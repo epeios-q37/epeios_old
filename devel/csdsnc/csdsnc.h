@@ -402,7 +402,7 @@ ERREpilog
 		public:
 			void reset( bso::bool__ P = true )
 			{
-				ioflow_functions___::reset( P );
+				fwf::ioflow_functions___<>::reset( P );
 
 				if ( P ) {
 					if ( _Flow != NULL )
@@ -427,7 +427,7 @@ ERREpilog
 			{
 				reset();
 
-				ioflow_functions___::Init( ThreadSafety );
+				fwf::ioflow_functions___<>::Init( ThreadSafety );
 				_Core = &Core;
 			}
 	};

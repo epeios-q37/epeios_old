@@ -177,7 +177,7 @@ namespace csducl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			ioflow_functions___::reset( P );
+			fwf::ioflow_functions___<>::reset( P );
 			_DaemonAccess.reset( P );
 			_Library.reset( P );
 
@@ -211,7 +211,7 @@ namespace csducl {
 				break;
 			}
 
-			ioflow_functions___::Init( ThreadSafety );
+			fwf::ioflow_functions___<>::Init( ThreadSafety );
 		}
 	};
 

@@ -128,7 +128,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			ioflow_functions___::reset( P );
+			fwf::ioflow_functions___<>::reset( P );
 
 			_Row = NONE;
 		}
@@ -148,7 +148,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset();
 			
-			ioflow_functions___::Init( ThreadSafety );
+			fwf::ioflow_functions___<>::Init( ThreadSafety );
 		}
 	};
 

@@ -1,5 +1,9 @@
 $Id$
 
+15/06/2011 :
+	- Général :
+		- Correction erreurs détectées par g++.
+
 12/06/2011 :
 	- NXSPCM : adaptation à XULRunner 2.0.
 

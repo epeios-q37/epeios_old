@@ -76,7 +76,7 @@ template <typename element, typename ui, typename id > static void _Register(
 {
 	Core.Init( Global.GetCurrentRow() );
 
-	nsxpcm::Register( Core, UI.Window, Id, nsxpcm::ef_All & ~nsxpcm::efFocus & ~nsxpcm::efBlur );
+	nsxpcm::Register( Core, UI.Window, Id, nsxpcm::ef_AllButAnnoying /*& ~nsxpcm::efFocus & ~nsxpcm::efBlur*/ );
 }
 
 static void _RegisterSpecific( ui__::main &UI )
@@ -162,21 +162,25 @@ RN
 RE
 }
 
-void ui_input_textbox__::NSXPCMOnInput( void )
+void ui_input_textbox__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
+	if ( Event != nsxpcm::eInput )
+		ERRc();
+
 	if ( UI().Main.Shared.IsChecked() )
 		Kernel().InputToAllOutputs();
 	else
 		Kernel().InputToOutput();
 }
 
-void ui_link__::NSXPCMOnCommand( void )
+void ui_link__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
-	nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ( "Command" ) );
-}
-void ui_link__::NSXPCMOnClick( void )
-{
-	nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ("The BIG click" ) );
+	if ( Event == nsxpcm::eCommand )
+		nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ( "Command" ) );
+	else if ( Event == nsxpcm::eClick )
+		nsxpcm::GetWindowInternal( UI().Page.Window )->Alert( NS_LITERAL_STRING ("The BIG click" ) );
+	else
+		ERRc();
 }
 
 
@@ -287,7 +291,7 @@ ERREnd
 ERREpilog
 }
 
-void ui_error_button__::NSXPCMOnCommand( void )
+void ui_error_button__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 ERRProlog
 ERRBegin
@@ -297,7 +301,7 @@ ERREnd
 ERREpilog
 }
 
-void ui_xslt_button__::NSXPCMOnCommand( void )
+void ui_xslt_button__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 ERRProlog
 	nsxpcm::xslt_parameters Parameters;
@@ -361,7 +365,7 @@ template <typename element> inline element *_QueryInterface(
 }
 #endif
 
-void ui_jsconsole_button__::NSXPCMOnCommand( void )
+void ui_jsconsole_button__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 /*
 	nsxpcm::Log( "Window2" );
@@ -403,10 +407,15 @@ static nsModuleComponentInfo components[] =
 
 NS_IMPL_NSGETMODULE("EpeiosModule", components) 
 #else
+using nsxpcm::event_listener;
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
+NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener)
+
 
 // The following line defines a kNS_SAMPLE_CID CID variable.
 NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
+NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
 
 // Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
 // should be completely unique UUIDs.
@@ -414,6 +423,7 @@ NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
 // where factoryproc is usually NULL.
 static const mozilla::Module::CIDEntry kEGeckoComCIDs[] = {
     { &kEGECKOCOM_CID, false, NULL, egeckocomConstructor },
+	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listenerConstructor },
     { NULL }
 };
 
@@ -423,7 +433,8 @@ static const mozilla::Module::CIDEntry kEGeckoComCIDs[] = {
 // to modify or extend functionality.
 static const mozilla::Module::ContractIDEntry kEGeckoComContracts[] = {
     { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
-    { NULL }
+     { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
+   { NULL }
 };
 
 // Category entries are category/key/value triples which can be used

@@ -56,11 +56,7 @@ class ui_textbox__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnCommand( void ){}
-	virtual void NSXPCMOnClick( void ){}
-	virtual void NSXPCMOnInput( void );
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
 public:
 	void Init( krow__ KernelRow )
 	{
@@ -76,11 +72,6 @@ class ui_label__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnCommand( void ){}
-	virtual void NSXPCMOnClick( void ){}
-	virtual void NSXPCMOnInput( void ){}
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
 public:
 	void Init( krow__ KernelRow )
 	{
@@ -96,11 +87,6 @@ class ui_checkbox__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnCommand( void ){}
-	virtual void NSXPCMOnClick( void ){}
-	virtual void NSXPCMOnInput( void ){}
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
 public:
 	void Init( krow__ KernelRow )
 	{
@@ -116,10 +102,6 @@ class ui_button__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnClick( void ){}
-	virtual void NSXPCMOnInput( void ){}
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
 public:
 	void Init( krow__ KernelRow )
 	{
@@ -132,21 +114,21 @@ class ui_error_button__
 : public ui_button__
 {
 protected:
-	virtual void NSXPCMOnCommand( void );
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
 };
 
 class ui_jsconsole_button__
 : public ui_button__
 {
 protected:
-	virtual void NSXPCMOnCommand( void );
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
 };
 
 class ui_xslt_button__
 : public ui_button__
 {
 protected:
-	virtual void NSXPCMOnCommand( void );
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
 };
 
 
@@ -155,11 +137,6 @@ class ui_description__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnCommand( void ){}
-	virtual void NSXPCMOnClick( void ){}
-	virtual void NSXPCMOnInput( void ){}
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
 public:
 	void Init( krow__ KernelRow )
 	{
@@ -177,11 +154,7 @@ class ui_link__
   public bridge__
 {
 protected:
-	virtual void NSXPCMOnCommand( void );
-	virtual void NSXPCMOnClick( void );
-	virtual void NSXPCMOnInput( void ){}
-	virtual void NSXPCMOnFocus( void ){}
-	virtual void NSXPCMOnBlur( void ){}
+	virtual void NSXPCMOnEvent( nsxpcm::event__ Event );
 public:
 	void Init( krow__ KernelRow )
 	{

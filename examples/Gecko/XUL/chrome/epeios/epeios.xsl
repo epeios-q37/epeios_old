@@ -28,7 +28,7 @@
 			</xsl:element>
 			<xsl:element name="description">
 				<xsl:attribute name="command">cmdXPCOM</xsl:attribute>
-				</xsl:text>CLICK !</xsl:text>
+				<xsl:text>CLICK !</xsl:text>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
