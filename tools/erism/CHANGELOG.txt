@@ -3,7 +3,7 @@ $Id$
 'erism' changelog.
 
 19/05/2011 :
-	- Adapting to modifications in underltyong libraries.
+	- Adapting to modifications in underlying libraries.
 
 25/04/2011 :
 	- Adding 'detail' command.
