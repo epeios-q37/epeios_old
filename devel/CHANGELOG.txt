@@ -1,5 +1,13 @@
 $Id$
 
+25/06/2011 :
+	- MTX :
+		- Correction bogue lié au Mac. Les fonctions issues de 'OSBase.h' ne se comportent pas de la même manière que celle issues de 'OSAtomic.h' !
+
+24/06/2011 :
+	- NSXPCM :
+		- Ajout possibilité de basculer entre Gecko 1.9 et Gecko 2.
+
 15/06/2011 :
 	- Général :
 		- Correction erreurs détectées par g++.

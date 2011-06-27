@@ -33,7 +33,7 @@ copt += -DCPE_MT -DMTK_KEEP
 # copt += -DNSXPCM_BKD
 copt += -DCPE_LIBRARY
 lopt = 
-mods = err fil flw lst mmi nsxpcm str tht tol ttr uym
+mods = cdgb64 err fil flw fnm lcl lst mmi nsxpcm rgstry str tht tol ttr uym xml xpp
 
 # To adapt !
 arm-sdk=/home/csimon/xulrunner-sdk-arm
@@ -46,7 +46,7 @@ else
 endif
 
 ifndef EPEIOS_ENV
-	env=gnu
+	env=macosxu
 else
 	env=$(EPEIOS_ENV)
 endif
@@ -63,16 +63,13 @@ co = -c
 co += -DMTX_NO_ATOMIC_OPERATIONS
 co += -fshort-wchar
 co += -include "mozilla-config.h"
+
 ifeq ("$(DEB_BUILD_ARCH)","armel")
 sdk=$(arm-sdk)
 else
 sdk=$(i686-sdk)
 endif
-co += -I$(sdk)/include
-co += -I$(sdk)/include/xpcom
-co += -I$(sdk)/include/content
-co += -I$(sdk)/include/dom
-co += -I$(sdk)/sdk/include
+
 # Generates debugging data.
 # co += -g
 # We want a library.
@@ -119,14 +116,12 @@ ifeq ("$(env)","macosxu")
 co = -c
 # co += -O
 co += -fPIC
-co += -isysroot /Developer/SDKs/MacOSX10.4u.sdk
-co += -arch i386
-co += -arch ppc
+co += -fshort-wchar
 lo = -o $(name).dylib
-lo += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib
-lo += -arch i386
-lo += -arch ppc
-lo += -L/csimon/mozilla/dist/lib -lnspr4 -lembed_base_s -lplc4 -lplds4 -lxpcom -lxpcomglue_s -lxpcom_core
+lo += -Wl,-executable_path,/Users/csimon/xulrunner-sdk/bin
+lo += -dynamiclib
+libs += -L/Users/csimon/xulrunner-sdk/lib -lnspr4 -lxpcom -lxpcomglue_s
+copt += -DXP_MAC
 ox = o
 cc = g++
 ds = :

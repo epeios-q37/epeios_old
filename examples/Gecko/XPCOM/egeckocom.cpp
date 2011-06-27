@@ -388,7 +388,7 @@ void ui_jsconsole_button__::NSXPCMOnEvent( nsxpcm::event__ Event )
 
 
 /* Gecko required part. */
-#if 0
+#ifdef NSXPCM__GECKO_V1
 
 #include "nsIGenericFactory.h"
 
@@ -406,7 +406,7 @@ static nsModuleComponentInfo components[] =
 };
 
 NS_IMPL_NSGETMODULE("EpeiosModule", components) 
-#else
+#elif defined( NSXPCM__GECKO_V2 )
 using nsxpcm::event_listener;
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
@@ -458,4 +458,6 @@ static const mozilla::Module EGeckoComModule = {
 NSMODULE_DEFN(EGeckoComModule) = &EGeckoComModule;
 //NSMODULE_DEFN(EventListenerModule) = &EventListenerModule;
 
+#else
+# error
 #endif

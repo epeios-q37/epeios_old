@@ -71,6 +71,8 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #include "xpcom-config.h"
 
+#define NSXPCM__GECKO_V1
+
 #include "nsITreeView.h"
 #include "nsITreeContentView.h"
 #include "nsITreeSelection.h"
@@ -101,8 +103,13 @@ extern class ttr_tutor &NSXPCMTutor;
 #include "nsServiceManagerUtils.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsIDOMEventListener.h"
-//#include "nsIGenericFactory.h"	// Et remplacé par l'en-tête ci-dessous.
-# include "mozilla/ModuleUtils.h"
+# ifdef NSXPCM__GECKO_V1
+#  include "nsIGenericFactory.h"
+# elif defined( NSXPCM__GECKO_V2 )
+#  include "mozilla/ModuleUtils.h"
+# else
+#  error
+# endif
 #include "nsIDOMHTMLAnchorElement.h"
 #include "nsIDOMDocumentFragment.h"
 #include "nsICommandLine.h" // Situé dans 'toolkitcomps'.

@@ -267,7 +267,9 @@ namespace mtx {
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_dec_and_test( &Counter );
 #elif defined( MTX__USE_MAC_ATOMIC_OPERATIONS )
-		return OSAtomicDecrement32( &Counter ) == 1;	// '== 1' car 'OSAtomicDecrement' retourne la valeur AVANT décrémentation.
+//		return OSAtomicDecrement32( &Counter ) == 1;	// Il existe un autre 'OSAtomic.h', dans lequel 'OSAtomicDecrement(|8|16|64)(...)'. retourne la valeur AVANT décrémentation.
+														// Cependant, celui-ci n'a pas de fonction 'OSAtomicDecrement32'(...)".
+		return OSAtomicDecrement32( &Counter ) == 0;
 #elif defined( MTX__USE_PTHREAD_MUTEX )
 		bso::bool__ Buffer;
 		if ( pthread_mutex_lock( &Counter.Mutex ) )
