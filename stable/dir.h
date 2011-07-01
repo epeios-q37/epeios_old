@@ -80,10 +80,16 @@ extern class ttr_tutor &DIRTutor;
 #ifdef DIR__MS
 #	include <direct.h>
 #	include <windows.h>
+# define DIR_PATH_MAX_SIZE	MAX_PATH
 #elif defined( DIR__POSIX )
+# ifdef CPE__T_MAC
+#  include <mach-o/dyld.h>
+#  include <sys/param.h>
+# endif
 #	include <unistd.h>
 #	include <sys/stat.h>
 #	include <dirent.h>
+# define DIR_PATH_MAX_SIZE	PATH_MAX
 #else
 #	error
 #endif
@@ -111,10 +117,25 @@ namespace dir {
 		char Path[MAX_PATH];
 		DWORD Size = GetModuleFileNameA( NULL, Path, sizeof( Path ) );
 #endif
-#ifdef DIR__POSIX	// Ne fonctionne peur-être oas sur tous les sytèmes POSIX, mais du moins avec 'GNU/Linux' et 'Cygwin'.
+#ifdef DIR__POSIX
+# ifdef CPE__T_MAC
+		char Path[MAXPATHLEN];
+		uint32_t Size = sizeof( Path );
+		switch ( _NSGetExecutablePath( Path, &Size ) ) {
+		case -1 :	// La taille de 'Path' est insuffisante.
+			ERRl();
+			break;
+		case 0:	// Succés.
+			break;
+		default:
+			ERRs();
+			break;
+		}
+
+# else	// Ne fonctionne peur-être pas sur tous les sytèmes POSIX, mais du moins avec 'GNU/Linux' et 'Cygwin'.
 		char Path[PATH_MAX];
 		int Size = readlink( "/proc/self/exe", Path, sizeof( Path ) );
-#endif
+
 		// Valeur d"erreur retournée par 'GetModuleFileName(..)'.
 		// Valeur d'erreur retrounée par 'readlink(...)', mais '0' est normalement une impossibilité.
 		if ( Size <= 0 )
@@ -124,7 +145,8 @@ namespace dir {
 			ERRl();
 
 		Path[Size] = 0;	//'readlink(...) ne rajoute pas le '\0' final.
-
+# endif
+#endif
 		return fnm::GetLocation( Path, Buffer );
 	}
 

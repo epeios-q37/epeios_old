@@ -28,30 +28,30 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
+# copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err uym fil
+libs = cdgb64 cio err fil flw fnm fwf lcl mmi rgstry str tol ttr uym xml xpp
 
+ifndef EPEIOS_SRC
+	src=
+else
+	src=$(EPEIOS_SRC)
+endif
 
-
-ifeq ("$(EPEIOS_ENV)","windows")
-# compilation options
-co = -q -c -w-aus -w-inl
-# linkage options
-lo = -q -e$(name)
+ifndef EPEIOS_ENV
+	EPEIOS_ENV=gnu
 endif
 
 ifeq ("$(EPEIOS_ENV)","gnu")
-co = -c
 # Generates debugging data.
 co += -g
 # General optimization.
-#co += -O
+# co += -O
 # To use with gprof
-#co += -pg
+# co += -pg
 lo = -o $(name)
 # needed when pthread are used.
-#lo += -lpthread
+# lo += -lpthread
 endif
 
 ifeq ("$(EPEIOS_ENV)","beos")

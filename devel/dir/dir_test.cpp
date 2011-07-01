@@ -38,14 +38,14 @@ using cio::cin;
 using cio::cout;
 using cio::cerr;
 
-#define PATH	"c:"
+#define PATH	"."
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	dir::handle___ Handle = NULL;
 	const char *Name = NULL;
-	char LocalizedName[MAX_PATH];
+	char LocalizedName[DIR_PATH_MAX_SIZE];
 	DIR_BUFFER___ Buffer;
 ERRBegin
 /*	if ( dir::CreateDir( "coucou" ) != dir::sOK )
@@ -56,7 +56,7 @@ ERRBegin
 
 	while ( ( Name != NULL ) && *Name ) {
 
-		sprintf( LocalizedName, "%s\\%s", PATH, Name );
+		sprintf( LocalizedName, "%s/%s", PATH, Name );
 
 		cio::cout << '"' << LocalizedName << "\" : ";
 

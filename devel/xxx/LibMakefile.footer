@@ -24,15 +24,8 @@
 
 # $$Id$$
 
-
-ifeq ("$(EPEIOS_ENV)","windows")
-ox = obj
-cc = bcc32
-ds = ;
-larg = $(lo) *.$(ox)	# Because Windows command size limited.
-endif
-
 ifeq ("$(EPEIOS_ENV)","gnu")
+co := -c $(co)
 ox = o
 cc = g++ 
 larg = $(lo) $(objs)

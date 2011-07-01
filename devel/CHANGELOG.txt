@@ -1,5 +1,13 @@
 $Id$
 
+30/06/2011 :
+	- DIR :
+		- Adaptation au Mac.
+
+29/06/2011 :
+	- PLLIO :
+		- Correction bogue génération d'une exception non interceptée.
+
 25/06/2011 :
 	- MTX :
 		- Correction bogue lié au Mac. Les fonctions issues de 'OSBase.h' ne se comportent pas de la même manière que celle issues de 'OSAtomic.h' !
