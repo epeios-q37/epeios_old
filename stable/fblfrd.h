@@ -292,7 +292,7 @@ namespace fblfrd {
 		}
 		bso::bool__ _TestCompatibility(
 			const char *Language,
-			const char *TargetLabel,
+			const char *BackendLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Flow,
 			str::string_ &Message,
@@ -320,7 +320,7 @@ namespace fblfrd {
 		//f Initialization with 'Channel' to parse/answer the request.
 		bso::bool__ Init(
 			const char *Language,
-			const char *TargetLabel,
+			const char *BackendLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
@@ -333,7 +333,7 @@ namespace fblfrd {
 		ERRBegin
 			reset();
 
-			if ( !_TestCompatibility( Language, TargetLabel, APIVersion, Channel, Message, URL ) ) {
+			if ( !_TestCompatibility( Language, BackendLabel, APIVersion, Channel, Message, URL ) ) {
 				Success = false;
 				ERRReturn;
 			}
@@ -552,7 +552,7 @@ namespace fblfrd {
 		}
 		void About(
 			string_ &ProtocolVersion,
-			string_ &TargetLabel,
+			string_ &BackendLabel,
 			string_ &APIVersion,
 			string_ &Backend,
 			string_ &Publisher)
@@ -562,7 +562,7 @@ namespace fblfrd {
 			EndOfInParameters();
 
 			StringOut( ProtocolVersion );
-			StringOut( TargetLabel );
+			StringOut( BackendLabel );
 			StringOut( APIVersion );
 			StringOut( Backend );
 			StringOut( Publisher );

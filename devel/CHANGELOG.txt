@@ -1,5 +1,13 @@
 $Id$
 
+02/07/2011 :
+	- FBL... :
+		- Renommage de certains pramètres pour une meilleur compréhension.
+	- FRD... :
+		- Utilisation des nouvelles bibliothèques 'FBL...'.
+	- RGSTRY :
+		- Correction bogue cas paramètre 'Error' à NULL non traité.
+
 30/06/2011 :
 	- DIR :
 		- Adaptation au Mac.

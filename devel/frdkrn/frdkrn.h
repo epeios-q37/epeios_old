@@ -73,6 +73,7 @@ extern class ttr_tutor &FRDKRNTutor;
 
 namespace frdkrn {
 	using namespace frdbkd;
+	using fblfrd::error_handling_functions__;
 
 	csducl::type__ GetBackendType( const frdrgy::registry_ &Registry );
 
@@ -105,6 +106,7 @@ namespace frdkrn {
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
 		rUnableToConnect,
+		rIncompatibleBackend,
 		r_amount,
 		r_Undefined
 	};
@@ -215,7 +217,7 @@ namespace frdkrn {
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			frdfbc::data___ &LibraryData,
-			error_reporting_functions___ &ErrorReportingFunctions,
+			error_handling_functions__ &ErrorHandlingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
 		{
@@ -260,11 +262,11 @@ namespace frdkrn {
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			csducl::type__ Type,
 			frdfbc::data___ &LibraryData,
-			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			error_handling_functions__ &ErrorReportingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
 			frdfbc::data___ &LibraryData,
-			error_reporting_functions___ &ErrorReportingFunctions = *(error_reporting_functions___ *)NULL,
+			error_handling_functions__ &ErrorHAndlingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
 		void reset( bso::bool__ P = true )
@@ -292,7 +294,7 @@ namespace frdkrn {
 		report__ Init(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
-			const str::string_ &Language,
+			const char *Language,
 			const char *CypherKey,
 			error_set___ &ErrorSet )
 		{
@@ -310,8 +312,8 @@ namespace frdkrn {
 		status__ Init(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
-			const char *CypherKey,
-			const str::string_ &Language );
+			const char *Language,
+			const char *CypherKey );
 		const frdrgy::registry_ &Registry( void ) const
 		{
 			return _Registry;
@@ -348,10 +350,13 @@ namespace frdkrn {
 		}
 		E_RWDISCLOSE__( str::string_, Message );
 		const void AboutBackend(
+			str::string_ &ProtocolVersion,
+			str::string_ &BackendLabel,
+			str::string_ &APIVersion,
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )
 		{
-			_Backend.About( BackendInformations, PublisherInformations );
+			_Backend.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations, PublisherInformations );
 		}
 		void Close( void )
 		{
@@ -396,14 +401,19 @@ namespace frdkrn {
 		}
 	};
 
-	inline bkdacc::id32__ _ExtractId32( const str::string_ &Value )
+	inline fblfrd::id32__ _ExtractId32( const str::string_ &Value )
 	{
 		return Value.ToUL();
 	}
 
-	inline bkdacc::id16__ _ExtractId16( const str::string_ &Value )
+	inline fblfrd::id16__ _ExtractId16( const str::string_ &Value )
 	{
 		return Value.ToUS();
+	}
+
+	inline fblfrd::id8__ _ExtractId8( const str::string_ &Value )
+	{
+		return Value.ToUB();
 	}
 
 }

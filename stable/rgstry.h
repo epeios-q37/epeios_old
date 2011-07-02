@@ -1395,9 +1395,9 @@ namespace rgstry {
 
 	E_AUTO( multi_level_registry )
 
-	template <typename registry> inline str::_guint__ _GetUnsigned(
+	template <typename registry, typename path> inline str::_guint__ _GetUnsigned(
 		const registry &Registry,
-		const str::string_ &Path,
+		const path &Path,
 		str::_guint__ Default,
 		bso::bool__ *Error,
 		str::_guint__ Min,
@@ -1414,8 +1414,13 @@ namespace rgstry {
 			Value = str::_GenericUnsignedConversion( RawValue, 0, &GenericError, str::bAuto, Max );
 
 		if ( ( GenericError != NONE ) || ( Value < Min ) ) {
+
 			Value = Default;
-			*Error = true;
+
+			if ( Error != NULL )
+				*Error = true;
+			else
+				ERRu();
 		}
 
 	ERRErr
@@ -1429,9 +1434,9 @@ namespace rgstry {
 #endif
 
 #define _M( name, type, min, max )\
-	template <typename registry> inline type Get##name(\
+	template <typename registry, typename path> inline type Get##name(\
 		const registry &Registry,\
-		const str::string_ &Path,\
+		const path &Path,\
 		type Default,\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\
@@ -1453,9 +1458,9 @@ namespace rgstry {
 #	undef _M
 #endif
 
-	template <typename registry> inline str::_gsint__ _GetSigned(
+	template <typename registry, typename path> inline str::_gsint__ _GetSigned(
 		const registry &Registry,
-		const str::string_ &Path,
+		const path &Path,
 		str::_gsint__ Default,
 		bso::bool__ *Error,
 		str::_gsint__ Min,
@@ -1472,8 +1477,13 @@ namespace rgstry {
 			Value = str::_GenericSignedConversion( RawValue, 0, &GenericError, str::bAuto, Min, Max );
 
 		if ( ( GenericError != NONE ) ) {
+
 			Value = Default;
-			*Error = true;
+
+			if ( Error != NULL )
+				*Error = true;
+			else
+				ERRu();
 		}
 
 	ERRErr
@@ -1487,9 +1497,9 @@ namespace rgstry {
 #endif
 
 #define _M( name, type, min, max )\
-	template <typename registry> inline bso::ulong__ Get##name(\
+	template <typename registry, typename path> inline bso::ulong__ Get##name(\
 		const registry &Registry,\
-		const str::string_ &Path,\
+		const path &Path,\
 		type Default,\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\

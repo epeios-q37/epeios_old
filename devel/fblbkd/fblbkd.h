@@ -732,7 +732,7 @@ namespace fblbkd {
 		master_module Master_;
 		STR_BUFFER___ _Language;
 		lcl::rack__ _LocaleRack;
-		const char *_TargetLabel;
+		const char *_BackendLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
 		// Information à propos du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
@@ -782,7 +782,7 @@ namespace fblbkd {
 		{
 			_CompatibilityTested = false;
 			_Mode = fblbur::m_Undefined;
-			_TargetLabel = NULL;
+			_BackendLabel = NULL;
 			_BackendInformations = NULL;
 			_PublisherInformations = NULL;
 			_ClientOrigin = NULL;
@@ -793,7 +793,7 @@ namespace fblbkd {
 			fblbur::mode__ Mode,
 			const char *APIVersion,	// NON dupliqué.
 			const char *ClientOrigin,	// NON dupliqué.
-			const char *TargetLabel,
+			const char *BackendLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
 			const char *BackendInformations,	// NON dupliqué.
 			const char *PublisherInformations )	// NON dupliqué.
@@ -806,7 +806,7 @@ namespace fblbkd {
 			_CompatibilityTested = false;
 			_Mode = Mode;
 
-			_TargetLabel = TargetLabel;
+			_BackendLabel = BackendLabel;
 
 			_BackendInformations = BackendInformations;
 			_PublisherInformations = PublisherInformations;
@@ -904,9 +904,9 @@ namespace fblbkd {
 		{
 			return Add( Name, FP, &Cast );
 		}
-		const char *GetTargetLabel( void ) const
+		const char *GetBackendLabel( void ) const
 		{
-			return _TargetLabel;
+			return _BackendLabel;
 		}
 		const char *GetBackendInformations( void ) const 
 		{

@@ -64,14 +64,14 @@ extern class ttr_tutor &FRDBKDTutor;
 #include "flw.h"
 
 #include "csducl.h"
-#include "bkduac.h"
+#include "fblfub.h"
 
 namespace frdbkd {
 	class _backend___
 	{
 	private:
 		csducl::universal_client_ioflow___ _Flow;
-		bkduac::backend_universal_access___ _BackendAccess;
+		fblfub::backend_universal_access___ _BackendAccess;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -80,32 +80,32 @@ namespace frdbkd {
 		}
 		bso::bool__ Init(
 			const char *Language,
-			const char *TargetLabel,
+			const char *BackendLabel,
 			const char *APIVersion,
 			csducl::universal_client_core &ClientCore,
-			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
+			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
 			str::string_ &Message,
 			str::string_ &URL )
 		{
-			bkduac::mode__ Mode = bkduac::m_Undefined;
+			fblfub::mode__ Mode = fblfub::m_Undefined;
 
 			_Flow.Init( ClientCore );
 
 			switch ( ClientCore.GetType() ) {
 			case csducl::tLibrary:
-				Mode = bkduac::mLocal;
+				Mode = fblfub::mEmbed;
 				break;
 			case csducl::tDaemon:
-				Mode = bkduac::mRemote;
+				Mode = fblfub::mRemote;
 				break;
 			default:
 				ERRu();
 				break;
 			}
 
-			return _BackendAccess.Init( Language, TargetLabel, APIVersion,_Flow, Mode, ErrorHandlingFunctions, Message, URL );
+			return _BackendAccess.Init( Language, BackendLabel, APIVersion,_Flow, Mode, ErrorHandlingFunctions, Message, URL );
 		}
-		bkdacc::backend_access___ &BackendAccess( void )
+		fblfrd::backend_access___ &BackendAccess( void )
 		{
 			return _BackendAccess;
 		}
@@ -119,12 +119,12 @@ namespace frdbkd {
 		}
 		void About(
 			str::string_ &ProtocolVersion,
-			str::string_ &TargetLabel,
+			str::string_ &BackendLabel,
 			str::string_ &APIVersion,
 			str::string_ &BackendInformations,
 			str::string_ &PublisherInformations )
 		{
-			_BackendAccess.About( ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
+			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations, PublisherInformations );
 		}
 	};
 
@@ -141,15 +141,15 @@ namespace frdbkd {
 		E_CVDTOR( backend___ )
 		bso::bool__ Init(
 			const char *Language,
-			const char *TargetLabel,
-			const char *APIVersion,
+			const char *BackendLabel,
+			const char *APIBackendVersion,
 			csducl::universal_client_core &ClientCore,
-			bkdacc::error_handling_functions__ &ErrorHandlingFunctions,
+			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
 			str::string_ &Message,
 			str::string_ &URL )
 		{
 			statics::Init( BackendAccess() );
-			return _backend___::Init( Language, TargetLabel, APIVersion,ClientCore, ErrorHandlingFunctions, MEssage, URL );
+			return _backend___::Init( Language, BackendLabel, APIVersion,ClientCore, ErrorHandlingFunctions, MEssage, URL );
 		}
 	};
 

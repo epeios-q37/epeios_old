@@ -82,7 +82,8 @@ namespace frdrgy {
 					*Root,
 					*Location,
 					*AccessMode,
-					*Type;
+					*Type,
+					*PingDelay;
 			} Backend;
 		} Parameters;
 		static struct profiles {
@@ -265,6 +266,11 @@ namespace frdrgy {
 		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
 	}
 
+	inline bso::ulong__ GetBackendPingDelay( const registry_ &Registry )
+	{
+		return rgstry::GetUL( Registry, paths::Parameters.Backend.PingDelay, 0 );
+	}
+
 	inline bso::bool__ GetBackendLocation(
 		const registry_ &Registry,
 		str::string_ &Target )
@@ -278,6 +284,8 @@ namespace frdrgy {
 	{
 		return GetValue( paths::Parameters.Locale, Registry, Locales );
 	}
+
+	
 
 }
 

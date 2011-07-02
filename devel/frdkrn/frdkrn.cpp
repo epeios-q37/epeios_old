@@ -80,6 +80,7 @@ const char *frdkrn::GetLabel( report__ Report )
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
 		CASE( UnableToConnect );
+		CASE( IncompatibleBackend );
 		default:
 			ERRu();
 			break;
@@ -228,8 +229,8 @@ ERREpilog
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
-	const char *CypherKey,
-	const str::string_ &Language )
+	const char *Language,
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -271,7 +272,7 @@ report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	csducl::type__ Type,
 	frdfbc::data___ &LibraryData,
-	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
+	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -279,12 +280,15 @@ ERRProlog
 ERRBegin
 	LibraryData.Locale = &_LocaleForLibrary;
 
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type ) ) {
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
 
-	_Backend.Init( _ClientCore, ErrorReportingFunctions );
+	if ( !_Backend.Init( LocaleRack().Language, BackendLabel, APIVersion, _ClientCore, ErrorReportingFunctions, Message, URL ) ) {
+		Report = rIncompatibleBackend;
+		ERRReturn;
+	}
 
 	Report = rOK;
 ERRErr
@@ -313,7 +317,7 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	frdfbc::data___ &LibraryData,
-	error_reporting_functions___ &ErrorReportingFunctions,
+	error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;

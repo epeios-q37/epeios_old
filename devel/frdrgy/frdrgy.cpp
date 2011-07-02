@@ -67,9 +67,10 @@ const char *frdrgy::paths::parameters::Locale					= "Locale";
 
 #define BACKEND		PARAMETERS "Backend" S
 const char *frdrgy::paths::parameters::backend::Root			= BACKEND;
-const char *frdrgy::paths::parameters::backend::Location		= BACKEND "Location";
 const char *frdrgy::paths::parameters::backend::Type			= BACKEND "@Type";
 const char *frdrgy::paths::parameters::backend::AccessMode		= BACKEND "@AccessMode";
+const char *frdrgy::paths::parameters::backend::PingDelay		= BACKEND "PingDelay";
+const char *frdrgy::paths::parameters::backend::Location		= BACKEND "Location";
 
 #define PROFILES	FRDRGY_PROFILES_PATH
 #define PROFILE		PROFILES "Profile[name=\"" T "\"]" S

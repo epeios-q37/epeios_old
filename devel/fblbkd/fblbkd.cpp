@@ -387,7 +387,7 @@ static void About_(
 	void * )
 {
 	Requete.StringOut() = FBLRPL_PROTOCOL_VERSION;
-	Requete.StringOut() = Backend.GetTargetLabel();
+	Requete.StringOut() = Backend.GetBackendLabel();
 	Requete.StringOut() = Backend.GetAPIVersion();
 	Requete.StringOut() = Backend.GetBackendInformations();
 	Requete.StringOut() = Backend.GetPublisherInformations();
@@ -815,7 +815,7 @@ bso::bool__ fblbkd::backend_::_TestCompatibility(
 {
 	bso::bool__ Success = true;
 ERRProlog
-	char RemoteTargetLabel[10];
+	char RemoteBackendLabel[10];
 	char Language[10];
 	char RemoteProtocolVersion[10];
 	char RemoteAPIVersion[10];
@@ -827,7 +827,7 @@ ERRBegin
 	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
 		ERRf();
 
-	if ( !flw::GetString( Flow, RemoteTargetLabel, sizeof( RemoteTargetLabel ) ) )
+	if ( !flw::GetString( Flow, RemoteBackendLabel, sizeof( RemoteBackendLabel ) ) )
 		ERRf();
 
 	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
@@ -835,7 +835,7 @@ ERRBegin
 
 	Flow.Dismiss();
 
-	if ( RemoteTargetLabel[0] && strcmp( RemoteTargetLabel, _TargetLabel ) )
+	if ( RemoteBackendLabel[0] && strcmp( RemoteBackendLabel, _BackendLabel ) )
 		ERRl();	// Pas encore traité.
 
 	if ( strcmp( RemoteProtocolVersion, FBLRPL_PROTOCOL_VERSION )
@@ -867,10 +867,10 @@ ERRProlog
 	str::string MessageLabel, URLLabel;
 	STR_BUFFER___ MessageLabelBuffer, URLLAbelBuffer;
 ERRBegin
-	MessageLabel.Init( _TargetLabel );
+	MessageLabel.Init( _BackendLabel );
 	MessageLabel.Append( "UpdateMessage" );
 
-	URLLabel.Init( _TargetLabel );
+	URLLabel.Init( _BackendLabel );
 	URLLabel.Append( "UpadetURL" );
 
 	Success = _TestCompatibility( Flow, _APIVersion, MessageLabel.Convert( MessageLabelBuffer ), URLLabel.Convert( URLLAbelBuffer ) );

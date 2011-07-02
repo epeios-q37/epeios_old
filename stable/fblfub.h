@@ -199,7 +199,7 @@ namespace fblfub {
 		}
 		bso::bool__ Init(
 			const char *Language,
-			const char *TargetLabel,
+			const char *BackendLabel,
 			const char *APIVersion,
 			flw::ioflow__ &Flow,
 			mode__ Mode,
@@ -209,7 +209,7 @@ namespace fblfub {
 		{
 			_Functions.Init( Mode );
 
-			return _backend_access___::Init( Language, TargetLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
+			return _backend_access___::Init( Language, BackendLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
 		}
 	};
 

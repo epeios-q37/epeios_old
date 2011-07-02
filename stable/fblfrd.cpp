@@ -59,7 +59,7 @@ using namespace fblfrd;
 
 bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 	const char *Language,
-	const char *TargetLabel,
+	const char *BackendLabel,
 	const char *APIVersion,
 	flw::ioflow__ &Flow,
 	str::string_ &Message,
@@ -70,7 +70,7 @@ bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 
 	flw::PutString( Language, Flow );
 	flw::PutString( FBLRPL_PROTOCOL_VERSION, Flow );
-	flw::PutString( TargetLabel, Flow );
+	flw::PutString( BackendLabel, Flow );
 	flw::PutString( APIVersion, Flow );
 
 	Flow.Commit();
