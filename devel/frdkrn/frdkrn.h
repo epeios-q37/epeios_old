@@ -130,10 +130,12 @@ namespace frdkrn {
 	public:
 		rgstry::status__ Status;
 		rgstry::error_details Details;
+		incompatibility_informations IncompatibilityInformations;	// Quand survient un 'report__::rIncompatibleBackend'.
 		void reset( bso::bool__ P = true )
 		{
 			Status = rgstry::s_Undefined;
 			Details.reset( P );
+			IncompatibilityInformations.reset( P );
 		}
 		error_set___( void )
 		{
@@ -148,6 +150,7 @@ namespace frdkrn {
 			Status = rgstry::s_Undefined;
 
 			Details.Init();
+			IncompatibilityInformations.Init();
 		}
 	};
 
@@ -215,8 +218,10 @@ namespace frdkrn {
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la création ou du chargement du projet. Si == 0, pas de projet en cours d'utilisation.
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			frdfbc::data___ &LibraryData,
+			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHandlingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
@@ -260,12 +265,16 @@ namespace frdkrn {
 			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
+			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			frdfbc::data___ &LibraryData,
+			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorReportingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
+			const compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData,
+			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHAndlingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
@@ -322,13 +331,14 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const char *CypherKey,
+			const compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
 			if ( ( Report = _FillProjectRegistry( FileName, TargetName, CypherKey, ErrorSet ) ) == rOK )
-				Report = _Connect( LibraryData );
+				Report = _Connect( CompatibilityInformations, LibraryData, ErrorSet.IncompatibilityInformations );
 
 			if ( Report == rOK )
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -339,6 +349,7 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const char *CypkerKey,
+			const compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData );
 		bso::bool__ IsProjectInProgress( void ) const
 		{

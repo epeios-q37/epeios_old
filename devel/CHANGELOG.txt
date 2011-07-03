@@ -1,5 +1,19 @@
 $Id$
 
+03/07/2011 :
+	- Général :
+		- Adaptation aux modifications 'XPP'.
+	- CRPTGR :
+		- Donnée '_Key' passe de 'const char *' à 'str::string' pour faciliter la gestion de paramètres dans certaines bibliothèques.
+	- FBL... :
+		- Refonte paramètres relatifs à la gestion de la compatibilité entre frontend et backend.
+	- FRD... :
+		- Utilisation des nouvelles bibliothèques 'FBL...'.
+	- XPP :
+		- Regroupement de certains paramètres dans une structure.
+	- XUL... :
+		Adaptation aux modification bilbliothèques sous-jacentes.
+
 02/07/2011 :
 	- FBL... :
 		- Renommage de certains pramètres pour une meilleur compréhension.

@@ -95,7 +95,7 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, str::string( LOCATION ), str::string( NAMESPACE ) );
+	PFlow.Init( Flow, xpp::criterions___( str::string( LOCATION ), str::string(), str::string( NAMESPACE ) ) );
 
 	XFlow.Init( PFlow );
 

@@ -932,10 +932,9 @@ ERREpilog
 
 row__ rgstry::Parse(
 	flw::iflow__ &Flow,
-	const str::string_ &Directory,
+	const xpp::criterions___ &Criterions,
 	registry_ &Registry,
 	row__ Root,
-	const char *CypherKey,
 	error_details_ &ErrorDetails )
 {
 ERRProlog
@@ -947,7 +946,7 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, Directory, CypherKey, str::string( NAMESPACE ) );
+	PFlow.Init( Flow, Criterions );
 	XFlow.Init( PFlow );
 
 	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {
@@ -1199,9 +1198,8 @@ ERREpilog
 
 status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
-	const str::string_ &BaseDirectory,
+	const xpp::criterions___ &Criterions,
 	const char *RootPath,
-	const char *CypherKey,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
@@ -1209,7 +1207,7 @@ status__ rgstry::FillRegistry(
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
-	if ( ( RegistryRoot = rgstry::Parse( IFlow, BaseDirectory, Registry, RegistryRoot, CypherKey, ErrorDetails ) ) == NONE )
+	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
 		if ( ErrorDetails.GetXPPStatus() == xpp::sOK )
 			return sRootPathError;
 		else
@@ -1225,11 +1223,10 @@ status__ rgstry::FillRegistry(
 
 status__ rgstry::FillRegistry(
 	flw::iflow__ &IFlow,
+	const xpp::criterions___ &Criterions,
 	const char *RootPath,
-	const char *CypherKey,
 	rgstry::registry_ &Registry,
-	rgstry::row__ &RegistryRoot,
-	const str::string_ &BaseDirectory )
+	rgstry::row__ &RegistryRoot )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1237,7 +1234,7 @@ ERRProlog
 ERRBegin
 	Dummy.Init();
 
-	Status = FillRegistry( IFlow, BaseDirectory, RootPath, CypherKey, Registry, RegistryRoot, Dummy );
+	Status = FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog
@@ -1247,8 +1244,8 @@ ERREpilog
 
 status__ rgstry::FillRegistry(
 	const char *FileName,
+	const xpp::criterions___ &Criterions,
 	const char *RootPath,
-	const char *CypherKey,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
 	error_details_ &ErrorDetails )
@@ -1264,7 +1261,10 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Status = FillRegistry( FFlow, str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), RootPath, CypherKey, Registry, RegistryRoot, ErrorDetails );
+	if ( Criterions.Directory.Amount() != 0 )
+		ERRu();
+
+	Status = FillRegistry( FFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, ErrorDetails );
 
 	if ( Status == sParseError )
 		if ( ErrorDetails.FileName.Amount() == 0 )
@@ -1277,8 +1277,8 @@ ERREpilog
 
 status__ rgstry::FillRegistry(
 	const char *FileName,
+	const xpp::criterions___ &Criterions,
 	const char *RootPath,
-	const char *Key,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot )
 {
@@ -1288,7 +1288,7 @@ ERRProlog
 ERRBegin
 	Dummy.Init();
 
-	Status = FillRegistry( FileName, RootPath, Key, Registry, RegistryRoot, Dummy );
+	Status = FillRegistry( FileName, Criterions, RootPath, Registry, RegistryRoot, Dummy );
 ERRErr
 ERREnd
 ERREpilog

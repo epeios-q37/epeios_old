@@ -63,6 +63,7 @@ extern class ttr_tutor &CRPTGRTutor;
 #include "err.h"
 #include "flw.h"
 #include "fwf.h"
+#include "str.h"
 
 namespace crptgr {
 
@@ -73,14 +74,14 @@ namespace crptgr {
 	{
 	private:
 		flw::oflow__ *_Flow;
-		const char *_Key;
+		str::string _Key;
 		bso::size__ _Position;
 		fwf::datum__ _Encrypt( fwf::datum__ Datum )
 		{
-			if ( _Key[_Position] == 0 )
+			if ( _Position == _Key.Amount() )
 				_Position = 0;
 
-			return Datum + _Key[_Position++];
+			return Datum + _Key(_Position++ );
 		}
 	protected:
 		virtual fwf::size__ FWFWrite(
@@ -105,7 +106,7 @@ namespace crptgr {
 			_oflow_functions___::reset( P );
 
 			_Flow = NULL;
-			_Key = NULL;
+			_Key.reset( P );
 			_Position = 0;
 		}
 		encrypt_oflow_functions___( void )
@@ -124,7 +125,7 @@ namespace crptgr {
 			_oflow_functions___::Init( ThreadSafety );
 
 			_Flow = &Flow;
-			_Key = Key;
+			_Key.Init( Key );
 			_Position = 0;
 		}
 	};
@@ -168,14 +169,14 @@ namespace crptgr {
 	{
 	private:
 		flw::iflow__ *_Flow;
-		const char *_Key;
+		str::string _Key;
 		bso::size__ _Position;
 		fwf::datum__ _Decrypt( fwf::datum__ Datum )
 		{
-			if ( _Key[_Position] == 0 )
+			if ( _Position == _Key.Amount() )
 				_Position = 0;
 
-			return Datum - _Key[_Position++];
+			return Datum - _Key(_Position++ );
 		}
 	protected:
 		virtual fwf::size__ FWFRead(
@@ -204,7 +205,7 @@ namespace crptgr {
 			_iflow_functions___::reset( P );
 
 			_Flow = NULL;
-			_Key = NULL;
+			_Key.reset( P );
 			_Position = 0;
 		}
 		decrypt_iflow_functions___( void )
@@ -217,13 +218,13 @@ namespace crptgr {
 		}
 		void Init(
 			flw::iflow__ &Flow,
-			const char *Key,
-			fwf::thread_safety__ ThreadSafety )	// 'Key' n'est PAS dupliqué.
+			const str::string_ &Key,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_iflow_functions___::Init( ThreadSafety );
 
 			_Flow = &Flow;
-			_Key = Key;
+			_Key.Init( Key );
 			_Position = 0;
 		}
 	};
@@ -251,7 +252,7 @@ namespace crptgr {
 		}
 		void Init(
 			flw::iflow__ &Flow,
-			const char *Key,
+			const str::string_ &Key,
 			flw::size__ AmountMax = FLW_SIZE_MAX )	// 'Key' n'est PAS dupliqué.
 		{
 			_Functions.Init( Flow, Key, fwf::tsDisabled );

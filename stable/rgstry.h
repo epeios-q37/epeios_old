@@ -831,17 +831,15 @@ namespace rgstry {
 
 	row__ Parse(
 		flw::iflow__ &Flow,
-		const str::string_ &Directory,
+		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
 		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
-		const char *CypherKey,
 		error_details_ &ErrorDetails );
 
 	inline row__ Parse(
 		flw::iflow__ &Flow,
-		const str::string_ &Directory,
+		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
-		const char *CypherKey,
 		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
 		row__ Result = NONE;
@@ -850,7 +848,7 @@ namespace rgstry {
 	ERRBegin
 		Dummy.Init();
 
-		Result = Parse( Flow, Directory, Registry, Root, CypherKey, Dummy );
+		Result = Parse( Flow, Criterions, Registry, Root, Dummy );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -876,33 +874,31 @@ namespace rgstry {
 
 	status__ FillRegistry(
 		flw::iflow__ &IFlow,
-		const str::string_ &BaseDirectory,
+		const xpp::criterions___ &Criterions,
 		const char *RootPath,
-		const char *CypherKey,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
 
 	status__ FillRegistry(
 		flw::iflow__ &IFlow,
+		const xpp::criterions___ &Criterions,
 		const char *RootPath,
-		const char *CypherKey,
 		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot,
-		const str::string_ &BaseDirectory = str::string( "" ));
+		rgstry::row__ &RegistryRoot );
 
 	status__ FillRegistry(
 		const char *FileName,
+		const xpp::criterions___ &Criterions,
 		const char *RootPath,
-		const char *CypherKey,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
 		error_details_ &ErrorDetails );
 
 	status__ FillRegistry(
 		const char *FileName,
+		const xpp::criterions___ &Criterions,
 		const char *RootPath,
-		const char *CypherKey,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot );
 
@@ -1303,15 +1299,14 @@ namespace rgstry {
 		status__ Fill(
 			level__ Level,
 			flw::iflow__ &IFlow,
-			const str::string_ &BaseDirectory,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			error_details_ &ErrorDetails )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( IFlow, BaseDirectory, RootPath, CypherKey, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root, ErrorDetails ); 
 
 			Roots.Set( Root, Level );
 
@@ -1322,14 +1317,13 @@ namespace rgstry {
 		status__ Fill(
 			level__ Level,
 			flw::iflow__ &IFlow,
-			const char *RootPath,
-			const char *CypherKey,
-			const str::string_ &BaseDirectory = str::string( "" ))
+			const xpp::criterions___ &Criterions,
+			const char *RootPath )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( IFlow, RootPath, CypherKey, BaseRegistry, Root, BaseDirectory ); 
+			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root ); 
 
 			Roots.Set( Root, Level );
 
@@ -1340,14 +1334,14 @@ namespace rgstry {
 		status__ Fill(
 			level__ Level,
 			const char *FileName,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			error_details_ &ErrorDetails )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( FileName, RootPath, CypherKey, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( FileName,Criterions,  RootPath, BaseRegistry, Root, ErrorDetails ); 
 
 			Roots.Set( Root, Level );
 
@@ -1358,13 +1352,13 @@ namespace rgstry {
 		status__ Fill(
 			level__ Level,
 			const char *FileName,
-			const char *RootPath,
-			const char *CypherKey )
+			const xpp::criterions___ &Criterions,
+			const char *RootPath )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( FileName, RootPath, CypherKey, BaseRegistry, Root ); 
+			Status = FillRegistry( FileName, Criterions, RootPath, BaseRegistry, Root ); 
 
 			Roots.Set( Root, Level );
 

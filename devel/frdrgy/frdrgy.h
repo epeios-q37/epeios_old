@@ -172,35 +172,35 @@ namespace frdrgy {
 		}
 		rgstry::status__ FillConfiguration(
 			const char *FileName,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			rgstry::error_details_ &ErrorDetails )
 		{
-			return _registry_::Fill( S_.Configuration, FileName, RootPath, CypherKey, ErrorDetails );
+			return _registry_::Fill( S_.Configuration, FileName, Criterions, RootPath, ErrorDetails );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			rgstry::error_details_ &ErrorDetails )
 		{
-			return _registry_::Fill( S_.Project, FileName, RootPath, CypherKey, ErrorDetails );
+			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, ErrorDetails );
 		}
 		rgstry::status__ FillUser(
 			const char *FileName,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			rgstry::error_details_ &ErrorDetails )
 		{
-			return _registry_::Fill( S_.User, FileName, RootPath, CypherKey, ErrorDetails );
+			return _registry_::Fill( S_.User, FileName, Criterions, RootPath, ErrorDetails );
 		}
 		rgstry::status__ FillUser(
 			flw::iflow__ &Flow,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const char *CypherKey,
 			rgstry::error_details_ &ErrorDetails )
 		{
-			return _registry_::Fill( S_.User, Flow, str::string( "" ), RootPath, CypherKey, ErrorDetails );
+			return _registry_::Fill( S_.User, Flow, Criterions, RootPath, ErrorDetails );
 		}
 		time_t ConfigurationTimeStamp( void ) const
 		{

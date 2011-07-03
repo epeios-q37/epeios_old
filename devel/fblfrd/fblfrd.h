@@ -206,6 +206,80 @@ namespace fblfrd {
 		}
 	};
 
+	struct compatibility_informations__
+	{
+		const char
+			*BackendLabel,
+			*APIVersion;
+		void reset( bso::bool__ = true )
+		{
+			BackendLabel = APIVersion = NULL;
+		}
+		compatibility_informations__( void )
+		{
+			reset( false );
+		}
+		compatibility_informations__(
+			const char *BackendLabel,
+			const char *APIVersion )
+		{
+			Init( BackendLabel, APIVersion );
+		}
+		~compatibility_informations__( void )
+		{
+			reset();
+		}
+		void Init( 
+			const char *BackendLabel,
+			const char *APIVersion )
+		{
+			this->BackendLabel = BackendLabel;
+			this->APIVersion = APIVersion;
+		}
+	};
+
+	class incompatibility_informations_
+	{
+	public:
+		struct s {
+			str::string_::s 
+				Message,
+				URL;
+		};
+		str::string_
+			Message,
+			URL;
+		incompatibility_informations_( s &S )
+		: Message( S.Message ),
+			URL( S.URL )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Message.reset( P );
+			URL.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Message.plug( MM );
+			URL.plug( MM );
+		}
+		incompatibility_informations_ &operator =( const incompatibility_informations_ &II )
+		{
+			Message = II.Message;
+			URL = II.URL;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Message.Init();
+			URL.Init();
+		}
+	};
+
+	E_AUTO( incompatibility_informations );
+
+
 	//c The backend access core.
 	class backend_access___
 	{
@@ -292,11 +366,9 @@ namespace fblfrd {
 		}
 		bso::bool__ _TestCompatibility(
 			const char *Language,
-			const char *BackendLabel,
-			const char *APIVersion,
+			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Flow,
-			str::string_ &Message,
-			str::string_ &URL );
+			incompatibility_informations_ &IncompatibilityInformations );
 	public:
 		void reset( bool P = true )
 		{
@@ -320,20 +392,18 @@ namespace fblfrd {
 		//f Initialization with 'Channel' to parse/answer the request.
 		bso::bool__ Init(
 			const char *Language,
-			const char *BackendLabel,
-			const char *APIVersion,
+			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
 			error_handling_functions__ &ErrorHandlingFunctions,
-			str::string_ &Message,
-			str::string_ &URL )
+			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			bso::bool__ Success = true;
 		ERRProlog
 		ERRBegin
 			reset();
 
-			if ( !_TestCompatibility( Language, BackendLabel, APIVersion, Channel, Message, URL ) ) {
+			if ( !_TestCompatibility( Language, CompatibilityInformations, Channel, IncompatibilityInformations ) ) {
 				Success = false;
 				ERRReturn;
 			}

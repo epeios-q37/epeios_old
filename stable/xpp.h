@@ -375,26 +375,26 @@ namespace xpp {
 		_qualified_preprocessor_directives___ &_Directives;
 		str::string _LocalizedFileName;	// Si le 'parser' sert à l'inclusion d'un fichier ('<xpp:expand href="...">), contient le nom du fichier inclut.
 		str::string _Directory;
-		const char *_CypherKey;
+		str::string _CypherKey;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
 		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
 		status__ _InitWithFile(
 			const str::string_ &FileName,
 			const str::string_ &Directory,
-			const char *CypherKey );
+			const str::string_ &CypherKey );
 		status__ _InitWithContent(
 			const str::string_ &Content,
 			const str::string_ &NameOfTheCurrentFile,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
-			const char *CypherKey );
+			const str::string_ &CypherKey );
 		status__ _InitCypher(
 			flw::iflow__ &Flow,
 			const str::string_ &FileName,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
-			const char *CypherKey );
+			const str::string_ &CypherKey );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
@@ -408,7 +408,7 @@ namespace xpp {
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
 		status__ _HandleCypherOverride(
-			const char *CypherKey,
+			const str::string_ &CypherKey,
 			_extended_parser___ *&Parser );
 		status__ _HandleCypherDirective( _extended_parser___ *&Parser );
 		status__ _HandleAttributeDirective(
@@ -454,7 +454,7 @@ namespace xpp {
 			xtf::extended_text_iflow__ &XFlow,
 			const str::string_ &LocalizedFileName,	// Si 'XFlow' est rattaché à un fichier, le nom de ce fichier (utile pour la gestion d'erreurs).
 			const str::string_ &Directory,
-			const char *CypherKey )	// Ne pas modifier 'CypherKey'.
+			const str::string_ &CypherKey )
 		{
 			// _Repository.Init();
 			// _Tags.Init();
@@ -462,7 +462,7 @@ namespace xpp {
 			_Parser.Init( XFlow, xml::ehKeep );
 			_LocalizedFileName.Init( LocalizedFileName );
 			_Directory.Init( Directory );
-			_CypherKey = CypherKey;
+			_CypherKey.Init( CypherKey );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
 
@@ -503,6 +503,46 @@ namespace xpp {
 
 		return Parser;
 	}
+
+	struct criterions___
+	{
+		str::string
+			Directory,
+			CypherKey,
+			Namespace;
+		void reset( bso::bool__ P = true )
+		{
+			Directory.reset( P);
+			CypherKey.reset( P );
+			Namespace.reset( P );
+		}
+		criterions___( void )
+		{
+			reset( false );
+		}
+		~criterions___( void )
+		{
+			reset();
+		}
+		criterions___( 
+			const str::string_ &Directory,
+			const str::string_ &CypherKey = str::string() ,
+			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+		{
+			this->Directory = Directory;
+			this->CypherKey = CypherKey;
+			this->Namespace = Namespace;
+		}
+		void Init( 
+			const str::string_ &Directory,
+			const str::string_ &CypherKey = str::string() ,
+			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+		{
+			this->Directory.Init( Directory );
+			this->CypherKey.Init( CypherKey );
+			this->Namespace.Init( Namespace );
+		}
+	};
 
 	class _preprocessing_iflow_functions___
 	: public _iflow_functions___
@@ -566,20 +606,18 @@ namespace xpp {
 		void Init(
 			xtf::extended_text_iflow__ &XFlow,
 			fwf::thread_safety__ ThreadSafety,
-			const str::string_ &Directory,
-			const char *CypherKey,
-			const str::string_ &Namespace )
+			const criterions___ &Criterions )
 		{
 			_DeleteParsers();
 			_Repository.Init();
 			_Variables.Init();
-			_Directives.Init( Namespace );
+			_Directives.Init( Criterions.Namespace );
 			_Data.Init();
 			_Position = 0;
 			_iflow_functions___::Init( ThreadSafety );
 			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
 			_Parsers.Init();
-			if ( _Parser().Init( XFlow, str::string(), Directory, CypherKey ) != sOK )
+			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
 				ERRc();
 		}
 		E_RODISCLOSE__( status__, Status );
@@ -618,12 +656,10 @@ namespace xpp {
 		}
 		void Init(
 			flw::iflow__ &IFlow,
-			const str::string_ &Directory,
-			const char *CypherKey,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+			const criterions___ &Criterions )
 		{
 			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Directory, CypherKey, Namespace );
+			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Criterions );
 			_iflow__::Init( _FlowFunctions, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
@@ -751,51 +787,31 @@ namespace xpp {
 		xtf::coord__ &Coord );
 
 	status__ Process(
-		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
+		const criterions___ &Criterions,
 		xml::writer_ &Writer,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
 
 	status__ Process(
-		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
+		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow,
 		xtf::coord__ &Coord,
 		str::string_ &GuiltyFileName );
 
 	status__ Process(
-		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
+		const criterions___ &Criterions,
 		xml::writer_ &Writer );
 
 	status__ Process(
-		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
+		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow );
 
-	inline status__ Process(
-		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
-		xml::writer_ &Writer )
-	{
-		return Process( str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), IFlow, Directory, Writer );
-	}
-
-	inline status__ Process(
-		flw::iflow__ &IFlow,
-		const str::string_ &Directory,
-		xml::outfit__ Outfit,
-		txf::text_oflow__ &OFlow )
-	{
-		return Process( str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ), IFlow, Directory, Outfit, OFlow );
-	}
 
 	inline status__ Process(
 		flw::iflow__ &IFlow,

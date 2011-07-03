@@ -69,6 +69,12 @@ extern class ttr_tutor &FBLFUBTutor;
 
 namespace fblfub {
 
+	using fblfrd::compatibility_informations__;
+
+	using fblfrd::incompatibility_informations_;
+	using fblfrd::incompatibility_informations;
+
+
 	enum mode__
 	{
 		mEmbed,
@@ -199,17 +205,15 @@ namespace fblfub {
 		}
 		bso::bool__ Init(
 			const char *Language,
-			const char *BackendLabel,
-			const char *APIVersion,
+			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Flow,
 			mode__ Mode,
 			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
-			str::string_ &Message,
-			str::string_ &URL )
+			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			_Functions.Init( Mode );
 
-			return _backend_access___::Init( Language, BackendLabel, APIVersion, Flow, _Functions, ErrorHandlingFunctions, Message, URL  );
+			return _backend_access___::Init( Language, CompatibilityInformations, Flow, _Functions, ErrorHandlingFunctions, IncompatibilityInformations  );
 		}
 	};
 

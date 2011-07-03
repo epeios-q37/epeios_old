@@ -59,19 +59,17 @@ using namespace fblfrd;
 
 bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 	const char *Language,
-	const char *BackendLabel,
-	const char *APIVersion,
+	const compatibility_informations__ &CompatibilityInformations,
 	flw::ioflow__ &Flow,
-	str::string_ &Message,
-	str::string_ &URL )
+	incompatibility_informations_ &IncompatibilityInformations )
 {
 	bso::bool__ Success = true;
 	char Buffer[100];
 
 	flw::PutString( Language, Flow );
 	flw::PutString( FBLRPL_PROTOCOL_VERSION, Flow );
-	flw::PutString( BackendLabel, Flow );
-	flw::PutString( APIVersion, Flow );
+	flw::PutString( CompatibilityInformations.BackendLabel, Flow );
+	flw::PutString( CompatibilityInformations.APIVersion, Flow );
 
 	Flow.Commit();
 
@@ -82,19 +80,18 @@ bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
 			ERRb();
 
-		Message.Append( Buffer );
+		IncompatibilityInformations.Message.Append( Buffer );
 
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
 			ERRb();
 
-		URL.Append( Buffer );
+		IncompatibilityInformations.URL.Append( Buffer );
 	}
 
 	Flow.Dismiss();
 
 	return Success;
 }
-
 
 bso::bool__ fblfrd::backend_access___::TestBackendCasts_()
 {

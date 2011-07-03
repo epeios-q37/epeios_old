@@ -80,6 +80,7 @@ const char *frdkrn::GetLabel( report__ Report )
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
 		CASE( UnableToConnect );
+		CASE( IncompatibleBackend );
 		default:
 			ERRu();
 			break;
@@ -228,8 +229,8 @@ ERREpilog
 status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
-	const char *CypherKey,
-	const str::string_ &Language )
+	const char *Language,
+	const char *CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -269,9 +270,11 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
+	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	frdfbc::data___ &LibraryData,
-	frdkrn::error_reporting_functions___ &ErrorReportingFunctions,
+	incompatibility_informations_ &IncompatibilityInformations,
+	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -279,12 +282,15 @@ ERRProlog
 ERRBegin
 	LibraryData.Locale = &_LocaleForLibrary;
 
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type ) ) {
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
 
-	_Backend.Init( _ClientCore, ErrorReportingFunctions );
+	if ( !_Backend.Init( LocaleRack().Language, CompatibilityInformations, _ClientCore, ErrorHandlingFunctions, IncompatibilityInformations ) ) {
+		Report = rIncompatibleBackend;
+		ERRReturn;
+	}
 
 	Report = rOK;
 ERRErr
@@ -295,16 +301,18 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
+	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	frdfbc::data___ &LibraryData,
-	frdbkd::error_reporting_functions___ &ErrorReportingFunctions,
+	incompatibility_informations_ &IncompatibilityInformations,
+	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), Type, LibraryData, ErrorReportingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, LibraryData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -312,8 +320,10 @@ ERREpilog
 }
 
 report__ frdkrn::kernel___::_Connect(
+	const compatibility_informations__ &CompatibilityInformations,
 	frdfbc::data___ &LibraryData,
-	error_reporting_functions___ &ErrorReportingFunctions,
+	incompatibility_informations_ &IncompatibilityInformations,
+	error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -336,7 +346,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, Type, LibraryData, ErrorReportingFunctions, LogFunctions );
+		Report = _Connect( Location, CompatibilityInformations, Type, LibraryData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -355,6 +365,7 @@ status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
 	const char *CypherKey,
+	const compatibility_informations__ &CompatibilityInformations,
 	frdfbc::data___ &LibraryData )
 {
 	status__ Status = s_Undefined;
@@ -364,7 +375,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, CypherKey, LibraryData, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, CypherKey, CompatibilityInformations, LibraryData, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

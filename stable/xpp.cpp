@@ -767,11 +767,11 @@ status__ xpp::_extended_parser___::_HandleCypherDecryption(
 }
 
 status__ xpp::_extended_parser___::_HandleCypherOverride(
-	const char *CypherKey,
+	const str::string_ &CypherKey,
 	_extended_parser___ *&Parser )
 {
 
-	if ( ( _CypherKey != NULL ) && ( *_CypherKey != 0 ) && ( strcmp( _CypherKey, CypherKey ) != 0 ) )
+	if ( ( _CypherKey.Amount() != 0  ) && ( _CypherKey !=  CypherKey ) )
 		return sBadCypherKey;
 	else {
 		Parser = NewParser( _Repository, _Variables, _Directives );
@@ -787,19 +787,18 @@ status__ xpp::_extended_parser___::_HandleCypherDirective( _extended_parser___ *
 ERRProlog
 	cypher_mode__ Mode = cm_Undefined;
 	str::string Value;
-	STR_BUFFER___ Buffer;
 ERRBegin
 	Value.Init();
 
 	switch ( GetCypherModeAndValue_( _Parser, Value, Status ) ) {
 	case cmEncrypted:
 		if ( ( _CypherKey == NULL ) || ( *_CypherKey == 0 ) )
-			Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
+			Status = _HandleCypherOverride( Value, Parser );
 		else
 			Status = _HandleCypherDecryption( Value, Parser );
 		break;
 	case cmOverriden:
-		Status = _HandleCypherOverride( Value.Convert( Buffer ), Parser );
+		Status = _HandleCypherOverride( Value, Parser );
 		break;
 	case et_Undefined:
 		// 'Status' initialisé par 'etCypherModeAndValue_(...)'.
@@ -909,7 +908,7 @@ ERREpilog
 status__ xpp::_extended_parser___::_InitWithFile(
 	const str::string_ &FileName,
 	const str::string_ &Directory,
-	const char *CypherKey )
+	const str::string_ &CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -950,7 +949,7 @@ status__ xpp::_extended_parser___::_InitWithContent(
 	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory,
-	const char *CypherKey )
+	const str::string_ &CypherKey )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -976,7 +975,7 @@ status__ xpp::_extended_parser___::_InitCypher(
 	const str::string_ &FileName,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory,
-	const char *CypherKey )
+	const str::string_ &CypherKey )
 {
 	_Decoder.Init( Flow );
 	_Decrypter.Init( _Decoder, CypherKey );
@@ -1178,9 +1177,8 @@ mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
 }
 
 status__ xpp::Process(
-	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
-	const str::string_ &Directory,
+	const criterions___ &Criterions,
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord,
 	str::string_ &GuiltyFileName )
@@ -1193,7 +1191,7 @@ ERRProlog
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
 ERRBegin
-	PFlow.Init( IFlow, Directory, NULL, Namespace );
+	PFlow.Init( IFlow, Criterions );
 	XFlow.Init( PFlow );
 
 	Parser.Init( XFlow, xml::ehKeep );
@@ -1442,9 +1440,8 @@ ERREpilog
 
 
 status__ xpp::Process(
-	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
-	const str::string_ &Directory,
+	const criterions___ &Criterions,
 	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow,
 	xtf::coord__ &Coord,
@@ -1456,7 +1453,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
-	Status = Process( Namespace, IFlow, Directory, Writer, Coord, GuiltyFileName );
+	Status = Process( IFlow, Criterions, Writer, Coord, GuiltyFileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -1464,9 +1461,8 @@ ERREpilog
 }
 
 status__ xpp::Process(
-	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
-	const str::string_ &Directory,
+	const criterions___ &Criterions,
 	xml::writer_ &Writer )
 {
 	status__ Status = s_Undefined;
@@ -1476,7 +1472,7 @@ ERRProlog
 ERRBegin
 	DummyString.Init();
 
-	Status = Process( Namespace, IFlow, Directory, Writer, DummyCoord, DummyString );
+	Status = Process( IFlow, Criterions, Writer, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog
@@ -1484,9 +1480,8 @@ ERREpilog
 }
 
 status__ xpp::Process(
-	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
-	const str::string_ &Directory,
+	const criterions___ &Criterions,
 	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow )
 {
@@ -1497,7 +1492,7 @@ ERRProlog
 ERRBegin
 	DummyString.Init();
 
-	Status = Process( Namespace, IFlow, Directory, Outfit, OFlow, DummyCoord, DummyString );
+	Status = Process( IFlow, Criterions, Outfit, OFlow, DummyCoord, DummyString );
 ERRErr
 ERREnd
 ERREpilog

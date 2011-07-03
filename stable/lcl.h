@@ -140,26 +140,38 @@ namespace lcl {
 		}
 		status__ Init(
 			flw::iflow__ &IFlow,
+			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			const str::string_ &BaseDirectory,
 			error_details_ &ErrorDetails )
 		{
 			reset();
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, BaseDirectory, RootPath, NULL, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root, ErrorDetails );
 		}
 		status__ Init(
 			flw::iflow__ &IFlow,
-			const char *RootPath,
-			const str::string_ &BaseDirectory = str::string( "" ) )
+			const xpp::criterions___ &Criterions,
+			const char *RootPath )
 		{
 			reset();
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, RootPath, NULL, Registry, S_.Root, BaseDirectory );
+			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root );
+		}
+		status__ Init(
+			const char *FileName,
+			const xpp::criterions___ &Criterions,
+			const char *RootPath,
+			error_details_ &ErrorDetails )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root, ErrorDetails );
 		}
 		status__ Init(
 			const char *FileName,
@@ -170,7 +182,18 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, RootPath, NULL, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root, ErrorDetails );
+		}
+		status__ Init(
+			const char *FileName,
+			const xpp::criterions___ &Criterions,
+			const char *RootPath )
+		{
+			reset();
+
+			Registry.Init();
+
+			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root );
 		}
 		status__ Init(
 			const char *FileName,
@@ -180,7 +203,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, RootPath, NULL, Registry, S_.Root );
+			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root );
 		}
 		void GetLanguages(
 			strings_ &Labels,

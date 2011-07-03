@@ -67,6 +67,12 @@ extern class ttr_tutor &FRDBKDTutor;
 #include "fblfub.h"
 
 namespace frdbkd {
+
+	using fblfub::compatibility_informations__;
+
+	using fblfub::incompatibility_informations_;
+	using fblfub::incompatibility_informations;
+
 	class _backend___
 	{
 	private:
@@ -80,12 +86,10 @@ namespace frdbkd {
 		}
 		bso::bool__ Init(
 			const char *Language,
-			const char *BackendLabel,
-			const char *APIVersion,
+			const compatibility_informations__ &CompatibilityInformations,
 			csducl::universal_client_core &ClientCore,
 			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
-			str::string_ &Message,
-			str::string_ &URL )
+			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			fblfub::mode__ Mode = fblfub::m_Undefined;
 
@@ -103,7 +107,7 @@ namespace frdbkd {
 				break;
 			}
 
-			return _BackendAccess.Init( Language, BackendLabel, APIVersion,_Flow, Mode, ErrorHandlingFunctions, Message, URL );
+			return _BackendAccess.Init( Language, CompatibilityInformations, _Flow, Mode, ErrorHandlingFunctions, IncompatibilityInformations );
 		}
 		fblfrd::backend_access___ &BackendAccess( void )
 		{
