@@ -573,9 +573,9 @@ ERREpilog
 }
 
 #ifdef RGSTRY_PREPROCESSOR_NAMESPACE
-#	define NAMESPACE RGSTRY_PREPROCESSOR_NAMESPACE
+#	define DEFAULT_NAMESPACE RGSTRY_PREPROCESSOR_NAMESPACE
 #else
-#	define NAMESPACE XPP_PREPROCESSOR_DEFAULT_NAMESPACE
+#	define DEFAULT_NAMESPACE XPP__PREPROCESSOR_DEFAULT_NAMESPACE
 #endif
 
 class callback___
@@ -946,7 +946,7 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, Criterions );
+	PFlow.Init( Flow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
 	XFlow.Init( PFlow );
 
 	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {

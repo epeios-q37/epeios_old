@@ -72,8 +72,11 @@ extern class ttr_tutor &XPPTutor;
 #	include "cdgb64.h"
 
 
-
-#	define XPP_PREPROCESSOR_DEFAULT_NAMESPACE	"xpp"
+# ifdef XPP_PREPROCESSOR_DEFAULT_NAMESPACE
+#  define XPP__PREPROCESSOR_DEFAULT_NAMESPACE XPP_PREPROCESSOR_DEFAULT_NAMESPACE
+#else
+# define XPP__PREPROCESSOR_DEFAULT_NAMESPACE	"xpp"
+#endif
 
 namespace xpp {
 
@@ -431,7 +434,7 @@ namespace xpp {
 			_XFlow.reset( P );
 			_LocalizedFileName.reset( P );
 			_Directory.reset( P );
-			_CypherKey = NULL;
+			_CypherKey.reset( P );
 			_Parser.reset( P );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
@@ -527,20 +530,24 @@ namespace xpp {
 		criterions___( 
 			const str::string_ &Directory,
 			const str::string_ &CypherKey = str::string() ,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+			const str::string_ &Namespace = str::string() )
 		{
-			this->Directory = Directory;
-			this->CypherKey = CypherKey;
-			this->Namespace = Namespace;
+			reset( false );
+
+			Init( Directory, CypherKey, Namespace );
 		}
 		void Init( 
 			const str::string_ &Directory,
 			const str::string_ &CypherKey = str::string() ,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
+			const str::string_ &Namespace = str::string() )
 		{
 			this->Directory.Init( Directory );
 			this->CypherKey.Init( CypherKey );
 			this->Namespace.Init( Namespace );
+		}
+		bso::bool__ IsNamespaceDefined( void ) const
+		{
+			return Namespace.Amount() != 0;
 		}
 	};
 
@@ -611,7 +618,14 @@ namespace xpp {
 			_DeleteParsers();
 			_Repository.Init();
 			_Variables.Init();
-			_Directives.Init( Criterions.Namespace );
+# if 0	// A priori équivalent à ce qu'il y a dans le '#else', mais VC++ 10 détruit 'Criterions.Namespace' quand 'Criterions.IsNamespaceDefined()' est vrai. Fonctionner avec 'g++4.
+			_Directives.Init( Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( XPP__PREPROCESSOR_DEFAULT_NAMESPACE ) );
+# else
+			if ( Criterions.IsNamespaceDefined() )
+				_Directives.Init( Criterions.Namespace );
+			else
+				_Directives.Init( str::string( XPP__PREPROCESSOR_DEFAULT_NAMESPACE ) );
+# endif
 			_Data.Init();
 			_Position = 0;
 			_iflow_functions___::Init( ThreadSafety );

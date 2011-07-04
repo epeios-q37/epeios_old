@@ -85,6 +85,8 @@ ERRProlog
 	xml::parser___ Parser;
 	bso::bool__ Continue = true;
 	int TokenFlags = 0;
+	xpp::criterions___ Criterions( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) );
+	str::string Test;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -95,7 +97,13 @@ ERRBegin
 
 	Flow.EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, xpp::criterions___( str::string( LOCATION ), str::string(), str::string( NAMESPACE ) ) );
+	Test.Init();
+
+#if 1
+	PFlow.Init( Flow, xpp::criterions___( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) ) );
+#else
+	PFlow.Init( Flow, Criterions );
+#endif
 
 	XFlow.Init( PFlow );
 
@@ -113,7 +121,7 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			cerr << "Error '" << xpp::GetLabel( PFlow.Status() ) << "' at line " << PFlow.Coord().Line << " column " << PFlow.Coord().Column;
+			cerr << "Error '" << xpp::Label( PFlow.Status() ) << "' at line " << PFlow.Coord().Line << " column " << PFlow.Coord().Column;
 			if ( PFlow.LocalizedFileName().Amount() != 0 )
 				cerr << " in file '" << PFlow.LocalizedFileName() << '\'';
 			cerr << " !" << txf::nl << txf::commit;

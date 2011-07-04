@@ -1,5 +1,10 @@
 $Id$
 
+04/07/2011 :
+	- XPP :
+		- Changement prise en compte du namespace par défaut.
+		- Codage contournement bogue VC++ 10.
+
 03/07/2011 :
 	- Général :
 		- Adaptation aux modifications 'XPP'.
