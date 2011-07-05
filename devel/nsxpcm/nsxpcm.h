@@ -71,7 +71,14 @@ extern class ttr_tutor &NSXPCMTutor;
 
 #include "xpcom-config.h"
 
-#define NSXPCM__GECKO_V1
+# if NSXPCM_GECKO_V1
+#  define NSXPCM__GECKO_V1
+# elif NSXPCM_GECKO_V2
+#  define NSXPCM__GECKO_V2
+# else
+#  error "Missing adequate 'NSXPCM_GECKO_Vx' definition ! Accepted values for 'x' : 1 (Gecko 1.9) or 2 (Gecko 2)"
+# endif
+
 
 #include "nsITreeView.h"
 #include "nsITreeContentView.h"
