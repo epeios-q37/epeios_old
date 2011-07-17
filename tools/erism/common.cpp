@@ -546,7 +546,7 @@ ERRBegin
 	if ( FFlow.Init( FileName.Convert( STRBuffer ), err::hUserDefined ) != fil::sSuccess )
 		Report( eUnableToOpenFile, STRBuffer() );
 
-	PFlow.Init( FFlow, str::string( fnm::GetLocation( FileName.Convert( STRBuffer ), FNMBuffer ) ), NULL );
+	PFlow.Init( FFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName.Convert( STRBuffer ), FNMBuffer ) ) ) );
 	XFlow.Init( PFlow );
 
 	Parser.Init( XFlow, xml::eh_Default );

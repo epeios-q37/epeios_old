@@ -251,7 +251,7 @@ namespace fbltyp {
 	};
 
 	typedef bso::ushort__	object_t__;
-	E_TYPEDEF( object_t__, object__ );
+	E_TMIMIC__( object_t__, object__ );
 	typedef bso::bool__ boolean_t__;
 	typedef boolean_t__	boolean__;
 	typedef bitbch::bit_bunch_<epeios::row__>	booleans_;
@@ -263,19 +263,19 @@ namespace fbltyp {
 	typedef bch::E_BUNCH_( ulong__ ) ulongs_;
 	typedef bch::E_BUNCH( ulong__ ) ulongs;
 	typedef bso::ubyte__ id8_t__;
-	E_TYPEDEF( id8_t__,	id8__ );
+	E_TMIMIC__( id8_t__,	id8__ );
 	typedef bch::E_BUNCH_( id8__ ) ids8_;
 	typedef bch::E_BUNCH( id8__ ) ids8;
 	typedef ctn::E_XMCONTAINER_( ids8_ ) xids8_;
 	typedef ctn::E_XMCONTAINER( ids8_ ) xids8;
 	typedef bso::ushort__ id16_t__;
-	E_TYPEDEF( id16_t__,	id16__ );
+	E_TMIMIC__( id16_t__,	id16__ );
 	typedef bch::E_BUNCH_( id16__ ) ids16_;
 	typedef bch::E_BUNCH( id16__ ) ids16;
 	typedef ctn::E_XMCONTAINER_( ids16_ ) xids16_;
 	typedef ctn::E_XMCONTAINER( ids16_ ) xids16;
 	typedef bso::ulong__ id32_t__;
-	E_TYPEDEF( id32_t__,	id32__ );
+	E_TMIMIC__( id32_t__,	id32__ );
 	typedef bch::E_BUNCH_( id32__ ) ids32_;
 	typedef bch::E_BUNCH( id32__ ) ids32;
 	typedef ctn::E_XMCONTAINER_( ids32_ ) xids32_;

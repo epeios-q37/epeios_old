@@ -70,13 +70,11 @@ extern class ttr_tutor &MSCRMITutor;
 #include "lcl.h"
 
 namespace mscrmi {
-	typedef str::string_	label_;
-	typedef str::string		label;
+	E_TCLONE( str::string, label );
 
 	typedef bso::char__ datum__;
 
-	typedef str::string_ data_;
-	typedef str::string	data;
+	E_TCLONE( str::string, data );
 
 	E_ROW( row__ );
 

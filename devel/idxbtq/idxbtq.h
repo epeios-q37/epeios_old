@@ -411,9 +411,7 @@ namespace idxbtq {
 		return State;
 	}
 
-
-
-	template <typename r> E_TTYPEDEF__( idxbtr::E_TSEEKERt__( r ), index_seeker__ );
+	template <typename r> E_TTCLONE__( idxbtr::E_TSEEKERt__( r ), index_seeker__ );
 }
 
 //d An index.

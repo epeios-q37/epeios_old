@@ -27,19 +27,19 @@
 #ifndef TOL__INC
 #define TOL__INC
 
-#define TOL_NAME		"TOL"
+# define TOL_NAME		"TOL"
 
-#define	TOL_VERSION	"$Revision$"
+# define	TOL_VERSION	"$Revision$"
 
-#define TOL_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+# define TOL_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
 
-#include "ttr.h"
+# include "ttr.h"
 
 extern class ttr_tutor &TOLTutor;
 
-#if defined( XXX_DBG ) && !defined( TOL_NODBG )
-#define TOL_DBG
-#endif
+# if defined( XXX_DBG ) && !defined( TOL_NODBG )
+#  define TOL_DBG
+# endif
 
 /* Begin of automatic documentation generation part. */
 
@@ -107,57 +107,69 @@ namespace tol
 #	endif
 #endif
 
+// Usage interne.
+# define E__TMIMIC__( type ,alias )\
+	private:\
+		type V_;\
+	public:\
+		alias( void ) {}\
+		alias( type T )\
+		{\
+			V_ = T;\
+		}\
+		type *operator ->( void )\
+		{\
+			return &V_;\
+		}\
+		const type *operator ->( void ) const\
+		{\
+			return &V_;\
+		}\
+		type &operator *( void )\
+		{\
+			return V_;\
+		}\
+		const type &operator *( void ) const\
+		{\
+			return V_;\
+		}\
 
-/*m Same as 'typedef type alias', but 2 'alias' with same 'type' are not interchangeable.
-This is only for static objects. Use 'TYPEDEF_( type, alias )' for dynamic objects. */
-#define E_TYPEDEF( type, alias )\
+// Similaire à un 'typedef type alias', sauf que 'type' et 'alias' ne sont pas interchangeable.
+// Uniqumement pour des objets statiques.
+// Utiliiser 'E_TMIMIC( type, alias)' pour des objets dynamiques.
+# define E_TMIMIC__( type, alias )\
+	struct alias\
+	{\
+		E__TMIMIC__( type, alias )\
+		bool operator ==( alias A ) const\
+		{\
+			return V_ == A.V_;\
+		}\
+		bool operator !=( alias A ) const\
+		{\
+			return V_ != A.V_;\
+		}\
+		bool operator ==( type T ) const\
+		{\
+			return V_ == T;\
+		}\
+		bool operator !=( type T ) const\
+		{\
+			return V_ != T;\
+		}\
+	}
+
+// Similaire à un 'T_MIMIC__( type, alias )', mais sans opérateurs de comparaisons.
+# define E_TRMIMIC__( type, alias )\
 struct alias\
 {\
-private:\
-	type V_;\
-public:\
-	alias( void ) {}\
-	alias( type T )\
-	{\
-		V_ = T;\
-	}\
-	type *operator ->( void )\
-	{\
-		return &V_;\
-	}\
-	const type *operator ->( void ) const\
-	{\
-		return &V_;\
-	}\
-	type &operator *( void )\
-	{\
-		return V_;\
-	}\
-	const type &operator *( void ) const\
-	{\
-		return V_;\
-	}\
-	bool operator ==( alias A ) const\
-	{\
-		return V_ == A.V_;\
-	}\
-	bool operator !=( alias A ) const\
-	{\
-		return V_ != A.V_;\
-	}\
-	bool operator ==( type T ) const\
-	{\
-		return V_ == T;\
-	}\
-	bool operator !=( type T ) const\
-	{\
-		return V_ != T;\
-	}\
+	E__TMIMIC__( type, alias )\
 }
 
-/*m Same as 'TYPEDEF( type, alias ), but for dynamic objects
-Both '_' version and instanciable version are created. */
-#define E_TYPEDEF_( type, alias )\
+
+// Similaire à 'E_TMIMIC__( type, alias)', mais pour des objets dynamiques.
+// La version instanciable et la version '_' sont toutes deux créees.
+# define E_TMIMIC( type, alias )\
 class alias##_\
 : public type##_\
 {\
@@ -216,39 +228,31 @@ public:\
 	}\
 };
 
-//m Same as 'TYPEDEF( type, alias ), but light version, without comparison operators.
-#define E_TYPEDEF__( type, alias )\
-struct alias\
-{\
-private:\
-	type V_;\
-public:\
-	alias( void ) {}\
-	alias( type T )\
-	{\
-		V_ = T;\
-	}\
-	type *operator ->( void )\
-	{\
-		return &V_;\
-	}\
-	const type *operator ->( void ) const\
-	{\
-		return &V_;\
-	}\
-	type &operator *( void )\
-	{\
-		return V_;\
-	}\
-	const type &operator *( void ) const\
-	{\
-		return V_;\
-	}\
-}
 
-// Example of use :
-// template <typename field_ref__> E_TTYPEDEF( lstctn::E_LXMCONTAINERt_( comparison_item_<field_ref__>, item_row__ ), comparison_items_ );
-#define E_TTYPEDEF( type, alias )	class alias\
+// Pour les objets dynamiques, similaire à 'typedef type alias', mais
+// avec création de la version instanciable et de la version '_'.
+# define E_TCLONE( type, alias )\
+	typedef type##_ alias##_;\
+	typedef type alias;
+
+
+// Similaire à 'typedef type alias', mais permet la mise en oeuvre de 'template'.
+// Pour objets statiques uniquement.
+// Exemple d'utilisation.
+// template <typename r> E_TTCLONE__( tree_seeker__<r>, seeker__ );
+# define E_TTCLONE__( type, alias )\
+	class alias\
+	: public type\
+	{\
+	}
+
+
+// Similaire à 'typedef type  alias', mais permet la mise en oeuvre de 'template'.
+// Pour objets dynamiques uniquement.
+// Exemple :
+// template <typename field_ref__> E_TTCLONE( lstctn::E_LXMCONTAINERt_( comparison_item_<field_ref__>, item_row__ ), comparison_items_ );
+# define E_TTCLONE_( type, alias )\
+	class alias\
 	: public type\
 	{\
 	public:\
@@ -258,33 +262,44 @@ public:\
 		alias( s &S )\
 		: type( S )\
 		{}\
-	}
+	}\
 
-// Example of use :
-// template <typename r> E_TTYPEDEF__( tree_seeker__<r>, tree_seeker__ );
-#define E_TTYPEDEF__( type, alias )	class alias\
-	: public type\
-	{\
-	}
 
-#define E_TTYPEDEF___	E_TTYPEDEF__
+// Similaire à 'E_TTCLONE_( type ,alias )', mais crée la version instanciable en plus de la version '_'.
+// ATTENTION : 'type' doit être la version AVEC '_', 'alias' la version SANS '_'.
+// Version pour 1 'template".
+// Exemple :
+// template <typename field_ref__> E_TT1CLONE( lstctn::E_LXMCONTAINERt_( comparison_item_<field_ref__>, item_row__ ), comparison_items );
+# define E_TT1CLONE( type, alias )\
+	E_TTCLONE_( type, alias##_ );\
+	E_AUTO1( alias )
+
+// Idem que ci-dessus, mais pour 2 'templates's.
+# define E_TT2CLONE( type, alias )\
+	E_TTCLONE_( type, alias##_ );\
+	E_AUTO2( alias )
+
+// Idem que ci-dessus, mais pour 3 'templates's.
+# define E_TT3CLONE( type, alias )\
+	E_TTCLONE_( type, alias##_ );\
+	E_AUTO3( alias )
 
 
 //d Create a new type for a row named 'Type'.
-#define E_ROW( Type )	E_TYPEDEF( epeios::row_t__, Type )
+# define E_ROW( Type )	E_TMIMIC__( epeios::row_t__, Type )
 
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
 'E_COVER2( a, b )' donne 'a, b' */
-#define E_COVER2(a, b)	a, b
+# define E_COVER2(a, b)	a, b
 
 /* Permet de convertir un entier en chaîne (l'encadre par des '"').
 Utile pour afficher le numéro de ligne dans un #pragma message (...). */
-#define E__STRING(x) #x
-#define E_STRING(x) E__STRING(x)
+# define E__STRING(x) #x
+# define E_STRING(x) E__STRING(x)
 
 // Inspiré du site msdn.microsoft.com.
-#define __LOC__ __FILE__ "(" E_STRING(__LINE__) ")"
+# define __LOC__ __FILE__ "(" E_STRING(__LINE__) ")"
 
 // Utilisation :
 // #pragma message(__LOC__ " : Message")
@@ -293,7 +308,7 @@ Utile pour afficher le numéro de ligne dans un #pragma message (...). */
 
 
 //m Create the autonomous definition of the 'name' object based on the 'name'_ object.
-#define E_AUTO( Name )	\
+# define E_AUTO( Name )	\
 class Name\
 : public Name##_\
 {\
@@ -331,8 +346,8 @@ public:\
 };
 
 
-//m Same as 'E_AUTO()' but with one template parameter of type 'TypeName'
-#define E_AUTO1( Name )	\
+//m Same as 'E_AUTO()' but with one template parameter of type 'Name'
+# define E_AUTO1( Name )	\
 template < typename t > class Name\
 : public Name##_<t>\
 {\
@@ -371,7 +386,7 @@ public:\
 
 
 //m Same as 'E_AUTO()' but with two template parameter.
-#define E_AUTO2( Name )	\
+# define E_AUTO2( Name )	\
 template < typename t, typename u > class Name\
 : public Name##_<t,u>\
 {\
@@ -409,7 +424,7 @@ public:\
 };
 
 //m Same as 'E_AUTO()' but with three template parameter.
-#define E_AUTO3( Name )	\
+# define E_AUTO3( Name )	\
 template < typename t, typename u, typename v > class Name\
 : public Name##_<t,u,v>\
 {\
@@ -447,7 +462,7 @@ public:\
 };
 
 //m Same as 'E_AUTO()' but with four template parameter.
-#define E_AUTO4( Name )	\
+# define E_AUTO4( Name )	\
 template < typename t, typename u, typename v, typename w > class Name\
 : public Name##_<t,u,v,w>\
 {\
@@ -649,7 +664,7 @@ namespace tol {
 }
 
 //m Define navigation functions ( 'First', 'Next', Amount', ... ) using 'Object' and 'Type'.
-#define E_NAVt( Object, Type )\
+# define E_NAVt( Object, Type )\
 	Type First( void ) const\
 	{\
 		return Object  First();\
@@ -686,7 +701,7 @@ namespace tol {
 /* Lorsque 'Object' contient une virgule, on ne peut utiliser E_XNAVt(...), même en utilisant E_COVER2(...)
 car 'E_XNAVt(...)' fait elle-même appel à une macro. Aussi faudra-t'il explicitement appelé 'E_NAVt(...)' et cette macro-ci
 pour parvenir au même résultat que 'E_XNAVt(...)'. */
-#define E_NAVXt( Object, Type )\
+# define E_NAVXt( Object, Type )\
 	Type First( epeios::size__ Offset ) const\
 	{\
 		return Object  First( Offset );\
@@ -714,13 +729,13 @@ pour parvenir au même résultat que 'E_XNAVt(...)'. */
 		Object Allocate( Size, Mode );\
 	}
 
-#define E_XNAVt( Object, Type )\
+# define E_XNAVt( Object, Type )\
 		E_NAVt( Object, Type )\
 		E_NAVXt( Object, Type )
 
-#define E_NAV( Object )		E_NAVt( Object, epeios::row__ )
-#define E_NAVX( Object )	E_NAVXt( Object, epeios::row__ )
-#define E_XNAV( Object )	E_XNAVt( Object, epeios::row__ )
+# define E_NAV( Object )		E_NAVt( Object, epeios::row__ )
+# define E_NAVX( Object )	E_NAVXt( Object, epeios::row__ )
+# define E_XNAV( Object )	E_XNAVt( Object, epeios::row__ )
 
 namespace mmm {
 	class multimemory_;
@@ -875,7 +890,7 @@ namespace tol {
 		}
 	};
 
-	#define E_FPOINTER___( t )	free_pointer___<t>
+# define E_FPOINTER___( t )	free_pointer___<t>
 
 	template <typename t> class delete_pointer___	// Classe de gestion d'un pointeur devant être déalloué par un 'delete'.
 	: public _core_pointer___<t>
@@ -903,7 +918,7 @@ namespace tol {
 		}
 	};
 
-	#define E_DPOINTER___( t )	delete_pointer___<t>
+# define E_DPOINTER___( t )	delete_pointer___<t>
 }
 
 #if 0
@@ -918,35 +933,35 @@ namespace tol {
 #endif
 
 // Création d'un constructeur standardisé.
-#define E_CTOR( name )\
+# define E_CTOR( name )\
 	name( void )\
 	{\
 		reset( false );\
 	}\
 
 // Création d'un destructeur standardisé.
-#define E_DTOR( name )\
+# define E_DTOR( name )\
 	~name( void )\
 	{\
 		reset();\
 	}\
 
 // Création d'un destructeur virtuel standardisé.
-#define E_VDTOR( name )	virtual E_DTOR( name )
+# define E_VDTOR( name )	virtual E_DTOR( name )
 
 // Création d'un constructeur et d'un destructeur standardisé.
-#define E_CDTOR( name )\
+# define E_CDTOR( name )\
 	E_CTOR( name )\
 	E_DTOR( name )
 
 // Création d'un constructeur et d'un destructeur virtuel standardisé.
-#define E_CVDTOR( name )\
+# define E_CVDTOR( name )\
 	E_CTOR( name )\
 	E_VDTOR( name )
 
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
-#define E_RRODISCLOSE_(type__, name )\
+# define E_RRODISCLOSE_(type__, name )\
 	const type__ Get##name( void ) const\
 	{\
 		return S_.name;\
@@ -954,20 +969,20 @@ namespace tol {
 
 
 //d Make accessible the static member, for read-only access, of a dynamic object, named 'name' of type 'type__'.
-#define E_RODISCLOSE_(type__, name )\
+# define E_RODISCLOSE_(type__, name )\
 	E_RRODISCLOSE_( type__, name )\
 	const type__ &name( void ) const\
 	{\
 		return S_.name;\
 	}
 
-#define E_RWODISCLOSE_(type__, name )\
+# define E_RWODISCLOSE_(type__, name )\
 	void Set##name( const type__ &V )\
 	{\
 		S_.name = V;\
 	}
 
-#define E_WODISCLOSE_(type__, name )\
+# define E_WODISCLOSE_(type__, name )\
 	E_RWODISCLOSE_( type__, name )\
 	type__ &name( void )\
 	{\
@@ -975,49 +990,49 @@ namespace tol {
 	}
 
 //d Make accessible the static member, for read-write access, of a dynamic object, named 'name' of type 'type__'.
-#define E_RRWDISCLOSE_(type__, name )\
+# define E_RRWDISCLOSE_(type__, name )\
 	E_RRODISCLOSE_( type__, name )\
 	E_RWODISCLOSE_( type__, name )
 
 //d Make accessible the static member, for read-write access, of a dynamic object, named 'name' of type 'type__'.
-#define E_RWDISCLOSE_(type__, name )\
+# define E_RWDISCLOSE_(type__, name )\
 	E_RODISCLOSE_( type__, name )\
 	E_WODISCLOSE_( type__, name )
 
 
 
-#define E_RRODISCLOSE__(type__, name )\
+# define E_RRODISCLOSE__(type__, name )\
 	const type__ Get##name( void ) const\
 	{\
 		return _##name;\
 	}
 
 //d Make accessible the member, for read-only access, of a static object, named 'name' of type 'type__'.
-#define E_RODISCLOSE__(type__, name )\
+# define E_RODISCLOSE__(type__, name )\
 	E_RRODISCLOSE__( type__, name )\
 	const type__ &name( void ) const\
 	{\
 		return _##name;\
 	}
 
-#define E_RWODISCLOSE__(type__, name )\
+# define E_RWODISCLOSE__(type__, name )\
 	void Set##name( const type__ &V )\
 	{\
 		_##name = V;\
 	}
 
-#define E_WODISCLOSE__(type__, name )\
+# define E_WODISCLOSE__(type__, name )\
 	E_RWODISCLOSE__( type__, name )\
 	type__ &name( void )\
 	{\
 		return _##name;\
 	}
 
-#define E_RRWDISCLOSE__(type__, name )\
+# define E_RRWDISCLOSE__(type__, name )\
 	E_RRODISCLOSE__( type__, name )\
 	E_RWODISCLOSE__( type__, name )
 
-#define E_RWDISCLOSE__(type__, name )\
+# define E_RWDISCLOSE__(type__, name )\
 	E_RODISCLOSE__( type__, name )\
 	E_WODISCLOSE__( type__, name )
 

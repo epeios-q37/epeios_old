@@ -1,5 +1,11 @@
 $Id$
 
+17/07/2011 :
+	- Général :
+		- Adaptation aux modifications 'TOL'.
+	- TOL :
+		- Remplacement de 'E_...TYPEDEF...' par 'E_...TCLONE...' et 'E_...TMIMIC...'.
+
 05/07/2011 :
 	- NSXPCM :
 		- Mise en oeuvre de 'NSXPCM_GECKO_Vx' pour bascualer facilement d'une version à l'autre de Gecko.

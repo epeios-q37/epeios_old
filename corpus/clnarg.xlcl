@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
-<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp/">
 	<Translations message="CLNARG_TryHelpCommand">
 		<Translation language="fr">Essayer la commande '--help' pour plus d'informations</Translation>
 		<Translation language="en-US">Try '--help' command for more informations</Translation>

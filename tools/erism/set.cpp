@@ -47,7 +47,7 @@ ERRBegin
 	if ( Flow.Init( SettingsFileName ) != fil::sSuccess )
 		Report( eUnableToOpenFile, SettingsFileName );
 
-	PFlow.Init( Flow, str::string(), NULL );
+	PFlow.Init( Flow, xpp::criterions___() );
 
 	XFlow.Init( PFlow );
 

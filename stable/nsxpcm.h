@@ -2159,7 +2159,7 @@ namespace nsxpcm {
 		GetDOMInspector( NULL );
 	}
 
-	template <typename type, typename row> E_TTYPEDEF( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.
+	template <typename type, typename row> E_TTCLONE_( lstbch::E_LBUNCHt_( type *, row ), _lpbunch_ );	// 'List Pointer Bunch'.
 
 	template <typename type, typename row> class repository_
 	: public _lpbunch_<type, row>

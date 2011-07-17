@@ -40,7 +40,7 @@ namespace registry {
 		const char *FileName,
 		rgstry::error_details_ &ErrorDetails )
 	{
-		return Registry.Fill( Registry.CreateNewLevel(), FileName, "Configurations/Configuration[target=\"" NAME "\"]", "test", ErrorDetails );
+		return Registry.Fill( Registry.CreateNewLevel(), FileName, xpp::criterions___(), "Configurations/Configuration[target=\"" NAME "\"]", ErrorDetails );
 	}
 
 	struct path {

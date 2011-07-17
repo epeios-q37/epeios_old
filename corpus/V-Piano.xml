@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp/">
 	<xpp:define name="common">
 		<xpp:bloc>
 			<xpp:bloc><!-- defines -->
@@ -150,6 +150,22 @@
 					</xpp:bloc>
 				</xpp:define>
 			</xpp:bloc>
+			<Switchings>
+				<Recalls>
+					<Recall Alias="UserPreset" AliasParameter="1">
+						<Event Type="MIDI" Id="b0" Label="ControlChange" Data="00 00"/>
+						<Event Type="MIDI" Id="b0" Label="ControlChange" Tied="true" Data="20 40"/>
+						<Event Type="MIDI" Id="c0" Label="ProgramChange" Data="00"/>
+					</Recall>
+					<Recall Alias="UserPreset" AliasParameter="2">
+						<Event Type="MIDI" Id="b0" Label="ControlChange" Data="00 00"/>
+						<Event Type="MIDI" Id="b0" Label="ControlChange" Tied="true" Data="20 40"/>
+						<Event Type="MIDI" Id="c0" Label="ProgramChange" Data="02"/>
+					</Recall>
+				</Recalls>
+				<Storings>
+				</Storings>
+			</Switchings>
 			<Parameters Label="Tone" Address="03000000">
 				<xpp:bloc><!-- defines -->
 					<xpp:define name="Tone EQ Zone">

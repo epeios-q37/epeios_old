@@ -116,7 +116,7 @@ namespace fblbkd {
 	typedef fbltyp::id16_t__	command__;
 
 	typedef fbltyp::id16_t__	type_t__;
-	E_TYPEDEF( type_t__, type__ );
+	E_TMIMIC__( type_t__, type__ );
 
 	using fbltyp::object_t__;
 	using fbltyp::object__;

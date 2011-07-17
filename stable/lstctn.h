@@ -154,7 +154,7 @@ namespace lstctn {
 
 	E_AUTO3( list_container )
 
-	template <typename container> E_TTYPEDEF___( ctn::container_file_manager___<container>, _container_file_manager___ );
+	template <typename container> E_TTCLONE__( ctn::container_file_manager___<container>, _container_file_manager___ );
 
 	template <typename container> class list_container_file_manager___
 	{
