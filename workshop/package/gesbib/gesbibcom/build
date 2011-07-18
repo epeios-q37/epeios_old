@@ -1,0 +1,25 @@
+# $Id$
+mkdir workdir
+cd workdir
+export DIR=gesbib-com-sources
+mkdir $DIR
+GET=../../../get_cvs
+
+$GET epeios $DIR stable/*.h
+$GET epeios $DIR stable/*.cpp
+
+$GET Logiplus $DIR stable/*.h
+$GET Logiplus $DIR stable/*.cpp
+
+$GET Logiplus $DIR apps/gesbib/frontend/*.h
+$GET Logiplus $DIR apps/gesbib/frontend/*.cpp
+
+$GET Logiplus $DIR apps/gesbib/frontend/Gecko/XPCOM/*.h
+$GET Logiplus $DIR apps/gesbib/frontend/Gecko/XPCOM/*.cpp
+$GET Logiplus $DIR apps/gesbib/frontend/Gecko/XPCOM/Makefile
+
+cp /cygdrive/h/xulrunner/components/igesbib.xpt $DIR
+
+#../../../create_pkg $DIR
+tar --gzip -cf $DIR.tar.gz $DIR
+

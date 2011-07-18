@@ -68,8 +68,10 @@ extern class ttr_tutor &LTFTutor;
 namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
+	typedef fwf::oflow_functions___<> _oflow_functions___;
+
 	class _line_text_oflow_functions___
-	: public fwf::oflow_functions___<>
+	: public _oflow_functions___
 	{
 	private:
 		fwf::datum__ *Data_;
@@ -110,7 +112,7 @@ namespace ltf {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			oflow_functions___::reset( P );
+			_oflow_functions___::reset( P );
 		}
 		_line_text_oflow_functions___( void )
 		{
@@ -131,7 +133,7 @@ namespace ltf {
 
 			TFlow_ = &TFlow;
 
-			oflow_functions___::Init( ThreadSafety );
+			_oflow_functions___::Init( ThreadSafety );
 			
 			Data_ = Data;
 

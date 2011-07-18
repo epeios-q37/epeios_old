@@ -1,5 +1,11 @@
 $Id$
 
+18/07/2011 :
+	- LTF :
+		- Correction errreur détectées par g++.
+	- SCK :
+		- Correction errreur détectées par g++.
+
 17/07/2011 :
 	- Général :
 		- Adaptation aux modifications 'TOL'.

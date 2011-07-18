@@ -84,6 +84,7 @@ extern class ttr_tutor &SCKTutor;
 #	define SCK_EINTR				WSAEINTR
 #	define SCK_ENOTSOCK				WSAENOTSOCK
 #elif defined( SCK__POSIX )
+#  include <arpa/inet.h>
 #	include <sys/time.h>
 #	include <sys/types.h>
 #	include <sys/socket.h>

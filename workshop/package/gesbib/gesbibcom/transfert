@@ -1,0 +1,3 @@
+# $Id$
+scp -r workdir/*.tar.gz Logiplus@mac:.
+rm -rf workdir
