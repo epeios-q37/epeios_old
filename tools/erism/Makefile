@@ -26,7 +26,7 @@
 name = erism
 copt =
 # Epeios general debugging features
-copt += -DXXX_DBG
+copt += -DXXX_DBG -DMSCMDD__ALSA
 # Required for multitasking
 copt += -DCPE_MT
 lopt = 

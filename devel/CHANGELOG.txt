@@ -1,5 +1,9 @@
 $Id$
 
+20/07/2011 :
+	- TXF :
+		- Correction bogue affuchage pointeur.
+
 18/07/2011 :
 	- LTF :
 		- Correction errreur détectées par g++.

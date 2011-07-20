@@ -373,7 +373,7 @@ namespace txf {
 		{
 			char Buffer[sizeof( P ) * 2 + 2 + 1];	// Deux lettres pour chaque octet + le '0x' devant + le 'nul' final.
 
-			sprintf( Buffer, "0x%p", P );
+			sprintf( Buffer, "%p", P );
 
 			return operator <<( Buffer );
 		}
