@@ -1,10 +1,13 @@
 $Id$
 
+- 21/07/2011 :
+	- Internationalization and standardisation.
+
 - 19/05/2011 :
 	- Adaptating to changes in 'CLNARG'.
 
 ---------------
-Version 0.3.0 :
+Version 0.3.1 :
 ---------------
 
 - 18/03/2011 :
@@ -12,13 +15,13 @@ Version 0.3.0 :
 
 - 15/03/2011 :
 	- Adaptation to changes in underlying libraries.
-	- Qdding '--encrypt' option.
+	- Adding '--encrypt' option.
 
 - 04/03/2011 :
 	- Adaptation to changes in underlying libraries.
 
 - 08/07/2010 :
-	- Adaptating to changes in 'XPP'.
+	- Adaptatong to changes in 'XPP'.
 
 ---------------
 Version 0.3.0 :
@@ -62,7 +65,7 @@ Version 0.2.1 :
 ---------------
 
 - 17/05/2007 :
-	- Missing nesting overflow message bug fixed.
+	- Missing 'nesting overflow' message bug fixed.
 	- Bug concerning file inclusion with relative path fixed.
 
 - 11/05/2007 :
@@ -86,7 +89,7 @@ Version 0.1.1 :
 
 - 11/04/2007 :
 	- Improved error detection in 'ifeq' tag.
-	- Bug which prevents to have a macro and a variable with the same name fixed.
+	- Bug, which prevents to have a macro and a variable with the same name, fixed.
 
 ---------------
 Version 0.1.0 :

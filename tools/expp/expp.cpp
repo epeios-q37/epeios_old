@@ -24,6 +24,9 @@
 
 // $$Id$$
 
+#include "expp.h"
+#include "global.h"
+
 #include "err.h"
 #include "cio.h"
 #include "epsmsc.h"
@@ -32,22 +35,9 @@
 #include "fnm.h"
 #include "flf.h"
 
-#define NAME			"expp"
-#define VERSION			"0.3.1"
-#define COPYRIGHT_YEARS	"2007-2011"
-#define DESCRIPTION		"Epeios XML preprocessor"
-#define AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
-#define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
-#define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
-#define HELP			EPSMSC_HELP_INVITATION( NAME )
-#define COPYRIGHT		EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
-#define CVS_DETAILS		("$Id$\b " + 5)
+using namespace global;
 
-#define DEFAULT_NAMESPACE	XPP_PREPROCESSOR_DEFAULT_NAMESPACE
-
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+#define DEFAULT_NAMESPACE	XPP__PREPROCESSOR_DEFAULT_NAMESPACE
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -67,7 +57,7 @@ enum command__ {
 	cHelp,
 	cVersion,
 	cLicense,
-	cProces,
+	cProcess,
 	cEncrypt,
 	c_amount,
 	c_Undefined
@@ -96,24 +86,101 @@ struct parameters {
 	}
 };
 
+static void PrintSpecialsCommandsDescriptions( const clnarg::description_ &Description )
+{
+ERRProlog
+	str::string Text;
+	STR_BUFFER___ TranslationBuffer;
+	CLNARG_BUFFER__ Buffer;
+ERRBegin
+	cout << LocaleRack.GetTranslation( "ProgramDescription", "", TranslationBuffer ) << '.'  << txf::nl;
+	cout << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetVersionCommandDescription( LocaleRack, Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetLicenseCommandDescription( LocaleRack, Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+	cout << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
+	Text.Init();
+	clnarg::GetHelpCommandDescription( LocaleRack, Text );
+	cout << txf::pad << Text << '.' << txf::nl;
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void PrintUsage( const clnarg::description_ &Description )
 {
-	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help" << txf::nl;
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " <command> [options] [source-file [dest-file]]" << txf::nl;
-	cout << txf::pad << "source-file:" << txf::nl << txf::tab << "source file; stdin if none." << txf::nl;
-	cout << txf::pad << "dest-file:" << txf::nl << txf::tab << "destination file; stdout if none." << txf::nl;
-	cout << "command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cProces, "Process XML file.", clnarg::vSplit, true );
-	clnarg::PrintCommandUsage( Description, cEncrypt, "Encrypt XML file.", clnarg::vSplit, true );
-//	clnarg::PrintCommandUsage( Description, c, "", false, true );
-	cout << "options:" << txf::nl;
-	clnarg::PrintOptionUsage( Description, oNamespace, "<namespace>", "<namespace> becomes tags namespace; '" DEFAULT_NAMESPACE "' by default.", clnarg::vSplit );
-	clnarg::PrintOptionUsage( Description, oNoIndent, "suppress indentation.", clnarg::vSplit );
-//	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
+ERRProlog
+	str::string Translation;
+	STR_BUFFER___ TBuffer;
+	CLNARG_BUFFER__ Buffer;
+ERRBegin
+
+	PrintSpecialsCommandsDescriptions( Description );
+
+// Commands.
+	cout << NAME << ' ' << Description.GetCommandLabels( cProcess, Buffer );
+	cout << " " << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>";
+	cout << " " << Description.GetOptionLabels( oNoIndent, Buffer );
+	cout << " [<src-file> [<dest-file>]]";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << global::GetTranslation( global::mProcessCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
+	cout << " " << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>";
+	cout << " " << Description.GetOptionLabels( oNoIndent, Buffer );
+	cout << " [<src-file> [<dest-file>]]";
+	cout << txf::nl;
+	Translation.Init();
+	cout << txf::pad << global::GetTranslation( global::mEncryptCommandDescription, Translation ) << '.' << txf::nl;
+
+	cout << txf::nl;
+
+// Options.
+	Translation.Init();
+	cout << clnarg::GetOptionsWordingTranslation( LocaleRack, Translation );
+	cout << " :" << txf::nl;
+
+	cout << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
+	cout << txf::tab;
+	global::Display( mNamespaceOptionDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
+	cout << txf::tab;
+	global::Display( mNoIndentOptionDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::nl;
+
+// Arguments.
+	Translation.Init();
+	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
+	cout << " :" << txf::nl;
+
+	cout << txf::pad << "<src-file> :" << txf::nl;
+	cout << txf::tab;
+	global::Display( mSourceFileArgumentDescription );
+	cout << '.' << txf::nl;
+
+	cout << txf::pad << "<dest-file> :" << txf::nl;
+	cout << txf::tab;
+	global::Display( mDestFileArgumentDescription );
+	cout << '.' << txf::nl;
+
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void PrintHeader( void )
@@ -228,7 +295,7 @@ ERRBegin
 	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
 	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
 	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
-	Description.AddCommand( 'p', "process", cProces );
+	Description.AddCommand( 'p', "process", cProcess );
 	Description.AddCommand( CLNARG_NO_SHORT, "encrypt", cEncrypt );
 //	Description.AddOption( '', "", o );
 	Description.AddOption( 'n', "namespace", oNamespace );
@@ -250,12 +317,12 @@ ERRBegin
 		epsmsc::PrintLicense( cout );
 		ERRi();
 		break;
-	case cProces:
+	case cProcess:
 	case cEncrypt:
 		Parameters.Command = (command__)Analyzer.GetCommand();
 		break;
 	case CLNARG_NONE:
-		Parameters.Command = cProces;
+		Parameters.Command = cProcess;
 		break;
 	default:
 		ERRc();
@@ -318,11 +385,9 @@ ERRBegin
 
 	( Destination == NULL ? cout : TOFlow ) << txf::nl;
 
-	if ( ( Status = xpp::Process( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
-								  IFlow,
-								  str::string( Directory == NULL ? (const char *)"" : Directory ),
-								  Indent ? xml::oIndent : xml::oCompact,
-								  ( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
+	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
+															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
+								  Indent ? xml::oIndent : xml::oCompact, ( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
 		cio::cerr << "Error ";
 
 		if ( ErrorFileName.Amount() != 0 )
@@ -393,7 +458,7 @@ void Go( const parameters &Parameters )
 ERRProlog
 ERRBegin
 	switch ( Parameters.Command ) {
-	case cProces:
+	case cProcess:
 		Process_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
 		break;
 	case cEncrypt:
@@ -430,11 +495,11 @@ int main(
 {
 ERRFProlog
 ERRFBegin
+	Initialize();
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
-	cio::cout.reset();
-	cio::cerr.reset();
+	Release();
 ERRFEpilog
 	return ERRExitValue;
 }
