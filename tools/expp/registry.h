@@ -38,9 +38,9 @@ namespace registry {
 
 	inline rgstry::status__ FillRegistry(
 		const char *FileName,
-		rgstry::error_details_ &ErrorDetails )
+		rgstry::context___ &Context )
 	{
-		return Registry.Fill( Registry.CreateNewLevel(), FileName, xpp::criterions___(),  "Configurations/Configuration[target=\"" NAME "\"]", ErrorDetails );
+		return Registry.Fill( Registry.CreateNewLevel(), FileName, xpp::criterions___(),  "Configurations/Configuration[target=\"" NAME "\"]", Context );
 	}
 
 	struct path {

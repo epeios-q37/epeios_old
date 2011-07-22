@@ -201,17 +201,14 @@ ERRProlog
 	epeios::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
-	const char *Unknow = NULL;
+	const bso::char__ *Unknown = NULL;
 	clnarg::argument Argument;
 	clnarg::buffer__ Buffer;
 ERRBegin
 	Options.Init();
 
-	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		cout << HELP << txf::nl;
-		ERRi();
-	}
+	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
+		global::Report( eOptionUnknown, Unknown );
 
 	P = Options.First();
 
@@ -222,10 +219,8 @@ ERRBegin
 		case oNamespace:
 			Analyzer.GetArgument( Option, Argument );
 
-			if ( Argument.Amount() == 0 ) {
-				cout << "Option " << Analyzer.Description().GetOptionLabels( oNamespace, Buffer ) << " must have one argument !" << txf::nl;
-				ERRExit( evParameters );
-			}
+			if ( Argument.Amount() == 0 )
+				global::Report( eOptionMissingArgument, Analyzer.Description().GetOptionLabels( oNamespace, Buffer ) );
 
 			Argument.Convert( Parameters.Namespace );
 
@@ -269,9 +264,7 @@ ERRBegin
 	case 0:
 		break;
 	default:
-		cerr << "Wrong amount of arguments." << txf::nl;
-		cout << HELP << txf::nl;
-		ERRi();
+		Report( eWrongArgumentsAmount );
 		break;
 	}
 
@@ -306,7 +299,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise( cio::cout );
+		TTR.Advertise( cout );
 		ERRi();
 		break;
 	case cHelp:
@@ -340,6 +333,41 @@ ERREpilog
 /* End of the part which handles command line arguments. */
 
 static void Process_(
+	flw::iflow__ &IFlow,
+	const char *Namespace,
+	const char *Directory,
+	xml::outfit__ Outfit,
+	txf::text_oflow__ &OFlow )
+{
+ERRProlog
+	xpp::status__ Status = xpp::s_Undefined;
+	xpp::context___ Context;
+ERRBegin
+	Context.Init();
+
+	xml::WriteXMLHeader( OFlow, xml::encoding__() );
+
+	OFlow << txf::nl;
+
+	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
+															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
+								  Outfit, OFlow,  Context ) ) != xpp::sOK ) {
+									  xpp::GetTranslation( Status,
+		cerr << "Error ";
+
+		if ( ErrorFileName.Amount() != 0 )
+			cerr << "in file '" << ErrorFileName << "' ";
+
+		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
+
+		ERRExit( evProcessing );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void Process_(
 	const char *Source,
 	const char *Destination,
 	const char *Namespace,
@@ -349,12 +377,9 @@ ERRProlog
 	flf::file_oflow___ OFlow;
 	txf::text_oflow__ TOFlow;
 	flf::file_iflow___ IFlow;
-	str::string ErrorFileName;
 	const char *Directory;
 	bso::bool__ BackedUp = false;
-	xpp::status__ Status = xpp::s_Undefined;
 	FNM_BUFFER___ Buffer;
-	xtf::coord__ Coord;
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess ) {
@@ -366,7 +391,7 @@ ERRBegin
 	}
 
 	if ( Destination != NULL ) {
-		fil::CreateBackupFile( Destination, fil::bmDuplicate );
+		global::CreateBackupFile( Destination );
 
 		BackedUp = true;
 
@@ -378,28 +403,11 @@ ERRBegin
 		TOFlow.Init( OFlow );
 	}
 
-	ErrorFileName.Init();
+	Process_( Source == NULL ? IFlow : cin.Flow(), Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? TOFlow : cout );
 
-
-	xml::WriteXMLHeader( Destination == NULL ? cio::cout : TOFlow, xml::encoding__() );
-
-	( Destination == NULL ? cout : TOFlow ) << txf::nl;
-
-	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
-															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
-								  Indent ? xml::oIndent : xml::oCompact, ( Destination == NULL ? cout : TOFlow ),  Coord, ErrorFileName ) ) != xpp::sOK ) {
-		cio::cerr << "Error ";
-
-		if ( ErrorFileName.Amount() != 0 )
-			cerr << "in file '" << ErrorFileName << "' ";
-
-		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
-
-		ERRExit( evProcessing );
-	}
 ERRErr
 	if ( BackedUp )
-		fil::RecoverBackupFile( Destination );
+		global::RecoverBackupFile( Destination );
 ERREnd
 ERREpilog
 }
@@ -426,7 +434,7 @@ ERRBegin
 	}
 
 	if ( Destination != NULL ) {
-		fil::CreateBackupFile( Destination, fil::bmDuplicate );
+		global::CreateBackupFile( Destination );
 
 		BackedUp = true;
 
@@ -442,13 +450,13 @@ ERRBegin
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
 								  ( Destination == NULL ? cout : TOFlow ),  Coord ) ) != xpp::sOK ) {
-		cio::cerr << "Error at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
+		cerr << "Error at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
 
 		ERRExit( evProcessing );
 	}
 ERRErr
 	if ( BackedUp )
-		fil::RecoverBackupFile( Destination );
+		global::RecoverBackupFile( Destination );
 ERREnd
 ERREpilog
 }

@@ -77,8 +77,7 @@ extern class ttr_tutor &LCLTutor;
 
 namespace lcl {
 	using rgstry::status__;
-	using rgstry::error_details_;
-	using rgstry::error_details;
+	using rgstry::context___;
 	using str::strings_;
 	using str::strings;
 
@@ -142,13 +141,13 @@ namespace lcl {
 			flw::iflow__ &IFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			error_details_ &ErrorDetails )
+			context___ &Context )
 		{
 			reset();
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root, Context );
 		}
 		status__ Init(
 			flw::iflow__ &IFlow,
@@ -165,24 +164,24 @@ namespace lcl {
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			error_details_ &ErrorDetails )
+			context___ &Context )
 		{
 			reset();
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root, Context );
 		}
 		status__ Init(
 			const char *FileName,
 			const char *RootPath,
-			error_details_ &ErrorDetails )
+			context___ &Context )
 		{
 			reset();
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root, ErrorDetails );
+			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root, Context );
 		}
 		status__ Init(
 			const char *FileName,

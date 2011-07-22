@@ -115,11 +115,50 @@ namespace xpp {
 
 	const char *Label( status__ Status );
 
+	struct context___ {
+		status__ Status;
+		xtf::coord__ Coord;
+		str::string FileName;
+		void reset( bso::bool__ P = true )
+		{
+			Status = s_Undefined;
+
+			Coord.reset( P  );
+			FileName.reset( P );
+		}
+		context___( void )
+		{
+			reset( false );
+
+			Init();
+		}
+		context___(
+			status__ Status,
+			const xtf::coord__ &Coord,
+			const str::string_ &FileName = str::string() )
+		{
+			reset( false );
+
+			this->Status = Status;
+			this->Coord = Coord;
+			this->FileName.Init( FileName );
+		}
+		~context___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			Status = s_Undefined;
+
+			Coord.Init();
+			FileName.Init();
+		}
+	};
+
 	const str::string_ &GetTranslation(
-		status__ Status,
+		const context___ &Context,
 		const lcl::rack__ &LocaleRack,
-		const str::string_ &LocalizedFileName,
-		const xtf::coord__ &Coord,
 		str::string_ &Translation );
 
 	struct _qualified_preprocessor_directives___ {
@@ -634,14 +673,13 @@ namespace xpp {
 			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
 				ERRc();
 		}
-		E_RODISCLOSE__( status__, Status );
-		const xtf::coord__ &Coord( void ) const
+		const context___ &GetContext( context___ &Context ) const
 		{
-			return _Parser().Coord();
-		}
-		const str::string_ &LocalizedFileName( void ) const
-		{
-			return _Parser().LocalizedFileName();
+			Context.Coord = _Parser().Coord();
+			Context.FileName = _Parser().LocalizedFileName();
+			Context.Status = _Status;
+
+			return Context;
 		}
 	};
 
@@ -677,17 +715,9 @@ namespace xpp {
 			_iflow__::Init( _FlowFunctions, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
-		status__ Status( void ) const
+		const context___ &GetContext( context___ &Context ) const
 		{
-			return _FlowFunctions.Status();
-		}
-		const xtf::coord__ &Coord( void ) const
-		{
-			return _FlowFunctions.Coord();
-		}
-		const str::string_ &LocalizedFileName( void ) const
-		{
-			return _FlowFunctions.LocalizedFileName();
+			return _FlowFunctions.GetContext( Context );
 		}
 	};
 
@@ -697,134 +727,60 @@ namespace xpp {
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( PFlow.Status(), LocaleRack, PFlow.LocalizedFileName(), PFlow.Coord(), Translation );
+	ERRProlog
+		context___ Context;
+	ERRBegin
+		Context.Init();
+
+		GetTranslation( PFlow.GetContext( Context ), LocaleRack, Translation );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Translation;
 	}
 
-#if 0
-	class preprocessing_extended_text_iflow___
-	: public _extended_text_iflow__
-	{
-	private:
-		preprocessing_iflow___ _IFlow;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_IFlow.reset( P );
-			_extended_text_iflow__::reset( P );
-		}
-		preprocessing_extended_text_iflow___( void )
-		{
-			reset( false );
-		}
-		~preprocessing_extended_text_iflow___( void )
-		{
-			reset( true );
-		}
-		void Init(
-			flw::iflow__ &IFlow,
-			const str::string_ &Directory,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
-		{
-			_IFlow.Init( IFlow, Directory, Namespace );
-			_extended_text_iflow__::Init( _IFlow );
-		}
-		const _preprocessing_iflow_functions___ &Preprocessor( void ) const
-		{
-			return _IFlow.Preprocessor();
-		}
-		const xtf::coord__ &Coord( void ) const
-		{
-			return Preprocessor().Coord();
-		}
-		const str::string_ &LocalizedFileName( void ) const
-		{
-			return Preprocessor().LocalizedFileName();
-		}
-	};
-#endif
-
-#if 0
-	class preprocessing_extended_text_iflow___
-	: public _extended_text_iflow__
-	{
-	private:
-		_extended_text_iflow__ _XFlow;
-		_preprocessing_iflow_functions___ _FlowFunctions;
-		_iflow___ _IFlow;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_XFlow.reset( P );
-			_FlowFunctions.reset( P );
-			_IFlow.reset( P );
-			_extended_text_iflow__::reset( P );
-		}
-		preprocessing_extended_text_iflow___( void )
-		: _IFlow(
-			_FlowFunctions,
-			FLW_SIZE_MAX )
-		{
-			reset( false );
-		}
-		~preprocessing_extended_text_iflow___( void )
-		{
-			reset( true );
-		}
-		void Init(
-			flw::iflow__ &IFlow,
-			const str::string_ &Directory,
-			const str::string_ &Namespace = str::string( XPP_PREPROCESSOR_DEFAULT_NAMESPACE ) )
-		{
-			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, Directory, Namespace );
-			_IFlow.Init();
-			_IFlow.EOFD( XTF_EOXT );
-			_extended_text_iflow__::Init( _IFlow );
-		}
-		const _preprocessing_iflow_functions___ &Preprocessor( void ) const
-		{
-			return _FlowFunctions;
-		}
-	};
-#endif
 	status__ Encrypt(
 		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
 		xml::writer_ &Writer,
-		xtf::coord__ &Coord );
+		context___ &Context );
 
 	status__ Encrypt(
 		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow,
-		xtf::coord__ &Coord );
+		context___ &Context );
 
 	status__ Process(
 		flw::iflow__ &IFlow,
 		const criterions___ &Criterions,
 		xml::writer_ &Writer,
-		xtf::coord__ &Coord,
-		str::string_ &GuiltyFileName );
+		context___ &Context );
 
 	status__ Process(
 		flw::iflow__ &IFlow,
 		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow,
-		xtf::coord__ &Coord,
-		str::string_ &GuiltyFileName );
+		context___ &Context );
 
-	status__ Process(
+	inline status__ Process(
 		flw::iflow__ &IFlow,
 		const criterions___ &Criterions,
-		xml::writer_ &Writer );
+		xml::writer_ &Writer )
+	{
+		return Process( IFlow, Criterions, Writer, context___() );
+	}
 
-	status__ Process(
+	inline status__ Process(
 		flw::iflow__ &IFlow,
 		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
-		txf::text_oflow__ &OFlow );
+		txf::text_oflow__ &OFlow )
+	{
+		return Process( IFlow, Criterions, Outfit, OFlow, context___() );
+	}
 
 
 	inline status__ Process(

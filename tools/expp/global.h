@@ -36,6 +36,7 @@
 namespace global {
 	extern cio::cerr___ cerr;
 	extern cio::cout___ cout;
+	extern cio::cin___ cin;
 
 	extern lcl::rack__ LocaleRack;
 	
@@ -44,6 +45,7 @@ namespace global {
 //	E_AUTO( value )
 
 	enum message__ {
+		mHelpHintMessage,
 		mProcessCommandDescription,
 		mEncryptCommandDescription,
 		mNamespaceOptionDescription,
@@ -72,6 +74,9 @@ namespace global {
 		... );
 
 	enum error__ {
+		eOptionUnknown,
+		eOptionMissingArgument,
+		eWrongArgumentsAmount,
 		eErrorParsingConfigurationFile,
 		eErrorParsingLocaleFile,
 		e_amount,

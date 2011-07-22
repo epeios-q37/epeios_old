@@ -83,8 +83,7 @@ const char *rgstry::Label( status__ Status )
 }
 
 const str::string_ &rgstry::GetTranslation(
-	status__ Status,
-	const error_details_ &ErrorDetails,
+	const context___ &Context,
 	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
@@ -95,27 +94,27 @@ ERRProlog
 ERRBegin
 	Message.Init();
 
-	switch ( Status ) {
+	switch ( Context.Status ) {
 	case sOK:
 		ERRu();
 		break;
 	case sUnableToOpenFile:
 		Message.Init();
 
-		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Message );
 
 		TagValues.Init();
-		TagValues.Append( ErrorDetails.FileName );
+		TagValues.Append( Context.FileName );
 
 		lcl::ReplaceTags( Message, TagValues );
 		break;
 	case sParseError:
-		xpp::GetTranslation( ErrorDetails.XPPStatus(), LocaleRack, ErrorDetails.FileName, ErrorDetails.Coord(), Message );
+		xpp::GetTranslation( Context, LocaleRack, Message );
 		break;
 	case sRootPathError:
-		if ( ErrorDetails.GetPathErrorRow() != NONE )
+		if ( Context.PathErrorRow != NONE )
 			ERRu();
-		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Message );
+		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Message );
 		break;
 	default:
 		ERRu();
@@ -935,7 +934,7 @@ row__ rgstry::Parse(
 	const xpp::criterions___ &Criterions,
 	registry_ &Registry,
 	row__ Root,
-	error_details_ &ErrorDetails )
+	xpp::context___ &Context )
 {
 ERRProlog
 	callback___ Callback( Registry );
@@ -955,9 +954,7 @@ ERRBegin
 		break;
 	case xml::sUnexpectedEOF:
 		Root = NONE;
-		ErrorDetails.FileName = PFlow.LocalizedFileName();
-		ErrorDetails.S_.Coord = PFlow.Coord();
-		ErrorDetails.S_.XPPStatus = PFlow.Status();
+		PFlow.GetContext( Context );
 		break;
 	default:
 		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
@@ -1202,45 +1199,24 @@ status__ rgstry::FillRegistry(
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
-	error_details_ &ErrorDetails )
+	context___ &Context )
 {
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
 
-	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, ErrorDetails ) ) == NONE )
-		if ( ErrorDetails.GetXPPStatus() == xpp::sOK )
-			return sRootPathError;
+	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
+		if ( Context.xpp::context___::Status == xpp::sOK )
+			return Context.Status = sRootPathError;
 		else
-			return sParseError;
+			return Context.Status = sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
-		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &ErrorDetails.S_.PathErrorRow ) ) == NONE )
+		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &Context.PathErrorRow ) ) == NONE )
 			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
-				return sRootPathError;
+				return Context.Status = sRootPathError;
 
 	return sOK;
 }
-
-status__ rgstry::FillRegistry(
-	flw::iflow__ &IFlow,
-	const xpp::criterions___ &Criterions,
-	const char *RootPath,
-	rgstry::registry_ &Registry,
-	rgstry::row__ &RegistryRoot )
-{
-	status__ Status = s_Undefined;
-ERRProlog
-	error_details Dummy;
-ERRBegin
-	Dummy.Init();
-
-	Status = FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, Dummy );
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
 
 status__ rgstry::FillRegistry(
 	const char *FileName,
@@ -1248,7 +1224,7 @@ status__ rgstry::FillRegistry(
 	const char *RootPath,
 	rgstry::registry_ &Registry,
 	rgstry::row__ &RegistryRoot,
-	error_details_ &ErrorDetails )
+	context___ &Context )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1256,46 +1232,24 @@ ERRProlog
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-		Status = sUnableToOpenFile;
-		ErrorDetails.FileName = FileName;
+		Context.Status = sUnableToOpenFile;
+		Context.FileName = FileName;
 		ERRReturn;
 	}
 
 	if ( Criterions.Directory.Amount() != 0 )
 		ERRu();
 
-	Status = FillRegistry( FFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, ErrorDetails );
+	Status = FillRegistry( FFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
 
 	if ( Status == sParseError )
-		if ( ErrorDetails.FileName.Amount() == 0 )
-			ErrorDetails.FileName = FileName;
+		if ( Context.FileName.Amount() == 0 )
+			Context.FileName = FileName;
 ERRErr
 ERREnd
 ERREpilog
 	return Status;
 }
-
-status__ rgstry::FillRegistry(
-	const char *FileName,
-	const xpp::criterions___ &Criterions,
-	const char *RootPath,
-	rgstry::registry_ &Registry,
-	rgstry::row__ &RegistryRoot )
-{
-	status__ Status = s_Undefined;
-ERRProlog
-	error_details Dummy;
-ERRBegin
-	Dummy.Init();
-
-	Status = FillRegistry( FileName, Criterions, RootPath, Registry, RegistryRoot, Dummy );
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
-
 
 
 /* Although in theory this class is inaccessible to the different modules,

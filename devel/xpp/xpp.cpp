@@ -136,10 +136,8 @@ const char *xpp::Label( status__ Status )
 }
 
 const str::string_ &xpp::GetTranslation(
-	status__ Status,
+	const context___ &Context,
 	const lcl::rack__ &LocaleRack,
-	const str::string_ &LocalizedFileName,
-	const xtf::coord__ &Coord,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -148,7 +146,7 @@ ERRProlog
 	bso::integer_buffer__ IBuffer;
 	lcl::strings Values;
 ERRBegin
-	if ( LocalizedFileName.Amount() == 0 )
+	if ( Context.FileName.Amount() == 0 )
 		Message.Init( LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
 	else
 		Message.Init( LocaleRack.GetTranslation( "ErrorInFileAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
@@ -156,9 +154,9 @@ ERRBegin
 	
 	Values.Init();	
 
-	Values.Append( LocalizedFileName );
-	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
-	Values.Append( str::string( bso::Convert( Coord.Column, IBuffer ) ) );
+	Values.Append( Context.FileName );
+	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
+	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
 
 	lcl::ReplaceTags( Message, Values );
 
@@ -166,10 +164,10 @@ ERRBegin
 
 	Translation.Append( " : " );
 
-	if ( Status < (xpp::status__)xml::s_amount )
-		xml::GetTranslation( (xml::status__)Status, LocaleRack, Coord, Translation );
+	if ( Context.Status < (xpp::status__)xml::s_amount )
+		xml::GetTranslation( (xml::status__)Context.Status, LocaleRack, Context.Coord, Translation );
 	else
-		LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Translation );
+		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -1180,8 +1178,7 @@ status__ xpp::Process(
 	flw::iflow__ &IFlow,
 	const criterions___ &Criterions,
 	xml::writer_ &Writer,
-	xtf::coord__ &Coord,
-	str::string_ &GuiltyFileName )
+	context___ &Context )
 {
 	status__ Status = sOK;
 ERRProlog
@@ -1221,9 +1218,7 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			Status = PFlow.Status();
-			Coord = PFlow.Coord();
-			GuiltyFileName = PFlow.LocalizedFileName();
+			PFlow.GetContext( Context );
 			Continue = false;
 			break;
 		default:
@@ -1349,7 +1344,7 @@ status__ xpp::Encrypt(
 	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
 	xml::writer_ &Writer,
-	xtf::coord__ &Coord )
+	context___ &Context )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1376,8 +1371,10 @@ ERRBegin
 			break;
 		case xml::tStartTag:
 			if ( Parser.TagName() == Directives.CypherTag ) {
-				if ( ( Status = HandleCypherDirective_( Namespace, Parser, Writer, Coord ) ) != sOK )
+				if ( ( Status = HandleCypherDirective_( Namespace, Parser, Writer, Context.Coord ) ) != sOK ) {
+					Context.Status = Status;
 					ERRReturn;
+				}
 			} else
 				Writer.PushTag( Parser.TagName() );
 			break;
@@ -1401,8 +1398,8 @@ ERRBegin
 			Continue = false;
 			break;
 		case xml::tError:
-			Status = _Convert( Parser.Status() );
-			Coord = XFlow.Coord();
+			Context.Status = Status = _Convert( Parser.Status() );
+			Context.Coord = XFlow.Coord();
 			ERRReturn;
 			break;
 		default:
@@ -1423,7 +1420,7 @@ status__ xpp::Encrypt(
 	flw::iflow__ &IFlow,
 	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow,
-	xtf::coord__ &Coord )
+	context___ &Context )
 {
 	status__ Status = sOK;
 ERRProlog
@@ -1431,7 +1428,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
-	Status = Encrypt( Namespace, IFlow, Writer, Coord );
+	Status = Encrypt( Namespace, IFlow, Writer, Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -1444,8 +1441,7 @@ status__ xpp::Process(
 	const criterions___ &Criterions,
 	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow,
-	xtf::coord__ &Coord,
-	str::string_ &GuiltyFileName )
+	context___ &Context )
 {
 	status__ Status = sOK;
 ERRProlog
@@ -1453,46 +1449,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
-	Status = Process( IFlow, Criterions, Writer, Coord, GuiltyFileName );
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
-status__ xpp::Process(
-	flw::iflow__ &IFlow,
-	const criterions___ &Criterions,
-	xml::writer_ &Writer )
-{
-	status__ Status = s_Undefined;
-ERRProlog
-	xtf::coord__ DummyCoord;
-	str::string DummyString;
-ERRBegin
-	DummyString.Init();
-
-	Status = Process( IFlow, Criterions, Writer, DummyCoord, DummyString );
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
-status__ xpp::Process(
-	flw::iflow__ &IFlow,
-	const criterions___ &Criterions,
-	xml::outfit__ Outfit,
-	txf::text_oflow__ &OFlow )
-{
-	status__ Status = s_Undefined;
-ERRProlog
-	xtf::coord__ DummyCoord;
-	str::string DummyString;
-ERRBegin
-	DummyString.Init();
-
-	Status = Process( IFlow, Criterions, Outfit, OFlow, DummyCoord, DummyString );
+	Status = Process( IFlow, Criterions, Writer, Context );
 ERRErr
 ERREnd
 ERREpilog

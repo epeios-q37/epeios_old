@@ -1,8 +1,18 @@
 $Id$
 
+22/07/2011 :
+	- Général :
+		- Adaptation aux modifications 'XPP' et 'RGSTRY'.
+	- RGSTRY :
+		- Mise en oeuvre 'context___'.
+	- TXF :
+		- Ajout méthode 'Flow()' retournant le 'flw::(i|o)flow__' sous-jacent.
+	- XPP :
+		- Mise en oeuvre 'context___'.
+
 20/07/2011 :
 	- TXF :
-		- Correction bogue affuchage pointeur.
+		- Correction bogue affuihage pointeur.
 
 18/07/2011 :
 	- LTF :
@@ -35,7 +45,7 @@ $Id$
 	- FRD... :
 		- Utilisation des nouvelles bibliothèques 'FBL...'.
 	- XPP :
-		- Regroupement de certains paramètres dans une structure.
+		- Regroupement de certains paramètres dans une structure ('criterions___' ).
 	- XUL... :
 		Adaptation aux modification bilbliothèques sous-jacentes.
 

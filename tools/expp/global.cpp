@@ -37,6 +37,7 @@ using namespace global;
 
 cio::cerr___ global::cerr;
 cio::cout___ global::cout;
+cio::cin___ global::cin;
 
 static lcl::locale _Locale;
 STR_BUFFER___ _Language;
@@ -88,6 +89,9 @@ ERRBegin
 	GetTranslation( Message, Translation );
 
 	switch ( Message ) {
+	case mHelpHintMessage:
+		lcl::ReplaceTag( str::string( NAME ), 1, Translation );
+		break;
 	case mProcessCommandDescription:
 	case mEncryptCommandDescription:
 		break;
@@ -122,6 +126,7 @@ const char *global::Label( error__ Error )
 #endif
 
 	switch( Error ) {
+	CASE( OptionUnknown );
 	CASE( ErrorParsingConfigurationFile )
 	CASE( ErrorParsingLocaleFile )
 	default:
@@ -144,17 +149,31 @@ ERRProlog
 	str::string Translation;
 	va_list Args;
 	str::string TagValue;
+	message__ AdditionalMessage = m_Undefined;
 ERRBegin
 	va_start( Args, Error );
 
 	Translation.Init();
 
+	GetTranslation( Error, Translation );
+
 	switch ( Error ) {
+	case eOptionUnknown:
+	case eOptionMissingArgument: 
+	{
+		const bso::char__ *Option = va_arg( Args, const bso::char__* );
+
+		lcl::ReplaceTag( str::string( Option ), 1, Translation );
+	}
+	case eWrongArgumentsAmount:
+		AdditionalMessage = mHelpHintMessage;
+		break;
 	case eErrorParsingConfigurationFile:
 	case eErrorParsingLocaleFile:
 	{
 		const rgstry::status__ &Status = *va_arg(Args, const rgstry::status__ *);
 
+		Translation.Init();
 		rgstry::GetTranslation( Status, *va_arg( Args, const rgstry::error_details *), LocaleRack, Translation );
 		break;
 	}
@@ -164,6 +183,10 @@ ERRBegin
 	}
 
 	cerr << Translation << " !" << txf::nl << txf::commit;
+
+	if ( AdditionalMessage != m_Undefined )
+		Display( AdditionalMessage );
+
 	ERRExit( EXIT_FAILURE );
 ERRErr
 ERREnd
@@ -272,6 +295,7 @@ void global::Initialize( void )
 {
 	cerr.Init();
 	cout.Init();
+	cin.Init();
 
 	registry::Registry.Init();
 
@@ -289,6 +313,7 @@ void global::Release( void )
 {
 	cerr.reset();
 	cout.reset();
+	cin.reset();
 }
 
 void global::CreateBackupFile( const char *FileName )

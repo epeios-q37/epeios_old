@@ -774,7 +774,8 @@ namespace rgstry {
 
 	E_AUTO( registry )
 
-	class error_details_
+# if 0
+	struct error_details_
 	{
 	public:
 		struct s {
@@ -828,13 +829,14 @@ namespace rgstry {
 	};
 
 	E_AUTO( error_details );
+#endif
 
 	row__ Parse(
 		flw::iflow__ &Flow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
 		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
-		error_details_ &ErrorDetails );
+		xpp::context___ &Context );
 
 	inline row__ Parse(
 		flw::iflow__ &Flow,
@@ -842,17 +844,7 @@ namespace rgstry {
 		registry_ &Registry,
 		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
-		row__ Result = NONE;
-	ERRProlog
-		error_details Dummy;
-	ERRBegin
-		Dummy.Init();
-
-		Result = Parse( Flow, Criterions, Registry, Root, Dummy );
-	ERRErr
-	ERREnd
-	ERREpilog
-		return Result;
+		return Parse( Flow, Criterions, Registry, Root, xpp::context___() );
 	}
 
 	enum status__ {
@@ -866,9 +858,42 @@ namespace rgstry {
 
 	const char *Label( status__ Status );
 
+	typedef xpp::context___ _context___;
+
+	struct context___
+	: public _context___
+	{
+		status__ Status;
+		epeios::row__ PathErrorRow;
+		void reset( bso::bool__ P = true )
+		{
+			_context___::reset( P );
+
+			Status = s_Undefined;
+			PathErrorRow = NONE;
+		}
+		context___( void )
+		{
+			reset( false );
+
+			Init();
+		}
+		~context___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			_context___::Init();
+
+			Status = s_Undefined;
+			PathErrorRow = NONE;
+		}
+	};
+
+
 	const str::string_ &GetTranslation(
-		status__ Status,
-		const error_details_ &ErrorDetails,
+		const context___ &Context,
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation );
 
@@ -878,14 +903,17 @@ namespace rgstry {
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
-		error_details_ &ErrorDetails );
+		context___ &Context );
 
-	status__ FillRegistry(
+	inline status__ FillRegistry(
 		flw::iflow__ &IFlow,
 		const xpp::criterions___ &Criterions,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot );
+		rgstry::row__ &RegistryRoot )
+	{
+		return FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, context___() );
+	}
 
 	status__ FillRegistry(
 		const char *FileName,
@@ -893,14 +921,17 @@ namespace rgstry {
 		const char *RootPath,
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot,
-		error_details_ &ErrorDetails );
+		context___ &Context );
 
-	status__ FillRegistry(
+	inline status__ FillRegistry(
 		const char *FileName,
 		const xpp::criterions___ &Criterions,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
-		rgstry::row__ &RegistryRoot );
+		rgstry::row__ &RegistryRoot )
+	{
+		return FillRegistry( FileName, Criterions, RootPath, Registry, RegistryRoot, context___() );
+	}
 
 
 	class overloaded_registry___
@@ -1301,12 +1332,12 @@ namespace rgstry {
 			flw::iflow__ &IFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			error_details_ &ErrorDetails )
+			context___ &Context )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root, Context ); 
 
 			Roots.Set( Root, Level );
 
@@ -1336,12 +1367,12 @@ namespace rgstry {
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			error_details_ &ErrorDetails )
+			context___ &Context )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( FileName,Criterions,  RootPath, BaseRegistry, Root, ErrorDetails ); 
+			Status = FillRegistry( FileName,Criterions,  RootPath, BaseRegistry, Root, Context ); 
 
 			Roots.Set( Root, Level );
 

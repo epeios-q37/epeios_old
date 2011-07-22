@@ -82,7 +82,7 @@ namespace txf {
 	private:
 		// Flow from which data are red.
 		flw::iflow__ *_Flow;
-		flw::iflow__ &_F( void )
+		flw::iflow__ &_F( void ) const
 		{
 #ifdef TXF_DBG
 			if ( _Flow == NULL )
@@ -243,6 +243,10 @@ namespace txf {
 		{
 			return Lire_();
 		}
+		flw::iflow__ &Flow( void ) const
+		{
+			return _F();
+		}
 	};
 
 
@@ -252,7 +256,7 @@ namespace txf {
 	private:
 		// Flow to write into.
 		flw::oflow__ *_Flow;
-		flw::oflow__ &_F( void )
+		flw::oflow__ &_F( void ) const
 		{
 #ifdef TXF_DBG
 			if ( _Flow == NULL )
@@ -393,6 +397,10 @@ namespace txf {
 		void Commit( void )
 		{
 			Commit_();
+		}
+		flw::oflow__ &Flow( void ) const
+		{
+			return _F();
 		}
 	};
 
