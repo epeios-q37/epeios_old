@@ -56,7 +56,7 @@ namespace global {
 		m_Undefined
 	};
 
-# define GLOBAL__MESSAGE_AMOUNT	6
+# define GLOBAL__MESSAGE_AMOUNT	7
 
 	const char *Label( message__ Message );
 
@@ -79,11 +79,14 @@ namespace global {
 		eWrongArgumentsAmount,
 		eErrorParsingConfigurationFile,
 		eErrorParsingLocaleFile,
+		eUnableToOpenFile,
+		eProcessingError,
+		eEncryptionError,
 		e_amount,
 		e_Undefined
 	};
 
-# define GLOBAL__ERROR_AMOUNT	2
+# define GLOBAL__ERROR_AMOUNT	8
 
 	const char *Label( error__ Error );
 

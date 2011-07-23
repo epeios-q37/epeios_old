@@ -50,11 +50,12 @@ lcl::rack__ global::LocaleRack( _Locale, _Language() );
 
 const char *global::Label( message__ Message )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 6
+#if	GLOBAL__MESSAGE_AMOUNT != 7
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
 	switch( Message ) {
+	CASE( HelpHintMessage )
 	CASE( ProcessCommandDescription )
 	CASE( EncryptCommandDescription )
 	CASE( NamespaceOptionDescription )
@@ -73,7 +74,7 @@ void global::Display(
 		message__ Message
 		... )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 6
+#if	GLOBAL__MESSAGE_AMOUNT != 7
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
@@ -121,14 +122,19 @@ ERREpilog
 
 const char *global::Label( error__ Error )
 {
-#if	GLOBAL__ERROR_AMOUNT != 2
+#if	GLOBAL__ERROR_AMOUNT != 8
 #	error "Amount of 'error__' entries changed ! Update !"
 #endif
 
 	switch( Error ) {
 	CASE( OptionUnknown );
-	CASE( ErrorParsingConfigurationFile )
+	CASE( OptionMissingArgument );
+	CASE( WrongArgumentsAmount );
+	CASE( ErrorParsingConfigurationFile );
 	CASE( ErrorParsingLocaleFile )
+	CASE( UnableToOpenFile );
+	CASE( ProcessingError );
+	CASE( EncryptionError );
 	default:
 		ERRc();
 		break;
@@ -141,12 +147,13 @@ void global::Report(
 		error__ Error,
 		... )
 {
-#if	GLOBAL__ERROR_AMOUNT != 2
+#if	GLOBAL__ERROR_AMOUNT != 8
 #	error "Amount of 'error__' entries changed ! Update !"
 #endif
 
 ERRProlog
 	str::string Translation;
+	str::string EmbededMessage;
 	va_list Args;
 	str::string TagValue;
 	message__ AdditionalMessage = m_Undefined;
@@ -171,10 +178,29 @@ ERRBegin
 	case eErrorParsingConfigurationFile:
 	case eErrorParsingLocaleFile:
 	{
-		const rgstry::status__ &Status = *va_arg(Args, const rgstry::status__ *);
+		const rgstry::context___ &Context = *va_arg(Args, const rgstry::context___ *);
 
-		Translation.Init();
-		rgstry::GetTranslation( Status, *va_arg( Args, const rgstry::error_details *), LocaleRack, Translation );
+		EmbededMessage.Init();
+		rgstry::GetTranslation( Context, LocaleRack, EmbededMessage );
+
+		lcl::ReplaceTag( Translation, 1, EmbededMessage );
+		break;
+	}
+	case eUnableToOpenFile:
+	{
+		const char *FileName = va_arg( Args, const char *);
+
+		lcl::ReplaceTag( str::string( FileName ), 1, Translation );
+	}
+	case eProcessingError:
+	case eEncryptionError:
+	{
+		const xpp::context___ &Context = *va_arg( Args, const xpp::context___ *);
+
+		EmbededMessage.Init();
+		xpp::GetTranslation( Context, LocaleRack, EmbededMessage );
+
+		lcl::ReplaceTag( Translation, 1, EmbededMessage );
 		break;
 	}
 	default:
@@ -207,7 +233,7 @@ static void LoadTemporaryLocale_( void )
 {
 ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 	str::string LocaleFileName;
 	DIR_BUFFER___ DIRBuffer;
 	FNM_BUFFER___ FNMBuffer;
@@ -220,7 +246,7 @@ ERRBegin
 	if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) )
 		LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), NAME, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
 
-	_Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", ErrorDetails );
+	_Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context );
 
 	Language.Init();
 
@@ -236,21 +262,21 @@ void LoadRegistry_( void )
 {
 ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 	DIR_BUFFER___ DIRBuffer;
 	FNM_BUFFER___ FNMBuffer;
 ERRBegin
 	registry::Registry.Init();
-	ErrorDetails.Init();
+	Context.Init();
 
-	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
+	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
 		if ( Status == rgstry::sUnableToOpenFile ) {
 			registry::Registry.Init();
-			ErrorDetails.Init();
-			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
-				Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
+			Context.Init();
+			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
+				Report( eErrorParsingConfigurationFile, &Status, &Context );
 		} else
-			Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
+			Report( eErrorParsingConfigurationFile, &Status, &Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -261,7 +287,7 @@ static void LoadLocale_( void )
 {
 ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 	str::string LocaleFileName;
 	FNM_BUFFER___ FNMBuffer;
 	STR_BUFFER___ STRBuffer;
@@ -277,8 +303,10 @@ ERRBegin
 			LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), NAME, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
 	}
 
-	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", ErrorDetails ) ) != rgstry::sOK )
-		Report( eErrorParsingLocaleFile, &Status, &ErrorDetails );
+	Context.Init();
+
+	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context ) ) != rgstry::sOK )
+		Report( eErrorParsingLocaleFile, &Status, &Context );
 
 	Language.Init();
 

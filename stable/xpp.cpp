@@ -1219,6 +1219,7 @@ ERRBegin
 			break;
 		case xml::tError:
 			PFlow.GetContext( Context );
+			Status = Context.Status;
 			Continue = false;
 			break;
 		default:

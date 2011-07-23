@@ -351,17 +351,8 @@ ERRBegin
 
 	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
-								  Outfit, OFlow,  Context ) ) != xpp::sOK ) {
-									  xpp::GetTranslation( Status,
-		cerr << "Error ";
-
-		if ( ErrorFileName.Amount() != 0 )
-			cerr << "in file '" << ErrorFileName << "' ";
-
-		cerr << "at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
-
-		ERRExit( evProcessing );
-	}
+								  Outfit, OFlow,  Context ) ) != xpp::sOK )
+		Report( eProcessingError, &Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -382,10 +373,8 @@ ERRProlog
 	FNM_BUFFER___ Buffer;
 ERRBegin
 	if ( Source != NULL ) {
-		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess ) {
-			cerr << "Unable to open file '" << Source << "' for reading !" << txf::nl;
-			ERRExit( evInputOutput );
-		}
+		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess )
+			Report( eUnableToOpenFile, Source );
 
 		Directory = fnm::GetLocation( Source, Buffer );
 	}
@@ -395,15 +384,13 @@ ERRBegin
 
 		BackedUp = true;
 
-		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess ) {
-			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
-			ERRExit( evInputOutput );
-		}
+		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess )
+			Report( eUnableToOpenFile, Destination );
 
 		TOFlow.Init( OFlow );
 	}
 
-	Process_( Source == NULL ? IFlow : cin.Flow(), Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? TOFlow : cout );
+	Process_( Source == NULL ? cin.Flow() : IFlow, Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? cout : TOFlow );
 
 ERRErr
 	if ( BackedUp )
@@ -423,37 +410,30 @@ ERRProlog
 	txf::text_oflow__ TOFlow;
 	flf::file_iflow___ IFlow;
 	bso::bool__ BackedUp = false;
-	xpp::status__ Status = xpp::s_Undefined;
-	xtf::coord__ Coord;
+	xpp::context___ Context;
 ERRBegin
-	if ( Source != NULL ) {
-		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess ) {
-			cerr << "Unable to open file '" << Source << "' for reading !" << txf::nl;
-			ERRExit( evInputOutput );
-		}
-	}
+	if ( Source != NULL )
+		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess )
+			Report( eUnableToOpenFile, Source );
 
 	if ( Destination != NULL ) {
 		global::CreateBackupFile( Destination );
 
 		BackedUp = true;
 
-		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess ) {
-			cerr << "Unable to open file '" << Destination << "' for writing !" << txf::nl;
-			ERRExit( evInputOutput );
-		}
+		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess )
+			Report( eUnableToOpenFile, Destination );
 
 		TOFlow.Init( OFlow );
 	}
 
-	if ( ( Status = xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
+	Context.Init();
+
+	if ( xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
-								  ( Destination == NULL ? cout : TOFlow ),  Coord ) ) != xpp::sOK ) {
-		cerr << "Error at line " << Coord.Line << ", column " << Coord.Column << " : " << xpp::Label( Status ) << " !" << txf::nl;
-
-		ERRExit( evProcessing );
-	}
+								  ( Destination == NULL ? cout : TOFlow ),  Context ) != xpp::sOK )
+		Report( eEncryptionError, &Context );
 ERRErr
 	if ( BackedUp )
 		global::RecoverBackupFile( Destination );
