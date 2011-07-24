@@ -154,7 +154,9 @@ ERRBegin
 	
 	Values.Init();	
 
-	Values.Append( Context.FileName );
+	if ( Context.FileName.Amount() != 0 )
+		Values.Append( Context.FileName );
+
 	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
 	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
 
@@ -166,8 +168,12 @@ ERRBegin
 
 	if ( Context.Status < (xpp::status__)xml::s_amount )
 		xml::GetTranslation( (xml::status__)Context.Status, LocaleRack, Context.Coord, Translation );
-	else
+	else {
+		Values.Init();
+
 		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Translation );
+		lcl::ReplaceTags( Translation, Values );	// Pour enlever le '%0' en cas de traduation introuvable.
+	}
 ERRErr
 ERREnd
 ERREpilog

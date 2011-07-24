@@ -45,7 +45,7 @@
 	</Translations>
 	<Translations message="CLNARG_MissingOptionArgumentError">
 		<Translation language="fr">argument manquant pour l'option '%1'</Translation>
-		<Translation language="en-US">msiing argument for '%1' option</Translation>
+		<Translation language="en-US">missing argument for '%1' option</Translation>
 	</Translations>
 	<Translations message="CLNARG_UnexpectedOptionError">
 		<Translation language="fr">Option '%1' inattendue</Translation>

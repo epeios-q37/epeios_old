@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-  <xpp:expand href="xml.xlcl"/>"
-  <Translations message="XPP_ErrorAtLineColumn"><!-- One of the 2 generic message displayed before error description. -->
-    <Translation language="fr">Erreur ligne %1, colonne %2</Translation>
-    <Translation language="en-US">Error line %1, column %2</Translation>
-  </Translations>
-  <Translations message="XPP_ErrorInFileAtLineColumn"><!-- One of the 2 generic message displayed before error description. -->
-    <Translation language="fr">Erreur dans le fichier '%1' à la ligne %2, colonne %3</Translation>
-    <Translation language="en-US">Error in file '%1' at line %2, column %3</Translation>
-  </Translations>
+	<xpp:expand href="xml.xlcl"/>"
+	<Translations message="XPP_ErrorAtLineColumn">
+		<!-- One of the 2 generic message displayed before error description. -->
+		<Translation language="fr">Erreur ligne %1, colonne %2</Translation>
+		<Translation language="en-US">Error line %1, column %2</Translation>
+	</Translations>
+	<Translations message="XPP_ErrorInFileAtLineColumn">
+		<!-- One of the 2 generic message displayed before error description. -->
+		<Translation language="fr">Erreur dans le fichier '%1' à la ligne %2, colonne %3</Translation>
+		<Translation language="en-US">Error in file '%1' at line %2, column %3</Translation>
+	</Translations>
 	<Translations message="XPP_NoTagsAllowedHere">
 		<Translation language="fr">balises non autorisée ici</Translation>
 		<Translation language="en-US">no tag allowed here</Translation>
+	</Translations>
+	<Translations message="XPP_UnknownDirective">
+		<Translation language="fr">directive inconnue</Translation>
+		<Translation language="en-US">unknown directive</Translation>
 	</Translations>
 	<Translations message="XPP_UnexpectedTag">
 		<Translation language="fr">balise inattendue</Translation>

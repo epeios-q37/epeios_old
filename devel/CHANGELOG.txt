@@ -1,5 +1,11 @@
 $Id$
 
+23/07/2011 :
+	- XPP :	
+		- Correction bogues 'GetTranslation()'.
+			- Gestion du nom de fichier.
+			- Gestion du tag '%0'.
+
 22/07/2011 :
 	- Général :
 		- Adaptation aux modifications 'XPP' et 'RGSTRY'.
