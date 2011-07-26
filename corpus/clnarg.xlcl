@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp/">
-	<Translations message="CLNARG_TryHelpCommand">
-		<Translation language="fr">Essayer la commande '--help' pour plus d'informations</Translation>
-		<Translation language="en-US">Try '--help' command for more informations</Translation>
+	<Translations message="CLNARG_HelpHintMessage">
+		<Translation language="fr">Essayez la '%1 --help' pour plus d'informations</Translation>
+		<Translation language="en-US">Try '%1 --help' for more informations</Translation>
+	</Translations>
+	<Translations message="CLNARG_OptionWording">
+		<Translation language="fr">Option</Translation>
+		<Translation language="en-US">Option</Translation>
+	</Translations>
+	<Translations message="CLNARG_OptionsWording">
+		<Translation language="fr">Options</Translation>
+		<Translation language="en-US">Options</Translation>
+	</Translations>
+	<Translations message="CLNARG_ArgumentWording">
+		<Translation language="fr">Argument</Translation>
+		<Translation language="en-US">Argument</Translation>
+	</Translations>
+	<Translations message="CLNARG_ArgumentsWording">
+		<Translation language="fr">Arguments</Translation>
+		<Translation language="en-US">Arguments</Translation>
 	</Translations>
 
-  <Translations message="CLNARG_OptionWording">
-    <Translation language="fr">Option</Translation>
-    <Translation language="en-US">Option</Translation>
-  </Translations>
-  <Translations message="CLNARG_OptionsWording">
-    <Translation language="fr">Options</Translation>
-    <Translation language="en-US">Options</Translation>
-  </Translations>
-  <Translations message="CLNARG_ArgumentWording">
-    <Translation language="fr">Argument</Translation>
-    <Translation language="en-US">Argument</Translation>
-  </Translations>
-  <Translations message="CLNARG_ArgumentsWording">
-    <Translation language="fr">Arguments</Translation>
-    <Translation language="en-US">Arguments</Translation>
-  </Translations>
 
-
-  <Translations message="CLNARG_VersionCommandDescription">
-    <Translation language="fr">Affiche la version du programme et de ses différents comopsants</Translation>
-    <Translation language="en-US">Displays the version of the program and its components</Translation>
-  </Translations>
-  <Translations message="CLNARG_LicenseCommandDescription">
-    <Translation language="fr">Affiche la licence du programme</Translation>
-    <Translation language="en-US">Displays the program license</Translation>
-  </Translations>
-  <Translations message="CLNARG_HelpCommandDescription">
-    <Translation language="fr">Affiche cette page</Translation>
-    <Translation language="en-US">Displays this page</Translation>
-  </Translations>
+	<Translations message="CLNARG_VersionCommandDescription">
+		<Translation language="fr">Affiche la version du programme et de ses différents comopsants</Translation>
+		<Translation language="en-US">Displays the version of the program and its components</Translation>
+	</Translations>
+	<Translations message="CLNARG_LicenseCommandDescription">
+		<Translation language="fr">Affiche la licence du programme</Translation>
+		<Translation language="en-US">Displays the program license</Translation>
+	</Translations>
+	<Translations message="CLNARG_HelpCommandDescription">
+		<Translation language="fr">Affiche cette page</Translation>
+		<Translation language="en-US">Displays this page</Translation>
+	</Translations>
 
 
 
-  <Translations message="CLNARG_UnknownOptionError">
+	<Translations message="CLNARG_UnknownOptionError">
 		<Translation language="fr">option '%1' inconnue</Translation>
 		<Translation language="en-US">unkown '%1' option</Translation>
 	</Translations>

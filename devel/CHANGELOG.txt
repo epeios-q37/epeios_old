@@ -1,5 +1,15 @@
 $Id$
 
+26/07/2011 :
+	- SCK :
+		- Correction problème 'timeout'.
+
+25/07/2011 :
+	- CGIDAT :
+		- Adaptation aux modifications bibliothèques sous-jacentes.
+	- CLNARG :
+		- Ajout paramètre 'ProgramName'.
+
 23/07/2011 :
 	- XPP :	
 		- Correction bogues 'GetTranslation()'.

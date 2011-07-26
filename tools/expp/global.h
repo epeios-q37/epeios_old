@@ -74,9 +74,6 @@ namespace global {
 		... );
 
 	enum error__ {
-		eOptionUnknown,
-		eOptionMissingArgument,
-		eWrongArgumentsAmount,
 		eErrorParsingConfigurationFile,
 		eErrorParsingLocaleFile,
 		eUnableToOpenFile,

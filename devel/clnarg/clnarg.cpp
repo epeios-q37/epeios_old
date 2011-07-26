@@ -66,7 +66,7 @@ using namespace clnarg;
 const char *clnarg::Label( message__ Message )
 {
 	switch ( Message ) {
-		CASE( TryHelpCommand )
+		CASE( HelpHintMessage )
 		CASE( OptionWording )
 		CASE( OptionsWording )
 		CASE( ArgumentWording )
@@ -106,7 +106,9 @@ ERRBegin
 	va_start( Args, Translation );
 
 	switch ( Message ) {
-	case mTryHelpCommand:
+	case mHelpHintMessage:
+		lcl::ReplaceTag( str::string(* va_arg( Args, const char * ) ), 1, Translation );
+		break;
 	case mOptionWording:
 	case mOptionsWording:
 	case mArgumentWording:
@@ -160,7 +162,9 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportMissingCommandError( const lcl::rack__ &LocaleRack )
+void clnarg::ReportMissingCommandError(
+	const char *ProgramName,
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
@@ -169,7 +173,7 @@ ERRBegin
 
 	GetMissingCommandErrorTranslation( LocaleRack ,Message );
 
-	Report( Message, LocaleRack );
+	Report( Message, ProgramName, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -177,6 +181,7 @@ ERREpilog
 
 void clnarg::Report(
 	const str::string_ &Message,
+	const char *ProgramName,
 	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
@@ -184,7 +189,7 @@ ERRProlog
 ERRBegin
 	HelpMessage.Init();
 
-	GetTranslation( mTryHelpCommand, LocaleRack, HelpMessage );
+	GetHelpHintMessageTranslation( ProgramName, LocaleRack, HelpMessage );
 
 	Report_( Message, HelpMessage );
 ERRErr
@@ -194,6 +199,7 @@ ERREpilog
 
 void clnarg::ReportUnknownOptionError(
 	const char *Option,
+	const char *ProgramName,
 	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
@@ -203,7 +209,7 @@ ERRBegin
 
 	GetUnknownOptionErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, LocaleRack );
+	Report( Message, ProgramName, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -211,6 +217,7 @@ ERREpilog
 
 void clnarg::ReportMissingOptionArgumentError(
 	const char *Option,
+	const char *ProgramName,
 	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
@@ -220,7 +227,7 @@ ERRBegin
 
 	GetMissingOptionArgumentErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, LocaleRack );
+	Report( Message, ProgramName, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
@@ -229,6 +236,7 @@ ERREpilog
 
 void clnarg::ReportUnexpectedOptionError(
 	const char *Option,
+	const char *ProgramName,
 	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
@@ -238,14 +246,16 @@ ERRBegin
 
 	GetUnexpectedOptionErrorTranslation( LocaleRack, Option, Message );
 
-	Report( Message, LocaleRack );
+	Report( Message, ProgramName, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 
-void clnarg::ReportWrongNumberOfArgumentsError( const lcl::rack__ &LocaleRack )
+void clnarg::ReportWrongNumberOfArgumentsError(
+	const char *ProgramName,
+	const lcl::rack__ &LocaleRack )
 {
 ERRProlog
 	str::string Message;
@@ -254,7 +264,7 @@ ERRBegin
 
 	GetWrongNumberOfArgumentsErrorTranslation( LocaleRack ,Message );
 
-	Report( Message, LocaleRack );
+	Report( Message, ProgramName, LocaleRack );
 ERRErr
 ERREnd
 ERREpilog

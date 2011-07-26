@@ -141,10 +141,10 @@ namespace sck {
 
 	/* NOTA: Les deux déclarations ci-dessous ont été mise en place pour simplifier
 	l'usage des sockets sous Windows. En effet, ce dernier, et lui seul, ne réalise
-	pas automatiquement l'initialisation de la couche réseau. Cette librairie,
+	pas automatiquement l'initialisation de la couche réseau. Cette bibliothèque,
 	cependant, propose une fonction permettant d'assurer un comportement identique
-	sur un maximum de sytème. Cette fonction n'est pas utilisé par cette librairie,
-	mais une utilisation pertinente de cette fonction, notamment par les librairies
+	sur un maximum de sytème. Cette fonction n'est pas utilisée par cette bibliothèque,
+	mais une utilisation pertinente de cette fonction, notamment par les bibliothèques
 	gèrant respectivement les fonctionnalités de serveur et de client, permettront
 	à l'utilisateur de faire abstraction de la contrainte imposée par Windows. */
 
@@ -316,7 +316,7 @@ namespace sck {
 			if ( _Error )
 				ERRd();
 
-			if ( ( Maximum = sck::Write( _Socket, Buffer, Maximum, 0 ) ) == SCK_DISCONNECTED ) {
+			if ( ( Maximum = sck::Write( _Socket, Buffer, Maximum, _TimeOut ) ) == SCK_DISCONNECTED ) {
 				_Socket = SCK_INVALID_SOCKET;
 				_Error = true;
 				Maximum = 0;

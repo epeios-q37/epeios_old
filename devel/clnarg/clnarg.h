@@ -112,7 +112,7 @@ namespace clnarg {
 	#define CLNARG_NO_LONG	NULL
 
 	enum message__ {
-		mTryHelpCommand,
+		mHelpHintMessage,
 		mOptionWording,
 		mOptionsWording,
 		mArgumentWording,
@@ -136,6 +136,14 @@ namespace clnarg {
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation,
 		... );
+
+	inline const str::string_ &GetHelpHintMessageTranslation(
+		const char *ProgramName,
+		const lcl::rack__ &LocaleRack,
+		str::string_ &Translation )
+	{
+		return GetTranslation( mHelpHintMessage, LocaleRack, Translation, ProgramName );
+	}
 
 	inline const str::string_ &GetOptionWordingTranslation( 
 		const lcl::rack__ &LocaleRack,
@@ -226,23 +234,31 @@ namespace clnarg {
 
 	void Report(
 		const str::string_ &Message,
+		const char *ProgramName,
 		const lcl::rack__ &LocaleRack );
 
-	void ReportMissingCommandError( const lcl::rack__ &LocalRack );
+	void ReportMissingCommandError(
+		const char *ProgramName,
+		const lcl::rack__ &LocalRack );
 
 	void ReportUnknownOptionError(
 		const char *Option,
+		const char *ProgramName,
 		const lcl::rack__ &LocaleRack );
 
 	void ReportMissingOptionArgumentError(
 		const char *Option,
+		const char *ProgramName,
 		const lcl::rack__ &LocaleRack );
 
 	void ReportUnexpectedOptionError(
 		const char *Option,
+		const char *ProgramName,
 		const lcl::rack__ &LocaleRack );
 
-	void ReportWrongNumberOfArgumentsError( const lcl::rack__ &LocaleRack );
+	void ReportWrongNumberOfArgumentsError(
+		const char *ProgramName,
+		const lcl::rack__ &LocaleRack );
 
 	//e View mode
 	enum view {

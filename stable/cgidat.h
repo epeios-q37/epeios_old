@@ -70,10 +70,10 @@ extern class ttr_tutor &CGIDATTutor;
 
 namespace cgidat {
 	//t Row.
-	E_TYPEDEF( epeios::row_t__, row__ );
+	E_ROW( row__ );
 
 	//t Content row.
-	E_TYPEDEF( epeios::row_t__, content_row__ );
+	E_ROW( content_row__ );
 
 	//t Content.
 	typedef str::string_	content_;

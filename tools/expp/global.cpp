@@ -246,6 +246,7 @@ ERRBegin
 	if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) )
 		LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), NAME, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
 
+	Context.Init();
 	_Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context );
 
 	Language.Init();
