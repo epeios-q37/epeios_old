@@ -844,7 +844,17 @@ namespace rgstry {
 		registry_ &Registry,
 		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 	{
-		return Parse( Flow, Criterions, Registry, Root, xpp::context___() );
+		row__ Row = NONE;
+	ERRProlog
+		xpp::context___ Context;
+	ERRBegin
+		Context.Init();
+
+		Row = Parse( Flow, Criterions, Registry, Root, Context );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Row;
 	}
 
 	enum status__ {
@@ -912,7 +922,17 @@ namespace rgstry {
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot )
 	{
-		return FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, context___() );
+		status__ Status = s_Undefined;
+	ERRProlog
+		context___ Context;
+	ERRBegin
+		Context.Init();
+
+		Status = FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, Context );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Status;
 	}
 
 	status__ FillRegistry(
@@ -930,7 +950,17 @@ namespace rgstry {
 		rgstry::registry_ &Registry,
 		rgstry::row__ &RegistryRoot )
 	{
-		return FillRegistry( FileName, Criterions, RootPath, Registry, RegistryRoot, context___() );
+		status__ Status = s_Undefined;
+	ERRProlog
+		context___ Context;
+	ERRBegin
+		Context.Init();
+
+		Status = FillRegistry( FileName, Criterions, RootPath, Registry, RegistryRoot, Context );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Status;
 	}
 
 
@@ -1372,7 +1402,7 @@ namespace rgstry {
 			status__ Status = s_Undefined;
 			row__ Root = Roots( Level );
 			
-			Status = FillRegistry( FileName,Criterions,  RootPath, BaseRegistry, Root, Context ); 
+			Status = FillRegistry( FileName, Criterions, RootPath, BaseRegistry, Root, Context ); 
 
 			Roots.Set( Root, Level );
 

@@ -33,6 +33,7 @@ copt =
 #copt += -m32
 lopt = 
 libs = cio clnarg epsmsc err fil flw fnm mmi str tol ttr uym xml xpp lcl rgstry cdgb64
+libs += global registry
 
 ifndef EPEIOS_SRC
 	src=

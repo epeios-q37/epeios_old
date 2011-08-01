@@ -45,7 +45,6 @@ namespace global {
 //	E_AUTO( value )
 
 	enum message__ {
-		mHelpHintMessage,
 		mProcessCommandDescription,
 		mEncryptCommandDescription,
 		mNamespaceOptionDescription,
@@ -56,7 +55,7 @@ namespace global {
 		m_Undefined
 	};
 
-# define GLOBAL__MESSAGE_AMOUNT	7
+# define GLOBAL__MESSAGE_AMOUNT	6
 
 	const char *Label( message__ Message );
 
@@ -83,7 +82,7 @@ namespace global {
 		e_Undefined
 	};
 
-# define GLOBAL__ERROR_AMOUNT	8
+# define GLOBAL__ERROR_AMOUNT	5
 
 	const char *Label( error__ Error );
 

@@ -121,7 +121,14 @@ ERRProlog
 	Socket = SCK_INVALID_SOCKET;
 	timeval TimeOutStruct;
 	struct sockaddr_in SockAddr;
-    int SockAddrSize = sizeof( SockAddr );
+#ifdef SCK__MS
+    int
+#elif defined( SCK__POSIX )
+	socklen_t
+#else
+# error
+#endif
+	SockAddrSize = sizeof( SockAddr );
 ERRBegin
 		Boucler = false;
 		FD_ZERO( &fds );

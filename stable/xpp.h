@@ -770,7 +770,17 @@ namespace xpp {
 		const criterions___ &Criterions,
 		xml::writer_ &Writer )
 	{
-		return Process( IFlow, Criterions, Writer, context___() );
+		status__ Status = s_Undefined;
+	ERRProlog
+		context___ Context;
+	ERRBegin
+		Context.Init();
+
+		Status = Process( IFlow, Criterions, Writer, Context );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Status;
 	}
 
 	inline status__ Process(
@@ -779,7 +789,17 @@ namespace xpp {
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow )
 	{
-		return Process( IFlow, Criterions, Outfit, OFlow, context___() );
+		status__ Status = s_Undefined;
+	ERRProlog
+		context___ Context;
+	ERRBegin
+		Context.Init();
+
+		Status =  Process( IFlow, Criterions, Outfit, OFlow, Context );
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Status;
 	}
 
 

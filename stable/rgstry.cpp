@@ -1232,7 +1232,7 @@ ERRProlog
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-		Context.Status = sUnableToOpenFile;
+		Status = Context.Status = sUnableToOpenFile;
 		Context.FileName = FileName;
 		ERRReturn;
 	}

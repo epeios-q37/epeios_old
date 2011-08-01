@@ -56,6 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "cio.h"
+#include "cpe.h"
 
 using namespace clnarg;
 
@@ -103,11 +104,18 @@ ERRBegin
 
 	LocaleRack.GetTranslation( Label( Message ), TRANSLATION_PREFIX, Intermediate );
 
+#ifdef CPE__C_VC	// Nécessaire avec VC++ 10 ; 'va_start( Args, Translation )' utilise la taille d'un 'str::string_' et non pas d'un 'str::string_ *'.
+	Args = (char *)&Translation + sizeof( &Translation );
+#else
 	va_start( Args, Translation );
+#endif
 
 	switch ( Message ) {
 	case mHelpHintMessage:
-		lcl::ReplaceTag( str::string(* va_arg( Args, const char * ) ), 1, Translation );
+		TagValue.Init();
+		TagValue.Append( va_arg( Args, const char *) );
+
+		lcl::ReplaceTag( Translation, 1, TagValue );
 		break;
 	case mOptionWording:
 	case mOptionsWording:

@@ -9,7 +9,7 @@
 	</Translations>
 	 -->
 	
-	<!-- Message générique -->
+	<!-- Messages génériques -->
 	<Translations message="MSCRMI_ErrorAtLineColumnInFile">
 		<Translation language="fr">Erreur à la ligne %1, colonne %2 dans le fichier '%3'</Translation>
 		<Translation language="en-US">Error at line %1, column %2 in file '%3'</Translation>
@@ -21,8 +21,8 @@
 
 	<!-- Début traductions 'parse_status' -->
 	<Translations message="MSCRMI_ParserError">
-		<Translation language="fr">Erreur durant l'analyse du fichier</Translation>
-		<Translation language="en-US">Error during the parsing of the file</Translation>
+		<Translation language="fr">Erreur durant l'analyse</Translation>
+		<Translation language="en-US">Error during parsing</Translation>
 	</Translations>
 	<Translations message="MSCRMI_UnexpectedTag">
 		<Translation language="fr">Balise inattendue</Translation>
@@ -30,15 +30,15 @@
 	</Translations>
 	<Translations message="MSCRMI_AttributeAlreadyDefined">
 		<Translation language="fr">Attribut déjà défini</Translation>
-		<Translation language="en-US">Already defined attribute</Translation>
+		<Translation language="en-US">Attribute already defined</Translation>
 	</Translations>
 	<Translations message="MSCRMI_UnexpectedAttribute">
 		<Translation language="fr">Attribut inattendu</Translation>
-		<Translation language="en-US">Unexpected Attribute</Translation>
+		<Translation language="en-US">Unexpected attribute</Translation>
 	</Translations>
 	<Translations message="MSCRMI_MissingAttribute">
 		<Translation language="fr">Attribut manquant</Translation>
-		<Translation language="en-US">Unexpected attribute</Translation>
+		<Translation language="en-US">Missing attribute</Translation>
 	</Translations>
 	<Translations message="MSCRMI_BadValue">
 		<Translation language="fr">Valeur incorrecte</Translation>

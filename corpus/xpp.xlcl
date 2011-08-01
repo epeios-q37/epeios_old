@@ -13,24 +13,16 @@
 		<Translation language="en-US">Error in file '%1' at line %2, column %3</Translation>
 	</Translations>
 	<Translations message="XPP_NoTagsAllowedHere">
-		<Translation language="fr">balises non autorisée ici</Translation>
+		<Translation language="fr">balises non autorisées ici</Translation>
 		<Translation language="en-US">no tag allowed here</Translation>
+	</Translations>
+	<Translations message="XPP_UnexpectedValue">
+		<Translation language="fr">valeur inatendue</Translation>
+		<Translation language="en-US">unexpected value</Translation>
 	</Translations>
 	<Translations message="XPP_UnknownDirective">
 		<Translation language="fr">directive inconnue</Translation>
 		<Translation language="en-US">unknown directive</Translation>
-	</Translations>
-	<Translations message="XPP_UnexpectedTag">
-		<Translation language="fr">balise inattendue</Translation>
-		<Translation language="en-US">unexpected tag</Translation>
-	</Translations>
-	<Translations message="XPP_UnknwonTag">
-		<Translation language="fr">balise inconnue</Translation>
-		<Translation language="en-US">unknown tag</Translation>
-	</Translations>
-	<Translations message="XPP_AttributeAlreadyDefined">
-		<Translation language="fr">attribut déjà défini</Translation>
-		<Translation language="en-US">attribute already defined</Translation>
 	</Translations>
 	<Translations message="XPP_UnexpectedAttribute">
 		<Translation language="fr">attribut inattendu</Translation>
@@ -56,13 +48,17 @@
 		<Translation language="fr">attribut 'value' manquant</Translation>
 		<Translation language="en-US">missing 'value' attribute</Translation>
 	</Translations>
-	<Translations message="XPP_UnknownVariable">
-		<Translation language="fr">variable inconnue</Translation>
-		<Translation language="en-US">unknown variable</Translation>
+	<Translations message="XPP_MissingNameAndValueAttributes">
+		<Translation language="fr">attributs 'name' et 'value' manquants</Translation>
+		<Translation language="en-US">missing 'name' and 'value' attributes</Translation>
 	</Translations>
-	<Translations message="XPP_NoValueAllowedHere">
-		<Translation language="fr">valeur non autorisée ici</Translation>
-		<Translation language="en-US">no value allowed here</Translation>
+	<Translations message="XPP_MissingSelectAndValueAttributes">
+		<Translation language="fr">attributs 'select' et 'value' manquants</Translation>
+		<Translation language="en-US">missing 'select' and 'value' attributes</Translation>
+	</Translations>
+	<Translations message="XPP_MustBeEmpty">
+		<Translation language="fr">doit être vide</Translation>
+		<Translation language="en-US">must be empty</Translation>
 	</Translations>
 	<Translations message="XPP_TooManyTags">
 		<Translation language="fr">trop de balises</Translation>
@@ -72,12 +68,24 @@
 		<Translation language="fr">impossible d'ouvrir le fichier</Translation>
 		<Translation language="en-US">unable to open file</Translation>
 	</Translations>
-	<Translations message="XPP_NestingOverflow">
-		<Translation language="fr">dépacement de capacité d'imbrication</Translation>
-		<Translation language="en-US">nesting overflow</Translation>
-	</Translations>
 	<Translations message="XPP_UnknownMacro">
 		<Translation language="fr">macro inconnue</Translation>
 		<Translation language="en-US">unknown macro</Translation>
+	</Translations>
+	<Translations message="XPP_BadAttributeDefinitionSyntax">
+		<Translation language="fr">mauvaise syntaxe pour une définition d'attribut</Translation>
+		<Translation language="en-US">bad attribute definition syntax</Translation>
+	</Translations>
+	<Translations message="XPP_BadCypherKey">
+		<Translation language="fr">mauvaise clef de cryptage</Translation>
+		<Translation language="en-US">bad cypher key</Translation>
+	</Translations>
+	<Translations message="XPP_MissingCypherKey">
+		<Translation language="fr">clef de cryptage manquante</Translation>
+		<Translation language="en-US">missing cypher key</Translation>
+	</Translations>
+	<Translations message="XPP_MissingKeyOrFormatAttribute">
+		<Translation language="fr">attribut 'key' ou 'format' manquant</Translation>
+		<Translation language="en-US">missing 'key' or 'format' attribute</Translation>
 	</Translations>
 </xpp:bloc>

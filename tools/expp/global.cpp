@@ -50,12 +50,11 @@ lcl::rack__ global::LocaleRack( _Locale, _Language() );
 
 const char *global::Label( message__ Message )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 7
+#if	GLOBAL__MESSAGE_AMOUNT != 6
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
 	switch( Message ) {
-	CASE( HelpHintMessage )
 	CASE( ProcessCommandDescription )
 	CASE( EncryptCommandDescription )
 	CASE( NamespaceOptionDescription )
@@ -74,7 +73,7 @@ void global::Display(
 		message__ Message
 		... )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 7
+#if	GLOBAL__MESSAGE_AMOUNT != 6
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
@@ -90,9 +89,6 @@ ERRBegin
 	GetTranslation( Message, Translation );
 
 	switch ( Message ) {
-	case mHelpHintMessage:
-		lcl::ReplaceTag( str::string( NAME ), 1, Translation );
-		break;
 	case mProcessCommandDescription:
 	case mEncryptCommandDescription:
 		break;
@@ -122,14 +118,11 @@ ERREpilog
 
 const char *global::Label( error__ Error )
 {
-#if	GLOBAL__ERROR_AMOUNT != 8
+#if	GLOBAL__ERROR_AMOUNT != 5
 #	error "Amount of 'error__' entries changed ! Update !"
 #endif
 
 	switch( Error ) {
-	CASE( OptionUnknown );
-	CASE( OptionMissingArgument );
-	CASE( WrongArgumentsAmount );
 	CASE( ErrorParsingConfigurationFile );
 	CASE( ErrorParsingLocaleFile )
 	CASE( UnableToOpenFile );
@@ -147,7 +140,7 @@ void global::Report(
 		error__ Error,
 		... )
 {
-#if	GLOBAL__ERROR_AMOUNT != 8
+#if	GLOBAL__ERROR_AMOUNT != 5
 #	error "Amount of 'error__' entries changed ! Update !"
 #endif
 
@@ -165,16 +158,6 @@ ERRBegin
 	GetTranslation( Error, Translation );
 
 	switch ( Error ) {
-	case eOptionUnknown:
-	case eOptionMissingArgument: 
-	{
-		const bso::char__ *Option = va_arg( Args, const bso::char__* );
-
-		lcl::ReplaceTag( str::string( Option ), 1, Translation );
-	}
-	case eWrongArgumentsAmount:
-		AdditionalMessage = mHelpHintMessage;
-		break;
 	case eErrorParsingConfigurationFile:
 	case eErrorParsingLocaleFile:
 	{
@@ -190,7 +173,7 @@ ERRBegin
 	{
 		const char *FileName = va_arg( Args, const char *);
 
-		lcl::ReplaceTag( str::string( FileName ), 1, Translation );
+		lcl::ReplaceTag( Translation, 1, str::string( FileName ) );
 	}
 	case eProcessingError:
 	case eEncryptionError:
@@ -275,9 +258,9 @@ ERRBegin
 			registry::Registry.Init();
 			Context.Init();
 			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
-				Report( eErrorParsingConfigurationFile, &Status, &Context );
+				Report( eErrorParsingConfigurationFile, &Context );
 		} else
-			Report( eErrorParsingConfigurationFile, &Status, &Context );
+			Report( eErrorParsingConfigurationFile,&Context );
 ERRErr
 ERREnd
 ERREpilog

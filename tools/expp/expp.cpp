@@ -128,18 +128,18 @@ ERRBegin
 	PrintSpecialsCommandsDescriptions( Description );
 
 // Commands.
-	cout << NAME << ' ' << Description.GetCommandLabels( cProcess, Buffer );
-	cout << " " << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>";
-	cout << " " << Description.GetOptionLabels( oNoIndent, Buffer );
-	cout << " [<src-file> [<dest-file>]]";
+	cout << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
+	cout << "] [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
+	cout << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
+	cout << "] [<src> [<dst>]]";
 	cout << txf::nl;
 	Translation.Init();
 	cout << txf::pad << global::GetTranslation( global::mProcessCommandDescription, Translation ) << '.' << txf::nl;
 
 	cout << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
-	cout << " " << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>";
-	cout << " " << Description.GetOptionLabels( oNoIndent, Buffer );
-	cout << " [<src-file> [<dest-file>]]";
+	cout << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
+	cout << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
+	cout << "] [<src> [<dst>]]";
 	cout << txf::nl;
 	Translation.Init();
 	cout << txf::pad << global::GetTranslation( global::mEncryptCommandDescription, Translation ) << '.' << txf::nl;
@@ -168,12 +168,12 @@ ERRBegin
 	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
 	cout << " :" << txf::nl;
 
-	cout << txf::pad << "<src-file> :" << txf::nl;
+	cout << txf::pad << "<src> :" << txf::nl;
 	cout << txf::tab;
 	global::Display( mSourceFileArgumentDescription );
 	cout << '.' << txf::nl;
 
-	cout << txf::pad << "<dest-file> :" << txf::nl;
+	cout << txf::pad << "<dst> :" << txf::nl;
 	cout << txf::tab;
 	global::Display( mDestFileArgumentDescription );
 	cout << '.' << txf::nl;
@@ -208,7 +208,7 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
-		global::Report( eOptionUnknown, Unknown );
+		clnarg::ReportUnknownOptionError( Unknown, NAME, LocaleRack );
 
 	P = Options.First();
 
@@ -220,7 +220,7 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 
 			if ( Argument.Amount() == 0 )
-				global::Report( eOptionMissingArgument, Analyzer.Description().GetOptionLabels( oNamespace, Buffer ) );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oNamespace, Buffer ), NAME, LocaleRack );
 
 			Argument.Convert( Parameters.Namespace );
 
@@ -264,7 +264,7 @@ ERRBegin
 	case 0:
 		break;
 	default:
-		Report( eWrongArgumentsAmount );
+		clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 		break;
 	}
 

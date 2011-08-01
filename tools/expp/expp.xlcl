@@ -8,10 +8,6 @@
 			<Translation language="en-US">Epeios XML preprocessor</Translation>
 		</Translations>
 		<xpp:bloc><!-- 'message__' -->
-			<Translations message="HelpHintMessage">
-				<Translation language="fr">Pour plus d'informations, essayez '%1 --help'</Translation>
-				<Translation language="en-US">Try '%1 --help' for more informations</Translation>
-			</Translations>
 			<Translations message="ProcessCommandDescription">
 				<Translation language="fr">Traite fichier XML</Translation>
 				<Translation language="en-US">Process XML file</Translation>
@@ -29,26 +25,18 @@
 				<Translation language="en-US">No indentation</Translation>
 			</Translations>
 			<Translations message="SourceFileArgumentDescription">
-				<Translation language="fr">Nom du fichier source; entrée standard si non spécifié</Translation>
-				<Translation language="en-US">Input file name; standard input if not given</Translation>
+				<Translation language="fr">Nom du fichier source ; entrée standard si absent</Translation>
+				<Translation language="en-US">Input file name; standard input if missing</Translation>
 			</Translations>
 			<Translations message="DestFileArgumentDescription">
-				<Translation language="fr">Nom du fichier destination; sortie standard si non spécifié</Translation>
-				<Translation language="en-US">Output file name; standard output if not given</Translation>
+				<Translation language="fr">Nom du fichier destination ; sortie standard si absent</Translation>
+				<Translation language="en-US">Output file name; standard output if missing</Translation>
 			</Translations>
 		</xpp:bloc>
 		<xpp:bloc><!-- 'error__' -->
-			<Translations message="OptionUnkonwn">
-				<Translation language="fr">Option '%1' inconnue</Translation>
-				<Translation language="en-US">Unkown '%1' option</Translation>
-			</Translations>
-			<Translations message="OptionMissingArgument">
-				<Translation language="fr">L'option '%1' doit avoir un argument</Translation>
-				<Translation language="en-US">Option '%1' must have an argument</Translation>
-			</Translations>
 			<Translations message="ErrorParsingConfigurationFile">
-				<Translation language="fr">Erreur dans le fichier de configuration : %1</Translation>
-				<Translation language="en-US">Error in the configuration fiie : %1</Translation>
+				<Translation language="fr">%1</Translation>
+				<Translation language="en-US">%1</Translation>
 			</Translations>
 			<Translations message="ErrorParsingLocaleFile">
 				<Translation language="fr">Erreur dans le fichier de locale : %1</Translation>

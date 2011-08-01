@@ -5,32 +5,32 @@
     <Translation language="fr">Erreur ligne %1, colonne %2 :</Translation>
     <Translation language="en-US">Error line %1, column %2</Translation>
   </Translations>
-  <Translations message="XML_Unexpected_EOF">
-		<Translation language="fr">fin de fichier inattendue !</Translation>
-		<Translation language="en-US">unexpected end of file !</Translation>
+  <Translations message="XML_UnexpectedEOF">
+		<Translation language="fr">fin de fichier inattendue</Translation>
+		<Translation language="en-US">unexpected end of file</Translation>
 	</Translations>
 	<Translations message="XML_UnknownEntity">
-		<Translation language="fr">entité inconnue !</Translation>
-		<Translation language="en-US">unknown entity !</Translation>
+		<Translation language="fr">entité inconnue</Translation>
+		<Translation language="en-US">unknown entity</Translation>
 	</Translations>
 	<Translations message="XML_MissingEqualSign">
-		<Translation language="fr">'=' manquant !</Translation>
-		<Translation language="en-US">missing '=' !</Translation>
+		<Translation language="fr">'=' manquant</Translation>
+		<Translation language="en-US">missing '='</Translation>
 	</Translations>
 	<Translations message="XML_BadAttributeValueDelimiter">
-		<Translation language="fr">mauvais délimiteur d'attribut !</Translation>
-		<Translation language="en-US">bad attribute delimiter !</Translation>
+		<Translation language="fr">mauvais délimiteur d'attribut</Translation>
+		<Translation language="en-US">bad attribute delimiter</Translation>
 	</Translations>
 	<Translations message="XML_UnexpectedCharacter">
-		<Translation language="fr">caractère inattendu !</Translation>
-		<Translation language="en-US">unexpected character !</Translation>
+		<Translation language="fr">caractère inattendu</Translation>
+		<Translation language="en-US">unexpected character</Translation>
 	</Translations>
 	<Translations message="XML_EmptyTagName">
-		<Translation language="fr">nom de balise vide !</Translation>
-		<Translation language="en-US">empty tag name !</Translation>
+		<Translation language="fr">nom de balise vide</Translation>
+		<Translation language="en-US">empty tag name</Translation>
 	</Translations>
 	<Translations message="XML_MismatchedTag">
-		<Translation language="fr">balise non appariée !</Translation>
-		<Translation language="en-US">mismatched tag !</Translation>
+		<Translation language="fr">balise non appariée</Translation>
+		<Translation language="en-US">mismatched tag</Translation>
 	</Translations>
 </xpp:bloc>

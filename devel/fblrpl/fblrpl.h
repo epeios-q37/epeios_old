@@ -62,7 +62,7 @@ extern class ttr_tutor &FBLRPLTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "lcl.H"
+#include "lcl.h"
 
 #define FBLRPL_PROTOCOL_VERSION	"3"
 

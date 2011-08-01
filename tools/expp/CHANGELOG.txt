@@ -15,7 +15,7 @@ Version 0.3.1 :
 
 - 15/03/2011 :
 	- Adaptation to changes in underlying libraries.
-	- Adding '--encrypt' option.
+	- Adding '--encrypt' command.
 
 - 04/03/2011 :
 	- Adaptation to changes in underlying libraries.

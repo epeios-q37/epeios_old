@@ -1,5 +1,16 @@
 $Id$
 
+01/08/2011 :
+	- RGSTRY :
+		- Correction bogue 'Status' non relayé.
+
+27/07/2011 :
+	- CLNARG :
+		- Correction mauvais passage d'argumens 'ReplaceTag(...)'.
+
+	- RGSTRY, XPP :
+		- Correction erreurs détectées par 'g++'.
+
 26/07/2011 :
 	- SCK :
 		- Correction problème 'timeout'.

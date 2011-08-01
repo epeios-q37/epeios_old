@@ -75,13 +75,15 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
+	CLNARG_BUFFER__ Buffer;
+
 	cout << DESCRIPTION << txf::nl;
 	cout << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 
-	cout << NAME << " [" << Description.GetCommandLabels( cQuantize, "," ) << "] <MIDI-source-file> [XML-target-file]" << txf::nl;
+	cout << NAME << " [" << Description.GetCommandLabels( cQuantize, Buffer, "," ) << "] <MIDI-source-file> [XML-target-file]" << txf::nl;
 	cout << txf::tab << "converts melody in a customized MIDI file to XML." << txf::nl;
 
 	cout << txf::nl;
@@ -164,7 +166,7 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 2:
-		Parameters.XMLFile = Free( P ).Convert( Parameters.MIDIFileBuffer );
+		Parameters.XMLFile = Free( P ).Convert( Parameters.XMLFileBuffer );
 		P = Free.Previous( P );
 	case 1:
 		Parameters.MIDIFile = Free( P ).Convert( Parameters.MIDIFileBuffer );
@@ -256,11 +258,7 @@ static void WriteXML(
 ERRProlog
 	xml::writer Writer;
 ERRBegin
-	xml::WriteXMLHeader( TOFlow );
-
-	TOFlow << txf::nl;
-
-	Writer.Init( TOFlow, xml::oIndent );
+	Writer.Init( TOFlow, xml::oIndent, xml::e_Default );
 
 	mscmld::WriteXML( Melody, Writer );
 ERRErr
@@ -293,15 +291,17 @@ static void Go(
 ERRProlog
 	bso::bool__ Backuped = false;
 	flf::file_oflow___ OFlow;
-	txf::text_oflow__ TOFlow( OFlow );
+	txf::text_oflow__ TOFlow;
 ERRBegin
-	fil::CreateBackupFile( XMLFile, fil::hbfRename );
+	fil::CreateBackupFile( XMLFile, fil::bmRename );
 	Backuped = true;
 
-	if ( OFlow.Init( XMLFile, err::hSkip ) != fil::sSuccess ) {
+	if ( OFlow.Init( XMLFile, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open target file '" << XMLFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
+
+	TOFlow.Init( OFlow );
 
 	Go( IFlow, TOFlow );
 ERRErr
@@ -318,7 +318,7 @@ static void Go(
 ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
-	if ( IFlow.Init( MIDIFile, err::hSkip ) != fil::sSuccess ) {
+	if ( IFlow.Init( MIDIFile, err::hUserDefined ) != fil::sSuccess ) {
 		cerr << "Unable to open file '" << MIDIFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}

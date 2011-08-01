@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Translations message="RGSTRY_UnableToOpenFile_1%0">
+	<Translations message="RGSTRY_UnableToOpenFile">
 		<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
 		<Translation language="en-US">Unable to open file '%1'</Translation>
 	</Translations>
-	<Translations message="RGSTRY_ParseError_4%0">
+	<Translations message="RGSTRY_ParseError">
 		<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : %4)</Translation>
 		<Translation language="en-US">Error in file '%1' (line %2, column %3 : %4)</Translation>
 	</Translations>
