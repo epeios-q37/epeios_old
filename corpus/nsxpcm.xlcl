@@ -3,10 +3,10 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<!--Translations text="NSXPCM_">
 		<Translation language="fr"></Translation>
-		<Translation language="en-US"></Translation>
+		<Translation language="en"></Translation>
 	</Translations-->
 	<Translations text="NSXPCM_XPRJFilterLabel">
 		<Translation language="fr">Fichier XML de projet</Translation>
-		<Translation language="en-US">XML-Based project file</Translation>
+		<Translation language="en">XML-Based project file</Translation>
 	</Translations>
 </xpp:bloc>

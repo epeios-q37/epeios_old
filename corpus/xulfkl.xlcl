@@ -3,10 +3,10 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
   <Translations message="XULFKL_SelectProjectFile">
     <Translation language="fr">Sélectionner un fichier de projet</Translation>
-    <Translation language="en-US">Select a project file</Translation>
+    <Translation language="en">Select a project file</Translation>
   </Translations>
   <Translations message="XULFKL_ExitConfirmation">
     <Translation language="fr">Êtes-vous sûr de vouloir fermer l'application ?</Translation>
-    <Translation language="en-US">Are you sure to exit ?</Translation>
+    <Translation language="en">Are you sure to exit ?</Translation>
   </Translations>
 </xpp:bloc>

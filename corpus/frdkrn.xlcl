@@ -3,38 +3,38 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="FRDKRN_ConfigurationParsingError">
 		<Translation language="fr">Erreur durant l'analyse de la configuration</Translation>
-		<Translation language="en-US">Error during configuration parsing</Translation>
+		<Translation language="en">Error during configuration parsing</Translation>
 	</Translations>
 	<Translations text="FRDKRN_LocaleParsingError">
 		<Translation language="fr">Erreur durant l'analyse des données 'locale'</Translation>
-		<Translation language="en-US">Error during locale handling</Translation>
+		<Translation language="en">Error during locale handling</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoLocaleFileDefined">
 		<Translation language="fr">Pas de fichier de 'locale' défini</Translation>
-		<Translation language="en-US">No locale file defined</Translation>
+		<Translation language="en">No locale file defined</Translation>
 	</Translations>
 	<Translations text="FRDKRN_ProjectParsingError">
 		<Translation language="fr">Erreur durant l'analyse du projet</Translation>
-		<Translation language="en-US">Error during project handling</Translation>
+		<Translation language="en">Error during project handling</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoOrBadBackendDefinition">
 		<Translation language="fr">Pas de ou mauvaise définition du moteur de traitement (backend)</Translation>
-		<Translation language="en-US">No or bad backend definition</Translation>
+		<Translation language="en">No or bad backend definition</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoBackendLocation">
 		<Translation language="fr">Localisation du moteur de traitement (backend) non défini</Translation>
-		<Translation language="en-US">No backend location</Translation>
+		<Translation language="en">No backend location</Translation>
 	</Translations>
 	<Translations text="FRDKRN_UnableToConnect">
 		<Translation language="fr">Impossible de se connecter au moteur de traitement (backend)</Translation>
-		<Translation language="en-US">Unable to connect to the backend</Translation>
+		<Translation language="en">Unable to connect to the backend</Translation>
 	</Translations>
 	<Translations text="FRDKRN_IncompatibleBackend">
 		<Translation language="fr">Moteur de traitement (backend) incompatible</Translation>
-		<Translation language="en-US">Incompatible backend</Translation>
+		<Translation language="en">Incompatible backend</Translation>
 	</Translations>
 	<!--Translations text="FRDKRN_">
 		<Translation language="fr"></Translation>
-		<Translation language="en-US"></Translation>
+		<Translation language="en"></Translation>
 	</Translations-->
 </xpp:bloc>

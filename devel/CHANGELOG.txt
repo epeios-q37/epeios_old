@@ -1,5 +1,9 @@
 $Id$
 
+02/08/2011 :
+	- CLNARG :
+		- Contournement bogue 'va_...' sous VC++ 10.
+
 01/08/2011 :
 	- RGSTRY :
 		- Correction bogue 'Status' non relayé.

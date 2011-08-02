@@ -92,30 +92,22 @@ const char *clnarg::Label( message__ Message )
 const str::string_ &clnarg::GetTranslation(
 	message__ Message,
 	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation,
+	str::string_ *Translation,	// 'str::string_ &' fait bugger 'va_...' avec VC++ 10.
 	... )
 {
 ERRProlog
 	va_list Args;
 	str::string Intermediate;
-	str::string TagValue;
 ERRBegin
 	Intermediate.Init();
 
 	LocaleRack.GetTranslation( Label( Message ), TRANSLATION_PREFIX, Intermediate );
 
-#ifdef CPE__C_VC	// Nécessaire avec VC++ 10 ; 'va_start( Args, Translation )' utilise la taille d'un 'str::string_' et non pas d'un 'str::string_ *'.
-	Args = (char *)&Translation + sizeof( &Translation );
-#else
 	va_start( Args, Translation );
-#endif
 
 	switch ( Message ) {
 	case mHelpHintMessage:
-		TagValue.Init();
-		TagValue.Append( va_arg( Args, const char *) );
-
-		lcl::ReplaceTag( Translation, 1, TagValue );
+		lcl::ReplaceTag( Intermediate, 1, str::string( va_arg( Args, const char *) ) );
 		break;
 	case mOptionWording:
 	case mOptionsWording:
@@ -130,10 +122,7 @@ ERRBegin
 	case mUnknownOptionError:
 	case mMissingOptionArgumentError:
 	case mUnexpectedOptionError:
-		TagValue.Init();
-		TagValue.Append( va_arg( Args, const char *) );
-
-		lcl::ReplaceTag( Intermediate, 1, TagValue );
+		lcl::ReplaceTag( Intermediate, 1, str::string( va_arg( Args, const char *) ) );
 		break;
 	default:
 		ERRu();
@@ -142,11 +131,11 @@ ERRBegin
 
 	va_end( Args );
 
-	Translation.Append( Intermediate );
+	Translation->Append( Intermediate );
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
+	return *Translation;
 }
 
 static void Report_(

@@ -134,7 +134,7 @@ namespace clnarg {
 	const str::string_ &GetTranslation(
 		message__ Message,
 		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation,
+		str::string_ *Translation,
 		... );
 
 	inline const str::string_ &GetHelpHintMessageTranslation(
@@ -142,63 +142,63 @@ namespace clnarg {
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mHelpHintMessage, LocaleRack, Translation, ProgramName );
+		return GetTranslation( mHelpHintMessage, LocaleRack, &Translation, ProgramName );
 	}
 
 	inline const str::string_ &GetOptionWordingTranslation( 
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mOptionWording, LocaleRack, Translation );
+		return GetTranslation( mOptionWording, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetOptionsWordingTranslation( 
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mOptionsWording, LocaleRack, Translation );
+		return GetTranslation( mOptionsWording, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetArgumentWordingTranslation( 
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mArgumentWording, LocaleRack, Translation );
+		return GetTranslation( mArgumentWording, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetArgumentsWordingTranslation( 
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mArgumentsWording, LocaleRack, Translation );
+		return GetTranslation( mArgumentsWording, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetVersionCommandDescription(
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mVersionCommandDescription, LocaleRack, Translation );
+		return GetTranslation( mVersionCommandDescription, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetLicenseCommandDescription(
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mLicenseCommandDescription, LocaleRack, Translation );
+		return GetTranslation( mLicenseCommandDescription, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetHelpCommandDescription(
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mHelpCommandDescription, LocaleRack, Translation );
+		return GetTranslation( mHelpCommandDescription, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetMissingCommandErrorTranslation(
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingCommandError, LocaleRack, Translation );
+		return GetTranslation( mMissingCommandError, LocaleRack, &Translation );
 	}
 
 	inline const str::string_ &GetUnknownOptionErrorTranslation(
@@ -206,7 +206,7 @@ namespace clnarg {
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnknownOptionError, LocaleRack, Translation, Option );
+		return GetTranslation( mUnknownOptionError, LocaleRack, &Translation, Option );
 	}
 
 	inline const str::string_ &GetMissingOptionArgumentErrorTranslation(
@@ -214,7 +214,7 @@ namespace clnarg {
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mMissingOptionArgumentError, LocaleRack, Translation, Option );
+		return GetTranslation( mMissingOptionArgumentError, LocaleRack, &Translation, Option );
 	}
 
 	inline const str::string_ &GetUnexpectedOptionErrorTranslation(
@@ -222,14 +222,14 @@ namespace clnarg {
 		const char *Option,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mUnexpectedOptionError, LocaleRack, Translation, Option );
+		return GetTranslation( mUnexpectedOptionError, LocaleRack, &Translation, Option );
 	}
 
 	inline const str::string_ &GetWrongNumberOfArgumentsErrorTranslation(
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return GetTranslation( mWrongNumberOfArgumentsError, LocaleRack, Translation );
+		return GetTranslation( mWrongNumberOfArgumentsError, LocaleRack, &Translation );
 	}
 
 	void Report(
