@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
-<Locales xmlns="http://zeusw.org/epeios/lcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
+<Locales xmlns="http://zeusw.org/epeios/xlcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Locale target="expp">
 		<xpp:expand href="epeios.xlcl"/>
 		<Translations message="ProgramDescription">
