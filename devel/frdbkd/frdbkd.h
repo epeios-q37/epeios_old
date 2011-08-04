@@ -172,7 +172,7 @@ namespace frdbkd {
 		}
 	};
 
-	template <typename object> E_TTYPEDEF__( object, backend_object___ );
+	template <typename object> E_TMIMIC__( object, backend_object___ );
 }
 
 /*$END$*/

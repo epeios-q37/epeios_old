@@ -55,12 +55,12 @@ const char *global::Label( message__ Message )
 #endif
 
 	switch( Message ) {
-	CASE( ProcessCommandDescription )
-	CASE( EncryptCommandDescription )
-	CASE( NamespaceOptionDescription )
-	CASE( NoIndentOptionDescription )
-	CASE( SourceFileArgumentDescription )
-	CASE( DestFileArgumentDescription )
+	CASE( ProcessCommandDescription );
+	CASE( EncryptCommandDescription );
+	CASE( NamespaceOptionDescription );
+	CASE( NoIndentOptionDescription );
+	CASE( SourceFileArgumentDescription );
+	CASE( DestFileArgumentDescription );
 	default:
 		ERRc();
 		break;
@@ -124,7 +124,7 @@ const char *global::Label( error__ Error )
 
 	switch( Error ) {
 	CASE( ErrorParsingConfigurationFile );
-	CASE( ErrorParsingLocaleFile )
+	CASE( ErrorParsingLocaleFile );
 	CASE( UnableToOpenFile );
 	CASE( ProcessingError );
 	CASE( EncryptionError );
@@ -149,7 +149,6 @@ ERRProlog
 	str::string EmbededMessage;
 	va_list Args;
 	str::string TagValue;
-	message__ AdditionalMessage = m_Undefined;
 ERRBegin
 	va_start( Args, Error );
 
@@ -193,15 +192,18 @@ ERRBegin
 
 	cerr << Translation << " !" << txf::nl << txf::commit;
 
-	if ( AdditionalMessage != m_Undefined )
-		Display( AdditionalMessage );
-
 	ERRExit( EXIT_FAILURE );
 ERRErr
 ERREnd
 ERREpilog
 
 }
+
+/*
+	Nothing should be modified below this line
+	(standard behaviour of loading configuration
+	and locales files)
+*/	
 
 static inline const str::string_ &GetLanguage_( str::string_ &Language )
 {
@@ -260,7 +262,7 @@ ERRBegin
 			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
 				Report( eErrorParsingConfigurationFile, &Context );
 		} else
-			Report( eErrorParsingConfigurationFile,&Context );
+			Report( eErrorParsingConfigurationFile, &Context );
 ERRErr
 ERREnd
 ERREpilog

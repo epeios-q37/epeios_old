@@ -188,6 +188,7 @@ ERRProlog
 	str::string Translation;
 	va_list Args;
 	str::string TagValue;
+	xpp::context___ Context;
 ERRBegin
 	va_start( Args, Error );
 
@@ -225,8 +226,12 @@ ERRBegin
 		
 		if ( Status == mscrmi::psParserError )
 			xpp::GetTranslation( Flow, LocaleRack, Translation );
-		else
-			mscrmi::GetTranslation( Status, LocaleRack, Flow.Coord(), Flow.LocalizedFileName(), Translation );
+		else {
+			Context.Init();
+			Flow.GetContext( Context );
+
+			mscrmi::GetTranslation( Status, LocaleRack, Context.Coord, Context.FileName, Translation );
+		}
 		break;
 	}
 	case eUnableToIdentifyDevice:
@@ -245,7 +250,7 @@ ERRBegin
 	{
 		const rgstry::status__ &Status = *va_arg(Args, const rgstry::status__ *);
 
-		rgstry::GetTranslation( Status,*va_arg( Args, const rgstry::error_details *), LocaleRack, Translation );
+		rgstry::GetTranslation( *va_arg( Args, const rgstry::context___ *), LocaleRack, Translation );
 		break;
 	}
 	case eTransmissionError:
@@ -278,6 +283,150 @@ ERREpilog
 
 }
 
+
+#if 1
+static inline const str::string_ &GetLanguage_( str::string_ &Language )
+{
+	if ( !registry::GetLanguage( Language ) )
+		Language = DEFAULT_LANGUAGE;
+
+	return Language;
+}
+
+// Try to find a locale file name, to avoid cryptic message until we have loadthe correct one.
+static void LoadTemporaryLocale_( void )
+{
+ERRProlog
+	rgstry::status__ Status = rgstry::s_Undefined;
+	rgstry::context___ Context;
+	str::string LocaleFileName;
+	DIR_BUFFER___ DIRBuffer;
+	FNM_BUFFER___ FNMBuffer;
+	STR_BUFFER___ STRBuffer;
+	STR_BUFFER___ PathBuffer;
+	str::string Language;
+ERRBegin
+	LocaleFileName.Init( NAME LCL_DEFAULT_FILENAME_SUFFIX );
+
+	if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) )
+		LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), NAME, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
+
+	Context.Init();
+	_Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context );
+
+	Language.Init();
+
+	GetLanguage_( Language );
+
+	LocaleRack.Init( _Locale, Language.Convert( _Language ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void LoadRegistry_( void )
+{
+ERRProlog
+	rgstry::status__ Status = rgstry::s_Undefined;
+	rgstry::context___ Context;
+	DIR_BUFFER___ DIRBuffer;
+	FNM_BUFFER___ FNMBuffer;
+ERRBegin
+	registry::Registry.Init();
+	Context.Init();
+
+	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
+		if ( Status == rgstry::sUnableToOpenFile ) {
+			registry::Registry.Init();
+			Context.Init();
+			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
+				Report( eErrorParsingConfigurationFile, &Context );
+		} else
+			Report( eErrorParsingConfigurationFile,&Context );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+static void LoadLocale_( void )
+{
+ERRProlog
+	rgstry::status__ Status = rgstry::s_Undefined;
+	rgstry::context___ Context;
+	str::string LocaleFileName;
+	FNM_BUFFER___ FNMBuffer;
+	STR_BUFFER___ STRBuffer;
+	STR_BUFFER___ PathBuffer;
+	str::string Language;
+ERRBegin
+	LocaleFileName.Init();
+
+	if ( !registry::GetLocaleFileName( LocaleFileName ) ) {
+		LocaleFileName.Init( NAME LCL_DEFAULT_FILENAME_SUFFIX );
+
+		if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) )
+			LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), NAME, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
+	}
+
+	Context.Init();
+
+	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context ) ) != rgstry::sOK )
+		Report( eErrorParsingLocaleFile, &Status, &Context );
+
+	Language.Init();
+
+	GetLanguage_( Language );
+
+	LocaleRack.Init( _Locale, Language.Convert( _Language ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void global::Initialize( void )
+{
+	cerr.Init();
+	cout.Init();
+	cin.Init();
+
+	registry::Registry.Init();
+
+	_Locale.Init();
+	_Language.Init();
+
+	LoadTemporaryLocale_();
+
+	LoadRegistry_();
+
+	LoadLocale_();
+}
+
+void global::Release( void )
+{
+	cerr.reset();
+	cout.reset();
+	cin.reset();
+}
+
+void global::CreateBackupFile( const char *FileName )
+{
+ERRProlog
+	fil::backup_status__ Status = fil::bs_Undefined;
+	str::string Translation;
+ERRBegin
+	if ( ( Status = fil::CreateBackupFile( FileName, fil::bmDuplicate, err::hUserDefined ) )!= fil::bsOK ) {
+		Translation.Init();
+		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
+		cerr << Translation << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+#else	// Old
 static inline const str::string_ &GetLanguage_( str::string_ &Language )
 {
 	if ( !registry::GetLanguage( Language ) )
@@ -291,7 +440,7 @@ void common::GlobalInitialization( void )
 {
 ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 	str::string LocaleFileName;
 	DIR_BUFFER___ DIRBuffer;
 	FNM_BUFFER___ FNMBuffer;
@@ -303,19 +452,19 @@ ERRBegin
 	cout.Init();
 
 	registry::Registry.Init();
-	ErrorDetails.Init();
+	Context.Init();
 
 	_Locale.Init();
 	_Language.Init();
 
 	LocaleRack.Init( _Locale, _Language );	// Even if no 'locale' loaded, to display raw messages (not translated). Language parameter doesn't matter.
 
-	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
+	if ( ( Status = registry::FillRegistry( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
 		if ( Status == rgstry::sUnableToOpenFile ) {
 			registry::Registry.Init();
-			ErrorDetails.Init();
-			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), ErrorDetails ) ) != rgstry::sOK )
-				Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
+			Context.Init();
+			if ( ( Status = registry::FillRegistry( fnm::BuildFileName( "", NAME, ".xcfg", FNMBuffer ), Context ) ) != rgstry::sOK )
+				Report( eErrorParsingConfigurationFile, &Status, &Context );
 		} else
 			Report( eErrorParsingConfigurationFile, &Status, &ErrorDetails );
 
@@ -345,7 +494,7 @@ void common::GlobalRelease( void )
 	cerr.reset();
 	cout.reset();
 }
-
+#endif
 
 
 mscrmi::device_id__ common::GetDeviceID( const char *RawDeviceID )

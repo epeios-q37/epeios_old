@@ -174,33 +174,33 @@ namespace frdrgy {
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			rgstry::error_details_ &ErrorDetails )
+			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Configuration, FileName, Criterions, RootPath, ErrorDetails );
+			return _registry_::Fill( S_.Configuration, FileName, Criterions, RootPath, Context );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			rgstry::error_details_ &ErrorDetails )
+			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, ErrorDetails );
+			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, Context );
 		}
 		rgstry::status__ FillUser(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			rgstry::error_details_ &ErrorDetails )
+			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.User, FileName, Criterions, RootPath, ErrorDetails );
+			return _registry_::Fill( S_.User, FileName, Criterions, RootPath, Context );
 		}
 		rgstry::status__ FillUser(
 			flw::iflow__ &Flow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
-			rgstry::error_details_ &ErrorDetails )
+			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.User, Flow, Criterions, RootPath, ErrorDetails );
+			return _registry_::Fill( S_.User, Flow, Criterions, RootPath, Context );
 		}
 		time_t ConfigurationTimeStamp( void ) const
 		{

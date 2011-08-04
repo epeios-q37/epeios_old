@@ -1,5 +1,9 @@
 $Id$
 
+04/08/2011 :
+	- Général :
+		- Adaptation aux bibliothèques sous-jacentes.
+
 02/08/2011 :
 	- CLNARG :
 		- Contournement bogue 'va_...' sous VC++ 10.

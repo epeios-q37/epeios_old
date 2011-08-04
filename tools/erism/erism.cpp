@@ -232,7 +232,7 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL )
-		clnarg::ReportUnexpectedOptionError( Unknow, LocaleRack );
+		clnarg::ReportUnexpectedOptionError( Unknow, NAME, LocaleRack );
 
 	P = Options.First();
 
@@ -243,13 +243,13 @@ ERRBegin
 		case oDIn:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 )
-				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDIn, Buffer ), LocaleRack );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDIn, Buffer ), NAME, LocaleRack );
 			Argument.Convert( Parameters.DIn );
 			break;
 		case oDOut:
 			Analyzer.GetArgument( Option, Argument );
 			if ( Argument.Amount() == 0 )
-				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDOut, Buffer ), LocaleRack );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oDOut, Buffer ), NAME, LocaleRack );
 			Argument.Convert( Parameters.DOut );
 			break;
 //		case o:
@@ -342,7 +342,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 		break;
@@ -351,7 +351,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 		break;
@@ -363,7 +363,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 		break;
@@ -373,7 +373,7 @@ ERRBegin
 			Free( P ).Convert( Parameters.SettingsFileName );
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 		break;
@@ -385,7 +385,7 @@ ERRBegin
 			Free( P ).Convert( Parameters.AddressRange );
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 	case cDetail:
@@ -393,7 +393,7 @@ ERRBegin
 		case 0:
 			break;
 		default:
-			clnarg::ReportWrongNumberOfArgumentsError( LocaleRack );
+			clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
 			break;
 		}
 		break;
@@ -458,7 +458,7 @@ ERRBegin
 		break;
 //	case c:
 	case CLNARG_NONE:
-		clnarg::ReportMissingCommandError( LocaleRack );
+		clnarg::ReportMissingCommandError( NAME, LocaleRack );
 		break;
 	default:
 		ERRc();

@@ -104,18 +104,19 @@ namespace xulfkl {
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const char *Language,
-			const char *CypherKey )
+			const xpp::criterions___ &Criterions )
 		{
-			return _kernel___::Init( ConfigurationFileName, TargetName, Language, CypherKey );
+			return _kernel___::Init( ConfigurationFileName, TargetName, Language, Criterions );
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			const frdkrn::compatibility_informations__ &CompatibilityInformations,
-			frdfbc::data___ &LibraryData )
+			frdfbc::data___ &LibraryData,
+			frdkrn::error_set___ &ErrorSet )
 		{
-			return _kernel___::LoadProject( FileName, TargetName, CypherKey, CompatibilityInformations, LibraryData );
+			return _kernel___::LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibraryData, ErrorSet );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

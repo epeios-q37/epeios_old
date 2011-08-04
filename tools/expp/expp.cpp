@@ -124,10 +124,9 @@ ERRProlog
 	STR_BUFFER___ TBuffer;
 	CLNARG_BUFFER__ Buffer;
 ERRBegin
-
 	PrintSpecialsCommandsDescriptions( Description );
 
-// Commands.
+	// Commands.
 	cout << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
 	cout << "] [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
 	cout << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
@@ -300,15 +299,15 @@ ERRBegin
 	case cVersion:
 		PrintHeader();
 		TTR.Advertise( cout );
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 		break;
 	case cHelp:
 		PrintUsage( Description );
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 		break;
 	case cLicense:
 		epsmsc::PrintLicense( cout );
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 		break;
 	case cProcess:
 	case cEncrypt:

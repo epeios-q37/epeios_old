@@ -158,7 +158,7 @@ static str::string_ &AppendTargetAttributePathItem_(
 report__ frdkrn::kernel___::_LoadConfiguration(
 	const str::string_ &FileName,
 	const char *TargetName,
-	const char *CypherKey,
+	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
@@ -169,10 +169,17 @@ ERRBegin
 	Path.Init( "Configurations/Configuration" );
 	AppendTargetAttributePathItem_( TargetName, Path );
 
+#if 1
+	if ( _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
+		Report = rConfigurationParsingError;
+		ERRReturn;
+	}
+#else	// Ancien.
 	if ( ( ErrorSet.Status = _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), CypherKey, ErrorSet.Details ) ) != rgstry::sOK ) {
 		Report = rConfigurationParsingError;
 		ERRReturn;
 	}
+#endif
 
 	Report = rOK;
 ERRErr
@@ -194,7 +201,7 @@ ERRBegin
 	Path.Init( "Locales/Locale" );
 	AppendTargetAttributePathItem_( TargetName, Path );
 
-	if ( ( ErrorSet.Status = _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Details ) ) != rgstry::sOK ) {
+	if ( _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
 		Report = rLocaleParsingError;
 		ERRReturn;
 	}
@@ -230,7 +237,7 @@ status__ frdkrn::kernel___::Init(
 	const str::string_ &ConfigurationFileName,
 	const char *TargetName,
 	const char *Language,
-	const char *CypherKey )
+	const xpp::criterions___ &Criterions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -239,7 +246,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	switch( Report = Init( ConfigurationFileName, TargetName, Language, CypherKey, ErrorSet ) ) {
+	switch( Report = Init( ConfigurationFileName, TargetName, Language, Criterions, ErrorSet ) ) {
 	case rOK:
 		Status = sOK;
 		break;
@@ -364,7 +371,7 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	const char *CypherKey,
+	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations,
 	frdfbc::data___ &LibraryData )
 {
@@ -375,7 +382,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, CypherKey, CompatibilityInformations, LibraryData, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibraryData, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
@@ -396,14 +403,14 @@ ERREpilog
 
 void frdkrn::kernel___::FillUserRegistry(
 	flw::iflow__ &User,
-	const char *CypherKey )
+	const xpp::criterions___ &Criterions )
 {
 ERRProlog
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 ERRBegin
-	ErrorDetails.Init();	
+	Context.Init();	
 
-	_Registry.FillUser( User, NULL, CypherKey, ErrorDetails );
+	_Registry.FillUser( User, Criterions, NULL, Context );
 
 ERRErr
 ERREnd
@@ -413,7 +420,7 @@ ERREpilog
 report__ frdkrn::kernel___::_FillProjectRegistry(
 	const str::string_ &FileName,
 	const char *Target,
-	const char *CypherKey,
+	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
@@ -425,7 +432,7 @@ ERRBegin
 	Path.Append( Target );
 	Path.Append( "\"]" );
 
-	if ( ( ErrorSet.Status = _Registry.FillProject( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), CypherKey, ErrorSet.Details ) ) != rgstry::sOK ) {
+	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
 		Report = rProjectParsingError;
 		ERRReturn;
 	}

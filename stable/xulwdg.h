@@ -131,7 +131,7 @@ namespace xulwdg {
 	};
 
 #	define XULWDG__WN( widget, name, events )\
-	template <typename target> E_TTYPEDEF__( E_COVER2( _generic__<target, nsxpcm::widget##__> ), name##__ );\
+	template <typename target> E_TMIMIC__( E_COVER2( _generic__<target, nsxpcm::widget##__> ), name##__ );\
 	template <typename target> inline void Register(\
 		target &Target,\
 		name##__<target> &Widget,\

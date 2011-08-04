@@ -128,13 +128,11 @@ namespace frdkrn {
 	struct error_set___
 	{
 	public:
-		rgstry::status__ Status;
-		rgstry::error_details Details;
+		rgstry::context___ Context;
 		incompatibility_informations IncompatibilityInformations;	// Quand survient un 'report__::rIncompatibleBackend'.
 		void reset( bso::bool__ P = true )
 		{
-			Status = rgstry::s_Undefined;
-			Details.reset( P );
+			Context.reset( P );
 			IncompatibilityInformations.reset( P );
 		}
 		error_set___( void )
@@ -147,9 +145,7 @@ namespace frdkrn {
 		}
 		void Init( void )
 		{
-			Status = rgstry::s_Undefined;
-
-			Details.Init();
+			Context.Init();
 			IncompatibilityInformations.Init();
 		}
 	};
@@ -191,7 +187,7 @@ namespace frdkrn {
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		return rgstry::GetTranslation( ErrorSet.Status, ErrorSet.Details, LocaleRack, Translation );
+		return rgstry::GetTranslation( ErrorSet.Context, LocaleRack, Translation );
 	}
 
 	const str::string_ &GetTranslation(
@@ -236,7 +232,7 @@ namespace frdkrn {
 		report__ _LoadConfiguration(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
 		report__ _LoadLocale(
 			const str::string_ &FileName,
@@ -248,12 +244,12 @@ namespace frdkrn {
 		report__ _LoadConfigurationAndLocale(
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, CypherKey, ErrorSet ) ) == rOK )
+			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, Criterions, ErrorSet ) ) == rOK )
 				Report = _LoadLocale( TargetName, ErrorSet );
 
 			return Report;
@@ -261,7 +257,7 @@ namespace frdkrn {
 		report__ _FillProjectRegistry(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
@@ -304,7 +300,7 @@ namespace frdkrn {
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const char *Language,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet )
 		{
 			_Registry.Init();
@@ -314,7 +310,7 @@ namespace frdkrn {
 			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
 			_ProjectOriginalTimeStamp = 0;
 
-			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, CypherKey, ErrorSet );
+			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, Criterions, ErrorSet );
 
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 		}
@@ -322,7 +318,7 @@ namespace frdkrn {
 			const str::string_ &ConfigurationFileName,
 			const char *TargetName,
 			const char *Language,
-			const char *CypherKey );
+			const xpp::criterions___ &Criterions );
 		const frdrgy::registry_ &Registry( void ) const
 		{
 			return _Registry;
@@ -330,14 +326,14 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const char *CypherKey,
+			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, CypherKey, ErrorSet ) ) == rOK )
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == rOK )
 				Report = _Connect( CompatibilityInformations, LibraryData, ErrorSet.IncompatibilityInformations );
 
 			if ( Report == rOK )
@@ -348,7 +344,7 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const char *CypkerKey,
+			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData );
 		bso::bool__ IsProjectInProgress( void ) const
@@ -383,7 +379,7 @@ namespace frdkrn {
 		}
 		void FillUserRegistry(
 			flw::iflow__ &User,
-			const char *CypherKey );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
+			const xpp::criterions___ &Criterions );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
 		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
 		{
 			_Registry.DumpConfiguration( OFlow );
