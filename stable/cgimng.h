@@ -309,9 +309,7 @@ namespace cgimng {
 			epeios::size__ Size,
 			aem::mode__ Mode )
 		{}
-		virtual void *CSDPreProcess(
-			flw::ioflow__ &Flow,
-			const char *Origin )
+		virtual void *CSDPreProcess( const char *Origin )
 		{
 			return NULL;
 		}

@@ -1,5 +1,11 @@
 $Id$
 
+08/08/2011 :
+	- Général :
+		- Adaptation aux bibliothèques sous-jacentes.
+	- EPSMSC :
+		- Mise à jour texte licence.
+
 04/08/2011 :
 	- Général :
 		- Adaptation aux bibliothèques sous-jacentes.

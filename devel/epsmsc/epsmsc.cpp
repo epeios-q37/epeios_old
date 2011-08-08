@@ -61,22 +61,19 @@ using namespace txf;
 void epsmsc::PrintLicense( txf::text_oflow__ &Flow )
 {
 	Flow 
-	<< "        This program is free software; you can redistribute it and/or" << nl
-	<< "        modify it under the terms of the GNU General Public License" << nl
-	<< "        as published by the Free Software Foundation; either version 3" << nl
-	<< "        of the License, or (at your option) any later version." << nl
+	<< "	This program is free software: you can redistribute it and/or modify" << nl
+	<< "    it under the terms of the GNU General Public License as published by" << nl
+	<< "    the Free Software Foundation, either version 3 of the License, or" << nl
+	<< "    (at your option) any later version." << nl
 	<< nl
-	<< "        This program is distributed in the hope that it will be useful," << nl
-	<< "        but WITHOUT ANY WARRANTY; without even the implied warranty of" << nl
-	<< "        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the" << nl
-	<< "        GNU General Public License for more details." << nl
+	<< "    This program is distributed in the hope that it will be useful," << nl
+	<< "    but WITHOUT ANY WARRANTY; without even the implied warranty of" << nl
+	<< "    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << nl
+	<< "    GNU General Public License for more details." << nl
 	<< nl
-	<< "        You should have received a copy of the GNU General Public License" << nl
-	<< "        along with this program; if not, go to http://www.fsf.org/" << nl
-	<< "        or write to the:" << nl
-	<< nl
-    << "                        Free Software Foundation, Inc.," << nl
-	<< "            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA." << nl;
+	<< "    You should have received a copy of the GNU General Public License" << nl
+	<< "    along with this program.  If not, see <http://www.gnu.org/licenses/>." << nl;
+
 }
 
 
