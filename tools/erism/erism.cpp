@@ -620,12 +620,12 @@ int main(
 {
 ERRFProlog
 ERRFBegin
-	GlobalInitialization();
+	Initialize();
 
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
-	GlobalRelease();
+	Release();
 ERRFEpilog
 	return ERRExitValue;
 }

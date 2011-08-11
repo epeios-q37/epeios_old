@@ -8,14 +8,13 @@ $Id$
 
 The windows binary is provided with this package ('expp.exe').
 
-Under GNU/Linux, cygwin (and theoritically under Mac), unpack the archive, then launch 'make'.
+For GNU/Linux, cygwin (and theoritically Mac OS), unpack the archive, then launch 'make'.
 
 'expp' without arguments waits for data on the standard input.
 
 Launch 'expp --help' to obtain a help page.
 
-See 'http://zeusw.org/intl/expp/' for more details.
-
+See enclosed PDF files or go to 'http://zeusw.org/intl/expp/' for more details.
 
 
 The 'linux.xcf', 'windows.xcf' et 'common.xcf' are example files.

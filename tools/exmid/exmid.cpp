@@ -39,7 +39,7 @@
 #define VERSION			"0.1.2"
 #define COPYRIGHT_YEARS	"2007; 2009"
 #define DESCRIPTION		"MIDI to XML and XML to MIDI converter."
-#define INFO			EPSMSC_EPEIOS_AFFILIATION
+#define INFO			EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -557,6 +557,8 @@ ERRFBegin
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
+	cio::cerr.reset();
+	cio::cout.reset();
 ERRFEpilog
 	return ERRExitValue;
 }

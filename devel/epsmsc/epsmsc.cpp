@@ -61,7 +61,7 @@ using namespace txf;
 void epsmsc::PrintLicense( txf::text_oflow__ &Flow )
 {
 	Flow 
-	<< "	This program is free software: you can redistribute it and/or modify" << nl
+	<< "    This program is free software: you can redistribute it and/or modify" << nl
 	<< "    it under the terms of the GNU General Public License as published by" << nl
 	<< "    the Free Software Foundation, either version 3 of the License, or" << nl
 	<< "    (at your option) any later version." << nl

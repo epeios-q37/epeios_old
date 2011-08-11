@@ -102,6 +102,7 @@ static const char *MetaEventLabels_[mta_amount] = {
 	"Marker",
 	"CuePoint",
 	"ChannelPrefix",
+	"PortPrefix",
 	"EndOfTrack",
 	"TempoSet",
 	"SMPTE",
@@ -322,11 +323,20 @@ static inline meta_event__ DetermineMetaEvent_( flw::datum__ Datum )
 	case 0x7:
 		return mtaCuePoint;
 		break;
+	case 0x20:
+		return mtaChannelPrefix;
+		break;
+	case 0x21:
+		return mtaPortPrefix;
+		break;
 	case 0x2f:
 		return mtaEndOfTrack;
 		break;
 	case 0x51:
 		return mtaTempoSet;
+		break;
+	case 0x54:
+		return mtaSMPTE;
 		break;
 	case 0x58:
 		return mtaTimeSignature;
@@ -461,8 +471,11 @@ void mscmdm::PrintMetaEvent(
 		if ( Data.Amount() != 0 )
 			ERRc();
 		break;
+	case mtaChannelPrefix:
+	case mtaPortPrefix:
 	case mtaSequenceNumber:
 	case mtaTempoSet:
+	case mtaSMPTE:
 	case mtaTimeSignature:
 	case mtaKeySignature:
 	{

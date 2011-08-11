@@ -161,6 +161,8 @@ namespace mscmdm {
 		mtaCuePoint,
 		//i Channel prefix meta-event.
 		mtaChannelPrefix,
+		//i Port prefix meta-event.
+		mtaPortPrefix,
 		//i End of track meta-event.
 		mtaEndOfTrack,
 		//i Tempo set meta-event.
@@ -467,9 +469,12 @@ namespace mscmdm {
 		case mtaCuePoint:
 			return true;
 			break;
+		case mtaChannelPrefix:
+		case mtaPortPrefix:
 		case mtaEndOfTrack:
 		case mtaSequenceNumber:
 		case mtaTempoSet:
+		case mtaSMPTE:
 		case mtaTimeSignature:
 		case mtaKeySignature:
 		case mta_Unknown:

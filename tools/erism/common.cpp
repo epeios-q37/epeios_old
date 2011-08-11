@@ -38,6 +38,7 @@ using namespace common;
 
 cio::cerr___ common::cerr;
 cio::cout___ common::cout;
+cio::cin___ common::cin;
 
 static lcl::locale _Locale;
 STR_BUFFER___ _Language;
@@ -385,7 +386,7 @@ ERREpilog
 }
 
 
-void global::Initialize( void )
+void common::Initialize( void )
 {
 	cerr.Init();
 	cout.Init();
@@ -403,29 +404,13 @@ void global::Initialize( void )
 	LoadLocale_();
 }
 
-void global::Release( void )
+void common::Release( void )
 {
 	cerr.reset();
 	cout.reset();
 	cin.reset();
 }
 
-void global::CreateBackupFile( const char *FileName )
-{
-ERRProlog
-	fil::backup_status__ Status = fil::bs_Undefined;
-	str::string Translation;
-ERRBegin
-	if ( ( Status = fil::CreateBackupFile( FileName, fil::bmDuplicate, err::hUserDefined ) )!= fil::bsOK ) {
-		Translation.Init();
-		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
-		cerr << Translation << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
 #else	// Old
 static inline const str::string_ &GetLanguage_( str::string_ &Language )
 {

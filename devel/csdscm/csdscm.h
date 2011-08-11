@@ -81,6 +81,18 @@ namespace csdscm {
 		virtual void CSDExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
 												// (facilite la mise en oeuvre en tant que service Windows).
 	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		user_functions__( void )
+		{
+			reset( false );
+		}
+		~user_functions__( void )
+		{
+			reset();
+		}
 		void *PreProcess( const char *Origin )
 		{
 			return CSDPreProcess( Origin );
@@ -101,7 +113,7 @@ namespace csdscm {
 		}
 		void Init( void )
 		{
-			// A des fins de standardisation.
+			// Standadisation.
 		}
 	};
 

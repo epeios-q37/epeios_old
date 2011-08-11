@@ -184,10 +184,10 @@ ERREpilog
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
+	cout << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
 	cout << COPYRIGHT << txf::nl;
 	cout << AFFILIATION << txf::nl;
+	cout << txf::pad << "Build : "__DATE__ " " __TIME__ << txf::nl;
 //	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
@@ -298,7 +298,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise( cout );
+//		TTR.Advertise( cout );
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cHelp:

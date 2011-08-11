@@ -1,5 +1,15 @@
 $Id$
 
+10/08/2011 :
+	- MSCMDM :
+		- Ajout gestion évènements 'meta' 'Channel|Port Prefix' et 'SMPTE'
+
+09/08/2011 :
+	- CSDSCM :
+		- Standardisation.
+	- FBLBKD :
+		- Amélioration ergonomie 'test_log_functions__'.
+
 08/08/2011 :
 	- Général :
 		- Adaptation aux bibliothèques sous-jacentes.

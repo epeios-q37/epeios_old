@@ -25,19 +25,20 @@
 
 
 #ifndef COMMON__INC
-#	define COMMON__INC
+# define COMMON__INC
 
-#include "erism.h"
-#include "registry.h"
-#include "mscrmi.h"
-#include "mscmdd.h"
+# include "erism.h"
+# include "registry.h"
+# include "mscrmi.h"
+# include "mscmdd.h"
 
-#include "lcl.h"
-#include "cio.h"
+# include "lcl.h"
+# include "cio.h"
 
 namespace common {
 	extern cio::cerr___ cerr;
 	extern cio::cout___ cout;
+	extern cio::cin___ cin;
 
 	extern lcl::rack__ LocaleRack;
 	
@@ -122,7 +123,7 @@ namespace common {
 		e_Undefined
 	};
 
-#	define COMMON__ERROR_AMOUNT	18
+# define COMMON__ERROR_AMOUNT	18
 
 	const char *Label( error__ Error );
 
@@ -139,8 +140,8 @@ namespace common {
 		error__ Error,
 		... );
 
-	void GlobalInitialization( void );
-	void GlobalRelease();
+	void Initialize( void );
+	void Release();
 
 	void GetImplementations( mscrmi::midi_implementations_ &Implementations );
 

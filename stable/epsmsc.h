@@ -94,7 +94,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_GNU_PROJECT_AFFILIATION "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ").\n\tIt uses Epeios (" EPSMSC_EPEIOS_URL ") technologies."
 
 //d Epeios (http://zeusw.org/epeios/) Text.
-#define EPSMSC_EPEIOS_PROJETC_AFFILIATION "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
+#define EPSMSC_EPEIOS_PROJECT_AFFILIATION "\tThis program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Epeios.
 #define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."

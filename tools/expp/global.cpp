@@ -292,7 +292,7 @@ ERRBegin
 	Context.Init();
 
 	if ( ( Status = _Locale.Init( LocaleFileName.Convert( STRBuffer ), "Locales/Locale[target=\"" NAME "\"]", Context ) ) != rgstry::sOK )
-		Report( eErrorParsingLocaleFile, &Status, &Context );
+		Report( eErrorParsingLocaleFile, &Context );
 
 	Language.Init();
 

@@ -5,15 +5,21 @@ export DIR=expp
 GET=../../get_cvs
 
 mkdir -p $DIR
+mkdir -p $DIR/epeios
 
-$GET epeios $DIR stable/*.h
-$GET epeios $DIR stable/*.cpp
+$GET epeios $DIR/epeios stable/*.h
+$GET epeios $DIR/epeios stable/*.cpp
+
+$GET epeios $DIR corpus/*.xlcl
 
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/$DIR/README.txt
 $GET epeios $DIR tools/$DIR/CHANGELOG.txt
 $GET epeios $DIR tools/$DIR/Makefile
-$GET epeios $DIR tools/$DIR/expp.cpp
+$GET epeios $DIR tools/$DIR/*.cpp
+$GET epeios $DIR tools/$DIR/*.h
+$GET epeios $DIR tools/$DIR/expp.xcfg
+$GET epeios $DIR tools/$DIR/expp.xlcl
 cp /cygdrive/h/bin/expp.exe $DIR
 $GET epeios $DIR tools/$DIR/linux.xcf
 $GET epeios $DIR tools/$DIR/windows.xcf
