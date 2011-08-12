@@ -1,25 +1,24 @@
 /*
 	'expp' by Claude SIMON (claude.simon@zeusw.org)
-	Preprocesseur XML
-	Copyright (C) 2007-2010 Claude SIMON
+	XML Preprocessor.
+	Copyright (C) 2007-2011 Claude SIMON
 
 	This file is part of the Epeios project (http://zeusw.org/epeios/).
 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 3
-  of the License, or (at your option) any later version.
- 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+    This file is part of 'expp'.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, go to http://www.fsf.org or write to the
-  
-                        Free Software Foundation, Inc.,
-           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    'expp' is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    'expp' is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with 'expp'.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // $$Id$$
@@ -184,13 +183,12 @@ ERREpilog
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
+	cout << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
 	cout << COPYRIGHT << txf::nl;
-	cout << AFFILIATION << txf::nl;
-	cout << txf::pad << "Build : "__DATE__ " " __TIME__ << txf::nl;
-//	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	cout << txf::pad << AFFILIATION << txf::nl;
+	cout << txf::pad << DEPENDENCE << txf::nl;
+	cout << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
 }
-
 
 static void AnalyzeOptions(
 	clnarg::analyzer___ &Analyzer,
@@ -461,7 +459,7 @@ ERREnd
 ERREpilog
 }
 
-static inline void Main(
+void Main(
 	int argc,
 	const char *argv[] )
 {
@@ -474,19 +472,4 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-}
-
-int main(
-	int argc,
-	const char *argv[] )
-{
-ERRFProlog
-ERRFBegin
-	Initialize();
-	Main( argc, argv );
-ERRFErr
-ERRFEnd
-	Release();
-ERRFEpilog
-	return ERRExitValue;
 }

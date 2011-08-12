@@ -5,22 +5,21 @@
 
 	This file is part of the Epeios project (http://zeusw.org/epeios/).
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
-	of the License, or (at your option) any later version.
- 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This file is part of 'expp'.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, go to http://www.fsf.org/
-	or write to the:
-  
-         	         Free Software Foundation, Inc.,
-           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.*/
+    'expp' is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    'expp' is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with 'expp'.  If not, see <http://www.gnu.org/licenses/>.
+*/
 // $Id$
 
 #include "global.h"
@@ -34,10 +33,6 @@
 #include "dir.h"
 
 using namespace global;
-
-cio::cerr___ global::cerr;
-cio::cout___ global::cout;
-cio::cin___ global::cin;
 
 static lcl::locale _Locale;
 STR_BUFFER___ _Language;
@@ -173,6 +168,7 @@ ERRBegin
 		const char *FileName = va_arg( Args, const char *);
 
 		lcl::ReplaceTag( Translation, 1, str::string( FileName ) );
+		break;
 	}
 	case eProcessingError:
 	case eEncryptionError:
@@ -268,7 +264,6 @@ ERREnd
 ERREpilog
 }
 
-
 static void LoadLocale_( void )
 {
 ERRProlog
@@ -305,12 +300,8 @@ ERREpilog
 }
 
 
-void global::Initialize( void )
+static void _Initialize( void )
 {
-	cerr.Init();
-	cout.Init();
-	cin.Init();
-
 	registry::Registry.Init();
 
 	_Locale.Init();
@@ -323,11 +314,8 @@ void global::Initialize( void )
 	LoadLocale_();
 }
 
-void global::Release( void )
+static void _Release( void )
 {
-	cerr.reset();
-	cout.reset();
-	cin.reset();
 }
 
 void global::CreateBackupFile( const char *FileName )
@@ -364,6 +352,23 @@ ERREnd
 ERREpilog
 }
 
+int main(
+	int argc,
+	const char *argv[] )
+{
+ERRFProlog
+ERRFBegin
+	_Initialize();
+	Main( argc, argv );
+ERRFErr
+ERRFEnd
+	_Release();
+	cout << txf::commit;
+	cerr << txf::commit;
+ERRFEpilog
+	return ERRExitValue;
+}
+
 static struct global__cdtor {
 	global__cdtor( void )
 	{
@@ -372,5 +377,8 @@ static struct global__cdtor {
 
 		if ( GLOBAL__MESSAGE_AMOUNT != m_amount )
 			ERRc();
+	}
+	~global__cdtor( void )
+	{
 	}
 } GlobalCDTor;

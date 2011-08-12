@@ -82,15 +82,9 @@ iof::io_oflow_functions___ cio::_coutf;
 iof::io_oflow_functions___ cio::_cerrf;
 iof::io_iflow_functions___ cio::_cinf;
 
-#ifndef CPE__T_MT
-	coutf___ cio::coutf;
-	cerrf___ cio::cerrf;
-	cinf___ cio::cinf;
-
-	cout___ cio::cout;
-	cerr___ cio::cerr;
-	cin___ cio::cin;
-#endif
+cout___ cio::cout;
+cerr___ cio::cerr;
+cin___ cio::cin;
 
 void cio::Initialize( void )
 {
@@ -108,12 +102,9 @@ void cio::Initialize( void )
 		cio::_cinf.Init( cind, fwf::ts_Default );
 		cio::_cerrf.Init( cerrd, fwf::ts_Default );
 
-#ifndef CPE__T_MT
 		cio::cout.Init();
 		cio::cerr.Init();
 		cio::cin.Init();
-#endif
-
 
 		::Initialized_ = true;
 }

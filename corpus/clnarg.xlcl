@@ -22,8 +22,8 @@
 		<Translation language="en">Arguments</Translation>
 	</Translations>
 	<Translations message="CLNARG_VersionCommandDescription">
-		<Translation language="fr">Affiche la version du programme et de ses différents composants</Translation>
-		<Translation language="en">Displays the version of the program and its components</Translation>
+		<Translation language="fr">Affiche la version du programme</Translation>
+		<Translation language="en">Displays the version of the program</Translation>
 	</Translations>
 	<Translations message="CLNARG_LicenseCommandDescription">
 		<Translation language="fr">Affiche la licence du programme</Translation>

@@ -1104,12 +1104,12 @@ ERRBegin
 	if ( S_.TagNameInProgress )
 		*S_.Flow << "/>";
 	else {
-		if ( !S_.TagValueInProgress && ( S_.Outfit = oIndent ) )
+		if ( !S_.TagValueInProgress && ( S_.Outfit == oIndent ) )
 			_WriteTabs( Tags.Amount() );
 		*S_.Flow << "</" << Name << ">";
 	}
 
-	if ( S_.Outfit = oIndent )
+	if ( S_.Outfit == oIndent )
 		*S_.Flow << txf::nl;
 
 	S_.TagNameInProgress = false;

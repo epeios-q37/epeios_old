@@ -60,32 +60,27 @@ extern class ttr_tutor &CIOTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "iof.h"
-#include "txf.h"
-#include "cio.h"
-#include "cpe.h"
+# include "err.h"
+# include "iof.h"
+# include "txf.h"
+# include "cio.h"
+# include "cpe.h"
 
-#ifdef CPE__T_LIBRARY
-#	error "Cannot be used in a library !"
-#endif
+# ifdef CPE__T_LIBRARY
+#  error "Cannot be used in a library !"
+# endif
 
-#ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Usefull for a Windows service.
-#	define CIO__AUTOMATIC_INITIALIZATION
-	// Si modifié, modifier 'WINTOL' en conséquence !
-#endif
+# ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Utilise dans le cadre d'un service Windows.
+#  define CIO__AUTOMATIC_INITIALIZATION 	// Si modifié, modifié 'WINTOL' en conséquence !
+# endif
 
 namespace cio {
 
 	extern iop::descriptor__ cind, coutd, cerrd;
 
-	//o Standard output as a pure flow (not a text flow).
+	// 'Thread-safe'.
 	extern iof::io_oflow_functions___ _coutf;
-
-	//o Error output as a pure flow (not a text flow).
 	extern iof::io_oflow_functions___ _cerrf;
-
-	//o Standard input as a pure flow (not a text flow).
 	extern iof::io_iflow_functions___ _cinf;
 
 	class coutf___
@@ -201,15 +196,10 @@ namespace cio {
 		}
 	};
 
-#ifndef CPE__T_MT
-	extern coutf___ coutf;
-	extern cerrf___ cerrf;
-	extern cinf___ cinf;
-
+	// 'thread UNsafe'.
 	extern cout___ cout;
 	extern cerr___ cerr;
 	extern cin___ cin;
-#endif
 
 	void Initialize( void );
 	/* Peform the initialization needed by this library if not

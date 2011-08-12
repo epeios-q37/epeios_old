@@ -1,5 +1,14 @@
 $Id$
 
+12/08/2011 :
+	- CIO :
+		- Suppression 'c(in|out|err)f___' (accessible via 'c(in|out|err)'.
+		- 'c(in|out|err)' toujours disponibles, même en contexte 'multi-thread' (pour le thread principal).
+	- EPSMSC
+		- Retouches cosmétiques.
+	- XML :
+		- Correction bogue 'Outfit'.
+
 10/08/2011 :
 	- MSCMDM :
 		- Ajout gestion évènements 'meta' 'Channel|Port Prefix' et 'SMPTE'
