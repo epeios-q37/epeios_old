@@ -1,5 +1,16 @@
 $Id$
 
+14/08/2011 :
+	- CRPTGR :
+		- Ajout fonctions '(En|De)crypt(...)' 
+		- Standardisation type paramètre 'Key'.
+	- XPP :
+		- Adaptation aux modifications 'CRPTGR'.
+
+13/08/2011 :
+	- XPP :
+		- Correction bogue 'processing instruction' non relayée lorsque suivie d'un commentaire.
+
 12/08/2011 :
 	- CIO :
 		- Suppression 'c(in|out|err)f___' (accessible via 'c(in|out|err)'.
@@ -39,7 +50,7 @@ $Id$
 
 27/07/2011 :
 	- CLNARG :
-		- Correction mauvais passage d'argumens 'ReplaceTag(...)'.
+		- Correction mauvais passage d'arguments 'ReplaceTag(...)'.
 
 	- RGSTRY, XPP :
 		- Correction erreurs détectées par 'g++'.
@@ -72,7 +83,7 @@ $Id$
 
 20/07/2011 :
 	- TXF :
-		- Correction bogue affuihage pointeur.
+		- Correction bogue affichage pointeur.
 
 18/07/2011 :
 	- LTF :
@@ -111,7 +122,7 @@ $Id$
 
 02/07/2011 :
 	- FBL... :
-		- Renommage de certains pramètres pour une meilleur compréhension.
+		- Renommage de certains paramètres pour une meilleur compréhension.
 	- FRD... :
 		- Utilisation des nouvelles bibliothèques 'FBL...'.
 	- RGSTRY :
@@ -138,7 +149,8 @@ $Id$
 		- Correction erreurs détectées par g++.
 
 12/06/2011 :
-	- NXSPCM : adaptation à XULRunner 2.0.
+	- NXSPCM :
+		- Adaptation à XULRunner 2.0.
 
 08/06/2011 :
 	- Retrait de ce qui est relatif à la gestion 'frontend'/'backend'.
@@ -157,7 +169,7 @@ $Id$
 	- FWF :
 		- Réorganisation cause suspiscion de bogue.
 	- XPP :
-		- Correction bogue contructeur.
+		- Correction bogue constructeur.
 
 17/05/2011 :
 	- Génaral :
@@ -295,7 +307,7 @@ $Id$
 	- CCH :
 		- Correction bogue mauvaise gestion méthode 'Append(...)' lorsque taille du cache nulle.
 	- MSCRMI :
-		- Mise en oeuvre de 'Octetx' et 'Nibblex' à la palce de 'Rawx'.
+		- Mise en oeuvre de 'Octetx' et 'Nibblex' à la place de 'Rawx'.
 
 06/04/2011 :
 	- Général :
@@ -311,7 +323,7 @@ $Id$
 	- Général :
 		- Adaptation aux modifications bibliothèque 'LCL'.
 	- LCL :
-		- 'locale_rack___' est simplifié et deviens 'rack__'.
+		- 'locale_rack___' est simplifié et devient 'rack__'.
 
 03/04/2011 :
 	- MSCMDX :
@@ -325,7 +337,7 @@ $Id$
 
 29/03/2011 :
 	- MSCRMI :
-		- L'adresse affichée des 'Parameters' est maintenant relative lorsque c'est adapté, et non plus systématiquement relatif.
+		- L'adresse affichée des 'Parameters' est maintenant relative lorsque c'est adapté, et non plus systématiquement relative.
 		- Suppression double-encodage lors de l'envoi de 'settings'.
 
 27/03/2011 :

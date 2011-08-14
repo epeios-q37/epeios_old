@@ -55,7 +55,57 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "flx.h"
+
 using namespace crptgr;
+
+const str::string_ &crptgr::Encrypt(
+	const str::string_ &Plain,
+	const str::string_ &Key,
+	str::string_ &Crypted )
+{
+ERRProlog
+	flx::E_STRING_OFLOW___ SFlow;
+	encrypt_oflow___ EFlow;
+	epeios::row__ Row = NONE;
+ERRBegin
+	SFlow.Init( Crypted );
+	EFlow.Init( SFlow, Key );
+
+	Row = Plain.First();
+
+	while( Row != NONE ) {
+		EFlow.Put( Plain( Row ) );
+
+		Row = Plain.Next( Row );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Crypted;
+}
+
+const str::string_ &Decrypt(
+	const str::string_ &Crypted,
+	const str::string_ &Key,
+	str::string_ &Plain )
+{
+ERRProlog
+	flx::E_STRING_IFLOW__ SFlow;
+	decrypt_iflow___ DFlow;
+ERRBegin
+	SFlow.Init( Crypted );
+	DFlow.Init( SFlow, Key );
+
+	while ( DFlow.AmountRed() != Crypted.Amount() )
+		Plain.Append( DFlow.Get() );
+ERRErr
+ERREnd
+ERREpilog
+	return Plain;
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

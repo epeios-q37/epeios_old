@@ -1027,9 +1027,11 @@ status__ xpp::_extended_parser___::Handle(
 		PreviousToken = _Parser.Token();
 		switch ( _Parser.Parse() ) {
 		case  xml::tProcessingInstruction:
-			if ( _IgnorePreprocessingInstruction )
-					_Parser.PurgeDumpData();
-			Continue = true;
+			if ( _IgnorePreprocessingInstruction ) {
+				_Parser.PurgeDumpData();
+				Continue = true;
+			} else
+				Status = sOK;
 			break;
 		case xml::tStartTag:
 			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
@@ -1241,7 +1243,7 @@ ERREpilog
 
 static status__ Encrypt_(
 	xml::parser___ &Parser,
-	const char *CypherKey,
+	const str::string_ &CypherKey,
 	str::string_ &Target,
 	xtf::coord__ &Coord )
 {
@@ -1267,7 +1269,7 @@ ERREpilog
 static status__ Encrypt_(
 	xml::parser___ &Parser,
 	const str::string_ &Namespace,
-	const char *CypherKey,
+	const str::string_ &CypherKey,
 	xml::writer_ &Writer,
 	xtf::coord__ &Coord )
 {
@@ -1305,7 +1307,6 @@ static status__ HandleCypherDirective_(
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string CypherKey;
-	STR_BUFFER___ Buffer;
 	bso::bool__ CypheringComplete = false;
 	bso::bool__ Continue = true;
 ERRBegin
@@ -1331,7 +1332,7 @@ ERRBegin
 				Status = sMissingCypherKey;
 				ERRReturn;
 			}
-			if ( ( Status = Encrypt_( Parser, Namespace, CypherKey.Convert( Buffer ), Writer, Coord ) ) != sOK )
+			if ( ( Status = Encrypt_( Parser, Namespace, CypherKey, Writer, Coord ) ) != sOK )
 				ERRReturn;
 			Continue = false;
 			break;

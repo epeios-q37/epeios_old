@@ -119,8 +119,8 @@ namespace crptgr {
 		}
 		void Init(
 			flw::oflow__ &Flow,
-			const char *Key,
-			fwf::thread_safety__ ThreadSafety )	// 'Key' n'est PAS dupliqué.
+			const str::string_ &Key,
+			fwf::thread_safety__ ThreadSafety )
 		{
 			_oflow_functions___::Init( ThreadSafety );
 
@@ -153,14 +153,18 @@ namespace crptgr {
 		}
 		void Init(
 			flw::oflow__ &Flow,
-			const char *Key,
-			flw::size__ AmountMax = FLW_SIZE_MAX )	// 'Key' n'est PAS dupliqué.
+			const str::string_ &Key,
+			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Functions.Init( Flow, Key, fwf::tsDisabled );
 			_oflow__::Init( _Functions, AmountMax );
 		}
 	};
 
+	const str::string_ &Encrypt(
+		const str::string_ &Plain,
+		const str::string_ &Key,
+		str::string_ &Crypted );
 
 	typedef fwf::iflow_functions___<>	_iflow_functions___;
 	
@@ -259,6 +263,11 @@ namespace crptgr {
 			_iflow__::Init( _Functions, AmountMax );
 		}
 	};
+
+	const str::string_ &Decrypt(
+		const str::string_ &Crypted,
+		const str::string_ &Key,
+		str::string_ &Plain );
 
 }
 

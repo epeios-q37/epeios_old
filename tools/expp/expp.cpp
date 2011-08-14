@@ -342,10 +342,6 @@ ERRProlog
 ERRBegin
 	Context.Init();
 
-	xml::WriteXMLHeader( OFlow, xml::encoding__() );
-
-	OFlow << txf::nl;
-
 	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
 								  Outfit, OFlow,  Context ) ) != xpp::sOK )
