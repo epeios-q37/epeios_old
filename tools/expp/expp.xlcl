@@ -46,6 +46,10 @@
 				<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
 				<Translation language="en">Unable to open file '%1'</Translation>
 			</Translations>
+			<Translations message="ProcessingError">
+				<Translation language="fr">Erreur de traitement : %1</Translation>
+				<Translation language="en">Processing error : %1</Translation>
+			</Translations>
 		</xpp:bloc>
 
 		<!--

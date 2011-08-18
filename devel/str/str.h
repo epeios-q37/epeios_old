@@ -110,6 +110,8 @@ namespace str {
 	public:
 		static epeios::size__ SizeOf( const char *S )
 		{
+			if ( NULL == S )
+				S = "";
 #ifdef STR_DBG
 			if ( strlen( S ) > EPEIOS_SIZE_MAX )
 				ERRu();
@@ -155,6 +157,8 @@ namespace str {
 		//f Initialization with 'Seed'.
 		void Init( const bso::char__ *Seed )
 		{
+			if ( NULL == Seed )
+				Seed = "";
 #ifdef STR_DBG
 			if ( strlen( Seed ) > EPEIOS_SIZE_MAX )
 				ERRu();
@@ -172,6 +176,8 @@ namespace str {
 		}
 		string_ &operator =( const char *Chaine )
 		{
+			if ( NULL == Chaine )
+				Chaine = "";
 #ifdef STR_DBG
 			if ( strlen( Chaine ) > EPEIOS_SIZE_MAX )
 				ERRu();

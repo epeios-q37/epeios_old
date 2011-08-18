@@ -1,5 +1,11 @@
 $Id$
 
+18/08/2011 :
+	- CRPTGR :
+		- Pas d'encryptage ou de cryptage réalsé si la clef est vide.
+	- STR :
+		- Une initialisation avec NULL donne maintenant une chaîne vide.
+
 14/08/2011 :
 	- CRPTGR :
 		- Ajout fonctions '(En|De)crypt(...)' 

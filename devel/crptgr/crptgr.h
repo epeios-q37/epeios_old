@@ -125,7 +125,12 @@ namespace crptgr {
 			_oflow_functions___::Init( ThreadSafety );
 
 			_Flow = &Flow;
-			_Key.Init( Key );
+
+			if ( Key.Amount() )
+				_Key.Init( Key );
+			else
+				_Key.Append( '\0' );	// So, if 'Key' is empty, no crypting will be made.
+
 			_Position = 0;
 		}
 	};
@@ -228,7 +233,12 @@ namespace crptgr {
 			_iflow_functions___::Init( ThreadSafety );
 
 			_Flow = &Flow;
-			_Key.Init( Key );
+
+			if ( Key.Amount() )
+				_Key.Init( Key );
+			else
+				_Key.Append( '\0' );	// So, if 'Key' is empty, no decrypting will be made.
+
 			_Position = 0;
 		}
 	};

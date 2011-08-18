@@ -3,7 +3,7 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
   <Translations message="XML_ErrorAtLineColumn"><!-- Generic message displayed before error description. -->
     <Translation language="fr">Erreur ligne %1, colonne %2 :</Translation>
-    <Translation language="en">Error line %1, column %2</Translation>
+    <Translation language="en">Error line %1, column %2 : </Translation>
   </Translations>
   <Translations message="XML_UnexpectedEOF">
 		<Translation language="fr">fin de fichier inattendue</Translation>
