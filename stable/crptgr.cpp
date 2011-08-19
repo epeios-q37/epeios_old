@@ -85,7 +85,7 @@ ERREpilog
 	return Crypted;
 }
 
-const str::string_ &Decrypt(
+const str::string_ &crptgr::Decrypt(
 	const str::string_ &Crypted,
 	const str::string_ &Key,
 	str::string_ &Plain )

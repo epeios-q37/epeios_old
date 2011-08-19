@@ -1,5 +1,9 @@
 $Id$
 
+19/08/2011 :
+	- FLW :
+		- Un appel à 'Dismiss(...)' ou 'Commit(...)' d'un objet non initialisé ne provoque plus d'erreur.
+
 18/08/2011 :
 	- CRPTGR :
 		- Pas d'encryptage ou de cryptage réalsé si la clef est vide.

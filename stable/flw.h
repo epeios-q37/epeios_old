@@ -387,7 +387,8 @@ namespace flw {
 		}
 		void Dismiss( void )
 		{
-			_Dismiss();
+			if ( _Functions != NULL )
+				_Dismiss();
 		}
 		bso::bool__ IsInitialized( void ) const
 		{
@@ -611,7 +612,8 @@ namespace flw {
 		//f Synchronization.
 		void Commit( void )
 		{
-			_Commit();
+			if ( _Functions != NULL )
+				_Commit();
 		}
 		//f Return the amount of data written since last 'Synchronize()'.
 		size__ AmountWritten( void ) const
