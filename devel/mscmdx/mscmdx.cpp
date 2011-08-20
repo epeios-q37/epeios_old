@@ -346,10 +346,10 @@ protected:
 
 						// Removing size.
 						while ( ( _MetaData.First() != NONE ) && ( _MetaData( _MetaData.First() ) & 0x80 ) )
-							_MetaData.Remove( _MetaData.First() );	// Removing Meta id
+							_MetaData.Remove( _MetaData.First() );
 
 						if ( _MetaData.First() != NONE )
-							_MetaData.Remove( _MetaData.First() );	// Removing Meta id
+							_MetaData.Remove( _MetaData.First() );
 					}
 
 					Event.Init( EventHeader, _MetaData );
@@ -424,6 +424,103 @@ ERREpilog
 	return Status;
 }
 
+static inline bso::bool__ GetData_(
+	const str::string_ &Value,
+	mscmdm::data_ &Data )
+{
+	epeios::row__ Error = NONE;
+
+	epeios::row__ Row = Value.First();
+
+	while ( Row != NONE ) {
+		Error = NONE;
+
+		Data.Append( Value.ToUB( Row, &Error, str::b16 ) );
+
+		if ( Error != NONE ) {
+			if ( Value( Error ) != ' ' )
+				return false;
+
+			Row = Value.Next( Error );
+
+		} else
+			Row = NONE;
+	}
+		
+	return true;
+}
+
+status__ mscmdx::ParseEvents(
+	xml::parser___ &Parser,
+	mscmdm::events_ &Events )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	bso::bool__ _TiedEvent;
+	mscmdm::data _RawData, _MetaData;
+	mscmdm::delta_time_ticks__ _EventDeltaTimeTicks;
+	mscmdm::event_id__ _Id, _MetaId;
+	bso::bool__ InProgress = false;
+ERRBegin
+	_RawData.Init();
+	_MetaData.Init();
+	_TiedEvent = false;
+
+	while ( Status == s_Undefined ) {
+		switch ( Parser.Parse( xml::tfObvious ) ) {
+		case xml::tStartTag:
+			if ( Parser.TagName() == EVENT_TAG ) {
+				_RawData.Init();
+				_MetaData.Init();
+				_TiedEvent = false;
+				InProgress = true;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tAttribute:
+			if ( Parser.TagName() == EVENT_TAG ) {
+				epeios::row__ Error = NONE;
+
+				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
+					_EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
+				else if ( Parser.AttributeName() == ID_ATTRIBUTE )
+					_Id = Parser.Value().ToUB( &Error, str::b16 );
+				else if ( Parser.AttributeName() == TIED_ATTRIBUTE )
+					_TiedEvent = true;
+				else if ( Parser.AttributeName() == META_ID_ATTRIBUTE ) {
+					_MetaId = Parser.Value().ToUB( &Error, str::b16 );
+				} else if ( Parser.AttributeName() == DATA_ATTRIBUTE )
+					if ( !GetData_( Parser.Value(), _RawData ) )
+						return Status = sBadDataAttributeValue;
+
+				if ( Error != NONE )
+					Status = sBadIdValue;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tValue:
+			if ( Parser.TagName() == EVENT_TAG ) {
+				if ( _MetaData.Amount() == 0 )
+					_MetaData = Parser.Value();
+				else
+					Status = sUnexpectedValue;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tEndTag:
+			if ( Parser.TagName() == EVENT_TAG )
+				if ( 
+				Status = sOK;
+
+
+
+
+
+
+ERRErr
+ERREnd
+ERREpilog
+}
 
 
 

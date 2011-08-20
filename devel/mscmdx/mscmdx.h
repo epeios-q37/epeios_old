@@ -80,6 +80,21 @@ namespace mscmdx {
 		xtf::extended_text_iflow__ &IFlow,
 		flw::oflow__ &OFlow );
 
+	enum status__ {
+		sOK,
+		sUnexpectedTag,
+		sUnexpectedValue,
+		sBadDataAttributeValue,
+		sBadIdValue,
+		sXML,
+		s_amount,
+		s_Undefined
+	};
+
+	status__ ParseEvents(
+		xml::parser___ &Parser,
+		mscmdm::events_ &Events );
+
 }
 
 /*$END$*/
