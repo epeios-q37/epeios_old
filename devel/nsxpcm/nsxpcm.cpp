@@ -1373,6 +1373,8 @@ ERRBegin
 
 	Success = true;
 ERRErr
+	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iAbort ) )
+		Success = true;	// L'erreur a été déjà traite (ou va l'être ci-dessous) ; plus la peine de la remonter.
 	NSXPCM_ERR( _Window );
 ERREnd
 ERREpilog

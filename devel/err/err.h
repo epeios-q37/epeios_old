@@ -147,10 +147,11 @@ namespace err {
 	enum i
 	{
 		iGeneric,
-		iTest,		// for testing purpose.
-		iExit,		// Pour termnier rapidement un programme, suite à une erreur (erreur utilisateur, d'arguments de la ligne de commande, ...).
-		iBeam,		// Pour retourner rapidement à un point donné.
-		iReturn		// Pour retourner à la fonction appelante (en dehors d'un contexte d'erreur).
+		iTest,		// A des fins de test.
+		iExit,		// Pour terminer rapidement un programme, suite à une erreur (erreur utilisateur, d'arguments de la ligne de commande, ...).
+		iReturn,	// Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
+		iBeam,		// Pour retourner rapidement à un point donné (test de cette valeur + remise à zéro de l'erreur à la charge de l'utilisateur).
+		iAbort		// Abandonne l'action en cours ; typiquement pour retourner à à la boucle d'attente d'un évènement utilisateur.
 	};
 		// throw error
 	enum c
@@ -385,11 +386,17 @@ namespace err {
 #endif
 
 
-// Exits the software returning 'v'.
+// quitte le logiciel an retournant la valeur 'v'.
 #define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iExit ); }
 
-// Jump to 'ERRErr' and reset the reset the err::itn/iNoError' error.
+// Pour retourner rapidement à un point donné (test de cette valeur + remise à zéro de l'erreur à la charge de l'utilisateur).
+# define ERRBeam()		ERRI( iBeam )
+
+// Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
 #define	ERRReturn		ERRI( iReturn )
+
+// Abandonne l'action en cours ; typiquement pour retourner à à la boucle d'attente d'un évènement utilisateur.
+# define ERRAbort()		ERRI( iAbort )
 
 #define ERRExitValue	err::ERR.ExitValue
 }

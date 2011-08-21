@@ -1,5 +1,11 @@
 $Id$
 
+21/08/2011 :
+	- ERR :
+		- Ajout 'ERRBeam()' et 'ERRAbort()'.
+	- NSXPCM :
+		- Amélioration gestion d'erreurs.
+
 19/08/2011 :
 	- FLW :
 		- Un appel à 'Dismiss(...)' ou 'Commit(...)' d'un objet non initialisé ne provoque plus d'erreur.

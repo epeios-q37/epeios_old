@@ -151,11 +151,11 @@ extern class ttr_tutor &NSXPCMTutor;
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
 // Permet de 'logger' une erreur et d'éviter qu'elle soit ne remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
-#define NSXPCM_ERR( window )\
+# define NSXPCM_ERR( window )\
 	if ( ERRMajor == err::itn ) {\
 		if ( ERRMinor == err::iExit )\
 			nsxpcm::Close( window );\
-		else if ( ERRMinor != err::iReturn ) {\
+		else if ( ERRMinor != err::iAbort ) {\
 			err::buffer__ Buffer;\
 			nsxpcm::Log( err::Message( Buffer ) );\
 			nsxpcm::GetJSConsole();\
@@ -166,6 +166,9 @@ extern class ttr_tutor &NSXPCMTutor;
 		nsxpcm::GetJSConsole();\
 	}\
 	ERRRst()
+
+// Permet de redonner la main immédiatement à 'Gecko'.
+# define ERRGecko()	ERRI( iGecko )
 
 
 namespace nsxpcm {
