@@ -226,6 +226,7 @@ namespace nsxpcm {
 		eSelect,
 		eAttributeChange,
 		eKeyPress,
+		eLoad,
 		eClose,
 		e_amount,
 		e_Undefined
@@ -248,6 +249,7 @@ namespace nsxpcm {
 		EF( Select ),
 		EF( AttributeChange ),
 		EF( KeyPress ),
+		EF( Load ),
 		EF( Close ),
 		ef_None = 0,
 		ef_All = ( ( 1 << e_amount ) - 1 ),
@@ -1182,8 +1184,7 @@ namespace nsxpcm {
 		{
 			NSXPCMOnEvent( Event );
 		}
-		virtual void NSXPCMOnEvent(
-			event__ Event )
+		virtual void NSXPCMOnEvent(	event__ Event )
 		{
 			ERRu();
 		}
@@ -1255,6 +1256,20 @@ namespace nsxpcm {
 			nsISupports *Supports,
 			nsIDOMWindow *Window,
 			int Events );
+		void Init(
+			nsIDOMWindow *Window,
+			const str::string_ &Id,
+			int Events )
+		{
+			Init( nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
+		}
+		void Init(
+			nsIDOMWindow *Window,
+			const char *Id,
+			int Events )
+		{
+			Init( Window, str::string( Id ), Events );
+		}
 		void SupersedEventHandling( _event_handler__ &EventHandler )
 		{
 			_EventHandler = &EventHandler;
@@ -1277,24 +1292,6 @@ namespace nsxpcm {
 	};
 
 	E_ROW( row__ );
-
-	inline void Register(
-		nsxpcm::widget_core__ &Widget,
-		nsISupports *Supports,
-		nsIDOMWindow *Window,
-		int Events )
-	{
-		Widget.Init( Supports, Window, Events );
-	}
-
-	template <class id_type> inline void Register(
-		nsxpcm::widget_core__ &Widget,
-		nsIDOMWindow *Window,
-		const id_type &Id,
-		int Events )
-	{
-		Register( Widget, nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
-	}
 
 	void Alert(
 		nsIDOMWindow *Window,

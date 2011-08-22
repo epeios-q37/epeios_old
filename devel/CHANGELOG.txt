@@ -1,5 +1,12 @@
 $Id$
 
+22/08/2011 :
+	- NSXPCM :
+		- Ajout pointeur utilisateur pour les 'widget's.
+		- Ajoput variantes méthode 'Init(...)' pour les 'widget's.
+		- Retrait des fonctions 'Register(...)'.
+		- Ajout de l'év-nement 'onload'.
+
 21/08/2011 :
 	- ERR :
 		- Ajout 'ERRBeam()' et 'ERRAbort()'.

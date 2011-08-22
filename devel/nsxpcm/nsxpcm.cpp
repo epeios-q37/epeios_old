@@ -1317,6 +1317,8 @@ static event__ Convert_( const char *RawEvent )
 		Event = eAttributeChange;
 	else if ( !strcmp( RawEvent, "keypress" ) )
 		Event = eKeyPress;
+	else if ( !strcmp( RawEvent, "load" ) )
+		Event = eLoad;
 	else if ( !strcmp( RawEvent, "close" ) )
 		Event = eClose;
 	else
@@ -1435,6 +1437,10 @@ void nsxpcm::widget_core__::Init(
 
 	if ( Events & efKeyPress )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "keypress" ), _EventData._EventListener, false ) != NS_OK )
+			ERRc();
+
+	if ( Events & efLoad )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "load" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
 	if ( Events & efClose )
