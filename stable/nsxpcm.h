@@ -2096,10 +2096,15 @@ namespace nsxpcm {
 			WindowBuffer = Window;
 		else
 			WindowBuffer = &DummyWindow;
-
-
+	
 		Transform( URL, TransformedURL );
 		Transform( Name, TransformedName );
+
+		if ( ParentWindow == NULL )
+			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
+				ParentWindow = MasterWindow;
+			else
+				ERRu();
 
 		if ( ParentWindow == NULL )
 			ERRu();	// Fonction bloquante, donc on ne peut pas prendre 'MAsterWindow' (risque de bloquer la fenêtre non initiatrice de l'ouverture de la boîte de dialogue).
@@ -2112,14 +2117,14 @@ namespace nsxpcm {
 	ERREpilog
 	}
 
-	/*inline void OpenDialog(
+	inline void OpenDialog(
 		const char *URL,
 		const char *Name,
 		nsIDOMWindow **Window = NULL )
 	{
 		OpenDialog( NULL, URL, Name, Window );
 	}
-	*/
+	
 
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,
