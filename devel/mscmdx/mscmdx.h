@@ -86,10 +86,15 @@ namespace mscmdx {
 		sUnexpectedValue,
 		sBadDataAttributeValue,
 		sBadIdValue,
+		sUnexpectedContext,
 		sXML,
 		s_amount,
 		s_Undefined
 	};
+
+	status__ ParseEvent(
+		xml::parser___ &Parser,
+		mscmdm::event_ &Event );
 
 	status__ ParseEvents(
 		xml::parser___ &Parser,

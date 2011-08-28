@@ -62,7 +62,7 @@ using xml::dump_;
 #define MIDI_FILE_TAG	"MidiFile"
 #define TRACK_CHUNK_TAG	"TrackChunk"
 
-#define TIME_STAMP_ATTRIBUTE	"TimeStamp"
+#define TIME_STAMP_ATTRIBUTE			"TimeStamp"
 #define SMF_TYPE_ATTRIBUTE				"SMFType"
 #define TRACK_CHUNK_AMOUNT_ATTRIBUTE	"TrackChunkAmount"
 #define DELTA_TIME_TICKS_ATTRIBUTE		"DeltaTimeTicks"
@@ -450,29 +450,32 @@ static inline bso::bool__ GetData_(
 	return true;
 }
 
-status__ mscmdx::ParseEvents(
+status__ mscmdx::ParseEvent(
 	xml::parser___ &Parser,
-	mscmdm::events_ &Events )
+	mscmdm::event_ &Event )
 {
 	status__ Status = s_Undefined;
 ERRProlog
-	bso::bool__ _TiedEvent;
-	mscmdm::data _RawData, _MetaData;
-	mscmdm::delta_time_ticks__ _EventDeltaTimeTicks;
-	mscmdm::event_id__ _Id, _MetaId;
+	bso::bool__ TiedEvent = false;
+	mscmdm::data RawData, MetaData;
+	mscmdm::delta_time_ticks__ EventDeltaTimeTicks;
+	mscmdm::event_id__ Id, MetaId;
 	bso::bool__ InProgress = false;
 ERRBegin
-	_RawData.Init();
-	_MetaData.Init();
-	_TiedEvent = false;
+	RawData.Init();
+	MetaData.Init();
 
 	while ( Status == s_Undefined ) {
 		switch ( Parser.Parse( xml::tfObvious ) ) {
 		case xml::tStartTag:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				_RawData.Init();
-				_MetaData.Init();
-				_TiedEvent = false;
+
+				if ( InProgress )
+					Status = sUnexpectedTag;
+
+				RawData.Init();
+				MetaData.Init();
+				TiedEvent = false;
 				InProgress = true;
 			} else
 				Status = sUnexpectedTag;
@@ -482,44 +485,216 @@ ERRBegin
 				epeios::row__ Error = NONE;
 
 				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
-					_EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
+					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
 				else if ( Parser.AttributeName() == ID_ATTRIBUTE )
-					_Id = Parser.Value().ToUB( &Error, str::b16 );
+					Id = Parser.Value().ToUB( &Error, str::b16 );
 				else if ( Parser.AttributeName() == TIED_ATTRIBUTE )
-					_TiedEvent = true;
+					TiedEvent = true;
 				else if ( Parser.AttributeName() == META_ID_ATTRIBUTE ) {
-					_MetaId = Parser.Value().ToUB( &Error, str::b16 );
+					MetaId = Parser.Value().ToUB( &Error, str::b16 );
 				} else if ( Parser.AttributeName() == DATA_ATTRIBUTE )
-					if ( !GetData_( Parser.Value(), _RawData ) )
+					if ( !GetData_( Parser.Value(), RawData ) )
 						return Status = sBadDataAttributeValue;
 
 				if ( Error != NONE )
 					Status = sBadIdValue;
+
+				InProgress = true;
 			} else
 				Status = sUnexpectedTag;
 			break;
 		case xml::tValue:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				if ( _MetaData.Amount() == 0 )
-					_MetaData = Parser.Value();
+
+				if ( !InProgress )
+					Status = sUnexpectedContext;
+
+				if ( MetaData.Amount() == 0 )
+					MetaData = Parser.Value();
 				else
 					Status = sUnexpectedValue;
 			} else
 				Status = sUnexpectedTag;
 			break;
 		case xml::tEndTag:
-			if ( Parser.TagName() == EVENT_TAG )
-				if ( 
+			if ( Parser.TagName() == EVENT_TAG ) {
+				mscmdm::event_header__ EventHeader;
+
+				mscmdm::PartiallyFillEventHeader( Id, MetaId, EventHeader );
+
+				EventHeader.DeltaTimeTicks = EventDeltaTimeTicks;
+				EventHeader.MIDIEvent.Tied = TiedEvent;
+
+				if ( EventHeader.EventType == mscmdm::etMeta ) {
+					if ( !mscmdm::IsMetaDataText( EventHeader.MetaEvent.Event ) ) {
+
+						MetaData = RawData;
+
+						MetaData.Remove( MetaData.First() );	// Removing Meta id
+
+						// Removing size.
+						while ( ( MetaData.First() != NONE ) && ( MetaData( MetaData.First() ) & 0x80 ) )
+							MetaData.Remove( MetaData.First() );
+
+						if ( MetaData.First() != NONE )
+							MetaData.Remove( MetaData.First() );
+					}
+
+					Event.Init( EventHeader, MetaData );
+				} else
+					Event.Init( EventHeader, RawData );
+
+				RawData.Init();
+				MetaData.Init();
+			}
+
+			if ( !InProgress )
 				Status = sOK;
 
 
-
-
-
-
+			break;
+		case xml::tProcessed:
+			Status = sUnexpectedContext;
+			break;
+		case xml::tError:
+			Status = sXML;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
 ERRErr
 ERREnd
 ERREpilog
+	return Status;
+}
+
+status__ mscmdx::ParseEvents(
+	xml::parser___ &Parser,
+	mscmdm::events_ &Events )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	bso::bool__ TiedEvent = false;
+	mscmdm::data RawData, MetaData;
+	mscmdm::delta_time_ticks__ EventDeltaTimeTicks;
+	mscmdm::event_id__ Id, MetaId;
+	bso::bool__ InProgress = false;
+ERRBegin
+	RawData.Init();
+	MetaData.Init();
+
+	while ( Status == s_Undefined ) {
+		switch ( Parser.Parse( xml::tfObvious ) ) {
+		case xml::tStartTag:
+			if ( Parser.TagName() == EVENT_TAG ) {
+
+				if ( InProgress )
+					Status = sUnexpectedTag;
+
+				RawData.Init();
+				MetaData.Init();
+				TiedEvent = false;
+				InProgress = true;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tAttribute:
+			if ( Parser.TagName() == EVENT_TAG ) {
+				epeios::row__ Error = NONE;
+
+				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
+					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
+				else if ( Parser.AttributeName() == ID_ATTRIBUTE )
+					Id = Parser.Value().ToUB( &Error, str::b16 );
+				else if ( Parser.AttributeName() == TIED_ATTRIBUTE )
+					TiedEvent = true;
+				else if ( Parser.AttributeName() == META_ID_ATTRIBUTE ) {
+					MetaId = Parser.Value().ToUB( &Error, str::b16 );
+				} else if ( Parser.AttributeName() == DATA_ATTRIBUTE )
+					if ( !GetData_( Parser.Value(), RawData ) )
+						return Status = sBadDataAttributeValue;
+
+				if ( Error != NONE )
+					Status = sBadIdValue;
+
+				InProgress = true;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tValue:
+			if ( Parser.TagName() == EVENT_TAG ) {
+
+				if ( !InProgress )
+					Status = sUnexpectedContext;
+
+				if ( MetaData.Amount() == 0 )
+					MetaData = Parser.Value();
+				else
+					Status = sUnexpectedValue;
+			} else
+				Status = sUnexpectedTag;
+			break;
+		case xml::tEndTag:
+			if ( Parser.TagName() == EVENT_TAG ) {
+			ERRProlog
+				mscmdm::event Event;
+				mscmdm::event_header__ EventHeader;
+			ERRBegin
+				mscmdm::PartiallyFillEventHeader( Id, MetaId, EventHeader );
+
+				EventHeader.DeltaTimeTicks = EventDeltaTimeTicks;
+				EventHeader.MIDIEvent.Tied = TiedEvent;
+
+				if ( EventHeader.EventType == mscmdm::etMeta ) {
+					if ( !mscmdm::IsMetaDataText( EventHeader.MetaEvent.Event ) ) {
+
+						MetaData = RawData;
+
+						MetaData.Remove( MetaData.First() );	// Removing Meta id
+
+						// Removing size.
+						while ( ( MetaData.First() != NONE ) && ( MetaData( MetaData.First() ) & 0x80 ) )
+							MetaData.Remove( MetaData.First() );
+
+						if ( MetaData.First() != NONE )
+							MetaData.Remove( MetaData.First() );
+					}
+
+					Event.Init( EventHeader, MetaData );
+				} else
+					Event.Init( EventHeader, RawData );
+
+				RawData.Init();
+				MetaData.Init();
+
+				Events.Append( Event );
+			ERRErr
+			ERREnd
+			ERREpilog
+			}
+
+			if ( !InProgress )
+				Status = sOK;
+
+
+			break;
+		case xml::tProcessed:
+			Status = sUnexpectedContext;
+			break;
+		case xml::tError:
+			Status = sXML;
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
 }
 
 
