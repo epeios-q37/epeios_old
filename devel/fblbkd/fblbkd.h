@@ -156,11 +156,11 @@ namespace fblbkd {
 		}
 	};
 
-	template <int cache_size = FWF__DEFAULT_CACHE_SIZE> class text_log_functions__
+	template <int cache_size = FDR__DEFAULT_CACHE_SIZE> class text_log_functions__
 	: public log_functions__
 	{
 	private:
-		fwf::datum__ _Cache[cache_size];
+		fdr::datum__ _Cache[cache_size];
 		flw::oflow__ _Flow;
 	protected:
 		txf::text_oflow__ TFlow;
@@ -188,11 +188,11 @@ namespace fblbkd {
 		{
 			reset();
 		}
-		void Init( fwf::oflow_functions_base___ &Functions )	// On s'appuie sur un 'fwf::oflow_functions_base___', car cet objet est 'thread safe'.
+		void Init( fdr::oflow_driver_base___ &Driver )	// On s'appuie sur un 'fdr::oflow_fdr_base___', car cet objet est 'thread safe'.
 		{
 			reset();
 
-			_Flow.Init( Functions, _Cache, sizeof( _Cache ), FWF_SIZE_MAX );
+			_Flow.Init( Driver, _Cache, sizeof( _Cache ), FDR_SIZE_MAX );
 			TFlow.Init( _Flow );
 			log_functions__::Init();
 		}

@@ -62,7 +62,7 @@ extern class ttr_tutor &SCKTutor;
 
 #include "err.h"
 #include "cpe.h"
-#include "fwf.h"
+#include "fdr.h"
 #include "flw.h"
 #include "tol.h"
 
@@ -282,11 +282,11 @@ namespace sck {
 #endif
 	}
 
-	typedef fwf::ioflow_functions___<> _ioflow_functions___;
+	typedef fdr::ioflow_driver___<> _ioflow_driver___;
 
 	//c Socket as input/output flow driver.
-	class socket_ioflow_functions___
-	: public _ioflow_functions___
+	class socket_ioflow_driver___
+	: public _ioflow_driver___
 	{
 	private:
 		socket__ _Socket;
@@ -298,9 +298,9 @@ namespace sck {
 			_TimeStamp = tol::Clock( false );
 		}
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			if ( ( Maximum = sck::Read( _Socket, ( Maximum ), Buffer, _TimeOut ) ) == SCK_DISCONNECTED )
 				Maximum = 0;
@@ -309,9 +309,9 @@ namespace sck {
 
 			return Maximum;
 		}
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			if ( _Error )
 				ERRd();
@@ -326,44 +326,44 @@ namespace sck {
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{}
 	public:
 		void reset( bool P = true )
 		{
 			if ( P ) {
 				if ( _Socket != SCK_INVALID_SOCKET ) {
-					_ioflow_functions___::Commit();
+					_ioflow_driver___::Commit();
 					Close( _Socket );
 				}
 			}
 
-			_ioflow_functions___::reset( P );
+			_ioflow_driver___::reset( P );
 								
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
 			_TimeStamp = 0;
 		}
-		socket_ioflow_functions___( void )
+		socket_ioflow_driver___( void )
 		{
 			reset( false );
 		}
-		virtual ~socket_ioflow_functions___( void )
+		virtual ~socket_ioflow_driver___( void )
 		{
 			reset();
 		}
 		//f Initialization with socket 'Socket' and 'TimeOut' as timeout.
 		void Init(
 			socket__ Socket,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			duration__ TimeOut = SCK__DEFAULT_TIMEOUT )	// En secondes.
 		{
 			reset();
 		
-			_ioflow_functions___::Init( ThreadSafety );
+			_ioflow_driver___::Init( ThreadSafety );
 
 			_Socket = Socket;
 			_TimeOut = TimeOut;
@@ -378,13 +378,13 @@ namespace sck {
 	: public flw::ioflow__
 	{
 	private:
-		socket_ioflow_functions___ _Functions;
+		socket_ioflow_driver___ _Driver;
 		flw::datum__ _Cache[2 * SCK_SOCKET_FLOW_BUFFER_SIZE];
 	public:
 		void reset( bool P = true )
 		{
 			ioflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		socket_ioflow___( void )
 		{
@@ -402,16 +402,16 @@ namespace sck {
 		{
 			reset();
 
-			_Functions.Init( Socket, fwf::tsDisabled, TimeOut );
-			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( Socket, fdr::tsDisabled, TimeOut );
+			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 		socket__ Socket( void ) const
 		{
-			return _Functions.Socket();
+			return _Driver.Socket();
 		}
 		time_t TimeStamp( void )
 		{
-			return _Functions.TimeStamp();
+			return _Driver.TimeStamp();
 		}
 	};
 

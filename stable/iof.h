@@ -61,7 +61,7 @@ extern class ttr_tutor &IOFTutor;
 /*$BEGIN$*/
 
 #include "cpe.h"
-#include "fwf.h"
+#include "fdr.h"
 #include "flw.h"
 #include "iop.h"
 
@@ -70,13 +70,13 @@ namespace iof {
 	typedef iop::output__		_output__;
 	typedef iop::io__			_io__;
 
-	class _output_functions__
+	class _output_driver__
 	: public _output__
 	{
 	protected:
-		fwf::size__ _Write(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		fdr::size__ _Write(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 #ifdef IOF_DBG
 			if ( Buffer == NULL )
@@ -90,43 +90,43 @@ namespace iof {
 		}
 	};
 
-	typedef fwf::oflow_functions___<> _oflow_functions___;
+	typedef fdr::oflow_driver___<> _oflow_driver___;
 
-	class io_oflow_functions___
-	: public _output_functions__,
-	  public _oflow_functions___
+	class io_oflow_driver___
+	: public _output_driver__,
+	  public _oflow_driver___
 	{
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Tampon,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Tampon,
+			fdr::size__ Maximum )
 		{
-			return _output_functions__::Write( Tampon, Maximum );
+			return _output_driver__::Write( Tampon, Maximum );
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
-			return _output_functions__::_Commit();
+			return _output_driver__::_Commit();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_output_functions__::reset( P );
-			_oflow_functions___::reset( P );
+			_output_driver__::reset( P );
+			_oflow_driver___::reset( P );
 		}
-		io_oflow_functions___( void )
+		io_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		virtual ~io_oflow_functions___( void )
+		virtual ~io_oflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			iop::descriptor__ D,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
-			_output_functions__::Init( D );
-			_oflow_functions___::Init( ThreadSafety );
+			_output_driver__::Init( D );
+			_oflow_driver___::Init( ThreadSafety );
 		}
 	};
 
@@ -134,13 +134,13 @@ namespace iof {
 	: public flw::oflow__
 	{
 	private:
-		io_oflow_functions___ _Functions;
+		io_oflow_driver___ _Driver;
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		io_oflow___( void )
 		{
@@ -154,18 +154,18 @@ namespace iof {
 			iop::descriptor__ D,
 			iop::amount__ AmountMax )
 		{
-			_Functions.Init( D, fwf::tsDisabled );
-			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( D, fdr::tsDisabled );
+			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
-	class _input_functions__
+	class _input_driver__
 	: public _input__
 	{
 	protected:
-		virtual fwf::size__ _Read(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ _Read(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 	#ifdef IOF_DBG
 			if( Buffer == NULL )
@@ -180,43 +180,43 @@ namespace iof {
 		{}
 	};
 
-	typedef fwf::iflow_functions___<> _iflow_functions___;
+	typedef fdr::iflow_driver___<> _iflow_driver___;
 
-	class io_iflow_functions___
-	: public _input_functions__,
-	  public _iflow_functions___
+	class io_iflow_driver___
+	: public _input_driver__,
+	  public _iflow_driver___
 	{
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
-			return _input_functions__::_Read( Maximum, Buffer );
+			return _input_driver__::_Read( Maximum, Buffer );
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
-			_input_functions__::_Dismiss();
+			_input_driver__::_Dismiss();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_input_functions__::reset( P );
-			_iflow_functions___::reset( P );
+			_input_driver__::reset( P );
+			_iflow_driver___::reset( P );
 		}
-		io_iflow_functions___( void )
+		io_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		virtual ~io_iflow_functions___( void )
+		virtual ~io_iflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			iop::descriptor__ D,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
-			_input_functions__::Init( D );
-			_iflow_functions___::Init( ThreadSafety );
+			_input_driver__::Init( D );
+			_iflow_driver___::Init( ThreadSafety );
 		}
 	};
 
@@ -224,11 +224,11 @@ namespace iof {
 	: public flw::iflow__
 	{
 	private:
-		io_iflow_functions___ _Functions;
+		io_iflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_Functions.reset( P );
+			_Driver.reset( P );
 			iflow__::reset( P );
 		}
 		io_iflow___( void )
@@ -243,47 +243,47 @@ namespace iof {
 			iop::descriptor__ D,
 			iop::amount__ AmountMax )
 		{
-			_Functions.Init( D, fwf::tsDisabled );
-			iflow__::Init( _Functions, AmountMax );
+			_Driver.Init( D, fdr::tsDisabled );
+			iflow__::Init( _Driver, AmountMax );
 		}
 	};
 
-	typedef fwf::ioflow_functions___<> _ioflow_functions___;
+	typedef fdr::ioflow_driver___<> _ioflow_driver___;
 
-	class io_flow_functions___
-	: public _output_functions__,
-	  public _input_functions__,
-	  public _ioflow_functions___
+	class io_flow_driver___
+	: public _output_driver__,
+	  public _input_driver__,
+	  public _ioflow_driver___
 	{
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
-			return _output_functions__::_Write( Buffer, Maximum );
+			return _output_driver__::_Write( Buffer, Maximum );
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
-			_output_functions__::_Commit();
+			_output_driver__::_Commit();
 		}
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
-			return _input_functions__::_Read( Maximum, Buffer );
+			return _input_driver__::_Read( Maximum, Buffer );
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
-			return _input_functions__::_Dismiss();
+			return _input_driver__::_Dismiss();
 		}
 	public:
 		void Init(
 			iop::descriptor__ D,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
-			_input_functions__::Init( D );
-			_output_functions__::Init( D );
-			_ioflow_functions___::Init( ThreadSafety );
+			_input_driver__::Init( D );
+			_output_driver__::Init( D );
+			_ioflow_driver___::Init( ThreadSafety );
 		}
 
 	};
@@ -293,7 +293,7 @@ namespace iof {
 	  public flw::ioflow__
 	{
 	private:
-		io_flow_functions___ _Functions;
+		io_flow_driver___ _Driver;
 		flw::datum__ _Cache[2 * IOP__BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
@@ -312,11 +312,11 @@ namespace iof {
 		void Init(
 			iop::descriptor__ D,
 			iop::amount__ AmountMax,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
 			_io__::Init( D );
-			_Functions.Init( D, ThreadSafety );
-			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( D, ThreadSafety );
+			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 }

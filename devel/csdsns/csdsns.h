@@ -70,9 +70,14 @@ extern class ttr_tutor &CSDSNSTutor;
 
 namespace csdsns {
 
-	using namespace csdscm;
 	using namespace csdsnb;
 	using csdbns::port__;
+
+	using csdscm::action__;
+
+	using csdscm::aContinue;
+	using csdscm::aStop;
+	using csdscm::a_Undefined;
 
 	enum log__ {
 		lNew,
@@ -95,6 +100,22 @@ namespace csdsns {
 			void *UP,
 			epeios::size__ Amount ) = 0;
 	public:
+		void reset( bso::bool__  = true )
+		{
+			// Standardisation.
+		}
+		log_functions__( void )
+		{
+			reset( false );
+		}
+		~log_functions__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			// Standardisation.
+		}
 		void Log(
 			log__ Log,
 			id__ Id,
@@ -259,14 +280,42 @@ ERREpilog
 
 	E_AUTO( core)
 
+	typedef csdbns::user_functions__ _user_functions__;
+
+	class user_functions__
+	: public _user_functions__,
+	  public log_functions__
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_user_functions__::reset( P );
+			log_functions__::reset( P );
+		}
+		user_functions__( void )
+		{
+			reset( false );
+		}
+		~user_functions__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			_user_functions__::Init();
+			log_functions__::Init();
+		}
+	};
+
+
 	class _functions___
-	: public csdbns::user_functions__
+	: public _user_functions__
 	{
 	private:
 		core _Core;
 		user_functions__ *_Functions;
 		const char *_Origin;
-		void _Clean( void );	// Appelle tout le 'postProcess' pour tous les objets utilisateurs.
+		void _Clean( void );	// Appelle le 'PostProcess' pour tous les objets utilisateurs.
 	protected:
 		virtual void *CSDPreProcess( const char *Origin )
 		{
@@ -283,7 +332,7 @@ ERREpilog
 				ERRc();
 #endif
 			id__ Id = CSDSNB_UNDEFINED;
-			action__ Action = aContinue;
+			action__ Action = csdscm::aContinue;
 
 			UP = NULL;
 
@@ -299,9 +348,9 @@ ERREpilog
 				Flow.Put( (flw::datum__)0 );
 				Flow.Commit();
 			} else if ( !_Core.TestAndGet( Id, UP ) ) {
-					Flow.Put( (flw::datum__)-1 );
-					Flow.Commit();
-					Action = aStop;
+				Flow.Put( (flw::datum__)-1 );
+				Flow.Commit();
+				Action = aStop;
 			} else {
 				Flow.Put( 0 );
 				Action = _Functions->Process( Flow, UP );
@@ -340,6 +389,7 @@ ERREpilog
 			_Core.reset( P );
 			_Functions = NULL;
 			_Origin = NULL;
+			_user_functions__::reset( P );
 		}
 		_functions___( void)
 		{
@@ -357,6 +407,7 @@ ERREpilog
 
 			_Core.Init( LogFunctions );
 			_Functions = &Functions;
+			_user_functions__::Init();
 		}
 	};
 
@@ -369,10 +420,9 @@ ERREpilog
 	public:
 		void Init(
 			port__ Port,
-			user_functions__ &UserFunctions,
-			log_functions__ &LogFunctions )
+			user_functions__ &UserFunctions )
 		{
-			_Functions.Init( UserFunctions, LogFunctions );
+			_Functions.Init( UserFunctions, UserFunctions );
 
 			_Server.Init( Port, _Functions );
 		}

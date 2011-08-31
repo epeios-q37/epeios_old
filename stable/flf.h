@@ -55,7 +55,7 @@ extern class ttr_tutor &FLFTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D FLow Functions 
+//D FiLe Flow
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -67,15 +67,15 @@ extern class ttr_tutor &FLFTutor;
 #include "iof.h"
 
 namespace flf {
-	class file_iflow_functions___
-	: public iof::io_iflow_functions___
+	class file_iflow_driver___
+	: public iof::io_iflow_driver___
 	{
 	private:
 		iop::descriptor__ _D;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			io_iflow_functions___::reset( P );
+			io_iflow_driver___::reset( P );
 
 			if ( P ) {
 				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
@@ -84,17 +84,17 @@ namespace flf {
 
 			_D = IOP_UNDEFINED_DESCRIPTOR;
 		}
-		file_iflow_functions___( void )
+		file_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		~file_iflow_functions___( void )
+		~file_iflow_driver___( void )
 		{
 			reset();
 		}
 		fil::status__ Init(
 			const char *FileName,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			fil::mode__ Mode = fil::mReadOnly,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
@@ -117,14 +117,14 @@ namespace flf {
 				}
 			} else {
 				Status = fil::sSuccess;
-				io_iflow_functions___::Init( _D, ThreadSafety );
+				io_iflow_driver___::Init( _D, ThreadSafety );
 			}
 
 			return Status;
 		}
 		fil::status__ Init(
 			const char *FileName,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mReadOnly )
 		{
@@ -198,15 +198,15 @@ namespace flf {
 		}
 	};
 
-	class file_oflow_functions___
-	: public iof::io_oflow_functions___
+	class file_oflow_driver___
+	: public iof::io_oflow_driver___
 	{
 	private:
 		iop::descriptor__ _D;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			io_oflow_functions___::reset( P );
+			io_oflow_driver___::reset( P );
 
 			if ( P ) {
 				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
@@ -215,17 +215,17 @@ namespace flf {
 
 			_D = IOP_UNDEFINED_DESCRIPTOR;
 		}
-		file_oflow_functions___( void )
+		file_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		~file_oflow_functions___( void )
+		~file_oflow_driver___( void )
 		{
 			reset();
 		}
 		fil::status__ Init(
 			const char *FileName,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			fil::mode__ Mode = fil::mRemove,
 			err::handling__ ErrorHandling = err::h_Default )
 		{
@@ -248,14 +248,14 @@ namespace flf {
 				}
 			} else {
 				Status = fil::sSuccess;
-				io_oflow_functions___::Init( _D, ThreadSafety );
+				io_oflow_driver___::Init( _D, ThreadSafety );
 			}
 
 			return Status;
 		}
 		fil::status__ Init(
 			const char *FileName,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mRemove )
 		{

@@ -1123,7 +1123,7 @@ status__ xpp::_extended_parser___::Handle(
 	return Status;
 }
 
-void xpp::_preprocessing_iflow_functions___::_DeleteParsers( void )
+void xpp::_preprocessing_iflow_driver___::_DeleteParsers( void )
 {
 	if ( _CurrentParser != NULL )
 		delete _CurrentParser;
@@ -1132,7 +1132,7 @@ void xpp::_preprocessing_iflow_functions___::_DeleteParsers( void )
 		delete _Parsers.Pop();
 }
 
-mdr::size__ xpp::_preprocessing_iflow_functions___::FWFRead(
+mdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 	mdr::size__ Maximum,
 	mdr::datum__ *Buffer )
 {

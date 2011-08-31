@@ -120,6 +120,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&ERRor handling
 &fam		&epeios		&2000-2001, \
 	&Fast Allocation Memory
+&fdr		&epeios		&, \
+	&Flow DRiver
 &fgm		&epeios		&2000, \
 	&Fragmented memory
 &fil		&epeios		&2000-2001, \

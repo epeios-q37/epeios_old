@@ -62,21 +62,21 @@ extern class ttr_tutor &CRPTGRTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "fwf.h"
+#include "fdr.h"
 #include "str.h"
 
 namespace crptgr {
 
-	typedef fwf::oflow_functions___<>	_oflow_functions___;
+	typedef fdr::oflow_driver___<>	_oflow_driver___;
 	
-	class encrypt_oflow_functions___
-	: public _oflow_functions___
+	class encrypt_oflow_driver___
+	: public _oflow_driver___
 	{
 	private:
 		flw::oflow__ *_Flow;
 		str::string _Key;
 		bso::size__ _Position;
-		fwf::datum__ _Encrypt( fwf::datum__ Datum )
+		fdr::datum__ _Encrypt( fdr::datum__ Datum )
 		{
 			if ( _Position == _Key.Amount() )
 				_Position = 0;
@@ -84,11 +84,11 @@ namespace crptgr {
 			return Datum + _Key(_Position++ );
 		}
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
-			fwf::size__ Amount = 0;
+			fdr::size__ Amount = 0;
 
 			// A optimiser.
 			while ( Amount < Maximum )
@@ -96,33 +96,33 @@ namespace crptgr {
 
 			return Amount;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			_Flow->Commit();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_oflow_functions___::reset( P );
+			_oflow_driver___::reset( P );
 
 			_Flow = NULL;
 			_Key.reset( P );
 			_Position = 0;
 		}
-		encrypt_oflow_functions___( void )
+		encrypt_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		~encrypt_oflow_functions___( void )
+		~encrypt_oflow_driver___( void )
 		{
 			reset( false );
 		}
 		void Init(
 			flw::oflow__ &Flow,
 			const str::string_ &Key,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
-			_oflow_functions___::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 
 			_Flow = &Flow;
 
@@ -141,12 +141,12 @@ namespace crptgr {
 	: public _oflow__
 	{
 	private:
-		encrypt_oflow_functions___ _Functions;
+		encrypt_oflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		encrypt_oflow___( void )
 		{
@@ -161,8 +161,8 @@ namespace crptgr {
 			const str::string_ &Key,
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( Flow, Key, fwf::tsDisabled );
-			_oflow__::Init( _Functions, AmountMax );
+			_Driver.Init( Flow, Key, fdr::tsDisabled );
+			_oflow__::Init( _Driver, AmountMax );
 		}
 	};
 
@@ -171,16 +171,16 @@ namespace crptgr {
 		const str::string_ &Key,
 		str::string_ &Crypted );
 
-	typedef fwf::iflow_functions___<>	_iflow_functions___;
+	typedef fdr::iflow_driver___<>	_iflow_driver___;
 	
-	class decrypt_iflow_functions___
-	: public _iflow_functions___
+	class decrypt_iflow_driver___
+	: public _iflow_driver___
 	{
 	private:
 		flw::iflow__ *_Flow;
 		str::string _Key;
 		bso::size__ _Position;
-		fwf::datum__ _Decrypt( fwf::datum__ Datum )
+		fdr::datum__ _Decrypt( fdr::datum__ Datum )
 		{
 			if ( _Position == _Key.Amount() )
 				_Position = 0;
@@ -188,11 +188,11 @@ namespace crptgr {
 			return Datum - _Key(_Position++ );
 		}
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
-			fwf::size__ Amount = 0;
+			fdr::size__ Amount = 0;
 
 			Maximum = _Flow->ReadUpTo( Maximum, Buffer, 0 );
 
@@ -204,33 +204,33 @@ namespace crptgr {
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
 			_Flow->Dismiss();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_iflow_functions___::reset( P );
+			_iflow_driver___::reset( P );
 
 			_Flow = NULL;
 			_Key.reset( P );
 			_Position = 0;
 		}
-		decrypt_iflow_functions___( void )
+		decrypt_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		~decrypt_iflow_functions___( void )
+		~decrypt_iflow_driver___( void )
 		{
 			reset( false );
 		}
 		void Init(
 			flw::iflow__ &Flow,
 			const str::string_ &Key,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
-			_iflow_functions___::Init( ThreadSafety );
+			_iflow_driver___::Init( ThreadSafety );
 
 			_Flow = &Flow;
 
@@ -249,12 +249,12 @@ namespace crptgr {
 	: public _iflow__
 	{
 	private:
-		decrypt_iflow_functions___ _Functions;
+		decrypt_iflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_iflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		decrypt_iflow___( void )
 		{
@@ -269,8 +269,8 @@ namespace crptgr {
 			const str::string_ &Key,
 			flw::size__ AmountMax = FLW_SIZE_MAX )	// 'Key' n'est PAS dupliqué.
 		{
-			_Functions.Init( Flow, Key, fwf::tsDisabled );
-			_iflow__::Init( _Functions, AmountMax );
+			_Driver.Init( Flow, Key, fdr::tsDisabled );
+			_iflow__::Init( _Driver, AmountMax );
 		}
 	};
 

@@ -61,7 +61,7 @@ extern class ttr_tutor &FLXTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "fwf.h"
+#include "fdr.h"
 #include "flw.h"
 #include "bso.h"
 #include "bch.h"
@@ -92,15 +92,15 @@ extern class ttr_tutor &FLXTutor;
 
 namespace flx {
 
-	typedef fwf::iflow_functions___<> _iflow_functions___;
+	typedef fdr::iflow_driver___<> _iflow_driver___;
 
 	//c Buffer as a standard input flow.
-	class buffer_iflow_functions___
-	: public _iflow_functions___
+	class buffer_iflow_driver___
+	: public _iflow_driver___
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
-		const fwf::datum__ *Tampon_;
+		const fdr::datum__ *Tampon_;
 		// Nombre de caractère pouvant encore être lus.
 		bso::size__ Taille_;
 	protected:
@@ -109,9 +109,9 @@ namespace flx {
 		{
 			ERRf();
 		}
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			if ( !Taille_ )
 				FLXUnavailable();
@@ -129,33 +129,33 @@ namespace flx {
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{}
 	public:
 		void reset( bool P = true )
 		{
-			_iflow_functions___::reset( P );
+			_iflow_driver___::reset( P );
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
-		buffer_iflow_functions___( void )
+		buffer_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		~buffer_iflow_functions___( void )
+		~buffer_iflow_driver___( void )
 		{
 			reset();
 		}
 		/*f Initialization with the buffer 'Buffer' of size 'Size'..'Size' is not
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
-			const fwf::datum__ *Buffer,
-			fwf::thread_safety__ ThreadSafety,
+			const fdr::datum__ *Buffer,
+			fdr::thread_safety__ ThreadSafety,
 			bso::size__ Size = BSO_SIZE_MAX )
 		{
 			reset();
 
-			_iflow_functions___::Init( ThreadSafety );
+			_iflow_driver___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -167,11 +167,11 @@ namespace flx {
 	: public flw::iflow__
 	{
 	private:
-		buffer_iflow_functions___ _Functions;
+		buffer_iflow_driver___ _Driver;
 	public:
 		void reset( bool P = true )
 		{
-			_Functions.reset( P );
+			_Driver.reset( P );
 			iflow__::reset( P );
 		}
 		buffer_iflow___( void )
@@ -189,26 +189,26 @@ namespace flx {
 			bso::size__ Size = BSO_SIZE_MAX,
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( Buffer, fwf::tsDisabled, Size );
-			iflow__::Init( _Functions, AmountMax );
+			_Driver.Init( Buffer, fdr::tsDisabled, Size );
+			iflow__::Init( _Driver, AmountMax );
 		}
 	};
 
-	typedef fwf::oflow_functions___<> _oflow_functions___;
+	typedef fdr::oflow_driver___<> _oflow_driver___;
 
 	//c Buffer as a standard ouput flow.driver
-	class buffer_oflow_functions___
-	: public _oflow_functions___
+	class buffer_oflow_driver___
+	: public _oflow_driver___
 	{
 	private:
 		// Pointeur sur le prochain caractère à écrire.
-		fwf::datum__ *Tampon_;
+		fdr::datum__ *Tampon_;
 		// Nombre de caractères pouvant encore être écris.
 		bso::size__ Taille_;
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			if ( Maximum > Taille_ )
 				Maximum = Taille_;
@@ -220,33 +220,33 @@ namespace flx {
 
 			return Maximum;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{}
 	public:
 		void reset( bool P = true )
 		{
-			_oflow_functions___::reset( P );
+			_oflow_driver___::reset( P );
 
 			Tampon_ = NULL;
 			Taille_ = 0;
 		}
-		buffer_oflow_functions___( void )
+		buffer_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		~buffer_oflow_functions___( void )
+		~buffer_oflow_driver___( void )
 		{
 			reset( true );
 		}
 		//f Initialization with 'Buffer' of size 'Size'.
 		void Init(
-			fwf::datum__ *Buffer,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::datum__ *Buffer,
+			fdr::thread_safety__ ThreadSafety,
 			bso::size__ Size )
 		{
 			reset();
 
-			_oflow_functions___::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;
@@ -258,13 +258,13 @@ namespace flx {
 	: public flw::oflow__
 	{
 	private:
-		buffer_oflow_functions___ _Functions;
+		buffer_oflow_driver___ _Driver;
 		// The cache.
 		flw::datum__ _Cache[FLX_BUFFER_BUFFER_SIZE];
 	public:
 		void reset( bool P = true )
 		{
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		buffer_oflow___( void )
 		{
@@ -282,21 +282,21 @@ namespace flx {
 		{
 			reset();
 
-			_Functions.Init( Buffer, fwf::tsDisabled, Size );
-			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( Buffer, fdr::tsDisabled, Size );
+			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
 	//c A bunch as input flow.driver.
-	template < typename bunch_, typename so__, int cache_size> class bunch_iflow_functions___
-	: public fwf::iflow_functions___<cache_size>
+	template < typename bunch_, typename so__, int cache_size> class bunch_iflow_driver___
+	: public fdr::iflow_driver___<cache_size>
 	{ 
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
-			if ( (fwf::size__)Maximum > ( Bunch_->Amount() - Position_ ) )
+			if ( (fdr::size__)Maximum > ( Bunch_->Amount() - Position_ ) )
 				Maximum = ( Bunch_->Amount() - Position_ );
 
 			if ( Maximum )
@@ -307,30 +307,30 @@ namespace flx {
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{}
 	private:
 		const bunch_ *Bunch_;
 		epeios::row_t__ Position_;
 	public:
-		bunch_iflow_functions___( void )
+		bunch_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		~bunch_iflow_functions___( void )
+		~bunch_iflow_driver___( void )
 		{
 			reset( true );
 		}
 		void reset( bool P = true )
 		{
-			fwf::iflow_functions___<cache_size>::reset( P );
+			fdr::iflow_driver___<cache_size>::reset( P );
 			Bunch_ = NULL;
 			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			epeios::row_t__ Position = 0 )
 		{
 			reset();
@@ -338,7 +338,7 @@ namespace flx {
 			Bunch_ = &Bunch;
 			Position_ = Position;
 
-			fwf::iflow_functions___<cache_size>::Init( ThreadSafety );
+			fdr::iflow_driver___<cache_size>::Init( ThreadSafety );
 		}
 	};
 
@@ -347,7 +347,7 @@ namespace flx {
 	: public flw::iflow__
 	{ 
 	private:
-		bunch_iflow_functions___<bunch_, so__, CacheSize> _Functions;
+		bunch_iflow_driver___<bunch_, so__, CacheSize> _Driver;
 	public:
 		bunch_iflow__( void )
 		{
@@ -359,7 +359,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
@@ -369,57 +369,57 @@ namespace flx {
 		{
 			reset();
 
-			_Functions.Init( Bunch, fwf::tsDisabled, Position );
-			iflow__::Init( _Functions, AmountMax );
+			_Driver.Init( Bunch, fdr::tsDisabled, Position );
+			iflow__::Init( _Driver, AmountMax );
 		}
 	};
 
 	#define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
 
 	//c A bunch as output flow.driver.
-	template < typename bunch_, typename so__> class bunch_oflow_functions___
-	: public fwf::oflow_functions___<>
+	template < typename bunch_, typename so__> class bunch_oflow_driver___
+	: public fdr::oflow_driver___<>
 	{
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			_Bunch->Append( (const so__ *)Buffer, Maximum );
 
 			return Maximum;
 		}
-		virtual void FWFCommit()
+		virtual void FDRCommit()
 		{}
 	private:
 		bunch_ *_Bunch;
 	public:
-		bunch_oflow_functions___( void )
+		bunch_oflow_driver___( void )
 		{
 			reset( false );
 
 			_Bunch = NULL;
 		}
-		~bunch_oflow_functions___( void )
+		~bunch_oflow_driver___( void )
 		{
 			reset();
 		}
 		void reset( bool P = true )
 		{
-			fwf::oflow_functions___<>::reset( P );
+			fdr::oflow_driver___<>::reset( P );
 
 			_Bunch = NULL;
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
 		void Init(
 			bunch_ &Bunch,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
 			reset();
 
 			_Bunch = &Bunch;
 
-			fwf::oflow_functions___<>::Init( ThreadSafety );
+			fdr::oflow_driver___<>::Init( ThreadSafety );
 		}
 	};
 	//c A bunch as output flow.driver.
@@ -427,7 +427,7 @@ namespace flx {
 	: public flw::oflow__
 	{
 	private:
-		bunch_oflow_functions___<bunch_, so__> _Functions;
+		bunch_oflow_driver___<bunch_, so__> _Driver;
 		flw::datum__ _Cache[FLX_BUNCH_BUFFER_SIZE];
 	public:
 		bunch_oflow___( )
@@ -441,7 +441,7 @@ namespace flx {
 		void reset( bool P = true )
 		{
 			oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
 		void Init(
@@ -450,53 +450,53 @@ namespace flx {
 		{
 			reset();
 
-			_Functions.Init( Bunch, fwf::tsDisabled );
-			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( Bunch, fdr::tsDisabled );
+			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
 	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
 	//c A output flow which write to nothing.
-	class dump_oflow_functions___
-	: public fwf::oflow_functions___<>
+	class dump_oflow_driver___
+	: public fdr::oflow_driver___<>
 	{
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *,
+			fdr::size__ Maximum )
 		{
 			return Maximum;
 		}
-		virtual void FWFCommit()
+		virtual void FDRCommit()
 		{}
 	public:
-		~dump_oflow_functions___( void )
+		~dump_oflow_driver___( void )
 		{
 			reset();
 		}
-		void Init( fwf::thread_safety__ ThreadSafety )
+		void Init( fdr::thread_safety__ ThreadSafety )
 		{
-			fwf::oflow_functions___<>::Init( ThreadSafety );
+			fdr::oflow_driver___<>::Init( ThreadSafety );
 		}
 
 	};	
 
-	extern dump_oflow_functions___ dump;
+	extern dump_oflow_driver___ dump;
 
 	//c A output flow which write to nothing.
 	class dump_oflow__
 	: public flw::oflow__
 	{
 	private:
-		dump_oflow_functions___ _Functions;
+		dump_oflow_driver___ _Driver;
 			// The cache.
 		flw::datum__ _Cache[FLX_DUMP_BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		dump_oflow__( void )
 		{
@@ -508,28 +508,28 @@ namespace flx {
 		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( fwf::tsDisabled );
-			oflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( fdr::tsDisabled );
+			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
 #ifdef FLX__MT
 
 	// Permet de lire à partir d'un 'iflow' ce qui est écrit dans un 'oflow'.
-	class mediator_ioflow_functions___
-	: public fwf::ioflow_functions___<>
+	class mediator_ioflow_driver___
+	: public fdr::ioflow_driver___<>
 	{
 	private:
 		mtx::mutex_handler__ 
 			_Read,
 			_Write;
-		const fwf::datum__ *_Buffer;
-		fwf::size__ _Size;
-		fwf::size__ _Red;
+		const fdr::datum__ *_Buffer;
+		fdr::size__ _Size;
+		fdr::size__ _Red;
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			mtx::Lock( _Write );
 			mtx::Unlock( _Write );
@@ -543,11 +543,11 @@ namespace flx {
 
 			return _Red;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{}
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 
 			mtx::Lock( _Read );
@@ -565,7 +565,7 @@ namespace flx {
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -579,21 +579,21 @@ namespace flx {
 					mtx::Delete( _Write,true );
 			}
 
-			fwf::ioflow_functions___<>::reset( P );
+			fdr::ioflow_driver___<>::reset( P );
 
 			_Buffer = NULL;
 			_Red = _Size = 0;
 			_Read = _Write = MTX_INVALID_HANDLER;
 		}
-		mediator_ioflow_functions___( void )
+		mediator_ioflow_driver___( void )
 		{
 			reset( false );
 		}
-		~mediator_ioflow_functions___( void )
+		~mediator_ioflow_driver___( void )
 		{
 			reset();
 		}
-		void Init( fwf::thread_safety__ ThreadSafety )
+		void Init( fdr::thread_safety__ ThreadSafety )
 		{
 			if ( _Read != MTX_INVALID_HANDLER )
 				mtx::Delete( _Read, true );
@@ -601,7 +601,7 @@ namespace flx {
 			if ( _Write != MTX_INVALID_HANDLER )
 				mtx::Delete( _Write, true );
 
-			fwf::ioflow_functions___<>::Init( ThreadSafety );
+			fdr::ioflow_driver___<>::Init( ThreadSafety );
 
 			_Size = _Red = 0;
 
@@ -618,12 +618,12 @@ namespace flx {
 		: public flw::standalone_ioflow__<OutCacheSize>
 	{
 	private:
-		mediator_ioflow_functions___ _Functions;
+		mediator_ioflow_driver___ _Driver;
 	public:
 		void Init( void )
 		{
-			_Functions.Init( fwf::tsDisabled );
-			flw::standalone_ioflow__<OutCacheSize>Init( _Functions );
+			_Driver.Init( fdr::tsDisabled );
+			flw::standalone_ioflow__<OutCacheSize>Init( _Driver );
 		}
 	};
 #endif

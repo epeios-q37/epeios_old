@@ -1,5 +1,13 @@
 $Id$
 
+29/08/2011 :
+	- FDR remplace FLW.
+	- Général :
+		- Mise en oeuvre 'FDR'.
+	- CSDSNS :
+		- Standardisation.
+		- Inclusion 'log_functions__' dans 'user_functions__'.
+
 22/08/2011 :
 	- NSXPCM :
 		- Ajout pointeur utilisateur pour les 'widget's.

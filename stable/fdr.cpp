@@ -1,6 +1,7 @@
 /*
-	Header for the 'fblrpl' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) 2004 Claude SIMON.
+	'fdr' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'fdr' header file ('fdr.h').
+	Copyright (C) , 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
@@ -22,69 +23,59 @@
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+
+
 //	$Id$
 
-#ifndef FBLRPL__INC
-#define FBLRPL__INC
+#define FDR__COMPILATION
 
-#define FBLRPL_NAME		"FBLRPL"
+#include "fdr.h"
 
-#define	FBLRPL_VERSION	"$Revision$"
-
-#define FBLRPL_OWNER		"Claude SIMON"
-
-#include "ttr.h"
-
-extern class ttr_tutor &FBLRPLTutor;
-
-#if defined( XXX_DBG ) && !defined( FBLRPL_NODBG )
-#define FBLRPL_DBG
+class fdrtutor
+: public ttr_tutor
+{
+public:
+	fdrtutor( void )
+	: ttr_tutor( FDR_NAME )
+	{
+#ifdef FDR_DBG
+		Version = FDR_VERSION "\b\bD $";
+#else
+		Version = FDR_VERSION;
 #endif
-
-/* Begin of automatic documentation generation part. */
-
-//V $Revision$
-//C Claude SIMON (csimon at zeusw dot org)
-//R $Date$
-
-/* End of automatic documentation generation part. */
+		Owner = FDR_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~fdrtutor( void ){}
+};
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
-
-/* Addendum to the automatic documentation generation part. */
-//D Frontend/Backend Layout RePLy 
-/* End addendum to automatic documentation generation part. */
-
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "lcl.h"
+using namespace fdr;
 
-#define FBLRPL_PROTOCOL_VERSION	"3"
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 
-namespace fblrpl {
-	enum reply__ {
-		rOK,
-		rBackendError,	// Lorsque survient un 'ERR[x|X](...)'.
-		rUserError,		// Erreur définie par l'utilisateur.
-		r_amount,
-		r_Undefined
-	};
-
-	const char *Label( reply__ Reply );
-
-	inline const char *GetTranslation(
-		reply__ Reply,
-		const lcl::rack__ &Rack,
-		STR_BUFFER___ &Buffer )
+class fdrpersonnalization
+: public fdrtutor
+{
+public:
+	fdrpersonnalization( void )
 	{
-		return Rack.GetTranslation( Label( Reply ),  FBLRPL_NAME "_", Buffer );
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
 	}
-}
+	~fdrpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
+
 
 /*$END$*/
 				  /********************************************/
@@ -92,4 +83,8 @@ namespace fblrpl {
 				  /*			  unless specified		   	  */
 /******************************************************************************/
 
-#endif
+// 'static' by GNU C++.
+
+static fdrpersonnalization Tutor;
+
+ttr_tutor &FDRTutor = Tutor;

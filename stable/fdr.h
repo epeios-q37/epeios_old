@@ -1,12 +1,12 @@
 /*
-	Header for the 'fwf' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'fdr' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) , 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@
 
 //	$Id$
 
-#ifndef FWF__INC
-#define FWF__INC
+#ifndef FDR__INC
+#define FDR__INC
 
-#define FWF_NAME		"FWF"
+#define FDR_NAME		"FDR"
 
-#define	FWF_VERSION	"$Revision$"
+#define	FDR_VERSION	"$Revision$"
 
-#define FWF_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define FDR_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &FWFTutor;
+extern class ttr_tutor &FDRTutor;
 
-#if defined( XXX_DBG ) && !defined( FWF_NODBG )
-#define FWF_DBG
+#if defined( XXX_DBG ) && !defined( FDR_NODBG )
+#define FDR_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,44 +55,42 @@ extern class ttr_tutor &FWFTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D FloW Functions 
+//D Flow DRiver 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-#error "Obsolete ! Use 'FDR' library instead."
 
 #include "err.h"
 #include "bso.h"
 
 #include <string.h>
 
-#ifdef FWF_THREAD_SAFE
-#	define FWF__TS
-#elif !defined( FWF_THREAD_UNSAFE )
+#ifdef FDR_THREAD_SAFE
+#	define FDR__TS
+#elif !defined( FDR_THREAD_UNSAFE )
 #	ifdef CPE__T_MT
-#		define FWF__TS
+#		define FDR__TS
 #	endif
 #endif
 
-#ifdef FWF__TS
+#ifdef FDR__TS
 #	include "mtx.h"
-#	define FWF_NO_MUTEX	MTX_INVALID_HANDLER
+#	define FDR_NO_MUTEX	MTX_INVALID_HANDLER
 	typedef mtx::mutex_handler__ mutex__;
 #else
 	typedef void *mutex__;
-#	define FWF_NO_MUTEX	NULL
+#	define FDR_NO_MUTEX	NULL
 #endif
 
-#ifdef FWF_DEFAULT_CACHE_SIZE
-#	define FWF__DEFAULT_CACHE_SIZE	FWF_DEFAULT_CACHE_SIZE
+#ifdef FDR_DEFAULT_CACHE_SIZE
+#	define FDR__DEFAULT_CACHE_SIZE	FDR_DEFAULT_CACHE_SIZE
 #else
-#	define FWF__DEFAULT_CACHE_SIZE	1024
+#	define FDR__DEFAULT_CACHE_SIZE	1024
 #endif
 
 
 
-namespace fwf {
+namespace fdr {
 		//t Amount of data.
 	using bso::size__;
 
@@ -103,7 +101,7 @@ namespace fwf {
 		ts_amount,
 		ts_Undefined,
 		ts_Default =
-#ifdef FWF__TS
+#ifdef FDR__TS
 		tsEnabled
 #else
 		tsDisabled
@@ -111,15 +109,15 @@ namespace fwf {
 	};
 
 	//d The max value for a amount.
-#	define FWF_SIZE_MAX			BSO_SIZE_MAX
+#	define FDR_SIZE_MAX			BSO_SIZE_MAX
 
 	//t Type of a datum.
 	typedef unsigned char		datum__;
 
-#ifdef FWF__TS
+#ifdef FDR__TS
 	inline void Test_( mutex__ Mutex )
 	{
-		if ( Mutex == FWF_NO_MUTEX )
+		if ( Mutex == FDR_NO_MUTEX )
 			ERRc();
 	}
 #endif
@@ -128,52 +126,52 @@ namespace fwf {
 	{
 		switch ( ThreadSafety ) {
 		case tsEnabled:
-#ifdef FWF__TS
+#ifdef FDR__TS
 			return mtx::Create( mtx::mOwned );
 #else
 			ERRu();
 #endif
 			break;
 		case tsDisabled:
-			return FWF_NO_MUTEX;
+			return FDR_NO_MUTEX;
 			break;
 		default:
 			ERRu();
 			break;
 		}
 
-		return FWF_NO_MUTEX;	// Pour éviter un 'warning'.
+		return FDR_NO_MUTEX;	// Pour éviter un 'warning'.
 	}
 
 
 	inline void Delete_( mutex__ Mutex )
 	{
-#ifdef FWF__TS
-		if ( Mutex != FWF_NO_MUTEX )
+#ifdef FDR__TS
+		if ( Mutex != FDR_NO_MUTEX )
 			mtx::Delete( Mutex );
 #endif
 	}
 
 	inline void Lock_( mutex__ Mutex )
 	{
-#ifdef FWF__TS
-		if ( Mutex != FWF_NO_MUTEX )
+#ifdef FDR__TS
+		if ( Mutex != FDR_NO_MUTEX )
 			mtx::Lock( Mutex );
 #endif
 	}
 
 	inline void Unlock_( mutex__ Mutex )
 	{
-#ifdef FWF__TS
-		if ( Mutex != FWF_NO_MUTEX )
+#ifdef FDR__TS
+		if ( Mutex != FDR_NO_MUTEX )
 			mtx::Unlock( Mutex );
 	#endif
 	}
 
 	inline bso::bool__ IsLocked_( mutex__ Mutex )
 	{
-#ifdef FWF__TS
-		if ( Mutex != FWF_NO_MUTEX )
+#ifdef FDR__TS
+		if ( Mutex != FDR_NO_MUTEX )
 			return mtx::IsLocked( Mutex );
 #endif
 		return false;
@@ -181,14 +179,14 @@ namespace fwf {
 
 	inline bso::bool__ IsOwner_( mutex__ Mutex )
 	{
-#ifdef FWF__TS
-		if ( Mutex != FWF_NO_MUTEX )
+#ifdef FDR__TS
+		if ( Mutex != FDR_NO_MUTEX )
 			return mtx::IsOwner( Mutex );
 #endif
 		return true;
 	}
 
-	class iflow_functions_base___
+	class iflow_driver_base___
 	{
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
@@ -203,7 +201,7 @@ namespace fwf {
 		void _Unlock( void )
 		{
 			if ( IsLocked_( _Mutex ) ) {
-#ifdef FWF_DBG
+#ifdef FDR_DBG
 				if ( !IsOwner_( _Mutex ) )
 					ERRu();
 #endif
@@ -212,7 +210,7 @@ namespace fwf {
 		}
 		void _FillCache( void )
 		{
-#ifdef FWF_DBG
+#ifdef FDR_DBG
 			if ( ( _Cache == NULL ) || ( _Size == 0 ) )
 				ERRu();
 
@@ -220,14 +218,14 @@ namespace fwf {
 				ERRc();
 #endif
 			_Position = 1;
-			_Available = FWFRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
+			_Available = FDRRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
 		}
 	protected:
 		// Retourne le nombre d'octets effectivement lus. Ne retourne '0' que si plus aucune donnée n'est disponibe.
-		virtual size__ FWFRead(
+		virtual size__ FDRRead(
 			size__ Maximum,
 			datum__ *Buffer ) = 0;
-		virtual void FWFDismiss( void ) = 0;
+		virtual void FDRDismiss( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
 		{
@@ -238,13 +236,13 @@ namespace fwf {
 
 			_Cache = NULL;
 			_Size = _Available = _Position = 0;
-			_Mutex = FWF_NO_MUTEX;
+			_Mutex = FDR_NO_MUTEX;
 		}
-		iflow_functions_base___( void )
+		iflow_driver_base___( void )
 		{
 			reset( false );
 		}
-		virtual ~iflow_functions_base___( void )
+		virtual ~iflow_driver_base___( void )
 		{
 			reset();
 		}
@@ -254,7 +252,7 @@ namespace fwf {
 			thread_safety__ ThreadSafety )
 		{
 			reset();
-#ifdef FWF_DBG
+#ifdef FDR_DBG
 			if ( Cache == NULL )
 				ERRu();
 #endif
@@ -268,7 +266,7 @@ namespace fwf {
 		void Dismiss( void )
 		{
 			if ( _Cache != NULL ) {
-				FWFDismiss();
+				FDRDismiss();
 				_Unlock();
 			}
 		}
@@ -278,7 +276,7 @@ namespace fwf {
 			bso::bool__ AdjustCache,
 			bso::bool__ &CacheIsEmpty )
 		{
-#ifdef FWF_DBG
+#ifdef FDR_DBG
 			if ( Maximum < 1 )
 				ERRu();
 #endif
@@ -318,25 +316,25 @@ namespace fwf {
 		{
 			return IsLocked_( _Mutex );
 		}
-		bso::bool__ IFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
+		bso::bool__ IFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_driver_...'
 		{
 			return IsLocked();
 		}
 	};
 
-	template <int cache_size = FWF__DEFAULT_CACHE_SIZE> class iflow_functions___
-	: public iflow_functions_base___
+	template <int cache_size = FDR__DEFAULT_CACHE_SIZE> class iflow_driver___
+	: public iflow_driver_base___
 	{
 	private:
 		datum__ _Cache[cache_size+1];	// '+1' pour gèrer le 'Unget()'.
 	public:
 		void Init( thread_safety__ ThreadSafety )
 		{
-			iflow_functions_base___::Init( _Cache, sizeof( _Cache ), ThreadSafety );
+			iflow_driver_base___::Init( _Cache, sizeof( _Cache ), ThreadSafety );
 		}
 	};
 
-	class oflow_functions_base___
+	class oflow_driver_base___
 	{
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
@@ -348,7 +346,7 @@ namespace fwf {
 		void _Unlock( void )
 		{
 			if ( IsLocked_( _Mutex ) ) {
-#ifdef FWF_DBG
+#ifdef FDR_DBG
 				if ( !IsOwner_( _Mutex ) )
 					ERRu();
 #endif
@@ -357,10 +355,10 @@ namespace fwf {
 		}
 	protected:
 		// Retourne le nombre d'octets effectivement écrits. Ne retourne '0' que si plus aucune donnée ne peut être écrite.
-		virtual size__ FWFWrite(
+		virtual size__ FDRWrite(
 			const datum__ *Buffer,
 			size__ MAximum ) = 0;
-		virtual void FWFCommit( void ) = 0;
+		virtual void FDRCommit( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true ) 
 		{
@@ -369,14 +367,14 @@ namespace fwf {
 				Delete_( _Mutex );
 			}
 
-			_Mutex = FWF_NO_MUTEX;
+			_Mutex = FDR_NO_MUTEX;
 			_Initialized = false;
 		}
-		oflow_functions_base___( void )
+		oflow_driver_base___( void )
 		{
 			reset( false );
 		}
-		virtual ~oflow_functions_base___( void )
+		virtual ~oflow_driver_base___( void )
 		{
 			reset();
 		}
@@ -390,7 +388,7 @@ namespace fwf {
 		void Commit( void )
 		{
 			if ( _Initialized ) {
-				FWFCommit();
+				FDRCommit();
 				_Unlock();
 			}
 		}
@@ -399,59 +397,59 @@ namespace fwf {
 			size__ Maximum )
 		{
 			_Lock();
-			return FWFWrite( Buffer, Maximum );
+			return FDRWrite( Buffer, Maximum );
 		}
 		bso::bool__ IsLocked( void )
 		{
 			return IsLocked_( _Mutex );
 		}
-		bso::bool__ OFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_functions_...'
+		bso::bool__ OFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_driver_...'
 		{
 			return IsLocked();
 		}
 	};
 
-	// Uniquement pour avoir une symétrie par rapport à 'iflow_functions___'.
-	template <int Dummy = 0> class oflow_functions___
-	: public oflow_functions_base___
+	// Uniquement pour avoir une symétrie par rapport à 'iflow_driver___'.
+	template <int Dummy = 0> class oflow_driver___
+	: public oflow_driver_base___
 	{
 	public:
-		oflow_functions___( void )
+		oflow_driver___( void )
 		{
 			if ( Dummy != 0 )	
 				ERRu();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
 		}
 	};
 
-	class ioflow_functions_base___
-	: public iflow_functions_base___,
-	  public oflow_functions_base___
+	class ioflow_driver_base___
+	: public iflow_driver_base___,
+	  public oflow_driver_base___
 	{
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			iflow_functions_base___::reset( P );
-			oflow_functions_base___::reset( P );
+			iflow_driver_base___::reset( P );
+			oflow_driver_base___::reset( P );
 		}
 		void Init(
 			datum__ *InputCache,
 			size__ InputCacheSize,
 			thread_safety__ ThreadSafety )
 		{
-			iflow_functions_base___::Init( InputCache, InputCacheSize, ThreadSafety );
-			oflow_functions_base___::Init( ThreadSafety );
+			iflow_driver_base___::Init( InputCache, InputCacheSize, ThreadSafety );
+			oflow_driver_base___::Init( ThreadSafety );
 		}
 	};
 
-	template <int input_cache_size = FWF__DEFAULT_CACHE_SIZE> class ioflow_functions___
-	: public ioflow_functions_base___
+	template <int input_cache_size = FDR__DEFAULT_CACHE_SIZE> class ioflow_driver___
+	: public ioflow_driver_base___
 	{
 	private:
 		datum__ _InputCache[input_cache_size];
 	public:
 		void Init( thread_safety__ ThreadSafety )
 		{
-			ioflow_functions_base___::Init( _InputCache, sizeof( _InputCache ), ThreadSafety );
+			ioflow_driver_base___::Init( _InputCache, sizeof( _InputCache ), ThreadSafety );
 		}
 	};
 }

@@ -60,16 +60,15 @@ extern class ttr_tutor &XPPTutor;
 
 /*$BEGIN$*/
 
-#	include "err.h"
-#	include "flw.h"
-#	include "xml.h"
-#	include "fwf.h"
-#	include "flw.h"
-#	include "xtf.h"
-#	include "flx.h"
-#	include "flf.h"
-#	include "crptgr.h"
-#	include "cdgb64.h"
+# include "err.h"
+# include "flw.h"
+# include "xml.h"
+# include "fdr.h"
+# include "xtf.h"
+# include "flx.h"
+# include "flf.h"
+# include "crptgr.h"
+# include "cdgb64.h"
 
 
 # ifdef XPP_PREPROCESSOR_DEFAULT_NAMESPACE
@@ -531,7 +530,7 @@ namespace xpp {
 	typedef stk::E_BSTACK_(_extended_parser___ *) _xparser_stack_;
 	E_AUTO( _xparser_stack );
 
-	typedef fwf::iflow_functions___<> _iflow_functions___;
+	typedef fdr::iflow_driver___<> _iflow_driver___;
 
 	inline _extended_parser___ *NewParser(
 		_repository_ &Repository,
@@ -590,8 +589,8 @@ namespace xpp {
 		}
 	};
 
-	class _preprocessing_iflow_functions___
-	: public _iflow_functions___
+	class _preprocessing_iflow_driver___
+	: public _iflow_driver___
 	{
 	private:
 		status__ _Status;
@@ -620,10 +619,10 @@ namespace xpp {
 			return *_CurrentParser;
 		}
 	protected:
-		virtual mdr::size__ FWFRead(
+		virtual mdr::size__ FDRRead(
 			mdr::size__ Maximum,
 			mdr::datum__ *Buffer );
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -637,21 +636,21 @@ namespace xpp {
 			_Directives.reset();
 			_Data.reset( P );
 			_Position = 0;
-			_iflow_functions___::reset( P );
+			_iflow_driver___::reset( P );
 			_Parsers.reset( P );
 			_CurrentParser = NULL;
 		}
-		_preprocessing_iflow_functions___( void )
+		_preprocessing_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		virtual ~_preprocessing_iflow_functions___( void )
+		virtual ~_preprocessing_iflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			xtf::extended_text_iflow__ &XFlow,
-			fwf::thread_safety__ ThreadSafety,
+			fdr::thread_safety__ ThreadSafety,
 			const criterions___ &Criterions )
 		{
 			_DeleteParsers();
@@ -667,7 +666,7 @@ namespace xpp {
 # endif
 			_Data.Init();
 			_Position = 0;
-			_iflow_functions___::Init( ThreadSafety );
+			_iflow_driver___::Init( ThreadSafety );
 			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
 			_Parsers.Init();
 			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
@@ -690,12 +689,12 @@ namespace xpp {
 	{
 	private:
 		xtf::extended_text_iflow__ _XFlow;
-		_preprocessing_iflow_functions___ _FlowFunctions;
+		_preprocessing_iflow_driver___ _FlowDriver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_XFlow.reset( P );
-			_FlowFunctions.reset( P );
+			_FlowDriver.reset( P );
 			_iflow__::reset( P );
 		}
 		preprocessing_iflow___( void )
@@ -711,13 +710,13 @@ namespace xpp {
 			const criterions___ &Criterions )
 		{
 			_XFlow.Init( IFlow );
-			_FlowFunctions.Init( _XFlow, fwf::tsDisabled, Criterions );
-			_iflow__::Init( _FlowFunctions, FLW_SIZE_MAX );
+			_FlowDriver.Init( _XFlow, fdr::tsDisabled, Criterions );
+			_iflow__::Init( _FlowDriver, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
 		const context___ &GetContext( context___ &Context ) const
 		{
-			return _FlowFunctions.GetContext( Context );
+			return _FlowDriver.GetContext( Context );
 		}
 	};
 

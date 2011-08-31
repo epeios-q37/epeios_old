@@ -60,6 +60,8 @@ extern class ttr_tutor &FWFTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use 'FDR' library instead."
+
 #include "err.h"
 #include "bso.h"
 

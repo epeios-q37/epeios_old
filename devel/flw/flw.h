@@ -63,17 +63,17 @@ extern class ttr_tutor &FLWTutor;
 #include <string.h>
 #include "bso.h"
 #include "cpe.h"
-#include "fwf.h"
+#include "fdr.h"
 
 // Non utilisé dabs cette bibliothèque, mais dans des bibliothèques appelantes.
 #ifndef FLW_INPUT_CACHE_SIZE
-#	define FLW__INPUT_CACHE_SIZE	FWF__DEFAULT_CACHE_SIZE
+#	define FLW__INPUT_CACHE_SIZE	FDR__DEFAULT_CACHE_SIZE
 #else
 #	define FLW__INPUT_CACHE_SIZE	FLW_INPUT_CACHE_SIZE
 #endif
 
 #ifndef FLW_OUTPUT_CACHE_SIZE
-#	define FLW__OUTPUT_CACHE_SIZE	FWF__DEFAULT_CACHE_SIZE
+#	define FLW__OUTPUT_CACHE_SIZE	FDR__DEFAULT_CACHE_SIZE
 #else
 #	define FLW__OUTPUT_CACHE_SIZE	FLW_OUTPUT_CACHE_SIZE
 #endif
@@ -84,11 +84,11 @@ extern class ttr_tutor &FLWTutor;
 #	endif
 #endif
 
-#define FLW_SIZE_MAX	FWF_SIZE_MAX
+#define FLW_SIZE_MAX	FDR_SIZE_MAX
 
 namespace flw {
-	using fwf::datum__;
-	using fwf::size__;
+	using fdr::datum__;
+	using fdr::size__;
 
 	//c Base input flow.
 	class iflow__	/* Bien que cette classe ai un destructeur, elle est suffixée par '__', d'une part pour simplifier
@@ -97,7 +97,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une fonction abstraite).*/
 	{
 	private:
-		fwf::iflow_functions_base___ *_Functions;
+		fdr::iflow_driver_base___ *_Driver;
 		// Amount of data red since the last reset.
 		size__ _Red;
 		// Max amount of data alllowed between 2 reset.
@@ -116,12 +116,12 @@ namespace flw {
 				// At true if we have to generate an error if not all awaited data are red. Only significant if 'HandleAmount' at true.
 				HandleToFew:	1;
 		} EOFD_;
-		fwf::iflow_functions_base___ &_F( void )
+		fdr::iflow_driver_base___ &_D( void )
 		{
-			if ( _Functions == NULL )
+			if ( _Driver == NULL )
 				ERRu();
 
-			return *_Functions;
+			return *_Driver;
 		}
 		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
 		directly from device. */
@@ -200,11 +200,11 @@ namespace flw {
 			bso::bool__ Adjust,
 			bso::bool__ &CacheIsEmpty )
 		{
-			size__ PonctualAmount = _F().Read( Wanted, Buffer, Adjust, CacheIsEmpty );
+			size__ PonctualAmount = _D().Read( Wanted, Buffer, Adjust, CacheIsEmpty );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _F().Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust, CacheIsEmpty );
+				PonctualAmount = _D().Read( Wanted - CumulativeAmount, Buffer + CumulativeAmount, Adjust, CacheIsEmpty );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -218,7 +218,7 @@ namespace flw {
 			bso::bool__ &CacheIsEmpty );
 		void _Dismiss( void )
 		{
-			_F().Dismiss();
+			_D().Dismiss();
 			_Red = 0;
 		}
 		/*f Handle EOFD. To call when no more data available in the medium.
@@ -269,13 +269,13 @@ namespace flw {
 			reset();
 		}
 		void Init(
-			fwf::iflow_functions_base___ &Functions,
+			fdr::iflow_driver_base___ &Driver,
 			size__ AmountMax )
 		{
 			if ( _Red )
 				Dismiss();
 
-			_Functions = &Functions;
+			_Driver = &Driver;
 			_AmountMax = AmountMax;
 
 			_Red = 0;
@@ -332,7 +332,7 @@ namespace flw {
 		}
 		void Unget( datum__ Datum )
 		{
-			return _F().Unget( Datum );
+			return _D().Unget( Datum );
 		}
 		//f Skip 'Amount' bytes.
 		void Skip( size__ Amount = 1 )
@@ -357,7 +357,7 @@ namespace flw {
 		{
 			size_t Length = strlen( Data );
 
-			if ( Length > FWF_SIZE_MAX )
+			if ( Length > FDR_SIZE_MAX )
 				ERRl();
 
 			EOFD( (void *)Data, (size__)Length );
@@ -387,12 +387,12 @@ namespace flw {
 		}
 		void Dismiss( void )
 		{
-			if ( _Functions != NULL )
+			if ( _Driver != NULL )
 				_Dismiss();
 		}
 		bso::bool__ IsInitialized( void ) const
 		{
-			return _Functions != NULL;
+			return _Driver != NULL;
 		}
 		bso::bool__ IsLocked( void )
 		{
@@ -401,7 +401,7 @@ namespace flw {
 				ERRu();
 #endif
 
-			return _Functions->IsLocked();
+			return _Driver->IsLocked();
 		}
 		bso::bool__ IFlowIsLocked( void )	// Facilite l'utilisation de 'ioflow__'
 		{
@@ -448,7 +448,7 @@ namespace flw {
 					soit pas obligatoire d'un point de vue C++, car ce n'est pas une focntion abstraite).*/
 	{
 	private:
-		fwf::oflow_functions_base___ *_Functions;
+		fdr::oflow_driver_base___ *_Driver;
 		// The cache.
 		datum__ *_Cache;
 		// The size of the cache.
@@ -459,23 +459,23 @@ namespace flw {
 		size__ _Written;
 		// Max amount of data between 2 synchronizing.
 		size__ _AmountMax;
-		fwf::oflow_functions_base___ &_F( void )
+		fdr::oflow_driver_base___ &_D( void )
 		{
-			if ( _Functions == NULL )
+			if ( _Driver == NULL )
 				ERRu();
 
-			return *_Functions;
+			return *_Driver;
 		}
 		size__ _LoopingWrite(
 			const datum__ *Buffer,
 			size__ Wanted,
 			size__ Minimum )
 		{
-			size__ PonctualAmount = _F().Write( Buffer, Wanted );
+			size__ PonctualAmount = _D().Write( Buffer, Wanted );
 			size__ CumulativeAmount = PonctualAmount;
 
 			while ( ( PonctualAmount != 0 ) && ( Minimum > CumulativeAmount ) ) {
-				PonctualAmount = _F().Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
+				PonctualAmount = _D().Write( Buffer + CumulativeAmount, Wanted - CumulativeAmount );
 				CumulativeAmount += PonctualAmount;
 			}
 
@@ -529,7 +529,7 @@ namespace flw {
 		void _Commit( void )
 		{
 			_DumpCache();
-			_F().Commit();
+			_D().Commit();
 
 			_Written = 0;
 		}
@@ -559,7 +559,7 @@ namespace flw {
 					Commit();
 			}
 
-			_Functions = NULL;
+			_Driver = NULL;
 			_Cache = NULL;
 			_Size = _Free = 0;
 			_AmountMax = 0;
@@ -575,7 +575,7 @@ namespace flw {
 			reset();
 		}
 		void Init(
-			fwf::oflow_functions_base___ &Functions,
+			fdr::oflow_driver_base___ &Driver,
 			datum__ *Cache,
 			size__ Size,
 			size__ AmountMax )
@@ -583,7 +583,7 @@ namespace flw {
 			if ( _Size != _Free )
 				Commit();
 
-			_Functions = &Functions;
+			_Driver = &Driver;
 			_Cache = Cache;
 			_Size = _Free = Size;
 			_AmountMax = AmountMax;
@@ -612,7 +612,7 @@ namespace flw {
 		//f Synchronization.
 		void Commit( void )
 		{
-			if ( _Functions != NULL )
+			if ( _Driver != NULL )
 				_Commit();
 		}
 		//f Return the amount of data written since last 'Synchronize()'.
@@ -651,7 +651,7 @@ namespace flw {
 		}
 		bso::bool__ IsInitialized( void ) const
 		{
-			return _Functions != NULL;
+			return _Driver != NULL;
 		}
 		bso::bool__ IsLocked( void )
 		{
@@ -660,7 +660,7 @@ namespace flw {
 				ERRu();
 #endif
 
-			return _Functions->IsLocked();
+			return _Driver->IsLocked();
 		}
 		bso::bool__ OFlowIsLocked( void )	// Facilite l'utilisation de 'ioflow__'
 		{
@@ -675,10 +675,10 @@ namespace flw {
 		flw::datum__ _Cache[CacheSize];
 	public:
 		void Init(
-			fwf::oflow_functions_base___ &Functions,
+			fdr::oflow_driver_base___ &Driver,
 			size__ AmountMax )
 		{
-			oflow__::Init( Functions, _Cache, sizeof( _Cache ), AmountMax );
+			oflow__::Init( Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -732,24 +732,24 @@ namespace flw {
 			SetAmountMax( AmountMax, AmountMax );
 		}
 		void Init(
-			fwf::ioflow_functions_base___ &Functions,
+			fdr::ioflow_driver_base___ &Driver,
 			size__ ReadAmountMax,
 			datum__ *OCache,
 			size__ OSize,
 			size__ WriteAmountMax )
 		{
-			iflow__::Init( Functions, ReadAmountMax );
-			oflow__::Init( Functions, OCache, OSize, WriteAmountMax );
+			iflow__::Init( Driver, ReadAmountMax );
+			oflow__::Init( Driver, OCache, OSize, WriteAmountMax );
 
 		}
 		void Init(
-			fwf::ioflow_functions_base___ &Functions,
+			fdr::ioflow_driver_base___ &Driver,
 			datum__ *Cache,
 			size__ Size,
 			size__ AmountMax )
 		{
-			iflow__::Init( Functions, AmountMax );
-			oflow__::Init( Functions, Cache + Size / 2, Size / 2, AmountMax );
+			iflow__::Init( Driver, AmountMax );
+			oflow__::Init( Driver, Cache + Size / 2, Size / 2, AmountMax );
 		}
 	};
 
@@ -760,17 +760,17 @@ namespace flw {
 		flw::datum__ _OutputCache[OutCacheSize];
 	public:
 		void Init(
-			fwf::ioflow_functions_base___ &Functions,
+			fdr::ioflow_driver_base___ &Driver,
 			size__ ReadAmountMax,
 			size__ WriteAmountMax )
 		{
-			ioflow__::Init( Functions, ReadAmountMax, _OutputCache, sizeof( _OutputCache ), WriteAmountMax );
+			ioflow__::Init( Driver, ReadAmountMax, _OutputCache, sizeof( _OutputCache ), WriteAmountMax );
 		}
 		void Init(
-			fwf::ioflow_functions_base___ &Functions,
+			fdr::ioflow_driver_base___ &Driver,
 			size__ AmountMax )
 		{
-			ioflow__::Init( Functions, AmountMax, _OutputCache, sizeof( _OutputCache ), AmountMax );
+			ioflow__::Init( Driver, AmountMax, _OutputCache, sizeof( _OutputCache ), AmountMax );
 		}
 	};
 

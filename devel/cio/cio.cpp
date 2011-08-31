@@ -78,9 +78,9 @@ iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
 #	error "Unkonw I/O enviroment !"
 #endif
 
-iof::io_oflow_functions___ cio::_coutf;
-iof::io_oflow_functions___ cio::_cerrf;
-iof::io_iflow_functions___ cio::_cinf;
+iof::io_oflow_driver___ cio::_coutd;
+iof::io_oflow_driver___ cio::_cerrd;
+iof::io_iflow_driver___ cio::_cind;
 
 cout___ cio::cout;
 cerr___ cio::cerr;
@@ -98,9 +98,9 @@ void cio::Initialize( void )
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::_coutf.Init( coutd, fwf::ts_Default );
-		cio::_cinf.Init( cind, fwf::ts_Default );
-		cio::_cerrf.Init( cerrd, fwf::ts_Default );
+		cio::_coutd.Init( coutd, fdr::ts_Default );
+		cio::_cind.Init( cind, fdr::ts_Default );
+		cio::_cerrd.Init( cerrd, fdr::ts_Default );
 
 		cio::cout.Init();
 		cio::cerr.Init();

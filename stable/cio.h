@@ -63,7 +63,6 @@ extern class ttr_tutor &CIOTutor;
 # include "err.h"
 # include "iof.h"
 # include "txf.h"
-# include "cio.h"
 # include "cpe.h"
 
 # ifdef CPE__T_LIBRARY
@@ -79,9 +78,9 @@ namespace cio {
 	extern iop::descriptor__ cind, coutd, cerrd;
 
 	// 'Thread-safe'.
-	extern iof::io_oflow_functions___ _coutf;
-	extern iof::io_oflow_functions___ _cerrf;
-	extern iof::io_iflow_functions___ _cinf;
+	extern iof::io_oflow_driver___ _coutd;
+	extern iof::io_oflow_driver___ _cerrd;
+	extern iof::io_iflow_driver___ _cind;
 
 	class coutf___
 	: public flw::oflow__
@@ -91,7 +90,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			oflow__::Init( _coutf, _Cache, sizeof( _Cache ), AmountMax );
+			oflow__::Init( _coutd, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -130,7 +129,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			oflow__::Init( _cerrf, _Cache, sizeof( _Cache ), AmountMax ) ;
+			oflow__::Init( _cerrd, _Cache, sizeof( _Cache ), AmountMax ) ;
 		}
 	};
 
@@ -166,7 +165,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			iflow__::Init( _cinf, AmountMax );
+			iflow__::Init( _cind, AmountMax );
 		}
 	};
 

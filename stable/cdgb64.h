@@ -63,8 +63,7 @@ extern class ttr_tutor &CDGB64Tutor;
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
-#include "fwf.h"
-#include "flw.h"
+#include "fdr.h"
 
 namespace cdgb64 {
 
@@ -91,28 +90,28 @@ namespace cdgb64 {
 
 #	define CDGB64__PROCESSED	BSO_UBYTE_MAX
 
-	typedef fwf::oflow_functions___<> _oflow_functions___;
+	typedef fdr::oflow_driver___<> _oflow_driver___;
 
-	class encoding_oflow_functions___
-	: public _oflow_functions___
+	class encoding_oflow_driver___
+	: public _oflow_driver___
 	{
 	private:
-		fwf::datum__ _Cache[3];
+		fdr::datum__ _Cache[3];
 		bso::ubyte__ _Amount;
 		flw::oflow__ *_Flow;	
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			flw::datum__ Result[4];
-			fwf::size__ Amount = 0;
+			fdr::size__ Amount = 0;
 
 			if ( _Amount == CDGB64__PROCESSED )
 				_Amount = 0;
 
 			if ( _Amount != 0 ) {
-				if ( (fwf::size__)( 3 - _Amount ) < Maximum )
+				if ( (fdr::size__)( 3 - _Amount ) < Maximum )
 					Amount = 3 - _Amount;
 				else
 					Amount = Maximum;
@@ -168,7 +167,7 @@ namespace cdgb64 {
 
 			return Amount;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			flw::datum__ Result[4];
 
@@ -205,28 +204,28 @@ namespace cdgb64 {
 			if ( P )
 				Commit();
 
-			_oflow_functions___::reset( P );
+			_oflow_driver___::reset( P );
 			_Amount = CDGB64__PROCESSED;
 			_Flow = NULL;
 		}
-		encoding_oflow_functions___( void )
+		encoding_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		~encoding_oflow_functions___( void )
+		~encoding_oflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			flw::oflow__ &Flow,
-			fwf::thread_safety__ ThreadSafety = fwf::ts_Default )
+			fdr::thread_safety__ ThreadSafety = fdr::ts_Default )
 		{
 			Commit();
 
 			_Amount = CDGB64__PROCESSED;
 			_Flow = &Flow;
 
-			_oflow_functions___::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 		}
 	};
 
@@ -236,12 +235,12 @@ namespace cdgb64 {
 	: public _oflow__
 	{
 	private:
-		encoding_oflow_functions___ _Functions;
+		encoding_oflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		encoding_oflow___( void )
 		{
@@ -255,8 +254,8 @@ namespace cdgb64 {
 			flw::oflow__ &Flow,
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( Flow, fwf::tsDisabled );
-			_oflow__::Init( _Functions, AmountMax  );
+			_Driver.Init( Flow, fdr::tsDisabled );
+			_oflow__::Init( _Driver, AmountMax  );
 
 #ifdef CDGB64_DBG
 			if ( GetCacheSize() < 3 )
@@ -277,8 +276,8 @@ namespace cdgb64 {
 	}
 
 	inline void Decode_(
-		const fwf::datum__ *Source,	// Séquence complète de 4 octets en b64, sans '='.
-		fwf::datum__ *Target )	// Doit avoir la place suffisante pour recevoir la séquence de 3 octets résultante.
+		const fdr::datum__ *Source,	// Séquence complète de 4 octets en b64, sans '='.
+		fdr::datum__ *Target )	// Doit avoir la place suffisante pour recevoir la séquence de 3 octets résultante.
 	{
 		Target[0] = Decode_( Source[0] ) | ( Decode_( Source[1] ) << 6 );
 		Target[1] = ( Decode_( Source[1] ) >> 2 ) | ( Decode_( Source[2] ) << 4 );
@@ -286,11 +285,11 @@ namespace cdgb64 {
 	}
 
 	inline void Decode_(
-		fwf::datum__ *Data,
-		fwf::size__ Amount )
+		fdr::datum__ *Data,
+		fdr::size__ Amount )
 	{
-		const fwf::datum__ *Source = Data;
-		fwf::datum__ *Target = Data;
+		const fdr::datum__ *Source = Data;
+		fdr::datum__ *Target = Data;
 #ifdef CDGB64_DBG
 		if ( Amount & 3 )	// Si pas un multiple de 4.
 			ERRc();
@@ -306,7 +305,7 @@ namespace cdgb64 {
 	inline void DecodePartial_(
 		const flw::datum__ *Source,
 		flw::size__ Amount,
-		fwf::datum__ *Target )
+		fdr::datum__ *Target )
 	{
 		memmove( Target, Source, 4 );
 
@@ -330,22 +329,22 @@ namespace cdgb64 {
 		Decode_( Target, 4 );
 	}
 
-	typedef fwf::iflow_functions___<1023> _iflow_functions____;
+	typedef fdr::iflow_driver___<1023> _iflow_driver____;
 
-	class decoding_iflow_functions___
-	: public _iflow_functions____
+	class decoding_iflow_driver___
+	: public _iflow_driver____
 	{
 	private:
 		flw::iflow__ *_Flow;
-		fwf::datum__ _Cache[4];
+		fdr::datum__ _Cache[4];
 		bso::ubyte__ _Size;
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			bso::size__ Amount = 0;
-			fwf::datum__ Datum;
+			fdr::datum__ Datum;
 			bso::bool__ CacheIsEmpty = false;
 
 #ifdef CDGB64_DBG
@@ -381,7 +380,7 @@ namespace cdgb64 {
 
 			return 3 * ( Amount >> 2 ) + ( ( Amount & 3 ) > 1 ? ( Amount & 3 ) - 1 : 0 ); 
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
 #ifdef CDGB64_DBG
 			if ( _Flow == NULL )
@@ -392,24 +391,24 @@ namespace cdgb64 {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_iflow_functions____::reset( P );
+			_iflow_driver____::reset( P );
 			_Flow = NULL;
 			_Size = 0;
 		}
-		decoding_iflow_functions___( void )
+		decoding_iflow_driver___( void )
 		{
 			reset( false );
 		}
-		~decoding_iflow_functions___( void )
+		~decoding_iflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			flw::iflow__ &Flow,
-			fwf::thread_safety__ ThreadSafety = fwf::ts_Default )
+			fdr::thread_safety__ ThreadSafety = fdr::ts_Default )
 		{
 			_Flow = &Flow;
-			_iflow_functions____::Init( ThreadSafety );
+			_iflow_driver____::Init( ThreadSafety );
 			_Size = 0;
 		}
 	};
@@ -420,19 +419,19 @@ namespace cdgb64 {
 	: public _iflow___
 	{
 	private:
-		decoding_iflow_functions___ _Functions;
+		decoding_iflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_iflow___::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		void Init(
 			flw::iflow__ &Flow,
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Functions.Init( Flow );
-			_iflow___::Init( _Functions, AmountMax  );
+			_Driver.Init( Flow );
+			_iflow___::Init( _Driver, AmountMax  );
 		}
 	};
 
