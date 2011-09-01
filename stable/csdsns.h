@@ -98,7 +98,8 @@ namespace csdsns {
 			log__ Log,
 			id__ Id,
 			void *UP,
-			epeios::size__ Amount ) = 0;
+			epeios::size__ Amount )
+		{}
 	public:
 		void reset( bso::bool__  = true )
 		{

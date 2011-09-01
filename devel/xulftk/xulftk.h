@@ -162,9 +162,10 @@ namespace xulftk {
 		void _ApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
+			const frdkrn::compatibility_informations__ &CompatibilityInformations,
 			frdfbc::data___ &LibraryData )
 		{
-			if ( Kernel().LoadProject( FileName, Criterions, _TargetName, LibraryData ) != frdkrn::sOK )
+			if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations, LibraryData ) != frdkrn::sOK )
 				UI().Alert( Kernel().Message() );
 
 			UpdateUI();

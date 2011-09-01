@@ -127,11 +127,11 @@ namespace csducl {
 		{
 			return _Type;
 		}
-		friend class universal_client_ioflow_functions___;
+		friend class universal_client_ioflow_driver___;
 	};
 
-	class universal_client_ioflow_functions___
-	: public fwf::ioflow_functions___<>
+	class universal_client_ioflow_driver___
+	: public fdr::ioflow_driver___<>
 	{
 	private:
 		csdsnc::client_ioflow___ _DaemonAccess;
@@ -154,46 +154,46 @@ namespace csducl {
 			return *(flw::ioflow__ *)NULL;	// Pour éviter un 'warning'.
 		}
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			return _Get().ReadUpTo( Maximum, Buffer );
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
 			_Get().Dismiss();
 		}
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			return _Get().WriteUpTo( Buffer, Maximum );
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			_Get().Commit();
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			fwf::ioflow_functions___<>::reset( P );
+			fdr::ioflow_driver___<>::reset( P );
 			_DaemonAccess.reset( P );
 			_Library.reset( P );
 
 			_Core = NULL;
 		}
-		universal_client_ioflow_functions___( void )
+		universal_client_ioflow_driver___( void )
 		{
 			reset( true );
 		}
-		~universal_client_ioflow_functions___( void )
+		~universal_client_ioflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			universal_client_core &Core,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
 			reset();
 
@@ -211,7 +211,7 @@ namespace csducl {
 				break;
 			}
 
-			fwf::ioflow_functions___<>::Init( ThreadSafety );
+			fdr::ioflow_driver___<>::Init( ThreadSafety );
 		}
 	};
 
@@ -219,13 +219,13 @@ namespace csducl {
 	: public flw::ioflow__
 	{
 	private:
-		universal_client_ioflow_functions___ _Functions;
+		universal_client_ioflow_driver___ _Driver;
 		flw::datum__ _Cache[CSDUCL_CACHE_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			ioflow__::reset( P );
-			_Functions.reset();
+			_Driver.reset();
 		}
 		universal_client_ioflow___( void )
 		{
@@ -241,8 +241,8 @@ namespace csducl {
 		{
 			reset();
 
-			_Functions.Init( Core, fwf::tsDisabled );
-			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), AmountMax );
+			_Driver.Init( Core, fdr::tsDisabled );
+			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 }

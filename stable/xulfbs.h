@@ -99,7 +99,7 @@ namespace xulfbs {
 	using xulftk::trunk___;
 	using xulfrd::ui___;
 
-	using xulwdg::Register;
+//	using xulwdg::Register;
 
 	typedef nsxpcm::ui_core__ _ui_core__;
 	typedef xulwdg::bare_bridge__<trunk___> bridge__;

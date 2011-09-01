@@ -1247,11 +1247,6 @@ namespace nsxpcm {
 		{
 			reset( );
 		}
-		void Init( void )
-		{
-			reset();
-			_EventData.Init();
-		}
 		void Init(
 			nsISupports *Supports,
 			nsIDOMWindow *Window,
@@ -1793,18 +1788,6 @@ namespace nsxpcm {
 			return nsxpcm::GetWindowInternal( GetObject() );
 		}
 	};
-
-	// Un 'GetElementById(...)' d'une balise 'window' ne retourne pas un 'nsIDOMWindow'
-	// Cette fonction a pour donc but d'empêcher toute tentative dans ce sens.
-	template <class id_type> inline void Register(
-		window__ &Widget,
-		nsIDOMWindow *Window,
-		const id_type &Id,
-		int Events )
-	{
-		ERRl();	
-		Register( (widget_core__)Widget, Window, Id, Events );	// Pour détecter tout changement de la signature de la fonction dont on est censé interdire l'accés.
-	}
 
 	class file_picker_filter_ 
 	{

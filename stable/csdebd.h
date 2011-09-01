@@ -73,17 +73,17 @@ namespace csdebd {
 	typedef bch::E_BUNCH_( flw::datum__ ) data_;
 	E_AUTO( data )
 
-	class _passive_generic_functions___
-	: public fwf::ioflow_functions___<>
+	class _passive_generic_driver___
+	: public fdr::ioflow_driver___<>
 	{
 	private:
 		data_ &_Read;
 		data_ &_Write;
 		epeios::row__ _Row;
 	protected:
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			if ( _Row == NONE )
 				_Row = _Read.First();
@@ -107,7 +107,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			return Maximum;
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
 #ifdef CSDEBD_DBG
 			if ( _Row != NONE )
@@ -115,24 +115,24 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 #endif
 			_Read.Init();
 		}
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			_Write.Append( Buffer, Maximum );
 
 			return Maximum;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			fwf::ioflow_functions___<>::reset( P );
+			fdr::ioflow_driver___<>::reset( P );
 
 			_Row = NONE;
 		}
-		_passive_generic_functions___(
+		_passive_generic_driver___(
 			data_ &Read,
 			data_ &Write )
 		: _Read( Read ),
@@ -140,20 +140,20 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset( false );
 		}
-		~_passive_generic_functions___( void )
+		~_passive_generic_driver___( void )
 		{
 			reset();
 		}
-		void Init( fwf::thread_safety__ ThreadSafety )
+		void Init( fdr::thread_safety__ ThreadSafety )
 		{
 			reset();
 			
-			fwf::ioflow_functions___<>::Init( ThreadSafety );
+			fdr::ioflow_driver___<>::Init( ThreadSafety );
 		}
 	};
 
-	class _active_generic_functions___
-	: public _passive_generic_functions___
+	class _active_generic_driver___
+	: public _passive_generic_driver___
 	{
 	private:
 		csdscm::user_functions__ *_UserFunctions;
@@ -170,15 +170,15 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 				_UserFunctions->PostProcess( _UP );
 		}
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			_DataAvailable = true;
 
-			return _passive_generic_functions___::FWFWrite( Buffer, Maximum );
+			return _passive_generic_driver___::FDRWrite( Buffer, Maximum );
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			if ( _DataAvailable )
 				_UserFunctions->Process( *_Flow, _UP );
@@ -188,7 +188,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_passive_generic_functions___::reset( P );
+			_passive_generic_driver___::reset( P );
 
 			if ( P )
 				_Delete();
@@ -198,28 +198,28 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			_Flow = NULL;
 			_DataAvailable = false;
 		}
-		_active_generic_functions___(
+		_active_generic_driver___(
 			data_ &Read,
 			data_ &Write )
-		: _passive_generic_functions___( Read, Write )
+		: _passive_generic_driver___( Read, Write )
 		{
 			reset( false );
 		}
-		~_active_generic_functions___( void )
+		~_active_generic_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			csdscm::user_functions__ &UserFunctions,
 			flw::ioflow__ &Flow,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::thread_safety__ ThreadSafety )
 		{
 			reset();
 
 			_UserFunctions = &UserFunctions;
 			_Flow = &Flow;
 
-			_passive_generic_functions___::Init( ThreadSafety );
+			_passive_generic_driver___::Init( ThreadSafety );
 
 			_Create();
 		}
@@ -231,20 +231,20 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	{
 	private:
 		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
-		_active_generic_functions___ _Functions;
+		_active_generic_driver___ _Driver;
 		data _Master, _Slave;
 		struct backend {
 			flw::datum__ Cache[CSDEBD_CACHE_SIZE];
-			_passive_generic_functions___ Functions;
+			_passive_generic_driver___ Driver;
 			flw::ioflow__ Flow;
 			void reset( bso::bool__ P = true )
 			{
-				Functions.reset( P );
+				Driver.reset( P );
 			}
 			backend(
 				data_ &Read,
 				data_ &Write )
-			: Functions( Read, Write )
+			: Driver( Read, Write )
 			{
 				reset( false );
 			}
@@ -254,13 +254,13 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			}
 			void Init( void )
 			{
-				Functions.Init( fwf::tsDisabled );
-				Flow.Init( Functions, Cache, sizeof( Cache ), FLW_SIZE_MAX );
+				Driver.Init( fdr::tsDisabled );
+				Flow.Init( Driver, Cache, sizeof( Cache ), FLW_SIZE_MAX );
 			}
 		} _Backend;
 	public:
 		embed_client_server_ioflow___( void )
-		: _Functions( _Master, _Slave ),
+		: _Driver( _Master, _Slave ),
 		  _Backend( _Slave ,_Master )
 		{
 			reset( false );
@@ -271,7 +271,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		void reset( bso::bool__ P = true )
 		{
-			_Functions.reset( P );
+			_Driver.reset( P );
 
 			_Backend.reset( P );
 
@@ -290,8 +290,8 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 
 			_Backend.Init();
 
-			_Functions.Init( UserFunctions, _Backend.Flow, fwf::tsDisabled );
-			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
+			_Driver.Init( UserFunctions, _Backend.Flow, fdr::tsDisabled );
+			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
 		}
 	};
 }

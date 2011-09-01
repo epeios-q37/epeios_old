@@ -1,6 +1,18 @@
 $Id$
 
-29/08/2011 :
+01/08/2011 :
+	- Général :
+		- Mise en oeuvre 'FDR'.
+	- NSXPCM :
+		- Retrait d'un 'Register(...)' oublié.
+	- XUL... :
+		- Adaptation à la suppresion de la fonction 'Register(...)'.
+	- XULFTK :
+		- Adaptation aux modifications bibliothèques sous-jacentes.
+	- XULWDG :
+		- Utilisation de 'TTCLONE' à la place de 'TMIMIC' pour simplification.
+
+30/08/2011 :
 	- FDR remplace FLW.
 	- Général :
 		- Mise en oeuvre 'FDR'.

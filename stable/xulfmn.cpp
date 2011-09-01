@@ -130,7 +130,7 @@ static void Register_(
 	nsIDOMWindow *Window,
 	const char *Id )
 {
-	xulfbs::Register( Trunk, Broadcast, Window, Id );
+	Broadcast.Init( Trunk, Window, Id );
 }
 
 static void Register_(
@@ -139,7 +139,7 @@ static void Register_(
 	nsIDOMWindow *Window,
 	const char *Id )
 {
-	xulfbs::Register( Trunk, Command, Window, Id );
+	Command.Init( Trunk, Window, Id );
 }
 
 static void Register_(
@@ -161,7 +161,7 @@ static void Register_(
 	main__::widgets__ &Widgets,
 	nsIDOMWindow *Window )
 {
-	xulfbs::Register( Trunk, Widgets.Window, Window, Window );
+	Widgets.Window.Init( Trunk, Window, Window );
 	Register_( Trunk, Widgets.Commands, Window );
 }
 

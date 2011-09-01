@@ -335,8 +335,8 @@ ERREpilog
 
 	E_AUTO( core );
 
-	class _functions___
-	: public fwf::ioflow_functions___<>
+	class _driver___
+	: public fdr::ioflow_driver___<>
 	{
 	private:
 		_flow___ *_Flow;
@@ -369,28 +369,28 @@ ERREpilog
 				ERRf();
 		}
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
-			fwf::size__ Amount = 0;
+			fdr::size__ Amount = 0;
 
 			_Prepare();
 
 			return _Flow->WriteUpTo( Buffer, Maximum );
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			if ( _Flow != NULL )
 				_Commit();
 		}
-		virtual fwf::size__ FWFRead(
-			fwf::size__ Maximum,
-			fwf::datum__ *Buffer )
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
 		{
 			return _Flow->ReadUpTo( Maximum, Buffer );
 		}
-		virtual void FWFDismiss( void )
+		virtual void FDRDismiss( void )
 		{
 			if ( _Flow != NULL ) {
 				_Core->Release( _Flow );
@@ -402,7 +402,7 @@ ERREpilog
 		public:
 			void reset( bso::bool__ P = true )
 			{
-				fwf::ioflow_functions___<>::reset( P );
+				fdr::ioflow_driver___<>::reset( P );
 
 				if ( P ) {
 					if ( _Flow != NULL )
@@ -413,21 +413,21 @@ ERREpilog
 				_Id = CSDSNB_UNDEFINED;
 				_Core = NULL;
 			}
-			_functions___( void )
+			_driver___( void )
 			{
 				reset( false );
 			}
-			~_functions___( void )
+			~_driver___( void )
 			{
 				reset();
 			}
 			void Init(
 				core_ &Core,
-				fwf::thread_safety__ ThreadSafety )
+				fdr::thread_safety__ ThreadSafety )
 			{
 				reset();
 
-				fwf::ioflow_functions___<>::Init( ThreadSafety );
+				fdr::ioflow_driver___<>::Init( ThreadSafety );
 				_Core = &Core;
 			}
 	};
@@ -436,13 +436,13 @@ ERREpilog
 	: public flw::ioflow__
 	{
 	private:
-		_functions___ _Functions;
+		_driver___ _Driver;
 		flw::datum__ _Cache[CSDSNC_DEFAULT_CACHE_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			flw::ioflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		client_ioflow___( void )
 		{
@@ -452,8 +452,8 @@ ERREpilog
 		{
 			reset();
 
-			_Functions.Init( Core, fwf::tsDisabled );
-			ioflow__::Init( _Functions, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
+			_Driver.Init( Core, fdr::tsDisabled );
+			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
 		}
 	};
 }

@@ -113,7 +113,7 @@ namespace xulwdg {
 		}
 	};
 
-	template <typename target, typename widget> class _generic__
+	template <typename target, typename widget, int events> class _generic__
 	: public bare_bridge__<target>,
 	  public widget
 	{
@@ -123,31 +123,32 @@ namespace xulwdg {
 			ERRu();
 		}
 	public:
-		void Init( target &Target )
+		void Init(
+			target &Target,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
 		{
 			bare_bridge__<target>::Init( Target );
-			widget::Init();
+			widget::Init( Supports, Window, events );
+		}
+		void Init( target &Target,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			bare_bridge__<target>::Init( Target );
+			widget::Init( Window, Id, events );
+		}
+		void Init( target &Target,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			bare_bridge__<target>::Init( Target );
+			widget::Init( Window, Id, events );
 		}
 	};
 
 #	define XULWDG__WN( widget, name, events )\
-	template <typename target> E_TMIMIC__( E_COVER2( _generic__<target, nsxpcm::widget##__> ), name##__ );\
-	template <typename target> inline void Register(\
-		target &Target,\
-		name##__<target> &Widget,\
-		nsISupports *Element,\
-		nsIDOMWindow *Window )\
-	{\
-		Register( Target, Widget, Element, Window, events );\
-	}\
-	template <typename target> inline void Register(\
-		target &Target,\
-		name##__<target> &Widget,\
-		nsIDOMWindow *Window,\
-		const char *Id )\
-	{\
-		Register( Target, Widget, Window, Id, events );\
-	}
+	template <typename target> E_TTCLONE__( E_COVER2( _generic__< E_COVER2( target, nsxpcm::widget##__ ), events> ), name##__ );
 
 #	define XULWDG__W( widget, events )	XULWDG__WN( widget, widget, events )
 
@@ -166,29 +167,6 @@ namespace xulwdg {
 //	XULWDG__W( document, nsxpcm::efClose );
 	XULWDG__W( window, nsxpcm::efClose );
 	XULWDG__W( description, nsxpcm::ef_None );
-
-	template <typename target, typename widget> void Register(
-		target &Target,
-		widget &Widget,
-		nsIDOMWindow *Window,
-		const char *Id,
-		int Events )
-	{
-		Widget.Init( Target );
-		nsxpcm::Register( Widget, Window, Id, Events );
-	}
-
-	template <typename target, typename widget> void Register(
-		target &Target,
-		widget &Widget,
-		nsISupports *Supports,
-		nsIDOMWindow *Window,
-		int Events )
-	{
-		Widget.Init( Target );
-		nsxpcm::Register( Widget, Supports, Window, Events );
-	}
-
 }
 
 /*$END$*/
