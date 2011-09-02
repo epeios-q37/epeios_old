@@ -55,7 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-flx::dump_oflow_driver___ flx::dump;
+flx::void_oflow_driver___ flx::VoidOFlowDriver;
+flx::void_iflow_driver___ flx::VoidIFlowDriver;
 
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -66,7 +67,8 @@ class flxpersonnalization
 public:
 	flxpersonnalization( void )
 	{
-		flx::dump.Init( fdr::ts_Default );
+		flx::VoidOFlowDriver.Init( fdr::ts_Default );
+		flx::VoidIFlowDriver.Init( fdr::ts_Default );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

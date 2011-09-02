@@ -48,7 +48,7 @@ using xml::writer_;
 #define VERSION			"0.2.4"
 #define COPYRIGHT_YEARS	"2001-2006; 2009-2011"
 #define DESCRIPTION		"Get the API from an Epeios-driven backend."
-#define INFO			EPSMSC_EPEIOS_AFFILIATION
+#define INFO			EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -698,7 +698,7 @@ ERRProlog
 	sck::socket_ioflow___ Flow;
 #endif
 	fblfub::backend_universal_access___ BackendAccess;
-	str::string DummyMessage, DummyURL;
+	fblfrd::incompatibility_informations Dummy;
 	fblfub::mode__ Mode = fblfub::m_Undefined;
 	dummy_error_handling_functions__ DummyErrorHandlingFunctions;
 ERRBegin
@@ -721,10 +721,9 @@ ERRBegin
 	Flow.Init( csdbnc::Connect( Location ) );
 #endif
 
-	DummyMessage.Init();
-	DummyURL.Init();
+	Dummy.Init();
 
-	BackendAccess.Init( "", "", "", Flow, Mode, DummyErrorHandlingFunctions, DummyMessage, DummyURL );
+	BackendAccess.Init( "", fblfrd::compatibility_informations__(), Flow, Mode, DummyErrorHandlingFunctions, Dummy );
 
 	GetDescription( BackendAccess, Types );
 	

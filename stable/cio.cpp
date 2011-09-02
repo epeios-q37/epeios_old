@@ -59,6 +59,16 @@ public:
 
 static bso::bool__ Initialized_ = false;
 
+static flx::void_oflow_driver___ _VOutDriver;
+static flx::void_oflow_driver___ _VErrDriver;
+static flx::void_iflow_driver___ _VInDriver;
+
+
+static iof::io_oflow_driver___ _COutDriver;
+static iof::io_oflow_driver___ _CErrDriver;
+static iof::io_iflow_driver___ _CInDriver;
+
+
 #if defined( CPE__P_MS )
 #	include <io.h>
 #	include <fcntl.h>
@@ -67,27 +77,29 @@ static bso::bool__ Initialized_ = false;
 using namespace cio;
 
 #ifdef IOP__USE_LOWLEVEL_IO
-#	if defined( CPE__P_MS ) || defined( CPE__P_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__P_MAC )
-iop::descriptor__ cio::cind = 0, cio::coutd = 1, cio::cerrd = 2;
-#else
+# if defined( CPE__P_MS ) || defined( CPE__P_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__P_MAC )
+iop::descriptor__ cio::CInDescriptor = 0, cio::COutDescriptor = 1, cio::CErrDescriptor = 2;
+# else
 #		error "Unknow compilation enviroment !"
-#	endif
+# endif
 #elif defined( IOP__USE_STANDARD_IO )
 iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
 #else
 #	error "Unkonw I/O enviroment !"
 #endif
 
-iof::io_oflow_driver___ cio::_coutd;
-iof::io_oflow_driver___ cio::_cerrd;
-iof::io_iflow_driver___ cio::_cind;
+flx::relay_oflow_driver___ cio::COutDriver;
+flx::relay_oflow_driver___ cio::CErrDriver;
+flx::relay_iflow_driver___ cio::CInDriver;
 
-cout___ cio::cout;
-cerr___ cio::cerr;
-cin___ cio::cin;
+cout___ cio::COut;
+cerr___ cio::CErr;
+cin___ cio::CIn;
 
-void cio::Initialize( void )
+void cio::Initialize( target__ Target )
 {
+	switch ( Target ) {
+	case tConsole:
 #if defined( CPE__P_MS )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
@@ -98,15 +110,30 @@ void cio::Initialize( void )
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
 			ERRd();
 #endif
-		cio::_coutd.Init( coutd, fdr::ts_Default );
-		cio::_cind.Init( cind, fdr::ts_Default );
-		cio::_cerrd.Init( cerrd, fdr::ts_Default );
+		_COutDriver.Init( COutDescriptor, fdr::ts_Default );
+		_CInDriver.Init( CInDescriptor, fdr::ts_Default );
+		_CErrDriver.Init( CErrDescriptor, fdr::ts_Default );
 
-		cio::cout.Init();
-		cio::cerr.Init();
-		cio::cin.Init();
+		COutDriver.Init( _COutDriver, fdr::ts_Default );
+		CInDriver.Init( _CInDriver, fdr::ts_Default );
+		CErrDriver.Init( _CErrDriver, fdr::ts_Default );
 
-		::Initialized_ = true;
+		break;
+	case tVoid:
+		COutDriver.Init( _VOutDriver, fdr::ts_Default );
+		CInDriver.Init( _VInDriver, fdr::ts_Default );
+		CErrDriver.Init( _VErrDriver, fdr::ts_Default );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	cio::COut.Init();
+	cio::CErr.Init();
+	cio::CIn.Init();
+
+	::Initialized_ = true;
 }
 
 bso::bool__ cio::IsInitialized( void )
@@ -124,7 +151,7 @@ public:
 	ciopersonnalization( void )
 	{
 #ifdef CIO__AUTOMATIC_INITIALIZATION
-		cio::Initialize();
+		cio::Initialize( t_Default );
 #endif
 	/* place here the actions concerning this library
 		to be realized at the launching of the application  */

@@ -64,6 +64,7 @@ extern class ttr_tutor &CIOTutor;
 # include "iof.h"
 # include "txf.h"
 # include "cpe.h"
+# include "flx.h"
 
 # ifdef CPE__T_LIBRARY
 #  error "Cannot be used in a library !"
@@ -75,12 +76,12 @@ extern class ttr_tutor &CIOTutor;
 
 namespace cio {
 
-	extern iop::descriptor__ cind, coutd, cerrd;
+	extern iop::descriptor__ CInDescriptor, COutDescriptor, CErrDescriptor;
 
 	// 'Thread-safe'.
-	extern iof::io_oflow_driver___ _coutd;
-	extern iof::io_oflow_driver___ _cerrd;
-	extern iof::io_iflow_driver___ _cind;
+	extern flx::relay_oflow_driver___ COutDriver;
+	extern flx::relay_oflow_driver___ CErrDriver;
+	extern flx::relay_iflow_driver___ CInDriver;
 
 	class coutf___
 	: public flw::oflow__
@@ -90,7 +91,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			oflow__::Init( _coutd, _Cache, sizeof( _Cache ), AmountMax );
+			oflow__::Init( COutDriver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -129,7 +130,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			oflow__::Init( _cerrd, _Cache, sizeof( _Cache ), AmountMax ) ;
+			oflow__::Init( CErrDriver, _Cache, sizeof( _Cache ), AmountMax ) ;
 		}
 	};
 
@@ -165,7 +166,7 @@ namespace cio {
 	public:
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			iflow__::Init( _cind, AmountMax );
+			iflow__::Init( CInDriver, AmountMax );
 		}
 	};
 
@@ -196,11 +197,20 @@ namespace cio {
 	};
 
 	// 'thread UNsafe'.
-	extern cout___ cout;
-	extern cerr___ cerr;
-	extern cin___ cin;
+	extern cout___ COut;
+	extern cerr___ CErr;
+	extern cin___ CIn;
 
-	void Initialize( void );
+	enum target__
+	{
+		tConsole,	// Lecture/écriture de/dans la console.
+		tVoid,		// Lecture/écriture de/dans rien (utile pour les service Windows.
+		t_amount,
+		t_Undefined,
+		t_Default = tConsole
+	};
+
+	void Initialize( target__ Target );
 	/* Peform the initialization needed by this library if not
 	automatically done (defining of 'CIO_NO_AUTOMATIC_INITIALIZATION' ). */
 

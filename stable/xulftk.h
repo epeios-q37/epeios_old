@@ -152,7 +152,7 @@ namespace xulftk {
 	protected:
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
 		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent(...)' doir être redéfini.
+			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent(...)' doit être redéfini.
 		}
 		virtual void XULFTKSiteURL( str::string_ &URL )
 		{
@@ -172,7 +172,7 @@ namespace xulftk {
 		}
 		virtual void XULFTKApplySession(
 			const str::string_ &FileName,
-			const char *CypherKey )
+			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
 			ERRu();	//	Si pas surchargé, alors xulfmn::open_project_command__::NSXPCMOnEvent') doit être redéfini.
 		}
@@ -326,7 +326,7 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void  ApplySession( const char *CypherKey )
+		void  ApplySession( const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
 		ERRProlog
 			str::string Translation;
@@ -336,7 +336,7 @@ namespace xulftk {
 			FileName.Init();
 
 			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) )
-				XULFTKApplySession( FileName, CypherKey );
+				XULFTKApplySession( FileName, XMLPreprocessorCriterions );
 		ERRErr
 		ERREnd
 		ERREpilog

@@ -85,9 +85,9 @@ extern class ttr_tutor &FLXTutor;
 #define FLX_BUNCH_BUFFER_SIZE		500
 #endif
 
-#ifndef FLX_DUMP_BUFFER_SIZE
-//d Size of the buffer of a 'flx::dump_oflow___'.
-#define FLX_DUMP_BUFFER_SIZE		500
+#ifndef FLX_VOID_BUFFER_SIZE
+//d Size of the buffer of a 'flx::void_oflow___'.
+#define FLX_VOID_BUFFER_SIZE		500
 #endif
 
 namespace flx {
@@ -422,6 +422,7 @@ namespace flx {
 			fdr::oflow_driver___<>::Init( ThreadSafety );
 		}
 	};
+
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow___
 	: public flw::oflow__
@@ -457,8 +458,8 @@ namespace flx {
 
 	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
-	//c A output flow which write to nothing.
-	class dump_oflow_driver___
+	// 'driver' qui n'écrit dans rien.
+	class void_oflow_driver___
 	: public fdr::oflow_driver___<>
 	{
 	protected:
@@ -471,45 +472,88 @@ namespace flx {
 		virtual void FDRCommit()
 		{}
 	public:
-		~dump_oflow_driver___( void )
-		{
-			reset();
-		}
 		void Init( fdr::thread_safety__ ThreadSafety )
 		{
 			fdr::oflow_driver___<>::Init( ThreadSafety );
 		}
-
 	};	
 
-	extern dump_oflow_driver___ dump;
+	extern void_oflow_driver___ VoidOFlowDriver;
 
-	//c A output flow which write to nothing.
-	class dump_oflow__
+	// 'flow' qui n'écrit dans rien.
+	class void_oflow__
 	: public flw::oflow__
 	{
 	private:
-		dump_oflow_driver___ _Driver;
 			// The cache.
-		flw::datum__ _Cache[FLX_DUMP_BUFFER_SIZE];
+		flw::datum__ _Cache[FLX_VOID_BUFFER_SIZE];
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			oflow__::reset( P );
-			_Driver.reset( P );
 		}
-		dump_oflow__( void )
+		void_oflow__( void )
 		{
 			reset( false );
 		}
-		~dump_oflow__( void )
+		~void_oflow__( void )
 		{
 			reset();
 		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			_Driver.Init( fdr::tsDisabled );
-			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
+			oflow__::Init( VoidOFlowDriver, _Cache, sizeof( _Cache ), AmountMax );
+		}
+	};
+
+	// 'driver' qui ne lit rien.
+	class void_iflow_driver___
+	: public fdr::iflow_driver___<>
+	{
+	protected:
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
+		{
+			return 0;
+		}
+		virtual void FDRDismiss( void )
+		{
+		}
+	public:
+		~void_iflow_driver___( void )
+		{
+			reset();
+		}
+		void Init( fdr::thread_safety__ ThreadSafety )
+		{
+			fdr::iflow_driver___<>::Init( ThreadSafety );
+		}
+	};	
+
+	extern void_iflow_driver___ VoidIFlowDriver;
+
+	// 'flow' qui ne lit rien.
+	class void_iflow__
+	: public flw::iflow__
+	{
+	private:
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			iflow__::reset( P );
+		}
+		void_iflow__( void )
+		{
+			reset( false );
+		}
+		~void_iflow__( void )
+		{
+			reset();
+		}
+		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		{
+			iflow__::Init( VoidIFlowDriver, AmountMax );
 		}
 	};
 
@@ -615,7 +659,7 @@ namespace flx {
 	};
 
 	template <int OutCacheSize = FLW__OUTPUT_CACHE_SIZE> class mediator_ioflow___
-		: public flw::standalone_ioflow__<OutCacheSize>
+	: public flw::standalone_ioflow__<OutCacheSize>
 	{
 	private:
 		mediator_ioflow_driver___ _Driver;
@@ -626,6 +670,101 @@ namespace flx {
 			flw::standalone_ioflow__<OutCacheSize>Init( _Driver );
 		}
 	};
+
+	// 'driver' qui relaye un autre 'driver'.
+	class relay_oflow_driver___
+	: public fdr::oflow_driver___<>
+	{
+	private:
+		fdr::oflow_driver_base___ *_Driver;
+	protected:
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Write( Buffer, Maximum );
+		}
+		virtual void FDRCommit()
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Commit();
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			fdr::oflow_driver___<>::reset( P );
+			_Driver = NULL;
+		}
+		relay_oflow_driver___( void )
+		{
+			reset( false );
+		}
+		~relay_oflow_driver___( void )
+		{
+			reset();
+		}
+		void Init(
+			fdr::oflow_driver_base___ &Driver,
+			fdr::thread_safety__ ThreadSafety )
+		{
+			_Driver = &Driver;
+			fdr::oflow_driver___<>::Init( ThreadSafety );
+		}
+	};	
+
+	// 'driver' qui relaye un autre 'driver'.
+	class relay_iflow_driver___
+	: public fdr::iflow_driver___<>
+	{
+	private:
+		fdr::iflow_driver_base___ *_Driver;
+	protected:
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
+		{
+			bso::bool__ Dummy = false;
+
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Read( Maximum, Buffer, true, Dummy );
+		}
+		virtual void FDRDismiss( void )
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			_Driver->Dismiss();
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			fdr::iflow_driver___<>::reset( P );
+			_Driver = NULL;
+		}
+		relay_iflow_driver___( void )
+		{
+			reset( false );
+		}
+		~relay_iflow_driver___( void )
+		{
+			reset();
+		}
+		void Init(
+			fdr::iflow_driver_base___ &Driver,
+			fdr::thread_safety__ ThreadSafety )
+		{
+			_Driver = &Driver;
+			fdr::iflow_driver___<>::Init( ThreadSafety );
+		}
+	};	
+
 #endif
 }
 

@@ -1,5 +1,8 @@
 $Id$
 
+- 02/09/2011 :
+	- Adaptation to underlying libraries.
+
 - 19/05/2011 :
 	- Adaptation to underlying libraries.
 

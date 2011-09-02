@@ -1,6 +1,17 @@
 $Id$
 
-01/08/2011 :
+02/09/2011 :
+	- CIO :
+		- Renommage de certaines variables pour éviter des confusions.
+		- Lors de l'initialisation, on peut spécifier que les flow ne lise/n'écrive de/dans rien pour la mise en oeuvre d'un programme en tant que service.
+	- FLX :
+		- 'dump_...' -> 'void_...'.
+		- Ajout 'void_...' en lecture (ne retourne rien ; toujours vide).
+		- Ajout 'relay_(i|o)flow_driver___'.
+	- XULFTK :
+		- Adaptation aux modifications 'XPP'.
+
+01/09/2011 :
 	- Général :
 		- Mise en oeuvre 'FDR'.
 	- NSXPCM :
