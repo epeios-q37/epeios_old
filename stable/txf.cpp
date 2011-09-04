@@ -60,8 +60,7 @@ it is necessary to personalize it, or certain compiler would not work properly *
 
 #include "flx.h"
 
-static flx::dump_oflow__ nul;
-txf::text_oflow__ txf::nul;
+txf::text_oflow__ txf::VoidTOFlow;
 
 class txfpersonnalization
 : public txftutor
@@ -69,8 +68,7 @@ class txfpersonnalization
 public:
 	txfpersonnalization( void )
 	{
-		nul.Init();
-		txf::nul.Init( ::nul );
+		txf::VoidTOFlow.Init( flx::VoidOFlow );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

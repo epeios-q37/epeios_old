@@ -205,6 +205,7 @@ namespace cio {
 	{
 		tConsole,	// Lecture/écriture de/dans la console.
 		tVoid,		// Lecture/écriture de/dans rien (utile pour les service Windows.
+		tUser,		// Lecture/écriture de/dans des dispositifs fournis par l'utilisateur (qui doit initialiser 'C(Out|In|Err)Driver').
 		t_amount,
 		t_Undefined,
 		t_Default = tConsole

@@ -64,6 +64,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #include "flw.h"
 #include "cpe.h"
 #include "txf.h"
+#include "cio.h"
 
 //d The epeios site URL.
 #define EPSMSC_EPEIOS_URL	"http://zeusw.org/epeios/"
@@ -97,7 +98,7 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_EPEIOS_PROJECT_AFFILIATION "This program is part of the Epeios project (" EPSMSC_EPEIOS_URL ")." 
 
 //d Epeios (http://zeusw.org/epeios/) framework.
-#define EPSMSC_EPEIOS_FRAMEWORK_DEPENDENCE "Heavily relies on the Epeios framework (" EPSMSC_EPEIOS_URL ")." 
+#define EPSMSC_EPEIOS_FRAMEWORK_DEPENDENCE "Relies massively on the Epeios framework (" EPSMSC_EPEIOS_URL ")." 
 
 //m Copyright text with yers 'Years' (string) for Epeios.
 #define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
@@ -105,12 +106,7 @@ extern class ttr_tutor &EPSMSCTutor;
 							
 namespace epsmsc {
 	//f Print information about GNU GPL license.
-	void PrintLicense(
-		txf::text_oflow__ &Flow
-#ifdef CPE__ST
-		= cio::cout
-#endif
-		);
+	void PrintLicense( txf::text_oflow__ &Flow = cio::COut );
 }
 
 /*$END$*/

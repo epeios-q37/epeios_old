@@ -67,9 +67,7 @@ extern class ttr_tutor &CLNARGTutor;
 #include "ctn.h"
 #include "str.h"
 #include "lcl.h"
-#ifndef CPE__T_MT
-#	include "cio.h"
-#endif
+# include "cio.h"
 
 #include <stdarg.h>
 
@@ -473,11 +471,7 @@ namespace clnarg {
 		int CommandId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__T_MT
-		txf::text_oflow__ &Flow = cio::cout,
-#else
-		txf::text_oflow__ &Flow,
-#endif
+		txf::text_oflow__ &Flow = cio::COut,
 		bso::bool__ Default = false );
 
 	inline void PrintCommandUsage(
@@ -486,11 +480,7 @@ namespace clnarg {
 		const char *Text,
 		clnarg::view View,
 		bso::bool__ Default,
-#ifndef CPE__T_MT
-		txf::text_oflow__ &Flow = cio::cout )
-#else
-		txf::text_oflow__ &Flow )
-#endif
+		txf::text_oflow__ &Flow = cio::COut )
 	{
 		PrintCommandUsage( Description, CommandId, Text, View, Flow, Default );
 	}
@@ -503,11 +493,7 @@ namespace clnarg {
 		const char *Parameter,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__T_MT
-		txf::text_oflow__ &Flow = cio::cout );
-#else
-		txf::text_oflow__ &Flow );
-#endif
+		txf::text_oflow__ &Flow = cio::COut );
 
 	/*f Print the usage text for option, without parameter, in 'Description'
 	identified by 'OptionId' using 'Text' and 'View'. */
@@ -516,11 +502,7 @@ namespace clnarg {
 		int OptionId,
 		const char *Text,
 		clnarg::view View,
-#ifndef CPE__T_MT
-		txf::text_oflow__ &Flow = cio::cout )
-#else
-		txf::text_oflow__ &Flow )
-#endif
+		txf::text_oflow__ &Flow = cio::COut )
 	{
 		PrintOptionUsage( Description, OptionId, NULL, Text, View, Flow );
 	}

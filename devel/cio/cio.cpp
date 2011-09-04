@@ -124,6 +124,17 @@ void cio::Initialize( target__ Target )
 		CInDriver.Init( _VInDriver, fdr::ts_Default );
 		CErrDriver.Init( _VErrDriver, fdr::ts_Default );
 		break;
+	case tUser:
+		if ( !COutDriver.IsInitialized() )
+			ERRu();
+
+		if ( !CInDriver.IsInitialized() )
+			ERRu();
+
+		if ( !CErrDriver.IsInitialized() )
+			ERRu();
+
+		break;
 	default:
 		ERRu();
 		break;

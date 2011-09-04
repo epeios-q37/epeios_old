@@ -446,7 +446,7 @@ namespace txf {
 	}
 
 	//o All written in this object is erased.
-	extern text_oflow__ nul;
+	extern text_oflow__ VoidTOFlow;
 
 
 }

@@ -56,7 +56,10 @@ public:
 /*$BEGIN$*/
 
 flx::void_oflow_driver___ flx::VoidOFlowDriver;
+flx::void_oflow__ flx::VoidOFlow;
+
 flx::void_iflow_driver___ flx::VoidIFlowDriver;
+flx::void_iflow__ flx::VoidIFlow;
 
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -68,7 +71,11 @@ public:
 	flxpersonnalization( void )
 	{
 		flx::VoidOFlowDriver.Init( fdr::ts_Default );
+		flx::VoidOFlow.Init();
+
 		flx::VoidIFlowDriver.Init( fdr::ts_Default );
+		flx::VoidIFlow.Init();
+
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

@@ -1,5 +1,18 @@
 $Id$
 
+04/09/2011 :
+	- FLX :
+		- Rajout 'Void(I|O)Flow'.
+	- TXF :
+		- Adaptation modifications 'FLX'.
+		- 'nul' -> 'VoidTOFlow'.
+
+03/09/2011 :
+	- Général :
+		- Adaptation aux modifications 'CIO'.
+	- FLX :
+		- Ajout méthode 'IsInitialized(...)' aux classes 'relay_(i|o)_flow_driver__'.
+
 02/09/2011 :
 	- CIO :
 		- Renommage de certaines variables pour éviter des confusions.

@@ -60,35 +60,35 @@ extern class ttr_tutor &FLXTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "fdr.h"
-#include "flw.h"
-#include "bso.h"
-#include "bch.h"
-#include "cpe.h"
+# include "err.h"
+# include "fdr.h"
+# include "flw.h"
+# include "bso.h"
+# include "bch.h"
+# include "cpe.h"
 
-#ifdef CPE__T_MT
-#	define FLX__MT
-#endif
+# ifdef CPE__T_MT
+#  define FLX__MT
+# endif
 
-#ifdef FLX__MT
-#	include "mtx.h"
-#endif
+# ifdef FLX__MT
+#  include "mtx.h"
+# endif
 
-#ifndef FLX_BUFFER_BUFFER_SIZE
+# ifndef FLX_BUFFER_BUFFER_SIZE
 //d Size of the buffer of a 'flx::buffer_flow___'.
-#define FLX_BUFFER_BUFFER_SIZE	100
-#endif
+#  define FLX_BUFFER_BUFFER_SIZE	100
+# endif
 
-#ifndef FLX_BUNCH_BUFFER_SIZE
+# ifndef FLX_BUNCH_BUFFER_SIZE
 //d Size of the buffer of a 'flx::bunch_flow___'.
-#define FLX_BUNCH_BUFFER_SIZE		500
-#endif
+#  define FLX_BUNCH_BUFFER_SIZE		500
+# endif
 
-#ifndef FLX_VOID_BUFFER_SIZE
+# ifndef FLX_VOID_BUFFER_SIZE
 //d Size of the buffer of a 'flx::void_oflow___'.
-#define FLX_VOID_BUFFER_SIZE		500
-#endif
+#  define FLX_VOID_BUFFER_SIZE		500
+# endif
 
 namespace flx {
 
@@ -506,6 +506,10 @@ namespace flx {
 		}
 	};
 
+	// ATTENTION : n'est pas 'therad-safe'.
+	extern void_oflow__ VoidOFlow;
+
+
 	// 'driver' qui ne lit rien.
 	class void_iflow_driver___
 	: public fdr::iflow_driver___<>
@@ -557,7 +561,112 @@ namespace flx {
 		}
 	};
 
-#ifdef FLX__MT
+	// ATTENTION : n'est pas 'therad-safe'.
+	extern void_iflow__ VoidIFlow;
+
+	// 'driver' qui relaye un autre 'driver'.
+	class relay_oflow_driver___
+	: public fdr::oflow_driver___<>
+	{
+	private:
+		fdr::oflow_driver_base___ *_Driver;
+	protected:
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Write( Buffer, Maximum );
+		}
+		virtual void FDRCommit()
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Commit();
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			fdr::oflow_driver___<>::reset( P );
+			_Driver = NULL;
+		}
+		relay_oflow_driver___( void )
+		{
+			reset( false );
+		}
+		~relay_oflow_driver___( void )
+		{
+			reset();
+		}
+		void Init(
+			fdr::oflow_driver_base___ &Driver,
+			fdr::thread_safety__ ThreadSafety )
+		{
+			_Driver = &Driver;
+			fdr::oflow_driver___<>::Init( ThreadSafety );
+		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _Driver != NULL;
+		}
+	};	
+
+	// 'driver' qui relaye un autre 'driver'.
+	class relay_iflow_driver___
+	: public fdr::iflow_driver___<>
+	{
+	private:
+		fdr::iflow_driver_base___ *_Driver;
+	protected:
+		virtual fdr::size__ FDRRead(
+			fdr::size__ Maximum,
+			fdr::datum__ *Buffer )
+		{
+			bso::bool__ Dummy = false;
+
+			if ( _Driver == NULL )
+				ERRu();
+
+			return _Driver->Read( Maximum, Buffer, true, Dummy );
+		}
+		virtual void FDRDismiss( void )
+		{
+			if ( _Driver == NULL )
+				ERRu();
+
+			_Driver->Dismiss();
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			fdr::iflow_driver___<>::reset( P );
+			_Driver = NULL;
+		}
+		relay_iflow_driver___( void )
+		{
+			reset( false );
+		}
+		~relay_iflow_driver___( void )
+		{
+			reset();
+		}
+		void Init(
+			fdr::iflow_driver_base___ &Driver,
+			fdr::thread_safety__ ThreadSafety )
+		{
+			_Driver = &Driver;
+			fdr::iflow_driver___<>::Init( ThreadSafety );
+		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _Driver != NULL;
+		}
+	};	
+
+# ifdef FLX__MT
 
 	// Permet de lire à partir d'un 'iflow' ce qui est écrit dans un 'oflow'.
 	class mediator_ioflow_driver___
@@ -671,101 +780,7 @@ namespace flx {
 		}
 	};
 
-	// 'driver' qui relaye un autre 'driver'.
-	class relay_oflow_driver___
-	: public fdr::oflow_driver___<>
-	{
-	private:
-		fdr::oflow_driver_base___ *_Driver;
-	protected:
-		virtual fdr::size__ FDRWrite(
-			const fdr::datum__ *Buffer,
-			fdr::size__ Maximum )
-		{
-			if ( _Driver == NULL )
-				ERRu();
-
-			return _Driver->Write( Buffer, Maximum );
-		}
-		virtual void FDRCommit()
-		{
-			if ( _Driver == NULL )
-				ERRu();
-
-			return _Driver->Commit();
-		}
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			fdr::oflow_driver___<>::reset( P );
-			_Driver = NULL;
-		}
-		relay_oflow_driver___( void )
-		{
-			reset( false );
-		}
-		~relay_oflow_driver___( void )
-		{
-			reset();
-		}
-		void Init(
-			fdr::oflow_driver_base___ &Driver,
-			fdr::thread_safety__ ThreadSafety )
-		{
-			_Driver = &Driver;
-			fdr::oflow_driver___<>::Init( ThreadSafety );
-		}
-	};	
-
-	// 'driver' qui relaye un autre 'driver'.
-	class relay_iflow_driver___
-	: public fdr::iflow_driver___<>
-	{
-	private:
-		fdr::iflow_driver_base___ *_Driver;
-	protected:
-		virtual fdr::size__ FDRRead(
-			fdr::size__ Maximum,
-			fdr::datum__ *Buffer )
-		{
-			bso::bool__ Dummy = false;
-
-			if ( _Driver == NULL )
-				ERRu();
-
-			return _Driver->Read( Maximum, Buffer, true, Dummy );
-		}
-		virtual void FDRDismiss( void )
-		{
-			if ( _Driver == NULL )
-				ERRu();
-
-			_Driver->Dismiss();
-		}
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			fdr::iflow_driver___<>::reset( P );
-			_Driver = NULL;
-		}
-		relay_iflow_driver___( void )
-		{
-			reset( false );
-		}
-		~relay_iflow_driver___( void )
-		{
-			reset();
-		}
-		void Init(
-			fdr::iflow_driver_base___ &Driver,
-			fdr::thread_safety__ ThreadSafety )
-		{
-			_Driver = &Driver;
-			fdr::iflow_driver___<>::Init( ThreadSafety );
-		}
-	};	
-
-#endif
+# endif
 }
 
 /*$END$*/

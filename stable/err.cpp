@@ -245,21 +245,21 @@ void err::Final( void )
 
 #ifdef CPE__T_CONSOLE
 ERRProlog
-#	ifdef CPE__T_MT
-	cio::cout___ cout;
-	cio::cerr___ cerr;
-#	else
-	static txf::text_oflow__ &cout = cio::cout;
-	static txf::text_oflow__ &cerr = cio::cerr;
-#	endif
+# ifdef CPE__T_MT
+	cio::cout___ COut;
+	cio::cerr___ CErr;
+# else
+	static txf::text_oflow__ &COut = cio::COut;
+	static txf::text_oflow__ &CErr = cio::CErr;
+# endif
 ERRBegin
 	if ( cio::IsInitialized() ) {
-#	ifdef CPE__T_MT
-		cout.Init();
-		cerr.Init();
-#	endif
-		cout << txf::commit;
-		cerr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::commit /*<< '\a'*/;
+# ifdef CPE__T_MT
+		COut.Init();
+		CErr.Init();
+# endif
+		COut << txf::commit;
+		CErr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::commit /*<< '\a'*/;
 	}
 ERRErr
 ERREnd
