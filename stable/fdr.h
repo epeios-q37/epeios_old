@@ -414,10 +414,20 @@ namespace fdr {
 	: public oflow_driver_base___
 	{
 	public:
-		oflow_driver___( void )
+		void reset( bso::bool__ P = true )
 		{
 			if ( Dummy != 0 )	
 				ERRu();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
+
+			oflow_driver_base___::reset( P );
+		}
+		oflow_driver___( void )
+		{
+			reset( false );
+		}
+		~oflow_driver___( void )
+		{
+			reset();
 		}
 	};
 

@@ -81,6 +81,13 @@ public:
 	}
 	~flxpersonnalization( void )
 	{
+		flx::VoidIFlow.reset();
+		flx::VoidIFlowDriver.reset();
+
+		flx::VoidOFlow.reset();
+		flx::VoidOFlowDriver.reset();
+
+
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

@@ -1,5 +1,16 @@
 $Id$
 
+06/09/2011 :
+	- FDR :
+		- Ajout 'reset(...)' manquant.
+	- FLX :
+		- Correction (contournement ?) bogue (VC++ 10 ?) 'pure virtual function call'.
+
+05/09/2011 :
+	- TXF :
+		- Rajout méthode 'IsInitialized()'.
+		- Un 'Commit()' s'un objet non initilaisé ne provoque plus d'erreur.
+
 04/09/2011 :
 	- FLX :
 		- Rajout 'Void(I|O)Flow'.

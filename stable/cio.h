@@ -66,12 +66,10 @@ extern class ttr_tutor &CIOTutor;
 # include "cpe.h"
 # include "flx.h"
 
-# ifdef CPE__T_LIBRARY
-#  error "Cannot be used in a library !"
-# endif
-
 # ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Utilise dans le cadre d'un service Windows.
-#  define CIO__AUTOMATIC_INITIALIZATION 	// Si modifié, modifié 'WINTOL' en conséquence !
+# ifndef CPE__T_LIBRARY
+#  define CIO__AUTOMATIC_INITIALIZATION 	// Si modifié, modifier 'WINTOL' en conséquence !
+#  endif
 # endif
 
 namespace cio {

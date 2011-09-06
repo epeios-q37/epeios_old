@@ -300,6 +300,10 @@ namespace txf {
 		{
 			_Flow = &Flow;
 		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _Flow != NULL;
+		}
 		text_oflow__ &operator <<( text_oflow__ &(* Function )( text_oflow__ &Flot ) )
 		{
 			return Function( *this );
@@ -396,7 +400,8 @@ namespace txf {
 		//f Synchronization.
 		void Commit( void )
 		{
-			Commit_();
+			if ( IsInitialized() ) 
+				Commit_();
 		}
 		flw::oflow__ &Flow( void ) const
 		{
