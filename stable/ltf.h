@@ -61,31 +61,31 @@ extern class ttr_tutor &LTFTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "fwf.h"
+#include "fdr.h"
 #include "flw.h"
 #include "txf.h"
 
 namespace ltf {
 	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
 
-	typedef fwf::oflow_functions___<> _oflow_functions___;
+	typedef fdr::oflow_driver___<> _oflow_driver___;
 
-	class _line_text_oflow_functions___
-	: public _oflow_functions___
+	class _line_text_oflow_driver___
+	: public _oflow_driver___
 	{
 	private:
-		fwf::datum__ *Data_;
+		fdr::datum__ *Data_;
 		bso::ubyte__ Size_;
 		bso::ubyte__ Amount_;
 		txf::text_oflow__ *TFlow_;
 		bso::ubyte__ _FreezePosition;
 	protected:
-		virtual fwf::size__ FWFWrite(
-			const fwf::datum__ *Buffer,
-			fwf::size__ Maximum )
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
 		{
 			if ( ( Amount_ + Maximum ) > Size_ ) {
-				if ( Maximum >= (fwf::size__)( Size_ - _FreezePosition ) ) {
+				if ( Maximum >= (fdr::size__)( Size_ - _FreezePosition ) ) {
 					memcpy( Data_ + _FreezePosition, Buffer + ( Size_ - _FreezePosition - Maximum ), Size_ - _FreezePosition );
 				} else {
 					memcpy( Data_ + _FreezePosition, Data_ + _FreezePosition + Maximum, Size_ - Maximum - _FreezePosition );
@@ -105,35 +105,35 @@ namespace ltf {
 
 			return Maximum;
 		}
-		virtual void FWFCommit( void )
+		virtual void FDRCommit( void )
 		{
 			*TFlow_ << txf::commit;
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_oflow_functions___::reset( P );
+			_oflow_driver___::reset( P );
 		}
-		_line_text_oflow_functions___( void )
+		_line_text_oflow_driver___( void )
 		{
 			reset( false );
 		}
-		virtual ~_line_text_oflow_functions___( void )
+		virtual ~_line_text_oflow_driver___( void )
 		{
 			reset();
 		}
 		void Init(
 			txf::text_oflow__ &TFlow,
-			fwf::datum__ *Data,
-			fwf::size__ Size,
-			fwf::thread_safety__ ThreadSafety )
+			fdr::datum__ *Data,
+			fdr::size__ Size,
+			fdr::thread_safety__ ThreadSafety )
 		{
 			if ( Size > LTF__SIZE_MAX )
 				ERRl();
 
 			TFlow_ = &TFlow;
 
-			_oflow_functions___::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 			
 			Data_ = Data;
 
@@ -178,12 +178,12 @@ namespace ltf {
 	: public flw::oflow__
 	{
 	private:
-		_line_text_oflow_functions___ _Functions;
+		_line_text_oflow_driver___ _Driver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			flw::oflow__::reset( P );
-			_Functions.reset( P );
+			_Driver.reset( P );
 		}
 		_line_text_oflow___(  )
 		{
@@ -198,24 +198,24 @@ namespace ltf {
 			flw::datum__ *Data,
 			flw::size__ Size )
 		{
-			_Functions.Init( TFlow, Data, Size, fwf::tsDisabled );
-			oflow__::Init( _Functions, NULL, 0, FLW_SIZE_MAX );
+			_Driver.Init( TFlow, Data, Size, fdr::tsDisabled );
+			oflow__::Init( _Driver, NULL, 0, FLW_SIZE_MAX );
 		}
 		void Clear( void )
 		{
-			_Functions.Clear();
+			_Driver.Clear();
 		}
 		void ClearAll( void )
 		{
-			_Functions.ClearAll();
+			_Driver.ClearAll();
 		}
 		void CR( void )
 		{
-			_Functions.CR();
+			_Driver.CR();
 		}
 		void Freeze( void )
 		{
-			_Functions.Freeze();
+			_Driver.Freeze();
 		}
 	};
 

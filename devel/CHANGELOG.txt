@@ -1,5 +1,9 @@
 $Id$
 
+07/09/2011 :
+	- Général :
+		- Mise en oeuvre 'FDR'.
+
 06/09/2011 :
 	- FDR :
 		- Ajout 'reset(...)' manquant.
