@@ -44,7 +44,7 @@
 #define VERSION					"0.3.2"
 #define COPYRIGHT_YEARS			"2010"
 #define DESCRIPTION				"Epeios random picker"
-#define PROJECT_AFFILIATION		EPSMSC_EPEIOS_AFFILIATION
+#define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME				EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT			EPSMSC_AUTHOR_CONTACT
 #define HELP					EPSMSC_HELP_INVITATION( NAME )
@@ -53,9 +53,9 @@
 
 #define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 typedef bso::ulong__	id__;
 #define ALL				BSO_ULONG_MAX
@@ -101,28 +101,28 @@ struct parameters {
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help" << txf::nl;
+	COut << DESCRIPTION << txf::nl;
+	COut << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	cout << NAME << " <command> [options] <project-file> [id]" << txf::nl;
-	cout << txf::tab << "project-file:" << txf::tab << "file containing the project defintions." << txf::nl;
-	cout << "command: " << txf::nl;
+	COut << NAME << " <command> [options] <project-file> [id]" << txf::nl;
+	COut << txf::tab << "project-file:" << txf::tab << "file containing the project defintions." << txf::nl;
+	COut << "command: " << txf::nl;
 	clnarg::PrintCommandUsage( Description, cPick, "Pick a random entry according to project file.", clnarg::vSplit, true );
-	cout << txf::tab << "Id : the id of the reocrd to diaplay; if 0, all records are displayed; if absent, a random record is diaplayed." << txf::nl;
+	COut << txf::tab << "Id : the id of the reocrd to diaplay; if 0, all records are displayed; if absent, a random record is diaplayed." << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-//	cout << "options:" << txf::nl;
+//	COut << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
-	cout << COPYRIGHT << txf::nl;
-	cout << PROJECT_AFFILIATION << txf::nl;
-	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	COut << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	COut << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
+	COut << COPYRIGHT << txf::nl;
+	COut << PROJECT_AFFILIATION << txf::nl;
+	COut << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -139,8 +139,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << '\'' << Unknow << "': unknow option." << txf::nl;
+		COut << HELP << txf::nl;
 		ERRi();
 	}
 
@@ -183,7 +183,7 @@ ERRBegin
 		Id = Free( P ).ToUL( &Error );
 
 		if ( Error != NONE ) {
-			cerr << "Bad value for record id !" << txf::nl;
+			CErr << "Bad value for record id !" << txf::nl;
 			ERRExit( EXIT_FAILURE );
 		}
 
@@ -193,8 +193,8 @@ ERRBegin
 		Free( P ).Convert( Parameters.Project );
 		break;
 	default:
-		cerr << "Wrong amount of arguments." << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << "Wrong amount of arguments." << txf::nl;
+		COut << HELP << txf::nl;
 		ERRi();
 		break;
 	}
@@ -227,7 +227,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise( cio::cout );
+		TTR.Advertise( cio::COut );
 		ERRi();
 		break;
 	case cHelp:
@@ -235,7 +235,7 @@ ERRBegin
 		ERRi();
 		break;
 	case cLicense:
-		epsmsc::PrintLicense( cout );
+		epsmsc::PrintLicense( COut );
 		ERRi();
 		break;
 	case cPick:
@@ -312,24 +312,35 @@ static void PrintPosition_(
 	const xpp::preprocessing_iflow___ &IFlow,
 	txf::text_oflow__ &TFlow )
 {
-	PrintPosition_( IFlow.Coord(), TFlow );
+ERRProlog
+	xpp::context___ Context;
+ERRBegin
 
-	if ( IFlow.LocalizedFileName().Amount() != 0 )
-		TFlow << " in file '" << IFlow.LocalizedFileName() << '\'';
+	Context.Init();
+
+	IFlow.GetContext( Context );
+
+	PrintPosition_( Context.Coord, TFlow );
+
+	if ( Context.FileName.Amount() != 0 )
+		TFlow << " in file '" << Context.FileName << '\'';
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void ReportErrorAndExit_( 
 	const str::string_ &Message,
 	const xpp::preprocessing_iflow___ &IFlow )
 {
-	cerr << "Parsing interrupted at ";
+	CErr << "Parsing interrupted at ";
 /*
-	PrintPosition_( XFlow.Coord(), cerr );
+	PrintPosition_( XFlow.Coord(), CErr );
 	if ( XFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
-		cerr << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
+		CErr << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
 */
-	PrintPosition_( IFlow, cerr );
-	cerr << " : " << Message << " !" << txf::nl;
+	PrintPosition_( IFlow, CErr );
+	CErr << " : " << Message << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 
 }
@@ -349,9 +360,9 @@ ERRProlog
 ERRBegin
 	Locale.Init();
 	ErrorMessage.Init();
-	cerr << xpp::GetTranslation( IFlow, lcl::rack__( Locale, "" ), ErrorMessage ) << " at ";
-	PrintPosition_( IFlow, cerr );
-	cerr << " !" << txf::nl;
+	CErr << xpp::GetTranslation( IFlow, lcl::rack__( Locale, "" ), ErrorMessage ) << " at ";
+	PrintPosition_( IFlow, CErr );
+	CErr << " !" << txf::nl;
 	ERRExit( EXIT_FAILURE );
 ERRErr
 ERREnd
@@ -1030,7 +1041,7 @@ ERRBegin
 			break;
 		case xml::tEndTag:
 			if ( !TableDetected ) {
-				cerr << "No '" TABLE_TAG "' tag in data file !" << txf::nl;
+				CErr << "No '" TABLE_TAG "' tag in data file !" << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			} else
 				Continue = false;
@@ -1063,13 +1074,13 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	if ( FFlow.Init( DataFileName, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
+		CErr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	FFlow.EOFD( XTF_EOXT );
 
-	IFlow.Init( FFlow, str::string( fnm::GetLocation( DataFileName, Buffer ) ), NULL );
+	IFlow.Init( FFlow, xpp::criterions___( str::string( fnm::GetLocation( DataFileName, Buffer ) ) ) );
 
 	XFlow.Init( IFlow );
 
@@ -1092,7 +1103,7 @@ ERRBegin
 			break;
 		case xml::tProcessed:
 			if ( !DataDetected ) {
-				cerr << "No '" << NAME << "' data in '" << DataFileName << "' !" << txf::nl;
+				CErr << "No '" << NAME << "' data in '" << DataFileName << "' !" << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			} else
 				Continue = false;
@@ -1226,7 +1237,7 @@ id__  Display_(
 			} while ( Record( Row ).GetSkip() && ( Counter < Records.Amount() ) );
 
 			if ( Record( Row ).GetSkip() ) {
-				cout << "Unable to pick a record : all are marked as skipped !" << txf::nl;
+				COut << "Unable to pick a record : all are marked as skipped !" << txf::nl;
 				ERRExit( EXIT_SUCCESS );
 			}
 
@@ -1237,7 +1248,7 @@ id__  Display_(
 
 		} else {
 			if ( Id > Records.Amount() ) {
-				cerr << "No record of id '" << Id << "'! " << txf::nl;
+				CErr << "No record of id '" << Id << "'! " << txf::nl;
 				ERRExit( EXIT_FAILURE )
 			} else
 				Row = Id - 1;
@@ -1349,7 +1360,7 @@ ERRProlog
 	txf::text_oflow__ TFlow;
 ERRBegin
 	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		cerr << "Unable to open '" << FileName << "' for output !" << txf::nl;
+		CErr << "Unable to open '" << FileName << "' for output !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1374,7 +1385,7 @@ ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
 	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
-		cerr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
+		CErr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1401,7 +1412,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, cout );
+		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, COut );
 	else
 		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, OutputFileName.Convert( Buffer ) );
 ERRErr
@@ -1430,7 +1441,7 @@ ERRBegin
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
 		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
-		cout << "Launching '" << CompleteCommand << "\'." << txf::nl;
+		COut << "Launching '" << CompleteCommand << "\'." << txf::nl;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
 
@@ -1462,7 +1473,7 @@ ERRProlog
 	xml::writer Writer;
 ERRBegin
 	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		cerr << "Unable to open file '" << FileName << "'!" << txf::nl;
+		CErr << "Unable to open file '" << FileName << "'!" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1485,7 +1496,7 @@ ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
 	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
-		cerr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
+		CErr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1555,12 +1566,12 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	if ( !fil::FileExists( FileName ) ) {
-		cout << "Unable to find context file '" << FileName << "'! It will be created at exit." << txf::nl;
+		COut << "Unable to find context file '" << FileName << "'! It will be created at exit." << txf::nl;
 		ERRReturn;
 	}
 
 	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		cerr << "Unable to open file '" << FileName << "' !" << txf::nl;
+		CErr << "Unable to open file '" << FileName << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1596,13 +1607,13 @@ ERRBegin
 	DataFileName.Init();
 
 	if ( !Registry.GetValue( str::string( DATA_FILENAME_TAG ), DataFileName ) ) {
-		cerr << "No '" << DATA_FILENAME_TAG << "' tag found !" << txf::nl;
+		CErr << "No '" << DATA_FILENAME_TAG << "' tag found !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	OutputFileName.Init();
 	if ( !Registry.GetValue( str::string( OUTPUT_FILENAME_TAG ), OutputFileName ) ) {
-		cerr << "No output file defined !" << txf::nl;
+		CErr << "No output file defined !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1611,7 +1622,7 @@ ERRBegin
 
 	ContextFileName.Init();
 	if ( !Registry.GetValue( str::string( CONTEXT_FILENAME_TAG ), ContextFileName ) ) {
-		cerr << "No context file name defined !" << txf::nl;
+		CErr << "No context file name defined !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -1642,7 +1653,7 @@ static void Process_(
 {
 ERRProlog
 	rgstry::status__ Status = rgstry::s_Undefined;
-	rgstry::error_details ErrorDetails;
+	rgstry::context___ Context;
 	registry Registry;
 	lcl::locale Locale;
 	str::string ErrorMessage;
@@ -1652,12 +1663,12 @@ ERRBegin
 	Registry.Init();
 	Level = Registry.AddNewLevel();
 
-	ErrorDetails.Init();
+	Context.Init();
 
-	if ( ( Status = Registry.Fill( Level, ProjectFileName, "Projects/Project[target=\"" NAME "\"]", NULL, ErrorDetails ) ) != rgstry::sOK ) {
+	if ( ( Status = Registry.Fill( Level, ProjectFileName, xpp::criterions___(), "Projects/Project[target=\"" NAME "\"]", Context ) ) != rgstry::sOK ) {
 		Locale.Init();
 		ErrorMessage.Init();
-		cerr << rgstry::GetTranslation( Status, ErrorDetails,  lcl::rack__( Locale, ""), ErrorMessage ) << txf::nl;
+		CErr << rgstry::GetTranslation( Context,  lcl::rack__( Locale, ""), ErrorMessage ) << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 

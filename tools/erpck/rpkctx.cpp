@@ -218,7 +218,7 @@ void rpkctx::Retrieve(
 	}
 }
 
-static amount__ Fill_(
+static amount__ Remove_(
 	const rrows_ &Records,
 	amount__ Amount,
 	amount__ TotalAmount,
@@ -304,13 +304,13 @@ ERRBegin
 		Current.Records.Init();
 	}
 
-	Remainder = Amount - Fill_( Current.Records, Amount, Amount, Grid );
+	Remainder = Amount - Remove_( Current.Records, Amount, Amount, Grid );
 
 	if ( ( RPKCTX_AMOUNT_MAX / COEFF ) < Remainder )
 		ERRl();
 
 	if ( ( Remainder * COEFF ) > Amount )
-		Fill_( Previous.Records, Amount / COEFF, Amount, Grid );
+		Remove_( Previous.Records, Amount / COEFF, Amount, Grid );
 
 	Row = Pick_( Grid );
 
