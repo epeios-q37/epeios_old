@@ -174,8 +174,6 @@ void fblfrb::backend_remote_access_base___::PostProcess( flw::ioflow__ &Flow )
 
 		Row = Data.Next( Row );
 	}
-
-	Data.Init();
 }
 
 

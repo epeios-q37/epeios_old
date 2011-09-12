@@ -95,6 +95,10 @@ namespace fblfrb {
 		{
 			Data.Init();
 		}
+		void PreProcess( void )
+		{
+			Data.Init();
+		}
 		void In(
 			fblcst::cast Cast,
 			const void *Pointer,
@@ -114,21 +118,25 @@ namespace fblfrb {
 	private:
 		backend_remote_access_base___ _Base;
 	protected:
-		virtual void BKDACCIn(
+		void FBLFRDPreProcess( void )
+		{
+			_Base.PreProcess();
+		}
+		virtual void FBLFRDIn(
 			fblcst::cast Cast,
 			const void *Pointer,
 			flw::ioflow__ &Flow )
 		{
 			_Base.In( Cast, Pointer, Flow );
 		}
-		virtual void BKDACCOut(
+		virtual void FBLFRDOut(
 			flw::ioflow__ &Flow,
 			fblcst::cast Cast,
 			void *Pointer )
 		{
 			_Base.Out( Flow, Cast, Pointer );
 		}
-		void BKDACCPostProcess( flw::ioflow__ &Flow )
+		void FBLFRDPostProcess( flw::ioflow__ &Flow )
 		{
 			_Base.PostProcess( Flow );
 		}

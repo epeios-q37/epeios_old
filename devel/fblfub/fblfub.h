@@ -94,6 +94,20 @@ namespace fblfub {
 		fblfrb::backend_remote_access_base___ _Remote;
 		mode__ _Mode;
 	protected:
+		virtual void FBLFRDPreProcess( void )
+		{
+			switch ( _Mode ) {
+			case mEmbed:
+				_Embed.PreProcess();
+				break;
+			case mRemote:
+				_Remote.PreProcess();
+				break;
+			default:
+				ERRu();
+				break;
+			}
+		}
 		virtual void FBLFRDIn(
 			fblcst::cast Cast,
 			const void *Pointer,
@@ -110,8 +124,6 @@ namespace fblfub {
 				ERRu();
 				break;
 			}
-
-			
 		}
 		virtual void FBLFRDOut(
 			flw::ioflow__ &Flow,

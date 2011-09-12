@@ -129,6 +129,7 @@ namespace fblfrd {
 	struct parameters_handling_functions__
 	{
 	protected:
+		virtual void FBLFRDPreProcess( void ) = 0;
 		virtual void FBLFRDIn(
 			fblcst::cast Cast,
 			const void *Pointer,
@@ -154,6 +155,10 @@ namespace fblfrd {
 		void Init( void )
 		{
 			// A des fins de standadisation.
+		}
+		void PreProcess( void )
+		{
+			FBLFRDPreProcess();
 		}
 		void In(
 			fblcst::cast Cast,
@@ -286,6 +291,10 @@ namespace fblfrd {
 	private:
 		parameters_handling_functions__ *_ParametersHandlingFunctions;
 		error_handling_functions__ *_ErrorHandlingFunctions;
+		void _PreProcess( void )
+		{
+			_ParametersHandlingFunctions->PreProcess();
+		}
 		void _In(
 			fblcst::cast Cast,
 			const void *Pointer )
@@ -317,16 +326,16 @@ namespace fblfrd {
 		void GetBackendCommands_( void );
 		void RetrieveBackendCommands_( void )
 		{
-				command__ DefaultCommand;
+			command__ DefaultCommand;
 
-				if ( !TestBackendCasts_() )
-					ERRb();
+			if ( !TestBackendCasts_() )
+				ERRb();
 
-				DefaultCommand = GetBackendDefaultCommand_();
+			DefaultCommand = GetBackendDefaultCommand_();
 
-				GetGetCommandsCommand_( DefaultCommand );
+			GetGetCommandsCommand_( DefaultCommand );
 
-				GetBackendCommands_();
+			GetBackendCommands_();
 		}
 		void Internal_( fblcmd::command Command )
 		{
@@ -424,6 +433,8 @@ namespace fblfrd {
 			object__ Object,
 			command__ Command )
 		{
+			_PreProcess();
+
 			flw::Put( Object, *Channel_ );
 			flw::Put( Command, *Channel_ );
 		}

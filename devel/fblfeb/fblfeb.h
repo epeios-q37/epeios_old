@@ -79,6 +79,10 @@ namespace fblfeb {
 		{
 			// Standardization.
 		}
+		void PreProcess( void )
+		{
+			// Nothing to do.
+		}
 		void In(
 			fblcst::cast Cast,
 			const void *Pointer,
@@ -111,21 +115,25 @@ namespace fblfeb {
 	private:
 		backend_local_access_base__ _Base;
 	protected:
-		virtual void BKDACCIn(
+		virtual void FBLFRDPoreProcess( void )
+		{
+			_Base.PreProcess();
+		}
+		virtual void FBLFRDIn(
 			fblcst::cast Cast,
 			const void *Pointer,
 			flw::ioflow__ &Flow )
 		{
 			_Base.In( Cast, Pointer, Flow );
 		}
-		virtual void BKDACCOut(
+		virtual void FBLFRDOut(
 			flw::ioflow__ &Flow,
 			fblcst::cast Cast,
 			void *Pointer )
 		{
 			_Base.Out( Flow, Cast, Pointer );
 		}
-		virtual void BKDACCPostProcess( flw::ioflow__ &Flow )
+		virtual void FBLFRDPostProcess( flw::ioflow__ &Flow )
 		{
 			_Base.PostProcess( Flow );
 		}

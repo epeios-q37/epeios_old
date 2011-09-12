@@ -1,5 +1,12 @@
 $Id$
 
+12/09/2011 :
+	- FBLFRD :
+		- Ajout 'FBLFRDPreProcess(...)' nécessaires pour éviter certains problèmes dans la gestion des paramètres lors de la survenu d'une erreur dans le backend.
+
+	- FBLxxx :
+		- Adaptation aux modifications 'FBLFRD'.
+
 07/09/2011 :
 	- Général :
 		- Mise en oeuvre 'FDR'.
