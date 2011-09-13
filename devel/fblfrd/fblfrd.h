@@ -218,7 +218,7 @@ namespace fblfrd {
 			*APIVersion;
 		void reset( bso::bool__ = true )
 		{
-			BackendLabel = APIVersion = NULL;
+			BackendLabel = APIVersion = "";	// Bien une chaîne vide, et pas 'NULL'.
 		}
 		compatibility_informations__( void )
 		{

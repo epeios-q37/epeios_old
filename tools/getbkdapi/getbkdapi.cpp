@@ -715,7 +715,12 @@ ERRBegin
 	}
 
 #if 1
-	Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type, 0 );
+	if ( !Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
+		CErr << "Unable to access the backend !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+
 	Flow.Init( Core );
 #else
 	Flow.Init( csdbnc::Connect( Location ) );
@@ -731,8 +736,10 @@ ERRBegin
 
 	BackendAccess.Disconnect();
 ERRErr
-	CErr << "Unable to communicate with the backend !" << txf::nl;
-	ERRExit( EXIT_FAILURE );
+	if ( ERRMajor != err::itn ) {
+		CErr << "Unable to communicate with the backend !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
 ERREnd
 ERREpilog
 }
@@ -985,6 +992,7 @@ ERRFErr
 ERRFEnd
 ERRFEpilog
 	COut << txf::commit;
+	CErr << txf::commit;
 
 	return ExitValue;
 }

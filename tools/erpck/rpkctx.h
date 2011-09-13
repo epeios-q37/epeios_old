@@ -66,28 +66,41 @@ namespace rpkctx {
 	class context_ {
 	public:
 		struct s {
-			pool_::s Previous, Current;
-		};
-		pool_ Previous, Current;
+			pool_::s Pool;
+			amount__
+				Session,	// Amount of record of the current session.
+				Cycle;		// To ensure that, inside a cycle, a record is only picked once.
+		} &S_;
+		pool_ Pool;
 		context_( s &S )
-		: Previous( S.Previous ),
-		  Current( S.Current )
-		{
-		}
+		: S_( S ),
+		  Pool( S.Pool )
+		{}
 		void reset( bso::bool__ P = true )
 		{
-			Previous.reset( P );
-			Current.reset( P );
+			Pool.reset( P );
+
+			S_.Session = S_.Cycle = 0;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			Pool.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
-			Previous.plug( MM );
-			Current.plug( MM );
+			Pool.plug( MM );
+		}
+		context_ &operator =( const context_ &C )
+		{
+			Pool = C.Pool;
+			S_.Cycle = C.S_.Cycle;
+			S_.Session = C.S_.Session;
 		}
 		void Init( void )
 		{
-			Previous.Init();
-			Current.Init();
+			Pool.Init();
+
+			S_.Session = S_.Cycle = 0;
 		}
 		rrow__ Pick(
 			amount__ Amount,

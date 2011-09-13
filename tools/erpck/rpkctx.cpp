@@ -21,15 +21,10 @@ E_AUTO( grid );
 #define CONTEXT_TAG_NAME				"Context"
 #define CONTEXTE_TARGET_ATTRIBUTE_NAME	"target"
 
-#define POOLS_TAG_NAME					"Pools"
-
-
 #define POOL_TAG_NAME						"Pool"
 
-#define POOL_STATE_ATTRIBUTE_NAME			"State"
-#define POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE	"Previous"
-#define POOL_CURRENT_STATE_ATTRIBUTE_VALUE	"Current"
-
+#define POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME	"CycleAmount"
+#define POOL_SESSION_AMOUNT_ATTRIBUTE_NAME	"SessionAmount"
 #define POOL_TIMESTAMP_ATTRIBUTE_NAME		"TimeStamp"
 
 
@@ -118,11 +113,13 @@ static void Retrieve_(
 
 static void Dump_(
 	const pool_ &Pool,
-	const char *State,
+	amount__ SessionAmount,
+	amount__ CycleAmount,
 	xml::writer_ &Writer )
 {
 	Writer.PushTag( POOL_TAG_NAME );
-	Writer.PutAttribute( POOL_STATE_ATTRIBUTE_NAME, State );
+	Writer.PutAttribute( POOL_SESSION_AMOUNT_ATTRIBUTE_NAME, bso::Convert( SessionAmount) );
+	Writer.PutAttribute( POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME, bso::Convert( CycleAmount) );
 	Writer.PutAttribute( POOL_TIMESTAMP_ATTRIBUTE_NAME, bso::Convert( Pool.TimeStamp() ) );
 	Dump_( Pool.Records, Writer );
 	Writer.PopTag();
@@ -132,24 +129,15 @@ void rpkctx::Dump(
 	const context_ &Context,
 	xml::writer_ &Writer )
 {
-	Writer.PushTag( POOLS_TAG_NAME );
-
-	Dump_( Context.Previous, POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE, Writer );
-	Dump_( Context.Current, POOL_CURRENT_STATE_ATTRIBUTE_VALUE, Writer );
-
-	Writer.PopTag();
+	Dump_( Context.Pool, Context.S_.Session, Context.S_.Cycle, Writer );
 }
 
-static void RetrievePools_(
+static void RetrievePool_(
 	xml::parser___ &Parser,
 	context_ &Context )
 {
-ERRProlog
+
 	bso::bool__ Continue = true;
-	str::string State;
-	time_t TimeStamp = 0;
-ERRBegin
-	State.Init();
 
 	while ( Continue ) {
 		switch( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
@@ -159,25 +147,18 @@ ERRBegin
 
 			break;
 		case xml::tAttribute:
-			if ( Parser.AttributeName() == POOL_STATE_ATTRIBUTE_NAME )
-				State = Parser.Value();
+			if ( Parser.AttributeName() == POOL_SESSION_AMOUNT_ATTRIBUTE_NAME )
+				Context.S_.Session = Parser.Value().ToUL();
+			else if ( Parser.AttributeName() == POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME )
+				Context.S_.Cycle = Parser.Value().ToUL();
 			else if ( Parser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
-				TimeStamp = Parser.Value().ToULL();
+				Context.Pool.TimeStamp() = Parser.Value().ToULL();
 			else
 				ERRc();
 
 			break;
 		case xml::tStartTagClosed:
-			if ( State == POOL_PREVIOUS_STATE_ATTRIBUTE_VALUE ) {
-				Context.Previous.TimeStamp() = TimeStamp;
-				Retrieve_( Parser, Context.Previous.Records );
-			} else if ( State == POOL_CURRENT_STATE_ATTRIBUTE_VALUE ) {
-				Context.Current.TimeStamp() = TimeStamp;
-				Retrieve_( Parser, Context.Current.Records );
-			} else
-				ERRc();
-
-			State.Init();
+			Retrieve_( Parser, Context.Pool.Records );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -187,9 +168,6 @@ ERRBegin
 			break;
 		}
 	}
-ERRErr
-ERREnd
-ERREpilog
 }
 
 
@@ -197,25 +175,7 @@ void rpkctx::Retrieve(
 	xml::parser___ &Parser,
 	context_ &Context )
 {
-	bso::bool__ Continue = true;
-
-	while ( Continue ) {
-		switch ( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
-		case xml::tStartTag:
-			if ( Parser.TagName() != POOLS_TAG_NAME )
-				ERRc();
-			break;
-		case xml::tStartTagClosed:
-			RetrievePools_( Parser, Context );
-			break;
-		case xml::tEndTag:
-			Continue = false;
-			break;
-		default:
-			ERRc();
-			break;
-		}
-	}
+	RetrievePool_( Parser, Context );
 }
 
 static amount__ Remove_(
@@ -294,17 +254,13 @@ ERRBegin
 
 	Grid.Reset( true );
 
-	if ( Current.Records.Amount() >= Amount ) {
-		Previous = Current;
-		Current.Init();
-	}
+	if ( IsNewSession_( Pool.TimeStamp(), Duration ) )
+		S_.Session = 0;
 
-	if ( IsNewSession_( Current.TimeStamp(), Duration ) ) {
-		Add_( Current.Records, Previous.Records );
-		Current.Records.Init();
-	}
+	if ( S_.Cycle >= Amount )
+		S_.Cycle = 0;
 
-	Remainder = Amount - Remove_( Current.Records, Amount, Amount, Grid );
+	Remainder = Amount - Remove_( Pool.Records, S_.Session > S_.Cycle ? S_.Session : S_.Cycle, Amount, Grid );
 
 	if ( ( RPKCTX_AMOUNT_MAX / COEFF ) < Remainder )
 		ERRl();
