@@ -115,13 +115,14 @@ static void Dump_(
 	const pool_ &Pool,
 	amount__ SessionAmount,
 	amount__ CycleAmount,
+	time_t TimeStamp,
 	xml::writer_ &Writer )
 {
 	Writer.PushTag( POOL_TAG_NAME );
 	Writer.PutAttribute( POOL_SESSION_AMOUNT_ATTRIBUTE_NAME, bso::Convert( SessionAmount) );
 	Writer.PutAttribute( POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME, bso::Convert( CycleAmount) );
-	Writer.PutAttribute( POOL_TIMESTAMP_ATTRIBUTE_NAME, bso::Convert( Pool.TimeStamp() ) );
-	Dump_( Pool.Records, Writer );
+	Writer.PutAttribute( POOL_TIMESTAMP_ATTRIBUTE_NAME, bso::Convert( TimeStamp ) );
+	Dump_( Pool, Writer );
 	Writer.PopTag();
 }
 
@@ -129,7 +130,7 @@ void rpkctx::Dump(
 	const context_ &Context,
 	xml::writer_ &Writer )
 {
-	Dump_( Context.Pool, Context.S_.Session, Context.S_.Cycle, Writer );
+	Dump_( Context.Pool, Context.S_.Session, Context.S_.Cycle, Context.S_.TimeStamp, Writer );
 }
 
 static void RetrievePool_(
@@ -152,13 +153,13 @@ static void RetrievePool_(
 			else if ( Parser.AttributeName() == POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME )
 				Context.S_.Cycle = Parser.Value().ToUL();
 			else if ( Parser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
-				Context.Pool.TimeStamp() = Parser.Value().ToULL();
+				Context.S_.TimeStamp = Parser.Value().ToULL();
 			else
 				ERRc();
 
 			break;
 		case xml::tStartTagClosed:
-			Retrieve_( Parser, Context.Pool.Records );
+			Retrieve_( Parser, Context.Pool );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -247,31 +248,36 @@ rrow__ rpkctx::context_::Pick(
 	rrow__ Row = NONE;
 ERRProlog
 	grid Grid;
-	amount__ Remainder = 0;
+	amount__ Applicaple = 0;
 ERRBegin
 	Grid.Init();
 	Grid.Allocate( Amount );
 
 	Grid.Reset( true );
 
-	if ( IsNewSession_( Pool.TimeStamp(), Duration ) )
+	if ( ( S_.Session >= Amount ) || IsNewSession_( S_.TimeStamp, Duration ) )
 		S_.Session = 0;
 
 	if ( S_.Cycle >= Amount )
 		S_.Cycle = 0;
 
-	Remainder = Amount - Remove_( Pool.Records, S_.Session > S_.Cycle ? S_.Session : S_.Cycle, Amount, Grid );
+	Applicaple = Amount / 3;
 
-	if ( ( RPKCTX_AMOUNT_MAX / COEFF ) < Remainder )
-		ERRl();
+	Applicaple = ( Applicaple > S_.Session ? Applicaple : S_.Session );
 
-	if ( ( Remainder * COEFF ) > Amount )
-		Remove_( Previous.Records, Amount / COEFF, Amount, Grid );
+	Applicaple = ( Applicaple > S_.Cycle ? Applicaple : S_.Cycle );
+
+	if ( Pool.Amount() != 0 )
+		Pool.Remove( Pool.First(), Pool.Amount() - Remove_( Pool, Applicaple, Amount, Grid ) );
 
 	Row = Pick_( Grid );
 
-	Current.Records.Append( Row );
-	Current.TimeStamp() = time( NULL );
+	Pool.Append( Row );
+
+	S_.Session++;
+	S_.Cycle++;
+
+	S_.TimeStamp = time( NULL );
 ERRErr
 ERREnd
 ERREpilog

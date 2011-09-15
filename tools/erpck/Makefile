@@ -26,72 +26,104 @@
 name = erpck
 copt =
 # Epeios general debugging features
-#copt += -DXXX_DBG
+copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
-# Forcing code generation for 32 bits enviroment.
-#copt += -m32
-lopt = 
-libs = cio clnarg epsmsc err fil flw fnm mmi
-libs += str tol ttr uym xml lcl rgstry xpp
-libs += rpkals rpkbsc rpkctx rpkrcd rpktbl
+# copt += -DCPE_MT
+# For using <setjmp.h> instead of C++ exceptions.
+# copt += -DERR_JMPUSE
+mods = cio clnarg epsmsc err fil flw fnm mmi cdgb64
+mods += str tol ttr uym xml lcl rgstry xpp
+mods += rpkals rpkbsc rpkctx rpkrcd rpktbl
+
+os := $(shell uname -o 2>/dev/null || uname -s)
+
+src =
 
 ifndef EPEIOS_SRC
-	src=
+	src += epeios
 else
-	src=$(EPEIOS_SRC)
+	src += $(EPEIOS_SRC)
 endif
 
-ifndef EPEIOS_ENV
-	env=gnu
-else
-	env=$(EPEIOS_ENV)
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+	env = gnu
+	co +=
+	lo +=
+	libs =
+
+	# To use as Windows service.
+	#mods += wintol
 endif
 
-ifeq ("$(env)","windows")
-# compilation options
-co = -q -c -w-aus -w-inl
-# linkage options
-lo = -q -e$(name)
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+	env = gnu
+	co +=
+	lo +=
+	libs = 
+
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
 endif
+
+##################################################
+# Specific for the Linux environment (N900/N810) #
+##################################################
+
+ifeq ("$(os)","Linux")
+	env = gnu
+	co +=
+	lo +=
+	libs = 
+
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+endif
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+	env = gnu
+	lo +=
+	libs =
+endif
+
+##################################
+# Common to all GNU environment. #
+##################################
 
 ifeq ("$(env)","gnu")
-co = -c
-# Generates debugging data.
-#co += -g
-# General optimization.
-co += -O
-# To use with gprof
-#co += -pg
-lo = -o $(name)
-# needed when pthread are used.
-#lo += -lpthread
+	lo = -o $(name)
+
+	# Generates debugging data.
+	#co += -g
+
+	# General optimization.
+	co += -O
+
+	# To use with gprof
+	#co += -pg
 endif
 
-ifeq ("$(env)","beos")
-co = -c -g
-lo = -o $(name)
-endif
-
-ifeq ("$(env)","windows")
-ox = obj
-cc = bcc32
-ds = ;
-lrfs = @LinkResponseFile
-endif
+######################
+# Don't modify below #
+######################
 
 ifeq ("$(env)","gnu")
-ox = o
-cc = g++ 
-ds = :
-lrfs = `cat LinkResponseFile`
-endif
-
-ifeq ("$(env)","beos")
-ox = o
-cc = g++
-ds = :
-lrfs = `cat LinkResponseFile`
+	co := -c $(co)
+	ox = o
+	cc = g++ 
+	larg = $(lo) $(objs)
+	ds = :
 endif
 
 vpath %.cpp $(subst $(ds),:,$(src))
@@ -99,12 +131,12 @@ vpath %.cpp $(subst $(ds),:,$(src))
 srcd = $(subst $(ds), ,$(src))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT) $(lopt)
+lo += $(EPEIOS_LOPT)
 
-objs = $(name).$(ox) $(libs:=.$(ox))
+objs = $(name).$(ox) $(mods:=.$(ox)) 
 
 $(name):  $(objs)
-	$(cc) $(lo) $(objs)
+	$(cc) $(larg) $(libs)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
+	$(cc) $(co) $<

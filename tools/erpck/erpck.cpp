@@ -41,8 +41,8 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.3.2"
-#define COPYRIGHT_YEARS			"2010"
+#define VERSION					"0.4.0"
+#define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME				EPSMSC_AUTHOR_NAME
@@ -1236,15 +1236,11 @@ id__  Display_(
 				Counter++;
 			} while ( Record( Row ).GetSkip() && ( Counter < Records.Amount() ) );
 
-			if ( Record( Row ).GetSkip() ) {
-				COut << "Unable to pick a record : all are marked as skipped !" << txf::nl;
-				ERRExit( EXIT_SUCCESS );
-			}
+			if ( !Record( Row ).GetSkip() )
+				Id = *Row + 1;
 
-			Id = *Row + 1;
-
-			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.Current.Records.Amount() ) );
-			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.Current.Records, Records ) ) );
+			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.Pool.Amount() ) );
+			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.Pool, Records ) ) );
 
 		} else {
 			if ( Id > Records.Amount() ) {
@@ -1298,7 +1294,7 @@ ERRBegin
 
 	Table.Init( Data );
 
-	Writer.Init( Output, xml::oIndent, xml::e_Default );
+	Writer.Init( Output, xml::oIndent, xml::e_None );
 
 	Writer.PushTag( "Picking" );
 
@@ -1441,7 +1437,7 @@ ERRBegin
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
 		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
-		COut << "Launching '" << CompleteCommand << "\'." << txf::nl;
+		COut << "Launching '" << CompleteCommand << "\'." << txf::nl << txf::commit;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
 
@@ -1457,6 +1453,7 @@ static void DumpContext_(
 {
 	Writer.PushTag( "Context" );
 	Writer.PutAttribute( "Target", NAME );
+	Writer.PutAttribute( "TimeStamp", tol::DateAndTime() );
 
 	Dump( Context, Writer );
 
@@ -1529,13 +1526,13 @@ ERRBegin
 
 			break;
 		case xml::tAttribute:
-			if ( Parser.AttributeName() != "Target" )
-				ERRc();
+			if ( Parser.AttributeName() == "Target" ) {
+				if ( Target.Amount() != 0 )
+					ERRc();
 
-			if ( Target.Amount() != 0 )
+				Target = Parser.Value();
+			} else if ( Parser.AttributeName() != "TimeStamp" )
 				ERRc();
-
-			Target = Parser.Value();
 			break;
 		case xml::tStartTagClosed:
 			if ( Target != NAME )

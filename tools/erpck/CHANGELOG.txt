@@ -1,5 +1,13 @@
 $Id$
 
+*********
+* 0.4.0 *
+*********
+
+- 15/09/2011 :
+	- No record can be picked twice before all records are picked once, overall, or in a session.
+	- New 'context' file format.
+
 - 11/09/2011 :
 	- Adaptation to modifications in underlying libraries.
 
