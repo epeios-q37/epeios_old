@@ -1,5 +1,11 @@
 $Id$
 
+18/09/2011 :
+	- CSDDLC :
+		- Ajout 'GetStreering()'.
+	- CSDSNS :
+		- 'log_functions__' est de nouveau à part.
+
 12/09/2011 :
 	- FBLFRD :
 		- Ajout 'FBLFRDPreProcess(...)' nécessaires pour éviter certains problèmes dans la gestion des paramètres lors de la survenu d'une erreur dans le backend.

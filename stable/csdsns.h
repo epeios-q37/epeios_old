@@ -283,32 +283,6 @@ ERREpilog
 
 	typedef csdbns::user_functions__ _user_functions__;
 
-	class user_functions__
-	: public _user_functions__,
-	  public log_functions__
-	{
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_user_functions__::reset( P );
-			log_functions__::reset( P );
-		}
-		user_functions__( void )
-		{
-			reset( false );
-		}
-		~user_functions__( void )
-		{
-			reset();
-		}
-		void Init( void )
-		{
-			_user_functions__::Init();
-			log_functions__::Init();
-		}
-	};
-
-
 	class _functions___
 	: public _user_functions__
 	{
@@ -421,9 +395,10 @@ ERREpilog
 	public:
 		void Init(
 			port__ Port,
-			user_functions__ &UserFunctions )
+			csdscm::user_functions__ &UserFunctions,
+			log_functions__ &LogFunctions = *(log_functions__ *)NULL )
 		{
-			_Functions.Init( UserFunctions, UserFunctions );
+			_Functions.Init( UserFunctions, LogFunctions );
 
 			_Server.Init( Port, _Functions );
 		}
