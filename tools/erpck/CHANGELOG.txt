@@ -1,5 +1,9 @@
 $Id$
 
+
+19/09/2011 :
+	- Correction bogue mauvais 'SessionAmount' dans le flux XML.
+
 *********
 * 0.4.0 *
 *********

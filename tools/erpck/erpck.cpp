@@ -1239,7 +1239,7 @@ id__  Display_(
 			if ( !Record( Row ).GetSkip() )
 				Id = *Row + 1;
 
-			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.Pool.Amount() ) );
+			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.S_.Session ) );
 			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.Pool, Records ) ) );
 
 		} else {
