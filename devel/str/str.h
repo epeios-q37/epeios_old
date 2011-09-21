@@ -243,235 +243,84 @@ namespace str {
 		epeios::row__ Search(
 			char C,
 			epeios::row__ Start = 0 ) const;
-		/*f Convert to unsigned long long. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
+		// NOTA : Les méthodes 'ToNumber'(...)' facilitent la mise en oeuvre de 'template's.
+#define STR_UN( name, type, limit )\
+	type To##name(\
+			epeios::row__ Begin,\
+			epeios::row__ *ErrP,\
+			base__ Base,\
+			type Limit = limit ) const\
+		{\
+			return (type)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );\
+		}\
+		type To##name(\
+			epeios::row__ *ErrP = NULL,\
+			type Limit = limit,\
+			base__ Base = bAuto ) const\
+		{\
+			return To##name( 0, ErrP, Base, Limit );\
+		}\
+		void ToNumber(\
+			type &Number,\
+			epeios::row__ *Error = NULL ) const\
+		{\
+			Number = To##name( Error );\
+		}\
+		void ToNumber(\
+			type Limit,\
+			type &Number,\
+			epeios::row__ *Error = NULL ) const\
+		{\
+			Number = To##name( Error, Limit );\
+		}
+#define STR_SN( name, type, positive_limit, negative_limit )\
+	type To##name(\
+			epeios::row__ Begin,\
+			epeios::row__ *ErrP,\
+			base__ Base,\
+			type PositiveLimit = positive_limit,\
+			type NegativeLimit = negative_limit ) const\
+		{\
+			return (type)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );\
+		}\
+		type To##name(\
+			epeios::row__ *ErrP = NULL,\
+			type PositiveLimit = positive_limit,\
+			type NegativeLimit = negative_limit,\
+			base__ Base = bAuto ) const\
+		{\
+			return To##name( 0, ErrP, Base, PositiveLimit, NegativeLimit );\
+		}\
+		void ToNumber(\
+			type &Number,\
+			epeios::row__ *Error = NULL ) const\
+		{\
+			Number = To##name( Error );\
+		}\
+		void ToNumber(\
+			type PositiveLimit,\
+			type NegativeLimit,\
+			type &Number,\
+			epeios::row__ *Error = NULL ) const\
+		{\
+			Number = To##name( Error, PositiveLimit, NegativeLimit );\
+		}
 #ifdef STR__64_BITS_TYPES_ALLOWED
-		bso::ullong__ ToULL(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::ullong__ Limit = BSO_ULLONG_MAX ) const
-		{
-			return _GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
-		}
-		bso::ullong__ ToULL(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::ullong__ Limit = BSO_ULLONG_MAX ) const
-		{
-			return ToULL( 0, ErrP, Base, Limit );
-		}
+		STR_UN( ULL, bso::ullong__, BSO_ULLONG_MAX )
+		STR_SN( SLL, bso::sllong__, BSO_SLLONG_MAX, BSO_SLLONG_MIN )
 #endif
-		/*f Convert to unsigned long. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
-		bso::ulong__ ToUL(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::ulong__ Limit = BSO_ULONG_MAX ) const
-		{
-			return (bso::ulong__)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
-		}
-		//f Variation in parameters.
-		bso::ulong__ ToUL(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::ulong__ Limit = BSO_ULONG_MAX ) const
-		{
-			return ToUL( 0, ErrP, Base, Limit );
-		}
-#ifdef STR__64_BITS_TYPES_ALLOWED
-		bso::sllong__ ToSLL(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::sllong__ PositiveLimit = BSO_SLONG_MAX,
-			bso::sllong__ NegativeLimit = BSO_SLONG_MIN ) const
-		{
-			return _GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		bso::sllong__ ToUSL(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
-			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
-		{
-			return ToSLL( 0, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-#endif
-		/*f Convert to signed long. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max absolute value that the returned value can have. */
-		bso::slong__ ToSL(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
-			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
-		{
-			return (bso::slong__)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		//f Variation in parameters.
-		bso::slong__ ToSL(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::slong__ PositiveLimit = BSO_SLONG_MAX,
-			bso::slong__ NegativeLimit = BSO_SLONG_MIN ) const
-		{
-			return ToSL( 0, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		/*f Convert to unsigned short. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
-		bso::ushort__ ToUS(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base = bAuto,
-			bso::ushort__ Limit = BSO_USHORT_MAX ) const
-		{
-			return (bso::ushort__)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );
-		}
-		bso::ushort__ ToUS(
-			epeios::row__ *ErrP,
-			base__ Base,
-			epeios::row__ Begin,
-			bso::ushort__ Limit = BSO_USHORT_MAX ) const
-		{
-			return (bso::ushort__)ToUS( Begin, ErrP, Base, Limit );
-		}
-		//f Variation in parameters.
-		bso::ushort__ ToUS(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::ushort__ Limit = BSO_USHORT_MAX ) const
-		{
-			return ToUS( ErrP, Base, 0, Limit );
-		}
-		/*f Convert to signed short. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
-		bso::sshort__ ToSS(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::sshort__ PositiveLimit = BSO_SSHORT_MAX,
-			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
-		{
-			return (bso::sshort__)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		//f Variation in parameters.
-		bso::sshort__ ToSS(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::sshort__ PositiveLimit = BSO_SSHORT_MAX,
-			bso::sshort__ NegativeLimit = BSO_SSHORT_MIN ) const
-		{
-			return ToSS( 0, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		/*f Convert to unsigned byte. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
-		bso::ubyte__ ToUB(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base = bAuto,
-			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
-		{
-			return (bso::ubyte__)_GenericUnsignedConversion(*this, Begin, ErrP, Base, Limit );
-		}
-		bso::ubyte__ ToUB(
-			epeios::row__ *ErrP,
-			base__ Base,
-			epeios::row__ Begin,
-			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
-		{
-			return ToUB( Begin, ErrP, Base, Limit );
-		}
-		//f Variation in parameters.
-		bso::ubyte__ ToUB(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::ubyte__ Limit = BSO_UBYTE_MAX ) const
-		{
-			return ToUB( 0, ErrP, Base, Limit );
-		}
-		/*f Convert to signed byte. If 'ErrP' != NULL, put in it the position of the bad character
-		if there is one. 'Limit' is the max value that the returned value can have. */
-		bso::sbyte__ ToSB(
-			epeios::row__ Begin,
-			epeios::row__ *ErrP,
-			base__ Base,
-			bso::sbyte__ PositiveLimit = BSO_SBYTE_MAX,
-			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
-		{
-			return (bso::sbyte__)_GenericSignedConversion( *this, 0, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		//f Variation in parameters.
-		bso::sbyte__ ToSB(
-			epeios::row__ *ErrP = NULL,
-			base__ Base = bAuto,
-			bso::sbyte__ PositiveLimit = BSO_SBYTE_MAX,
-			bso::sbyte__ NegativeLimit = BSO_SBYTE_MIN ) const
-		{
-			return ToSB( 0, ErrP, Base, PositiveLimit, NegativeLimit );
-		}
-		/*f Convert to long float. If 'ErrP' != NULL, put the character where is 
-		an error or 'NONE' when no error. */
+		STR_UN( UL, bso::ulong__, BSO_ULONG_MAX )
+		STR_SN( SL, bso::slong__, BSO_SLONG_MAX, BSO_SLONG_MIN )
+		STR_UN( US, bso::ushort__, BSO_USHORT_MAX )
+		STR_SN( SS, bso::sshort__, BSO_SSHORT_MAX, BSO_SSHORT_MIN )
+		STR_UN( UB, bso::ubyte__, BSO_UBYTE_MAX )
+		STR_SN( SB, bso::sbyte__, BSO_SBYTE_MAX, BSO_SBYTE_MIN )
 		bso::lfloat__ ToLF(
 			epeios::row__ *ErrP,
 			epeios::row__ Begin ) const;
-		//f Variation in parameters.
 		bso::lfloat__ ToLF( epeios::row__ *ErrP = NULL ) const
 		{
 			return ToLF( ErrP, 0 );
-		}
-		// Les fonctions 'ToNumber(...)' ci-dessous facilitent l'utilisattion des 'template's.
-#ifdef STR__64_BITS_TYPES_ALLOWED
-		void ToNumber(
-			bso::ullong__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToULL( Error );
-		}
-		void ToNumber(
-			bso::sllong__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-//			Number = ToSLL( Error );	// Missing; TODO !
-			ERRl();
-		}
-#endif
-		void ToNumber(
-			bso::ulong__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToUL( Error );
-		}
-		void ToNumber(
-			bso::slong__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToSL( Error );
-		}
-		void ToNumber(
-			bso::ushort__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToUS( Error );
-		}
-		void ToNumber(
-			bso::sshort__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToSS( Error );
-		}
-		void ToNumber(
-			bso::ubyte__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToUB( Error );
-		}
-		void ToNumber(
-			bso::sbyte__ &Number,
-			epeios::row__ *Error = NULL ) const
-		{
-			Number = ToSB( Error );
 		}
 		void ToNumber(
 			bso::lfloat__ &Number,

@@ -871,7 +871,7 @@ ERRBegin
 	MessageLabel.Append( "UpdateMessage" );
 
 	URLLabel.Init( _BackendLabel );
-	URLLabel.Append( "UpadetURL" );
+	URLLabel.Append( "UpdateURL" );
 
 	Success = _TestCompatibility( Flow, _APIVersion, MessageLabel.Convert( MessageLabelBuffer ), URLLabel.Convert( URLLAbelBuffer ) );
 ERRErr

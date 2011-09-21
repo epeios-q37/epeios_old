@@ -1,5 +1,11 @@
 $Id$
 
+21/09/2011 :
+	- Réecriture méthodes de conversion vers un nombre.
+
+20/09/2011 :
+	- Correction 'Upadet...' -> 'Update...'.
+
 18/09/2011 :
 	- CSDDLC :
 		- Ajout 'GetStreering()'.
