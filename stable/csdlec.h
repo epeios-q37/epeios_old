@@ -326,7 +326,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 	};
 
-	class dynamic_library_client_ioflow___
+	class library_embedded_client_ioflow___
 	: public _client_server_ioflow___
 	{
 	public:

@@ -63,7 +63,7 @@ extern class ttr_tutor &CSDUCLTutor;
 #include "err.h"
 #include "flw.h"
 #include "csdsnc.h"
-#include "csddlc.h"
+#include "csdlec.h"
 
 #define CSDUCL_CACHE_SIZE	1000
 
@@ -80,7 +80,7 @@ namespace csducl {
 	private:
 		type__ _Type;
 		csdsnc::core _DaemonAccess;
-		csddlc::dynamic_library_client_core _LibraryAccess;
+		csdlec::library_embedded_client_core__ _LibraryAccess;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -134,17 +134,17 @@ namespace csducl {
 	: public fdr::ioflow_driver___<>
 	{
 	private:
-		csdsnc::client_ioflow___ _DaemonAccess;
-		csddlc::dynamic_library_client_ioflow___ _Library;
+		csdsnc::client_ioflow___ _DaemonFlow;
+		csdlec::library_embedded_client_ioflow___ _LibraryFlow;
 		universal_client_core *_Core;
 		flw::ioflow__ &_Get( void )
 		{
 			switch ( _Core->_Type ) {
 			case tDaemon:
-				return _DaemonAccess;
+				return _DaemonFlow;
 				break;
 			case tLibrary:
-				return _Library;
+				return _LibraryFlow;
 				break;
 			default:
 				ERRu();
@@ -178,8 +178,8 @@ namespace csducl {
 		void reset( bso::bool__ P = true )
 		{
 			fdr::ioflow_driver___<>::reset( P );
-			_DaemonAccess.reset( P );
-			_Library.reset( P );
+			_DaemonFlow.reset( P );
+			_LibraryFlow.reset( P );
 
 			_Core = NULL;
 		}
@@ -201,10 +201,10 @@ namespace csducl {
 
 			switch ( Core._Type ) {
 			case tDaemon:
-				_DaemonAccess.Init( Core._DaemonAccess );
+				_DaemonFlow.Init( Core._DaemonAccess );
 				break;
 			case tLibrary:
-				_Library.Init( Core._LibraryAccess );
+				_LibraryFlow.Init( Core._LibraryAccess );
 				break;
 			default:
 				ERRu();

@@ -62,8 +62,9 @@ extern class ttr_tutor &CSDBNSTutor;
 
 #include "err.h"
 #include "sck.h"
-#include "csdscm.h"
 #include "cpe.h"
+
+# include "csdsuf.h"
 
 #ifdef CPE__T_MS
 #	ifndef CSD__NO_SERVICE_HANDLING
@@ -81,7 +82,8 @@ extern class ttr_tutor &CSDBNSTutor;
 
 namespace csdbns {
 	using namespace sck;
-	using namespace csdscm;
+
+	using namespace csdsuf;
 
 	//t The type of a port.
 	typedef bso::ushort__	port__;

@@ -63,60 +63,10 @@ extern class ttr_tutor &CSDLEOTutor;
 # include "err.h"
 # include "flw.h"
 
+#include "csdsuf.h"
+
 namespace csdleo {
-	enum action__ {
-		aContinue,
-		aStop,
-		a_amount,
-		a_Undefined
-	};
-
-	class user_functions__ {
-	protected:
-		virtual void *CSDLEOPreProcess( const char *Origin ) = 0;
-		virtual action__ CSDLEOProcess(
-			flw::ioflow__ &Flow,
-			void *UP ) = 0;
-		virtual void CSDLEOPostProcess( void *UP ) = 0;
-		virtual void CSDLEOExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
-												// (facilite la mise en oeuvre en tant que service Windows).
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		user_functions__( void )
-		{
-			reset( false );
-		}
-		~user_functions__( void )
-		{
-			reset();
-		}
-		void *PreProcess( const char *Origin )
-		{
-			return CSDLEOPreProcess( Origin );
-		}
-		action__ Process(
-			flw::ioflow__ &Flow,
-			void *UP )
-		{
-			return CSDLEOProcess( Flow, UP );
-		}
-		void PostProcess( void *UP )
-		{
-			CSDLEOPostProcess( UP );
-		}
-		void Exit( void )
-		{
-			CSDLEOExit();
-		}
-		void Init( void )
-		{
-			// Standadisation.
-		}
-	};
-
+	using namespace csdsuf;
 }
 
 /*$END$*/

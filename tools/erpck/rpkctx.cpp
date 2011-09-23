@@ -255,8 +255,11 @@ ERRBegin
 
 	Grid.Reset( true );
 
-	if ( ( S_.Session >= Amount ) || IsNewSession_( S_.TimeStamp, Duration ) )
+	if ( ( S_.Session >= Amount ) || IsNewSession_( S_.TimeStamp, Duration ) ) {
+		if ( ( S_.Session < Amount ) && ( S_.Session > S_.Cycle ) )
+			S_.Cycle = S_.Session;
 		S_.Session = 0;
+	}
 
 	if ( S_.Cycle >= Amount )
 		S_.Cycle = 0;

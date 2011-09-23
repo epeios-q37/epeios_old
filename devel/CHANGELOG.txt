@@ -1,5 +1,10 @@
 $Id$
 
+23/09/2011 :
+	Général :
+		- Rénommages des bibltiohqèques relatives à la gestion client/serveur à travers une bibliothèque dynamique en 'CSDLEx'.
+		- Adaptation aux modifications suite à la mise en oeuvre 'CSDLEx'.
+
 21/09/2011 :
 	- Réecriture méthodes de conversion vers un nombre.
 

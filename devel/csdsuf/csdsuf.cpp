@@ -1,5 +1,6 @@
 /*
-	Header for the 'csdleo' library by Claude SIMON (csimon at zeusw dot org)
+	'csdsuf' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'csdsuf' header file ('csdsuf.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -22,52 +23,59 @@ $_RAW_$
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+
+
 //	$Id$
 
-#ifndef CSDLEO__INC
-#define CSDLEO__INC
+#define CSDSUF__COMPILATION
 
-#define CSDLEO_NAME		"CSDLEO"
+#include "csdsuf.h"
 
-#define	CSDLEO_VERSION	"$Revision$"
-
-#define CSDLEO_OWNER		"Claude SIMON"
-
-#include "ttr.h"
-
-extern class ttr_tutor &CSDLEOTutor;
-
-#if defined( XXX_DBG ) && !defined( CSDLEO_NODBG )
-#define CSDLEO_DBG
+class csdsuftutor
+: public ttr_tutor
+{
+public:
+	csdsuftutor( void )
+	: ttr_tutor( CSDSUF_NAME )
+	{
+#ifdef CSDSUF_DBG
+		Version = CSDSUF_VERSION "\b\bD $";
+#else
+		Version = CSDSUF_VERSION;
 #endif
-
-/* Begin of automatic documentation generation part. */
-
-//V $Revision$
-//C Claude SIMON (csimon at zeusw dot org)
-//R $Date$
-
-/* End of automatic documentation generation part. */
+		Owner = CSDSUF_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~csdsuftutor( void ){}
+};
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
-
-/* Addendum to the automatic documentation generation part. */
-//D Client-Server Devices Library Embedded Overlapping 
-/* End addendum to automatic documentation generation part. */
-
 /*$BEGIN$*/
 
-# include "err.h"
-# include "flw.h"
+using namespace csdsuf;
 
-#include "csdsuf.h"
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 
-namespace csdleo {
-	using namespace csdsuf;
-}
+class csdsufpersonnalization
+: public csdsuftutor
+{
+public:
+	csdsufpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
+	}
+	~csdsufpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
+
 
 /*$END$*/
 				  /********************************************/
@@ -75,4 +83,8 @@ namespace csdleo {
 				  /*			  unless specified		   	  */
 /******************************************************************************/
 
-#endif
+// 'static' by GNU C++.
+
+static csdsufpersonnalization Tutor;
+
+ttr_tutor &CSDSUFTutor = Tutor;

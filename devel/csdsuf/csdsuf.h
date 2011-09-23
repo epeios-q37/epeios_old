@@ -1,5 +1,5 @@
 /*
-	Header for the 'csdleo' library by Claude SIMON (csimon at zeusw dot org)
+	Header for the 'csdsuf' library by Claude SIMON (csimon at zeusw dot org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef CSDLEO__INC
-#define CSDLEO__INC
+#ifndef CSDSUF__INC
+#define CSDSUF__INC
 
-#define CSDLEO_NAME		"CSDLEO"
+#define CSDSUF_NAME		"CSDSUF"
 
-#define	CSDLEO_VERSION	"$Revision$"
+#define	CSDSUF_VERSION	"$Revision$"
 
-#define CSDLEO_OWNER		"Claude SIMON"
+#define CSDSUF_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CSDLEOTutor;
+extern class ttr_tutor &CSDSUFTutor;
 
-#if defined( XXX_DBG ) && !defined( CSDLEO_NODBG )
-#define CSDLEO_DBG
+#if defined( XXX_DBG ) && !defined( CSDSUF_NODBG )
+#define CSDSUF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,18 +55,67 @@ extern class ttr_tutor &CSDLEOTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client-Server Devices Library Embedded Overlapping 
+//D Client-Server Devices Server User Functions. 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-# include "err.h"
-# include "flw.h"
+#include "err.h"
+#include "flw.h"
 
-#include "csdsuf.h"
+namespace csdsuf {
+	enum action__ {
+		aContinue,
+		aStop,
+		a_amount,
+		a_Undefined
+	};
 
-namespace csdleo {
-	using namespace csdsuf;
+	class user_functions__ {
+	protected:
+		virtual void *CSDSUFPreProcess( const char *Origin ) = 0;
+		virtual action__ CSDSUFProcess(
+			flw::ioflow__ &Flow,
+			void *UP ) = 0;
+		virtual void CSDSUFPostProcess( void *UP ) = 0;
+		virtual void CSDSUFExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
+												// (facilite la mise en oeuvre en tant que service Windows).
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		user_functions__( void )
+		{
+			reset( false );
+		}
+		~user_functions__( void )
+		{
+			reset();
+		}
+		void *PreProcess( const char *Origin )
+		{
+			return CSDSUFPreProcess( Origin );
+		}
+		action__ Process(
+			flw::ioflow__ &Flow,
+			void *UP )
+		{
+			return CSDSUFProcess( Flow, UP );
+		}
+		void PostProcess( void *UP )
+		{
+			CSDSUFPostProcess( UP );
+		}
+		void Exit( void )
+		{
+			CSDSUFExit();
+		}
+		void Init( void )
+		{
+			// Standadisation.
+		}
+	};
 }
 
 /*$END$*/

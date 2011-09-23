@@ -62,7 +62,7 @@ extern class ttr_tutor &CSDSNSTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "csdscm.h"
+#include "csdsuf.h"
 #include "csdbns.h"
 #include "csdsnb.h"
 #include "lstbch.h"
@@ -71,13 +71,9 @@ extern class ttr_tutor &CSDSNSTutor;
 namespace csdsns {
 
 	using namespace csdsnb;
+	using namespace csdsuf;
+
 	using csdbns::port__;
-
-	using csdscm::action__;
-
-	using csdscm::aContinue;
-	using csdscm::aStop;
-	using csdscm::a_Undefined;
 
 	enum log__ {
 		lNew,
@@ -292,13 +288,13 @@ ERREpilog
 		const char *_Origin;
 		void _Clean( void );	// Appelle le 'PostProcess' pour tous les objets utilisateurs.
 	protected:
-		virtual void *CSDPreProcess( const char *Origin )
+		virtual void *CSDSUFPreProcess( const char *Origin )
 		{
 			_Origin = Origin;
 
 			return NULL;
 		}
-		virtual action__ CSDProcess(
+		virtual action__ CSDSUFProcess(
 			flw::ioflow__ &Flow,
 			void *UP )
 		{
@@ -307,7 +303,7 @@ ERREpilog
 				ERRc();
 #endif
 			id__ Id = CSDSNB_UNDEFINED;
-			action__ Action = csdscm::aContinue;
+			action__ Action = aContinue;
 
 			UP = NULL;
 
@@ -346,12 +342,12 @@ ERREpilog
 
 			return Action;
 		}
-		virtual void CSDPostProcess( void *UP )
+		virtual void CSDSUFPostProcess( void *UP )
 		{
 			if ( UP != NULL )
 				ERRc();
 		}
-		virtual void CSDExit( void )
+		virtual void CSDSUFExit( void )
 		{
 			_Functions->Exit();
 		}
@@ -395,7 +391,7 @@ ERREpilog
 	public:
 		void Init(
 			port__ Port,
-			csdscm::user_functions__ &UserFunctions,
+			user_functions__ &UserFunctions,
 			log_functions__ &LogFunctions = *(log_functions__ *)NULL )
 		{
 			_Functions.Init( UserFunctions, LogFunctions );

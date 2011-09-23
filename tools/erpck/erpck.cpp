@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.4.0"
+#define VERSION					"0.4.1"
 #define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
