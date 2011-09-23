@@ -1,12 +1,12 @@
 /*
-	Header for the 'csddls' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'csdles' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef CSDDLS__INC
-#define CSDDLS__INC
+#ifndef CSDLES__INC
+#define CSDLES__INC
 
-#define CSDDLS_NAME		"CSDDLS"
+#define CSDLES_NAME		"CSDLES"
 
-#define	CSDDLS_VERSION	"$Revision$"
+#define	CSDLES_VERSION	"$Revision$"
 
-#define CSDDLS_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define CSDLES_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CSDDLSTutor;
+extern class ttr_tutor &CSDLESTutor;
 
-#if defined( XXX_DBG ) && !defined( CSDDLS_NODBG )
-#define CSDDLS_DBG
+#if defined( XXX_DBG ) && !defined( CSDLES_NODBG )
+#define CSDLES_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,29 +55,28 @@ extern class ttr_tutor &CSDDLSTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client-Server Devices Dynamic Library Server 
+//D Client-Server Devices Library Embedded Server 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete : Use 'CSDLE'."
+# include "err.h"
+# include "flw.h"
 
-#include "err.h"
-#include "flw.h"
-#include "csdscm.h"
-#include "cpe.h"
+# include "csdleo.H"
 
-#ifdef CPE__T_MS
-#	define CSDDSL__FUNCTION_SPEC	__declspec(dllexport)
-#else
-#	define CSDDSL__FUNCTION_SPEC
-#endif
+# ifdef CPE__T_MS
+#  define CSDLES__FUNCTION_SPEC	__declspec(dllexport)
+# else
+#  define CSDLES__FUNCTION_SPEC
+# endif
 
-extern "C" CSDDSL__FUNCTION_SPEC csdscm::user_functions__ *CSDDLEntry( void *UP );
+extern "C" CSDLES__FUNCTION_SPEC csdleo::user_functions__ *CSDLESEntry( void *UP );
 
-namespace csddls {
-	csdscm::user_functions__ *CSDDLSCallback( void *UP );	// A surcharger.
+namespace csdles {
+	csdleo::user_functions__ *CSDLESCallback( void *UP );	// A surcharger.
 }		
+
 
 /*$END$*/
 				  /********************************************/

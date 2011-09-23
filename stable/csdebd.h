@@ -60,6 +60,8 @@ extern class ttr_tutor &CSDEBDTutor;
 
 /*$BEGIN$*/
 
+#error "Obsolete ! Use "CSDLEC' instead."
+
 #include "err.h"
 #include "flw.h"
 #include "csdscm.h"

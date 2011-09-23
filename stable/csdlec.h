@@ -1,12 +1,12 @@
 /*
-	Header for the 'csdebd' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
-$_RAW_$
+	Header for the 'csdlec' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef CSDEBD__INC
-#define CSDEBD__INC
+#ifndef CSDLEC__INC
+#define CSDLEC__INC
 
-#define CSDEBD_NAME		"CSDEBD"
+#define CSDLEC_NAME		"CSDLEC"
 
-#define	CSDEBD_VERSION	"$Revision$"
+#define	CSDLEC_VERSION	"$Revision$"
 
-#define CSDEBD_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define CSDLEC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CSDEBDTutor;
+extern class ttr_tutor &CSDLECTutor;
 
-#if defined( XXX_DBG ) && !defined( CSDEBD_NODBG )
-#define CSDEBD_DBG
+#if defined( XXX_DBG ) && !defined( CSDLEC_NODBG )
+#define CSDLEC_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,22 +55,20 @@ extern class ttr_tutor &CSDEBDTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client-Server EmBeD 
+//D Client-Server Devices Library Embedded Client 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete ! Use "CSDLEC' instead."
-
 #include "err.h"
 #include "flw.h"
-#include "csdscm.h"
 #include "bch.h"
 
-#define CSDEBD_CACHE_SIZE	1000
+#include "csdleo.h"
 
+# define CSDLEC_CACHE_SIZE	1000
 
-namespace csdebd {
+namespace csdlec {
 
 	typedef bch::E_BUNCH_( flw::datum__ ) data_;
 	E_AUTO( data )
@@ -158,7 +156,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	: public _passive_generic_driver___
 	{
 	private:
-		csdscm::user_functions__ *_UserFunctions;
+		csdleo::user_functions__ *_UserFunctions;
 		void *_UP;
 		flw::ioflow__ *_Flow;
 		bso::bool__ _DataAvailable;
@@ -212,7 +210,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			reset();
 		}
 		void Init(
-			csdscm::user_functions__ &UserFunctions,
+			csdleo::user_functions__ &UserFunctions,
 			flw::ioflow__ &Flow,
 			fdr::thread_safety__ ThreadSafety )
 		{
@@ -228,15 +226,15 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	};
 
 
-	class embed_client_server_ioflow___
+	class _client_server_ioflow___
 	: public flw::ioflow__
 	{
 	private:
-		flw::datum__ _Cache[CSDEBD_CACHE_SIZE];
+		flw::datum__ _Cache[CSDLEC_CACHE_SIZE];
 		_active_generic_driver___ _Driver;
 		data _Master, _Slave;
 		struct backend {
-			flw::datum__ Cache[CSDEBD_CACHE_SIZE];
+			flw::datum__ Cache[CSDLEC_CACHE_SIZE];
 			_passive_generic_driver___ Driver;
 			flw::ioflow__ Flow;
 			void reset( bso::bool__ P = true )
@@ -261,13 +259,13 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			}
 		} _Backend;
 	public:
-		embed_client_server_ioflow___( void )
+		_client_server_ioflow___( void )
 		: _Driver( _Master, _Slave ),
 		  _Backend( _Slave ,_Master )
 		{
 			reset( false );
 		}
-		~embed_client_server_ioflow___( void )
+		~_client_server_ioflow___( void )
 		{
 			reset();
 		}
@@ -280,7 +278,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			_Master.reset( P );
 			_Slave.reset( P );
 		}
-		void Init( csdscm::user_functions__ &UserFunctions)
+		void Init( csdleo::user_functions__ &UserFunctions)
 		{
 			reset();
 /*
@@ -296,6 +294,48 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			ioflow__::Init( _Driver, _Cache, sizeof( _Cache ), FLW_SIZE_MAX );
 		}
 	};
+
+	class library_embedded_client_core__
+	{
+	private:
+		csdleo::user_functions__ *_UserFunctions;
+		void *_LibraryHandler;
+	public:
+		void reset( bso::bool__ P = true );
+		library_embedded_client_core__( void )
+		{
+			reset( false );
+		}
+		~library_embedded_client_core__( void )
+		{
+			reset();
+		}
+		bso::bool__ Init(
+			const char *LibraryName,
+			void *UP );
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _UserFunctions != NULL;
+		}
+		csdleo::user_functions__ &GetSteering( void ) const
+		{
+			if ( !IsInitialized() )
+				ERRu();
+
+			return *_UserFunctions;
+		}
+	};
+
+	class dynamic_library_client_ioflow___
+	: public _client_server_ioflow___
+	{
+	public:
+		void Init( library_embedded_client_core__ &Core )
+		{
+			_client_server_ioflow___::Init( Core.GetSteering() );
+		}
+	};
+
 }
 
 /*$END$*/

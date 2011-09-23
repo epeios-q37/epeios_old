@@ -60,6 +60,8 @@ extern class ttr_tutor &CSDSCMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'CSDLEO'.
+
 #include "err.h"
 #include "flw.h"
 

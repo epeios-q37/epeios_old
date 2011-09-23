@@ -1,12 +1,12 @@
 /*
-	Header for the 'csddlc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	Header for the 'csdleo' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@
 
 //	$Id$
 
-#ifndef CSDDLC__INC
-#define CSDDLC__INC
+#ifndef CSDLEO__INC
+#define CSDLEO__INC
 
-#define CSDDLC_NAME		"CSDDLC"
+#define CSDLEO_NAME		"CSDLEO"
 
-#define	CSDDLC_VERSION	"$Revision$"
+#define	CSDLEO_VERSION	"$Revision$"
 
-#define CSDDLC_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define CSDLEO_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CSDDLCTutor;
+extern class ttr_tutor &CSDLEOTutor;
 
-#if defined( XXX_DBG ) && !defined( CSDDLC_NODBG )
-#define CSDDLC_DBG
+#if defined( XXX_DBG ) && !defined( CSDLEO_NODBG )
+#define CSDLEO_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,63 +55,68 @@ extern class ttr_tutor &CSDDLCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Client-Server Devices Dynamic Library Client 
+//D Client-Server Devices Library Embedded Overlapping 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsolete ! User 'CSDLEC' instead."
+# include "err.h"
+# include "flw.h"
 
-#include "err.h"
-#include "flw.h"
-#include "csdscm.h"
-#include "csdebd.h"
+namespace csdleo {
+	enum action__ {
+		aContinue,
+		aStop,
+		a_amount,
+		a_Undefined
+	};
 
-namespace csddlc {
-
-	class dynamic_library_client_core
-	{
-	private:
-		csdscm::user_functions__ *_UserFunctions;
-		void *_LibraryHandler;
+	class user_functions__ {
+	protected:
+		virtual void *CSDLEOPreProcess( const char *Origin ) = 0;
+		virtual action__ CSDLEOProcess(
+			flw::ioflow__ &Flow,
+			void *UP ) = 0;
+		virtual void CSDLEOPostProcess( void *UP ) = 0;
+		virtual void CSDLEOExit( void ) = 0;	// Appelé lorsque l'on quitte l'application
+												// (facilite la mise en oeuvre en tant que service Windows).
 	public:
-		void reset( bso::bool__ P = true );
-		dynamic_library_client_core( void )
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		user_functions__( void )
 		{
 			reset( false );
 		}
-		~dynamic_library_client_core( void )
+		~user_functions__( void )
 		{
 			reset();
 		}
-		bso::bool__ Init(
-			const char *LibraryName,
-			void *UP );
-		bso::bool__ IsInitialized( void ) const
+		void *PreProcess( const char *Origin )
 		{
-			return _UserFunctions != NULL;
+			return CSDLEOPreProcess( Origin );
 		}
-		csdscm::user_functions__ &GetSteering( void ) const
+		action__ Process(
+			flw::ioflow__ &Flow,
+			void *UP )
 		{
-			if ( !IsInitialized() )
-				ERRu();
-
-			return *_UserFunctions;
+			return CSDLEOProcess( Flow, UP );
 		}
-};
-
-	typedef csdebd::embed_client_server_ioflow___ _embed_client_server_ioflow___;
-
-	
-	class dynamic_library_client_ioflow___
-	: public _embed_client_server_ioflow___
-	{
-	public:
-		void Init( dynamic_library_client_core &Core )
+		void PostProcess( void *UP )
 		{
-			_embed_client_server_ioflow___::Init( Core.GetSteering() );
+			CSDLEOPostProcess( UP );
+		}
+		void Exit( void )
+		{
+			CSDLEOExit();
+		}
+		void Init( void )
+		{
+			// Standadisation.
 		}
 	};
+
 }
 
 /*$END$*/
