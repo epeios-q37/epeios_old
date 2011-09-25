@@ -63,6 +63,7 @@ extern class ttr_tutor &FRDFBCTutor;
 #include "err.h"
 #include "flw.h"
 #include "rgstry.h"
+#include "lcl.h"
 
 #define FRDFBC_DATA_STRUCTURE_VERSION	"1"
 
