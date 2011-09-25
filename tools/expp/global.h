@@ -33,9 +33,9 @@
 # include "cio.h"
 
 namespace global {
-	using cio::cerr;
-	using cio::cout;
-	using cio::cin;
+	using cio::CErr;
+	using cio::COut;
+	using cio::CIn;
 
 	extern lcl::rack__ LocaleRack;
 	

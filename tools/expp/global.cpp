@@ -99,7 +99,7 @@ ERRBegin
 		break;
 	}
 
-	cout << Translation;
+	COut << Translation;
 ERRErr
 ERREnd
 ERREpilog
@@ -186,7 +186,7 @@ ERRBegin
 		break;
 	}
 
-	cerr << Translation << " !" << txf::nl << txf::commit;
+	CErr << Translation << " !" << txf::nl << txf::commit;
 
 	ERRExit( EXIT_FAILURE );
 ERRErr
@@ -327,7 +327,7 @@ ERRBegin
 	if ( ( Status = fil::CreateBackupFile( FileName, fil::bmDuplicate, err::hUserDefined ) )!= fil::bsOK ) {
 		Translation.Init();
 		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
-		cerr << Translation << txf::nl;
+		CErr << Translation << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -344,7 +344,7 @@ ERRBegin
 	if ( ( Status = fil::RecoverBackupFile( FileName, err::hUserDefined ) )!= fil::rsOK ) {
 		Translation.Init();
 		fil::GetTranslation( Status, FileName, LocaleRack, Translation );
-		cerr << Translation << txf::nl;
+		CErr << Translation << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -363,8 +363,8 @@ ERRFBegin
 ERRFErr
 ERRFEnd
 	_Release();
-	cout << txf::commit;
-	cerr << txf::commit;
+	COut << txf::commit;
+	CErr << txf::commit;
 ERRFEpilog
 	return ERRExitValue;
 }

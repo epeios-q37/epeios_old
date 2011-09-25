@@ -1,5 +1,8 @@
 $Id$
 
+25/09/2011 :
+	- Adaptation to changes in underlying libraries.
+
 ---------------
 Version 0.4.0 :
 ---------------

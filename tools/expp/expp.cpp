@@ -92,23 +92,23 @@ ERRProlog
 	STR_BUFFER___ TranslationBuffer;
 	CLNARG_BUFFER__ Buffer;
 ERRBegin
-	cout << LocaleRack.GetTranslation( "ProgramDescription", "", TranslationBuffer ) << '.'  << txf::nl;
-	cout << txf::nl;
+	COut << LocaleRack.GetTranslation( "ProgramDescription", "", TranslationBuffer ) << '.'  << txf::nl;
+	COut << txf::nl;
 
-	cout << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
+	COut << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
 	Text.Init();
 	clnarg::GetVersionCommandDescription( LocaleRack, Text );
-	cout << txf::pad << Text << '.' << txf::nl;
+	COut << txf::pad << Text << '.' << txf::nl;
 
-	cout << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
+	COut << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
 	Text.Init();
 	clnarg::GetLicenseCommandDescription( LocaleRack, Text );
-	cout << txf::pad << Text << '.' << txf::nl;
+	COut << txf::pad << Text << '.' << txf::nl;
 
-	cout << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
+	COut << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
 	Text.Init();
 	clnarg::GetHelpCommandDescription( LocaleRack, Text );
-	cout << txf::pad << Text << '.' << txf::nl;
+	COut << txf::pad << Text << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -126,55 +126,55 @@ ERRBegin
 	PrintSpecialsCommandsDescriptions( Description );
 
 	// Commands.
-	cout << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
-	cout << "] [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
-	cout << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
-	cout << "] [<src> [<dst>]]";
-	cout << txf::nl;
+	COut << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
+	COut << "] [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
+	COut << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
+	COut << "] [<src> [<dst>]]";
+	COut << txf::nl;
 	Translation.Init();
-	cout << txf::pad << global::GetTranslation( global::mProcessCommandDescription, Translation ) << '.' << txf::nl;
+	COut << txf::pad << global::GetTranslation( global::mProcessCommandDescription, Translation ) << '.' << txf::nl;
 
-	cout << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
-	cout << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
-	cout << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
-	cout << "] [<src> [<dst>]]";
-	cout << txf::nl;
+	COut << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
+	COut << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
+	COut << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
+	COut << "] [<src> [<dst>]]";
+	COut << txf::nl;
 	Translation.Init();
-	cout << txf::pad << global::GetTranslation( global::mEncryptCommandDescription, Translation ) << '.' << txf::nl;
+	COut << txf::pad << global::GetTranslation( global::mEncryptCommandDescription, Translation ) << '.' << txf::nl;
 
-	cout << txf::nl;
+	COut << txf::nl;
 
 // Options.
 	Translation.Init();
-	cout << clnarg::GetOptionsWordingTranslation( LocaleRack, Translation );
-	cout << " :" << txf::nl;
+	COut << clnarg::GetOptionsWordingTranslation( LocaleRack, Translation );
+	COut << " :" << txf::nl;
 
-	cout << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
-	cout << txf::tab;
+	COut << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
+	COut << txf::tab;
 	global::Display( mNamespaceOptionDescription );
-	cout << '.' << txf::nl;
+	COut << '.' << txf::nl;
 
-	cout << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
-	cout << txf::tab;
+	COut << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
+	COut << txf::tab;
 	global::Display( mNoIndentOptionDescription );
-	cout << '.' << txf::nl;
+	COut << '.' << txf::nl;
 
-	cout << txf::nl;
+	COut << txf::nl;
 
 // Arguments.
 	Translation.Init();
-	cout << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
-	cout << " :" << txf::nl;
+	COut << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
+	COut << " :" << txf::nl;
 
-	cout << txf::pad << "<src> :" << txf::nl;
-	cout << txf::tab;
+	COut << txf::pad << "<src> :" << txf::nl;
+	COut << txf::tab;
 	global::Display( mSourceFileArgumentDescription );
-	cout << '.' << txf::nl;
+	COut << '.' << txf::nl;
 
-	cout << txf::pad << "<dst> :" << txf::nl;
-	cout << txf::tab;
+	COut << txf::pad << "<dst> :" << txf::nl;
+	COut << txf::tab;
 	global::Display( mDestFileArgumentDescription );
-	cout << '.' << txf::nl;
+	COut << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -183,11 +183,11 @@ ERREpilog
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
-	cout << COPYRIGHT << txf::nl;
-	cout << txf::pad << AFFILIATION << txf::nl;
-	cout << txf::pad << DEPENDENCE << txf::nl;
-	cout << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
+	COut << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
+	COut << COPYRIGHT << txf::nl;
+	COut << txf::pad << AFFILIATION << txf::nl;
+	COut << txf::pad << DEPENDENCE << txf::nl;
+	COut << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
 }
 
 static void AnalyzeOptions(
@@ -296,7 +296,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-//		TTR.Advertise( cout );
+//		TTR.Advertise( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cHelp:
@@ -304,7 +304,7 @@ ERRBegin
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cLicense:
-		epsmsc::PrintLicense( cout );
+		epsmsc::PrintLicense( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cProcess:
@@ -383,7 +383,7 @@ ERRBegin
 		TOFlow.Init( OFlow );
 	}
 
-	Process_( Source == NULL ? cin.Flow() : IFlow, Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? cout : TOFlow );
+	Process_( Source == NULL ? CIn.Flow() : IFlow, Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? COut : TOFlow );
 
 ERRErr
 	if ( BackedUp )
@@ -425,7 +425,7 @@ ERRBegin
 	if ( xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
-								  ( Destination == NULL ? cout : TOFlow ),  Context ) != xpp::sOK )
+								  ( Destination == NULL ? COut : TOFlow ),  Context ) != xpp::sOK )
 		Report( eEncryptionError, &Context );
 ERRErr
 	if ( BackedUp )
