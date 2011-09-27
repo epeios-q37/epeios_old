@@ -58,6 +58,17 @@ public:
 using namespace csdles;
 
 #ifdef CPE__T_MS
+# define FUNCTION_SPEC	__declspec(dllexport)
+#else
+#define FUNCTION_SPEC
+# endif
+
+#define DEF( name ) extern "C" FUNCTION_SPEC csdleo::function name
+
+DEF( CDLEO_FUNCTION_NAME );
+
+
+#ifdef CPE__T_MS
 
 #include <windows.h>
 
@@ -82,9 +93,15 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 #endif
 
-csdleo::user_functions__ *CSDDLEntry( void *UP )
+csdleo::user_functions__ *CSDLESEntry( csdleo::shared_data__ *Data )
 {
-	return csdles::CSDLESCallback( UP );
+	if ( Data == NULL )
+		ERRu();
+
+	if ( strcmp( Data->Version, CSDLEO_SHARED_DATA_VERSION ) )
+		ERRu();
+
+	return csdles::CSDLESCallback( Data );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

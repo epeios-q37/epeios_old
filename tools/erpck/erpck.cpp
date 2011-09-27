@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.4.1"
+#define VERSION					"0.4.3"
 #define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
@@ -732,7 +732,7 @@ ERRBegin
 			Record.Content.Append( Parser.DumpData() );
 			ProcessRecord_( Parser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Record );	// '...<ercp:content ...>...<TAG ...>...' -> '...</TAG>...'
 			if ( !Ignore )
-				Records.Append( Record );															//                                   ^                 ^	
+				Records.Append( Record );														//                                   ^                 ^	
 			else
 				Ignore = false;
 			Record.Init();
@@ -783,7 +783,7 @@ ERRBegin
 			if ( Parser.TagName() == CONTENT_TAG ) {
 				ProcessRecords_( Parser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records, Table.Skipped() );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
-			}  else														        			//                    ^                         ^
+			}  else																						        			//                    ^                         ^
 				ERRc();
 			break;
 		case xml::tEndTag:
@@ -1175,23 +1175,28 @@ static void DisplayAll_(
 }
 
 counter__ GetSkippedAmount_(
+	rpkctx::amount__ SessionAmount,
 	const rrows_ &RecordRows,
 	const records_ &Records )
 {
 	counter__ Skipped = 0;
-	epeios::row__ Row = RecordRows.First();
+	epeios::row__ Row = RecordRows.Last();
+	rrow__ RecordRow = NONE;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
 
 	Record.Init( Records );
 
-	while ( Row != NONE ) {
-		if ( Record( RecordRows( Row ) ).Skip() ) {
-			if ( Skipped == RPKBSC_COUNTER_MAX )
-				ERRl();
-			Skipped++;
-		}
+	while ( ( Row != NONE ) && ( SessionAmount-- ) ) {
+		RecordRow = RecordRows( Row );
 
-		Row = RecordRows.Next( Row );
+		if ( Records.Exists( RecordRow ) )
+			if ( Record( RecordRow ).Skip() ) {
+				if ( Skipped == RPKBSC_COUNTER_MAX )
+					ERRl();
+				Skipped++;
+			}
+
+		Row = RecordRows.Previous( Row );
 	}
 
 	return Skipped;
@@ -1209,7 +1214,7 @@ id__  Display_(
 	rrow__ Row = NONE;
 	bso::integer_buffer__ Buffer;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
-	counter__ Counter = 0;
+	counter__ Counter = Records.Amount();	// NOTA : there is at least one record.
 
 	Record.Init( Records );
 
@@ -1220,27 +1225,25 @@ id__  Display_(
 		Writer.PutAttribute( "Amount", bso::Convert( Records.Amount(), Buffer ) );
 		DisplayAll_( Records, Writer );
 	} else {
-		Writer.PutAttribute( "Amount", "1" );
-
 		if ( Id == 0 ) {
 /*
 			tol::InitializeRandomGenerator();
 			Row = Records.First( rand() % Records.Amount() );
 */
-			do {
+			do
 				Row = Context.Pick( Records.Amount(), SessionMaxDuration );
+			while ( Record( Row ).GetSkip() && ( --Counter ) );
 
-				if ( Counter == RPKBSC_COUNTER_MAX )
-					ERRl();
-
-				Counter++;
-			} while ( Record( Row ).GetSkip() && ( Counter < Records.Amount() ) );
-
-			if ( !Record( Row ).GetSkip() )
+			if ( !Counter ) {
+				Writer.PutAttribute( "Amount", "0" );
+				Row = NONE;
+			} else if ( !Record( Row ).GetSkip() ) {
 				Id = *Row + 1;
+				Writer.PutAttribute( "Amount", "1" );
+			}
 
 			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.S_.Session ) );
-			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.Pool, Records ) ) );
+			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.S_.Session, Context.Pool, Records ) ) );
 
 		} else {
 			if ( Id > Records.Amount() ) {
@@ -1250,7 +1253,8 @@ id__  Display_(
 				Row = Id - 1;
 		}
 
-		Display_( Row, Records, Writer );
+		if ( Row != NONE )
+			Display_( Row, Records, Writer );
 	}
 
 	return Id;
@@ -1417,11 +1421,11 @@ ERREpilog
 	return Id;
 }
 
-#define DATA_FILENAME_TAG		"Data"
-#define OUTPUT_FILENAME_TAG		"Output"
-#define XSL_FILENAME_TAG		"XSL"
-#define COMMAND_TAG				"Command"
-#define CONTEXT_FILENAME_TAG	"Context"
+#define DATA_FILENAME_TAG			"Data"
+#define OUTPUT_FILENAME_TAG			"Output"
+#define XSL_FILENAME_TAG			"XSL"
+#define COMMAND_TAG					"Command"
+#define CONTEXT_FILENAME_TAG		"Context"
 #define SESSION_MAX_DURATION_TAG	"SessionMaxDuration"
 
 void LaunchCommand_(

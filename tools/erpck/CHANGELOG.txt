@@ -1,6 +1,17 @@
 $Id$
 
 *********
+* 0.4.3 *
+*********
+
+27/09/2011 : Publication.
+
+27/09/2011 :
+	- Correction bogue lorsque le fichier de contexte référence un enregistrement qui n'existe plus.
+	- Correction bogue 'SessionSkippedAmount' > 'SessionAmount'.
+	- Correction bogue affichage d'une fiche bien que toutes les fiches soient 'skipped'
+
+*********
 * 0.4.1 *
 *********
 

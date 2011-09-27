@@ -62,11 +62,42 @@ extern class ttr_tutor &CSDLEOTutor;
 
 # include "err.h"
 # include "flw.h"
+# include "lcl.h"
+# include "rgstry.h"
 
 #include "csdsuf.h"
 
+# define CSDLEO_FUNCTION_NAME	"CSDLEOGetUserFunctions"
+# define CSDLEO_SHARED_DATA_VERSION	"alpha"
+
 namespace csdleo {
 	using namespace csdsuf;
+
+#pragma pack( push, 1)
+	class shared_data__
+	{
+	public:
+		static const char *Version;	// Toujours en première position.
+		lcl::locale_ *Locale;
+		rgstry::registry_ *Registry;
+		fdr::oflow_driver___<> *COut, *CErr;
+		void reset( bso::bool__ P = true )
+		{
+		}
+		shared_data__( void ) 
+		{
+			reset( false );
+		}
+		~shared_data__( void ) 
+		{
+			reset();
+		}
+		void Init( void )
+		{}
+	};
+#pragma pack( pop )
+
+	typedef csdleo::user_functions__ *(function)( shared_data__ * );
 }
 
 /*$END$*/

@@ -57,8 +57,6 @@ public:
 
 using namespace csdlec;
 
-#define FUNCTION_NAME	"CSDDLSEntry"
-
 #if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
 #	define CSDDLC__POSIX
 #elif defined( CPE__T_MS )
@@ -75,70 +73,84 @@ using namespace csdlec;
 #	error
 #endif
 
-
-
 using namespace csdlec;
 
-typedef csdleo::user_functions__ *(*f)( void *);
-
-void csdlec::library_embedded_client_core__::reset( bso::bool__ P )
+bso::bool__ csdlec::library_embedded_client_core__::_LoadLibrary( const char *LibraryName )
 {
-	if ( P ) {
-		if ( _LibraryHandler != NULL )
-#ifdef CSDDLC__MS
-			if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
-				ERRs();
-#elif defined( CSDDLC__POSIX )
-			if ( dlclose( _LibraryHandler ) == -1 )
-				ERRs();
-#else
-#	error
-#endif
-	}
-
-	_UserFunctions = NULL;
-	_LibraryHandler = NULL;
-}
-
-
-bso::bool__ csdlec::library_embedded_client_core__::Init(
-	const char *LibraryName,
-	void *UP )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	f CSDDLGet;
-ERRBegin
-	reset();
+	if ( _LibraryHandler != NULL )
+		ERRu();
 
 #ifdef CSDDLC__MS
 	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
+		return false;
+#elif defined( CSDDLC__POSIX )
+	if ( ( _LibraryHandler = dlopen( LibraryName, RTLD_LAZY ) ) == NULL ) {
+		const char *Error = dlerror();	// Facilite le débogage.
+		return false;
+	}
+#else
+#	error
+#endif
+	return true;
+}
+bso::bool__ csdlec::library_embedded_client_core__::_UnloadLibrary( void  )
+{
+	if ( _LibraryHandler == NULL )
 		ERRu();
 
-	if ( ( CSDDLGet = (f)GetProcAddress( (HMODULE)_LibraryHandler, FUNCTION_NAME ) ) == NULL )
+#ifdef CSDDLC__MS
+	if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
+		return false;
+#elif defined( CSDDLC__POSIX )
+	if ( dlclose( _LibraryHandler ) == -1 ) {
+		const char *Error = dlerror();	// Facilite le débogage.
+		return false;
+	}
+#else
+#	error
+#endif
+	return true;
+}
+
+
+template <typename function> function GetFunction_(
+	const char *FunctionName,
+	void *LibraryHandler )
+{
+	function Function;
+
+	if ( LibraryHandler == NULL )
+		ERRu();
+
+#ifdef CSDDLC__MS
+	if ( ( Function = (function)GetProcAddress( (HMODULE)LibraryHandler, FunctionName ) ) == NULL )
 		ERRs();
 #elif defined( CSDDLC__POSIX )
-	if ( ( _LibraryHandler = dlopen( LibraryName, RTLD_LAZY ) ) == NULL )
-		ERRu();
+	Function = (function)dlsym( LibraryHandler, FunctionName );
 
-	CSDDLGet = (f)dlsym( _LibraryHandler, FUNCTION_NAME );
-
-	if ( dlerror() != NULL )
-		ERRs();
+	if ( Function == NULL )
+		const char *Error = dlerror();	// Facilite le débogage.
 #else
 #	error
 #endif
 
-	Success = ( _UserFunctions = CSDDLGet( UP ) ) != NULL;
-ERRErr
-ERREnd
-	if ( !Success )
-		reset();
-ERREpilog
-	return Success;
+	return Function;
 }
 
+extern "C" typedef csdleo::function function;
 
+bso::bool__ csdlec::library_embedded_client_core__::_GetUserFunctions( csdleo::shared_data__ *Data )
+{
+	function *Function = GetFunction_<csdleo::function *>( CSDLEO_FUNCTION_NAME, _LibraryHandler );
+
+	if ( Function == NULL )
+		return false;
+
+	if ( ( _UserFunctions = Function( Data ) ) == NULL )
+		return false;
+
+	return true;
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

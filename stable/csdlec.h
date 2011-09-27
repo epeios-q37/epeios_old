@@ -300,8 +300,21 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	private:
 		csdleo::user_functions__ *_UserFunctions;
 		void *_LibraryHandler;
+		bso::bool__ _LoadLibrary( const char *LibraryName );
+		bso::bool__ _UnloadLibrary( void  );
+		bso::bool__ _GetUserFunctions( csdleo::shared_data__ *Data );
 	public:
-		void reset( bso::bool__ P = true );
+		void reset( bso::bool__ P = true )
+		{
+			if ( P ) {
+				if ( _LibraryHandler != NULL )
+					if ( !_UnloadLibrary() )
+						ERRs();
+			}
+
+			_UserFunctions = NULL;
+			_LibraryHandler = NULL;
+		}
 		library_embedded_client_core__( void )
 		{
 			reset( false );
@@ -312,7 +325,20 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		bso::bool__ Init(
 			const char *LibraryName,
-			void *UP );
+			csdleo::shared_data__ *SharedData,
+			err::handling__ ERRHandling = err::h_Default )
+		{
+			reset();
+
+			if ( _LoadLibrary( LibraryName ) )
+				if ( _GetUserFunctions( SharedData ) )
+					return true;
+
+			if ( ERRHandling != err::hUserDefined )
+				ERRs();
+
+			return false;
+		}
 		bso::bool__ IsInitialized( void ) const
 		{
 			return _UserFunctions != NULL;

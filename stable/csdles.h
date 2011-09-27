@@ -63,18 +63,10 @@ extern class ttr_tutor &CSDLESTutor;
 # include "err.h"
 # include "flw.h"
 
-# include "csdleo.H"
-
-# ifdef CPE__T_MS
-#  define CSDLES__FUNCTION_SPEC	__declspec(dllexport)
-# else
-#  define CSDLES__FUNCTION_SPEC
-# endif
-
-extern "C" CSDLES__FUNCTION_SPEC csdleo::user_functions__ *CSDLESEntry( void *UP );
+# include "csdleo.h"
 
 namespace csdles {
-	csdleo::user_functions__ *CSDLESCallback( void *UP );	// A surcharger.
+	csdleo::user_functions__ *CSDLESCallback( csdleo::shared_data__ *Data );	// A surcharger.
 }		
 
 

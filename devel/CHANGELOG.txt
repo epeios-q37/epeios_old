@@ -1,5 +1,9 @@
 $Id$
 
+27/09/2011 :
+	- CSDLEO :
+		- Mise en commun client/serveur des fonctions d'entrée pour la DLL.
+
 23/09/2011 :
 	Général :
 		- Rénommages des bibltiohqèques relatives à la gestion client/serveur à travers une bibliothèque dynamique en 'CSDLEx'.

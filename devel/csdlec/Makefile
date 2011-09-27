@@ -30,33 +30,111 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-libs = ttr tol flw cio err
+mods = ttr tol flw cio err
 
 
+os := $(shell uname -o 2>/dev/null || uname -s)
 
-ifeq ("$(EPEIOS_ENV)","windows")
-# compilation options
-co = -q -c -w-aus -w-inl
-# linkage options
-lo = -q -e$(name)
+src =
+
+ifndef EPEIOS_SRC
+	src += epeios
+else
+	src += $(EPEIOS_SRC)
 endif
 
-ifeq ("$(EPEIOS_ENV)","gnu")
-co = -c
-# Generates debugging data.
-co += -g
-# General optimization.
-#co += -O
-# To use with gprof
-#co += -pg
-lo = -o $(name)
-# needed when pthread are used.
-#lo += -lpthread
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+	env = gnu
+	co +=
+	lo +=
+	libs =
+
+	# To use as Windows service.
+	#mods += wintol
 endif
 
-ifeq ("$(EPEIOS_ENV)","beos")
-co = -c -g
-lo = -o $(name)
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+	env = gnu
+	co +=
+	lo +=
+	libs = 
+
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
 endif
 
-include ../xxx/LibMakefile.footer
+##################################################
+# Specific for the Linux environment (N900/N810) #
+##################################################
+
+ifeq ("$(os)","Linux")
+	env = gnu
+	co +=
+	lo +=
+	libs = 
+
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+endif
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+	env = gnu
+	lo +=
+	libs =
+endif
+
+##################################
+# Common to all GNU environment. #
+##################################
+
+ifeq ("$(env)","gnu")
+	lo = -o $(name)
+
+	# Generates debugging data.
+	co += -g
+
+	# General optimization.
+	#co += -O
+
+	# To use with gprof
+	#co += -pg
+endif
+
+######################
+# Don't modify below #
+######################
+
+ifeq ("$(env)","gnu")
+	co := -c $(co)
+	ox = o
+	cc = g++ 
+	larg = $(lo) $(objs)
+	ds = :
+endif
+
+vpath %.cpp $(subst $(ds),:,$(src))
+
+srcd = $(subst $(ds), ,$(src))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+lo += $(EPEIOS_LOPT)
+
+objs = $(name).$(ox) $(mods:=.$(ox)) 
+
+$(name):  $(objs)
+	$(cc) $(larg) $(libs)
+	
+%.$(ox): %.cpp
+	$(cc) $(co) $<
