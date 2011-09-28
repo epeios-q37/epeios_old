@@ -298,21 +298,29 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	class library_embedded_client_core__
 	{
 	private:
-		csdleo::user_functions__ *_UserFunctions;
+		csdleo::user_functions__ *_Steering;
 		void *_LibraryHandler;
 		bso::bool__ _LoadLibrary( const char *LibraryName );
 		bso::bool__ _UnloadLibrary( void  );
-		bso::bool__ _GetUserFunctions( csdleo::shared_data__ *Data );
+		bso::bool__ _RetrieveSteering( csdleo::shared_data__ *Data );
+		bso::bool__ _ReleaseSteering( void );
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( _LibraryHandler != NULL )
-					if ( !_UnloadLibrary() )
-						ERRs();
+				if ( _LibraryHandler != NULL ) {
+					if ( _Steering != NULL )
+						if ( !_ReleaseSteering() ) {
+							_UnloadLibrary();
+							ERRs();
+						}
+
+						if ( !_UnloadLibrary() )
+							ERRs();
+				}
 			}
 
-			_UserFunctions = NULL;
+			_Steering = NULL;
 			_LibraryHandler = NULL;
 		}
 		library_embedded_client_core__( void )
@@ -331,7 +339,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 			reset();
 
 			if ( _LoadLibrary( LibraryName ) )
-				if ( _GetUserFunctions( SharedData ) )
+				if ( _RetrieveSteering( SharedData ) )
 					return true;
 
 			if ( ERRHandling != err::hUserDefined )
@@ -341,14 +349,14 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		bso::bool__ IsInitialized( void ) const
 		{
-			return _UserFunctions != NULL;
+			return _Steering != NULL;
 		}
 		csdleo::user_functions__ &GetSteering( void ) const
 		{
 			if ( !IsInitialized() )
 				ERRu();
 
-			return *_UserFunctions;
+			return *_Steering;
 		}
 	};
 

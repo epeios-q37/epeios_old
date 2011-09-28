@@ -71,7 +71,7 @@ namespace fblbur {
 
 	enum mode__ 
 	{
-		mEmbed,
+		mEmbedded,
 		mRemote,
 		m_amount,
 		m_Undefined
@@ -108,7 +108,7 @@ namespace fblbur {
 			reset();
 
 			switch ( Mode ) {
-			case mEmbed:
+			case mEmbedded:
 				_Embed.Init();
 				_request__::Init( _Embed, Flow );
 				break;

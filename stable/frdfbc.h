@@ -60,6 +60,8 @@ extern class ttr_tutor &FRDFBCTutor;
 
 /*$BEGIN$*/
 
+#eerror "No more in use !"
+
 #include "err.h"
 #include "flw.h"
 #include "rgstry.h"

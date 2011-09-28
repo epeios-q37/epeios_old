@@ -1,5 +1,13 @@
 $Id$
 
+28/09/2011 :
+	- CSDLxx :
+		- Codage.
+	- CSDUCL :
+		- Adaptation.
+	- FBLBUR :
+		- 'Embed' -> 'Embedded'.
+
 27/09/2011 :
 	- CSDLEO :
 		- Mise en commun client/serveur des fonctions d'entrée pour la DLL.

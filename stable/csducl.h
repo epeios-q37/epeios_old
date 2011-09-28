@@ -98,7 +98,7 @@ namespace csducl {
 		}
 		bso::bool__ Init(
 			const char *Backend,
-			void *UP,
+			csdleo::shared_data__ *EmbeddedBackendSharedData,
 			csdsnc::log_functions__ &Log,
 			type__ Type,
 			time_t PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
@@ -112,7 +112,9 @@ namespace csducl {
 				Success = _DaemonAccess.Init( Backend, Log, PingDelay );
 				break;
 			case tLibrary:
-				Success = _LibraryAccess.Init( Backend, UP );
+				if ( EmbeddedBackendSharedData == NULL )	// En attendant la stabilisation des bibliothèques 'CSDxxx'.
+					ERRu();
+				Success = _LibraryAccess.Init( Backend, EmbeddedBackendSharedData );
 				break;
 			default:
 				ERRu();

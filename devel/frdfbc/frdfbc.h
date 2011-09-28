@@ -60,9 +60,12 @@ extern class ttr_tutor &FRDFBCTutor;
 
 /*$BEGIN$*/
 
+#eerror "No more in use !"
+
 #include "err.h"
 #include "flw.h"
 #include "rgstry.h"
+#include "lcl.h"
 
 #define FRDFBC_DATA_STRUCTURE_VERSION	"1"
 

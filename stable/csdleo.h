@@ -67,22 +67,33 @@ extern class ttr_tutor &CSDLEOTutor;
 
 #include "csdsuf.h"
 
-# define CSDLEO_FUNCTION_NAME	"CSDLEOGetUserFunctions"
-# define CSDLEO_SHARED_DATA_VERSION	"alpha"
+# define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		"CSDLEORetrieveSteering"
+# define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		"CSDLEOReleaseSteering"
+
+# define CSDLEO_SHARED_DATA_VERSION	"alpha 2"
 
 namespace csdleo {
 	using namespace csdsuf;
+
+	enum mode__ {
+		mEmbedded,
+		mRemote,
+		m_amount,
+		m_Undefined
+	};
 
 #pragma pack( push, 1)
 	class shared_data__
 	{
 	public:
 		static const char *Version;	// Toujours en première position.
-		lcl::locale_ *Locale;
-		rgstry::registry_ *Registry;
+		static bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		mode__ Mode;
+		const char *User;				// Chaîne de caratère à la discrétion de l'utilisateur.
 		fdr::oflow_driver___<> *COut, *CErr;
 		void reset( bso::bool__ P = true )
 		{
+			Mode = m_Undefined;
 		}
 		shared_data__( void ) 
 		{
@@ -92,12 +103,19 @@ namespace csdleo {
 		{
 			reset();
 		}
-		void Init( void )
-		{}
+		void Init( mode__ Mode )
+		{
+			this->Mode = Mode;
+		}
+		static size_t ControlComputing( void )
+		{
+			return sizeof( fdr::oflow_driver___<> );
+		}
 	};
 #pragma pack( pop )
 
-	typedef csdleo::user_functions__ *(function)( shared_data__ * );
+	typedef csdleo::user_functions__ *(retrieve_steering)( shared_data__ * );
+	typedef void (release_steering)( csdleo::user_functions__ * );
 }
 
 /*$END$*/

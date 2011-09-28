@@ -63,9 +63,10 @@ using namespace csdles;
 #define FUNCTION_SPEC
 # endif
 
-#define DEF( name ) extern "C" FUNCTION_SPEC csdleo::function name
+#define DEF( name, function ) extern "C" FUNCTION_SPEC function name
 
-DEF( CDLEO_FUNCTION_NAME );
+DEF( CDLEO_RETRIEVE_FUNCTION_NAME, csdleo::retrieve_steering );
+DEF( CDLEO_RELEASE_FUNCTION_NAME, csdleo::release_steering );
 
 
 #ifdef CPE__T_MS
@@ -101,7 +102,10 @@ csdleo::user_functions__ *CSDLESEntry( csdleo::shared_data__ *Data )
 	if ( strcmp( Data->Version, CSDLEO_SHARED_DATA_VERSION ) )
 		ERRu();
 
-	return csdles::CSDLESCallback( Data );
+	if ( Data->Control != Data->ControlComputing() )
+		ERRc();
+
+	return csdles::CSDLESRetrieveSteering( Data );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

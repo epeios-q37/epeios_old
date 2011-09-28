@@ -66,7 +66,8 @@ extern class ttr_tutor &CSDLESTutor;
 # include "csdleo.h"
 
 namespace csdles {
-	csdleo::user_functions__ *CSDLESCallback( csdleo::shared_data__ *Data );	// A surcharger.
+	csdleo::user_functions__ *CSDLESRetrieveSteering( csdleo::shared_data__ *Data );	// A surcharger.
+	void CSDLESReleaseSteering( csdleo::user_functions__ * );	// A surcharger.
 }		
 
 

@@ -137,17 +137,31 @@ template <typename function> function GetFunction_(
 	return Function;
 }
 
-extern "C" typedef csdleo::function function;
+extern "C" typedef csdleo::retrieve_steering retrieve_steering;
 
-bso::bool__ csdlec::library_embedded_client_core__::_GetUserFunctions( csdleo::shared_data__ *Data )
+bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::shared_data__ *Data )
 {
-	function *Function = GetFunction_<csdleo::function *>( CSDLEO_FUNCTION_NAME, _LibraryHandler );
+	retrieve_steering *RetrieveSteering = GetFunction_<retrieve_steering *>( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME, _LibraryHandler );
 
-	if ( Function == NULL )
+	if ( RetrieveSteering == NULL )
 		return false;
 
-	if ( ( _UserFunctions = Function( Data ) ) == NULL )
+	if ( ( _Steering = RetrieveSteering( Data ) ) == NULL )
 		return false;
+
+	return true;
+}
+
+extern "C" typedef csdleo::release_steering release_steering;
+
+bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( VOID )
+{
+	release_steering *ReleaseSteering = GetFunction_<release_steering *>( CSDLEO_RELEASE_STEERING_FUNCTION_NAME, _LibraryHandler );
+
+	if ( ReleaseSteering == NULL )
+		return false;
+
+	ReleaseSteering( _Steering );
 
 	return true;
 }
