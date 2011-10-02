@@ -92,11 +92,11 @@ extern class ttr_tutor &FLXTutor;
 
 namespace flx {
 
-	typedef fdr::iflow_driver___<> _iflow_driver___;
+	template <int cache_size = FDR__DEFAULT_CACHE_SIZE> E_TTCLONE_( fdr::iflow_driver___<cache_size>, _iflow_driver___ );
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow_driver___
-	: public _iflow_driver___
+	: public _iflow_driver___<>
 	{
 	private:
 		// Pointeur sur le prochain caractère à lire.
@@ -162,9 +162,11 @@ namespace flx {
 		}
 	};
 
+	typedef flw::iflow__ _iflow__;
+
 	//c Buffer as a standard input flow.
 	class buffer_iflow___
-	: public flw::iflow__
+	: public _iflow__
 	{
 	private:
 		buffer_iflow_driver___ _Driver;
@@ -172,7 +174,7 @@ namespace flx {
 		void reset( bool P = true )
 		{
 			_Driver.reset( P );
-			iflow__::reset( P );
+			_iflow__::reset( P );
 		}
 		buffer_iflow___( void )
 		{
@@ -190,7 +192,7 @@ namespace flx {
 			flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Driver.Init( Buffer, fdr::tsDisabled, Size );
-			iflow__::Init( _Driver, AmountMax );
+			_iflow__::Init( _Driver, AmountMax );
 		}
 	};
 
@@ -253,9 +255,11 @@ namespace flx {
 		}
 	};
 
+	typedef flw::oflow__ _oflow__;
+
 	//c Buffer as a standard ouput flow.driver
 	class buffer_oflow___
-	: public flw::oflow__
+	: public _oflow__
 	{
 	private:
 		buffer_oflow_driver___ _Driver;
@@ -264,6 +268,7 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
+			_oflow__::reset( P );
 			_Driver.reset( P );
 		}
 		buffer_oflow___( void )
@@ -289,7 +294,7 @@ namespace flx {
 
 	//c A bunch as input flow.driver.
 	template < typename bunch_, typename so__, int cache_size> class bunch_iflow_driver___
-	: public fdr::iflow_driver___<cache_size>
+	: public _iflow_driver___<cache_size>
 	{ 
 	protected:
 		virtual fdr::size__ FDRRead(
@@ -313,6 +318,12 @@ namespace flx {
 		const bunch_ *Bunch_;
 		epeios::row_t__ Position_;
 	public:
+		void reset( bool P = true )
+		{
+			_iflow_driver___<cache_size>::reset( P );
+			Bunch_ = NULL;
+			Position_ = 0;
+		}
 		bunch_iflow_driver___( void )
 		{
 			reset( false );
@@ -320,12 +331,6 @@ namespace flx {
 		~bunch_iflow_driver___( void )
 		{
 			reset( true );
-		}
-		void reset( bool P = true )
-		{
-			fdr::iflow_driver___<cache_size>::reset( P );
-			Bunch_ = NULL;
-			Position_ = 0;
 		}
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
@@ -338,13 +343,13 @@ namespace flx {
 			Bunch_ = &Bunch;
 			Position_ = Position;
 
-			fdr::iflow_driver___<cache_size>::Init( ThreadSafety );
+			_iflow_driver___<cache_size>::Init( ThreadSafety );
 		}
 	};
 
 	//c A bunch as input flow.driver.
 	template < typename bunch_, typename so__,int  CacheSize = FLX_BUNCH_BUFFER_SIZE> class bunch_iflow__
-	: public flw::iflow__
+	: public _iflow__
 	{ 
 	private:
 		bunch_iflow_driver___<bunch_, so__, CacheSize> _Driver;
@@ -359,6 +364,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
+			_iflow__::reset( P );
 			_Driver.reset( P );
 		}
 		//f Initializing with the bunch buffer 'Set'.
@@ -378,7 +384,7 @@ namespace flx {
 
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow_driver___
-	: public fdr::oflow_driver___<>
+	: public _oflow_driver___
 	{
 	protected:
 		virtual fdr::size__ FDRWrite(
@@ -406,7 +412,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			fdr::oflow_driver___<>::reset( P );
+			_oflow_driver___::reset( P );
 
 			_Bunch = NULL;
 		}
@@ -419,13 +425,13 @@ namespace flx {
 
 			_Bunch = &Bunch;
 
-			fdr::oflow_driver___<>::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 		}
 	};
 
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow___
-	: public flw::oflow__
+	: public _oflow__
 	{
 	private:
 		bunch_oflow_driver___<bunch_, so__> _Driver;
@@ -441,7 +447,7 @@ namespace flx {
 		}
 		void reset( bool P = true )
 		{
-			oflow__::reset( P );
+			_oflow__::reset( P );
 			_Driver.reset( P );
 		}
 		//f Initializing with the buffer bunch 'Bunch'.
@@ -452,15 +458,17 @@ namespace flx {
 			reset();
 
 			_Driver.Init( Bunch, fdr::tsDisabled );
-			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
+			_oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
 	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
+	typedef fdr::oflow_driver___<> _oflow_driver___;
+
 	// 'driver' qui n'écrit dans rien.
 	class void_oflow_driver___
-	: public fdr::oflow_driver___<>
+	: public _oflow_driver___
 	{
 	protected:
 		virtual fdr::size__ FDRWrite(
@@ -472,9 +480,21 @@ namespace flx {
 		virtual void FDRCommit()
 		{}
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			_oflow_driver___::reset( P );
+		}
+		void_oflow_driver___( void )
+		{
+			reset( false );
+		}
+		~void_oflow_driver___( void )
+		{
+			reset();
+		}
 		void Init( fdr::thread_safety__ ThreadSafety )
 		{
-			fdr::oflow_driver___<>::Init( ThreadSafety );
+			_oflow_driver___::Init( ThreadSafety );
 		}
 	};	
 
@@ -482,7 +502,7 @@ namespace flx {
 
 	// 'flow' qui n'écrit dans rien.
 	class void_oflow__
-	: public flw::oflow__
+	: public _oflow__
 	{
 	private:
 			// The cache.
@@ -490,7 +510,7 @@ namespace flx {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			oflow__::reset( P );
+			_oflow__::reset( P );
 		}
 		void_oflow__( void )
 		{
@@ -502,7 +522,7 @@ namespace flx {
 		}
 		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
 		{
-			oflow__::Init( VoidOFlowDriver, _Cache, sizeof( _Cache ), AmountMax );
+			_oflow__::Init( VoidOFlowDriver, _Cache, sizeof( _Cache ), AmountMax );
 		}
 	};
 
@@ -512,7 +532,7 @@ namespace flx {
 
 	// 'driver' qui ne lit rien.
 	class void_iflow_driver___
-	: public fdr::iflow_driver___<>
+	: public _iflow_driver___<>
 	{
 	protected:
 		virtual fdr::size__ FDRRead(

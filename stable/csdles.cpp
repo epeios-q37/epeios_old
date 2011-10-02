@@ -58,17 +58,17 @@ public:
 using namespace csdles;
 
 #ifdef CPE__T_MS
-# define FUNCTION_SPEC	__declspec(dllexport)
+# define FUNCTION_SPEC __declspec(dllexport)
 #else
 #define FUNCTION_SPEC
 # endif
 
 #define DEF( name, function ) extern "C" FUNCTION_SPEC function name
 
-DEF( CDLEO_RETRIEVE_FUNCTION_NAME, csdleo::retrieve_steering );
-DEF( CDLEO_RELEASE_FUNCTION_NAME, csdleo::release_steering );
+DEF( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME, csdleo::retrieve_steering );
+DEF( CSDLEO_RELEASE_STEERING_FUNCTION_NAME, csdleo::release_steering );
 
-
+#if 0
 #ifdef CPE__T_MS
 
 #include <windows.h>
@@ -93,8 +93,9 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     return TRUE;
 }
 #endif
+#endif
 
-csdleo::user_functions__ *CSDLESEntry( csdleo::shared_data__ *Data )
+csdleo::user_functions__ *CSDLEORetrieveSteering( csdleo::shared_data__ *Data )
 {
 	if ( Data == NULL )
 		ERRu();
@@ -106,6 +107,11 @@ csdleo::user_functions__ *CSDLESEntry( csdleo::shared_data__ *Data )
 		ERRc();
 
 	return csdles::CSDLESRetrieveSteering( Data );
+}
+
+void CSDLEOReleaseSteering( csdleo::user_functions__ *Steering )
+{
+	csdles::CSDLESReleaseSteering( Steering );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

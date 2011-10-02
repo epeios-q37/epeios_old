@@ -67,8 +67,8 @@ extern class ttr_tutor &CSDLEOTutor;
 
 #include "csdsuf.h"
 
-# define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		"CSDLEORetrieveSteering"
-# define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		"CSDLEOReleaseSteering"
+# define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		CSDLEORetrieveSteering
+# define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		CSDLEOReleaseSteering
 
 # define CSDLEO_SHARED_DATA_VERSION	"alpha 2"
 

@@ -141,7 +141,7 @@ extern "C" typedef csdleo::retrieve_steering retrieve_steering;
 
 bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::shared_data__ *Data )
 {
-	retrieve_steering *RetrieveSteering = GetFunction_<retrieve_steering *>( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME, _LibraryHandler );
+	retrieve_steering *RetrieveSteering = GetFunction_<retrieve_steering *>( E_STRING( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME ), _LibraryHandler );
 
 	if ( RetrieveSteering == NULL )
 		return false;
@@ -156,7 +156,7 @@ extern "C" typedef csdleo::release_steering release_steering;
 
 bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( VOID )
 {
-	release_steering *ReleaseSteering = GetFunction_<release_steering *>( CSDLEO_RELEASE_STEERING_FUNCTION_NAME, _LibraryHandler );
+	release_steering *ReleaseSteering = GetFunction_<release_steering *>( E_STRING( CSDLEO_RELEASE_STEERING_FUNCTION_NAME ), _LibraryHandler );
 
 	if ( ReleaseSteering == NULL )
 		return false;

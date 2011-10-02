@@ -81,6 +81,7 @@ public:
 	}
 	~flxpersonnalization( void )
 	{
+		// Les 4 lignes ci-dessous ne devraient pas être nécessaire, mais si absentes, problême de 'pure virtual function call' (du moins sous VC++10).
 		flx::VoidIFlow.reset();
 		flx::VoidIFlowDriver.reset();
 
