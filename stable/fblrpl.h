@@ -64,9 +64,12 @@ extern class ttr_tutor &FBLRPLTutor;
 #include "flw.h"
 #include "lcl.h"
 
-#define FBLRPL_PROTOCOL_VERSION	"3"
+#error "Obsolete ! Use 'FBMOVL' instead !".
+
+#define FBLRPL_PROTOCOL_VERSION	"4"
 
 namespace fblrpl {
+
 	enum reply__ {
 		rOK,
 		rBackendError,	// Lorsque survient un 'ERR[x|X](...)'.

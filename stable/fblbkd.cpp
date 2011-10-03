@@ -390,7 +390,6 @@ static void About_(
 	Requete.StringOut() = Backend.GetBackendLabel();
 	Requete.StringOut() = Backend.GetAPIVersion();
 	Requete.StringOut() = Backend.GetBackendInformations();
-	Requete.StringOut() = Backend.GetPublisherInformations();
 	Requete.Complete();
 }
 

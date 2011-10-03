@@ -127,7 +127,6 @@ static const cast About[] = {
 		cString,	// libellé de la cible.
 		cString,	// Version de l'API.
 		cString,	// Informations au sujet du 'backend'.
-		cString,	// Informations au sujet du 'publisher'.
 	cEnd };
 static const cast Disconnect[] = {
 	cEnd,

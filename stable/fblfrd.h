@@ -635,8 +635,7 @@ namespace fblfrd {
 			string_ &ProtocolVersion,
 			string_ &BackendLabel,
 			string_ &APIVersion,
-			string_ &Backend,
-			string_ &Publisher)
+			string_ &Backend )
 		{
 			Internal_( fblcmd::cAbout );
 
@@ -646,7 +645,6 @@ namespace fblfrd {
 			StringOut( BackendLabel );
 			StringOut( APIVersion );
 			StringOut( Backend );
-			StringOut( Publisher );
 
 			_Handle();
 		}

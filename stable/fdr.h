@@ -328,6 +328,18 @@ namespace fdr {
 	private:
 		datum__ _Cache[cache_size+1];	// '+1' pour gèrer le 'Unget()'.
 	public:
+		void reset( bso::bool__ P = true )
+		{
+			iflow_driver_base___::reset( P );
+		}
+		iflow_driver___( void )
+		{
+			reset( false );
+		}
+		~iflow_driver___( void )
+		{
+			reset();
+		}
 		void Init( thread_safety__ ThreadSafety )
 		{
 			iflow_driver_base___::Init( _Cache, sizeof( _Cache ), ThreadSafety );

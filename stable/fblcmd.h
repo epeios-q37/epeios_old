@@ -64,7 +64,6 @@ extern class ttr_tutor &FBLCMDTutor;
 # include "flw.h"
 
 # include "fblcst.h"
-# include "fblcmd.h"
 
 namespace fblcmd {
 	using namespace fblcst;

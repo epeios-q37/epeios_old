@@ -92,7 +92,7 @@ extern class ttr_tutor &FLXTutor;
 
 namespace flx {
 
-	template <int cache_size = FDR__DEFAULT_CACHE_SIZE> E_TTCLONE_( fdr::iflow_driver___<cache_size>, _iflow_driver___ );
+	template <int cache_size = FDR__DEFAULT_CACHE_SIZE> E_TTCLONE__( fdr::iflow_driver___<cache_size>, _iflow_driver___ );
 
 	//c Buffer as a standard input flow.
 	class buffer_iflow_driver___
