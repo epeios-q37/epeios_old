@@ -154,7 +154,7 @@ bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::s
 
 extern "C" typedef csdleo::release_steering release_steering;
 
-bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( VOID )
+bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( void )
 {
 	release_steering *ReleaseSteering = GetFunction_<release_steering *>( E_STRING( CSDLEO_RELEASE_STEERING_FUNCTION_NAME ), _LibraryHandler );
 
