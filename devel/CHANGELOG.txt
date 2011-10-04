@@ -1,5 +1,9 @@
 $Id$
 
+04/10/2011 :
+	- FLX :
+		- Correction errreurs détectées par 'g++'.
+
 03/10/2011 :
 	- FBLxxx :
 		- Suppression du 'Publisher'.

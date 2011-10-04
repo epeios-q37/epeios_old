@@ -337,6 +337,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Frontend/Backend Layout CoMmanDs
 &fblcst		&epeios		&\
 	&Frontend/Backend Layout CaSTs
+&fblovl		&epeios		&\
+	&Frontend/Backend Layout OVerLapping
 &fbltyp	&epeios	&\
 	&Frontend/Backend Layout TYPes
 &fblrpl		&epeios		&\

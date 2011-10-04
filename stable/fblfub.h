@@ -69,19 +69,12 @@ extern class ttr_tutor &FBLFUBTutor;
 
 namespace fblfub {
 
+	using namespace fblovl;
+
 	using fblfrd::compatibility_informations__;
 
 	using fblfrd::incompatibility_informations_;
 	using fblfrd::incompatibility_informations;
-
-
-	enum mode__
-	{
-		mEmbed,
-		mRemote,
-		m_Amount,
-		m_Undefined
-	};
 
 	typedef fblfrd::parameters_handling_functions__ _parameters_handling_functions__;
 
@@ -90,15 +83,15 @@ namespace fblfub {
 	: public _parameters_handling_functions__
 	{
 	private:
-		fblfeb::backend_local_access_base__ _Embed;
+		fblfeb::backend_local_access_base__ _Embedded;
 		fblfrb::backend_remote_access_base___ _Remote;
 		mode__ _Mode;
 	protected:
 		virtual void FBLFRDPreProcess( void )
 		{
 			switch ( _Mode ) {
-			case mEmbed:
-				_Embed.PreProcess();
+			case mEmbedded:
+				_Embedded.PreProcess();
 				break;
 			case mRemote:
 				_Remote.PreProcess();
@@ -114,8 +107,8 @@ namespace fblfub {
 			flw::ioflow__ &Flow )
 		{
 			switch ( _Mode ) {
-			case mEmbed:
-				_Embed.In( Cast, Pointer, Flow );
+			case mEmbedded:
+				_Embedded.In( Cast, Pointer, Flow );
 				break;
 			case mRemote:
 				_Remote.In( Cast, Pointer, Flow );
@@ -131,8 +124,8 @@ namespace fblfub {
 			void *Pointer )
 		{
 			switch ( _Mode ) {
-			case mEmbed:
-				_Embed.Out( Flow, Cast, Pointer );
+			case mEmbedded:
+				_Embedded.Out( Flow, Cast, Pointer );
 				break;
 			case mRemote:
 				_Remote.Out( Flow, Cast, Pointer );
@@ -145,8 +138,8 @@ namespace fblfub {
 		virtual void FBLFRDPostProcess( flw::ioflow__ &Flow )
 		{
 			switch ( _Mode ) {
-			case mEmbed:
-				_Embed.PostProcess( Flow );
+			case mEmbedded:
+				_Embedded.PostProcess( Flow );
 				break;
 			case mRemote:
 				_Remote.PostProcess( Flow );
@@ -159,7 +152,7 @@ namespace fblfub {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_Embed.reset( P );
+			_Embedded.reset( P );
 			_Remote.reset( P );
 			_parameters_handling_functions__::reset( P );
 			_Mode = m_Undefined;
@@ -177,8 +170,8 @@ namespace fblfub {
 			reset();
 
 			switch ( Mode ) {
-			case mEmbed:
-				_Embed.Init();
+			case mEmbedded:
+				_Embedded.Init();
 				break;
 			case mRemote:
 				_Remote.Init();

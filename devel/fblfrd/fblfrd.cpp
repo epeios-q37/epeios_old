@@ -67,7 +67,7 @@ bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 	char Buffer[100];
 
 	flw::PutString( Language, Flow );
-	flw::PutString( FBLRPL_PROTOCOL_VERSION, Flow );
+	flw::PutString( FBLOVL_PROTOCOL_VERSION, Flow );
 	flw::PutString( CompatibilityInformations.BackendLabel, Flow );
 	flw::PutString( CompatibilityInformations.APIVersion, Flow );
 

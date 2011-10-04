@@ -29,7 +29,7 @@
 #include "epsmsc.h"
 #include "clnarg.h"
 
-#include "fblrpl.h"
+#include "fblovl.h"
 #include "fblfaq.h"
 #include "fblfub.h"
 #include "xml.h"
@@ -674,7 +674,7 @@ class dummy_error_handling_functions__
 {
 protected:
 	void FBLFRDHandleError(
-		fblrpl::reply__ Reply,
+		fblovl::reply__ Reply,
 		const char *Message )
 	{
 	}
@@ -687,52 +687,49 @@ void GetBackendData(
 	str::string_ &ProtocolVersion,
 	str::string_ &TargetLabel,
 	str::string_ &APIVersion,
-	str::string_ &BackendInformations,
-	str::string_ &PublisherInformations )
+	str::string_ &BackendInformations )
 {
 ERRProlog
-#if 1
 	csducl::universal_client_core Core;
 	csducl::universal_client_ioflow___ Flow;
-#else
-	sck::socket_ioflow___ Flow;
-#endif
 	fblfub::backend_universal_access___ BackendAccess;
 	fblfrd::incompatibility_informations Dummy;
-	fblfub::mode__ Mode = fblfub::m_Undefined;
+	fblfub::mode__ FBLMode = fblfub::m_Undefined;
+	csdleo::mode__ CSDMode = csdleo::m_Undefined;
 	dummy_error_handling_functions__ DummyErrorHandlingFunctions;
+	csdleo::shared_data__ SharedData;
 ERRBegin
 	switch ( Type ) {
 	case csducl::tDaemon:
-		Mode = fblfub::mRemote;
+		FBLMode = fblfub::mRemote;
+		CSDMode = csdleo::mRemote;
 		break;
 	case csducl::tLibrary:
-		Mode = fblfub::mEmbed;
+		FBLMode = fblfub::mEmbedded;
+		CSDMode = csdleo::mEmbedded;
 		break;
 	default:
 		ERRc();
 		break;
 	}
 
-#if 1
-	if ( !Core.Init( Location, NULL, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
+	SharedData.Init( CSDMode );
+
+	if ( !Core.Init( Location, &SharedData, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
 		CErr << "Unable to access the backend !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 
 	Flow.Init( Core );
-#else
-	Flow.Init( csdbnc::Connect( Location ) );
-#endif
 
 	Dummy.Init();
 
-	BackendAccess.Init( "", fblfrd::compatibility_informations__(), Flow, Mode, DummyErrorHandlingFunctions, Dummy );
+	BackendAccess.Init( "", fblfrd::compatibility_informations__(), Flow, FBLMode, DummyErrorHandlingFunctions, Dummy );
 
 	GetDescription( BackendAccess, Types );
 	
-	BackendAccess.About( ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
+	BackendAccess.About( ProtocolVersion, TargetLabel, APIVersion, BackendInformations );
 
 	BackendAccess.Disconnect();
 ERRErr
@@ -817,7 +814,6 @@ void Generate(
 
 void GenerateMisc(
 	const str::string_ &BackendInformations,
-	const str::string_ &PublisherInformations,
 	writer_ &Writer )
 {
 	tol::buffer__ Buffer;
@@ -836,7 +832,6 @@ void GenerateMisc(
 	Writer.PopTag();
 	Writer.PopTag();
 	Writer.PutValue( BackendInformations, "Backend" );
-	Writer.PutValue( PublisherInformations, "Publisher" );
 	Writer.PutValue( tol::Date( Buffer ), "Date" );
 	Writer.PutValue( tol::Time( Buffer ), "Time" );
 	Writer.PopTag();
@@ -851,7 +846,6 @@ void Generate(
 	const str::string_ &TargetLabel,
 	const str::string_ &APIVersion,
 	const str::string_ &BackendInformations,
-	const str::string_ &PublisherInformations,
 	txf::text_oflow__ &Flow )
 {
 ERRProlog
@@ -874,7 +868,7 @@ ERRBegin
 	Writer.PutAttribute( "ProtocolVersion", ProtocolVersion );
 	Writer.PutAttribute( "APIVersion", APIVersion );
 
-	GenerateMisc( BackendInformations, PublisherInformations, Writer );	
+	GenerateMisc( BackendInformations, Writer );	
 	Generate( Types, MasterRow, Writer );
 
 	Writer.PopTag();
@@ -913,7 +907,6 @@ ERRProlog
 	types Types;
 	str::string TargetLabel, ProtocolVersion, APIVersion;
 	str::string BackendInformations;
-	str::string PublisherInformations;
 	epeios::row__ MasterRow = NONE;
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
@@ -926,9 +919,8 @@ ERRBegin
 	ProtocolVersion.Init();
 	APIVersion.Init();
 	BackendInformations.Init();
-	PublisherInformations.Init();
 
-	GetBackendData( Arguments.BackendLocation, Type, Types, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations );
+	GetBackendData( Arguments.BackendLocation, Type, Types, ProtocolVersion, TargetLabel, APIVersion, BackendInformations );
 	
 	MasterRow = FindMasterType( Types );
 
@@ -940,15 +932,14 @@ ERRBegin
 		}
 
 		COut << "Backend : " << BackendInformations << txf::nl;
-		COut << "Publisher : " << PublisherInformations << txf::nl;
 
 		Backup = true;
 
 		File.Init( Arguments.FileName );
 		TFile.Init( File );
-		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations, TFile );
+		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, TFile );
 	} else
-		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, PublisherInformations, COut );
+		Generate( Types, MasterRow, ProtocolVersion, TargetLabel, APIVersion, BackendInformations, COut );
 ERRErr
 	if ( Backup )
 		fil::RecoverBackupFile( Arguments.FileName, lcl::rack__( Dummy, "" ), CErr );

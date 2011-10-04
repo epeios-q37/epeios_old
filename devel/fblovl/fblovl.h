@@ -1,5 +1,5 @@
 /*
-	Header for the 'fblrpl' library by Claude SIMON (csimon at zeusw dot org)
+	Header for the 'fblovl' library by Claude SIMON (csimon at zeusw dot org)
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef FBLRPL__INC
-#define FBLRPL__INC
+#ifndef FBLOVL__INC
+#define FBLOVL__INC
 
-#define FBLRPL_NAME		"FBLRPL"
+#define FBLOVL_NAME		"FBLOVL"
 
-#define	FBLRPL_VERSION	"$Revision$"
+#define	FBLOVL_VERSION	"$Revision$"
 
-#define FBLRPL_OWNER		"Claude SIMON"
+#define FBLOVL_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &FBLRPLTutor;
+extern class ttr_tutor &FBLOVLTutor;
 
-#if defined( XXX_DBG ) && !defined( FBLRPL_NODBG )
-#define FBLRPL_DBG
+#if defined( XXX_DBG ) && !defined( FBLOVL_NODBG )
+#define FBLOVL_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,7 +55,7 @@ extern class ttr_tutor &FBLRPLTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Frontend/Backend Layout RePLy 
+//D Frontend/Backend Layout OVerLapping 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -64,11 +64,16 @@ extern class ttr_tutor &FBLRPLTutor;
 #include "flw.h"
 #include "lcl.h"
 
-#error "Obsolete ! Use 'FBMOVL' instead !".
+#define FBLOVL_PROTOCOL_VERSION	"4"
 
-#define FBLRPL_PROTOCOL_VERSION	"4"
+namespace fblovl {
 
-namespace fblrpl {
+	enum mode__ {
+		mEmbedded,
+		mRemote,
+		m_Amount,
+		m_Undefined
+	};
 
 	enum reply__ {
 		rOK,
@@ -85,7 +90,7 @@ namespace fblrpl {
 		const lcl::rack__ &Rack,
 		STR_BUFFER___ &Buffer )
 	{
-		return Rack.GetTranslation( Label( Reply ),  FBLRPL_NAME "_", Buffer );
+		return Rack.GetTranslation( Label( Reply ),  FBLOVL_NAME "_", Buffer );
 	}
 }
 

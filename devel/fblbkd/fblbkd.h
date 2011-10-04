@@ -739,8 +739,6 @@ namespace fblbkd {
 		const char *_BackendLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
-		// Information à propos du publicateur (l'exécutable ou la bibliothèque) du 'backend'.
-		const char *_PublisherInformations;
 		// Retourne le module correspondant à 'IdType'.
 		untyped_module &Module_( type__ IdType ) const
 		{
@@ -788,7 +786,6 @@ namespace fblbkd {
 			_Mode = fblbur::m_Undefined;
 			_BackendLabel = NULL;
 			_BackendInformations = NULL;
-			_PublisherInformations = NULL;
 			_ClientOrigin = NULL;
 			_APIVersion = NULL;
 		}
@@ -799,8 +796,7 @@ namespace fblbkd {
 			const char *ClientOrigin,	// NON dupliqué.
 			const char *BackendLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
-			const char *BackendInformations,	// NON dupliqué.
-			const char *PublisherInformations )	// NON dupliqué.
+			const char *BackendInformations )	// NON dupliqué.
 		{
 			Master_.Init( *this );
 
@@ -813,7 +809,6 @@ namespace fblbkd {
 			_BackendLabel = BackendLabel;
 
 			_BackendInformations = BackendInformations;
-			_PublisherInformations = PublisherInformations;
 			_ClientOrigin = ClientOrigin;
 			_APIVersion = APIVersion;
 
@@ -915,10 +910,6 @@ namespace fblbkd {
 		const char *GetBackendInformations( void ) const 
 		{
 			return _BackendInformations;
-		}
-		const char *GetPublisherInformations( void ) const 
-		{
-			return _PublisherInformations;
 		}
 		const char *GetAPIVersion( void ) const 
 		{

@@ -134,7 +134,7 @@ namespace flx {
 	public:
 		void reset( bool P = true )
 		{
-			_iflow_driver___::reset( P );
+			_iflow_driver___<>::reset( P );
 			Taille_ = 0;
 			Tampon_ = NULL;
 		}
@@ -155,7 +155,7 @@ namespace flx {
 		{
 			reset();
 
-			_iflow_driver___::Init( ThreadSafety );
+			_iflow_driver___<>::Init( ThreadSafety );
 
 			Tampon_ = Buffer;
 			Taille_ = Size;

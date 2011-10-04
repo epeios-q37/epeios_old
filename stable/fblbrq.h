@@ -65,7 +65,7 @@ extern class ttr_tutor &FBLBRQTutor;
 
 # include "fbltyp.h"
 # include "fblbrd.h"
-# include "fblrpl.h"
+# include "fblovl.h"
 
 # ifdef CPE__VC
 #  undef GetObject
@@ -334,12 +334,12 @@ namespace fblbrq {
 		}
 		//f Send a message that explain the reason of no treatment.
 		void Report(
-			fblrpl::reply__ Reply,
+			fblovl::reply__ Reply,
 			const char *Message )
 		{
 			flw::Put( (flw::datum__)Reply, *Channel_ );
 
-			if ( Reply == fblrpl::rOK )
+			if ( Reply == fblovl::rOK )
 					ERRu();
 
 			if ( ( Message == NULL ) || ( Message[0] == 0 ) )
@@ -354,11 +354,11 @@ namespace fblbrq {
 		}
 		void ReportError( const char *Message )	// 'User error'.
 		{
-			Report( fblrpl::rUserError, Message );
+			Report( fblovl::rUserError, Message );
 		}
 		void ReportBackendError( const char *Message )
 		{
-			Report( fblrpl::rBackendError, Message );
+			Report( fblovl::rBackendError, Message );
 		}
 		const casts_ &GetCasts( void ) const
 		{

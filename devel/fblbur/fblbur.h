@@ -69,13 +69,7 @@ extern class ttr_tutor &FBLBURTutor;
 
 namespace fblbur {
 
-	enum mode__ 
-	{
-		mEmbedded,
-		mRemote,
-		m_amount,
-		m_Undefined
-	};
+	using namespace fblovl;
 
 	typedef fblbrq::request__ _request__;
 

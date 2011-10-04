@@ -56,7 +56,7 @@ public:
 /*$BEGIN$*/
 
 #include "fblcmd.h"
-#include "fblrpl.h"
+#include "fblovl.h"
 
 using namespace fblbkd;
 
@@ -386,11 +386,10 @@ static void About_(
 	bso::bool__ &,
 	void * )
 {
-	Requete.StringOut() = FBLRPL_PROTOCOL_VERSION;
+	Requete.StringOut() = FBLOVL_PROTOCOL_VERSION;
 	Requete.StringOut() = Backend.GetBackendLabel();
 	Requete.StringOut() = Backend.GetAPIVersion();
 	Requete.StringOut() = Backend.GetBackendInformations();
-	Requete.StringOut() = Backend.GetPublisherInformations();
 	Requete.Complete();
 }
 
@@ -838,7 +837,7 @@ ERRBegin
 	if ( RemoteBackendLabel[0] && strcmp( RemoteBackendLabel, _BackendLabel ) )
 		ERRl();	// Pas encore traité.
 
-	if ( strcmp( RemoteProtocolVersion, FBLRPL_PROTOCOL_VERSION )
+	if ( strcmp( RemoteProtocolVersion, FBLOVL_PROTOCOL_VERSION )
 		 || ( RemoteAPIVersion[0] && strcmp( RemoteAPIVersion, APIVersion ) ) ) {
 		Success = false;
 

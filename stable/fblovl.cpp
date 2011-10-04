@@ -1,7 +1,8 @@
 /*
-	Header for the 'fblrpl' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	'fblovl' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'fblovl' header file ('fblovl.h').
+	Copyright (C) 2004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -22,72 +23,59 @@ $_RAW_$
            59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+
+
 //	$Id$
 
-#ifndef FBLRPL__INC
-#define FBLRPL__INC
+#define FBLOVL__COMPILATION
 
-#define FBLRPL_NAME		"FBLRPL"
+#include "fblovl.h"
 
-#define	FBLRPL_VERSION	"$Revision$"
-
-#define FBLRPL_OWNER		"Claude SIMON"
-
-#include "ttr.h"
-
-extern class ttr_tutor &FBLRPLTutor;
-
-#if defined( XXX_DBG ) && !defined( FBLRPL_NODBG )
-#define FBLRPL_DBG
+class fblovltutor
+: public ttr_tutor
+{
+public:
+	fblovltutor( void )
+	: ttr_tutor( FBLOVL_NAME )
+	{
+#ifdef FBLOVL_DBG
+		Version = FBLOVL_VERSION "\b\bD $";
+#else
+		Version = FBLOVL_VERSION;
 #endif
-
-/* Begin of automatic documentation generation part. */
-
-//V $Revision$
-//C Claude SIMON (csimon at zeusw dot org)
-//R $Date$
-
-/* End of automatic documentation generation part. */
+		Owner = FBLOVL_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~fblovltutor( void ){}
+};
 
 /******************************************************************************/
 				  /* do not modify anything above this limit */
 				  /*			  unless specified			 */
 				  /*******************************************/
-
-/* Addendum to the automatic documentation generation part. */
-//D Frontend/Backend Layout RePLy 
-/* End addendum to automatic documentation generation part. */
-
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "lcl.h"
+using namespace fblovl;
 
-#error "Obsolete ! Use 'FBMOVL' instead !".
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 
-#define FBLRPL_PROTOCOL_VERSION	"4"
-
-namespace fblrpl {
-
-	enum reply__ {
-		rOK,
-		rBackendError,	// Lorsque survient un 'ERR[x|X](...)'.
-		rUserError,		// Erreur définie par l'utilisateur.
-		r_amount,
-		r_Undefined
-	};
-
-	const char *Label( reply__ Reply );
-
-	inline const char *GetTranslation(
-		reply__ Reply,
-		const lcl::rack__ &Rack,
-		STR_BUFFER___ &Buffer )
+class fblovlpersonnalization
+: public fblovltutor
+{
+public:
+	fblovlpersonnalization( void )
 	{
-		return Rack.GetTranslation( Label( Reply ),  FBLRPL_NAME "_", Buffer );
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
 	}
-}
+	~fblovlpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
+
 
 /*$END$*/
 				  /********************************************/
@@ -95,4 +83,8 @@ namespace fblrpl {
 				  /*			  unless specified		   	  */
 /******************************************************************************/
 
-#endif
+// 'static' by GNU C++.
+
+static fblovlpersonnalization Tutor;
+
+ttr_tutor &FBLOVLTutor = Tutor;

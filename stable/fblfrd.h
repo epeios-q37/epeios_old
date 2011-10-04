@@ -65,7 +65,7 @@ extern class ttr_tutor &FBLFRDTutor;
 
 # include "fbltyp.h"
 # include "fblcst.h"
-# include "fblrpl.h"
+# include "fblovl.h"
 # include "fblcmd.h"
 
 # define FBLFRD_UNDEFINED_CAST		255
@@ -184,7 +184,7 @@ namespace fblfrd {
 	{
 	protected:
 		virtual void FBLFRDHandleError(
-			fblrpl::reply__ Reply,
+			fblovl::reply__ Reply,
 			const char *Message ) = 0;
 	public:
 		void reset ( bso::bool__ = true )
@@ -204,7 +204,7 @@ namespace fblfrd {
 			// Standardisation.
 		}
 		void HandleError(
-			fblrpl::reply__ Reply,
+			fblovl::reply__ Reply,
 			const char *Message )
 		{
 			FBLFRDHandleError( Reply, Message );
@@ -312,7 +312,7 @@ namespace fblfrd {
 			_ParametersHandlingFunctions->PostProcess( Flow );
 		}
 		void _HandleError(
-			fblrpl::reply__ Reply,
+			fblovl::reply__ Reply,
 			const char *Message )
 		{
 			_ErrorHandlingFunctions->HandleError( Reply, Message );
@@ -347,17 +347,17 @@ namespace fblfrd {
 		}
 		void _Handle( void )
 		{
-			if ( Handle() != fblrpl::rOK )
+			if ( Handle() != fblovl::rOK )
 				ERRu();
 		}
-		fblrpl::reply__ _Send( void )
+		fblovl::reply__ _Send( void )
 		{
-			fblrpl::reply__ Reply = fblrpl::r_Undefined;
+			fblovl::reply__ Reply = fblovl::r_Undefined;
 
 			Channel_->Commit();
 
-			if ( ( Reply = (fblrpl::reply__)Channel_->Get() ) != fblrpl::rOK ) {
-				if ( Reply >= fblrpl::r_amount )
+			if ( ( Reply = (fblovl::reply__)Channel_->Get() ) != fblovl::rOK ) {
+				if ( Reply >= fblovl::r_amount )
 					ERRb();
 
 				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
@@ -370,7 +370,7 @@ namespace fblfrd {
 		}
 		void _SendAndTest( void )
 		{
-			if ( _Send() != fblrpl::rOK )
+			if ( _Send() != fblovl::rOK )
 				ERRb();
 		}
 		bso::bool__ _TestCompatibility(
@@ -475,11 +475,11 @@ namespace fblfrd {
 			Channel_->Put( 0 );	// End of request
 		}
 		//f Send the request.
-		fblrpl::reply__ Handle( void )
+		fblovl::reply__ Handle( void )
 		{
-			fblrpl::reply__  Reply = _Send();
+			fblovl::reply__  Reply = _Send();
 
-			if ( Reply == fblrpl::rOK )
+			if ( Reply == fblovl::rOK )
 				_PostProcess( *Channel_ );
 
 			if ( Channel_->Get() != fblcst::cEnd )
@@ -505,7 +505,7 @@ namespace fblfrd {
 			return *Channel_;
 		}
 		//f Throw an user error, for testing purpose.
-		fblrpl::reply__ ThrowUError( void )
+		fblovl::reply__ ThrowUError( void )
 		{
 			Internal_( fblcmd::cThrowUError );
 
@@ -514,7 +514,7 @@ namespace fblfrd {
 			return Handle();	// NOTA : Always to 'true'.
 		}
 		//f Throw an intentional error, for testing purpose.
-		fblrpl::reply__ ThrowIError( void )
+		fblovl::reply__ ThrowIError( void )
 		{
 			Internal_( fblcmd::cThrowIError );
 
@@ -523,7 +523,7 @@ namespace fblfrd {
 			return  Handle();	// NOTA : Always to 'true'.
 		}
 		// Génère une erreur utilisateur retournant le messahe 'Message'.
-		fblrpl::reply__ ThrowUserDefinedError( const string_ &Message )
+		fblovl::reply__ ThrowUserDefinedError( const string_ &Message )
 		{
 			Internal_( fblcmd::cThrowUserDefinedError );
 
@@ -744,8 +744,8 @@ namespace fblfrd {
 			_Out( Flow, Cast, Pointer );
 		}
 		*/
-/*		fblrpl::reply__ Handle(
-			fblrpl::reply__ Reply,
+/*		fblovl::reply__ Handle(
+			fblovl::reply__ Reply,
 			flw::ioflow__ &Flow )
 		{
 			return _Handle( Reply, Flow );
