@@ -1,5 +1,14 @@
 $Id$
 
+03/10/2011 :
+	- FBLxxx :
+		- Suppression du 'Publisher'.
+		- Changement version du protocol : "4".
+		- FBLRPL -> FBLOVL ; mise en commun 'mode__'.
+		- Utilisation de 'FBLOVL'.
+	- FLX, FDR :
+		- Diverses modifications desctructeurs/constructeurs (qui se sont révèlées inutiles, mais qui ne gênent pas ...)
+
 02/10/2011 :
 	- CSDLEx :
 		- Codage.
