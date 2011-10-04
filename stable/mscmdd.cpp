@@ -132,7 +132,7 @@ ERRBegin
 				break;
 			case 2:
 				Buffer[1] = ( ( dwParam1 & 0xff00 ) >> 8 );
-				Buffer[2] =(fwf::datum__)( ( dwParam1 & 0xff0000 ) >> 16 );
+				Buffer[2] =(fdr::datum__)( ( dwParam1 & 0xff0000 ) >> 16 );
 				Fill_( Buffer, 3, Data );
 				break;
 			default:
@@ -171,9 +171,9 @@ ERREnd
 ERREpilog
 }
 
-fwf::size__ mscmdd::midi_in___::Read(
-	fwf::size__ Maximum,
-	fwf::datum__ *Buffer )
+fdr::size__ mscmdd::midi_in___::Read(
+	fdr::size__ Maximum,
+	fdr::datum__ *Buffer )
 {
 	bso::ubyte__ Amount = sizeof( _Header ) / sizeof( *_Header );
 

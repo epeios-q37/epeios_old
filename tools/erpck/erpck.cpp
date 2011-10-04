@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.4.3"
+#define VERSION					"0.4.4"
 #define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
@@ -1245,12 +1245,17 @@ id__  Display_(
 			Writer.PutAttribute( "SessionAmount", bso::Convert( Context.S_.Session ) );
 			Writer.PutAttribute( "SessionSkippedAmount", bso::Convert( GetSkippedAmount_( Context.S_.Session, Context.Pool, Records ) ) );
 
+			Writer.PutAttribute( "CycleAmount", bso::Convert( Context.S_.Cycle ) );
+			Writer.PutAttribute( "CycleSkippedAmount", bso::Convert( GetSkippedAmount_( Context.S_.Cycle, Context.Pool, Records ) ) );
+
 		} else {
 			if ( Id > Records.Amount() ) {
 				CErr << "No record of id '" << Id << "'! " << txf::nl;
 				ERRExit( EXIT_FAILURE )
-			} else
+			} else {
+				Writer.PutAttribute( "Amount", "1" );
 				Row = Id - 1;
+			}
 		}
 
 		if ( Row != NONE )

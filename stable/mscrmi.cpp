@@ -1126,7 +1126,7 @@ private:
 		case 2:
 		case 3:
 		case 4:
-			Long = Value.ToUL( &Error, str::b10, ~( 0xffffffff << ( Size * 7 ) ) );
+			Long = Value.ToUL( &Error, ~( 0xffffffff << ( Size * 7 ) ) );
 			break;
 		default:
 			ERRc();

@@ -3,6 +3,8 @@ $Id$
 04/10/2011 :
 	- FLX :
 		- Correction errreurs détectées par 'g++'.
+	- MSCMDD :
+		- Adaptation aux modifications.
 
 03/10/2011 :
 	- FBLxxx :

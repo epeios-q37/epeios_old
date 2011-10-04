@@ -489,7 +489,7 @@ mscrmi::device_id__ common::GetDeviceID( const char *RawDeviceID )
 	if ( RawDeviceID != NULL ) {
 		epeios::row__ Error = NONE;
 
-		DeviceID = str::string( RawDeviceID ).ToUB( &Error, str::bAuto, 127 );	// As this value is transmitted through a MIDI channel, it can't be > 127.
+		DeviceID = str::string( RawDeviceID ).ToUB( &Error, 127 );	// As this value is transmitted through a MIDI channel, it can't be > 127.
 
 		if ( Error != NONE )
 			Report( eBadDeviceID );

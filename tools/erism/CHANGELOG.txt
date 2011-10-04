@@ -2,6 +2,9 @@ $Id$
 
 'erism' changelog.
 
+04/10/2011 :
+	- Adapting to modifications in underlying libraries.
+
 17/07/2011 :
 	- Adapting to modifications in underlying libraries.
 
