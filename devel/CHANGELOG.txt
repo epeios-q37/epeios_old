@@ -35,7 +35,7 @@ $Id$
 
 23/09/2011 :
 	Général :
-		- Rénommages des bibltiohqèques relatives à la gestion client/serveur à travers une bibliothèque dynamique en 'CSDLEx'.
+		- Rénommages des bibliothèques relatives à la gestion client/serveur à travers une bibliothèque dynamique en 'CSDLEx'.
 		- Adaptation aux modifications suite à la mise en oeuvre 'CSDLEx'.
 
 21/09/2011 :
@@ -70,7 +70,7 @@ $Id$
 05/09/2011 :
 	- TXF :
 		- Rajout méthode 'IsInitialized()'.
-		- Un 'Commit()' s'un objet non initilaisé ne provoque plus d'erreur.
+		- Un 'Commit()' d'un objet non initilaisé ne provoque plus d'erreur.
 
 04/09/2011 :
 	- FLX :
@@ -121,7 +121,7 @@ $Id$
 		- Ajout pointeur utilisateur pour les 'widget's.
 		- Ajoput variantes méthode 'Init(...)' pour les 'widget's.
 		- Retrait des fonctions 'Register(...)'.
-		- Ajout de l'év-nement 'onload'.
+		- Ajout de l'évènement 'onload'.
 
 21/08/2011 :
 	- ERR :
@@ -238,7 +238,7 @@ $Id$
 
 05/07/2011 :
 	- NSXPCM :
-		- Mise en oeuvre de 'NSXPCM_GECKO_Vx' pour bascualer facilement d'une version à l'autre de Gecko.
+		- Mise en oeuvre de 'NSXPCM_GECKO_Vx' pour basculer facilement d'une version à l'autre de Gecko.
 
 04/07/2011 :
 	- XPP :

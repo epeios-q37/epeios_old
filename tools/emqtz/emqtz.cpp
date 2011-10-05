@@ -37,7 +37,7 @@
 #define VERSION			"0.0.1"
 #define COPYRIGHT_YEARS	"2007"
 #define DESCRIPTION		"Generates an XML file describing a melody stored in a customized MIDI file."
-#define INFO			EPSMSC_EPEIOS_AFFILIATION
+#define INFO			EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT	EPSMSC_AUTHOR_CONTACT
 #define HELP			EPSMSC_HELP_INVITATION( NAME )
@@ -47,9 +47,9 @@
 
 /*$RAW$*/
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -77,38 +77,38 @@ void PrintUsage( const clnarg::description_ &Description )
 {
 	CLNARG_BUFFER__ Buffer;
 
-	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help" << txf::nl;
+	COut << DESCRIPTION << txf::nl;
+	COut << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 
-	cout << NAME << " [" << Description.GetCommandLabels( cQuantize, Buffer, "," ) << "] <MIDI-source-file> [XML-target-file]" << txf::nl;
-	cout << txf::tab << "converts melody in a customized MIDI file to XML." << txf::nl;
+	COut << NAME << " [" << Description.GetCommandLabels( cQuantize, Buffer, "," ) << "] <MIDI-source-file> [XML-target-file]" << txf::nl;
+	COut << txf::tab << "converts melody in a customized MIDI file to XML." << txf::nl;
 
-	cout << txf::nl;
+	COut << txf::nl;
 
-	cout << "- MIDI-source-file :" << txf::nl;
-	cout << txf::tab << "the MIDI source file containing the melody (see" << txf::nl;
-	cout << txf::tab << URL << " for more details)." << txf::nl;
+	COut << "- MIDI-source-file :" << txf::nl;
+	COut << txf::tab << "the MIDI source file containing the melody (see" << txf::nl;
+	COut << txf::tab << URL << " for more details)." << txf::nl;
 
-	cout << "- XML-target-file :" << txf::nl;
-	cout << txf::tab << "the target XML file (if not given, standard output is used)." << txf::nl;
-//	cout << NAME << " <command> [options] ..." << txf::nl;
+	COut << "- XML-target-file :" << txf::nl;
+	COut << txf::tab << "the target XML file (if not given, standard output is used)." << txf::nl;
+//	COut << NAME << " <command> [options] ..." << txf::nl;
 	// Free argument description.
-//	cout << "command:" << txf::nl;
+//	COut << "command:" << txf::nl;
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-//	cout << "options:" << txf::nl;
+//	COut << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
-	cout << COPYRIGHT << txf::nl;
-	cout << INFO << txf::nl;
-	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	COut << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	COut << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
+	COut << COPYRIGHT << txf::nl;
+	COut << INFO << txf::nl;
+	COut << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -126,8 +126,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << '\'' << Unknow << "': unknow option." << txf::nl;
+		COut << HELP << txf::nl;
 		ERRi();
 	}
 
@@ -172,8 +172,8 @@ ERRBegin
 		Parameters.MIDIFile = Free( P ).Convert( Parameters.MIDIFileBuffer );
 		break;
 	default:
-		cerr << "Bad amount of arguments." << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << "Bad amount of arguments." << txf::nl;
+		COut << HELP << txf::nl;
 		ERRi();
 		break;
 	}
@@ -206,7 +206,7 @@ ERRBegin
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise( cio::cout );
+		TTR.Advertise( cio::COut );
 		ERRi();
 		break;
 	case cHelp:
@@ -214,7 +214,7 @@ ERRBegin
 		ERRi();
 		break;
 	case cLicense:
-		epsmsc::PrintLicense( cout );
+		epsmsc::PrintLicense( COut );
 		ERRi();
 		break;
 //	case c:
@@ -297,7 +297,7 @@ ERRBegin
 	Backuped = true;
 
 	if ( OFlow.Init( XMLFile, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open target file '" << XMLFile << "' !" << txf::nl;
+		CErr << "Unable to open target file '" << XMLFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -319,14 +319,14 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
 	if ( IFlow.Init( MIDIFile, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open file '" << MIDIFile << "' !" << txf::nl;
+		CErr << "Unable to open file '" << MIDIFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
 	if ( XMLFile != NULL ) {
 		Go( IFlow, XMLFile );
 	} else
-		Go( IFlow, cout );
+		Go( IFlow, COut );
 ERRErr
 ERREnd
 ERREpilog
