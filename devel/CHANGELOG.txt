@@ -1,5 +1,12 @@
 $Id$
 
+06/10/2011 :
+	- MSCMDD :
+		- Suppression des 'template' (utilisation d'une valeur par défaut).
+	- MSCMDM :
+		- 'origin__' -> 'extraneous__'.
+		- Gestion automatique du 'extraneous__' lorsque le flux est issu d'un 'device'.
+
 04/10/2011 :
 	- FLX :
 		- Correction errreurs détectées par 'g++'.

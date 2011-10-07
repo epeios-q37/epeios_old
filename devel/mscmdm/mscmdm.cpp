@@ -376,16 +376,25 @@ event_type__ mscmdm::DetermineEvent(
 	return EventType;
 }
 
+#if 0
 bso::bool__ mscmdm::GetEventHeader(
-   flw::iflow__ &IFlow,
-   origin__ Origin,
-   event_header__ &EventHeader,
-   err::handling__ ErrHandling )
+	flw::iflow__ &IFlow,
+	extraneous__ Extraneous,
+	event_header__ &EventHeader,
+	err::handling__ ErrHandling )
 {
 	flw::datum__ Datum;
 
-	if ( Origin == oFile )
+	switch ( Extraneous ) {
+	case xNone:
+		break;
+	case xTicks:
 		EventHeader.DeltaTimeTicks = GetDeltaTimeTicks( IFlow );
+		break;
+	default:
+		ERRu();
+		break;
+	}
 
 	Datum = IFlow.View();
 
@@ -420,6 +429,71 @@ bso::bool__ mscmdm::GetEventHeader(
 
 	return true;
 }
+#else
+bso::bool__ mscmdm::GetEventHeader(
+	flw::iflow__ &IFlow,
+	extraneous__ Extraneous,
+	event_header__ &EventHeader,
+	err::handling__ ErrHandling )
+{
+	flw::datum__ Datum;
+
+	switch ( Extraneous ) {
+	case xNone:
+		break;
+	case xTicks:
+		EventHeader.DeltaTimeTicks = GetDeltaTimeTicks( IFlow );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	Datum = IFlow.View();
+
+	switch ( EventHeader.EventType ) {
+		case etMIDI:
+			if ( Datum & 0x80 ) {
+				IFlow.Get();
+				EventHeader.MIDIEvent.Tied = false;
+			} else {
+				EventHeader.MIDIEvent.Tied = true;
+				return true;
+			}
+			break;
+		case et_Undefined:
+			EventHeader.MIDIEvent.Tied = false;
+		case etSystem:
+		case etMeta:
+			IFlow.Get();
+			break;
+		default :
+			ERRc();
+			break;
+	}
+
+	EventHeader.MIDIEvent.ChannelID = Datum & 0xf;
+
+	PartiallyFillEventHeader( Datum, IFlow.View(), EventHeader );
+
+	switch ( EventHeader.EventType ) {
+	case etMIDI:
+		break;
+	case etSystem:
+		break;
+	case etMeta:
+		IFlow.Get();
+		EventHeader.MetaEvent.Size = GetDeltaTimeTicks( IFlow );
+		break;
+	default:
+		return false;
+		break;
+	}
+
+	return true;
+}
+#endif
+
 
 void mscmdm::PrintMIDIEvent(
 	const extended_midi_event__ &Event,
@@ -536,14 +610,14 @@ static size__ GetMIDIEventData_(
 static size__ GetSystemEventData_(
 	const extended_system_event__ &Event,
 	flw::iflow__ &IFlow,
-	origin__ Origin,
+	extraneous__ Extraneous,
 	data_ &Data )
 {
 	size__ Size = 0;
 
 	if ( Event.Event == sysExclusive ) {
-		switch( Origin ) {
-		case oFile:
+		switch( Extraneous ) {
+		case xTicks:
 		{
 			delta_time_ticks__ Counter  = GetDeltaTimeTicks( IFlow ) - 1;
 			Size = Counter;
@@ -555,7 +629,7 @@ static size__ GetSystemEventData_(
 				ERRf();
 			break;
 		}
-		case oDevice:
+		case xNone:
 			flw::datum__ Datum;
 			while( ( Datum = IFlow.Get() ) != 0xf7 ) {
 				Size++;
@@ -587,7 +661,7 @@ static size__ GetMetaEventData_(
 size__ mscmdm::GetEventData(
 	const event_header__ &EventHeader,
 	flw::iflow__ &IFlow,
-	origin__ Origin,
+	extraneous__ Extraneous,
 	data_ &Data )
 {
 	switch( EventHeader.EventType ) {
@@ -598,7 +672,7 @@ size__ mscmdm::GetEventData(
 		return GetMetaEventData_( EventHeader.MetaEvent, IFlow, Data );
 		break;
 	case etSystem:
-		return GetSystemEventData_( EventHeader.SystemEvent, IFlow, Origin, Data );
+		return GetSystemEventData_( EventHeader.SystemEvent, IFlow, Extraneous, Data );
 		break;
 	default:
 		ERRl();
@@ -626,16 +700,26 @@ void mscmdm::PutEventHeader(
 	event_id__ Id,
 	const data_ &RawData,
 	bso::bool__ Tied,
+	extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 ERRProlog
 	str::string EncodedTicks;
 ERRBegin
-	EncodedTicks.Init();
-
-	Encode( Ticks, EncodedTicks );
-
-	Write_( EncodedTicks, OFlow );
+	switch ( Extraneous ) {
+	case xNone:
+		if ( Ticks != 0 )
+			ERRu();
+		break;
+	case xTicks:
+		EncodedTicks.Init();
+		Encode( Ticks, EncodedTicks );
+		Write_( EncodedTicks, OFlow );
+		break;
+	default:
+		ERRu();
+		break;
+	}
 
 	if ( !Tied )
 		OFlow.Put( Id );
@@ -648,6 +732,7 @@ ERREpilog
 
 void mscmdm::PutEvent(
 	const event_ &Event,
+	extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 ERRProlog
@@ -668,7 +753,7 @@ ERRBegin
 		RawData = Event.Data;
 	}
 
-	PutEventHeader( Event.EventHeader(), RawData, OFlow );
+	PutEventHeader( Event.EventHeader(), RawData, Extraneous, OFlow );
 ERRErr
 ERREnd
 ERREpilog
@@ -677,6 +762,7 @@ ERREpilog
 
 void mscmdm::PutEvents(
 	const events_ &Events,
+	extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 	ctn::E_CMITEMt( event_, erow__ ) Event;
@@ -685,7 +771,7 @@ void mscmdm::PutEvents(
 	Event.Init( Events );
 
 	while ( Row != NONE ) {
-		PutEvent( Event( Row ), OFlow );
+		PutEvent( Event( Row ), Extraneous, OFlow );
 
 		Row = Events.Next( Row );
 	}
@@ -729,6 +815,7 @@ static mscmdf::track_chunk_size__ GetSize_( const events_ &Events )
 
 void mscmdm::PutTrack(
 	const track_ &Track,
+	extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 	ctn::E_CMITEMt( event_, erow__ ) Event;
@@ -748,7 +835,7 @@ void mscmdm::PutTrack(
 
 	mscmdf::PutTrackChunkHeader( Size, OFlow );
 
-	PutEvents( Track, OFlow );
+	PutEvents( Track, Extraneous, OFlow );
 
 	if ( !LastEventIsEndOfTrack )
 		OFlow.WriteUpTo( "\x00\xff\x2f\x00", 4 );	// 'EndOfTrack'.
@@ -757,6 +844,7 @@ void mscmdm::PutTrack(
 
 void mscmdm::PutTracks(
 	const tracks_ &Tracks,
+	extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 	ctn::E_CITEMt( track_, trow__ ) Track;
@@ -765,7 +853,7 @@ void mscmdm::PutTracks(
 	Track.Init( Tracks );
 
 	while ( Row != NONE ) {
-		PutTrack( Track( Row ), OFlow );
+		PutTrack( Track( Row ), Extraneous, OFlow );
 
 		Row = Tracks.Next( Row );
 	}
@@ -790,7 +878,7 @@ static inline bso::bool__ EventIsDoublon_(
 bso::bool__ mscmdm::Parse(
 	callback__ &Callback,
 	flw::iflow__ &IFlow,
-	origin__ Origin,
+	extraneous__ Extraneous,
 	int Flags )
 {
 	bso::bool__ Success = true;
@@ -802,11 +890,11 @@ ERRBegin
 	PreviousData.Init();
 
 	while ( Continue ) {
-		if ( !( Success = GetEventHeader( IFlow, Origin, EventHeader ) ) )
+		if ( !( Success = GetEventHeader( IFlow, Extraneous, EventHeader ) ) )
 			ERRReturn;
 
 		Data.Init();
-		GetEventData( EventHeader, IFlow, Origin, Data );
+		GetEventData( EventHeader, IFlow, Extraneous, Data );
 
 		if ( Flags & fmSkipDoublons )
 			if ( EventIsDoublon_( EventHeader, Data, PreviousEventHeader, PreviousData ) )
@@ -821,7 +909,7 @@ ERRBegin
 				EventHeader.MIDIEvent.Tied = false;
 			}
 
-		Continue = Callback.HandleEvent( EventHeader, Data, Origin );
+		Continue = Callback.HandleEvent( EventHeader, Data, Extraneous );
 
 		PreviousEventHeader = EventHeader;
 		PreviousData = Data;

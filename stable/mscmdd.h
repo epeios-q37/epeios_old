@@ -283,15 +283,17 @@ namespace mscmdd {
 		}
 	};
 
-	template <int CacheSize = MSCMDD__OUTPUT_CACHE_SIZE> class midi_oflow___
-	: public flw::standalone_oflow__<CacheSize>
+	typedef flw::standalone_oflow__<MSCMDD__OUTPUT_CACHE_SIZE> _oflow__;
+
+	class midi_oflow___
+	: public _oflow__
 	{
 	private:
 		midi_oflow_driver___ _Driver;
 	public:
 		void reset( bool P = true )
 		{
-			flw::standalone_oflow__<CacheSize>::reset( P );
+			_oflow__::reset( P );
 			_Driver.reset( P );
 		}
 		midi_oflow___( void )
@@ -308,7 +310,7 @@ namespace mscmdd {
 			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrHandle = err::h_Default )
 		{
-			flw::standalone_oflow__<CacheSize>::Init( _Driver, AmountMax );
+			_oflow__::Init( _Driver, AmountMax );
 
 			return _Driver.Init( DeviceId, ErrHandle );
 		}
@@ -565,15 +567,17 @@ namespace mscmdd {
 		}
 	};
 
-	template <int CacheSize = 0> class midi_iflow___
-	: public flw::standalone_iflow__<CacheSize>
+	typedef flw::standalone_iflow__<> _iflow__;	// En fait, le 'template' est, et doit être, à 'O' (voir 'flw::standalone_iflow__').
+
+	class midi_iflow___
+	: public _iflow__
 	{
 	private:
 		midi_iflow_driver___ _Driver;
 	public:
 		void reset( bool P = true )
 		{
-			flw::standalone_iflow__<CacheSize>::reset( P );
+			_iflow__::reset( P );
 			_Driver.reset( P );
 		}
 		midi_iflow___( void )
@@ -589,7 +593,7 @@ namespace mscmdd {
 			flw::size__ AmountMax = FLW_SIZE_MAX,
 			err::handling__ ErrHandle = err::h_Default )
 		{
-			flw::standalone_iflow__<CacheSize>::Init( _Driver, AmountMax );
+			_iflow__::Init( _Driver, AmountMax );
 
 			return _Driver.Init( Device, ErrHandle );
 		}

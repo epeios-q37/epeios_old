@@ -66,22 +66,22 @@ extern class ttr_tutor &MSCMDMTutor;
 #include "str.h"
 #include "ctn.h"
 
+# include "mscmdd.h"
+
 namespace mscmdm {
 
 	typedef flw::datum__ event_id__;
 
 	using flw::size__;
 
-	//e Origin of the midi message.
-	enum origin__ {
-		//i Messages are red from a file.
-		oFile,
-		//i Messages are issued by a midi device.
-		oDevice,
-		//i Amount items.
-		o_amount,
-		//i Unknow origin.
-		o_Undefined,
+	// Autres données associées aux évènements.
+	enum extraneous__ {
+		// Pas d'autres données.
+		xNone,
+		// 'Delta time ticks'.
+		xTicks,
+		x_amount,
+		x_Undefined,
 
 	};
 
@@ -312,14 +312,14 @@ namespace mscmdm {
 		virtual bso::bool__ MSCMDMHandleEvent(
 			const event_header__ &Header,
 			const data_ &Data,
-			origin__ Origin ) = 0;
+			extraneous__ Extraneous ) = 0;
 	public:
 		virtual bso::bool__ HandleEvent(
 			const event_header__ &Header,
 			const data_ &Data,
-			origin__ Origin )
+			extraneous__ Extraneous )
 		{
-			return MSCMDMHandleEvent( Header, Data, Origin );
+			return MSCMDMHandleEvent( Header, Data, Extraneous );
 		}
 	};
 
@@ -340,22 +340,46 @@ namespace mscmdm {
 	bso::bool__ Parse(
 		callback__ &Callback,
 		flw::iflow__ &IFlow,
-		origin__ Origin,
+		extraneous__ Extraneous,
 		int Flags = fmDefaultFlag );
+
+	inline bso::bool__ Parse(
+		callback__ &Callback,
+		mscmdd::midi_iflow___ &IFlow,
+		int Flags = fmDefaultFlag )
+	{
+		return Parse( Callback, IFlow, xNone, Flags );
+	}
 		
 
 	//f Put in 'EventHeader' the header of the event red in 'IFlow'. Return the size of the header. If '04, the error.
 	bso::bool__ GetEventHeader(
 		flw::iflow__ &IFlow,
-		origin__ Origin,
+		extraneous__ Extraneous,
 		event_header__ &EventHeader,
 		err::handling__ ErrHandling = err::h_Default );
+
+	inline bso::bool__ GetEventHeader(
+		mscmdd::midi_iflow___ &IFlow,
+		event_header__ &EventHeader,
+		err::handling__ ErrHandling = err::h_Default )
+	{
+		return GetEventHeader( IFlow, xNone, EventHeader, ErrHandling );
+	}
 
 	size__ GetEventData(
 		const event_header__ &EventHeader,
 		flw::iflow__ &IFlow,
-		origin__ Origin,
+		extraneous__ Extraneous,
 		data_ &Data );
+
+	inline size__ GetEventData(
+		const event_header__ &EventHeader,
+		mscmdd::midi_iflow___ &IFlow,
+		data_ &Data )
+	{
+		return GetEventData( EventHeader, IFlow, xNone, Data );
+	}
 
 	class event_
 	{
@@ -423,30 +447,65 @@ namespace mscmdm {
 		event_id__ Id,
 		const data_ &RawData,
 		bso::bool__ Tied,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 
 	inline void PutEventHeader(
 		const event_header__ &Header,
 		const data_ &RawData,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow )
 	{
-		PutEventHeader( Header.DeltaTimeTicks, Header.Id, RawData, ( Header.EventType == etMIDI ? Header.MIDIEvent.Tied : false ), OFlow );
+		PutEventHeader( Header.DeltaTimeTicks, Header.Id, RawData, ( Header.EventType == etMIDI ? Header.MIDIEvent.Tied : false ), Extraneous, OFlow );
 	}
+
+	inline void PutEventHeader(
+		const event_header__ &Header,
+		const data_ &RawData,
+		mscmdd::midi_ioflow___ &OFlow )
+	{
+		PutEventHeader( Header, RawData, xNone, OFlow );
+	}
+
 
 	void PutEvent(
 		const event_ &Event,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
+
+	inline void PutEvent(
+		const event_ &Event,
+		mscmdd::midi_oflow___ &OFlow )
+	{
+		PutEvent( Event, xNone, OFlow );
+	}
 
 	void PutEvents(
 		const events_ &Events,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 	
+	inline void PutEvents(
+		const events_ &Events,
+		mscmdd::midi_oflow___ &OFlow )
+	{
+		PutEvents( Events, xNone, OFlow );
+	}
+
 	typedef events_	track_;
 	typedef events	track;
 
 	void PutTrack(
 		const track_ &Track,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
+
+	inline void PutTrack(
+		const track_ &Track,
+		mscmdd::midi_oflow___ &OFlow )
+	{
+		PutTrack( Track, xNone, OFlow );
+	}
 
 	E_ROW( trow__ );	// Track row.
 
@@ -455,7 +514,15 @@ namespace mscmdm {
 
 	void PutTracks(
 		const tracks_ &Tracks,
+		extraneous__ Extraneous,
 		flw::oflow__ &Flow );
+
+	inline void PutTracks(
+		const tracks_ &Tracks,
+		mscmdd::midi_oflow___ &OFlow )
+	{
+		PutTracks( Tracks, xNone, OFlow );
+	}
 
 	inline bso::bool__ IsMetaDataText( meta_event__ Event )
 	{
