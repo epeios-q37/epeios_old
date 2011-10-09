@@ -86,7 +86,7 @@ namespace ndbsct {
 		}
 		void _Touch( void )
 		{
-			S_.ModificationTimeStamp = tol::Clock( false );
+			S_.ModificationTimeStamp = tol::Clock( false ) / 1000;	// Pour pouvoir comparer avec un 'timestamp' de fichier.
 		}
 	public:
 		storage_ Storage;
@@ -206,7 +206,14 @@ namespace ndbsct {
 		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
 		{
-			return _MemoryFileManager.TimeStamp();
+			time_t TimeStamp = _MemoryFileManager.TimeStamp();
+			// Lors d'une suppression d'un enregistrement le fichier derrière '_MemoryFileManager' n'est pas touché, mais les fichiers accessoires
+			// doivent quand même être sauvés, d'où le code ci-dessous.
+
+			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() > TimeStamp ) ) 
+				TimeStamp = _Content->ModificationTimeStamp();
+
+			return TimeStamp;
 		}
 		void _ErasePhysically( void )
 		{
@@ -251,7 +258,7 @@ namespace ndbsct {
 		{
 			uym::state__ State = _MemoryFileManager.Bind();
 
-			if ( State != _ListFileManager.Bind( _MemoryFileManager.TimeStamp() ) )
+			if ( State != _ListFileManager.Bind( _GetUnderlyingFilesLastModificationTime() ) )
 				return uym::sInconsistent;
 
 			return State;
@@ -261,7 +268,7 @@ namespace ndbsct {
 			uym::state__ State = _MemoryFileManager.Settle();
 
 			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() != 0 ) )
-				_ListFileManager.Settle( _MemoryFileManager.TimeStamp() );
+				_ListFileManager.Settle( _GetUnderlyingFilesLastModificationTime() );
 
 			return State;
 		}
@@ -293,7 +300,7 @@ namespace ndbsct {
 		if ( uym::IsError( State ) ) {
 			FileManager.reset();
 		} else {
-			if ( State != lst::Plug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._MemoryFileManager.TimeStamp() ) ) {
+			if ( State != lst::Plug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._GetUnderlyingFilesLastModificationTime() ) ) {
 				FileManager.reset();
 				return uym::sInconsistent;
 			} else 

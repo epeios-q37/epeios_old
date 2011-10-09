@@ -1,5 +1,9 @@
 $Id$
 
+09/10/2011 :
+	- NDBSCT :
+		- Correction bogue fichiers accessoires non sauvegardées lorsque l'on fait seulement une suppression.
+
 06/10/2011 :
 	- MSCMDD :
 		- Suppression des 'template' (utilisation d'une valeur par défaut).
