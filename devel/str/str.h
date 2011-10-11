@@ -255,8 +255,8 @@ namespace str {
 		}\
 		type To##name(\
 			epeios::row__ *ErrP = NULL,\
-			type Limit = limit,\
-			base__ Base = bAuto ) const\
+			base__ Base = bAuto,\
+			type Limit = limit ) const\
 		{\
 			return To##name( 0, ErrP, Base, Limit );\
 		}\
@@ -271,7 +271,7 @@ namespace str {
 			type &Number,\
 			epeios::row__ *Error = NULL ) const\
 		{\
-			Number = To##name( Error, Limit );\
+			Number = To##name( Error, bAuto, Limit );\
 		}
 #define STR_SN( name, type, positive_limit, negative_limit )\
 	type To##name(\
@@ -285,9 +285,9 @@ namespace str {
 		}\
 		type To##name(\
 			epeios::row__ *ErrP = NULL,\
+			base__ Base = bAuto,\
 			type PositiveLimit = positive_limit,\
-			type NegativeLimit = negative_limit,\
-			base__ Base = bAuto ) const\
+			type NegativeLimit = negative_limit ) const\
 		{\
 			return To##name( 0, ErrP, Base, PositiveLimit, NegativeLimit );\
 		}\
@@ -303,7 +303,7 @@ namespace str {
 			type &Number,\
 			epeios::row__ *Error = NULL ) const\
 		{\
-			Number = To##name( Error, PositiveLimit, NegativeLimit );\
+			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
 #ifdef STR__64_BITS_TYPES_ALLOWED
 		STR_UN( ULL, bso::ullong__, BSO_ULLONG_MAX )
