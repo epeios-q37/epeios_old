@@ -1,5 +1,12 @@
 $Id$
 
+12/10/2011 :
+	- Général :
+		- Adaptation aux modifications.
+	- MSCMDD :
+		- '...[D|d]escription...' -> '...[N[n]ame...'
+		- Ajout fonction 'GetMidiDeviceNames(...)'.
+
 11/10/2011 :
 	STR :
 		- Changement paramètres méthodes relatives aux conversions numériques à cause de risques de bogues.

@@ -734,14 +734,42 @@ namespace mscmdd {
 	};
 
 
-	typedef str::string_	description_;
-	typedef str::string		description;
+	typedef str::string_	name_;
+	typedef str::string		name;
 
-	typedef ctn::E_XMCONTAINER_( description_ ) descriptions_;
-	E_AUTO( descriptions )
+	typedef ctn::E_XMCONTAINER_( name_ ) names_;
+	E_AUTO( names )
 
-	bso::ulong__ GetMidiInDeviceDescriptions( descriptions_ &Descriptions );
-	bso::ulong__ GetMidiOutDeviceDescriptions( descriptions_ &Descriptions );
+	bso::ulong__ GetMidiInDevicesNames( names_ &Names );
+	bso::ulong__ GetMidiOutDevicesNames( names_ &Names );
+
+	enum way__ {
+		wIn,
+		wOut,
+		w_amount,
+		w_Undefined
+	};
+
+	inline bso::ulong__ GetMidiDevicesNames(
+		way__ Way,
+		names_ &Names )
+	{
+		switch ( Way ) {
+		case wIn:
+			return GetMidiInDevicesNames( Names );
+			break;
+		case wOut:
+			return GetMidiOutDevicesNames( Names );
+			break;
+		default:
+			ERRu();
+			break;
+		}
+
+		return 0;	// Pour éviter un 'warning'.
+	}
+
+
 
 }
 

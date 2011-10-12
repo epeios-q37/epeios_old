@@ -65,7 +65,7 @@ extern class ttr_tutor &FRDKRNTutor;
 
 #include "frdbkd.h"
 #include "frdrgy.h"
-#include "frdfbc.h"
+#include "csdleo.h"
 
 #define FRDKRN_CONFIGURATION_FILE_EXTENSION	"xcfg"
 #define FRDKRN_PROJECT_FILE_EXTENSION		"xprj"
@@ -204,7 +204,6 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		lcl::locale _LocaleForLibrary;	// Uniquement utilisé en mode 'library'.
 		lcl::locale _Locale;
 		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
@@ -216,7 +215,7 @@ namespace frdkrn {
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			frdfbc::data___ &LibraryData,
+			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHandlingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
@@ -263,13 +262,13 @@ namespace frdkrn {
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			frdfbc::data___ &LibraryData,
+			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorReportingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
-			frdfbc::data___ &LibraryData,
+			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHAndlingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
@@ -282,7 +281,6 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
-			_LocaleForLibrary.reset();
 			_Locale.reset( P );
 			_LocaleRack.reset( P );
 			_Message.reset( P );
@@ -305,7 +303,6 @@ namespace frdkrn {
 		{
 			_Registry.Init();
 			_Message.Init();
-			_LocaleForLibrary.reset();
 			_Locale.Init();
 			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
 			_ProjectOriginalTimeStamp = 0;
@@ -328,13 +325,13 @@ namespace frdkrn {
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
-			frdfbc::data___ &LibraryData,
+			csdleo::shared_data__ &LibrarySharedData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
 			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == rOK )
-				Report = _Connect( CompatibilityInformations, LibraryData, ErrorSet.IncompatibilityInformations );
+				Report = _Connect( CompatibilityInformations, LibrarySharedData, ErrorSet.IncompatibilityInformations );
 
 			if ( Report == rOK )
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -346,7 +343,7 @@ namespace frdkrn {
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
-			frdfbc::data___ &LibraryData );
+			csdleo::shared_data__ &LibrarySharedData );
 		bso::bool__ IsProjectInProgress( void ) const
 		{
 			return _ProjectOriginalTimeStamp != 0;
@@ -360,10 +357,9 @@ namespace frdkrn {
 			str::string_ &ProtocolVersion,
 			str::string_ &BackendLabel,
 			str::string_ &APIVersion,
-			str::string_ &BackendInformations,
-			str::string_ &PublisherInformations )
+			str::string_ &BackendInformations )
 		{
-			_Backend.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations, PublisherInformations );
+			_Backend.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
 		}
 		void Close( void )
 		{

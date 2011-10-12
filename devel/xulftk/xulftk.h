@@ -163,9 +163,9 @@ namespace xulftk {
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
 			const frdkrn::compatibility_informations__ &CompatibilityInformations,
-			frdfbc::data___ &LibraryData )
+			csdleo::shared_data__ &LibrarySharedData )
 		{
-			if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations, LibraryData ) != frdkrn::sOK )
+			if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations, LibrarySharedData ) != frdkrn::sOK )
 				UI().Alert( Kernel().Message() );
 
 			UpdateUI();

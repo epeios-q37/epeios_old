@@ -279,10 +279,10 @@ bso::bool__ mscmdd::midi_in___::Init(
 
 static void Convert_(
 	const WCHAR *WString,
-	description_ &String )
+	name_ &Name )
 {
 	while ( *WString ) {
-		String.Append( (char)*WString );
+		Name.Append( (char)*WString );
 
 		WString++;
 	}
@@ -293,9 +293,9 @@ static void Convert_(
 // Pour g++ sous 'cygwin'.
 static inline void Convert_(
 	const CHAR *RawString,
-	description_ &String )
+	name_ &Name )
 {
-	String.Append( RawString );
+	Name.Append( RawString );
 }
 #endif
 
@@ -305,7 +305,7 @@ E_AUTO( strings )
 
 static bso::ulong__ GetMIDIDevices_(
 	strings_ &Names,
-	descriptions_ &Descriptions,
+	nmes_ &Names,
 	snd_rawmidi_stream_t Direction )
 {
 	bso::ulong__ Count = 0;
@@ -398,7 +398,7 @@ ERRBegin
 
 					Names.Append( Name );
 
-					Descriptions.Append( str::string( snd_rawmidi_info_get_subdevice_name( rawMidiInfo ) ) );
+					Names.Append( str::string( snd_rawmidi_info_get_subdevice_name( rawMidiInfo ) ) );
 
 					Count++;
 
@@ -423,12 +423,12 @@ bso::bool__ mscmdd::GetMIDIInDeviceName(
 	bso::bool__ Success = false;
 ERRProlog
 	strings Names;
-	descriptions Descriptions;
+	names Names;
 ERRBegin
 	Names.Init();
-	Descriptions.Init();
+	NAmes.Init();
 	
-	 if ( GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_INPUT ) <= Device )
+	 if ( GetMIDIDevices_( Names, NAmes, SND_RAWMIDI_STREAM_INPUT ) <= Device )
 		 ERRReturn;
 	 
 	 Success = true;
@@ -447,12 +447,12 @@ bso::bool__ mscmdd::GetMIDIOutDeviceName(
 	bso::bool__ Success = false;
 ERRProlog
 	strings Names;
-	descriptions Descriptions;
+	names NAmes;
 ERRBegin
 	Names.Init();
-	Descriptions.Init();
+	NAmes.Init();
 	
-	 if ( GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_OUTPUT ) <= Device )
+	 if ( GetMIDIDevices_( Names, Names, SND_RAWMIDI_STREAM_OUTPUT ) <= Device )
 		 ERRReturn;
 	 
 	 Success = true;
@@ -467,25 +467,25 @@ ERREpilog
 #endif
 
 
-bso::ulong__ mscmdd::GetMidiInDeviceDescriptions( descriptions_ &Descriptions )
+bso::ulong__ mscmdd::GetMidiInDevicesNames( names_ &Names )
 {
 	bso::ulong__ Count = 0;
 #ifdef MSCMDD__WINDOWS
 ERRProlog
 	MIDIINCAPS InCaps;
 	bso::ulong__ Counter = 0;
-	description Description;
+	name Name;
 ERRBegin
 	Count =  midiInGetNumDevs();
 
 	while ( Counter < Count ) {
 		midiInGetDevCaps( Counter++, &InCaps, sizeof( InCaps ) );
 
-		Description.Init();
+		Name.Init();
 
-		Convert_( InCaps.szPname, Description );
+		Convert_( InCaps.szPname, Name );
 
-		Descriptions.Append( Description );
+		Names.Append( Name );
 	}
 ERRErr
 ERREnd
@@ -496,7 +496,7 @@ ERRProlog
 ERRBegin
 	Names.Init();
 	
-	Count = GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_INPUT );
+	Count = GetMIDIDevices_( Names, Names, SND_RAWMIDI_STREAM_INPUT );
 ERRErr
 ERREnd
 ERREpilog
@@ -504,25 +504,25 @@ ERREpilog
 	return Count;
 }
 
-bso::ulong__ mscmdd::GetMidiOutDeviceDescriptions( descriptions_ &Descriptions )
+bso::ulong__ mscmdd::GetMidiOutDevicesNames( names_ &Names )
 {
 	bso::ulong__ Count = 0;
 #ifdef MSCMDD__WINDOWS
 ERRProlog
 	MIDIOUTCAPS OutCaps;
 	bso::ulong__ Counter = 0;
-	description Description;
+	name Name;
 ERRBegin
 	Count =  midiOutGetNumDevs();
 
 	while ( Counter < Count ) {
 		midiOutGetDevCaps( Counter++, &OutCaps, sizeof( OutCaps ) );
 
-		Description.Init();
+		Name.Init();
 
-		Convert_( OutCaps.szPname, Description );
+		Convert_( OutCaps.szPname, Name );
 
-		Descriptions.Append( Description );
+		Names.Append( Name );
 	}
 ERRErr
 ERREnd
@@ -533,7 +533,7 @@ ERRProlog
 ERRBegin
 	Names.Init();
 	
-	Count = GetMIDIDevices_( Names, Descriptions, SND_RAWMIDI_STREAM_OUTPUT );
+	Count = GetMIDIDevices_( Names, NAmes, SND_RAWMIDI_STREAM_OUTPUT );
 ERRErr
 ERREnd
 ERREpilog

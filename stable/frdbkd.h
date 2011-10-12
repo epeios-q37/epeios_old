@@ -97,7 +97,7 @@ namespace frdbkd {
 
 			switch ( ClientCore.GetType() ) {
 			case csducl::tLibrary:
-				Mode = fblfub::mEmbed;
+				Mode = fblfub::mEmbedded;
 				break;
 			case csducl::tDaemon:
 				Mode = fblfub::mRemote;
@@ -125,10 +125,9 @@ namespace frdbkd {
 			str::string_ &ProtocolVersion,
 			str::string_ &BackendLabel,
 			str::string_ &APIVersion,
-			str::string_ &BackendInformations,
-			str::string_ &PublisherInformations )
+			str::string_ &BackendInformations )
 		{
-			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations, PublisherInformations );
+			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
 		}
 	};
 

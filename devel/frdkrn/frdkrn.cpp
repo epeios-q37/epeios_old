@@ -279,7 +279,7 @@ report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	frdfbc::data___ &LibraryData,
+	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -287,9 +287,7 @@ report__ frdkrn::kernel___::_Connect(
 	report__ Report = r_Undefined;
 ERRProlog
 ERRBegin
-	LibraryData.Locale = &_LocaleForLibrary;
-
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibrarySharedData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
@@ -310,7 +308,7 @@ report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	frdfbc::data___ &LibraryData,
+	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -319,7 +317,7 @@ report__ frdkrn::kernel___::_Connect(
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, LibraryData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, LibrarySharedData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -328,7 +326,7 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
-	frdfbc::data___ &LibraryData,
+	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -340,12 +338,6 @@ ERRProlog
 ERRBegin
 	switch ( Type = GetBackendType( _Registry ) ) {
 	case csducl::tLibrary:
-		LibraryData.Registry = &Registry().BaseRegistry;
-		if ( ( LibraryData.Root = Registry().Search( str::string( frdrgy::GetBackendRootPath() ) ) ) == NONE ) {
-			Report = rNoOrBadBackendDefinition;
-			ERRReturn;
-		}
-		// break;	// La suite doit être exécutée.
 	case csducl::tDaemon:
 		Location.Init();
 		if ( !frdrgy::GetBackendLocation( _Registry, Location ) ) {
@@ -353,7 +345,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, CompatibilityInformations, Type, LibraryData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+		Report = _Connect( Location, CompatibilityInformations, Type, LibrarySharedData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -373,7 +365,7 @@ status__ frdkrn::kernel___::LoadProject(
 	const char *TargetName,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations,
-	frdfbc::data___ &LibraryData )
+	csdleo::shared_data__ &LibrarySharedData )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -382,16 +374,12 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibraryData, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibrarySharedData, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
 		Status = sError;
 		ERRReturn;
-	} else if ( LibraryData.Message.Amount() != 0 ) {
-		_Message.Init();
-		_Message.Append( LibraryData.Message );
-		Status = sWarning;
 	} else
 		Status = sOK;
 ERRErr
