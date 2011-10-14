@@ -112,10 +112,9 @@ namespace xulfkl {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations,
-			csdleo::shared_data__ &LibrarySharedData )
+			const frdkrn::compatibility_informations__ &CompatibilityInformations )
 		{
-			return _kernel___::LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibrarySharedData );
+			return _kernel___::LoadProject( FileName, TargetName, Criterions, CompatibilityInformations );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

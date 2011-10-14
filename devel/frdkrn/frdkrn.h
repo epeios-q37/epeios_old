@@ -111,7 +111,7 @@ namespace frdkrn {
 		r_Undefined
 	};
 
-#define FRDKRN__R_AMOUNT	8	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
+#define FRDKRN__R_AMOUNT	9	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
 	const char *GetLabel( report__ Report );
 
@@ -152,7 +152,7 @@ namespace frdkrn {
 
 	inline bso::bool__ IsErrorSetRelevant( report__ Report )
 	{
-#if FRDKRN__R_AMOUNT != 8
+#if FRDKRN__R_AMOUNT != 9
 #	error "'report__' modified !"
 #endif
 		switch ( Report  ) {
@@ -172,6 +172,7 @@ namespace frdkrn {
 		case rNoOrBadBackendDefinition:
 		case rNoBackendLocation:
 		case rUnableToConnect:
+		case rIncompatibleBackend:
 			return false;
 		default:
 			ERRu();
@@ -209,13 +210,13 @@ namespace frdkrn {
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
+		csdleo::shared_data__ _SharedData;
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la création ou du chargement du projet. Si == 0, pas de projet en cours d'utilisation.
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHandlingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
@@ -262,13 +263,11 @@ namespace frdkrn {
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorReportingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
-			csdleo::shared_data__ &LibrarySharedData,
 			incompatibility_informations_ &IncompatibilityInformations,
 			error_handling_functions__ &ErrorHAndlingFunctions = *(error_handling_functions__ *)NULL,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
@@ -278,6 +277,7 @@ namespace frdkrn {
 			if ( P )
 				Close();
 
+			_SharedData.reset( P );
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
@@ -325,13 +325,12 @@ namespace frdkrn {
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
-			csdleo::shared_data__ &LibrarySharedData,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
 			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == rOK )
-				Report = _Connect( CompatibilityInformations, LibrarySharedData, ErrorSet.IncompatibilityInformations );
+				Report = _Connect( CompatibilityInformations, ErrorSet.IncompatibilityInformations );
 
 			if ( Report == rOK )
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -342,8 +341,7 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
-			const compatibility_informations__ &CompatibilityInformations,
-			csdleo::shared_data__ &LibrarySharedData );
+			const compatibility_informations__ &CompatibilityInformations );
 		bso::bool__ IsProjectInProgress( void ) const
 		{
 			return _ProjectOriginalTimeStamp != 0;

@@ -59,7 +59,7 @@ using namespace xulfkl;
 
 #define CASE( message )	\
 	case m##message:\
-		Message = XULFKL_NAME "_" #message;\
+		Message = #message;\
 		break
 
 static const char *GetRawMessage_( xulfkl::message__ MessageId )
@@ -87,7 +87,7 @@ static const str::string_ &GetMessage_(
 	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
-	LocaleRack.GetTranslation( GetRawMessage_( Message ), "XULFKL_", Translation );
+	LocaleRack.GetTranslation( GetRawMessage_( Message ), XULFKL_NAME "_", Translation );
 
 	return Translation;
 }

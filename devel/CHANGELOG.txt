@@ -1,5 +1,11 @@
 $Id$
 
+14/10/2011 :
+	- Général :
+		- Adaptation aux modifications.
+	- FRDKRN :
+		- Prise en charge 'csdleo::shared_data__'.
+
 12/10/2011 :
 	- Général :
 		- Adaptation aux modifications.

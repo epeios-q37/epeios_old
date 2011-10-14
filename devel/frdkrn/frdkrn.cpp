@@ -67,7 +67,7 @@ using namespace frdkrn;
 
 const char *frdkrn::GetLabel( report__ Report )
 {
-#if FRDKRN__R_AMOUNT != 8
+#if FRDKRN__R_AMOUNT != 9
 #	error "'report__' modified !"
 #endif
 
@@ -279,7 +279,6 @@ report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -287,7 +286,19 @@ report__ frdkrn::kernel___::_Connect(
 	report__ Report = r_Undefined;
 ERRProlog
 ERRBegin
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &LibrarySharedData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
+	switch ( Type ) {
+	case csducl::tDaemon:
+		_SharedData.Init( csdleo::mRemote );
+		break;
+	case csducl::tLibrary:
+		_SharedData.Init( csdleo::mEmbedded );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &_SharedData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
 		Report = rUnableToConnect;
 		ERRReturn;
 	}
@@ -308,7 +319,6 @@ report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -317,7 +327,7 @@ report__ frdkrn::kernel___::_Connect(
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, LibrarySharedData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -326,7 +336,6 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
-	csdleo::shared_data__ &LibrarySharedData,
 	incompatibility_informations_ &IncompatibilityInformations,
 	error_handling_functions__ &ErrorHandlingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
@@ -345,7 +354,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, CompatibilityInformations, Type, LibrarySharedData, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+		Report = _Connect( Location, CompatibilityInformations, Type, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -364,8 +373,7 @@ status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
 	const xpp::criterions___ &Criterions,
-	const compatibility_informations__ &CompatibilityInformations,
-	csdleo::shared_data__ &LibrarySharedData )
+	const compatibility_informations__ &CompatibilityInformations )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -374,7 +382,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, LibrarySharedData, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

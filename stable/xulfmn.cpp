@@ -82,7 +82,7 @@ ERREpilog
 
 void xulfmn::open_project_command__::NSXPCMOnEvent( event__ )
 {
-	Target().ApplySession( NULL );
+	Target().ApplySession( xpp::criterions___() );
 }
 
 void xulfmn::close_project_command__::NSXPCMOnEvent( event__ )
