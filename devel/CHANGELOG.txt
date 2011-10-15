@@ -1,5 +1,11 @@
 $Id$
 
+15/10/2011 :
+	- MSCMLD :
+		- L'impossibilté d'ajuster les barres de mesures ne provoque plus une erreur, mais l'abandon de tentative d'ajustement.
+	- STR :
+		- La conversion d'une chaîne en nombre avec une limite inférieure à la base est dorénavant possible.
+
 14/10/2011 :
 	- Général :
 		- Adaptation aux modifications.

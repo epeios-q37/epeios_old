@@ -69,7 +69,9 @@
 		</xsl:call-template>
 	</xsl:template>
 	<xsl:template match="Melody">
+		<xsl:text>\relative c' { </xsl:text>
 		<xsl:apply-templates select="Bar"/>
+		<xsl:text> }</xsl:text>
 	</xsl:template>
 	<xsl:template match="Bar">
 		<xsl:apply-templates select="Signature"/>

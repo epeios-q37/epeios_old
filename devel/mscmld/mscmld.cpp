@@ -601,7 +601,8 @@ static void WriteXML_(
 
 bso::bool__ Adjust_(
 	mthfrc::fraction_ &BarFraction,
-	const mthfrc::fraction_ &NoteFraction )
+	const mthfrc::fraction_ &NoteFraction,
+	bso::bool__ *Error )
 {
 	bso::bool__ BarComplete = false;
 ERRProlog
@@ -610,10 +611,12 @@ ERRBegin
 #ifdef DEBUG
 	cio::cout << BarFraction << txf::tab << NoteFraction << txf::tab << txf::sync;
 #endif
+	if ( *Error )
+		ERRReturn;
 
 	switch ( ( BarFraction - NoteFraction ).GetSign() ) {
 	case -1 :
-		ERRu();
+		*Error = true;
 		break;
 	case 0:
 		BarComplete = true;
@@ -646,6 +649,7 @@ ERRProlog
 	mthfrc::fraction BarFraction, NoteFraction;
 	note__ PreviousNote, Note;
 	bso::bool__ BarClosed = true;
+	bso::bool__ BarHandlingError = false;
 ERRBegin
 	Row = Melody.First();
 
@@ -685,7 +689,7 @@ ERRBegin
 
 		GetFraction_( Note.Duration, NoteFraction );
 
-		if ( BarClosed = Adjust_( BarFraction, NoteFraction ) ) {
+		if ( BarClosed = Adjust_( BarFraction, NoteFraction, &BarHandlingError ) ) {
 			Writer.PopTag();	// For 'Notes' tag.
 			Writer.PopTag();	// For 'Bar' tag.
 		}

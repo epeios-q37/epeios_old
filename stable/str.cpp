@@ -372,11 +372,6 @@ _guint__ str::_GenericUnsignedConversion(
 
 	Base = (int)BaseFlag;
 
-#ifdef STR_DBG
-	if ( Limit < Base )
-		ERRu();
-#endif
-
 	OtherLimit = Limit / Base;
 
 	if ( *P < String.Amount() )
@@ -391,7 +386,7 @@ _guint__ str::_GenericUnsignedConversion(
 
 			Result *= Base;
 
-			if ( ( Limit - C ) < Result )
+			if ( ( Limit - Result ) < C )
 			   break;
 
 			Result += C;
