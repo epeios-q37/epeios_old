@@ -16,9 +16,9 @@ $NOTICE$
 #include "err.h"
 #include "cio.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 void Generic( int argc, char *argv[] )
 {
@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
 {
 ERRFProlog
 ERRFBegin
-	cout << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	COut << "Test of library " << $XXX$Tutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -42,13 +42,13 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cout );
+			TTR.Advertise( COut );
 			break;
 		}
 	default:
-		cout << txf::sync;
-		cerr << "\nBad arguments.\n";
-		cout << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
+		COut << txf::commit;
+		CErr << "\nBad arguments.\n";
+		COut << "Usage: " << $XXX$Tutor.Name << " [/i]\n\n";
 		ERRi();
 	}
 

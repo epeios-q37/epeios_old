@@ -694,7 +694,7 @@ static void GetLanguage_(
 	bso::bool__ &Deconnexion,
 	void * )
 {
-	Requete.StringOut() = Backend.LocaleRack().Language;
+	Requete.StringOut() = Backend.LocaleRack().Language();
 
 	Requete.Complete();
 }

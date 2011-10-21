@@ -1,5 +1,11 @@
 $Id$
 
+21/10/2011 :
+	- FBLBKD :
+		- Adaptation.
+	- LCL :
+		- Réorganisation 'rack__'.
+
 15/10/2011 :
 	- MSCMLD :
 		- L'impossibilté d'ajuster les barres de mesures ne provoque plus une erreur, mais l'abandon de tentative d'ajustement.

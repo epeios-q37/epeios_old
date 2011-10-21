@@ -223,13 +223,14 @@ namespace lcl {
 
 	struct rack__
 	{
+	private:
+		const locale_ *_Locale;
+		const char *_Language;
 	public:
-		const locale_ *Locale;
-		const char *Language;
 		void reset( bso::bool__ = true )
 		{
-			Locale = NULL;
-			Language = NULL;
+			_Locale = NULL;
+			_Language = NULL;
 		}
 		rack__( void )
 		{
@@ -241,8 +242,8 @@ namespace lcl {
 		{
 			reset( false );
 
-			this->Locale = &Locale;
-			this->Language = Language;
+			_Locale = &Locale;
+			_Language = Language;
 		}
 		void Init(
 			const locale_ &Locale,	// N'est pas dupliqué !
@@ -250,22 +251,34 @@ namespace lcl {
 		{
 			reset();
 
-			this->Locale = &Locale;
-			this->Language = Language;
+			_Locale = &Locale;
+			_Language = Language;
+		}
+		const lcl::locale_ &Locale( void ) const
+		{
+			return *_Locale;
+		}
+		const char *Language( void ) const
+		{
+			return _Language;
+		}
+		void SetLanguage( const char *Language )
+		{
+			_Language = Language;
 		}
 		bso::bool__ GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			str::string_ &Translation ) const
 		{
-			return Locale->GetTranslation( Text, Language, Prefix, Translation );
+			return _Locale->GetTranslation( Text, _Language, Prefix, Translation );
 		}
 		const char *GetTranslation(
 			const char *Text,
 			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
 		{
-			return Locale->GetTranslation( Text, Language, Prefix, Buffer );
+			return _Locale->GetTranslation( Text, _Language, Prefix, Buffer );
 		}
 	};
 

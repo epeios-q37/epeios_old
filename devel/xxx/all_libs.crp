@@ -240,6 +240,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Stand ALone Client/Server Manager
 &sbf		&epeios		&2000-		&Simplified Binary tree Filler
 &sbt		&epeios		&2000-		&Simplified Binary Tree
+
+&scllocale	&epeios	&2011	&SoCLe LOCALE
+&sclrgstry	&epeios	&2011	&SoCLe ReGiSTRY
+&sclmisc	&epeios	&2011	&SoCLe MISCellaneous
+&scltool	&epeios	&2011	&SoCLe TOOL
+&sclbacknd	&epeios	&2011	&SoCLe BACKEND
+
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe
 &srv		&epeios		&2000-2001, 	&SeRVer

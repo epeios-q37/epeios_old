@@ -941,7 +941,7 @@ namespace fblbkd {
 		void SetLanguage( const char *Language )
 		{
 			str::string( Language ).Convert( _Language );
-			_LocaleRack.Language = _Language;
+			_LocaleRack.SetLanguage( _Language );
 		}
 	};
 
