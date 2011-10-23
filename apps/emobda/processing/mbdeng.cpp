@@ -46,19 +46,19 @@ ERRBegin
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedContentBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	S_.SpreadedFileManager.Table.Init( *this, LocatedBaseFileName, Mode, S_.FilesgroupID );
+	S_.SpreadedFileManager.Table.Init( ndbctt::tDynamic, LocatedBaseFileName, Mode, S_.FilesgroupID );
 //	Content.Init( LocatedBaseFileName, FileMode ,Partial, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableRecordFieldIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
 //	TableRecordFieldIndex.Init( LocatedBaseFileName, S_.UniversalContent, FileMode, EraseIndexes, Partial, S_.FilesgroupID );
-	TableRecordFieldIndex.Init( _table_::Content(), FileMode );
-	S_.SpreadedFileManager.TableRecordFieldIndex.Init( TableRecordFieldIndex, LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
+	TableRecordFieldIndex.Init( _table_::Content, FileMode );
+	S_.SpreadedFileManager.TableRecordFieldIndex.Init( LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
 
 	LocatedBaseFileName.Init();
 	mbdbsc::BuildLocatedTableFieldDatumIndexBaseFileName( Location, BaseFileName, LocatedBaseFileName );
-	TableFieldDatumIndex.Init( _table_::Content(), FileMode );
-	S_.SpreadedFileManager.TableFieldDatumIndex.Init( TableFieldDatumIndex, LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
+	TableFieldDatumIndex.Init( _table_::Content, FileMode );
+	S_.SpreadedFileManager.TableFieldDatumIndex.Init( LocatedBaseFileName, EraseIndexes, FileMode, S_.FilesgroupID );
 
 	_table_::AddIndex( TableRecordFieldIndex );
 	_table_::AddIndex( TableFieldDatumIndex );

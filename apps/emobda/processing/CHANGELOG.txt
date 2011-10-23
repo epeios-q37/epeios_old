@@ -1,5 +1,9 @@
 $Id$
 
+- 23/10/2011 :
+	- Génaral :
+		- Adaptation.
+
 - 05/12/2009 :
 	- Adaptation aux modifications 'NDB...'.
 

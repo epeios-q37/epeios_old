@@ -487,15 +487,17 @@ bso::bool__ mbdmng::manager_::_ExportStructure( void )
 	bso::bool__ Success = false;
 ERRProlog
 	flf::file_oflow___ Flow;
-	txf::text_oflow__ TFlow( Flow );
+	txf::text_oflow__ TFlow;
 	xml::writer Writer;
 	FNM_BUFFER___ Buffer;
 	const char *Filename = NULL;
 ERRBegin
-	if ( Flow.Init( GetStructureFileName_( BaseDirectoryName, Buffer ), err::hSkip ) == fil::sSuccess ) {
+	if ( Flow.Init( GetStructureFileName_( BaseDirectoryName, Buffer ), err::hUserDefined ) == fil::sSuccess ) {
 		Success = true;
 
-		Writer.Init( TFlow, xml::oIndent );
+		TFlow.Init( Flow );
+
+		Writer.Init( TFlow, xml::oIndent, xml::e_Default );
 
 		mbddsc::Export( Structure, Writer, true );
 	}
@@ -514,7 +516,7 @@ ERRProlog
 	flf::file_iflow___ Flow;
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	if ( Flow.Init( Filename, err::hSkip ) == fil::sSuccess ) {
+	if ( Flow.Init( Filename, err::hUserDefined ) == fil::sSuccess ) {
 		XFlow.Init( Flow );
 
 		Success = mbddsc::Import( XFlow, Description );

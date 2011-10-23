@@ -303,7 +303,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( !_Backend.Init( LocaleRack().Language, CompatibilityInformations, _ClientCore, ErrorHandlingFunctions, IncompatibilityInformations ) ) {
+	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorHandlingFunctions, IncompatibilityInformations ) ) {
 		Report = rIncompatibleBackend;
 		ERRReturn;
 	}

@@ -26,7 +26,7 @@
 
 #include "mbdmng.h"
 
-#include "bkdmng.h"
+#include "fblbkd.h"
 
 #define BKDMNGER_MANAGER_PREFIX	"mbd"
 #define BKDMNGER_MANAGER_NAME	"manager"
@@ -34,7 +34,7 @@
 namespace bkdmnger {
 	extern const char *UserDefinedBackendVersion;	// To define by the user.
 
-	void Inform( bkdmng::backend_ &Backend );
+	void Inform( fblbkd::backend_ &Backend );
 
 	typedef mbdmng::manager_	_manager_;
 
@@ -49,13 +49,13 @@ namespace bkdmnger {
 		: _manager_( S )
 		{}
 		void HANDLE(
-			bkdmng::backend &Backend,
-			bkdmng::untyped_module &Module,
-			bkdmng::index__ Index,
-			bkdmng::command__ Command,
-			bkdmng::request_manager__ &Request,
+			fblbkd::backend &Backend,
+			fblbkd::untyped_module &Module,
+			fblbkd::index__ Index,
+			fblbkd::command__ Command,
+			fblbkd::request__ &Request,
 			void *UP );
-		static void NOTIFY( bkdmng::untyped_module &Module );
+		static void NOTIFY( fblbkd::untyped_module &Module );
 		static const char *PREFIX;
 		static const char *NAME;
 		static void RAW_MESSAGES( lcl::strings_ &Messages );

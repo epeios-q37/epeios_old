@@ -26,20 +26,20 @@
 
 #include "bkdmnger.h"
 
-#include "csdscm.h"
+#include "csdleo.h"
 
 #define BKDCORE_BACKEND_NAME	"emobdabkd"
 #define BKDCORE_BACKEND_VERSION	"0.1.0"
 #define BKDCORE_COPYRIGHT_YEARS	"2009"
 
 namespace bkdcore {
-	typedef bkdmng::backend	_backend;
+	typedef fblbkd::backend	_backend;
 
 	class backend
 	: public _backend
 	{
 	private:
-		BKDMNG_RAM_MODULE( bkdmnger::manager_ ) Manager;
+		FBLBKD_RAM_MODULE( bkdmnger::manager_ ) Manager;
 	public:
 		void Init( const lcl::locales_ &Locales )
 		{

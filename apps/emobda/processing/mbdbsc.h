@@ -79,8 +79,8 @@ namespace mbdbsc {
 
 
 	typedef bso::ushort__ record_id_t__;
-	E_TYPEDEF( record_id_t__, record_id__ );
-#define MBDBSC_UNDEFINED_RECORD_ID	((record_id__)BSO_USHORT_MAX)
+	E_TMIMIC__( record_id_t__, record_id__ );
+# define MBDBSC_UNDEFINED_RECORD_ID	((record_id__)BSO_USHORT_MAX)
 	typedef bch::E_BUNCH_( record_id__ ) record_ids_;
 	E_AUTO( record_ids );
 
@@ -111,11 +111,11 @@ namespace mbdbsc {
 	typedef bso::ubyte__ id_t__;
 
 	typedef id_t__ table_id_t__;
-	E_TYPEDEF( table_id_t__, table_id__ );
+	E_TMIMIC__( table_id_t__, table_id__ );
 #define MBDBSC_UNDEFINED_TABLE_ID	((table_id__)BSO_UBYTE_MAX)
 
 	typedef id_t__ field_id_t__;
-	E_TYPEDEF( field_id_t__, field_id__ );
+	E_TMIMIC__( field_id_t__, field_id__ );
 #define MBDBSC_UNDEFINED_FIELD_ID	((field_id__)BSO_UBYTE_MAX)
 
 #pragma pack(push,1)

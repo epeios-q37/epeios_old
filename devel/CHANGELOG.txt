@@ -1,5 +1,9 @@
 $Id$
 
+23/10/2011 :
+	- FRDKRN :
+		- Adaptation.
+
 21/10/2011 :
 	- FBLBKD :
 		- Adaptation.
