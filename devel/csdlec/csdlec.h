@@ -315,8 +315,8 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 							ERRs();
 						}
 
-						if ( !_UnloadLibrary() )
-							ERRs();
+					if ( !_UnloadLibrary() )
+						ERRs();
 				}
 			}
 

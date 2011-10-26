@@ -274,14 +274,14 @@ void nsxpcm::Transform(
 	const nsEmbedCString &ECString,
 	nsEmbedString &EString )
 {
-	NS_CStringToUTF16(ECString, NS_CSTRING_ENCODING_ASCII, EString );
+	NS_CStringToUTF16(ECString, NS_CSTRING_ENCODING_NATIVE_FILESYSTEM, EString );
 }
 
 void nsxpcm::Transform(
 	const nsEmbedString &EString,
 	nsEmbedCString &ECString )
 {
-	NS_UTF16ToCString( EString, NS_CSTRING_ENCODING_ASCII, ECString );
+	NS_UTF16ToCString( EString, NS_CSTRING_ENCODING_NATIVE_FILESYSTEM, ECString );
 }
 
 void nsxpcm::Transform(

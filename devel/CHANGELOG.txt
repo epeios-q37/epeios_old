@@ -1,5 +1,11 @@
 $Id$
 
+26/10/2011 :
+	- CSDLEC :
+		- Renforcement gestion d'erreurs.
+	- NSXPCM :
+		- Correction (à priori) problème d'encodage.
+
 23/10/2011 :
 	- FRDKRN :
 		- Adaptation.

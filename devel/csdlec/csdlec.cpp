@@ -78,7 +78,7 @@ using namespace csdlec;
 bso::bool__ csdlec::library_embedded_client_core__::_LoadLibrary( const char *LibraryName )
 {
 	if ( _LibraryHandler != NULL )
-		ERRu();
+		ERRc();
 
 #ifdef CSDDLC__MS
 	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
@@ -96,7 +96,10 @@ bso::bool__ csdlec::library_embedded_client_core__::_LoadLibrary( const char *Li
 bso::bool__ csdlec::library_embedded_client_core__::_UnloadLibrary( void  )
 {
 	if ( _LibraryHandler == NULL )
-		ERRu();
+		ERRc();
+
+	if ( _Steering != NULL )
+		ERRc();
 
 #ifdef CSDDLC__MS
 	if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
@@ -109,6 +112,8 @@ bso::bool__ csdlec::library_embedded_client_core__::_UnloadLibrary( void  )
 #else
 #	error
 #endif
+	_LibraryHandler = NULL;
+
 	return true;
 }
 
@@ -146,6 +151,9 @@ bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::s
 	if ( RetrieveSteering == NULL )
 		return false;
 
+	if ( _Steering != NULL )
+		ERRc();
+
 	if ( ( _Steering = RetrieveSteering( Data ) ) == NULL )
 		return false;
 
@@ -161,7 +169,12 @@ bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( void )
 	if ( ReleaseSteering == NULL )
 		return false;
 
+	if ( _Steering == NULL )
+		ERRc();
+
 	ReleaseSteering( _Steering );
+
+	_Steering = NULL;
 
 	return true;
 }
