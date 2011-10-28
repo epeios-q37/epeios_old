@@ -1,5 +1,18 @@
 $Id$
 
+28/10/2011 :
+	- FRDxxx :
+		- Adaptation.
+	- XUKxxx :
+		- Adaptation.
+	- RGSTRY :
+		- 'multi_level_registry_' accepte maintenant des 'registry's extérieures.
+		- Renommage de certaines fonctions.
+
+27/10/2011 :
+	- CSDLEC :
+		- Mise en oeuvre 'DLBRRY'.
+
 26/10/2011 :
 	- CSDLEC :
 		- Renforcement gestion d'erreurs.

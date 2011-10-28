@@ -71,83 +71,11 @@ extern class ttr_tutor &XULFTKTutor;
 namespace xulftk {
 	using xulfkl::status__;
 
-	E_ROW( trow__ );	// 'trunk row', see below.
-
-	class _repository_functions__
-	{
-	protected:
-		virtual void XULFKLExpose( trow__ Row ) = 0;
-		virtual void XULFKLRevoke( trow__ Row ) = 0;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		_repository_functions__( void )
-		{
-			reset( false );
-		}
-		~_repository_functions__( void )
-		{
-			reset();
-		}
-		void Init( void )
-		{
-			// Standardisation.
-		}
-		void Expose( trow__ Row )
-		{
-			XULFKLExpose( Row );
-		}
-		void Revoke( trow__ Row )
-		{
-			XULFKLRevoke( Row );
-		}
-	};
-
-	template <typename repository> class repository_functions__
-	: public _repository_functions__
-	{
-	private:
-		repository *_Repository;
-	protected:
-		virtual void XULFKLExpose( trow__ Row )
-		{
-			_Repository->SetCurrentRow( Row );
-		}
-		virtual void XULFKLRevoke( trow__ Row )
-		{
-			if ( _Repository->GetCurrentRow() != Row )
-				ERRc();
-
-			_Repository->DismissCurrentObject();
-		}
-	public:
-		void reset( bso::bool__ = true )
-		{
-			_Repository = NULL;
-		}
-		repository_functions__( void )
-		{
-			reset( false );
-		}
-		~repository_functions__( void )
-		{
-			reset();
-		}
-		void Init( repository &Repository )
-		{
-			_Repository = &Repository;
-		}
-	};
-
 	class trunk___
 	{
 	private:
-		trow__ _TRow;
 		xulfui::ui___ *_UI;
 		xulfkl::kernel___ *_Kernel;
-		_repository_functions__ *_RepositoryFunctions;
 		const char *_TargetName;
 	protected:
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
@@ -180,8 +108,6 @@ namespace xulftk {
 		{
 			_UI = NULL;
 			_Kernel =  NULL;
-			_TRow = NONE;
-			_RepositoryFunctions = NULL;
 //			_TrunkFunctions.reset();
 		}
 		trunk___( void )
@@ -193,17 +119,13 @@ namespace xulftk {
 			reset();
 		}
 		status__ Init(
-			trow__ TRow,
 			const char *TargetName,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
-			xulfkl::kernel___ &Kernel,
-			_repository_functions__ &RepositoryFunctions )
+			xulfkl::kernel___ &Kernel )
 		{
-			_TRow = TRow;
 			_UI = &UI;
 			_Kernel = &Kernel;
 			_TargetName = TargetName;
-			_RepositoryFunctions = &RepositoryFunctions;
 
 			return frdkrn::sOK;
 		}
@@ -280,22 +202,6 @@ namespace xulftk {
 		{
 			UI().Main().Widgets.Commands.CloseProject.Enable( Kernel().IsProjectInProgress() );
 //			UI().Debug.UpdateUI();	// Comme il s'agit d'une boîte de dialogue, n'est mis à jour qu'à son ouverture.
-		}
-		void Expose( void )
-		{
-#ifdef XULFKL_DBG
-			if ( _RepositoryFunctions == NULL )
-				ERRu();
-#endif
-			_RepositoryFunctions->Expose( _TRow );
-		}
-		void Revoke( void )
-		{
-#ifdef XULFKL_DBG
-			if ( _RepositoryFunctions == NULL )
-				ERRu();
-#endif
-			_RepositoryFunctions->Revoke( _TRow );
 		}
 		void BrowseInformations( void )
 		{

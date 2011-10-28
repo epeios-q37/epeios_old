@@ -99,9 +99,6 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum report__ {
 		rOK,
-		rConfigurationParsingError,	// Error during configuration file parsing. See 'ErrorSet' for more details.
-		rLocaleParsingError,		// Error during locales file handling. See 'ErrorSet' for more details.
-		rNoLocaleFileDefined,		// No locales file is defined. 
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
@@ -111,7 +108,7 @@ namespace frdkrn {
 		r_Undefined
 	};
 
-#define FRDKRN__R_AMOUNT	9	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
+#define FRDKRN__R_AMOUNT	6	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
 	const char *GetLabel( report__ Report );
 
@@ -152,18 +149,11 @@ namespace frdkrn {
 
 	inline bso::bool__ IsErrorSetRelevant( report__ Report )
 	{
-#if FRDKRN__R_AMOUNT != 9
+#if FRDKRN__R_AMOUNT != 6
 #	error "'report__' modified !"
 #endif
 		switch ( Report  ) {
 		case rOK:
-			return false;
-			break;
-		case rConfigurationParsingError:
-		case rLocaleParsingError:
-			return true;
-			break;
-		case rNoLocaleFileDefined:
 			return false;
 			break;
 		case rProjectParsingError:
@@ -205,7 +195,6 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		lcl::locale _Locale;
 		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
@@ -229,31 +218,6 @@ namespace frdkrn {
 			_ClientCore.reset();
 		}
 	protected:
-		report__ _LoadConfiguration(
-			const str::string_ &ConfigurationFileName,
-			const char *TargetName,
-			const xpp::criterions___ &Criterions,
-			error_set___ &ErrorSet );
-		report__ _LoadLocale(
-			const str::string_ &FileName,
-			const char *TargetName,
-			error_set___ &ErrorSet );
-		report__ _LoadLocale(
-			const char *TargetName,
-			error_set___ &ErrorSet );
-		report__ _LoadConfigurationAndLocale(
-			const str::string_ &ConfigurationFileName,
-			const char *TargetName,
-			const xpp::criterions___ &Criterions,
-			error_set___ &ErrorSet )
-		{
-			report__ Report = r_Undefined;
-
-			if ( ( Report = _LoadConfiguration( ConfigurationFileName, TargetName, Criterions, ErrorSet ) ) == rOK )
-				Report = _LoadLocale( TargetName, ErrorSet );
-
-			return Report;
-		}
 		report__ _FillProjectRegistry(
 			const str::string_ &FileName,
 			const char *TargetName,
@@ -281,7 +245,6 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
-			_Locale.reset( P );
 			_LocaleRack.reset( P );
 			_Message.reset( P );
 			_ProjectOriginalTimeStamp = 0;
@@ -294,28 +257,21 @@ namespace frdkrn {
 		{
 			reset();
 		}
-		report__ Init(
-			const str::string_ &ConfigurationFileName,
-			const char *TargetName,
-			const char *Language,
-			const xpp::criterions___ &Criterions,
-			error_set___ &ErrorSet )
-		{
-			_Registry.Init();
-			_Message.Init();
-			_Locale.Init();
-			_LocaleRack.Init( _Locale, Language );	// Initialisé dés mantenant bien que '_Locale' vide, pour pouvoir être utilisé par fonction appelante.
-			_ProjectOriginalTimeStamp = 0;
-
-			return _LoadConfigurationAndLocale( ConfigurationFileName, TargetName, Criterions, ErrorSet );
-
-			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
-		}
 		status__ Init(
-			const str::string_ &ConfigurationFileName,
+			rgstry::row__ ConfigurationRegistryRoot,
+			const rgstry::registry_ &ConfigurationRegistry,
 			const char *TargetName,
-			const char *Language,
-			const xpp::criterions___ &Criterions );
+			const lcl::locale_ &Locale,
+			const char *Language )
+		{
+			_Registry.Init( ConfigurationRegistryRoot, ConfigurationRegistry);
+			_Message.Init();
+			_LocaleRack.Init( Locale, Language );
+			_ProjectOriginalTimeStamp = 0;
+			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
+
+			return sOK;
+		}
 		const frdrgy::registry_ &Registry( void ) const
 		{
 			return _Registry;
@@ -365,7 +321,7 @@ namespace frdkrn {
 				_CloseConnection();
 			}
 
-			_Registry.Init();
+			_Registry.reset();
 		}
 		bso::bool__ IsConnected( void ) const
 		{

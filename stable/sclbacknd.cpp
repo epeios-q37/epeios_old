@@ -69,30 +69,7 @@ public:
 
 using namespace sclbacknd;
 
-/* Although in theory this class is inaccessible to the different modules,
-it is necessary to personalize it, or certain compiler would not work properly */
-
 static bso::bool__ IsInitialized_ = false;
-
-#if 0
-// For the 'getbkdapi' software.
-static csdsuf::user_functions__ *APIDiscovering_( void )
-{
-	static junction::backend_functions__ Functions;
-ERRProlog
-	lcl::locale Dummy;
-ERRBegin
-	Dummy.Init();
-
-	Functions.Init( fblbur::mRemote,  Dummy );
-ERRErr
-	ERRRst();	// Error catched to avoid that it goes further.
-				// Error reported by the fact that the returned value is 'NULL'.
-ERREnd
-ERREpilog
-	return &Functions;
-}
-#endif
 
 csdleo::user_functions__ *csdles::CSDLESRetrieveSteering( csdleo::shared_data__ *Data )
 {
@@ -140,6 +117,9 @@ void csdles::CSDLESReleaseSteering( csdleo::user_functions__ *Steering )
 	ReleaseSteering( Steering );
 }
 
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
 
 class sclbackndpersonnalization
 : public sclbackndtutor

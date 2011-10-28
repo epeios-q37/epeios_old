@@ -138,14 +138,17 @@ namespace frdrgy {
 
 			return *this;
 		}
-		void Init( void )
+		void Init(
+			rgstry::row__ ConfigurationRegistryRoot,
+			const rgstry::registry_ &ConfigurationRegistry )
 		{
 			_registry_::Init();
 
-			S_.Configuration = _registry_::AddNewLevel( rgstry::name( "Configuration" ) );
-			S_.Project = _registry_::AddNewLevel( rgstry::name( "Project" ) );
-			S_.User = _registry_::AddNewLevel( rgstry::name( "User" ) );
+			S_.Configuration = _registry_::AddImportedLevel( ConfigurationRegistryRoot, ConfigurationRegistry );
+			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
+			S_.User = _registry_::AddEmbeddedLevel( rgstry::name( "User" ) );
 		}
+#if 0
 		rgstry::row__ GetConfigurationRoot( void ) const
 		{
 			return _registry_::GetRoot( S_.Configuration );
@@ -158,6 +161,7 @@ namespace frdrgy {
 		{
 			return _registry_::GetRoot( S_.User );
 		}
+#endif
 		void DumpConfiguration( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Configuration, TFlow );

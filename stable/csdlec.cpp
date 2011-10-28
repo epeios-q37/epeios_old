@@ -57,96 +57,11 @@ public:
 
 using namespace csdlec;
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
-#	define CSDDLC__POSIX
-#elif defined( CPE__T_MS )
-#	define CSDDLC__MS
-#else
-#	error "Unknown target !"
-#endif
-
-#ifdef CSDDLC__MS
-#	include <windows.h>
-#elif defined ( CSDDLC__POSIX )
-#	include <dlfcn.h>
-#else
-#	error
-#endif
-
-using namespace csdlec;
-
-bso::bool__ csdlec::library_embedded_client_core__::_LoadLibrary( const char *LibraryName )
-{
-	if ( _LibraryHandler != NULL )
-		ERRc();
-
-#ifdef CSDDLC__MS
-	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
-		return false;
-#elif defined( CSDDLC__POSIX )
-	if ( ( _LibraryHandler = dlopen( LibraryName, RTLD_LAZY ) ) == NULL ) {
-		const char *Error = dlerror();	// Facilite le débogage.
-		return false;
-	}
-#else
-#	error
-#endif
-	return true;
-}
-bso::bool__ csdlec::library_embedded_client_core__::_UnloadLibrary( void  )
-{
-	if ( _LibraryHandler == NULL )
-		ERRc();
-
-	if ( _Steering != NULL )
-		ERRc();
-
-#ifdef CSDDLC__MS
-	if ( !FreeLibrary( (HMODULE)_LibraryHandler ) )
-		return false;
-#elif defined( CSDDLC__POSIX )
-	if ( dlclose( _LibraryHandler ) == -1 ) {
-		const char *Error = dlerror();	// Facilite le débogage.
-		return false;
-	}
-#else
-#	error
-#endif
-	_LibraryHandler = NULL;
-
-	return true;
-}
-
-
-template <typename function> function GetFunction_(
-	const char *FunctionName,
-	void *LibraryHandler )
-{
-	function Function;
-
-	if ( LibraryHandler == NULL )
-		ERRu();
-
-#ifdef CSDDLC__MS
-	if ( ( Function = (function)GetProcAddress( (HMODULE)LibraryHandler, FunctionName ) ) == NULL )
-		ERRs();
-#elif defined( CSDDLC__POSIX )
-	Function = (function)dlsym( LibraryHandler, FunctionName );
-
-	if ( Function == NULL )
-		const char *Error = dlerror();	// Facilite le débogage.
-#else
-#	error
-#endif
-
-	return Function;
-}
-
 extern "C" typedef csdleo::retrieve_steering retrieve_steering;
 
 bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::shared_data__ *Data )
 {
-	retrieve_steering *RetrieveSteering = GetFunction_<retrieve_steering *>( E_STRING( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME ), _LibraryHandler );
+	retrieve_steering *RetrieveSteering = dlbrry::GetFunction<retrieve_steering *>( E_STRING( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME ), _Library );
 
 	if ( RetrieveSteering == NULL )
 		return false;
@@ -164,7 +79,7 @@ extern "C" typedef csdleo::release_steering release_steering;
 
 bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( void )
 {
-	release_steering *ReleaseSteering = GetFunction_<release_steering *>( E_STRING( CSDLEO_RELEASE_STEERING_FUNCTION_NAME ), _LibraryHandler );
+	release_steering *ReleaseSteering = dlbrry::GetFunction<release_steering *>( E_STRING( CSDLEO_RELEASE_STEERING_FUNCTION_NAME ), _Library );
 
 	if ( ReleaseSteering == NULL )
 		return false;

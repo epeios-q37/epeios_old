@@ -64,6 +64,8 @@ extern class ttr_tutor &CSDLECTutor;
 #include "flw.h"
 #include "bch.h"
 
+#include "dlbrry.h"
+
 #include "csdleo.h"
 
 # define CSDLEC_CACHE_SIZE	1000
@@ -298,30 +300,25 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	class library_embedded_client_core__
 	{
 	private:
+		dlbrry::dynamic_library__ _Library;
 		csdleo::user_functions__ *_Steering;
-		void *_LibraryHandler;
-		bso::bool__ _LoadLibrary( const char *LibraryName );
-		bso::bool__ _UnloadLibrary( void  );
 		bso::bool__ _RetrieveSteering( csdleo::shared_data__ *Data );
 		bso::bool__ _ReleaseSteering( void );
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( _LibraryHandler != NULL ) {
+				if ( _Library.IsInitialized() ) {
 					if ( _Steering != NULL )
 						if ( !_ReleaseSteering() ) {
-							_UnloadLibrary();
+							_Library.reset();
 							ERRs();
 						}
-
-					if ( !_UnloadLibrary() )
-						ERRs();
 				}
 			}
 
 			_Steering = NULL;
-			_LibraryHandler = NULL;
+			_Library.reset( P );
 		}
 		library_embedded_client_core__( void )
 		{
@@ -338,7 +335,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			reset();
 
-			if ( _LoadLibrary( LibraryName ) )
+			if ( _Library.Init( LibraryName, ERRHandling ) )
 				if ( _RetrieveSteering( SharedData ) )
 					return true;
 

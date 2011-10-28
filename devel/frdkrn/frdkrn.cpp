@@ -67,15 +67,12 @@ using namespace frdkrn;
 
 const char *frdkrn::GetLabel( report__ Report )
 {
-#if FRDKRN__R_AMOUNT != 9
+#if FRDKRN__R_AMOUNT != 6
 #	error "'report__' modified !"
 #endif
 
 	switch( Report ) {
 		// CASE( OK );	// Cette fonction n'a pas à être appelée dans ce cas.
-		CASE( ConfigurationParsingError );
-		CASE( LocaleParsingError );
-		CASE( NoLocaleFileDefined );
 		CASE( ProjectParsingError );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
@@ -153,126 +150,6 @@ static str::string_ &AppendTargetAttributePathItem_(
 	Target.Append( "\"]" );
 
 	return Target;
-}
-
-report__ frdkrn::kernel___::_LoadConfiguration(
-	const str::string_ &FileName,
-	const char *TargetName,
-	const xpp::criterions___ &Criterions,
-	error_set___ &ErrorSet )
-{
-	report__ Report = r_Undefined;
-ERRProlog
-	str::string Path;
-	STR_BUFFER___ PathBuffer, FileNameBuffer;
-ERRBegin
-	Path.Init( "Configurations/Configuration" );
-	AppendTargetAttributePathItem_( TargetName, Path );
-
-#if 1
-	if ( _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
-		Report = rConfigurationParsingError;
-		ERRReturn;
-	}
-#else	// Ancien.
-	if ( ( ErrorSet.Status = _Registry.FillConfiguration( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), CypherKey, ErrorSet.Details ) ) != rgstry::sOK ) {
-		Report = rConfigurationParsingError;
-		ERRReturn;
-	}
-#endif
-
-	Report = rOK;
-ERRErr
-ERREnd
-ERREpilog
-	return Report;
-}
-
-report__ frdkrn::kernel___::_LoadLocale(
-	const str::string_ &FileName,
-	const char *TargetName,
-	error_set___ &ErrorSet )
-{
-	report__ Report = r_Undefined;
-ERRProlog
-	str::string Path;
-	STR_BUFFER___ PathBuffer, FileNameBuffer;
-ERRBegin
-	Path.Init( "Locales/Locale" );
-	AppendTargetAttributePathItem_( TargetName, Path );
-
-	if ( _Locale.Init( FileName.Convert( FileNameBuffer ), Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
-		Report = rLocaleParsingError;
-		ERRReturn;
-	}
-
-	Report = rOK;
-ERRErr
-ERREnd
-ERREpilog
-	return Report;
-}
-
-report__ frdkrn::kernel___::_LoadLocale(
-	const char *TargetName,
-	error_set___ &ErrorSet )
-{
-	report__ Report = r_Undefined;
-ERRProlog
-	str::string FileName;
-ERRBegin
-	FileName.Init();
-
-	if ( !frdrgy::GetLocalesFileName( _Registry, FileName ) )
-		Report = rNoLocaleFileDefined;
-	else
-		Report = _LoadLocale( FileName, TargetName, ErrorSet );
-ERRErr
-ERREnd
-ERREpilog
-	return Report;
-}
-
-status__ frdkrn::kernel___::Init(
-	const str::string_ &ConfigurationFileName,
-	const char *TargetName,
-	const char *Language,
-	const xpp::criterions___ &Criterions )
-{
-	status__ Status = s_Undefined;
-ERRProlog
-	report__ Report = r_Undefined;
-	frdkrn::error_set___ ErrorSet;
-ERRBegin
-	ErrorSet.Init();
-
-	switch( Report = Init( ConfigurationFileName, TargetName, Language, Criterions, ErrorSet ) ) {
-	case rOK:
-		Status = sOK;
-		break;
-	case rConfigurationParsingError:
-		Status = sError;
-		break;
-	case rNoLocaleFileDefined:
-		Status = sWarning;
-		break;
-	case rLocaleParsingError:
-		Status = sError;
-		break;
-	default:
-		ERRc();
-		break;
-	}
-
-	if ( Report != sOK ) {
-		_Message.Init();
-		frdkrn::GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
-		_Message.Append( " !" );
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
 }
 
 report__ frdkrn::kernel___::_Connect(

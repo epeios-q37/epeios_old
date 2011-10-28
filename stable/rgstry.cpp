@@ -594,7 +594,7 @@ protected:
 	{
 		if ( _Current == NONE )
 			if ( _Root == NONE )
-				_Root = _Current = _Registry.CreateNewRegistry( str::string( "_root" ) );
+				_Root = _Current = _Registry.CreateRegistry( str::string( "_root" ) );
 			else
 				ERRc();
 
@@ -966,7 +966,7 @@ ERREnd
 ERREpilog
 	return Root;
 }
-
+#if 1
 const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
@@ -1069,7 +1069,7 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
+#endif
 const value_ &rgstry::multi_level_registry_::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
@@ -1090,7 +1090,7 @@ ERRBegin
 	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		ERRReturn;
 
-	Level = Roots.Last();
+	Level = Entries.Last();
 
 	while ( Level != NONE ) {
 		*Missing = false;
@@ -1098,7 +1098,7 @@ ERRBegin
 		Result = &GetValue( Level, Path, Missing, Buffer );
 
 		if ( *Missing  )
-			Level = Roots.Previous( Level );
+			Level = Entries.Previous( Level );
 		else
 			Level = NONE;
 	}
@@ -1123,12 +1123,12 @@ ERRBegin
 	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		ERRReturn;
 
-	Level = Roots.Last();
+	Level = Entries.Last();
 
 	while ( ( Level != NONE ) && ( !Found ) ) {
 		Found = GetValue( Level, Path, Value );
 
-		Level = Roots.Previous( Level );
+		Level = Entries.Previous( Level );
 	}
 ERRErr
 ERREnd
@@ -1152,12 +1152,12 @@ ERRBegin
 	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		ERRReturn;
 
-	Level = Roots.Last();
+	Level = Entries.Last();
 
 	while ( Level != NONE ) {
 		Found |= GetValues( Level, Path, Values );
 
-		Level = Roots.Previous( Level );
+		Level = Entries.Previous( Level );
 	}
 ERRErr
 ERREnd
@@ -1179,12 +1179,12 @@ ERRBegin
 	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
 		ERRReturn;
 
-	Level = Roots.Last();
+	Level = Entries.Last();
 
 	while ( ( Level != NONE ) && ( Row == NONE ) ) {
 		Row = Search( Level, Path );
 
-		Level = Roots.Previous( Level );
+		Level = Entries.Previous( Level );
 	}
 ERRErr
 ERREnd
@@ -1202,7 +1202,7 @@ status__ rgstry::FillRegistry(
 	context___ &Context )
 {
 	if ( RegistryRoot == NONE )
-		RegistryRoot = Registry.CreateNewRegistry( str::string( "_registry" ) );
+		RegistryRoot = Registry.CreateRegistry( str::string( "_registry" ) );
 
 	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
 		if ( Context.xpp::context___::Status == xpp::sOK )

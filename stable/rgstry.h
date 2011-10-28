@@ -747,7 +747,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			row__ Row,
 			epeios::row__ *PathErrorRow = NULL );
-		row__ CreateNewRegistry( const name_ &Name )
+		row__ CreateRegistry( const name_ &Name )
 		{
 			return _CreateKey( Name );
 		}
@@ -963,7 +963,7 @@ namespace rgstry {
 		return Status;
 	}
 
-
+# if 1	// Déprécié, destiné à disparaître. Utiliser 'multi_level_registry_'.
 	class overloaded_registry___
 	{
 	public:
@@ -1005,7 +1005,7 @@ namespace rgstry {
 			this->Local.Registry = &Local;
 
 			if ( ( &Local != NULL ) && ( LocalRoot == NONE ) )
-				LocalRoot = Local.CreateNewRegistry( this->Global.Registry->GetName( Root, Buffer ) );
+				LocalRoot = Local.CreateRegistry( this->Global.Registry->GetName( Root, Buffer ) );
 
 			return this->Local.Root = LocalRoot;
 
@@ -1031,7 +1031,7 @@ namespace rgstry {
 			if ( Root == NONE ) {
 				buffer Buffer;
 
-				Root = Registry.CreateNewRegistry( this->Global.Registry->GetName( Global.Root, Buffer ) );
+				Root = Registry.CreateRegistry( this->Global.Registry->GetName( Global.Root, Buffer ) );
 			}
 
 			return Local.Root = Root;
@@ -1116,7 +1116,7 @@ namespace rgstry {
 			reset();
 
 			if ( Root == NONE )
-				Root = Global.CreateNewRegistry( name() );
+				Root = Global.CreateRegistry( name() );
 
 			_LocalRoot = overloaded_registry___::Init( Global, Root, *(registry_ *)NULL, NONE );
 
@@ -1148,11 +1148,24 @@ namespace rgstry {
 			return Root;
 		}
 	};
-
+# endif
 	E_ROW( level__ );
 #	define RGSTRY_UNDEFINED_LEVEL	NONE
 
-	typedef bch::E_BUNCHt_( row__, level__ ) _roots_;
+	struct entry__ {
+		row__ Root;
+		const registry_ *Registry;
+		entry__(
+			row__ Root = NONE,
+			const registry_ &Registry = *(const registry_ *)NULL )
+		{
+			this->Root = Root;
+			this->Registry = &Registry;
+		}
+	};
+
+
+	typedef bch::E_BUNCHt_( entry__, level__ ) _entries_;
 	typedef bch::E_BUNCHt_( time_t, level__ ) _timestamps_;
 
 	// Registre multi-niveau
@@ -1163,68 +1176,115 @@ namespace rgstry {
 		{
 			TimeStamps.Set( time( NULL ), Level );
 		}
-	public:
-		struct s {
-			registry_::s BaseRegistry;
-			_roots_::s Roots;
-			_timestamps_::s TimeStamps;
-		};
-		registry_ BaseRegistry;
-		_roots_ Roots;
-		_timestamps_ TimeStamps;
-		multi_level_registry_( s &S )
-		: BaseRegistry( S.BaseRegistry ),
-		  Roots( S.Roots ),
-		  TimeStamps( S.TimeStamps )
-		{}
-		void reset( bso::bool__ P = true )
-		{
-			BaseRegistry.reset( P );
-			Roots.reset( P );
-			TimeStamps.reset( P );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			BaseRegistry.plug( MM );
-			Roots.plug( MM );
-			TimeStamps.plug( MM );
-		}
-		multi_level_registry_ &operator =( const multi_level_registry_ &MLR )
-		{
-			BaseRegistry = MLR.BaseRegistry;
-			Roots = MLR.Roots;
-			TimeStamps = MLR.TimeStamps;
-
-			return *this;
-		}
-		void Init( void )
-		{
-			BaseRegistry.Init();
-			Roots.Init();
-			TimeStamps.Init();
-		}
-		row__ GetRoot( level__ Level ) const
-		{
-			return Roots( Level );
-		}
-		level__ CreateNewLevel( void )
+		level__ _RawCreateLevel( void )
 		{
 			level__ Level = TimeStamps.New();
 
-			if ( Roots.Append( NONE ) != Level )
+			if ( Entries.Append( entry__() ) != Level )
 				ERRc();
 
 			_Touch( Level );
 
 			return Level;
 		}
-		level__ AddNewLevel( const name_ &Name = name() )
+		level__ _RawAddLevel( const entry__ &Entry )
 		{
 			level__ Level = RGSTRY_UNDEFINED_LEVEL;
 
-			Roots.Set( BaseRegistry.CreateNewRegistry( Name ), Level = CreateNewLevel() );
+			Entries.Set( Entry, Level = _RawCreateLevel() );
 
 			return Level;
+		}
+		const entry__ _GetEntry( level__ Level ) const
+		{
+			return Entries( Level );
+		}
+		const registry_ &_GetRegistry( level__ Level ) const
+		{
+			entry__ Entry = GetEntry( Level );
+
+			if ( Entry.Registry == NULL )
+				return EmbeddedRegistry;
+			else
+				return *Entry.Registry;
+		}
+		registry_ &_GetRegistry( level__ Level )
+		{
+			entry__ Entry = GetEntry( Level );
+
+			if ( Entry.Registry != NULL )
+				ERRc();
+
+			return EmbeddedRegistry;
+		}
+		row__ _GetRoot( level__ Level ) const
+		{
+			return _GetEntry( Level ).Root;
+		}
+	public:
+		struct s {
+			registry_::s EmbeddedRegistry;
+			_entries_::s Entries;
+			_timestamps_::s TimeStamps;
+		};
+		registry_ EmbeddedRegistry;
+		_entries_ Entries;
+		_timestamps_ TimeStamps;
+		multi_level_registry_( s &S )
+		: EmbeddedRegistry( S.EmbeddedRegistry ),
+		  Entries( S.Entries ),
+		  TimeStamps( S.TimeStamps )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			EmbeddedRegistry.reset( P );
+			Entries.reset( P );
+			TimeStamps.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			EmbeddedRegistry.plug( MM );
+			Entries.plug( MM );
+			TimeStamps.plug( MM );
+		}
+		multi_level_registry_ &operator =( const multi_level_registry_ &MLR )
+		{
+			EmbeddedRegistry = MLR.EmbeddedRegistry;
+			Entries = MLR.Entries;
+			TimeStamps = MLR.TimeStamps;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			EmbeddedRegistry.Init();
+			Entries.Init();
+			TimeStamps.Init();
+		}
+		entry__ GetEntry( level__ Level ) const
+		{
+			return Entries( Level );
+		}
+/*		level__ CreateImportedLevel(
+			row__ Row,
+			const registry_ &Registry )
+		{
+			return _RawCreateLevel( entry__( Row, Registry ) );
+		}
+		level__ CreatedEmbeddedLevel( void )
+		{
+			return _RawCreateLevel( entry__() );
+		}
+*/
+		level__ AddImportedLevel(
+			row__ Root,
+			const registry_ &Registry )
+		{
+			return _RawAddLevel( entry__( Root, Registry ) );
+		}
+		level__ AddEmbeddedLevel( const name_ &Name = name() )
+		{
+			return _RawAddLevel( entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
 		}
 		const value_ &GetValue(
 			level__ Level,
@@ -1232,7 +1292,7 @@ namespace rgstry {
 			bso::bool__ *Missing,
 			buffer &Buffer ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		{
-			return BaseRegistry.GetValue( Path, Roots( Level ), Missing, Buffer );
+			return _GetRegistry( Level ).GetValue( Path, _GetRoot( Level ), Missing, Buffer );
 		}
 		const value_ &GetValue(
 			level__ Level,
@@ -1241,7 +1301,7 @@ namespace rgstry {
 			buffer &Buffer,
 			epeios::row__ *PathErrorRow = NULL  ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		{
-			return BaseRegistry.GetValue( PathString, Roots( Level ), Missing, Buffer, PathErrorRow );
+			return _GetRegistry( Level ).GetValue( PathString, _GetRoot( Level ), Missing, Buffer, PathErrorRow );
 		}
 		const value_ &GetValue(
 			const str::string_ &PathString,
@@ -1253,7 +1313,7 @@ namespace rgstry {
 			const path_ &Path,
 			value_ &Value ) const
 		{
-			return BaseRegistry.GetValue( Path, Roots( Level ), Value );
+			return _GetRegistry( Level ).GetValue( Path, _GetRoot( Level ), Value );
 		}
 		bso::bool__ GetValue(
 			level__ Level,
@@ -1284,7 +1344,7 @@ namespace rgstry {
 			const path_ &Path,
 			values_ &Values ) const
 		{
-			return BaseRegistry.GetValues( Path, Roots( Level ), Values );
+			return _GetRegistry( Level ).GetValues( Path, _GetRoot( Level ), Values );
 		}
 		bso::bool__ GetValues(
 			level__ Level,
@@ -1292,7 +1352,7 @@ namespace rgstry {
 			values_ &Values,
 			epeios::row__ *PathErrorRow = NULL ) const
 		{
-			return BaseRegistry.GetValues( PathString, Roots( Level ), Values, PathErrorRow );
+			return _GetRegistry( Level ).GetValues( PathString, _GetRoot( Level ), Values, PathErrorRow );
 		}
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
@@ -1311,7 +1371,7 @@ namespace rgstry {
 			const value_ &Value,
 			epeios::row__ *PathErrorRow = NULL )
 		{
-			BaseRegistry.SetValue( PathString, Value, Roots( Level ), PathErrorRow );
+			_GetRegistry( Level ).SetValue( PathString, Value, _GetRoot( Level ), PathErrorRow );
 
 			_Touch( Level );
 		}
@@ -1320,20 +1380,20 @@ namespace rgstry {
 			const value_ &Value,
 			epeios::row__ *PathErrorRow = NULL )
 		{
-			SetValue( Roots.Last(), PathString, Value, PathErrorRow );
+			SetValue( Entries.Last(), PathString, Value, PathErrorRow );
 		}
 		row__ Search(
 			level__ Level,
 			const path_ &Path ) const
 		{
-			return BaseRegistry.Search( Path, Roots( Level ) );
+			return _GetRegistry( Level ).Search( Path, _GetRoot( Level ) );
 		}
 		row__ Search(
 			level__ Level,
 			const str::string_ &PathString,
 			epeios::row__ *PathErrorRow = NULL ) const
 		{
-			return BaseRegistry.Search( PathString, Roots( Level ), PathErrorRow );
+			return _GetRegistry( Level ).Search( PathString, _GetRoot( Level ), PathErrorRow );
 		}
 		row__ Search(
 			const str::string_ &PathString,
@@ -1365,11 +1425,11 @@ namespace rgstry {
 			context___ &Context )
 		{
 			status__ Status = s_Undefined;
-			row__ Root = Roots( Level );
+			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root, Context ); 
+			Status = FillRegistry( IFlow, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Roots.Set( Root, Level );
+			Entries.Set( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1382,11 +1442,11 @@ namespace rgstry {
 			const char *RootPath )
 		{
 			status__ Status = s_Undefined;
-			row__ Root = Roots( Level );
+			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( IFlow, Criterions, RootPath, BaseRegistry, Root ); 
+			Status = FillRegistry( IFlow, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Roots.Set( Root, Level );
+			Entries.Set( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1400,11 +1460,11 @@ namespace rgstry {
 			context___ &Context )
 		{
 			status__ Status = s_Undefined;
-			row__ Root = Roots( Level );
+			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( FileName, Criterions, RootPath, BaseRegistry, Root, Context ); 
+			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Roots.Set( Root, Level );
+			Entries.Set( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1417,11 +1477,11 @@ namespace rgstry {
 			const char *RootPath )
 		{
 			status__ Status = s_Undefined;
-			row__ Root = Roots( Level );
+			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( FileName, Criterions, RootPath, BaseRegistry, Root ); 
+			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Roots.Set( Root, Level );
+			Entries.Set( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1432,7 +1492,7 @@ namespace rgstry {
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const
 		{
-			return BaseRegistry.Dump( Roots( Level ), RootToo, Writer );
+			return _GetRegistry( Level ).Dump( _GetRoot( Level ), RootToo, Writer );
 		}
 		epeios::size__ Dump(
 			level__ Level,
@@ -1440,7 +1500,7 @@ namespace rgstry {
 			xml::outfit__ Outfit,
 			txf::text_oflow__ &TFlow ) const
 		{
-			return BaseRegistry.Dump( Roots( Level ), RootToo, Outfit, TFlow );
+			return _GetRegistry( Level ).Dump( _GetRoot( Level ), RootToo, Outfit, TFlow );
 		}
 		time_t TimeStamp( level__ Level ) const
 		{

@@ -99,6 +99,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Differentiated Binary Tree
 &dir		&epeios		&\
 	&DIRectory.
+	
+&dlbrry	&epeios	&2011	&Dynamic LiBRaRY
+	
 &dte		&epeios		&2001,\
 	&DaTE
 &dtfbsc		&epeios		&2000-2001, \
@@ -150,7 +153,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &fwf		&epeios		&\
 	&FloW Functions
 	
-&gckcom	&epeios	&2011	&GeCKo COMponent
+&geckob	&epeios	&2011	&GECKO Backend
+&geckof	&epeios	&2011	&GECKO Frontend
+&geckoo	&epeios	&2011	&GECKO Overlapping
 	
 &gnumll		&epeios		&2000-2001, \
 	&GNU MaiLing List
@@ -244,11 +249,12 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sbf		&epeios		&2000-		&Simplified Binary tree Filler
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 
+&sclbacknd	&epeios	&2011	&SoCLe BACKEND
+&sclgecko	&epeios	&2001	&SoCLe GECKO component
 &scllocale	&epeios	&2011	&SoCLe LOCALE
 &sclrgstry	&epeios	&2011	&SoCLe ReGiSTRY
 &sclmisc	&epeios	&2011	&SoCLe MISCellaneous
 &scltool	&epeios	&2011	&SoCLe TOOL
-&sclbacknd	&epeios	&2011	&SoCLe BACKEND
 
 &sck		&epeios		&2000-		&SoCKet
 &spp		&epeios		&2000-		&Shared PiPe

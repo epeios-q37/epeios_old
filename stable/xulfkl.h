@@ -101,12 +101,13 @@ namespace xulfkl {
 			reset();
 		}
 		status__ Init(
-			const str::string_ &ConfigurationFileName,
+			rgstry::row__ ConfigurationRegistryRoot,
+			const rgstry::registry_ &ConfigurationRegistry,
 			const char *TargetName,
-			const char *Language,
-			const xpp::criterions___ &Criterions )
+			const lcl::locale_ &Locale,
+			const char *Language )
 		{
-			return _kernel___::Init( ConfigurationFileName, TargetName, Language, Criterions );
+			return _kernel___::Init( ConfigurationRegistryRoot, ConfigurationRegistry, TargetName, Locale, Language );
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
