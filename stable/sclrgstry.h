@@ -69,6 +69,9 @@ namespace sclrgstry {
 
 	extern const lcl::rack__ *LocaleRack;	// A définir.
 
+	const rgstry::registry_ GetRegistry( void );
+	rgstry::row__ GetRegistryRoot( void );
+
 	struct paths {
 		static const char *Language;
 		static const char *LocaleFileName;

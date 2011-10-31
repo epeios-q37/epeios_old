@@ -1,5 +1,13 @@
 $Id$
 
+31/10/2011 :
+	- FLX :
+		- Ajout STR_(I|O)_FLOW_DRIVER___.
+
+30/10/2011 :
+	- SCLRGSTRY :
+		- Exposition de la 'registry' et du 'root' associé.
+
 28/10/2011 :
 	- FRDxxx :
 		- Adaptation.

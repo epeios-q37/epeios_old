@@ -71,6 +71,20 @@ static STR_BUFFER___ Translation_;
 const char *sclrgstry::paths::LocaleFileName = "LocaleFileName";
 const char *sclrgstry::paths::Language = "Language";
 
+const rgstry::registry_ sclrgstry::GetRegistry( void )
+{
+	return Registry_;
+}
+
+rgstry::row__ sclrgstry::GetRegistryRoot( void )
+{
+	if ( Root_ == NONE )
+		ERRc();
+
+	return Root_;
+}
+
+
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
 	return Root_ != NONE;

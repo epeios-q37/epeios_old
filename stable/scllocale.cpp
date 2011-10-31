@@ -120,25 +120,37 @@ ERREpilog
 
 static const str::string_ &GetTranslation_( const char *Message )	// NOTA : seulement à usage limité à cette bibiothèque. Ne pas confondre avec 'scllocale::GetTranslation(...)'.
 {
+	Translation_.Init();
 	LocaleRack_.GetTranslation( Message, SCLLOCALE_NAME "_", Translation_ );
 
 	return Translation_;
 }
 
-static void ReportLocaleFileParsingError_( void )
+static void ReportLocaleFileParsingError_( const rgstry::context___ &Context )
 {
-	cio::CErr << GetTranslation_( "LocaleFileParsingError" ) << txf::nl << txf::commit;
+ERRProlog
+	str::string Message, EmbeddedMessage;
+ERRBegin
+	Message.Init( GetTranslation_( "LocaleFileParsingError" ) );
+
+	EmbeddedMessage.Init();
+
+	lcl::ReplaceTag( Message, 1, rgstry::GetTranslation( Context, LocaleRack_, EmbeddedMessage ) );
+
+	cio::CErr << Message << txf::nl << txf::commit;
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void LoadLocale_(
 	const str::string_ &SuggestedLocaleFileName,
 	const char *Affix,
 	const char *RootPath,
-	bso::bool__ IgnoreErrors )
+	bso::bool__ IgnoreUnableToOpenFileError )
 {
 ERRProlog
 	STR_BUFFER___ STRBuffer;
-	rgstry::status__ Status = rgstry::s_Undefined;
 	rgstry::context___ Context;
 	str::string Language;
 	str::string LocaleFileName;
@@ -147,12 +159,17 @@ ERRBegin
 	Context.Init();
 
 	if ( ( LocaleFileName.Amount() != 0 ) || ( GuessLocaleFileName_( Affix, LocaleFileName ) ) )
-		if ( ( ( Status = Locale_.Init( LocaleFileName.Convert( STRBuffer ), RootPath, Context ) ) != rgstry::sOK )
-			 && !IgnoreErrors ) {
+		switch ( Locale_.Init( LocaleFileName.Convert( STRBuffer ), RootPath, Context ) ) {
+		case rgstry::sOK:
+			break;
+		case rgstry::sUnableToOpenFile:
+			if ( IgnoreUnableToOpenFileError )
+				break;
+		default:
 			if ( !cio::IsInitialized() )
 				cio::Initialize( cio::t_Default );
 
-			ReportLocaleFileParsingError_();
+			ReportLocaleFileParsingError_( Context );
 			ERRExit( EXIT_FAILURE );
 		}
 
@@ -213,6 +230,8 @@ public:
 	{
 		Locale_.Init();
 		Language_.Init();
+		LocaleRack_.Init( Locale_, "" );
+		Translation_.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

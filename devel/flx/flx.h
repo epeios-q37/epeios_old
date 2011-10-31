@@ -347,6 +347,8 @@ namespace flx {
 		}
 	};
 
+# define E_STRING_IFLOW_DRIVER___	bunch_iflow_driver___<str::string_, bso::char__>
+
 	//c A bunch as input flow.driver.
 	template < typename bunch_, typename so__,int  CacheSize = FLX_BUNCH_BUFFER_SIZE> class bunch_iflow__
 	: public _iflow__
@@ -380,7 +382,7 @@ namespace flx {
 		}
 	};
 
-	#define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
+# define E_STRING_IFLOW__	bunch_iflow__<str::string_, bso::char__>
 
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow_driver___
@@ -429,6 +431,9 @@ namespace flx {
 		}
 	};
 
+# define E_STRING_OFLOW_DRIVER___	bunch_oflow_driver___<str::string_, bso::char__>
+
+
 	//c A bunch as output flow.driver.
 	template < typename bunch_, typename so__> class bunch_oflow___
 	: public _oflow__
@@ -462,7 +467,7 @@ namespace flx {
 		}
 	};
 
-	#define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
+# define E_STRING_OFLOW___	bunch_oflow___<str::string_, bso::char__>
 
 	typedef fdr::oflow_driver___<> _oflow_driver___;
 
