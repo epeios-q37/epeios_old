@@ -523,7 +523,10 @@ ERRBegin
 
 		Message.Insert( MergedValues, Row );
 
-		Row = Message.Search( Tag, Row );
+		Row = Message.Next( Row, MergedValues.Amount() );
+
+		if ( Row != NONE )
+			Row = Message.Search( Tag, Row );
 	}
 
 ERRErr
