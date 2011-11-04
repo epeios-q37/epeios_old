@@ -158,12 +158,12 @@ extern class ttr_tutor &NSXPCMTutor;
 		else if ( ERRMinor != err::iAbort ) {\
 			err::buffer__ Buffer;\
 			nsxpcm::Log( err::Message( Buffer ) );\
-			nsxpcm::GetJSConsole();\
+			nsxpcm::GetJSConsole( window );\
 		}\
 	} else {\
 		err::buffer__ Buffer;\
 		nsxpcm::Log( err::Message( Buffer ) );\
-		nsxpcm::GetJSConsole();\
+		nsxpcm::GetJSConsole( window );\
 	}\
 	ERRRst()
 

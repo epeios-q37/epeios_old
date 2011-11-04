@@ -70,13 +70,13 @@ void xulfdg::debug_dialog__::UpdateUI( void )
 
 void xulfdg::jsconsole_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::GetJSConsole();
+	nsxpcm::GetJSConsole( Target().UI().Main().Window );
 	nsxpcm::Close( Target().UI().Debug.Window );
 }
 
 void xulfdg::dominspector_command__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::GetDOMInspector();
+	nsxpcm::GetDOMInspector( Target().UI().Main().Window );
 	nsxpcm::Close( Target().UI().Debug.Window );
 }
 

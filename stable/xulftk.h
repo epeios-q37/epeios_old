@@ -60,13 +60,15 @@ extern class ttr_tutor &XULFTKTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "nsxpcm.h"
-#include "frdkrn.h"
+# include "err.h"
+# include "flw.h"
+# include "nsxpcm.h"
+# include "frdkrn.h"
 
-#include "xulfui.h"
-#include "xulfkl.h"
+# include "geckob.h"
+
+# include "xulfui.h"
+# include "xulfkl.h"
 
 namespace xulftk {
 	using xulfkl::status__;
@@ -76,6 +78,7 @@ namespace xulftk {
 	private:
 		xulfui::ui___ *_UI;
 		xulfkl::kernel___ *_Kernel;
+		geckoo::user_functions__  *_Steering;
 		const char *_TargetName;
 	protected:
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
@@ -108,6 +111,7 @@ namespace xulftk {
 		{
 			_UI = NULL;
 			_Kernel =  NULL;
+			_Steering = NULL;
 //			_TrunkFunctions.reset();
 		}
 		trunk___( void )
@@ -121,13 +125,19 @@ namespace xulftk {
 		status__ Init(
 			const char *TargetName,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
-			xulfkl::kernel___ &Kernel )
+			xulfkl::kernel___ &Kernel,
+			geckoo::user_functions__ &Steering )
 		{
 			_UI = &UI;
 			_Kernel = &Kernel;
 			_TargetName = TargetName;
+			_Steering = &Steering;
 
 			return frdkrn::sOK;
+		}
+		void ExposeSteering( void )
+		{
+			geckob::SetLoneSteering( *_Steering );
 		}
 		const xulfkl::kernel___ &Kernel( void ) const
 		{

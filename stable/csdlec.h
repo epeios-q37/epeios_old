@@ -300,7 +300,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 	class library_embedded_client_core__
 	{
 	private:
-		dlbrry::dynamic_library__ _Library;
+		dlbrry::dynamic_library___ _Library;
 		csdleo::user_functions__ *_Steering;
 		bso::bool__ _RetrieveSteering( csdleo::shared_data__ *Data );
 		bso::bool__ _ReleaseSteering( void );

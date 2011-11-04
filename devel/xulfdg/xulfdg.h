@@ -81,22 +81,48 @@ namespace xulfdg {
 	public:
 		struct widgets__ {
 			struct broadcasters__ {
+				void reset( bso::bool__ )
+				{
+				}
 			} Broadcasters;
 			struct commands__ {
 				jsconsole_command__ JSConsole;
 				dominspector_command__ DOMInspector;
 				frontend_error_command__ FrontendError;
 				backend_error_command__ BackendError;
+				void reset( bso::bool__ P  )
+				{
+					JSConsole.reset( P );
+					DOMInspector.reset( P );
+					FrontendError.reset( P );
+					BackendError.reset( P );
+				}
 			} Commands;
+			void reset( bso::bool__ P )
+			{
+				Broadcasters.reset( P );
+				Commands.reset( P );
+			}
 		} Widgets;
+		void reset( bso::bool__ P = true )
+		{
+			Widgets.reset( P );
+
+			_Trunk = NULL;
+		}
 		debug_dialog__( void )
 		{
-			_Trunk = NULL;
+			reset( false );
+		}
+		~debug_dialog__( void )
+		{
+			reset();
 		}
 		void Init(
 			xulftk::trunk___ &Trunk,
 			nsIDOMWindow *Window)
 		{
+			reset();
 			_ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}

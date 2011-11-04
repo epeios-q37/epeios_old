@@ -115,7 +115,7 @@ void xulfmn::web_site_command__::NSXPCMOnEvent( event__ )
 
 void xulfmn::debug_command__::NSXPCMOnEvent( event__ )
 {
-//	Target().Expose();	// A réactiver (sous une autre forme).
+	Target().ExposeSteering();
 	nsxpcm::OpenDialog( Window(), "debug.xul", "_blank" );
 }
 

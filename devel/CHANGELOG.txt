@@ -1,5 +1,21 @@
 $Id$
 
+03/11/2011 :
+	- Général :
+		- Adaptation.
+	- DLBRRY :
+		- Standadisation du nom (ajout d'un '_').
+	- GECKOx :
+		- Ajout gestion 'lone steering'.
+	- XULFDG :
+		- Comme un même composant peut être utilisé par plusieurs applications, on ne peut plus utiliser la 'master window' de 'NSXPCM'.
+	- XULFTK :
+		- Ajout métode 'ExposeSteering(...)'.
+
+02/11/2011 :
+	- STR :
+		- 'ReplaceTag(...)' et consorts
+
 31/10/2011 :
 	- FLX :
 		- Ajout STR_(I|O)_FLOW_DRIVER___.
