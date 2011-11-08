@@ -61,13 +61,13 @@ using namespace xulfmn;
 
 using nsxpcm::event__;
 
-void xulfmn::window__::NSXPCMOnEvent( event__ )
+void xulfmn::window__::XULWDGOnEvent( event__ )
 {
 	Target().CloseSession();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 
-void xulfmn::new_project_command__::NSXPCMOnEvent( event__ )
+void xulfmn::new_project_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 	str::string Id;
@@ -80,12 +80,12 @@ ERREnd
 ERREpilog
 }
 
-void xulfmn::open_project_command__::NSXPCMOnEvent( event__ )
+void xulfmn::open_project_command__::XULWDGOnEvent( event__ )
 {
 	Target().ApplySession( xpp::criterions___() );
 }
 
-void xulfmn::close_project_command__::NSXPCMOnEvent( event__ )
+void xulfmn::close_project_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 	str::string Id;
@@ -98,22 +98,22 @@ ERREnd
 ERREpilog
 }
 
-void xulfmn::exit_command__::NSXPCMOnEvent( event__ )
+void xulfmn::exit_command__::XULWDGOnEvent( event__ )
 {
 	Target().CloseSession();
 }
 
-void xulfmn::about_command__::NSXPCMOnEvent( event__ )
+void xulfmn::about_command__::XULWDGOnEvent( event__ )
 {
 	Target().BrowseInformations();
 }
 
-void xulfmn::web_site_command__::NSXPCMOnEvent( event__ )
+void xulfmn::web_site_command__::XULWDGOnEvent( event__ )
 {
 	Target().BrowseWEBSite();
 }
 
-void xulfmn::debug_command__::NSXPCMOnEvent( event__ )
+void xulfmn::debug_command__::XULWDGOnEvent( event__ )
 {
 	Target().ExposeSteering();
 	nsxpcm::OpenDialog( Window(), "debug.xul", "_blank" );

@@ -1,5 +1,14 @@
 $Id$
 
+08/11/2011 :
+	- SCLRGSTRY :
+		- Correction bogue 'GetRegistry()' ('&' manquant).
+	- XULFxx :
+		- Adaptation.
+	- XULWDG :
+		- Suppression code obsolete.
+		- Mise en oeuvre interception erreur.
+
 03/11/2011 :
 	- Général :
 		- Adaptation.

@@ -64,6 +64,7 @@ extern class ttr_tutor &XULWDGTutor;
 #include "flw.h"
 #include "nsxpcm.h"
 
+#if 0
 // Sensitive widget (reacts to events).
 #define XULWDG_SWIDGET( widget, name )\
 	class name\
@@ -78,6 +79,7 @@ extern class ttr_tutor &XULWDGTutor;
 	class name\
 	: public widget\
 	{}
+#endif
 
 #define XULWDG_ALL_WIDGETS( target )\
 	typedef xulwdg::broadcast__<target> broadcast__;\
@@ -87,6 +89,8 @@ extern class ttr_tutor &XULWDGTutor;
 	typedef xulwdg::listbox__<target> listbox__;\
 	typedef xulwdg::tree__<target> tree__;\
 	typedef xulwdg::window__<target> window__;\
+
+
 
 
 namespace xulwdg {
@@ -118,9 +122,19 @@ namespace xulwdg {
 	  public widget
 	{
 	protected:
-		void NSXPCMOnEvent( nsxpcm::event__ )
+		virtual void XULWDGOnEvent( nsxpcm::event__ Event )
 		{
-			ERRu();
+			ERRc();
+		}
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event )
+		{
+		ERRProlog
+		ERRBegin
+			XULWDGOnEvent( Event );
+		ERRErr
+			NSXPCM_ERR( Window() )
+		ERREnd
+		ERREpilog
 		}
 	public:
 		void Init(

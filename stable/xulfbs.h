@@ -80,7 +80,7 @@ namespace xulfrd {
 	: public widget<xulftk::trunk___>\
 	{\
 	protected:\
-		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
+		virtual void XULWDGOnEvent( nsxpcm::event__ Event );\
 	}
 
 // Unsensitive widget (reacts to no event).

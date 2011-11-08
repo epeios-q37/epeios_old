@@ -69,7 +69,7 @@ namespace sclrgstry {
 
 	extern const lcl::rack__ *LocaleRack;	// A définir.
 
-	const rgstry::registry_ GetRegistry( void );
+	const rgstry::registry_ &GetRegistry( void );
 	rgstry::row__ GetRegistryRoot( void );
 
 	struct paths {
@@ -80,14 +80,6 @@ namespace sclrgstry {
 
 	using rgstry::value;
 	using rgstry::value_;
-
-	enum status__ {
-		sOK,
-		sError,
-		sAbsent,
-		s_amount,
-		s_Undefined
-	};
 
 	void LoadRegistry(
 		const char *Affix,

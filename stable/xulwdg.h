@@ -64,6 +64,7 @@ extern class ttr_tutor &XULWDGTutor;
 #include "flw.h"
 #include "nsxpcm.h"
 
+#if 0
 // Sensitive widget (reacts to events).
 #define XULWDG_SWIDGET( widget, name )\
 	class name\
@@ -78,6 +79,7 @@ extern class ttr_tutor &XULWDGTutor;
 	class name\
 	: public widget\
 	{}
+#endif
 
 #define XULWDG_ALL_WIDGETS( target )\
 	typedef xulwdg::broadcast__<target> broadcast__;\
@@ -87,6 +89,8 @@ extern class ttr_tutor &XULWDGTutor;
 	typedef xulwdg::listbox__<target> listbox__;\
 	typedef xulwdg::tree__<target> tree__;\
 	typedef xulwdg::window__<target> window__;\
+
+
 
 
 namespace xulwdg {
@@ -118,9 +122,19 @@ namespace xulwdg {
 	  public widget
 	{
 	protected:
-		void NSXPCMOnEvent( nsxpcm::event__ )
+		virtual void XULWDGOnEvent( nsxpcm::event__ Event )
 		{
-			ERRu();
+			ERRc();
+		}
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event )
+		{
+		ERRProlog
+		ERRBegin
+			XULWDGOnEvent( Event );
+		ERRErr
+			NSXPCM_ERR( Window() )
+		ERREnd
+		ERREpilog
 		}
 	public:
 		void Init(
@@ -148,24 +162,8 @@ namespace xulwdg {
 	};
 
 #	define XULWDG__WN( widget, name, events )\
-	template <typename target> E_TTCLONE__( E_COVER2( _generic__< E_COVER2( target, nsxpcm::widget##__ ), events> ), name##__ );\
-/*	template <typename target> inline void Register(\
-		target &Target,\
-		name##__<target> &Widget,\
-		nsISupports *Element,\
-		nsIDOMWindow *Window )\
-	{\
-		Register( Target, Widget, Element, Window, events );\
-	}\
-	template <typename target> inline void Register(\
-		target &Target,\
-		name##__<target> &Widget,\
-		nsIDOMWindow *Window,\
-		const char *Id )\
-	{\
-		Register( Target, Widget, Window, Id, events );\
-	}
-*/
+	template <typename target> E_TTCLONE__( E_COVER2( _generic__< E_COVER2( target, nsxpcm::widget##__ ), events> ), name##__ );
+
 #	define XULWDG__W( widget, events )	XULWDG__WN( widget, widget, events )
 
 	XULWDG__W( textbox, nsxpcm::ef_None );
@@ -183,29 +181,6 @@ namespace xulwdg {
 //	XULWDG__W( document, nsxpcm::efClose );
 	XULWDG__W( window, nsxpcm::efClose );
 	XULWDG__W( description, nsxpcm::ef_None );
-/*
-	template <typename target, typename widget> void Register(
-		target &Target,
-		widget &Widget,
-		nsIDOMWindow *Window,
-		const char *Id,
-		int Events )
-	{
-		Widget.Init( Target );
-		nsxpcm::Register( Widget, Window, Id, Events );
-	}
-
-	template <typename target, typename widget> void Register(
-		target &Target,
-		widget &Widget,
-		nsISupports *Supports,
-		nsIDOMWindow *Window,
-		int Events )
-	{
-		Widget.Init( Target );
-		nsxpcm::Register( Widget, Supports, Window, Events );
-	}
-*/
 }
 
 /*$END$*/

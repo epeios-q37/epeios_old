@@ -68,19 +68,19 @@ void xulfdg::debug_dialog__::UpdateUI( void )
 }
 
 
-void xulfdg::jsconsole_command__::NSXPCMOnEvent( event__ )
+void xulfdg::jsconsole_command__::XULWDGOnEvent( event__ )
 {
 	nsxpcm::GetJSConsole( Target().UI().Main().Window );
 	nsxpcm::Close( Target().UI().Debug.Window );
 }
 
-void xulfdg::dominspector_command__::NSXPCMOnEvent( event__ )
+void xulfdg::dominspector_command__::XULWDGOnEvent( event__ )
 {
 	nsxpcm::GetDOMInspector( Target().UI().Main().Window );
 	nsxpcm::Close( Target().UI().Debug.Window );
 }
 
-void xulfdg::frontend_error_command__::NSXPCMOnEvent( event__ )
+void xulfdg::frontend_error_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
@@ -91,7 +91,7 @@ ERREnd
 ERREpilog
 }
 
-void xulfdg::backend_error_command__::NSXPCMOnEvent( event__ )
+void xulfdg::backend_error_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
