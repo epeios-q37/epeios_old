@@ -1,5 +1,13 @@
 $Id$
 
+09/11/2011 :
+	- NSXPCM :
+		- Le destructeur associé à la bibliothèque ferme l'éventuelle console JavaScript pour éviter une fenêtre fantôme.
+		- Ajout méthode/fonction 'Get(Parent|Root)Window(...)'.
+		- Pour faciliter leur usage, à la place de retourner une 'nsIDOMWindow (*)', les méthodes/fonctions retournent désormais la classe fille 'nsIDOMWindowInternal (*)'
+	- XULFxx :
+		- Adaptation.
+
 08/11/2011 :
 	- SCLRGSTRY :
 		- Correction bogue 'GetRegistry()' ('&' manquant).

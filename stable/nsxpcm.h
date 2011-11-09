@@ -157,13 +157,13 @@ extern class ttr_tutor &NSXPCMTutor;
 			nsxpcm::Close( window );\
 		else if ( ERRMinor != err::iAbort ) {\
 			err::buffer__ Buffer;\
-			nsxpcm::Log( err::Message( Buffer ) );\
 			nsxpcm::GetJSConsole( window );\
+			nsxpcm::Log( err::Message( Buffer ) );\
 		}\
 	} else {\
 		err::buffer__ Buffer;\
-		nsxpcm::Log( err::Message( Buffer ) );\
 		nsxpcm::GetJSConsole( window );\
+		nsxpcm::Log( err::Message( Buffer ) );\
 	}\
 	ERRRst()
 
@@ -184,7 +184,7 @@ namespace nsxpcm {
 
 	// Retourne un 'MasterWindows'. 'RealeaseWindow' doit être appelé dés que la 'Window' retournée n'est plus utilisée.
 	// Retourne 'NULL" si pas de fenêtre disponible.
-	nsIDOMWindow *RetrieveMasterWindow( void );
+	nsIDOMWindowInternal *RetrieveMasterWindow( void );
 
 	void ReleaseMasterWindow( nsIDOMWindow *Window );
 
@@ -570,7 +570,6 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
 	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
 	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
-
 
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
@@ -996,6 +995,45 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		const str::string_ &NodeName );
 
+#if 0
+	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
+#else
+	inline nsIDOMWindowInternal *GetWindowInternal( nsISupports *Window )
+#endif
+	{
+# ifdef NSXPCM__USE_ARMEL_WORKAROUND
+		return (nsIDOMWindowInternal *)Window;
+# else
+		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
+# endif
+	}
+
+	inline nsIDOMWindowInternal* GetParentWindow( nsIDOMWindow *Window )
+	{
+		T( Window->GetParent( &Window ) );
+
+		return GetWindowInternal( Window );
+	}
+
+	inline nsIDOMWindowInternal* GetRootWindow( nsIDOMWindow *Window )
+	{
+		T( Window->GetTop( &Window ) );
+
+		return GetWindowInternal( Window );
+	}
+
+	inline nsIDOMWindowInternal* GetOpener( nsIDOMWindowInternal *Window )
+	{
+		T( Window->GetOpener( &Window ) );
+
+		return Window;
+	}
+
+	inline nsIDOMWindowInternal* GetOpener( nsIDOMWindow *Window )
+	{
+		return GetOpener( GetWindowInternal( Window ) );
+	}
+
 	inline nsIDOMElement *GetDocumentElement( nsIDOMDocument *Document )
 	{
 		nsIDOMElement *Element = NULL;
@@ -1031,7 +1069,7 @@ namespace nsxpcm {
 			return NULL;
 	}
 
-		inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
+	inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
 	{
 		PRBool Value = false;
 
@@ -1040,37 +1078,19 @@ namespace nsxpcm {
 		return Value == PR_TRUE;
 	}
 
+	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
+	{
+		return IsClosed( GetWindowInternal( Window ) );
+	}
+
 	inline void Close( nsIDOMWindowInternal *Window )
 	{
 		T( Window->Close() );
 	}
 
-	inline nsIDOMWindowInternal *GetWindowInternal( nsIDOMWindow *Window )
-	{
-#ifdef NSXPCM__USE_ARMEL_WORKAROUND
-		return (nsIDOMWindowInternal *)Window;
-#else
-		return nsxpcm::QueryInterface<nsIDOMWindowInternal>( Window );
-#endif
-	}
-
 	inline void Close( nsIDOMWindow *Window )
 	{
 		Close( GetWindowInternal( Window ) );
-	}
-/*
-	inline void Close( void )
-	{
-		if ( GetMasterWindow() == NULL )
-			ERRu();
-
-		Close( GetMasterWindow() );
-	}
-*/
-
-	inline bso::bool__ IsClosed( nsIDOMWindow *Window )
-	{
-		return IsClosed( GetWindowInternal( Window ) );
 	}
 
 	typedef nsISupports *nsISupportsPointer;
@@ -1218,7 +1238,7 @@ namespace nsxpcm {
 	class widget_core__
 	{
 	private:
-		nsIDOMWindow *_Window;
+		nsIDOMWindowInternal *_Window;
 		nsISupports *_Supports;
 		event_data__ _EventData;
 		_event_handler__ *_EventHandler;	// Si défini, est prioritaire sur le traitement des évènements défini par surcharge.
@@ -1270,7 +1290,22 @@ namespace nsxpcm {
 			_EventHandler = &EventHandler;
 		}
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
-		E_RODISCLOSE__( nsIDOMWindowPointer, Window );
+		nsIDOMWindowInternal *GetWindow( void ) const
+		{
+			return _Window;
+		}
+		nsIDOMWindowInternal *GetParentWindow( void ) const
+		{
+			return nsxpcm::GetParentWindow( _Window );
+		}
+		nsIDOMWindowInternal *GetRootWindow( void ) const
+		{
+			return nsxpcm::GetRootWindow( _Window );
+		}
+		nsIDOMWindowInternal *GetOpener( void ) const
+		{
+			return nsxpcm::GetOpener( _Window );
+		}
 		bso::bool__ Handle( nsIDOMEvent *Event );
 		nsIDOMElement *GetElement( void )
 		{
@@ -2111,18 +2146,16 @@ namespace nsxpcm {
 
 	inline nsIDOMWindowInternal *GetJSConsole(
 		nsIDOMWindow *ParentWindow,
-		nsIDOMWindowInternal **JSConsoleWindow )
+		nsIDOMWindow **JSConsoleWindow )
 	{
-		nsIDOMWindow *Window = NULL;
-
 		if ( ( *JSConsoleWindow == NULL ) || ( IsClosed( *JSConsoleWindow ) ) ) {
 //			GetWindowInternal( ParentWindow )->Open( NS_LITERAL_STRING( "chrome://global/content/console.xul" ), NS_LITERAL_STRING( "_blank" ), NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), &Window );
-			OpenWindow( ParentWindow, "chrome://global/content/console.xul", "_blank", &Window );
-			*JSConsoleWindow = GetWindowInternal( Window );
+			OpenWindow( ParentWindow, "chrome://global/content/console.xul", "_blank", JSConsoleWindow );
+//			*JSConsoleWindow = GetWindowInternal( Window );
 		} else
-			T( (*JSConsoleWindow)->Focus() );
+			T( GetWindowInternal( *JSConsoleWindow )->Focus() );
 
-		return *JSConsoleWindow;
+		return GetWindowInternal( *JSConsoleWindow );
 	}
 
 	void GetJSConsole( nsIDOMWindow *ParentWindow );
@@ -2416,7 +2449,7 @@ namespace nsxpcm {
 		PatchCommandBadCommandBehaviorforKeysetListener( Document );
 	}
 
-	nsIDOMWindow *GetDocumentWindow( nsIDOMDocument *Document );
+	nsIDOMWindowInternal *GetDocumentWindow( nsIDOMDocument *Document );
 
 
 #ifdef NSXPCM__FBL

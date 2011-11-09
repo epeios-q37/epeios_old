@@ -157,7 +157,7 @@ ERREnd
 ERREpilog
 }
 
-nsIDOMWindow *nsxpcm::RetrieveMasterWindow( void )
+nsIDOMWindowInternal *nsxpcm::RetrieveMasterWindow( void )
 {
 	nsIDOMWindow *Window = NULL;
 ERRProlog
@@ -178,7 +178,7 @@ ERREnd
 	if ( Locked )
 		mtx::Unlock( MasterWindowMutex_ );
 ERREpilog
-	return Window;
+	return GetWindowInternal( Window );
 }
 
 void nsxpcm::ReleaseMasterWindow( nsIDOMWindow *Window )
@@ -203,7 +203,17 @@ ERREnd
 ERREpilog
 }
 
-static nsIDOMWindowInternal *JSConsoleWindow_ = NULL;
+static nsIDOMWindow *JSConsoleWindow_ = NULL;
+class jsconsole_widget__ :
+public widget_core__
+{
+protected:
+	void NSXPCMOnEvent( event__  )
+	{
+//		EventData().EventPreventDefault();
+//		SetAttribute( GetWindowDocument( GetWindow() ), "hidden", "true" );
+	}
+} JSConsoleWidget_;
 static nsCOMPtr<nsIFormHistory2> FormHistory_;
 #ifdef CPE__T_MT
 mtx::mutex_handler__ FormHistoryMutex_;
@@ -246,7 +256,12 @@ const char *nsxpcm::GetTranslation(
 
 void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 {
+	bso::bool__ InitializeWidget = ( JSConsoleWindow_ == NULL );
+
 	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
+
+	if ( InitializeWidget )
+		JSConsoleWidget_.Init( JSConsoleWindow_, JSConsoleWindow_, nsxpcm::efClose );
 }
 
 void nsxpcm::Transform(
@@ -1383,6 +1398,7 @@ ERREpilog
 	return Success;
 }
 
+
 void nsxpcm::widget_core__::Init(
 	nsISupports *Supports,
 	nsIDOMWindow *Window,
@@ -1394,12 +1410,10 @@ void nsxpcm::widget_core__::Init(
 #endif
 	reset();
 
-	_Window = Window;
+	_Window = GetWindowInternal( Window );
 	_Supports = Supports;
 
-	nsIDOMEventTarget *EventTarget = NULL;
-
-	EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
+	nsIDOMEventTarget *EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventData._EventListener );
 
@@ -1934,7 +1948,7 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	AddSemiColonCommand_( List );
 }
 
-nsIDOMWindow *nsxpcm::GetDocumentWindow( nsIDOMDocument *Document )
+nsIDOMWindowInternal *nsxpcm::GetDocumentWindow( nsIDOMDocument *Document )
 {
 	nsEmbedString EId;
 	nsIDOMNodeList *List = NULL;
@@ -1954,7 +1968,12 @@ nsIDOMWindow *nsxpcm::GetDocumentWindow( nsIDOMDocument *Document )
 
 	T( List->Item( Length, &Node ) );
 
+#if 0
 	return QueryInterface<nsIDOMWindow>( Node );
+#else
+	return GetWindowInternal( Node );
+#endif
+
 }
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -1985,6 +2004,9 @@ public:
 #	endif
 #endif
 		mtx::Delete( MasterWindowMutex_ );
+
+		if ( ::JSConsoleWindow_ != NULL )
+			Close( JSConsoleWindow_ );
 	}
 };
 

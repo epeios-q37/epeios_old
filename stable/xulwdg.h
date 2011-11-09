@@ -132,7 +132,7 @@ namespace xulwdg {
 		ERRBegin
 			XULWDGOnEvent( Event );
 		ERRErr
-			NSXPCM_ERR( Window() )
+			NSXPCM_ERR( GetOpener() );
 		ERREnd
 		ERREpilog
 		}

@@ -116,7 +116,7 @@ void xulfmn::web_site_command__::XULWDGOnEvent( event__ )
 void xulfmn::debug_command__::XULWDGOnEvent( event__ )
 {
 	Target().ExposeSteering();
-	nsxpcm::OpenDialog( Window(), "debug.xul", "_blank" );
+	nsxpcm::OpenDialog( GetWindow(), "debug.xul", "_blank" );
 }
 
 
