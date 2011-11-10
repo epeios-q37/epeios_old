@@ -88,7 +88,7 @@ namespace frdbkd {
 			const char *Language,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::universal_client_core &ClientCore,
-			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
+			fblfrd::error_reporting_functions__ &ErrorReportingFunctions,
 			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			fblfub::mode__ Mode = fblfub::m_Undefined;
@@ -97,7 +97,7 @@ namespace frdbkd {
 
 			switch ( ClientCore.GetType() ) {
 			case csducl::tLibrary:
-				Mode = fblfub::mEmbed;
+				Mode = fblfub::mEmbedded;
 				break;
 			case csducl::tDaemon:
 				Mode = fblfub::mRemote;
@@ -107,7 +107,7 @@ namespace frdbkd {
 				break;
 			}
 
-			return _BackendAccess.Init( Language, CompatibilityInformations, _Flow, Mode, ErrorHandlingFunctions, IncompatibilityInformations );
+			return _BackendAccess.Init( Language, CompatibilityInformations, _Flow, Mode, ErrorReportingFunctions, IncompatibilityInformations );
 		}
 		fblfrd::backend_access___ &BackendAccess( void )
 		{
@@ -125,10 +125,13 @@ namespace frdbkd {
 			str::string_ &ProtocolVersion,
 			str::string_ &BackendLabel,
 			str::string_ &APIVersion,
-			str::string_ &BackendInformations,
-			str::string_ &PublisherInformations )
+			str::string_ &BackendInformations )
 		{
-			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations, PublisherInformations );
+			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
+		}
+		void ThrowError( void )
+		{
+			_BackendAccess.ThrowUError();
 		}
 	};
 
@@ -148,12 +151,12 @@ namespace frdbkd {
 			const char *BackendLabel,
 			const char *APIBackendVersion,
 			csducl::universal_client_core &ClientCore,
-			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
+			fblfrd::error_reporting_functions__ &ErrorReportingFunctions,
 			str::string_ &Message,
 			str::string_ &URL )
 		{
 			statics::Init( BackendAccess() );
-			return _backend___::Init( Language, BackendLabel, APIVersion,ClientCore, ErrorHandlingFunctions, MEssage, URL );
+			return _backend___::Init( Language, BackendLabel, APIVersion,ClientCore, ErrorReportingFunctions, MEssage, URL );
 		}
 	};
 

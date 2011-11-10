@@ -180,10 +180,10 @@ namespace fblfrd {
 		}
 	};
 
-	class error_handling_functions__
+	class error_reporting_functions__
 	{
 	protected:
-		virtual void FBLFRDHandleError(
+		virtual void FBLFRDReportError(
 			fblovl::reply__ Reply,
 			const char *Message ) = 0;
 	public:
@@ -191,11 +191,11 @@ namespace fblfrd {
 		{
 			// Standardisation.
 		}
-		error_handling_functions__( void )
+		error_reporting_functions__( void )
 		{
 			reset( false );
 		}
-		~error_handling_functions__( void )
+		~error_reporting_functions__( void )
 		{
 			reset();
 		}
@@ -203,11 +203,11 @@ namespace fblfrd {
 		{
 			// Standardisation.
 		}
-		void HandleError(
+		void ReportError(
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
-			FBLFRDHandleError( Reply, Message );
+			FBLFRDReportError( Reply, Message );
 		}
 	};
 
@@ -290,7 +290,7 @@ namespace fblfrd {
 	{
 	private:
 		parameters_handling_functions__ *_ParametersHandlingFunctions;
-		error_handling_functions__ *_ErrorHandlingFunctions;
+		error_reporting_functions__ *_ErrorReportingFunctions;
 		void _PreProcess( void )
 		{
 			_ParametersHandlingFunctions->PreProcess();
@@ -315,7 +315,10 @@ namespace fblfrd {
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
-			_ErrorHandlingFunctions->HandleError( Reply, Message );
+			if ( _ErrorReportingFunctions == NULL )
+				ERRc();
+
+			_ErrorReportingFunctions->ReportError( Reply, Message );
 		}
 		id16__ Commands_[fblcmd::c_amount];
 		char Message_[100];
@@ -387,7 +390,7 @@ namespace fblfrd {
 			}
 				
 			_ParametersHandlingFunctions = NULL;
-			_ErrorHandlingFunctions = NULL;
+			_ErrorReportingFunctions = NULL;
 			Channel_ = NULL;
 		}
 		backend_access___( void )
@@ -404,7 +407,7 @@ namespace fblfrd {
 			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
-			error_handling_functions__ &ErrorHandlingFunctions,
+			error_reporting_functions__ &ErrorReportingFunctions,
 			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			bso::bool__ Success = true;
@@ -419,7 +422,7 @@ namespace fblfrd {
 
 			Channel_ = &Channel;
 			_ParametersHandlingFunctions = &ParametersHandlingFunctions;
-			_ErrorHandlingFunctions = &ErrorHandlingFunctions;
+			_ErrorReportingFunctions = &ErrorReportingFunctions;
 
 			RetrieveBackendCommands_();
 		ERRErr
@@ -522,10 +525,10 @@ namespace fblfrd {
 
 			return  Handle();	// NOTA : Always to 'true'.
 		}
-		// Génère une erreur utilisateur retournant le messahe 'Message'.
-		fblovl::reply__ ThrowUserDefinedError( const string_ &Message )
+		// Test la notification avec retournant le message 'Message'.
+		fblovl::reply__ TestNotification( const string_ &Message )
 		{
-			Internal_( fblcmd::cThrowUserDefinedError );
+			Internal_( fblcmd::cTestNotification );
 
 			StringIn( Message );
 

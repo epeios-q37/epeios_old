@@ -354,11 +354,11 @@ namespace fblbrq {
 		}
 		void ReportError( const char *Message )	// 'User error'.
 		{
-			Report( fblovl::rUserError, Message );
+			Report( fblovl::rError, Message );
 		}
-		void ReportBackendError( const char *Message )
+		void Notify( const char *Message )
 		{
-			Report( fblovl::rBackendError, Message );
+			Report( fblovl::rNotification, Message );
 		}
 		const casts_ &GetCasts( void ) const
 		{

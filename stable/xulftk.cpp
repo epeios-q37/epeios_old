@@ -57,6 +57,40 @@ public:
 
 using namespace xulftk;
 
+#define PREFIX	XULFKL_NAME " " 
+
+void xulftk::error_reporting_functions__::FBLFRDReportError(
+	fblovl::reply__ Reply,
+	const char *RawMessage )
+{
+ERRProlog
+	str::string Message;
+STR_BUFFER___ Buffer;
+ERRBegin
+	if ( _UI == NULL )
+		ERRc();
+
+	Message.Init( _Rack.GetTranslation( "ErrorType", PREFIX, Buffer ) );
+
+	Message.Append( " : " );
+
+	Message.Append( fblovl::GetTranslation( Reply, _Rack, Buffer ) );
+
+	Message.Append( '\n' );
+
+	Message.Append( _Rack.GetTranslation( "ErrorMessage", PREFIX, Buffer ) );
+
+	Message.Append( " : " );
+
+	Message.Append( RawMessage );
+
+	_UI->LogAndPrompt( Message );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

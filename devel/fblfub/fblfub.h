@@ -213,12 +213,12 @@ namespace fblfub {
 			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Flow,
 			mode__ Mode,
-			fblfrd::error_handling_functions__ &ErrorHandlingFunctions,
+			fblfrd::error_reporting_functions__ &ErrorReportingFunctions,
 			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			_Functions.Init( Mode );
 
-			return _backend_access___::Init( Language, CompatibilityInformations, Flow, _Functions, ErrorHandlingFunctions, IncompatibilityInformations  );
+			return _backend_access___::Init( Language, CompatibilityInformations, Flow, _Functions, ErrorReportingFunctions, IncompatibilityInformations  );
 		}
 	};
 

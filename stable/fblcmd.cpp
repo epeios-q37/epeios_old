@@ -60,7 +60,7 @@ using namespace fblcmd;
 const char *fblcmd::CommandsNames[c_amount] = {
 	"_ThrowUError$1",
 	"_ThrowIError$1",
-	"_ThrowUserDefinedError",
+	"_TestNotification$1",
 	"_GetNewObject$1",
 	"_GetType$1",
 //	"_GetRawMessages$1",
@@ -83,8 +83,8 @@ static const cast ThrowUError[] = {
 static const cast ThrowIError[] = {
 	cEnd,
 	cEnd };
-static const cast ThrowUserDefinedError[] = {
-		cString,	// Un message devant être retourné comme message d'erreur utilisateur.
+static const cast TestNotification[] = {
+		cString,	// Un message devant être retourné comme notification.
 	cEnd,
 	cEnd };
 static const cast GetNewObject[] = {
@@ -159,7 +159,7 @@ static const cast SetLanguage[] = {
 const cast *fblcmd::CommandsParameters[c_amount] = {
 	ThrowUError,
 	ThrowIError,
-	ThrowUserDefinedError,
+	TestNotification,
 	GetNewObject,
 	GetType,
 //	GetRawMessages,

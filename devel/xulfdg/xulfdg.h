@@ -60,10 +60,12 @@ extern class ttr_tutor &XULFDGTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "xulfbs.h"
+# include "xulfbs.h"
+
+# define XULFDG_DIALOG_ID	"dlgDebugV1"
 
 namespace xulfdg {
 	using namespace xulfbs;

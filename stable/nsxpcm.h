@@ -746,6 +746,14 @@ namespace nsxpcm {
 		T( Element->SetValue( EValue ) );
 	}
 
+	inline const str::string_ &GetId(
+		nsIDOMNode *Node,
+		str::string_ &Value )
+	{
+		return GetAttribute( Node, "id", Value );
+	}
+
+
 	inline void CloneNode(
 		nsIDOMNode *Node,
 		bso::bool__ Deep,
@@ -1425,7 +1433,7 @@ namespace nsxpcm {
 		}
 		const str::string_ &GetId( str::string_ &Value )
 		{
-			return GetAttribute( "id", Value );
+			return nsxpcm::GetId( GetObject(), Value );
 		}
 		void Enable( bso::bool__ Value = true )
 		{

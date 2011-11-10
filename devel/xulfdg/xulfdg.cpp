@@ -95,10 +95,10 @@ void xulfdg::backend_error_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
-	ERRL( lNotImplemented );
+	nsxpcm::Close( Target().UI().Debug.Window );
+	Target().Kernel().ThrowError();
 ERRErr
 ERREnd
-	nsxpcm::Close( Target().UI().Debug.Window );
 ERREpilog
 }
 /* UI Registrations */
@@ -152,11 +152,25 @@ void xulfdg::Register(
 	trunk___ &Trunk,
 	nsIDOMWindow *Window )
 {
+ERRProlog
+	str::string Id;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Id.Init();
+
+	if ( nsxpcm::GetId( nsxpcm::GetWindowElement( Window ), Id ) != XULFDG_DIALOG_ID ) {
+		Trunk.UI().Alert( Trunk.Kernel().LocaleRack().GetTranslation( "IncompatibleDebugDialog", XULFDG_NAME "_", Buffer ) );
+		ERRReturn;
+	}
+
 	Trunk.UI().Debug.Init( Trunk, Window );
 
 	Register_( Trunk, Trunk.UI().Debug.Widgets, Window );
 
 	Trunk.UI().Debug.UpdateUI();
+ERRErr
+ERREnd
+ERREpilog
 }
 
 

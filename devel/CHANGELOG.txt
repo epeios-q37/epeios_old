@@ -1,5 +1,27 @@
 $Id$
 
+10/11/2011 :
+	- FBLxxx :
+		- Adaptation.
+	- FBLFRD :
+		- 'Error report(ing)' -> 'Error handl(e|ing)'.
+		- Rajout test initialisation '_ErrorReportingFunctions'.
+	- FBLFUB :
+		- Adaptation.
+	- FBLOVL :
+		- Rajout fonction 'Label(...)' manquante.
+		- Renommage de 'reply__'.
+	- FRDxxx :
+		- Adaptation.
+	- FRDKRN :
+		- Le paramètre 'ErrorReportingFunctions' n'est désormais plus optionnel.
+	- XULFKL :
+		- Adaptation.
+	- XULFUI :
+		- Ajout méthodes 'Log(Quietly|AndPrompt)(...)'.
+	- XULFTK :
+		- Ajout d'une 'DefaultErrorReportingFunctions'.
+
 09/11/2011 :
 	- NSXPCM :
 		- Le destructeur associé à la bibliothèque ferme l'éventuelle console JavaScript pour éviter une fenêtre fantôme.

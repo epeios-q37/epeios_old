@@ -133,6 +133,24 @@ namespace xulfui {
 		{
 			return nsxpcm::Confirm( Main().Window, Message );
 		}
+		void LogQuietly( const str::string_ &Text ) const
+		{
+			nsxpcm::Log( Text );
+		}
+		void LogQuietly( const char *Text ) const
+		{
+			nsxpcm::Log( Text );
+		}
+		void LogAndPrompt( const str::string_ &Text ) const
+		{
+			nsxpcm::Log( Text );
+			nsxpcm::GetJSConsole( Main().Window );
+		}
+		void LogAndPrompt( const char *Text ) const
+		{
+			nsxpcm::Log( Text );
+			nsxpcm::GetJSConsole( Main().Window );
+		}
 	};
 }
 

@@ -62,6 +62,7 @@ extern class ttr_tutor &XULFTKTutor;
 
 # include "err.h"
 # include "flw.h"
+
 # include "nsxpcm.h"
 # include "frdkrn.h"
 
@@ -73,6 +74,38 @@ extern class ttr_tutor &XULFTKTutor;
 namespace xulftk {
 	using xulfkl::status__;
 
+	typedef frdkrn::error_reporting_functions__ _error_reporting_functions__;
+
+	class error_reporting_functions__
+	: public _error_reporting_functions__
+	{
+	private:
+		const xulfui::ui___ *_UI;
+		lcl::rack__ _Rack;
+	protected:
+		virtual void FBLFRDReportError(
+			fblovl::reply__ Reply,
+			const char *Message );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_error_reporting_functions__::reset( P );
+		}
+		E_CVDTOR( error_reporting_functions__ );
+		void Init(
+			const xulfui::ui___ &UI,
+			const lcl::locale_ &Locale,
+			const char *Language )
+		{
+			reset();
+
+			_error_reporting_functions__::Init();
+			_UI = &UI;
+			_Rack.Init( Locale, Language );
+		}
+	};
+
+
 	class trunk___
 	{
 	private:
@@ -80,6 +113,7 @@ namespace xulftk {
 		xulfkl::kernel___ *_Kernel;
 		geckoo::user_functions__  *_Steering;
 		const char *_TargetName;
+		error_reporting_functions__ _DefaultErrorReportingFunctions;
 	protected:
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
 		{
@@ -112,6 +146,7 @@ namespace xulftk {
 			_UI = NULL;
 			_Kernel =  NULL;
 			_Steering = NULL;
+			_DefaultErrorReportingFunctions.reset( P );
 //			_TrunkFunctions.reset();
 		}
 		trunk___( void )
@@ -126,14 +161,21 @@ namespace xulftk {
 			const char *TargetName,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
-			geckoo::user_functions__ &Steering )
+			geckoo::user_functions__ &Steering,
+			const lcl::locale_ &Locale,
+			const char *Language )
 		{
 			_UI = &UI;
 			_Kernel = &Kernel;
 			_TargetName = TargetName;
 			_Steering = &Steering;
+			_DefaultErrorReportingFunctions.Init( UI, Locale, Language );
 
 			return frdkrn::sOK;
+		}
+		_error_reporting_functions__ &DefaultErrorReportingFunctions( void )
+		{
+			return _DefaultErrorReportingFunctions;
 		}
 		void ExposeSteering( void )
 		{

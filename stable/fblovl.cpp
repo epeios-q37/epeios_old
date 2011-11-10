@@ -57,6 +57,27 @@ public:
 
 using namespace fblovl;
 
+#define CASE( m )\
+	case r##m:\
+	return #m;\
+	break
+
+
+const char *fblovl::Label( reply__ Reply )
+{
+	switch ( Reply ) {
+	CASE( OK );
+	CASE( Error );
+	CASE( Notification );
+	default:
+		ERRc();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

@@ -423,8 +423,7 @@ static void ThrowIError_(
 	Requete.Complete();
 }
 
-// Throw an itentional error (ERRi), for testing purpose.
-static void ThrowUserDefinedError_(
+static void TestNotification_(
 	backend_ &Backend,
 	untyped_module &Module,
 	index__,
@@ -741,8 +740,8 @@ void fblbkd::master_module::Init( fblbkd::backend_ &Backend )
 	// Throw a throw error (ERRt), for testing purpose.
 	ADD( ThrowIError );
 
-	// Gnération d'une erreur utilsateur.
-	ADD( ThrowUserDefinedError );
+	// Test de la notification.
+	ADD( TestNotification );
 
 	// Create a new object.
 	ADD( GetNewObject );
@@ -911,7 +910,7 @@ ERRErr
 
 	ERRRst();
 
-	Request.ReportBackendError(	ErrMsg );
+	Request.ReportError(	ErrMsg );
 ERREnd
 	Request.Complete();
 ERREpilog

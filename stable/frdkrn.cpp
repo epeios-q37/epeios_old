@@ -157,7 +157,7 @@ report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	incompatibility_informations_ &IncompatibilityInformations,
-	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
+	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -180,7 +180,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorHandlingFunctions, IncompatibilityInformations ) ) {
+	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorReportingFunctions, IncompatibilityInformations ) ) {
 		Report = rIncompatibleBackend;
 		ERRReturn;
 	}
@@ -197,14 +197,14 @@ report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	incompatibility_informations_ &IncompatibilityInformations,
-	frdkrn::error_handling_functions__ &ErrorHandlingFunctions,
+	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, IncompatibilityInformations, ErrorReportingFunctions, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -214,7 +214,7 @@ ERREpilog
 report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	incompatibility_informations_ &IncompatibilityInformations,
-	error_handling_functions__ &ErrorHandlingFunctions,
+	error_reporting_functions__ &ErrorReportingFunctions,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -231,7 +231,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, CompatibilityInformations, Type, IncompatibilityInformations, ErrorHandlingFunctions, LogFunctions );
+		Report = _Connect( Location, CompatibilityInformations, Type, IncompatibilityInformations, ErrorReportingFunctions, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -259,7 +259,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != rOK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

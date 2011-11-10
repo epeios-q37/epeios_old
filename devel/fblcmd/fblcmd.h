@@ -71,7 +71,7 @@ namespace fblcmd {
 	enum command {
 		cThrowUError,
 		cThrowIError,
-		cThrowUserDefinedError,
+		cTestNotification,
 		cGetNewObject,
 		cGetType,
 //		cGetRawMessages,

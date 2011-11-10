@@ -105,9 +105,10 @@ namespace xulfkl {
 			const rgstry::registry_ &ConfigurationRegistry,
 			const char *TargetName,
 			const lcl::locale_ &Locale,
-			const char *Language )
+			const char *Language,
+			frdkrn::error_reporting_functions__ &ErrorReportingFunctions )
 		{
-			return _kernel___::Init( ConfigurationRegistryRoot, ConfigurationRegistry, TargetName, Locale, Language );
+			return _kernel___::Init( ConfigurationRegistryRoot, ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,

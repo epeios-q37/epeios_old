@@ -73,7 +73,7 @@ extern class ttr_tutor &FRDKRNTutor;
 
 namespace frdkrn {
 	using namespace frdbkd;
-	using fblfrd::error_handling_functions__;
+	using fblfrd::error_reporting_functions__;
 
 	csducl::type__ GetBackendType( const frdrgy::registry_ &Registry );
 
@@ -202,12 +202,13 @@ namespace frdkrn {
 		csdleo::shared_data__ _SharedData;
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la création ou du chargement du projet. Si == 0, pas de projet en cours d'utilisation.
+		error_reporting_functions__ *_ErrorReportingFunctions;
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			incompatibility_informations_ &IncompatibilityInformations,
-			error_handling_functions__ &ErrorHandlingFunctions,
+			error_reporting_functions__ &ErrorReportingFunctions,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
 		{
@@ -228,12 +229,12 @@ namespace frdkrn {
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			incompatibility_informations_ &IncompatibilityInformations,
-			error_handling_functions__ &ErrorReportingFunctions = *(error_handling_functions__ *)NULL,
+			error_reporting_functions__ &ErrorReportingFunctions,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
 			incompatibility_informations_ &IncompatibilityInformations,
-			error_handling_functions__ &ErrorHAndlingFunctions = *(error_handling_functions__ *)NULL,
+			error_reporting_functions__ &ErrorReportingFunctions,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
 		void reset( bso::bool__ P = true )
@@ -248,6 +249,7 @@ namespace frdkrn {
 			_LocaleRack.reset( P );
 			_Message.reset( P );
 			_ProjectOriginalTimeStamp = 0;
+			_ErrorReportingFunctions = NULL;
 		}
 		kernel___( void )
 		{
@@ -262,12 +264,14 @@ namespace frdkrn {
 			const rgstry::registry_ &ConfigurationRegistry,
 			const char *TargetName,
 			const lcl::locale_ &Locale,
-			const char *Language )
+			const char *Language,
+			error_reporting_functions__ &ErrorReportingFunctions )
 		{
 			_Registry.Init( ConfigurationRegistryRoot, ConfigurationRegistry);
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
 			_ProjectOriginalTimeStamp = 0;
+			_ErrorReportingFunctions = &ErrorReportingFunctions;
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 
 			return sOK;
@@ -281,12 +285,13 @@ namespace frdkrn {
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
+			error_reporting_functions__ &ErrorReportingFunctions,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
 			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == rOK )
-				Report = _Connect( CompatibilityInformations, ErrorSet.IncompatibilityInformations );
+				Report = _Connect( CompatibilityInformations, ErrorSet.IncompatibilityInformations, ErrorReportingFunctions );
 
 			if ( Report == rOK )
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -307,13 +312,17 @@ namespace frdkrn {
 			return _ProjectOriginalTimeStamp < ProjectTimeStamp();
 		}
 		E_RWDISCLOSE__( str::string_, Message );
-		const void AboutBackend(
+		void AboutBackend(
 			str::string_ &ProtocolVersion,
 			str::string_ &BackendLabel,
 			str::string_ &APIVersion,
 			str::string_ &BackendInformations )
 		{
 			_Backend.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
+		}
+		void ThrowError( void )
+		{
+			_Backend.ThrowError();
 		}
 		void Close( void )
 		{
