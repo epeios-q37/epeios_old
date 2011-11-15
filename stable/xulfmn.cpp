@@ -173,7 +173,7 @@ void xulfmn::RegisterMainUI(
 
 	Register_( Trunk, Trunk.UI().Main().Widgets, Window );
 
-	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document );
+	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document() );
 }
 
 

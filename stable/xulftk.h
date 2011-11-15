@@ -292,7 +292,7 @@ namespace xulftk {
 			Translation.Init();
 			FileName.Init();
 
-			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window, Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) )
+			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) )
 				XULFTKApplySession( FileName, XMLPreprocessorCriterions );
 		ERRErr
 		ERREnd
@@ -303,7 +303,7 @@ namespace xulftk {
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
-			if ( nsxpcm::Confirm( UI().Main().Window, Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
+			if ( nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
 				Exit();
 		ERRErr
 		ERREnd

@@ -103,7 +103,7 @@ namespace xulfui {
 		}
 		void SaveUserData( const str::string_ &Data )
 		{
-			nsxpcm::SetAttribute( nsxpcm::GetWindowElement( Main().Window ), XULFUI_USERDATA_ATTRIBUTE_NAME, Data );
+			nsxpcm::SetAttribute( nsxpcm::GetWindowElement( Main().Window() ), XULFUI_USERDATA_ATTRIBUTE_NAME, Data );
 		}
 		void Alert(
 			nsIDOMWindow *Window,
@@ -119,19 +119,19 @@ namespace xulfui {
 		}
 		void Alert( const char *Message )
 		{
-			Alert( Main().Window, Message );
+			Alert( Main().Window(), Message );
 		}
 		void Alert( const str::string_ &Message )
 		{
-			Alert( Main().Window, Message );
+			Alert( Main().Window(), Message );
 		}
 		bso::bool__ Confirm( const char *Message )
 		{
-			return nsxpcm::Confirm( Main().Window, Message );
+			return nsxpcm::Confirm( Main().Window(), Message );
 		}
 		bso::bool__ Confirm( const str::string_ &Message )
 		{
-			return nsxpcm::Confirm( Main().Window, Message );
+			return nsxpcm::Confirm( Main().Window(), Message );
 		}
 		void LogQuietly( const str::string_ &Text ) const
 		{
@@ -144,12 +144,12 @@ namespace xulfui {
 		void LogAndPrompt( const str::string_ &Text ) const
 		{
 			nsxpcm::Log( Text );
-			nsxpcm::GetJSConsole( Main().Window );
+			nsxpcm::GetJSConsole( Main().Window() );
 		}
 		void LogAndPrompt( const char *Text ) const
 		{
 			nsxpcm::Log( Text );
-			nsxpcm::GetJSConsole( Main().Window );
+			nsxpcm::GetJSConsole( Main().Window() );
 		}
 	};
 }

@@ -70,21 +70,21 @@ void xulfdg::debug_dialog__::UpdateUI( void )
 
 void xulfdg::jsconsole_command__::XULWDGOnEvent( event__ )
 {
-	nsxpcm::Close( Target().UI().Debug.Window );
-	nsxpcm::GetJSConsole( Target().UI().Main().Window );
+	nsxpcm::Close( Target().UI().Debug.Window() );
+	nsxpcm::GetJSConsole( Target().UI().Main().Window() );
 }
 
 void xulfdg::dominspector_command__::XULWDGOnEvent( event__ )
 {
-	nsxpcm::Close( Target().UI().Debug.Window );
-	nsxpcm::GetDOMInspector( Target().UI().Main().Window );
+	nsxpcm::Close( Target().UI().Debug.Window() );
+	nsxpcm::GetDOMInspector( Target().UI().Main().Window() );
 }
 
 void xulfdg::frontend_error_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
-	nsxpcm::Close( Target().UI().Debug.Window );
+	nsxpcm::Close( Target().UI().Debug.Window() );
 	ERRI( iTest );
 ERRErr
 ERREnd
@@ -95,7 +95,7 @@ void xulfdg::backend_error_command__::XULWDGOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
-	nsxpcm::Close( Target().UI().Debug.Window );
+	nsxpcm::Close( Target().UI().Debug.Window() );
 	Target().Kernel().ThrowError();
 ERRErr
 ERREnd
@@ -160,6 +160,7 @@ ERRBegin
 
 	if ( nsxpcm::GetId( nsxpcm::GetWindowElement( Window ), Id ) != XULFDG_DIALOG_ID ) {
 		Trunk.UI().Alert( Trunk.Kernel().LocaleRack().GetTranslation( "IncompatibleDebugDialog", XULFDG_NAME "_", Buffer ) );
+		nsxpcm::Close( Window );
 		ERRReturn;
 	}
 

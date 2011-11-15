@@ -1104,19 +1104,29 @@ namespace nsxpcm {
 	typedef nsISupports *nsISupportsPointer;
 	typedef nsIDOMElement *nsIDOMElementPointer;
 	typedef nsIDOMWindow *nsIDOMWindowPointer;
+	typedef nsIDOMWindowInternal *nsIDOMWindowInternalPointer;
 
-	struct ui_core__ {
-		nsIDOMDocument *Document;
-		nsIDOMWindow *Window;
-		ui_core__( void )
+	class ui_core__ {
+	private:
+		nsIDOMWindowInternal *_Window;
+	public:
+		void reset( bso::bool__ = true )
 		{
-			Document = NULL;
-			Window = NULL;
+			_Window = NULL;
+		}
+		E_CVDTOR( ui_core__ )
+		void Init( nsIDOMWindowInternal *Window )
+		{
+			_Window = Window;
 		}
 		void Init( nsIDOMWindow *Window )
 		{
-			this->Window = Window;
-			this->Document = GetWindowDocument( Window );
+			Init( GetWindowInternal( Window ) );
+		}
+		E_RODISCLOSE__( nsIDOMWindowInternalPointer, Window );
+		nsIDOMDocument *Document( void ) const
+		{
+			return GetWindowDocument( _Window );
 		}
 	};
 
@@ -1815,7 +1825,7 @@ namespace nsxpcm {
 	{};
 */
 	class window__
-	: public _widget__<nsIDOMWindow>
+	: public _widget__<nsIDOMWindowInternal>
 	{
 	public:
 		void Close( void )
@@ -1825,10 +1835,6 @@ namespace nsxpcm {
 		bso::bool__ IsClosed( void )
 		{
 			return nsxpcm::IsClosed( GetObject() );
-		}
-		nsIDOMWindowInternal *GetInternal( void )
-		{
-			return nsxpcm::GetWindowInternal( GetObject() );
 		}
 	};
 

@@ -219,20 +219,12 @@ ERREpilog
 	return Buffer;
 }
 
-static inline void ReportBadOrNoValueForRegistryEntry_( const char *Path )
-{
-	if ( LocaleRack == NULL )
-		ERRu();
-
-	cio::CErr << LocaleRack->GetTranslation( "BadOrNoValueForRegistryEntry", "SCLREGISTRY_", Translation_ ) << " !" << txf::nl << txf::commit;
-}
-
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 	const char *Path,
 	str::string_ &Value )
 {
 	if ( !GetValue( Path, Value ) ) {
-		ReportBadOrNoValueForRegistryEntry_( Path );
+		ReportBadOrNoValueForRegistryEntryError_( Path );
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -275,7 +267,7 @@ ERRBegin
 	RawValue.ToNumber( Limit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntry_( Path );
+		ReportBadOrNoValueForRegistryEntryError_( Path );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -303,7 +295,7 @@ ERRBegin
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntry_( Path );
+		ReportBadOrNoValueForRegistryEntryError_( Path );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -320,7 +312,7 @@ ERREpilog
 		type Value;\
 \
 		if ( !GetRegistryUnsignedNumber_( Path, Limit, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntry_( Path );\
+			ReportBadOrNoValueForRegistryEntryError_( Path );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\
@@ -356,7 +348,7 @@ RUN( UByte, bso::ubyte__ )
 		type Value;\
 \
 		if ( !GetRegistrySignedNumber_( Path, Min, Max, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntry_( Path );\
+			ReportBadOrNoValueForRegistryEntryError_( Path );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\

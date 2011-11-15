@@ -1,5 +1,15 @@
 $Id$
 
+15/11/2011 :
+	- NSXPCM :
+		- Pour simplification, mise en oeuvre de 'nsIDOMWindowInternal' à la place de 'nsIDOWindow' dans certains cas.
+	- XULFxx :
+		- Adaptation.
+	- XULFDG :
+		- La boîte de dialogue de 'debug' est fermée lorsque la 'registration' échoue.
+	- XULFMN
+		- Ajout d'une macro contenant l'identifiant de la fenêtre principale.
+
 10/11/2011 :
 	- FBLxxx :
 		- Adaptation.
