@@ -1,5 +1,13 @@
 $Id$
 
+17/11/2011 :
+	- XML :
+		- Ajout du 'token' 'SpecialAttribute' ('xmlns[:...]', pour l'instant).
+		- Ajout 'tfAllButUseless'.
+		- 'tProcessed' -> 't_Processed' et 'tError' -> 't_Error'.
+	- XPP :
+		- Adaptation.
+
 15/11/2011 :
 	- NSXPCM :
 		- Pour simplification, mise en oeuvre de 'nsIDOMWindowInternal' à la place de 'nsIDOWindow' dans certains cas.

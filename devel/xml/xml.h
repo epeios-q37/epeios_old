@@ -251,12 +251,13 @@ namespace xml {
 		tStartTag,
 		tStartTagClosed,
 		tAttribute,
+		tSpecialAttribute,	// 'xmlns[:...]', par exemple.
 		tValue,
 		tEndTag,
 		tComment,
-		tProcessed,	// Tout le flux XML a été traité.
-		tError,	// Erreur dans l'analyse du flux XML; voir 'Status'.
 		t_amount,
+		t_Processed,	// Tout le flux XML a été traité.
+		t_Error,	// Erreur dans l'analyse du flux XML; voir 'Status'.
 		t_Undefined
 	};
 
@@ -275,11 +276,14 @@ namespace xml {
 		TF( StartTag ),
 		TF( StartTagClosed ),
 		TF( Attribute ),
+		TF( SpecialAttribute ),
 		TF( Value ),
 		TF( EndTag ),
 		TF( Comment ),
 		tfAll = ( ( 1 << t_amount ) - 1 ),
+		tfAllButUseless = tfAll & ~( tfComment |tfSpecialAttribute ),
 		tfObvious = tfStartTag | tfAttribute | tfValue | tfEndTag,
+		tfAllAttributes = tfAttribute | tfSpecialAttribute,
 	};
 
 #undef TF
@@ -416,6 +420,14 @@ namespace xml {
 			const str::string_ &Name,
 			const str::string_ &Value,
 			const dump_ &Dump ) = 0;
+		virtual bso::bool__ XMLSpecialAttribute(
+			const str::string_ &TagName,
+			const str::string_ &Name,
+			const str::string_ &Value,
+			const dump_ &Dump )
+		{
+			return true;
+		}
 		virtual bso::bool__ XMLValue(
 			const str::string_ &TagName,
 			const str::string_ &Value,

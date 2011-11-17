@@ -485,19 +485,37 @@ inline static status__ GetTagValue_(
 	return GetValue_( Flow, '<', false, EntitiesHandling, Value, OnlySpaces );
 }
 
+#define XMLNS	"xmlns"
+
+inline static bso::bool__ IsSpecialAttribute_( const str::string_ &Attribute )
+{
+	bso::size__ Length = strlen( XMLNS );
+
+	if ( Attribute.Amount() < Length )
+		return false;
+
+	if ( str::Compare( str::string( XMLNS ), Attribute, 0, 0, Length ) )
+		return false;
+
+	if ( ( Attribute.Amount() > Length ) && ( Attribute( Length ) != ':' ) )
+		return false;
+
+	return true;
+}
+
 #undef HANDLE
 
 #define HANDLE( F )\
 	if ( ( _Status = ( F ) ) != sOK )\
 	{\
-		_Token = tError;\
+		_Token = t_Error;\
 		ERRReturn;\
 	}
 
 #define RETURN( V )\
 	{\
 		_Status = V;\
-		_Token = tError;\
+		_Token = t_Error;\
 		ERRReturn;\
 	}
 
@@ -686,7 +704,7 @@ ERRBegin
 				_Tags.Pop( _TagName );
 
 				if ( _Tags.Amount() == 0 ) {
-					_Token = tProcessed;
+					_Token = t_Processed;
 					Continue = false;
 				} else
 					_Context = cValueExpected;
@@ -710,13 +728,17 @@ ERRBegin
 
 				_Tags.Top( _TagName );
 
-				_Token = tAttribute;
+				if ( IsSpecialAttribute_( _AttributeName ) )
+					_Token = tSpecialAttribute;
+				else
+					_Token = tAttribute;
 
 				if ( ( 1 << _Token ) & TokenToReport )
 					Continue = false;
 
 				break;
 			case tAttribute:
+			case tSpecialAttribute:
 				_Token = t_Undefined;
 
 				HANDLE( SkipSpaces_( _Flow ) );
@@ -795,7 +817,7 @@ ERRBegin
 				_Tags.Pop( _TagName );
 
 				if ( _Tags.Amount() == 0 ) {
-					_Token = tProcessed;
+					_Token = t_Processed;
 					Continue = false;
 				} else
 					_Context = cValueExpected;
@@ -903,7 +925,7 @@ ERRBegin
 
 	if ( _Tags.IsEmpty() )
 		if ( _Token == t_Undefined )
-			_Token = tProcessed;
+			_Token = t_Processed;
 
 	_Status = sOK;
 ERRErr
@@ -945,6 +967,9 @@ ERRBegin
 		case tAttribute:
 			Stop = !Callback.XMLAttribute( TagName, AttributeName, Value, Dump );
 			break;
+		case tSpecialAttribute:
+			Stop = !Callback.XMLSpecialAttribute( TagName, AttributeName, Value, Dump );
+			break;
 		case tValue:
 			Stop = !Callback.XMLValue( TagName, Value, Dump );
 			break;
@@ -954,8 +979,8 @@ ERRBegin
 		case tComment:
 			Stop = !Callback.XMLComment( Value, Dump );
 			break;
-		case tError:
-		case tProcessed:
+		case t_Error:
+		case t_Processed:
 			Stop = true;
 			break;
 		default:

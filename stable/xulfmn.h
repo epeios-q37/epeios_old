@@ -65,7 +65,7 @@ extern class ttr_tutor &XULFMNTutor;
 
 # include "xulfbs.h"
 
-# define XULFMN_WINDOW_ID	"wdwMain_alpha1"
+# define XULFMN_WINDOW_ID	"wdwMain"
 
 namespace xulfmn {
 	using namespace xulfbs;

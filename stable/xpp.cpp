@@ -282,11 +282,11 @@ static status__ AwaitingToken_(
 {
 	token__ Token = xml::t_Undefined;
 
-	switch ( Token = Parser.Parse( xml::tfAll & ~xml::tfComment ) ) {
-		case xml::tProcessed:
+	switch ( Token = Parser.Parse( xml::tfAllButUseless ) ) {
+		case xml::t_Processed:
 			ERRc();
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			return Convert_( Parser.Status() );
 			break;
 		default:
@@ -363,10 +363,10 @@ static status__ RetrieveTree_(
 				break;
 			}
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			return Convert_( Parser.Status() );
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			ERRc();
 			break;
 		default:
@@ -1064,6 +1064,9 @@ status__ xpp::_extended_parser___::Handle(
 			} else 
 				Status = sOK;
 			break;
+		case xml::tSpecialAttribute:
+			Continue = true;
+			break;
 		case xml::tStartTagClosed:
 			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
 				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
@@ -1093,16 +1096,16 @@ status__ xpp::_extended_parser___::Handle(
 		case xml::tValue:
 			Status = sOK;
 			break;
-		case xml::tProcessed:
-//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
-			Status = s_Pending;
-			break;
-		case xml::tError:
-			Status = Convert_( _Parser.Status() );
-			break;
 		case xml::tComment:
 			_Parser.PurgeDumpData();
 			Continue = true;
+			break;
+		case xml::t_Processed:
+//			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
+			Status = s_Pending;
+			break;
+		case xml::t_Error:
+			Status = Convert_( _Parser.Status() );
 			break;
 		default:
 			ERRc();
@@ -1202,7 +1205,7 @@ ERRBegin
 	Parser.Init( XFlow, xml::ehKeep );
 
 	while ( Continue ) {
-		switch( Parser.Parse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
+		switch( Parser.Parse( xml::tfAllButUseless ) ) {
 		case xml::tProcessingInstruction:
 			Writer.GetFlow() << Parser.DumpData();
 			
@@ -1222,10 +1225,10 @@ ERRBegin
 		case xml::tEndTag:
 			Writer.PopTag();
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			PFlow.GetContext( Context );
 			Status = Context.Status;
 			Continue = false;
@@ -1313,7 +1316,7 @@ ERRBegin
 	CypherKey.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( xml::tfAll ) ) {
+		switch ( Parser.Parse( xml::tfAll & ~xml::tfSpecialAttribute ) ) {
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == CYPHER_TAG_KEY_ATTRIBUTE ) {
 				if ( CypherKey.Amount() != 0 ) {
@@ -1390,6 +1393,7 @@ ERRBegin
 			// Pour purger le 'Dump' d'un éventuel '>' en attente (gênant lors du relayage d'un commentaire.
 			break;
 		case xml::tAttribute:
+		case xml::tSpecialAttribute:
 			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
 			break;
 		case xml::tValue:
@@ -1402,10 +1406,10 @@ ERRBegin
 			Writer.PutValue( "" );	// Pour mettre un éventuel '>' en attente.
 			Writer.GetFlow() << Parser.DumpData();
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			Context.Status = Status = _Convert( Parser.Status() );
 			Context.Coord = XFlow.Coord();
 			ERRReturn;
