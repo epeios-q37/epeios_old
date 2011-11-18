@@ -60,25 +60,25 @@ extern class ttr_tutor &CSDBNSTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "sck.h"
-#include "cpe.h"
+# include "err.h"
+# include "sck.h"
+# include "cpe.h"
 
 # include "csdsuf.h"
 
-#ifdef CPE__T_MS
-#	ifndef CSD__NO_SERVICE_HANDLING
-#		define CSD__HANDLE_SERVICE	// Handles the Windows service system.
-#	endif
-#endif
+# ifdef CPE__T_MS
+#  ifndef CSD_NO_SERVICE_HANDLING
+#   define CSD__HANDLE_SERVICE	// Handles the Windows service system.
+#  endif
+# endif
 
-#ifdef CSD__HANDLE_SERVICE
-#	include "wintol.h"
+ #ifdef CSD__HANDLE_SERVICE
+#  include "wintol.h"
 	typedef	wintol::service__ _service__;
 	using wintol::InstallService;
-#endif
+# endif
 
-#define CSDNBS__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
+# define CSDNBS__DEFAULT_TIMEOUT	SCK__DEFAULT_TIMEOUT
 
 namespace csdbns {
 	using namespace sck;
