@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id$ -->
+<Locales xmlns="http://zeusw.org/epeios/lcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Locale target="egeckocom">
+		<xpp:expand href="epeios.xlcl"/>
+		<Translations message="UnableToRegisterElement">
+			<Translation language="fr">Impossible d'enregistrer l'élément d'identifiant '%2' (%1)</Translation>
+			<Translation language="en">Unable to register element '%2' (%1)</Translation>
+		</Translations>
+		<Translations message="UnableToOpenComponent">
+			<Translation language="fr">Impossible d'ouvrir le composant '%2' (%1)</Translation>
+			<Translation language="en">Unable to open component '%2' (%1)</Translation>
+		</Translations>
+		<Translations message="BadLoneRegistrationContext">
+			<Translation language="fr">Mauvais contexte d'enregistrement isolé (%1)</Translation>
+			<Translation language="en">Bad lone registration context (%1)</Translation>
+		</Translations>
+		<Translations message="LoneRegistrationFailure">
+			<Translation language="fr">Echec de l'enregistrement isolé (%1)</Translation>
+			<Translation language="en">Lone regitration failure (%1)</Translation>
+		</Translations>
+
+		<!--
+			<Translations message="">
+				<Translation language="fr"></Translation>
+				<Translation language="en"></Translation>
+			</Translations>
+		-->
+	</Locale>
+</Locales>

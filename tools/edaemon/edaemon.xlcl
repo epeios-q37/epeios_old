@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id$ -->
+<Locales xmlns="http://zeusw.org/epeios/lcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Locale target="edaemon">
+		<xpp:expand href="epeios.xlcl"/>
+		<Translations message="ProgramDescription">
+			<Translation language="fr">'Daemoniseur' du projet Epeios</Translation>
+			<Translation language="en">Epesio project's 'daemonizer'</Translation>
+		</Translations>
+		<Translations message="ConfigurationFileParsingError">
+			<Translation language="fr">Erreur dans le fichier de configuration : %1</Translation>
+			<Translation language="en">Error in the configuration fiie : %1</Translation>
+		</Translations>
+		<Translations message="LocaleFileParsingError">
+			<Translation language="fr">Erreur dans le fichier de locale : %1</Translation>
+			<Translation language="en">Error in the locale file : %1</Translation>
+		</Translations>
+		<Translations message="UnableToOpenFile">
+			<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
+			<Translation language="en">Unable to open file '%1'</Translation>
+		</Translations>
+		<Translations message="BadOrNoValueForRegistryEntry">
+			<Translation language="fr">Pas ou mauvaise valeur pour l'entrée de registre '%1'</Translation>
+			<Translation language="en">Bar or no value for entry registry '%1'</Translation>
+		</Translations>
+
+		<!--
+			<Translations message="">
+				<Translation language="fr"></Translation>
+				<Translation language="en"></Translation>
+			</Translations>
+		-->
+	</Locale>
+</Locales>

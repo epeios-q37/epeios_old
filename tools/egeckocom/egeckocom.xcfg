@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<Configurations xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Configuration target="egeckocom">
+		<Components>
+			<Component id="eSketch">h:\bin\esketchgck</Component>
+		</Components>
+		<!-- Optional -->
+		<!--
+			<LocaleFileName>egeckocom.xlcl</LocaleFileName>
+		-->
+	</Configuration>
+</Configurations>

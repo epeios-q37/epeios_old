@@ -1,0 +1,9 @@
+<Configurations>
+	<Configuration target="edaemon">
+	    <Language>fr</Language>
+		<!-- Optional -->
+		<!--
+			<LocaleFileName>edaemon.xlcl</LocaleFileName>
+		-->
+	</Configuration>
+</Configurations>

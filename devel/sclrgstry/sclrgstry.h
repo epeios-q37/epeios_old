@@ -60,10 +60,13 @@ extern class ttr_tutor &SCLRGSTRYTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "rgstry.h"
+# include "rgstry.h"
+
+# define SCLREGSITRY_TAG_MARKER_STRING	"%"
+# define SCLREGSITRY_TAG_MARKER_CHAR	'%'
 
 namespace sclrgstry {
 
@@ -77,6 +80,65 @@ namespace sclrgstry {
 		static const char *LocaleFileName;
 	};
 
+	class xpath___ {
+	private:
+		const char *_Path;
+		str::strings _Tags;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Path = NULL;
+			_Tags.reset( P );
+		}
+		E_CVDTOR( xpath___ );
+		void Init( const char *Path )
+		{
+			_Path = Path;
+			_Tags.Init();
+		}
+		void Init(
+			const char *Path,
+			const str::string_ &Tag )
+		{
+			_Path = Path;
+
+			_Tags.Init();
+			_Tags.Append( Tag );
+		}
+		void Init(
+			const char *Path,
+			const str::strings_ &Tags )
+		{
+			_Path = Path;
+
+			_Tags.Init();
+			_Tags = Tags;
+		}
+		xpath___( const char *Path )
+		{
+			Init( Path );
+		}
+		xpath___(
+			const char *Path,
+			const str::string_ &Tag )
+		{
+			Init( Path, Tag );
+		}
+		xpath___(
+			const char *Path,
+			const str::strings_ &Tags )
+		{
+			Init( Path, Tags );
+		}
+		const str::string_ &GetTargetedPath( str::string_ &TargetedPath ) const
+		{
+			TargetedPath.Init( _Path );
+
+			str::ReplaceTags( TargetedPath, _Tags, SCLREGSITRY_TAG_MARKER_CHAR );
+
+			return TargetedPath;
+		}
+	};
 
 	using rgstry::value;
 	using rgstry::value_;
@@ -88,33 +150,37 @@ namespace sclrgstry {
 	bso::bool__ IsRegistryReady( void );
 
 	bso::bool__ GetValue(
-		const char *Path,
+		const xpath___ &Path,
 		str::string_ &Value );
 
+	bso::bool__ GetValues(
+		const xpath___ &Path,
+		str::strings_ &Values );
+
 	const str::string_ &GetOptionalRegistryValue(
-		const char *Path,
+		const xpath___ &Path,
 		str::string_ &Value,
 		bso::bool__ *Missing = NULL );
 
 	const char *GetOptionalRegistryValue(
-		const char *Path,
+		const xpath___ &Path,
 		STR_BUFFER___ &Buffer,
 		bso::bool__ *Missing = NULL );
 
 	const str::string_ &GetMandatoryRegistryValue(
-		const char *Path,
+		const xpath___ &Path,
 		str::string_ &Value );
 
 	const char *GetMandatoryRegistryValue(
-		const char *Path,
+		const xpath___ &Path,
 		STR_BUFFER___ &Buffer );
 
 # define SCLRGSTRY__RUN( type, name, limit )\
 	type GetMandatoryRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type Limit = limit );\
 	type GetRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type DefaultValue,\
 		type Limit = limit );
 
@@ -127,11 +193,11 @@ namespace sclrgstry {
 
 # define SCLRGSTRY__RSN( type, name, min, max )\
 	type GetMandatoryRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type Min = min,\
 		type Max = max );\
 	type GetRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type DefaultValue,\
 		type Min = min,\
 		type Max = max );

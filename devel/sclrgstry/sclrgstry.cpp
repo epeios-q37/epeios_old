@@ -99,10 +99,37 @@ static rgstry::status__ FillRegistry_(
 }
 
 bso::bool__ sclrgstry::GetValue(
-	const char *Path,
+	const xpath___ &Path,
 	str::string_ &Value )
 {
-	return Registry_.GetValue( str::string( Path ), ::Root_, Value );
+	bso::bool__ Missing = true;
+ERRProlog
+	str::string TargetedPath;
+ERRBegin
+	TargetedPath.Init();
+
+	Missing = Registry_.GetValue( Path.GetTargetedPath( TargetedPath ), ::Root_, Value );
+ERRErr
+ERREnd
+ERREpilog
+	return Missing;
+}
+
+bso::bool__ sclrgstry::GetValues(
+	const xpath___ &Path,
+		str::strings_ &Values )
+{
+	bso::bool__ Missing = true;
+ERRProlog
+	str::string TargetedPath;
+ERRBegin
+	TargetedPath.Init();
+
+	Missing = Registry_.GetValues( Path.GetTargetedPath( TargetedPath ), ::Root_, Values );
+ERRErr
+ERREnd
+ERREpilog
+	return Missing;
 }
 
 static str::string_ &GetTranslation_(
@@ -117,16 +144,18 @@ static str::string_ &GetTranslation_(
 	return Translation;
 }
 
-static inline void ReportBadOrNoValueForRegistryEntryError_( const char *Path )
+static inline void ReportBadOrNoValueForRegistryEntryError_( const xpath___ &Path )
 {
 ERRProlog
 	str::string Translation;
+	str::string TargetedPath;
 ERRBegin
 	Translation.Init();
 
 	GetTranslation_( "BadOrNoValueForRegistryEntry", Translation );
 
-	lcl::ReplaceTag( Translation, 1, str::string( Path ) );
+	TargetedPath.Init();
+	lcl::ReplaceTag( Translation, 1, Path.GetTargetedPath( TargetedPath ) );
 
 	cio::CErr << Translation << " !" << txf::nl << txf::commit;
 ERRErr
@@ -184,7 +213,7 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
-	const char *Path,
+	const xpath___ &Path,
 	str::string_ &Value,
 	bso::bool__ *Missing )
 {
@@ -196,7 +225,7 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 }
 
 const char *sclrgstry::GetOptionalRegistryValue(
-	const char *Path,
+	const xpath___ &Path,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
 {
@@ -220,7 +249,7 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
-	const char *Path,
+	const xpath___ &Path,
 	str::string_ &Value )
 {
 	if ( !GetValue( Path, Value ) ) {
@@ -232,7 +261,7 @@ const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 }
 
 const char *sclrgstry::GetMandatoryRegistryValue(
-	const char *Path,
+	const xpath___ &Path,
 	STR_BUFFER___ &Buffer )
 {
 ERRProlog
@@ -250,7 +279,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
-	const char *Path,
+	const xpath___ &Path,
 	t Limit,
 	t &Value )
 {
@@ -277,7 +306,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistrySignedNumber_(
-	const char *Path,
+	const xpath___ &Path,
 	t LowerLimit,
 	t UpperLimit,
 	t &Value )
@@ -306,7 +335,7 @@ ERREpilog
 
 #define RUN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type Limit  )\
 	{\
 		type Value;\
@@ -318,7 +347,7 @@ ERREpilog
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type DefaultValue,\
 		type Limit )\
 	{\
@@ -341,7 +370,7 @@ RUN( UByte, bso::ubyte__ )
 
 #define RSN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type Min,\
 		type Max)\
 	{\
@@ -354,7 +383,7 @@ RUN( UByte, bso::ubyte__ )
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const char *Path,\
+		const xpath___ &Path,\
 		type DefaultValue,\
 		type Min,\
 		type Max )\

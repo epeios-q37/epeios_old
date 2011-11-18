@@ -1,5 +1,12 @@
 $Id$
 
+18/11/2011 :
+	- CSDBNC :
+		- 'CSD__NO_SERVICE_HANDLING' -> 'CSD_NO_SERVICE_HANDLING'.
+	- SCLRGDTRY :
+		- Ajout 'GetValues(...)'.
+		- Mise en oeuvre 'xpath___'.
+
 17/11/2011 :
 	- XML :
 		- Ajout du 'token' 'SpecialAttribute' ('xmlns[:...]', pour l'instant).
