@@ -62,7 +62,7 @@ using nsxpcm::event__;
 
 using namespace xulftk;
 
-void xulfdg::debug_dialog__::UpdateUI( void )
+void xulfdg::debug_dialog__::Update( void )
 {
 	Widgets.Commands.BackendError.Enable( _Trunk->Kernel().IsConnected() );
 }
@@ -168,7 +168,7 @@ ERRBegin
 
 	Register_( Trunk, Trunk.UI().Debug.Widgets, Window );
 
-	Trunk.UI().Debug.UpdateUI();
+	Trunk.UI().Debug.Update();
 ERRErr
 ERREnd
 ERREpilog

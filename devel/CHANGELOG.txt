@@ -1,5 +1,18 @@
 $Id$
 
+19/11/2011 :
+	- XULFDG :
+		- 'UpdateUI()' -> 'Update()' (standardisation).
+	- XULFMN :
+		- Ajout méthode 'Update()'.
+		- Les 'Alert(...)'s utilisent maintenant la bonne fenêtre.
+	- XULFUI :
+		- Ajout méthode 'XULFUIUpdate()'.
+	- XULFTK :
+		- La mise à jour de l'interface 'UpdateUI()' s'appuie maintenant dur 'XULFUI'.
+
+
+
 18/11/2011 :
 	- CSDBNC :
 		- 'CSD__NO_SERVICE_HANDLING' -> 'CSD_NO_SERVICE_HANDLING'.

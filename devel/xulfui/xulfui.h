@@ -74,6 +74,8 @@ namespace xulfui {
 	{
 	private:
 		xulfmn::main__ *_Main;
+	protected:
+		virtual void XULFUIUpdate( void ) = 0;	// Mise à jour de l'interface.
 	public:
 		xulfdg::debug_dialog__ Debug;
 		void reset( bso::bool__ = true )
@@ -92,6 +94,10 @@ namespace xulfui {
 		{
 			_Main = &Main;
 			// 'Debug' est initialisé plus tard.
+		}
+		void Update( void )
+		{
+			XULFUIUpdate();
 		}
 		xulfmn::main__ &Main( void ) const
 		{

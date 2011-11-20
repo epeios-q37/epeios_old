@@ -104,7 +104,7 @@ namespace xulfmn {
 			_ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
-		void UpdateUI( void );
+		void Update( void );
 	};
 
 	void RegisterMainUI(

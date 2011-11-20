@@ -61,6 +61,11 @@ using namespace xulfmn;
 
 using nsxpcm::event__;
 
+void xulfmn::main__::Update( void )
+{
+	Widgets.Commands.CloseProject.Enable( _Trunk->Kernel().IsProjectInProgress() );
+}
+
 void xulfmn::window__::XULWDGOnEvent( event__ )
 {
 	Target().CloseSession();
@@ -74,7 +79,7 @@ ERRProlog
 ERRBegin
 	Id.Init();
 
-	nsxpcm::Alert( GetId( Id ) );
+	Target().UI().Alert( GetId( Id ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -92,7 +97,7 @@ ERRProlog
 ERRBegin
 	Id.Init();
 
-	nsxpcm::Alert( GetId( Id ) );
+	Target().UI().Alert( GetId( Id ) );
 ERRErr
 ERREnd
 ERREpilog

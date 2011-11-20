@@ -252,8 +252,7 @@ namespace xulftk {
 		}
 		void UpdateUI( void )
 		{
-			UI().Main().Widgets.Commands.CloseProject.Enable( Kernel().IsProjectInProgress() );
-//			UI().Debug.UpdateUI();	// Comme il s'agit d'une boîte de dialogue, n'est mis à jour qu'à son ouverture.
+			UI().Update();
 		}
 		void BrowseInformations( void )
 		{
