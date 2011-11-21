@@ -117,28 +117,45 @@ namespace xulftk {
 	protected:
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
 		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent(...)' doit être redéfini.
+			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKSiteURL( str::string_ &URL )
 		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent') doit être redéfini.
+			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
-		// Normalement appelé par la redéfintion de la fonciton qui suit.
+		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
 		void _ApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations )
-		{
-			if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK )
-				UI().Alert( Kernel().Message() );
-
-			UpdateUI();
-		}
+			const frdkrn::compatibility_informations__ &CompatibilityInformations );
 		virtual void XULFTKApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
-			ERRu();	//	Si pas surchargé, alors xulfmn::open_project_command__::NSXPCMOnEvent') doit être redéfini.
+			ERRu();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
+		bso::bool__ _DefendSession( void );
+		void _DropSession( void )
+		{
+			Kernel().Close();
+		}
+		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
+		{
+			ERRu();	//	Si pas surchargé, alors 'xulfmn::close_project_command__::NSXPCMOnEvent()' doit être redéfini.
+
+			return false;	// Pour éviter un 'warning'.
+		}
+		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
+		void _Exit( void )
+		{
+			SaveUserRegistry();
+			UI().Main().Widgets.Window.Close();
+			Kernel().Close();
+		}
+		virtual void XULFTKExit( void )
+		{
+			ERRu();	//	Si pas surchargé, alors 'xulfmn::exit_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -241,15 +258,6 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		bso::bool__ Exit( void )
-		{
-			SaveUserRegistry();
-			UI().Main().Widgets.Window.Close();
-			// nsxpcm::Close( UI().Main.Window );
-			Kernel().Close();
-
-			return true;
-		}
 		void UpdateUI( void )
 		{
 			UI().Update();
@@ -291,19 +299,29 @@ namespace xulftk {
 			Translation.Init();
 			FileName.Init();
 
-			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) )
+			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) ) {
 				XULFTKApplySession( FileName, XMLPreprocessorCriterions );
+				UpdateUI();
+			}
 		ERRErr
 		ERREnd
 		ERREpilog
 		}
-		void CloseSession( void )
+		bso::bool__ DropSession( void )
+		{
+			if ( XULFTKDropSession() ) {
+				UpdateUI();
+				return true;
+			} else
+				return false;
+		}
+		void Exit( void )
 		{
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
 			if ( nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
-				Exit();
+				XULFTKExit();
 		ERRErr
 		ERREnd
 		ERREpilog

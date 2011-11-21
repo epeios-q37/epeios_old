@@ -57,7 +57,7 @@ public:
 
 using namespace xulftk;
 
-#define PREFIX	XULFKL_NAME " " 
+#define PREFIX	XULFKL_NAME "_" 
 
 void xulftk::error_reporting_functions__::FBLFRDReportError(
 	fblovl::reply__ Reply,
@@ -65,7 +65,7 @@ void xulftk::error_reporting_functions__::FBLFRDReportError(
 {
 ERRProlog
 	str::string Message;
-STR_BUFFER___ Buffer;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( _UI == NULL )
 		ERRc();
@@ -89,6 +89,34 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void xulftk::trunk___::_ApplySession(
+	const str::string_ &FileName,
+	const xpp::criterions___ &Criterions,
+	const frdkrn::compatibility_informations__ &CompatibilityInformations )
+{
+	if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK )
+		UI().Alert( Kernel().Message() );
+}
+
+bso::bool__ xulftk::trunk___::_DefendSession( void )
+{
+	bso::bool__ Confirmed = false;
+ERRProlog
+	str::string Translation;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Translation.Init( Kernel().LocaleRack().GetTranslation( "ProjectClosingAsking", PREFIX, Buffer ) );
+	Translation.Append( ' ' );
+	Translation.Append( Kernel().LocaleRack().GetTranslation( "ProjectClosingWarning", PREFIX, Buffer ) );
+
+	Confirmed = UI().Confirm( Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Confirmed;
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

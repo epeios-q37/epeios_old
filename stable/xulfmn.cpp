@@ -68,7 +68,7 @@ void xulfmn::main__::Update( void )
 
 void xulfmn::window__::XULWDGOnEvent( event__ )
 {
-	Target().CloseSession();
+	Target().Exit();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 
@@ -92,20 +92,12 @@ void xulfmn::open_project_command__::XULWDGOnEvent( event__ )
 
 void xulfmn::close_project_command__::XULWDGOnEvent( event__ )
 {
-ERRProlog
-	str::string Id;
-ERRBegin
-	Id.Init();
-
-	Target().UI().Alert( GetId( Id ) );
-ERRErr
-ERREnd
-ERREpilog
+	Target().DropSession();
 }
 
 void xulfmn::exit_command__::XULWDGOnEvent( event__ )
 {
-	Target().CloseSession();
+	Target().Exit();
 }
 
 void xulfmn::about_command__::XULWDGOnEvent( event__ )

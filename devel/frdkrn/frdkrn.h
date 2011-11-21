@@ -201,7 +201,8 @@ namespace frdkrn {
 		frdbkd::_backend___ _Backend;
 		csdleo::shared_data__ _SharedData;
 		str::string _Message;
-		time_t _ProjectOriginalTimeStamp;	// Horodatage de la création ou du chargement du projet. Si == 0, pas de projet en cours d'utilisation.
+		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
+		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
 		error_reporting_functions__ *_ErrorReportingFunctions;
 		report__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
@@ -249,6 +250,7 @@ namespace frdkrn {
 			_LocaleRack.reset( P );
 			_Message.reset( P );
 			_ProjectOriginalTimeStamp = 0;
+			_ProjectModificationTimeStamp = 0;
 			_ErrorReportingFunctions = NULL;
 		}
 		kernel___( void )
@@ -351,9 +353,9 @@ namespace frdkrn {
 		{
 			_Registry.DumpUser( OFlow );
 		}
-		time_t ProjectTimeStamp( void ) const
+		time_t ProjectModificationTimeStamp( void ) const
 		{
-			return ProjectTimeStamp();
+			return _ProjectModificationTimeStamp;
 		}
 		bso::bool__ GetRegistryValue(
 			const char *Path,

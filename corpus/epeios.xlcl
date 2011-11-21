@@ -4,14 +4,12 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:expand href="clnarg.xlcl"/>
 	<xpp:expand href="fil.xlcl"/>
-	<xpp:expand href="frdkrn.xlcl"/>
-	<xpp:expand href="mscmdd.xlcl"/>
-	<xpp:expand href="mscrmi.xlcl"/>
+	<xpp:expand href="frd.xlcl"/>
+	<xpp:expand href="msc.xlcl"/>
 	<xpp:expand href="nsxpcm.xlcl"/>
 	<xpp:expand href="rgstry.xlcl"/>
-	<xpp:expand href="scllocale.xlcl"/>
-	<xpp:expand href="sclrgstry.xlcl"/>
+	<xpp:expand href="scl.xlcl"/>
 	<xpp:expand href="xml.xlcl"/>
 	<xpp:expand href="xpp.xlcl"/>
-	<xpp:expand href="xulfkl.xlcl"/>
+	<xpp:expand href="xulf.xlcl"/>
 </xpp:bloc>

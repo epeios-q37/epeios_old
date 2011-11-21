@@ -1,5 +1,12 @@
 $Id$
 
+21/11/2011 :
+	- XULFMN :
+		- Adaptation.
+	- XULFTK :
+		- Mise en place d'un 'DropSession(...)' par défaut.
+		- Mise en place d'un 'Exit(...)' par défaut.
+
 19/11/2011 :
 	- XULFDG :
 		- 'UpdateUI()' -> 'Update()' (standardisation).
