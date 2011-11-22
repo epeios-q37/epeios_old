@@ -72,12 +72,12 @@ const char *frdkrn::GetLabel( report__ Report )
 #endif
 
 	switch( Report ) {
-		// CASE( OK );	// Cette fonction n'a pas à être appelée dans ce cas.
 		CASE( ProjectParsingError );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
 		CASE( UnableToConnect );
 		CASE( IncompatibleBackend );
+		CASE( BackendError );
 		default:
 			ERRu();
 			break;
@@ -86,19 +86,47 @@ const char *frdkrn::GetLabel( report__ Report )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
+
+#if FRDKRN__R_AMOUNT != 6
+# error "'report__' modified !"
+#endif
+
 const str::string_ &frdkrn::GetTranslation(
 	report__ Report,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
+ERRProlog
+	str::string EmbeddedMessage;
+ERRBegin
 	GetTranslation( Report, LocaleRack, Translation );
-	
-	if ( IsErrorSetRelevant( Report ) ) {
-		Translation.Append( " :\n" );
-		GetTranslation( ErrorSet, LocaleRack, Translation );
-	}
 
+	switch ( Report ) {
+		case rProjectParsingError:
+			EmbeddedMessage.Init();
+			rgstry::GetTranslation( ErrorSet.Context, LocaleRack, EmbeddedMessage );
+			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
+			break;
+		case rNoOrBadBackendDefinition:
+			break;
+		case rNoBackendLocation:
+			break;
+		case rUnableToConnect:
+		case rIncompatibleBackend:
+			lcl::ReplaceTag( Translation, 1, ErrorSet.BackendLocation );
+			break;
+		case rBackendError:
+			lcl::ReplaceTag( Translation, 1, ErrorSet.ErrorMessage );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+ERRErr
+ERREnd
+ERREpilog
 	return Translation;
 }
 
@@ -156,38 +184,38 @@ report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
+	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
+	flx::E_STRING_OFLOW_DRIVER___ OFlowDriver;
+	csdlec::library_data__ LibraryData;
+	csdleo::mode__ Mode = csdleo::m_Undefined;
 ERRBegin
-	switch ( Type ) {
-	case csducl::tDaemon:
-		_SharedData.Init( csdleo::mRemote );
-		break;
-	case csducl::tLibrary:
-		_SharedData.Init( csdleo::mEmbedded );
-		break;
-	default:
-		ERRc();
-		break;
-	}
+	OFlowDriver.Init( ErrorSet.ErrorMessage, fdr::ts_Default );
+	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver );
 
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, &_SharedData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
-		Report = rUnableToConnect;
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
+		OFlowDriver.reset();	// Pour vider les caches.
+		if ( ErrorSet.ErrorMessage.Amount() != 0 )
+			Report = rBackendError;
+		else
+			Report = rUnableToConnect;
 		ERRReturn;
 	}
 
-	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorReportingFunctions, IncompatibilityInformations ) ) {
+	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorReportingFunctions, ErrorSet.IncompatibilityInformations ) ) {
 		Report = rIncompatibleBackend;
 		ERRReturn;
 	}
 
-	Report = rOK;
+	Report = r_OK;
 ERRErr
 ERREnd
+	if ( Report != r_OK )
+		ErrorSet.BackendLocation.Init( RemoteHostServiceOrLocalLibraryPath );
 ERREpilog
 	return Report;
 }
@@ -196,15 +224,15 @@ report__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	incompatibility_informations_ &IncompatibilityInformations,
 	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
+	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, IncompatibilityInformations, ErrorReportingFunctions, LogFunctions );
+	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, ErrorReportingFunctions, ErrorSet, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -213,8 +241,8 @@ ERREpilog
 
 report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
-	incompatibility_informations_ &IncompatibilityInformations,
 	error_reporting_functions__ &ErrorReportingFunctions,
+	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
 	report__ Report = r_Undefined;
@@ -231,7 +259,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-		Report = _Connect( Location, CompatibilityInformations, Type, IncompatibilityInformations, ErrorReportingFunctions, LogFunctions );
+		Report = _Connect( Location, CompatibilityInformations, Type, ErrorReportingFunctions, ErrorSet, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Report = rNoOrBadBackendDefinition;
@@ -244,6 +272,33 @@ ERRErr
 ERREnd
 ERREpilog
 	return Report;
+}
+
+static const str::string_ &Report_(
+	report__ Report,
+	const error_set___ &ErrorSet,
+	const lcl::rack__ &Locale,
+	str::string_ &Message )
+{
+	GetTranslation( Report, ErrorSet, Locale, Message );
+
+	switch ( Report ) {
+	case rProjectParsingError:
+		break;
+	case rNoOrBadBackendDefinition:
+		break;
+	case rNoBackendLocation:
+		break;
+	case rUnableToConnect:
+		break;
+	case rIncompatibleBackend:
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return Message;
 }
 
 status__ frdkrn::kernel___::LoadProject(
@@ -259,7 +314,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != rOK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
@@ -310,7 +365,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Report = rOK;
+	Report = r_OK;
 ERRErr
 ERREnd
 ERREpilog

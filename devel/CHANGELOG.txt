@@ -1,5 +1,34 @@
 $Id$
 
+22/11/2011 :
+	- CSDLEC :
+		- Adaptation.
+		- 'shared_data__' est traité de manière interne et plus par l'utilisateur.
+		- Correction bogue bibliothèque pas déchargée correctement à la fermeture de l'application lorsqu'erreur.
+	- CSDLEO :
+		- Remaniement 'shared_data__'.
+	- CSDLES :
+		- Mise en place de l'interception d'erreurs.
+	- CSDSNC :
+		- Lorsqu'une erreur survenait dans le chargement du backend, dans certains cas elle déclenchait un 'ERR...()' au d'être remontée.
+	- CSDUCL :
+		- Adaptation.
+	- DLBRRY :
+		- Le fait qu'une bibliothèque dynamique ne contient pas la fcontion demandée ne provoque plus d'erreur, mais est signalé par un pointeur 'NULL'.
+	- FRDKRN :
+		- Réorganisation de la gestion des messages d'erreur.
+		- Adpatation.
+	- NSXPCM :
+		- Renommage et réorganisation fonctions relatives à des 'Window's.
+	- SCLBACKND :
+		- Adaptation.
+	- XPP :
+		- Correction bogue mauvaises coordonées lorsque erreur dans un '<ifeq ...>'.
+	- XULFxx
+		- Adaptation.
+	- XULWDG :
+		- Pour afficher un message d'erreur, on utilise maintenant la fenêtre racine de l'application.
+
 21/11/2011 :
 	- XULFMN :
 		- Adaptation.

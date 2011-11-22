@@ -183,7 +183,7 @@ RB
 
 	Id.Init();
 
-	nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id );
+	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !_CurrentSteering->Register( Window, Id ) ) {
 		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT ) );
@@ -250,7 +250,7 @@ RB
 
 	Id.Init();
 
-	nsxpcm::GetAttribute( nsxpcm::GetWindowElement( Window ), "id", Id );
+	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !Steering->Register( Window, Id ) ) {
 		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT ) );

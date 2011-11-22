@@ -696,6 +696,8 @@ ERRBegin
 
 	Content.Init();
 
+	Coord = _Parser.GetCurrentCoord();
+
 	if ( ( Status = RetrieveTree_( _Parser, Content ) ) != sOK)
 		ERRReturn;
 

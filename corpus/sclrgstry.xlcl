@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Translations message="SCLRGSTRY_ConfigurationFileParsingError">
+		<Translation language="fr">%1</Translation>
+		<Translation language="en">%1</Translation>
+	</Translations>
+	<Translations message="SCLRGSTRY_BadOrNoValueForRegistryEntry">
+		<Translation language="fr">Entrée absente ou incorrecte pour le chemin '%1"</Translation>
+		<Translation language="en">Bad or no value for path '%1'</Translation>
+	</Translations>
+	<!--
+	<Translations message="SCLRGSTRY_">
+		<Translation language="fr"></Translation>
+		<Translation language="en"></Translation>
+	</Translations>
+	-->
+</xpp:bloc>

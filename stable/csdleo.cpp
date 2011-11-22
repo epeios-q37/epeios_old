@@ -57,9 +57,6 @@ public:
 
 using namespace csdleo;
 
-const char *csdleo::shared_data__::Version = CSDLEO_SHARED_DATA_VERSION;
-bso::ulong__ csdleo::shared_data__::Control = shared_data__::ControlComputing();
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

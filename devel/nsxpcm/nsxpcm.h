@@ -1016,14 +1016,14 @@ namespace nsxpcm {
 # endif
 	}
 
-	inline nsIDOMWindowInternal* GetParentWindow( nsIDOMWindow *Window )
+	inline nsIDOMWindowInternal* GetParent( nsIDOMWindow *Window )
 	{
 		T( Window->GetParent( &Window ) );
 
 		return GetWindowInternal( Window );
 	}
 
-	inline nsIDOMWindowInternal* GetRootWindow( nsIDOMWindow *Window )
+	inline nsIDOMWindowInternal* GetTop( nsIDOMWindow *Window )
 	{
 		T( Window->GetTop( &Window ) );
 
@@ -1042,7 +1042,9 @@ namespace nsxpcm {
 		return GetOpener( GetWindowInternal( Window ) );
 	}
 
-	inline nsIDOMElement *GetDocumentElement( nsIDOMDocument *Document )
+	nsIDOMWindowInternal* GetRoot( nsIDOMWindow *Window );	// Retourne la fenêtre racine de l'application.
+
+	inline nsIDOMElement *GetElement( nsIDOMDocument *Document )
 	{
 		nsIDOMElement *Element = NULL;
 
@@ -1051,7 +1053,7 @@ namespace nsxpcm {
 		return Element;
 	}
 
-	inline nsIDOMDocument *GetWindowDocument( nsIDOMWindow *Window )
+	inline nsIDOMDocument *GetDocument( nsIDOMWindow *Window )
 	{
 		nsIDOMDocument *Document = NULL;
 
@@ -1060,9 +1062,9 @@ namespace nsxpcm {
 		return Document;
 	}
 
-	inline nsIDOMElement *GetWindowElement( nsIDOMWindow *Window )
+	inline nsIDOMElement *GetElement( nsIDOMWindow *Window )
 	{
-		return GetDocumentElement( GetWindowDocument( Window ) );
+		return GetElement( GetDocument( Window ) );
 	}
 
 	template <typename element> inline element *FindParent(
@@ -1126,7 +1128,7 @@ namespace nsxpcm {
 		E_RODISCLOSE__( nsIDOMWindowInternalPointer, Window );
 		nsIDOMDocument *Document( void ) const
 		{
-			return GetWindowDocument( _Window );
+			return GetDocument( _Window );
 		}
 	};
 
@@ -1294,7 +1296,7 @@ namespace nsxpcm {
 			const str::string_ &Id,
 			int Events )
 		{
-			Init( nsxpcm::GetElementById( GetWindowDocument( Window ), Id ), Window, Events );
+			Init( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window, Events );
 		}
 		void Init(
 			nsIDOMWindow *Window,
@@ -1312,13 +1314,17 @@ namespace nsxpcm {
 		{
 			return _Window;
 		}
-		nsIDOMWindowInternal *GetParentWindow( void ) const
+		nsIDOMWindowInternal *GetParent( void ) const
 		{
-			return nsxpcm::GetParentWindow( _Window );
+			return nsxpcm::GetParent( _Window );
 		}
-		nsIDOMWindowInternal *GetRootWindow( void ) const
+		nsIDOMWindowInternal *GetTop( void ) const
 		{
-			return nsxpcm::GetRootWindow( _Window );
+			return nsxpcm::GetTop( _Window );
+		}
+		nsIDOMWindowInternal *GetRoot( void ) const
+		{
+			return nsxpcm::GetRoot( _Window );
 		}
 		nsIDOMWindowInternal *GetOpener( void ) const
 		{

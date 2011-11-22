@@ -75,7 +75,7 @@ namespace sclbacknd {
 	// A définir par l'utilisateur.
 	csdleo::user_functions__ *RetrieveSteering(
 		fblbur::mode__ Mode,
-		const char *User,
+		void *UP,
 		const lcl::locale_ &Locale );	// To overload !
 
 	// A définir par l'utilisateur.

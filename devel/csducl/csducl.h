@@ -98,33 +98,10 @@ namespace csducl {
 		}
 		bso::bool__ Init(
 			const char *Backend,
-			csdleo::shared_data__ *EmbeddedBackendSharedData,
+			csdlec::library_data__ &LibraryData,	// Utilisé uniquement si le backend est une bibliothèque.
 			csdsnc::log_functions__ &Log,
 			type__ Type,
-			time_t PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
-		{
-			reset();
-
-			bso::bool__ Success = false;
-
-			switch ( Type ) {
-			case tDaemon:
-				Success = _DaemonAccess.Init( Backend, Log, PingDelay );
-				break;
-			case tLibrary:
-				if ( EmbeddedBackendSharedData == NULL )	// En attendant la stabilisation des bibliothèques 'CSDxxx'.
-					ERRu();
-				Success = _LibraryAccess.Init( Backend, EmbeddedBackendSharedData );
-				break;
-			default:
-				ERRu();
-				break;
-			}
-
-			_Type = Type;
-
-			return Success;
-		}
+			time_t PingDelay );	// Délai maximum d'inactivité entre deux 'ping'.
 		type__ GetType( void ) const
 		{
 			return _Type;

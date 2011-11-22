@@ -97,6 +97,12 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 csdleo::user_functions__ *CSDLEORetrieveSteering( csdleo::shared_data__ *Data )
 {
+	csdleo::user_functions__ *Functions = NULL;
+ERRFProlog
+	flw::standalone_oflow__<> OFlow;
+	txf::text_oflow__ TOFlow;
+	err::buffer__ Buffer;
+ERRFBegin
 	if ( Data == NULL )
 		ERRu();
 
@@ -106,7 +112,18 @@ csdleo::user_functions__ *CSDLEORetrieveSteering( csdleo::shared_data__ *Data )
 	if ( Data->Control != Data->ControlComputing() )
 		ERRc();
 
-	return csdles::CSDLESRetrieveSteering( Data );
+	Functions = csdles::CSDLESRetrieveSteering( Data );
+ERRFErr
+	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iExit ) ) {
+		OFlow.Init( *Data->CErr, FLW_SIZE_MAX );
+		TOFlow.Init( OFlow );
+		TOFlow << err::Message( Buffer );
+	}
+
+	ERRRst();
+ERRFEnd
+ERRFEpilog
+	return Functions;
 }
 
 void CSDLEOReleaseSteering( csdleo::user_functions__ *Steering )

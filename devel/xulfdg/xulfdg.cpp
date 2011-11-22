@@ -158,7 +158,7 @@ ERRProlog
 ERRBegin
 	Id.Init();
 
-	if ( nsxpcm::GetId( nsxpcm::GetWindowElement( Window ), Id ) != XULFDG_DIALOG_ID ) {
+	if ( nsxpcm::GetId( nsxpcm::GetElement( Window ), Id ) != XULFDG_DIALOG_ID ) {
 		Trunk.UI().Alert( Trunk.Kernel().LocaleRack().GetTranslation( "IncompatibleDebugDialog", XULFDG_NAME "_", Buffer ) );
 		nsxpcm::Close( Window );
 		ERRReturn;

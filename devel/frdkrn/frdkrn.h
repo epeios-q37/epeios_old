@@ -98,14 +98,15 @@ namespace frdkrn {
 
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum report__ {
-		rOK,
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
 		rUnableToConnect,
 		rIncompatibleBackend,
+		rBackendError,
 		r_amount,
-		r_Undefined
+		r_Undefined,
+		r_OK,
 	};
 
 #define FRDKRN__R_AMOUNT	6	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
@@ -127,51 +128,24 @@ namespace frdkrn {
 	public:
 		rgstry::context___ Context;
 		incompatibility_informations IncompatibilityInformations;	// Quand survient un 'report__::rIncompatibleBackend'.
+		str::string BackendLocation;
+		str::string ErrorMessage;	// Eventurl message d'erreur du 'backend'.
 		void reset( bso::bool__ P = true )
 		{
 			Context.reset( P );
 			IncompatibilityInformations.reset( P );
+			BackendLocation.reset( P );
+			ErrorMessage.reset( P );
 		}
-		error_set___( void )
-		{
-			reset( false );
-		}
-		~error_set___( void )
-		{
-			reset();
-		}
+		E_CDTOR( error_set___ );
 		void Init( void )
 		{
 			Context.Init();
 			IncompatibilityInformations.Init();
+			BackendLocation.Init();
+			ErrorMessage.Init();
 		}
 	};
-
-	inline bso::bool__ IsErrorSetRelevant( report__ Report )
-	{
-#if FRDKRN__R_AMOUNT != 6
-#	error "'report__' modified !"
-#endif
-		switch ( Report  ) {
-		case rOK:
-			return false;
-			break;
-		case rProjectParsingError:
-			return true;
-			break;
-		case rNoOrBadBackendDefinition:
-		case rNoBackendLocation:
-		case rUnableToConnect:
-		case rIncompatibleBackend:
-			return false;
-		default:
-			ERRu();
-			break;
-		}
-
-		return false;	// Pour éviter un 'warning'.
-	}
-
 
 	inline const str::string_ &GetTranslation(
 		const error_set___ &ErrorSet,
@@ -199,7 +173,6 @@ namespace frdkrn {
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::_backend___ _Backend;
-		csdleo::shared_data__ _SharedData;
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
@@ -208,8 +181,8 @@ namespace frdkrn {
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			incompatibility_informations_ &IncompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
+			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
 		{
@@ -229,13 +202,13 @@ namespace frdkrn {
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			incompatibility_informations_ &IncompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
+			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		report__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
-			incompatibility_informations_ &IncompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
+			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 	public:
 		void reset( bso::bool__ P = true )
@@ -243,7 +216,6 @@ namespace frdkrn {
 			if ( P )
 				Close();
 
-			_SharedData.reset( P );
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
@@ -292,11 +264,13 @@ namespace frdkrn {
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == rOK )
-				Report = _Connect( CompatibilityInformations, ErrorSet.IncompatibilityInformations, ErrorReportingFunctions );
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == r_OK )
+				Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
 
-			if ( Report == rOK )
+			if ( Report == r_OK ) {
 				_ProjectOriginalTimeStamp = time( NULL );
+				_ProjectModificationTimeStamp = 0;
+			}
 
 			return Report;
 		}
@@ -305,13 +279,21 @@ namespace frdkrn {
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations );
+		void Touch( void )
+		{
+			_ProjectModificationTimeStamp = time( NULL );
+		}
+		time_t ProjectModificationTimeStamp( void ) const
+		{
+			return _ProjectModificationTimeStamp;
+		}
 		bso::bool__ IsProjectInProgress( void ) const
 		{
 			return _ProjectOriginalTimeStamp != 0;
 		}
 		bso::bool__ IsProjectModified( void ) const
 		{
-			return _ProjectOriginalTimeStamp < ProjectTimeStamp();
+			return _ProjectOriginalTimeStamp < ProjectModificationTimeStamp();
 		}
 		E_RWDISCLOSE__( str::string_, Message );
 		void AboutBackend(
@@ -352,10 +334,6 @@ namespace frdkrn {
 		void DumpUserRegistry( txf::text_oflow__ &OFlow ) const
 		{
 			_Registry.DumpUser( OFlow );
-		}
-		time_t ProjectModificationTimeStamp( void ) const
-		{
-			return _ProjectModificationTimeStamp;
 		}
 		bso::bool__ GetRegistryValue(
 			const char *Path,

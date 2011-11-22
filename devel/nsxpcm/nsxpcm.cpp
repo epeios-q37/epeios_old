@@ -203,6 +203,21 @@ ERREnd
 ERREpilog
 }
 
+nsIDOMWindowInternal* nsxpcm::GetRoot( nsIDOMWindow *Window )
+{
+	nsIDOMWindowInternal *Current = GetTop( Window ), *Candidate = Current;
+
+	while ( Candidate != NULL ) {
+		if ( Candidate == Current )
+			Candidate = GetOpener( Current );
+		else
+			Candidate = GetTop( Current );
+	}
+
+	return Current;
+}
+
+
 static nsIDOMWindow *JSConsoleWindow_ = NULL;
 class jsconsole_widget__ :
 public widget_core__

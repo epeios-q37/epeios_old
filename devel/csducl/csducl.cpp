@@ -55,7 +55,38 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "cio.h"
+
 using namespace csducl;
+
+bso::bool__ csducl::universal_client_core::Init(
+	const char *Backend,
+	csdlec::library_data__ &LibraryData,
+	csdsnc::log_functions__ &Log,
+	type__ Type,
+	time_t PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
+{
+	reset();
+
+	bso::bool__ Success = false;
+
+	switch ( Type ) {
+	case tDaemon:
+		Success = _DaemonAccess.Init( Backend, Log, PingDelay );
+		break;
+	case tLibrary:
+		Success = _LibraryAccess.Init( Backend, LibraryData, err::hUserDefined );
+		break;
+	default:
+		ERRu();
+		break;
+	}
+
+	_Type = Type;
+
+	return Success;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

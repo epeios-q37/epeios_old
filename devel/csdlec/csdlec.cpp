@@ -57,6 +57,30 @@ public:
 
 using namespace csdlec;
 
+bso::bool__ csdlec::library_embedded_client_core__::Init(
+	const char *LibraryName,
+	library_data__ &Data,
+	err::handling__ ERRHandling )
+{
+	csdleo::shared_data__ SharedData;
+
+	SharedData.Init( Data );
+
+	reset();
+
+	if ( _Library.Init( LibraryName, ERRHandling ) )
+		if ( _RetrieveSteering( &SharedData ) )
+			return true;
+		else
+			reset();	// Sinon le bibliothèque n'est pas déchargée correctement à la fermeture de l'application.
+
+	if ( ERRHandling != err::hUserDefined )
+		ERRs();
+
+	return false;
+}
+
+
 extern "C" typedef csdleo::retrieve_steering retrieve_steering;
 
 bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::shared_data__ *Data )

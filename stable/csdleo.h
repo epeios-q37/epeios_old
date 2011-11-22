@@ -70,7 +70,7 @@ extern class ttr_tutor &CSDLEOTutor;
 # define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		CSDLEORetrieveSteering
 # define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		CSDLEOReleaseSteering
 
-# define CSDLEO_SHARED_DATA_VERSION	"alpha 2"
+# define CSDLEO_SHARED_DATA_VERSION	"alpha 4"
 
 namespace csdleo {
 	using namespace csdsuf;
@@ -83,33 +83,75 @@ namespace csdleo {
 	};
 
 #pragma pack( push, 1)
-	class shared_data__
+	class data_control__
 	{
 	public:
-		static const char *Version;	// Toujours en première position.
-		static bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
-		mode__ Mode;
-		const char *User;				// Chaîne de caratère à la discrétion de l'utilisateur.
-		fdr::oflow_driver___<> *COut, *CErr;
-		void reset( bso::bool__ P = true )
+		const char *Version;	// Toujours en première position.
+		bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		void reset( bso::bool__ = true )
 		{
-			Mode = m_Undefined;
+			Version = NULL;
+			Control = 0;
 		}
-		shared_data__( void ) 
+		E_CDTOR( data_control__ );
+		void Init( void )
 		{
-			reset( false );
+			Version = CSDLEO_SHARED_DATA_VERSION;
+			Control = ControlComputing();
 		}
-		~shared_data__( void ) 
-		{
-			reset();
-		}
-		void Init( mode__ Mode )
-		{
-			this->Mode = Mode;
-		}
-		static size_t ControlComputing( void )
+		size_t ControlComputing( void )
 		{
 			return sizeof( fdr::oflow_driver___<> );
+		}
+	};
+
+	class data__ {
+	public:
+		mode__ Mode;
+		void *UP;				// A la discrétion de l'utilisateur.
+		fdr::oflow_driver_base___ *COut, *CErr;
+		void reset( bso::bool__ = true )
+		{
+			COut = CErr = NULL;
+			UP = NULL;
+		}
+		E_CDTOR( data__ );
+		data__(
+			mode__ Mode,
+			fdr::oflow_driver_base___ &COut,
+			fdr::oflow_driver_base___ &CErr,
+			void *UP = NULL )
+		{
+			Init( Mode, COut, CErr, UP );
+		}
+		void Init(
+			mode__ Mode,
+			fdr::oflow_driver_base___ &COut,
+			fdr::oflow_driver_base___ &CErr,
+			void *UP = NULL )
+		{
+			this->Mode = Mode;
+			this->COut = &COut;
+			this->CErr = &CErr;
+			this->UP = UP;
+		}
+	};
+
+	class shared_data__
+	: public data_control__,
+		public data__
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			data_control__::reset( P );
+			data__::reset( P );
+		}
+		E_CDTOR( shared_data__ );
+		void Init( data__ &Data )
+		{
+			data_control__::Init();
+			data__::Init( Data.Mode, *Data.COut, *Data.CErr, Data.UP );
 		}
 	};
 #pragma pack( pop )

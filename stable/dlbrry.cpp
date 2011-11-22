@@ -120,8 +120,7 @@ void * dlbrry::dynamic_library___::GetFunction( const char *FunctionName )
 		ERRc();
 
 #ifdef TARGET_MS
-	if ( ( Function = GetProcAddress( (HMODULE)_LibraryHandler, FunctionName ) ) == NULL )
-		ERRs();
+	Function = GetProcAddress( (HMODULE)_LibraryHandler, FunctionName );
 #elif defined( TARGET_POSIX )
 	Function = dlsym( _LibraryHandler, FunctionName );
 

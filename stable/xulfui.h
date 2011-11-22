@@ -109,7 +109,7 @@ namespace xulfui {
 		}
 		void SaveUserData( const str::string_ &Data )
 		{
-			nsxpcm::SetAttribute( nsxpcm::GetWindowElement( Main().Window() ), XULFUI_USERDATA_ATTRIBUTE_NAME, Data );
+			nsxpcm::SetAttribute( nsxpcm::GetElement( Main().Window() ), XULFUI_USERDATA_ATTRIBUTE_NAME, Data );
 		}
 		void Alert(
 			nsIDOMWindow *Window,

@@ -101,7 +101,7 @@ ERRBegin
 		break;
 	}
 
-	Steering = RetrieveSteering( Mode, Data->User, scllocale::GetRack().Locale() );
+	Steering = RetrieveSteering( Mode, Data->UP, scllocale::GetRack().Locale() );
 ERRErr
 ERREnd
 	if ( cio::IsInitialized() ) {

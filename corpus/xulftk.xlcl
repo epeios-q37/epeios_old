@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Translations message="XULFKL_ErrorType">
+		<Translation language="fr">Type d'erreur</Translation>
+		<Translation language="en">Error type</Translation>
+	</Translations>
+	<Translations message="XULFKL_ErrorMessage">
+		<Translation language="fr">Message d'erreur</Translation>
+		<Translation language="en">Error message</Translation>
+	</Translations>
+	<Translations message="XULFKL_ProjectClosingAsking">
+		<Translation language="fr">Êtes-vous sûr de vouloir fermer ce projet ?</Translation>
+		<Translation language="en">Are you sure you want to close this project ?</Translation>
+	</Translations>
+	<Translations message="XULFKL_ProjectClosingWarning">
+		<Translation language="fr">Toutes les modifications vont être perdues !</Translation>
+		<Translation language="en">All modifications will be lost !</Translation>
+	</Translations>
+	<!--
+	<Translations message="XULFKL_">
+		<Translation language="fr"></Translation>
+		<Translation language="en"></Translation>
+	</Translations>
+	-->
+</xpp:bloc>

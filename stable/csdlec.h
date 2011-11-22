@@ -72,6 +72,8 @@ extern class ttr_tutor &CSDLECTutor;
 
 namespace csdlec {
 
+	typedef csdleo::data__ library_data__;
+
 	typedef bch::E_BUNCH_( flw::datum__ ) data_;
 	E_AUTO( data )
 
@@ -330,20 +332,8 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		}
 		bso::bool__ Init(
 			const char *LibraryName,
-			csdleo::shared_data__ *SharedData,
-			err::handling__ ERRHandling = err::h_Default )
-		{
-			reset();
-
-			if ( _Library.Init( LibraryName, ERRHandling ) )
-				if ( _RetrieveSteering( SharedData ) )
-					return true;
-
-			if ( ERRHandling != err::hUserDefined )
-				ERRs();
-
-			return false;
-		}
+			library_data__ &Data,
+			err::handling__ ERRHandling = err::h_Default );
 		bso::bool__ IsInitialized( void ) const
 		{
 			return _Steering != NULL;
