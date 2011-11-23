@@ -74,20 +74,29 @@ namespace xulfrd {
 	class ui___;
 }
 
-// Sensitive widget (reacts to events).
-#define XULFBS_SWIDGET( widget, name )\
+#define XULFBS__WIDGET_COMMON( widget, name )\
 	class name\
 	: public widget<xulftk::trunk___>\
 	{\
+	protected:\
+		virtual void XULWDGReport( const char *Message )\
+		{\
+			_Report( Target(), Message );\
+		}
+
+
+
+// Sensitive widget (reacts to events).
+#define XULFBS_SWIDGET( widget, name )\
+	XULFBS__WIDGET_COMMON( widget, name )\
 	protected:\
 		virtual void XULWDGOnEvent( nsxpcm::event__ Event );\
 	}
 
 // Unsensitive widget (reacts to no event).
 #define XULFBS_UWIDGET( widget, name )\
-	class name\
-	: public widget<xulftk::trunk___>\
-	{}
+	XULFBS__WIDGET_COMMON( widget, name )\
+	}
 
 #define XULFBS_WINDOW( name )		XULFBS_SWIDGET( xulwdg::window__, name )
 #define XULFBS_COMMAND( name )		XULFBS_SWIDGET( xulwdg::command__, name )
@@ -99,13 +108,14 @@ namespace xulfbs {
 	using xulftk::trunk___;
 	using xulfrd::ui___;
 
-//	using xulwdg::Register;
-
 	typedef nsxpcm::ui_core__ _ui_core__;
-	typedef xulwdg::bare_bridge__<trunk___> bridge__;
 
 	typedef xulwdg::broadcast__<trunk___> broadcast__;
 	typedef xulwdg::command__<trunk___> command__;
+
+	void _Report(
+		xulftk::trunk___ &Trunk,
+		const char *Message );
 }
 
 /*$END$*/

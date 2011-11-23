@@ -74,13 +74,19 @@ namespace xulfui {
 	{
 	private:
 		xulfmn::main__ *_Main;
+		nsIDOMWindow *_JSConsoleWindow;
 	protected:
 		virtual void XULFUIUpdate( void ) = 0;	// Mise à jour de l'interface.
 	public:
 		xulfdg::debug_dialog__ Debug;
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
+			if ( P )
+				if ( _JSConsoleWindow != NULL )
+					nsxpcm::Close( _JSConsoleWindow );
+
 			_Main = NULL;
+			_JSConsoleWindow = NULL;
 		}
 		ui___( void )
 		{
@@ -92,6 +98,8 @@ namespace xulfui {
 		}
 		void Init( xulfmn::main__ &Main )
 		{
+			reset();
+
 			_Main = &Main;
 			// 'Debug' est initialisé plus tard.
 		}
@@ -147,15 +155,19 @@ namespace xulfui {
 		{
 			nsxpcm::Log( Text );
 		}
-		void LogAndPrompt( const str::string_ &Text ) const
+		void GetJSConsole( void )
 		{
-			nsxpcm::Log( Text );
-			nsxpcm::GetJSConsole( Main().Window() );
+			nsxpcm::GetJSConsole( Main().Window(), &_JSConsoleWindow );
 		}
-		void LogAndPrompt( const char *Text ) const
+		void LogAndPrompt( const str::string_ &Text )
 		{
 			nsxpcm::Log( Text );
-			nsxpcm::GetJSConsole( Main().Window() );
+			GetJSConsole();
+		}
+		void LogAndPrompt( const char *Text )
+		{
+			nsxpcm::Log( Text );
+			GetJSConsole();
 		}
 	};
 }

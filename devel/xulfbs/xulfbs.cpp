@@ -55,7 +55,17 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "xulftk.h"
+
 using namespace xulfbs;
+
+void xulfbs::_Report(
+	xulftk::trunk___ &Trunk,
+	const char *Message )
+{
+	Trunk.UI().LogAndPrompt( Message );\
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -67,8 +67,8 @@ const char *fblovl::Label( reply__ Reply )
 {
 	switch ( Reply ) {
 	CASE( OK );
-	CASE( Error );
-	CASE( Notification );
+	CASE( SoftwareError );
+	CASE( RequestError );
 	default:
 		ERRc();
 		break;

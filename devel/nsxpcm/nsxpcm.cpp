@@ -205,13 +205,11 @@ ERREpilog
 
 nsIDOMWindowInternal* nsxpcm::GetRoot( nsIDOMWindow *Window )
 {
-	nsIDOMWindowInternal *Current = GetTop( Window ), *Candidate = Current;
+	nsIDOMWindowInternal *Current = GetTop( Window ), *Candidate = GetOpener( Current );
 
 	while ( Candidate != NULL ) {
-		if ( Candidate == Current )
-			Candidate = GetOpener( Current );
-		else
-			Candidate = GetTop( Current );
+		Current = GetTop( Candidate );
+		Candidate = GetOpener( Current );
 	}
 
 	return Current;
@@ -219,16 +217,7 @@ nsIDOMWindowInternal* nsxpcm::GetRoot( nsIDOMWindow *Window )
 
 
 static nsIDOMWindow *JSConsoleWindow_ = NULL;
-class jsconsole_widget__ :
-public widget_core__
-{
-protected:
-	void NSXPCMOnEvent( event__  )
-	{
-//		EventData().EventPreventDefault();
-//		SetAttribute( GetWindowDocument( GetWindow() ), "hidden", "true" );
-	}
-} JSConsoleWidget_;
+
 static nsCOMPtr<nsIFormHistory2> FormHistory_;
 #ifdef CPE__T_MT
 mtx::mutex_handler__ FormHistoryMutex_;
@@ -271,12 +260,7 @@ const char *nsxpcm::GetTranslation(
 
 void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 {
-	bso::bool__ InitializeWidget = ( JSConsoleWindow_ == NULL );
-
 	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
-
-	if ( InitializeWidget )
-		JSConsoleWidget_.Init( JSConsoleWindow_, JSConsoleWindow_, nsxpcm::efClose );
 }
 
 void nsxpcm::Transform(

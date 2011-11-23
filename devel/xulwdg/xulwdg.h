@@ -91,21 +91,70 @@ extern class ttr_tutor &XULWDGTutor;
 	typedef xulwdg::window__<target> window__;\
 
 
-
-
 namespace xulwdg {
-	template <typename target> class bare_bridge__
+
+	template <typename target, typename widget, int events> class _generic__
+	: public widget
 	{
 	private:
 		target *_Target;
-	public:
-		bare_bridge__( void )
+		void _ErrHandling( void )
 		{
+			if ( ERRMajor == err::itn ) {
+				if ( ERRMinor != err::iAbort ) {
+					err::buffer__ Buffer;
+					XULWDGReport( err::Message( Buffer ) ); 
+				}
+			} else {
+				err::buffer__ Buffer;
+				XULWDGReport( err::Message( Buffer ) ); 
+			}
+			ERRRst()
+		}
+	protected:
+		virtual void XULWDGReport( const char *Message ) = 0;
+		virtual void XULWDGOnEvent( nsxpcm::event__ Event )
+		{
+			ERRc();	// Se produit pour les éléments dont on a défini une sensibilité à un évènement, sans mettre en place de gestionnaire.
+		}
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event )
+		{
+		ERRProlog
+		ERRBegin
+			XULWDGOnEvent( Event );
+		ERRErr
+			_ErrHandling();
+		ERREnd
+		ERREpilog
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			widget::reset( P );
 			_Target = NULL;
 		}
-		void Init( target &Target )
+		E_CVDTOR( _generic__ );
+		void Init(
+			target &Target,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
 		{
 			_Target = &Target;
+			widget::Init( Supports, Window, events );
+		}
+		void Init( target &Target,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			_Target = &Target;
+			widget::Init( Window, Id, events );
+		}
+		void Init( target &Target,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			_Target = &Target;
+			widget::Init( Window, Id, events );
 		}
 		const target &Target( void ) const
 		{
@@ -114,50 +163,6 @@ namespace xulwdg {
 		target &Target( void )
 		{
 			return *_Target;
-		}
-	};
-
-	template <typename target, typename widget, int events> class _generic__
-	: public bare_bridge__<target>,
-	  public widget
-	{
-	protected:
-		virtual void XULWDGOnEvent( nsxpcm::event__ Event )
-		{
-			ERRc();
-		}
-		virtual void NSXPCMOnEvent( nsxpcm::event__ Event )
-		{
-		ERRProlog
-		ERRBegin
-			XULWDGOnEvent( Event );
-		ERRErr
-			NSXPCM_ERR( GetRoot() );
-		ERREnd
-		ERREpilog
-		}
-	public:
-		void Init(
-			target &Target,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
-		{
-			bare_bridge__<target>::Init( Target );
-			widget::Init( Supports, Window, events );
-		}
-		void Init( target &Target,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			bare_bridge__<target>::Init( Target );
-			widget::Init( Window, Id, events );
-		}
-		void Init( target &Target,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			bare_bridge__<target>::Init( Target );
-			widget::Init( Window, Id, events );
 		}
 	};
 

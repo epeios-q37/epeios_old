@@ -352,13 +352,13 @@ namespace fblbrq {
 
 			Channel_->Commit();
 		}
-		void ReportError( const char *Message )	// 'User error'.
+		void ReportSoftwareError( const char *Message )	// 'User error'.
 		{
-			Report( fblovl::rError, Message );
+			Report( fblovl::rSoftwareError, Message );
 		}
-		void Notify( const char *Message )
+		void ReportRequestError( const char *Message )
 		{
-			Report( fblovl::rNotification, Message );
+			Report( fblovl::rRequestError, Message );
 		}
 		const casts_ &GetCasts( void ) const
 		{

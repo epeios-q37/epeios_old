@@ -107,7 +107,7 @@ static const str::string_ &GetTranslation_(
 	return Translation;
 }
 
-static void ReportError_(
+static void Report_(
 	message__ Message,
 	const lcl::rack__ &Rack,
 	request__ &Request )
@@ -118,7 +118,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	Request.ReportError( GetTranslation_( Message, Rack, Translation ).Convert( Buffer ) );
+	Request.ReportRequestError( GetTranslation_( Message, Rack, Translation ).Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -435,7 +435,7 @@ static void TestNotification_(
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	Requete.ReportError( Requete.StringIn().Convert( Buffer ) );
+	Requete.ReportRequestError( Requete.StringIn().Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -470,7 +470,7 @@ ERRBegin
 	if ( O != FBLBKD_INVALID_TYPE )
 		Request.ObjectOut() = O;
 	else
-		ReportError_( m_UnknowObjectType, Backend.LocaleRack(), Request );
+		Report_( m_UnknowObjectType, Backend.LocaleRack(), Request );
 
 	Request.Complete();
 ERRErr
@@ -498,7 +498,7 @@ ERRBegin
 	if ( ( T != FBLBKD_INVALID_TYPE ) )
 		Request.Id16Out() = *T;
 	else
-		ReportError_( m_UnknowObjectTypeName, Backend.LocaleRack(), Request );
+		Report_( m_UnknowObjectTypeName, Backend.LocaleRack(), Request );
 
 	Request.Complete();
 ERRErr
@@ -641,7 +641,7 @@ ERRBegin
 	if ( ( Command != FBLBKD_INVALID_COMMAND ) )
 		Request.Id16Out() = Command;
 	else
-		ReportError_( m_UnknowCommandNameOrDescription, Backend.LocaleRack(), Request );
+		Report_( m_UnknowCommandNameOrDescription, Backend.LocaleRack(), Request );
 
 	Request.Complete();
 ERRErr
@@ -714,7 +714,7 @@ ERRBegin
 	const str::string_ &Language = Request.StringIn();
 
 	if ( Language.Amount() == 0 )
-			ReportError_( m_BadLanguage, Backend.LocaleRack(), Request );
+		Report_( m_BadLanguage, Backend.LocaleRack(), Request );
 	else
 		Backend.SetLanguage( Language.Convert( Buffer ) );
 
@@ -910,7 +910,7 @@ ERRErr
 
 	ERRRst();
 
-	Request.ReportError(	ErrMsg );
+	Request.ReportSoftwareError( ErrMsg );
 ERREnd
 	Request.Complete();
 ERREpilog

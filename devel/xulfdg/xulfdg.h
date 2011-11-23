@@ -100,7 +100,7 @@ namespace xulfdg {
 					BackendError.reset( P );
 				}
 			} Commands;
-			void reset( bso::bool__ P )
+			void reset( bso::bool__ P = true )
 			{
 				Broadcasters.reset( P );
 				Commands.reset( P );
@@ -130,6 +130,11 @@ namespace xulfdg {
 		}
 		void Update( void );
 		void ExtractSelectedDatabase( void );
+		void Close( void )
+		{
+			nsxpcm::Close( Window() );
+//			Widgets.reset();
+		}
 	};
 
 	void Register(

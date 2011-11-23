@@ -1,5 +1,17 @@
 $Id$
 
+23/11/2011 :
+	- FBLOVL :
+		- Changement des libellés de 'reply__'.
+	- FBLxxx :
+		- Adaptation.
+	- NSXPCM :
+		- Correction bogue 'GetRoot(...)'.
+	- XULFUI :
+		- Chaque applicaiton à maintenant sa propre console JS.
+	- XULFxx :
+		- Adaptation.
+
 22/11/2011 :
 	- CSDLEC :
 		- Adaptation.

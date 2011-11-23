@@ -80,7 +80,7 @@ namespace xulftk {
 	: public _error_reporting_functions__
 	{
 	private:
-		const xulfui::ui___ *_UI;
+		xulfui::ui___ *_UI;
 		lcl::rack__ _Rack;
 	protected:
 		virtual void FBLFRDReportError(
@@ -93,7 +93,7 @@ namespace xulftk {
 		}
 		E_CVDTOR( error_reporting_functions__ );
 		void Init(
-			const xulfui::ui___ &UI,
+			xulfui::ui___ &UI,
 			const lcl::locale_ &Locale,
 			const char *Language )
 		{
