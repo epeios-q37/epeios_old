@@ -99,6 +99,7 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum report__ {
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
+		rNoOrBadProjectId,
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
 		rUnableToConnect,
@@ -109,7 +110,7 @@ namespace frdkrn {
 		r_OK,
 	};
 
-#define FRDKRN__R_AMOUNT	6	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
+#define FRDKRN__R_AMOUNT	7	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
 	const char *GetLabel( report__ Report );
 
@@ -128,22 +129,19 @@ namespace frdkrn {
 	public:
 		rgstry::context___ Context;
 		incompatibility_informations IncompatibilityInformations;	// Quand survient un 'report__::rIncompatibleBackend'.
-		str::string BackendLocation;
-		str::string ErrorMessage;	// Eventurl message d'erreur du 'backend'.
+		str::string Misc;
 		void reset( bso::bool__ P = true )
 		{
 			Context.reset( P );
 			IncompatibilityInformations.reset( P );
-			BackendLocation.reset( P );
-			ErrorMessage.reset( P );
+			Misc.reset( P );
 		}
 		E_CDTOR( error_set___ );
 		void Init( void )
 		{
 			Context.Init();
 			IncompatibilityInformations.Init();
-			BackendLocation.Init();
-			ErrorMessage.Init();
+			Misc.Init();
 		}
 	};
 
@@ -197,6 +195,7 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
+			str::string_ &Id,
 			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
@@ -260,11 +259,12 @@ namespace frdkrn {
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
+			str::string_ &Id,
 			error_set___ &ErrorSet )
 		{
 			report__ Report = r_Undefined;
 
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ErrorSet ) ) == r_OK )
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, Id, ErrorSet ) ) == r_OK )
 				Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
 
 			if ( Report == r_OK ) {
@@ -278,7 +278,8 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
-			const compatibility_informations__ &CompatibilityInformations );
+			const compatibility_informations__ &CompatibilityInformations,
+			str::string_ &Id );
 		void Touch( void )
 		{
 			_ProjectModificationTimeStamp = time( NULL );

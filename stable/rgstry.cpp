@@ -72,6 +72,7 @@ const char *rgstry::Label( status__ Status )
 	switch ( Status ) {
 	CASE( UnableToOpenFile )
 	CASE( ParseError )
+	CASE( UnableToFindRootPath )
 	CASE( RootPathError )
 	default:
 		ERRu();
@@ -109,6 +110,7 @@ ERRBegin
 		lcl::ReplaceTags( Message, TagValues );
 		break;
 	case sParseError:
+	case sUnableToFindRootPath:
 		xpp::GetTranslation( Context, LocaleRack, Message );
 		break;
 	case sRootPathError:
@@ -957,7 +959,7 @@ ERRBegin
 		PFlow.GetContext( Context );
 		break;
 	default:
-		// Puisque l'on passe par le préprocesseur, si une erreur est rencontré, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
+		// Puisque l'on passe par le préprocesseur, si une erreur est rencontrée, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
 		ERRc();
 		break;
 	}
@@ -1201,19 +1203,23 @@ status__ rgstry::FillRegistry(
 	rgstry::row__ &RegistryRoot,
 	context___ &Context )
 {
+	epeios::row__ PathErrorRow = NONE;
+
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateRegistry( str::string( "_registry" ) );
 
 	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
-		if ( Context.xpp::context___::Status == xpp::sOK )
-			return Context.Status = sRootPathError;
-		else
-			return Context.Status = sParseError;
+		return Context.Status = sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
-		if ( ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &Context.PathErrorRow ) ) == NONE )
-			|| ( Registry.GetNature( RegistryRoot ) == nAttribute ) )
+		if ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &PathErrorRow ) ) == NONE )
+			if ( PathErrorRow != NONE ) {
+				Context.PathErrorRow = PathErrorRow;
 				return Context.Status = sRootPathError;
+			} else  if ( Registry.GetNature( RegistryRoot ) == nAttribute )
+				return Context.Status = sRootPathError;
+			else
+				return Context.Status = sUnableToFindRootPath;
 
 	return sOK;
 }

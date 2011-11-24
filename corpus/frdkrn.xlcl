@@ -5,6 +5,10 @@
 		<Translation language="fr">%1</Translation>
 		<Translation language="en">%1</Translation>
 	</Translations>
+	<Translations text="FRDKRN_NoOrBadProjectId">
+		<Translation language="fr">Identifiant de projet absent ou incorrect ('%1')</Translation>
+		<Translation language="en">Bad Or no project id ('%1')</Translation>
+	</Translations>
 	<Translations text="FRDKRN_NoOrBadBackendDefinition">
 		<Translation language="fr">Pas de ou mauvaise définition du moteur de traitement (backend)</Translation>
 		<Translation language="en">No or bad backend definition</Translation>
@@ -25,8 +29,10 @@
 		<Translation language="fr">%1</Translation>
 		<Translation language="en">%1</Translation>
 	</Translations>
-	<!--Translations text="FRDKRN_">
+	<!--
+	<Translations text="FRDKRN_">
 		<Translation language="fr"></Translation>
 		<Translation language="en"></Translation>
-	</Translations-->
+	</Translations>
+	-->
 </xpp:bloc>

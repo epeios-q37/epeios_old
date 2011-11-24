@@ -1,5 +1,16 @@
 $Id$
 
+24/11/2011 :
+	- FRDRGY :
+		- Ajout méthodes 'Get(User|Project|Configuration)Value(...)'.
+	- FDRKRN :
+		- Prise en charge du chargement de la 'user registry' par 'LoadProject(...').
+	- FRDRGY :
+		- Ajout 'registry_::CreateUserPath(...)'.
+	- RGSTRY :
+		- Ajout 'status__' 'sUnableToFindRootPath'.
+		- Ajout 'multi_level_registry_::Create(...)'.
+
 23/11/2011 :
 	- FBLOVL :
 		- Changement des libellés de 'reply__'.

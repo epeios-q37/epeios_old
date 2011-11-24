@@ -206,6 +206,10 @@ namespace frdrgy {
 		{
 			return _registry_::Fill( S_.User, Flow, Criterions, RootPath, Context );
 		}
+		void CreateUserPath( const str::string_ &Path )
+		{
+			_registry_::Create( S_.User, Path );
+		}
 		time_t ConfigurationTimeStamp( void ) const
 		{
 			return TimeStamp( S_.Configuration );
@@ -217,6 +221,24 @@ namespace frdrgy {
 		time_t UserTimeStamp( void ) const
 		{
 			return TimeStamp( S_.User );
+		}
+		bso::bool__ GetConfigurationValue(
+			const str::string_ &Path,
+			str::string_ &Value ) const
+		{
+			return _registry_::GetValue( S_.Configuration, Path, Value );
+		}
+		bso::bool__ GetProjectValue(
+			const str::string_ &Path,
+			str::string_ &Value ) const
+		{
+			return _registry_::GetValue( S_.Project, Path, Value );
+		}
+		bso::bool__ GetUserValue(
+			const str::string_ &Path,
+			str::string_ &Value ) const
+		{
+			return _registry_::GetValue( S_.User, Path, Value );
 		}
 	};
 

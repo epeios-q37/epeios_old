@@ -9,8 +9,18 @@
 		<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : %4)</Translation>
 		<Translation language="en">Error in file '%1' (line %2, column %3 : %4)</Translation>
 	</Translations>
+	<Translations message="RGSTRY_RootPathErreur">
+		<Translation language="fr">Erruer dans le chemin de la racine</Translation>
+		<Translation language="en">Root path error</Translation>
+	</Translations>
 	<Translations message="RGSTRY_UnableToFindRootPath">
 		<Translation language="fr">Impossible de trouver le chemin de la racine</Translation>
 		<Translation language="en">Unable to find root path</Translation>
 	</Translations>
+	<!--
+	<Translations message="RGSTRY_UnableToFindRootPath">
+		<Translation language="fr">Impossible de trouver le chemin de la racine</Translation>
+		<Translation language="en">Unable to find root path</Translation>
+	</Translations>
+	-->
 </xpp:bloc>

@@ -67,12 +67,13 @@ using namespace frdkrn;
 
 const char *frdkrn::GetLabel( report__ Report )
 {
-#if FRDKRN__R_AMOUNT != 6
+#if FRDKRN__R_AMOUNT != 7
 #	error "'report__' modified !"
 #endif
 
 	switch( Report ) {
 		CASE( ProjectParsingError );
+		CASE( NoOrBadProjectId );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
 		CASE( UnableToConnect );
@@ -87,11 +88,11 @@ const char *frdkrn::GetLabel( report__ Report )
 }
 
 
-#if FRDKRN__R_AMOUNT != 6
+#if FRDKRN__R_AMOUNT != 7
 # error "'report__' modified !"
 #endif
 
-const str::string_ &frdkrn::GetTranslation(
+static const str::string_ &frdkrn::GetTranslation(
 	report__ Report,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &LocaleRack,
@@ -108,16 +109,17 @@ ERRBegin
 			rgstry::GetTranslation( ErrorSet.Context, LocaleRack, EmbeddedMessage );
 			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
 			break;
+		case rNoOrBadProjectId:
+			lcl::ReplaceTag( Translation, 1, ErrorSet.Misc );
+			break;
 		case rNoOrBadBackendDefinition:
 			break;
 		case rNoBackendLocation:
 			break;
 		case rUnableToConnect:
 		case rIncompatibleBackend:
-			lcl::ReplaceTag( Translation, 1, ErrorSet.BackendLocation );
-			break;
 		case rBackendError:
-			lcl::ReplaceTag( Translation, 1, ErrorSet.ErrorMessage );
+			lcl::ReplaceTag( Translation, 1, ErrorSet.Misc );
 			break;
 		default:
 			ERRc();
@@ -194,12 +196,12 @@ ERRProlog
 	csdlec::library_data__ LibraryData;
 	csdleo::mode__ Mode = csdleo::m_Undefined;
 ERRBegin
-	OFlowDriver.Init( ErrorSet.ErrorMessage, fdr::ts_Default );
+	OFlowDriver.Init( ErrorSet.Misc, fdr::ts_Default );
 	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver );
 
 	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
 		OFlowDriver.reset();	// Pour vider les caches.
-		if ( ErrorSet.ErrorMessage.Amount() != 0 )
+		if ( ErrorSet.Misc.Amount() != 0 )
 			Report = rBackendError;
 		else
 			Report = rUnableToConnect;
@@ -215,7 +217,7 @@ ERRBegin
 ERRErr
 ERREnd
 	if ( Report != r_OK )
-		ErrorSet.BackendLocation.Init( RemoteHostServiceOrLocalLibraryPath );
+		ErrorSet.Misc.Init( RemoteHostServiceOrLocalLibraryPath );
 ERREpilog
 	return Report;
 }
@@ -301,9 +303,131 @@ static const str::string_ &Report_(
 	return Message;
 }
 
+static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
+{
+	epeios::row__ Row = Id.First();
+
+	if ( Id.Amount() == 0 )
+		return false;
+
+	while ( Row != NONE ) {
+		if ( !isalnum( Id( Row ) ) && ( Id( Row ) != '_' ) )
+			return false;
+
+		Row = Id.Next( Row );
+	}
+
+	return true;
+}
+
+#define PROJECT_ID_RELATIVE_PATH "@id"
+
+report__ frdkrn::kernel___::_FillProjectRegistry(
+	const str::string_ &FileName,
+	const char *Target,
+	const xpp::criterions___ &Criterions,
+	str::string_ &Id,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string Path;
+	STR_BUFFER___ FileNameBuffer, PathBuffer;
+ERRBegin
+	Path.Init( "Projects/Project[@target=\"" );
+	Path.Append( Target );
+	Path.Append( "\"]" );
+
+	if ( _Registry.FillUser( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
+		Report = rProjectParsingError;
+		ERRReturn;
+	}
+
+	if ( !_Registry.GetProjectValue( str::string( PROJECT_ID_RELATIVE_PATH ), Id ) || !IsProjectIdValid_( Id ) ) {
+		Report = rNoOrBadProjectId;
+		Path.Append( '/' );
+		Path.Append( PROJECT_ID_RELATIVE_PATH );
+		ErrorSet.Misc.Init( Path );
+		ERRReturn;
+	}
+
+
+	Report = r_OK;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
+report__ frdkrn::kernel___::_FillUserRegistry(
+	flw::iflow__ &UserDataFlow,
+	const str::string_ &Id,
+	const xpp::criterions___ &Criterions,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string Path;
+	STR_BUFFER___ FileNameBuffer, PathBuffer;
+ERRBegin
+
+	Path.Init( "Projects/Project[@id=\"" );
+	Path.Append( Id );
+	Path.Append( "\"]" );
+
+	switch ( _Registry.FillUser( UserDataFlow, Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) ) {
+	case rgstry::sOK:
+		break;
+	case rgstry::sUnableToFindRootPath:
+		_Registry.CreateUserPath( Path );
+		break;
+	default:
+		Report = rProjectParsingError;
+		ERRReturn;
+		break;
+	}
+
+	Report = r_OK;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
+report__ frdkrn::kernel___::LoadProject(
+	const str::string_ &FileName,
+	const char *TargetName,
+	flw::iflow__ &UserDataFlow,
+	const xpp::criterions___ &Criterions,
+	const compatibility_informations__ &CompatibilityInformations,
+	error_reporting_functions__ &ErrorReportingFunctions,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string ProjectId;
+ERRBegin
+	ProjectId.Init();
+
+	if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ProjectId, ErrorSet ) ) == r_OK )
+		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
+			ERRReturn;
+
+	 if ( ( Report = _FillUserRegistry( UserDataFlow, ProjectId, Criterions, ErrorSet ) ) != r_OK )
+		 ERRReturn;
+
+	_ProjectOriginalTimeStamp = time( NULL );
+	_ProjectModificationTimeStamp = 0;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
+	flw::iflow__ &UserDataFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations )
 {
@@ -314,7 +438,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, UserDataFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
@@ -328,49 +452,6 @@ ERREpilog
 	return Status;
 }
 
-
-void frdkrn::kernel___::FillUserRegistry(
-	flw::iflow__ &User,
-	const xpp::criterions___ &Criterions )
-{
-ERRProlog
-	rgstry::context___ Context;
-ERRBegin
-	Context.Init();	
-
-	_Registry.FillUser( User, Criterions, NULL, Context );
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
-report__ frdkrn::kernel___::_FillProjectRegistry(
-	const str::string_ &FileName,
-	const char *Target,
-	const xpp::criterions___ &Criterions,
-	error_set___ &ErrorSet )
-{
-	report__ Report = r_Undefined;
-ERRProlog
-	str::string Path;
-	STR_BUFFER___ FileNameBuffer, PathBuffer;
-ERRBegin
-	Path.Init( "Projects/Project[@target=\"" );
-	Path.Append( Target );
-	Path.Append( "\"]" );
-
-	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
-		Report = rProjectParsingError;
-		ERRReturn;
-	}
-
-	Report = r_OK;
-ERRErr
-ERREnd
-ERREpilog
-	return Report;
-}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -861,6 +861,7 @@ namespace rgstry {
 		sOK,
 		sUnableToOpenFile,
 		sParseError,	// Pas d'entrée dans le fichier de traduction : ce sont les traductions du 'parser__' qui sont utilisés.
+		sUnableToFindRootPath,
 		sRootPathError,
 		s_amount,
 		s_Undefined
@@ -1285,6 +1286,12 @@ namespace rgstry {
 		level__ AddEmbeddedLevel( const name_ &Name = name() )
 		{
 			return _RawAddLevel( entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
+		}
+		void Create(
+			level__ Level,
+			const str::string_ &Path )
+		{
+			_GetRegistry( Level ).Create( Path, _GetRoot( Level ) );
 		}
 		const value_ &GetValue(
 			level__ Level,
