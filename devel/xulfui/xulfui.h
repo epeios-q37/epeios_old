@@ -66,8 +66,6 @@ extern class ttr_tutor &XULFUITutor;
 #include "xulfdg.h"
 #include "xulfmn.h"
 
-#define XULFUI_USERDATA_ATTRIBUTE_NAME	"UserData"
-
 namespace xulfui {
 
 	class ui___
@@ -115,9 +113,11 @@ namespace xulfui {
 #endif
 			return *_Main;
 		}
-		void SaveUserData( const str::string_ &Data )
+		void SaveParameters(
+			const char *AttributeName,
+			const str::string_ &Data )
 		{
-			nsxpcm::SetAttribute( nsxpcm::GetElement( Main().Window() ), XULFUI_USERDATA_ATTRIBUTE_NAME, Data );
+			nsxpcm::SetAttribute( nsxpcm::GetElement( Main().Window() ), AttributeName, Data );
 		}
 		void Alert(
 			nsIDOMWindow *Window,

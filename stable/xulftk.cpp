@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "xulfrg.h"
+
 using namespace xulftk;
 
 #define PREFIX	XULFKL_NAME "_" 
@@ -90,13 +92,92 @@ ERREnd
 ERREpilog
 }
 
+enum storage__
+{
+	sEmbedded,
+	sFile,
+	sVolatile,
+	s_amount,
+	s_Undefined
+};
+
+
+static storage__ GetStorage_( const rgstry::multi_level_registry_ &Registry )
+{
+	storage__ Storage = s_Undefined;
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+
+	if ( xulfrg::GetRawParametersStorage( Registry, Value ) ) {
+		if ( Value == "Embedded" )
+			Storage = sEmbedded;
+		else if ( Value == "File" )
+			Storage = sFile;
+		else if ( Value == "Volatile " )
+			Storage = sVolatile;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Storage;
+}
+
 void xulftk::trunk___::_ApplySession(
 	const str::string_ &FileName,
 	const xpp::criterions___ &Criterions,
-	const frdkrn::compatibility_informations__ &CompatibilityInformations )
+	const frdkrn::compatibility_informations__ &CompatibilityInformations,
+	const rgstry::multi_level_registry_ &Registry )
 {
-	if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK )
+ERRProlog
+	str::string Embedded;
+	flf::file_iflow___ FileFlow;
+	flx::E_STRING_IFLOW__  EmbeddedFlow;
+	flw::iflow__ *Flow = NULL;	
+	str::string FileName, Translation;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	switch ( GetStorage_( Registry )  ) {
+	case sEmbedded:
+		Embedded.Init();
+		nsxpcm::GetAttribute( nsxpcm::GetElement( UI().Main().Window() ), "Parameters", Embedded );
+		EmbeddedFlow.Init( Embedded );
+		Flow = &EmbeddedFlow;
+		break;
+	case sFile:
+		FileName.Init();
+		if ( !xulfrg::GetParametersFileName( Registry, FileName ) ) {
+			Translation.Init();
+			Kernel().LocaleRack().GetTranslation( "MissingOrBadParametersFileDefinition", PREFIX, Translation );
+			UI().Alert( Translation );
+			ERRReturn;
+		}
+		if ( FileFlow.Init( FileName.Convert( Buffer ), err::hUserDefined ) != fil::sSuccess )
+			Flow = &flx::VoidIFlow;
+		else
+			Flow = &FileFlow;
+		break;
+	case sVolatile:
+			Flow = &FileFlow;
+		break;
+	case s_Undefined:
+			Translation.Init();
+			Kernel().LocaleRack().GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
+			UI().Alert( Translation );
+			ERRReturn;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+
+	if ( Kernel().LoadProject( FileName, _TargetName, *Flow, Criterions, CompatibilityInformations ) != frdkrn::sOK )
 		UI().Alert( Kernel().Message() );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 bso::bool__ xulftk::trunk___::_DefendSession( void )

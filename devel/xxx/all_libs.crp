@@ -313,10 +313,10 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&XUL Frontend BaSe
 &xulfkl		&epeios		&\
 	&XUL Frontend KerneL
-&xulfrd		&epeios		&\
-	&XUL WiDGets
 &xulfmn		&epeios		&\
 	&XUL Frontend MaiN
+&xulfrg		&epeios		&\
+	&XUL Fro,te,d ReGistryWiDGets
 &xulftk		&epeios		&\
 	&XUL Frontend TrunK
 &xulfui		&epeios		&\

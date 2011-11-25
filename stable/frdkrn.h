@@ -197,6 +197,11 @@ namespace frdkrn {
 			const xpp::criterions___ &Criterions,
 			str::string_ &Id,
 			error_set___ &ErrorSet );
+		report__ _FillUserRegistry(
+			flw::iflow__ &UserDataFlow,
+			const str::string_ &Id,
+			const xpp::criterions___ &Criterions,
+			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
@@ -233,14 +238,13 @@ namespace frdkrn {
 			reset();
 		}
 		status__ Init(
-			rgstry::row__ ConfigurationRegistryRoot,
-			const rgstry::registry_ &ConfigurationRegistry,
+			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
 			error_reporting_functions__ &ErrorReportingFunctions )
 		{
-			_Registry.Init( ConfigurationRegistryRoot, ConfigurationRegistry);
+			_Registry.Init( ConfigurationRegistry );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
 			_ProjectOriginalTimeStamp = 0;
@@ -256,30 +260,17 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			flw::iflow__ &UserDataFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
-			str::string_ &Id,
-			error_set___ &ErrorSet )
-		{
-			report__ Report = r_Undefined;
-
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, Id, ErrorSet ) ) == r_OK )
-				Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
-
-			if ( Report == r_OK ) {
-				_ProjectOriginalTimeStamp = time( NULL );
-				_ProjectModificationTimeStamp = 0;
-			}
-
-			return Report;
-		}
+			error_set___ &ErrorSet );
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			flw::iflow__ &UserDataFlow,
 			const xpp::criterions___ &Criterions,
-			const compatibility_informations__ &CompatibilityInformations,
-			str::string_ &Id );
+			const compatibility_informations__ &CompatibilityInformations );
 		void Touch( void )
 		{
 			_ProjectModificationTimeStamp = time( NULL );
@@ -320,13 +311,6 @@ namespace frdkrn {
 		bso::bool__ IsConnected( void ) const
 		{
 			return _Backend.IsConnected();
-		}
-		void FillUserRegistry(
-			flw::iflow__ &User,
-			const xpp::criterions___ &Criterions );	// To call after 'Init()'. 'User' contains the 'XML' tree containing the user configuration.
-		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
-		{
-			_Registry.DumpConfiguration( OFlow );
 		}
 		void DumpProjectRegistry( txf::text_oflow__ &OFlow ) const
 		{

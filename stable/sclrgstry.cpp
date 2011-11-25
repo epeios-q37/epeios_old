@@ -64,30 +64,16 @@ using namespace sclrgstry;
 
 #define REGISTRY_FILE_EXTENSION ".xcfg"
 
-static rgstry::registry Registry_;
-static rgstry::row__ Root_ = NONE;
+static rgstry::multi_level_registry Registry_;
+static rgstry::level__ RootLevel_ = RGSTRY_UNDEFINED_LEVEL;
 static STR_BUFFER___ Translation_;
 
 const char *sclrgstry::paths::LocaleFileName = "LocaleFileName";
 const char *sclrgstry::paths::Language = "Language";
 
-const rgstry::registry_ &sclrgstry::GetRegistry( void )
+const rgstry::multi_level_registry_ &sclrgstry::GetRegistry( void )
 {
 	return Registry_;
-}
-
-rgstry::row__ sclrgstry::GetRegistryRoot( void )
-{
-	if ( Root_ == NONE )
-		ERRc();
-
-	return Root_;
-}
-
-
-bso::bool__ sclrgstry::IsRegistryReady( void )
-{
-	return Root_ != NONE;
 }
 
 static rgstry::status__ FillRegistry_(
@@ -95,7 +81,7 @@ static rgstry::status__ FillRegistry_(
 	const char *RootPath,
 	rgstry::context___ &Context )
 {
-	return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry_, Root_, Context );
+	return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry_.GetRegistry( RootLevel_), Registry_.GetRoot( RootLevel_), Context );
 }
 
 bso::bool__ sclrgstry::GetValue(
@@ -108,7 +94,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Registry_.GetValue( Path.GetTargetedPath( TargetedPath ), ::Root_, Value );
+	Missing = Registry_.GetValue( Path.GetTargetedPath( TargetedPath ), Value );
 ERRErr
 ERREnd
 ERREpilog
@@ -125,7 +111,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Registry_.GetValues( Path.GetTargetedPath( TargetedPath ), ::Root_, Values );
+	Missing = Registry_.GetValues( Path.GetTargetedPath( TargetedPath ), Values );
 ERRErr
 ERREnd
 ERREpilog
@@ -413,6 +399,8 @@ public:
 	sclrgstrypersonnalization( void )
 	{
 		Registry_.Init();
+
+		RootLevel_ = Registry_.AddEmbeddedLevel();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

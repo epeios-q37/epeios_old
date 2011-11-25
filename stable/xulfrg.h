@@ -1,5 +1,5 @@
 /*
-	Header for the 'xulfkl' library by Claude SIMON (csimon at zeusw dot org)
+	Header for the 'xulfrg' library by Claude SIMON (csimon at zeusw dot org)
 	Copyright (C) 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -24,21 +24,21 @@
 
 //	$Id$
 
-#ifndef XULFKL__INC
-#define XULFKL__INC
+#ifndef XULFRG__INC
+#define XULFRG__INC
 
-#define XULFKL_NAME		"XULFKL"
+#define XULFRG_NAME		"XULFRG"
 
-#define	XULFKL_VERSION	"$Revision$"
+#define	XULFRG_VERSION	"$Revision$"
 
-#define XULFKL_OWNER		"Claude SIMON"
+#define XULFRG_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &XULFKLTutor;
+extern class ttr_tutor &XULFRGTutor;
 
-#if defined( XXX_DBG ) && !defined( XULFKL_NODBG )
-#define XULFKL_DBG
+#if defined( XXX_DBG ) && !defined( XULFRG_NODBG )
+#define XULFRG_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,76 +55,42 @@ extern class ttr_tutor &XULFKLTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D XUL Frontend KerneL 
+//D XUL Fro,te,d ReGistryWiDGets 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "frdkrn.h"
+# include "frdrgy.h"
 
-#define XULFKL_M_AMOUNT	2
-
-namespace xulfkl {
-
-	using frdkrn::status__;
-
-	enum message__ 
+namespace xulfrg {
+	struct paths
+	: public frdrgy::paths
 	{
-		mSelectProjectFile,
-		mExitConfirmation,
-		m_amount,
-		m_Undefined
+		struct parameters {
+			static const char *Storage;
+			static const char *Target;
+		} Parameters;
 	};
 
-	typedef frdkrn::kernel___ _kernel___;
+	using frdrgy::registry_;
+	using frdrgy::registry;
 
-	class kernel___
-	: public _kernel___
+	inline bso::bool__ GetRawParametersStorage(
+		const rgstry::multi_level_registry_ &Registry,
+		str::string_ &Value )
 	{
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			if ( P )
-				Close();
+		return Registry.GetValue( paths::parameters::Storage, Value );
+	}
 
-			_kernel___::reset( P );
-		}
-		kernel___( void )
-		{
-			reset( false );
-		}
-		~kernel___( void )
-		{
-			reset();
-		}
-		status__ Init(
-			const rgstry::multi_level_registry_ &ConfigurationRegistry,
-			const char *TargetName,
-			const lcl::locale_ &Locale,
-			const char *Language,
-			frdkrn::error_reporting_functions__ &ErrorReportingFunctions )
-		{
-			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
-		}
-		status__ LoadProject(
-			const str::string_ &FileName,
-			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
-			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations )
-		{
-			return _kernel___::LoadProject( FileName, TargetName, UserDataFlow, Criterions, CompatibilityInformations );
-		}
-		const str::string_ &GetTranslation(
-			message__ Message,
-			str::string_ &Translation );
-		const char *GetTranslation(
-			message__ Message,
-			STR_BUFFER___ &Buffer );
-	};
+	inline bso::bool__ GetParametersTarget(
+		const rgstry::multi_level_registry_ &Registry,
+		str::string_ &Value )
+	{
+		return Registry.GetValue( paths::parameters::Target, Value );
+	}
 
 }
 

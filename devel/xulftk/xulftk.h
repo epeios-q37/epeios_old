@@ -127,7 +127,8 @@ namespace xulftk {
 		void _ApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations );
+			const frdkrn::compatibility_informations__ &CompatibilityInformations,
+			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
 		virtual void XULFTKApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
@@ -253,7 +254,7 @@ namespace xulftk {
 
 			SOFlow.reset();	// To flush buffer.
 
-			UI().SaveUserData( Data );
+			UI().SaveParameters( Data );
 		ERRErr
 		ERREnd
 		ERREpilog

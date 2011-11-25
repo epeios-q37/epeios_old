@@ -17,6 +17,14 @@
 		<Translation language="fr">Toutes les modifications vont être perdues !</Translation>
 		<Translation language="en">All modifications will be lost !</Translation>
 	</Translations>
+	<Translations message="XULFKL_MissingOrBadParametersTargetDefinition">
+		<Translation language="fr">Absence ou mauvaise valeur pour la d"finition de la cible des paramètres.</Translation>
+		<Translation language="en">Bad or no value for parameters target value.</Translation>
+	</Translations>
+	<Translations message="XULFKL_MissingOrBadParametersStorageDefinition">
+		<Translation language="fr">Absence ou mauvaise valeur pour la défibition du stockage des paramètres.</Translation>
+		<Translation language="en">Bad or no value for parameters storage definition.</Translation>
+	</Translations>
 	<!--
 	<Translations message="XULFKL_">
 		<Translation language="fr"></Translation>

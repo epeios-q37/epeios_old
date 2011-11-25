@@ -238,14 +238,13 @@ namespace frdkrn {
 			reset();
 		}
 		status__ Init(
-			rgstry::row__ ConfigurationRegistryRoot,
-			const rgstry::registry_ &ConfigurationRegistry,
+			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
 			error_reporting_functions__ &ErrorReportingFunctions )
 		{
-			_Registry.Init( ConfigurationRegistryRoot, ConfigurationRegistry);
+			_Registry.Init( ConfigurationRegistry );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
 			_ProjectOriginalTimeStamp = 0;
@@ -312,10 +311,6 @@ namespace frdkrn {
 		bso::bool__ IsConnected( void ) const
 		{
 			return _Backend.IsConnected();
-		}
-		void DumpConfigurationRegistry( txf::text_oflow__ &OFlow ) const
-		{
-			_Registry.DumpConfiguration( OFlow );
 		}
 		void DumpProjectRegistry( txf::text_oflow__ &OFlow ) const
 		{

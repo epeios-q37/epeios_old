@@ -1156,12 +1156,23 @@ namespace rgstry {
 	struct entry__ {
 		row__ Root;
 		const registry_ *Registry;
-		entry__(
+		void reset( bso::bool__ = true )
+		{
+			Root = NONE;
+			Registry = NULL;
+		}
+		void Init(
 			row__ Root = NONE,
 			const registry_ &Registry = *(const registry_ *)NULL )
 		{
 			this->Root = Root;
 			this->Registry = &Registry;
+		}
+		entry__(
+			row__ Root = NONE,
+			const registry_ &Registry = *(const registry_ *)NULL )
+		{
+			Init( Root, Registry );
 		}
 	};
 
@@ -1202,7 +1213,7 @@ namespace rgstry {
 		}
 		const registry_ &_GetRegistry( level__ Level ) const
 		{
-			entry__ Entry = GetEntry( Level );
+			entry__ Entry = _GetEntry( Level );
 
 			if ( Entry.Registry == NULL )
 				return EmbeddedRegistry;
@@ -1211,7 +1222,7 @@ namespace rgstry {
 		}
 		registry_ &_GetRegistry( level__ Level )
 		{
-			entry__ Entry = GetEntry( Level );
+			entry__ Entry = _GetEntry( Level );
 
 			if ( Entry.Registry != NULL )
 				ERRc();
@@ -1262,9 +1273,18 @@ namespace rgstry {
 			Entries.Init();
 			TimeStamps.Init();
 		}
-		entry__ GetEntry( level__ Level ) const
+		E_NAVt( Entries., level__ );
+		const registry_ &GetRegistry( level__ Level ) const
 		{
-			return Entries( Level );
+			return _GetRegistry( Level );
+		}
+		registry_ &GetRegistry( level__ Level )
+		{
+			return _GetRegistry( Level );
+		}
+		row__ GetRoot( level__ Level ) const
+		{
+			return _GetRoot( Level );
 		}
 /*		level__ CreateImportedLevel(
 			row__ Row,
@@ -1286,6 +1306,16 @@ namespace rgstry {
 		level__ AddEmbeddedLevel( const name_ &Name = name() )
 		{
 			return _RawAddLevel( entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
+		}
+		void Add( const multi_level_registry_ &Registry )
+		{
+			level__ Level = First();
+
+			while ( Level != RGSTRY_UNDEFINED_LEVEL ) {
+				AddImportedLevel( Registry.GetRoot( Level ), Registry.GetRegistry( Level ) );
+
+				Level = Next( Level );
+			}
 		}
 		void Create(
 			level__ Level,

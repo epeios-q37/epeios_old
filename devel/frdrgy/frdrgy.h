@@ -103,14 +103,13 @@ namespace frdrgy {
 			rgstry::level__ Level,
 			txf::text_oflow__ &TFlow ) const
 		{
-			return _registry_::Dump( S_.Configuration, true, xml::oIndent, TFlow );
+			return _registry_::Dump( Level, true, xml::oIndent, TFlow );
 		}
 	public:
 		struct s
 		: public _registry_::s
 		{
 			rgstry::level__
-				Configuration,
 				Project,
 				User;
 		} &S_;
@@ -122,7 +121,7 @@ namespace frdrgy {
 		{
 			_registry_::reset( P );
 
-			S_.Configuration = S_.Project = S_.User = RGSTRY_UNDEFINED_LEVEL;
+			S_.Project = S_.User = RGSTRY_UNDEFINED_LEVEL;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -132,19 +131,16 @@ namespace frdrgy {
 		{
 			_registry_::operator =( R );
 
-			S_.Configuration = R.S_.Configuration;
 			S_.Project = R.S_.Project;
 			S_.User = R.S_.User;
 
 			return *this;
 		}
-		void Init(
-			rgstry::row__ ConfigurationRegistryRoot,
-			const rgstry::registry_ &ConfigurationRegistry )
+		void Init( const rgstry::multi_level_registry_ &ConfigurationRegistry )
 		{
 			_registry_::Init();
 
-			S_.Configuration = _registry_::AddImportedLevel( ConfigurationRegistryRoot, ConfigurationRegistry );
+			_registry_::Add( ConfigurationRegistry );
 			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
 			S_.User = _registry_::AddEmbeddedLevel( rgstry::name( "User" ) );
 		}
@@ -162,10 +158,6 @@ namespace frdrgy {
 			return _registry_::GetRoot( S_.User );
 		}
 #endif
-		void DumpConfiguration( txf::text_oflow__ &TFlow ) const
-		{
-			_DumpRegistry( S_.Configuration, TFlow );
-		}
 		void DumpProject( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Project, TFlow );
@@ -173,14 +165,6 @@ namespace frdrgy {
 		void DumpUser( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.User, TFlow );
-		}
-		rgstry::status__ FillConfiguration(
-			const char *FileName,
-			const xpp::criterions___ &Criterions,
-			const char *RootPath,
-			rgstry::context___ &Context )
-		{
-			return _registry_::Fill( S_.Configuration, FileName, Criterions, RootPath, Context );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
@@ -210,10 +194,6 @@ namespace frdrgy {
 		{
 			_registry_::Create( S_.User, Path );
 		}
-		time_t ConfigurationTimeStamp( void ) const
-		{
-			return TimeStamp( S_.Configuration );
-		}
 		time_t ProjectTimeStamp( void ) const
 		{
 			return TimeStamp( S_.Project );
@@ -221,12 +201,6 @@ namespace frdrgy {
 		time_t UserTimeStamp( void ) const
 		{
 			return TimeStamp( S_.User );
-		}
-		bso::bool__ GetConfigurationValue(
-			const str::string_ &Path,
-			str::string_ &Value ) const
-		{
-			return _registry_::GetValue( S_.Configuration, Path, Value );
 		}
 		bso::bool__ GetProjectValue(
 			const str::string_ &Path,

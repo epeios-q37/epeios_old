@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "xulfrg.h"
+
 using namespace xulftk;
 
 #define PREFIX	XULFKL_NAME "_" 
@@ -90,13 +92,202 @@ ERREnd
 ERREpilog
 }
 
+enum storage__
+{
+	sEmbedded,
+	sFile,
+	sVolatile,
+	s_amount,
+	s_Undefined
+};
+
+
+static storage__ GetStorage_( const rgstry::multi_level_registry_ &Registry )
+{
+	storage__ Storage = s_Undefined;
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+
+	if ( xulfrg::GetRawParametersStorage( Registry, Value ) ) {
+		if ( Value == "Embedded" )
+			Storage = sEmbedded;
+		else if ( Value == "File" )
+			Storage = sFile;
+		else if ( Value == "Volatile " )
+			Storage = sVolatile;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Storage;
+}
+
+static bso::bool__ IsValid_( const str::string_ &Value )
+{
+	epeios::row__ Row = Value.First();
+
+	if ( Value.Amount() == 0 )
+		return false;
+
+	while ( Row != NONE ) {
+		if ( !isalnum( Value( Row ) || ( Value( Row ) != '_' ) ) )
+			return false;
+
+		Row = Value.Next( Row );
+	}
+
+	return true;
+}
+
+static struct bag___ {
+	str::string Embedded;
+	flf::file_iflow___ FileFlow;
+	flx::E_STRING_IFLOW__  EmbeddedFlow;
+	void Init( void )
+	{
+		// Standardisation.
+	}
+};
+
+static const char *GetTarget_( 
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack,
+	STR_BUFFER___ &Buffer )
+{
+	const char *Result = NULL;
+ERRProlog
+	str::string Target, Translation;
+ERRBegin
+	Target.Init();
+
+	xulfrg::GetParametersTarget( Registry, Target );
+
+	if ( !IsValid_( Target ) ) {
+		Translation.Init();
+		Rack.GetTranslation( "MissingOrBadParametersTargetDefinition", PREFIX, Translation );
+		nsxpcm::Alert( Window, Translation );
+		ERRReturn;
+	}
+
+	Result = Target.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
+static flw::iflow__ *GetEmbeddedFlow_(
+	bag___ &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flw::iflow__ *Flow = NULL;
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *Target = NULL;
+ERRBegin
+	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+		ERRReturn;
+
+	Bag.Embedded.Init();
+	nsxpcm::GetAttribute( nsxpcm::GetElement( Window ), Target, Bag.Embedded );
+	Bag.EmbeddedFlow.Init( Bag.Embedded );
+	Flow = &Bag.EmbeddedFlow;
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+static flw::iflow__ *GetFileFlow_(
+	bag___ &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flw::iflow__ *Flow = NULL;
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *Target = NULL;
+ERRBegin
+	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+		ERRReturn;
+
+	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
+		Flow = &flx::VoidIFlow;
+	else
+		Flow = &Bag.FileFlow;
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+static flw::iflow__ *GetVolatileFlow_( bag___ &Bag )
+{
+	return &flx::VoidIFlow;
+}
+
+static flw::iflow__ *GetFlow_(
+	bag___ &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flw::iflow__ *Flow = NULL;
+ERRProlog
+	str::string Translation;
+ERRBegin
+	switch ( GetStorage_( Registry )  ) {
+	case sEmbedded:
+		Flow = GetEmbeddedFlow_( Bag, Window, Registry, Rack );
+		break;
+	case sFile:
+		Flow = GetFileFlow_( Bag, Window, Registry, Rack );
+		break;
+	case sVolatile:
+		Flow = GetVolatileFlow_( Bag );
+		break;
+	case s_Undefined:
+			Translation.Init();
+			Rack.GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
+			nsxpcm::Alert( Window, Translation );
+			ERRReturn;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
 void xulftk::trunk___::_ApplySession(
 	const str::string_ &FileName,
 	const xpp::criterions___ &Criterions,
-	const frdkrn::compatibility_informations__ &CompatibilityInformations )
+	const frdkrn::compatibility_informations__ &CompatibilityInformations,
+	const rgstry::multi_level_registry_ &Registry )
 {
-	if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK )
+ERRProlog
+	flw::iflow__ *Flow = NULL;
+	bag___ Bag;
+ERRBegin
+	Bag.Init();
+
+	if ( ( Flow = GetFlow_( Bag, UI().Main().Window(), Registry, Kernel().LocaleRack() ) ) == NULL )
+		ERRReturn;
+
+	if ( Kernel().LoadProject( FileName, _TargetName, *Flow, Criterions, CompatibilityInformations ) != frdkrn::sOK )
 		UI().Alert( Kernel().Message() );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 bso::bool__ xulftk::trunk___::_DefendSession( void )
@@ -116,6 +307,12 @@ ERREnd
 ERREpilog
 	return Confirmed;
 }
+
+void xulftk::trunk___::_DropSession( void )
+{
+	Kernel().Close();
+}
+
 
 
 

@@ -1,5 +1,23 @@
 $Id$
 
+25/11/2011 :
+	- FRDKRN :
+		- Adaptation.
+	- FRDRGY :
+		- Initialisation avec un 'rgstry::multi_level_registry_'.
+	- RGSTRY :
+		- Ajout 'multi_level_registry_::Get(Root|Registry)(...)'.
+		- Standardisation de 'entry__'.
+		- Ajout 'muti_level_registry_::Add( const multi_level_registry_ &)'.
+	- SCLRGSTRY :
+		- La 'registry' de base est dorénavant un 'rgstry::multi_level_registry'.
+	- XULFKL :
+		- Adaptation.
+	- XULFTK :
+		- Prise en charge d la lecture et de l'enregistrement des paramètres utilisateurs.
+	- XULFUI :
+		- L'attribut utilisé pour sauver les paramètres et désormais parmétrable.
+
 24/11/2011 :
 	- FRDRGY :
 		- Ajout méthodes 'Get(User|Project|Configuration)Value(...)'.

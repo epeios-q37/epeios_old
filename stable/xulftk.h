@@ -127,7 +127,8 @@ namespace xulftk {
 		void _ApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations );
+			const frdkrn::compatibility_informations__ &CompatibilityInformations,
+			const rgstry::multi_level_registry_ &Registry );
 		virtual void XULFTKApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
