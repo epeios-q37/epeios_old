@@ -320,6 +320,8 @@ static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 	return true;
 }
 
+#define PROJECT_ROOT_PATH	"Projects/Project[@target=\"%1\"]"
+
 #define PROJECT_ID_RELATIVE_PATH "@id"
 
 report__ frdkrn::kernel___::_FillProjectRegistry(
@@ -334,11 +336,10 @@ ERRProlog
 	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
-	Path.Init( "Projects/Project[@target=\"" );
-	Path.Append( Target );
-	Path.Append( "\"]" );
+	Path.Init( PROJECT_ROOT_PATH );
+	str::ReplaceTag( Path, 1, str::string( Target ), '%' );
 
-	if ( _Registry.FillUser( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
+	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
 		Report = rProjectParsingError;
 		ERRReturn;
 	}
@@ -351,6 +352,40 @@ ERRBegin
 		ERRReturn;
 	}
 
+	Report = r_OK;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
+report__ frdkrn::kernel___::_DumpProjectRegistry(
+	const str::string_ &FileName,
+	const char *Target,
+	const str::string_ &Id,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string Path;
+
+	STR_BUFFER___ FileNameBuffer, PathBuffer;
+ERRBegin
+	Path.Init( PROJECT_ROOT_PATH );
+	str::ReplaceTag( Path, 1, str::string( Target ), '%' );
+
+	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
+		Report = rProjectParsingError;
+		ERRReturn;
+	}
+
+	if ( !_Registry.GetProjectValue( str::string( PROJECT_ID_RELATIVE_PATH ), Id ) || !IsProjectIdValid_( Id ) ) {
+		Report = rNoOrBadProjectId;
+		Path.Append( '/' );
+		Path.Append( PROJECT_ID_RELATIVE_PATH );
+		ErrorSet.Misc.Init( Path );
+		ERRReturn;
+	}
 
 	Report = r_OK;
 ERRErr
@@ -359,27 +394,24 @@ ERREpilog
 	return Report;
 }
 
-report__ frdkrn::kernel___::_FillUserRegistry(
-	flw::iflow__ &UserDataFlow,
-	const str::string_ &Id,
+
+#define PARAMETERS_ROOT_PATH	"Parameters"
+
+report__ frdkrn::kernel___::_FillParametersRegistry(
+	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
 ERRProlog
-	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
-
-	Path.Init( "Projects/Project[@id=\"" );
-	Path.Append( Id );
-	Path.Append( "\"]" );
-
-	switch ( _Registry.FillUser( UserDataFlow, Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) ) {
+	
+	switch ( _Registry.FillParameters( ParametersXFlow, Criterions, PARAMETERS_ROOT_PATH, ErrorSet.Context ) ) {
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		_Registry.CreateUserPath( Path );
+		_Registry.CreateParametersPath( str::string( PARAMETERS_ROOT_PATH ) );
 		break;
 	default:
 		Report = rProjectParsingError;
@@ -394,10 +426,167 @@ ERREpilog
 	return Report;
 }
 
+class parameters_
+{
+public:
+	struct s {
+		str::string_::s
+			Id,
+			Content;
+	};
+	str::string_
+		Id,
+		Content;
+	parameters_( s &S )
+	: Id( S.Id ),
+	  Content( S.Content )
+	{}
+	void reset( bso::bool__ P = true )
+	{
+		Id.reset( P );
+		Content.reset( P );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		Id.plug( MM );
+		Content.plug( MM );
+	}
+	parameters_ &operator =( const parameters_ &P )
+	{
+		Id = P.Id;
+		Content = P.Content;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		Id.Init();
+		Content.Init();
+	}
+};
+
+E_AUTO( parameters )
+
+static void Write_(
+	const parameters_ &Parameters,
+	flw::oflow__ Flow )
+{
+	Parameters.Id.NewWriteToFlow( Flow, true );
+	Parameters.Content.NewWriteToFlow( Flow, true );
+}
+
+static void Read_(
+	flw::iflow__ &Flow,
+	parameters_ &Parameters )
+{
+	Parameters.Id.NewReadFromFlow( Flow, 0 );
+	Parameters.Content.NewReadFromFlow( Flow, 0 );
+}
+
+typedef ctn::E_XCONTAINER_( parameters_ ) parameters_set_;
+E_AUTO( parameters_set );
+
+static void Write_(
+	const parameters_set_ &Set,
+	flw::oflow__ &Flow )
+{
+	epeios::row__ Row = Set.First();
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	dtfptb::NewPutSize( Set.Amount(), Flow );
+
+	Parameters.Init( Set );
+
+	while ( Row != NONE ) {
+		Write_( Parameters( Row ), Flow );
+
+		Row = Set.Next( Row );
+	}
+}
+
+static void Read_(
+	flw::iflow__ &Flow,
+	parameters_set_ &Set )
+{
+ERRProlog
+	epeios::size__ Amount = 0;
+	parameters Parameters;
+ERRBegin
+	Amount = dtfptb::NewGetSize( Flow );
+
+	while ( Amount-- != 0 ) {
+		Parameters.Init();
+
+		Read_( Flow, Parameters );
+
+		Set.Append( Parameters );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static epeios::row__ Search_(
+	const str::string_ &Id,
+	const parameters_set_ &Set )
+{
+	epeios::row__ Row = Set.First();
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	Parameters.Init( Set );
+
+	while ( ( Row != NONE ) && ( Parameters( Row ).Id != Id ) )
+		Row = Set.Next( Row );
+
+	return Row != NULL;
+}
+
+static bso::bool__ Get_(
+	const str::string_ &Id,
+	const parameters_set_ &Set,
+	str::string_ &Content )
+{
+	epeios::row__ Row = Search_( Id, Set );
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	if ( Row != NONE ) {
+		Parameters.Init( Set );
+
+		Content = Parameters( Row ).Content;
+	}
+
+	return Row != NONE;
+}
+
+static void Set_(
+	const str::string_ &Id,
+	const str::string_ &Content,
+	parameters_set_ &Set )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	parameters Parameters;
+ERRBegin
+	Row = Search_( Id, Set );
+
+	Parameters.Init();
+
+	Parameters.Id = Id;
+	Parameters.Content = Content;
+
+	if ( Row != NONE )
+		Set.Store( Parameters, Row );
+	else
+		Set.Append( Parameters );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 report__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	flw::iflow__ &UserDataFlow,
+	flw::iflow__ &ParametersSetFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations,
 	error_reporting_functions__ &ErrorReportingFunctions,
@@ -406,6 +595,10 @@ report__ frdkrn::kernel___::LoadProject(
 	report__ Report = r_Undefined;
 ERRProlog
 	str::string ProjectId;
+	str::string Parameters;
+	parameters_set Set;
+	flx::E_STRING_IFLOW__ Flow;
+	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	ProjectId.Init();
 
@@ -413,7 +606,16 @@ ERRBegin
 		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
 			ERRReturn;
 
-	 if ( ( Report = _FillUserRegistry( UserDataFlow, ProjectId, Criterions, ErrorSet ) ) != r_OK )
+	Set.Init();
+	Read_( ParametersSetFlow, Set );
+
+	Parameters.Init();
+	Get_( ProjectId, Set, Parameters );
+
+	Flow.Init( Parameters );
+	XFlow.Init( Flow );
+
+	 if ( ( Report = _FillParametersRegistry( XFlow, Criterions, ErrorSet ) ) != r_OK )
 		 ERRReturn;
 
 	_ProjectOriginalTimeStamp = time( NULL );
@@ -427,7 +629,7 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	flw::iflow__ &UserDataFlow,
+	flw::iflow__ &ParametersSetFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations )
 {
@@ -438,7 +640,73 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, UserDataFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, ParametersSetFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+		_Message.Init();
+		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		_Message.Append( " !" );
+		Status = sError;
+		ERRReturn;
+	} else
+		Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+report__ frdkrn::kernel___::SaveProject(
+	const str::string_ &FileName,
+	const char *TargetName,
+	flw::oflow__ &ParametersSetFlow,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	str::string ProjectId;
+	str::string Parameters;
+	parameters_set Set;
+	flx::E_STRING_IFLOW__ Flow;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	ProjectId.Init();
+
+	if ( ( Report = _DumpProjectRegistry(
+		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
+			ERRReturn;
+
+	Set.Init();
+	Read_( ParametersSetFlow, Set );
+
+	Parameters.Init();
+	Get_( ProjectId, Set, Parameters );
+
+	Flow.Init( Parameters );
+	XFlow.Init( Flow );
+
+	 if ( ( Report = _FillParametersRegistry( XFlow, Criterions, ErrorSet ) ) != r_OK )
+		 ERRReturn;
+
+	_ProjectOriginalTimeStamp = time( NULL );
+	_ProjectModificationTimeStamp = 0;
+ERRErr
+ERREnd
+ERREpilog
+	return Report;
+}
+
+status__ frdkrn::kernel___::SaveProject(
+	const str::string_ &FileName,
+	const char *TargetName,
+	flw::oflow__ &ParametersSetFlow )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	error_set___ ErrorSet;
+	report__ Report = r_Undefined;
+ERRBegin
+	ErrorSet.Init();
+
+	if ( ( Report = LoadProject( FileName, TargetName, ParametersSetFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

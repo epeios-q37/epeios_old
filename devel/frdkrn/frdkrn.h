@@ -197,10 +197,19 @@ namespace frdkrn {
 			const xpp::criterions___ &Criterions,
 			str::string_ &Id,
 			error_set___ &ErrorSet );
-		report__ _FillUserRegistry(
-			flw::iflow__ &UserDataFlow,
+		report__ _DumpProjectRegistry(
+			const str::string_ &FileName,
+			const char *TargetName,
 			const str::string_ &Id,
+			error_set___ &ErrorSet );
+		report__ _FillParametersRegistry(
+			xtf::extended_text_iflow__ &ParametersXFlow,
 			const xpp::criterions___ &Criterions,
+			error_set___ &ErrorSet );
+		report__ _DumpParameterstRegistry(
+			const str::string_ &FileName,
+			const char *TargetName,
+			const str::string_ &Id,
 			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
@@ -218,7 +227,7 @@ namespace frdkrn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				Close();
+				CloseProject( txf::text_oflow__( flx::VoidOFlow ) );
 
 			_Backend.reset( P );
 			_ClientCore.reset( P );
@@ -260,7 +269,7 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
+			flw::iflow__ &ParametersSetFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
@@ -268,9 +277,18 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
+			flw::iflow__ &ParametersSetFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations );
+		report__ SaveProject(
+			const str::string_ &FileName,
+			const char *TargetName,
+			flw::oflow__ &ParametersSetFlow,
+			error_set___ &ErrorSet );
+		status__ SaveProject(
+			const str::string_ &FileName,
+			const char *TargetName,
+			flw::oflow__ &ParametersSetFlow );
 		void Touch( void )
 		{
 			_ProjectModificationTimeStamp = time( NULL );
@@ -300,25 +318,18 @@ namespace frdkrn {
 		{
 			_Backend.ThrowError();
 		}
-		void Close( void )
+		void CloseProject( txf::text_oflow__ &ParametersFlow )
 		{
 			if ( IsConnected() ) {
 				_CloseConnection();
+				_DumpParametersRegistry( ParametersFlow );
 			}
-
+			
 			_Registry.reset();
 		}
 		bso::bool__ IsConnected( void ) const
 		{
 			return _Backend.IsConnected();
-		}
-		void DumpProjectRegistry( txf::text_oflow__ &OFlow ) const
-		{
-			_Registry.DumpProject( OFlow );
-		}
-		void DumpUserRegistry( txf::text_oflow__ &OFlow ) const
-		{
-			_Registry.DumpUser( OFlow );
 		}
 		bso::bool__ GetRegistryValue(
 			const char *Path,

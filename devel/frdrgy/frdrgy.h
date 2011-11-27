@@ -111,7 +111,7 @@ namespace frdrgy {
 		{
 			rgstry::level__
 				Project,
-				User;
+				Parameters;
 		} &S_;
 		registry_( s &S )
 		: S_( S ),
@@ -121,7 +121,7 @@ namespace frdrgy {
 		{
 			_registry_::reset( P );
 
-			S_.Project = S_.User = RGSTRY_UNDEFINED_LEVEL;
+			S_.Project = S_.Parameters = RGSTRY_UNDEFINED_LEVEL;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -132,7 +132,7 @@ namespace frdrgy {
 			_registry_::operator =( R );
 
 			S_.Project = R.S_.Project;
-			S_.User = R.S_.User;
+			S_.Parameters = R.S_.Parameters;
 
 			return *this;
 		}
@@ -142,29 +142,15 @@ namespace frdrgy {
 
 			_registry_::Add( ConfigurationRegistry );
 			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
-			S_.User = _registry_::AddEmbeddedLevel( rgstry::name( "User" ) );
+			S_.Parameters= _registry_::AddEmbeddedLevel( rgstry::name( "Parameters" ) );
 		}
-#if 0
-		rgstry::row__ GetConfigurationRoot( void ) const
-		{
-			return _registry_::GetRoot( S_.Configuration );
-		}
-		rgstry::row__ GetProjectRoot( void ) const
-		{
-			return _registry_::GetRoot( S_.User );
-		}
-		rgstry::row__ GetUserRoot( void ) const
-		{
-			return _registry_::GetRoot( S_.User );
-		}
-#endif
 		void DumpProject( txf::text_oflow__ &TFlow ) const
 		{
 			_DumpRegistry( S_.Project, TFlow );
 		}
-		void DumpUser( txf::text_oflow__ &TFlow ) const
+		void DumpParameters( txf::text_oflow__ &TFlow ) const
 		{
-			_DumpRegistry( S_.User, TFlow );
+			_DumpRegistry( S_.Parameters, TFlow );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
@@ -174,33 +160,33 @@ namespace frdrgy {
 		{
 			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillUser(
+		rgstry::status__ FillParameters(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.User, FileName, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Parameters, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillUser(
-			flw::iflow__ &Flow,
+		rgstry::status__ FillParameters(
+			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.User, Flow, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Parameters, XFlow, Criterions, RootPath, Context );
 		}
-		void CreateUserPath( const str::string_ &Path )
+		void CreateParametersPath( const str::string_ &Path )
 		{
-			_registry_::Create( S_.User, Path );
+			_registry_::Create( S_.Parameters, Path );
 		}
 		time_t ProjectTimeStamp( void ) const
 		{
 			return TimeStamp( S_.Project );
 		}
-		time_t UserTimeStamp( void ) const
+		time_t ParametersTimeStamp( void ) const
 		{
-			return TimeStamp( S_.User );
+			return TimeStamp( S_.Parameters );
 		}
 		bso::bool__ GetProjectValue(
 			const str::string_ &Path,
@@ -208,11 +194,11 @@ namespace frdrgy {
 		{
 			return _registry_::GetValue( S_.Project, Path, Value );
 		}
-		bso::bool__ GetUserValue(
+		bso::bool__ GetParametersValue(
 			const str::string_ &Path,
 			str::string_ &Value ) const
 		{
-			return _registry_::GetValue( S_.User, Path, Value );
+			return _registry_::GetValue( S_.Parameters, Path, Value );
 		}
 	};
 

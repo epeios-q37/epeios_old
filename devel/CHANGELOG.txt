@@ -1,5 +1,21 @@
 $Id$
 
+27/11/2011 :
+	- Général :
+		- Adpatation.
+	- TXF :
+		- Mise en place de contructeurs pour faciliter la mise en oeuvre de cette bibliothèque.
+	- XPP :
+		- Comme c'est un 'xtf::extended_text_iflow__' qui est utilisé en interne, c'est un objet de ce type qui est dorénavant passé en paramètre à la place d'un flw::iflow__'.
+	- XTF :
+		- Mise en place d'un contructeur pour faciliter la mise en oeuvre de cette bibliothèque.
+
+26/11/2011 :
+	- FRDRGY :
+		- 'User' -> 'Parameters'.
+	- FRDKRN :
+		- Adpatation.
+
 25/11/2011 :
 	- FRDKRN :
 		- Adaptation.
@@ -14,9 +30,9 @@ $Id$
 	- XULFKL :
 		- Adaptation.
 	- XULFTK :
-		- Prise en charge d la lecture et de l'enregistrement des paramètres utilisateurs.
+		- Prise en charge de la lecture et de l'enregistrement des paramètres utilisateurs.
 	- XULFUI :
-		- L'attribut utilisé pour sauver les paramètres et désormais parmétrable.
+		- L'attribut utilisé pour sauver les paramètres et désormais paramétrable.
 
 24/11/2011 :
 	- FRDRGY :

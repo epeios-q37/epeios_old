@@ -140,17 +140,18 @@ namespace xtf {
 			EOL_ = 0;
 			_EOX = false;
 		}
-		extended_text_iflow__( void )
+		E_CVDTOR( extended_text_iflow__ );
+		extended_text_iflow__(
+			flw::iflow__ &IFlow,
+			coord__ Coord = coord__( 1, 0 ) )
 		{
 			reset( false );
-		}
-		~extended_text_iflow__( void )
-		{
-			reset( true );
+
+			Init( IFlow, Coord );
 		}
 		//f Initialization with 'Flow'..
 		void Init(
-			flw::iflow__ &IStream,
+			flw::iflow__ &IFlow,
 			coord__ Coord = coord__( 1, 0 ) )
 		{
 			_Coord.Init( Coord );
@@ -158,7 +159,7 @@ namespace xtf {
 			EOL_ = 0;
 			_EOX = false;
 
-			_Flow = &IStream;
+			_Flow = &IFlow;
 		}
 		//f Extract and return next character in flow.
 		unsigned char Get( void )

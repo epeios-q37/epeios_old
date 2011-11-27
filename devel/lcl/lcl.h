@@ -138,7 +138,7 @@ namespace lcl {
 			Registry.Init();
 		}
 		status__ Init(
-			flw::iflow__ &IFlow,
+			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			context___ &Context )
@@ -147,10 +147,10 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root, Context );
+			return rgstry::FillRegistry( XFlow, Criterions, RootPath, Registry, S_.Root, Context );
 		}
 		status__ Init(
-			flw::iflow__ &IFlow,
+			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath )
 		{
@@ -158,7 +158,7 @@ namespace lcl {
 
 			Registry.Init();
 
-			return rgstry::FillRegistry( IFlow, Criterions, RootPath, Registry, S_.Root );
+			return rgstry::FillRegistry( XFlow, Criterions, RootPath, Registry, S_.Root );
 		}
 		status__ Init(
 			const char *FileName,

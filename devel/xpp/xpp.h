@@ -688,12 +688,10 @@ namespace xpp {
 	: public _iflow__
 	{
 	private:
-		xtf::extended_text_iflow__ _XFlow;
 		_preprocessing_iflow_driver___ _FlowDriver;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_XFlow.reset( P );
 			_FlowDriver.reset( P );
 			_iflow__::reset( P );
 		}
@@ -706,11 +704,10 @@ namespace xpp {
 			reset( true );
 		}
 		void Init(
-			flw::iflow__ &IFlow,
+			xtf::extended_text_iflow__ &XFlow,
 			const criterions___ &Criterions )
 		{
-			_XFlow.Init( IFlow );
-			_FlowDriver.Init( _XFlow, fdr::tsDisabled, Criterions );
+			_FlowDriver.Init( XFlow, fdr::tsDisabled, Criterions );
 			_iflow__::Init( _FlowDriver, FLW_SIZE_MAX );
 			_iflow__::EOFD( XTF_EOXT );
 		}
@@ -752,20 +749,20 @@ namespace xpp {
 		context___ &Context );
 
 	status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const criterions___ &Criterions,
 		xml::writer_ &Writer,
 		context___ &Context );
 
 	status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow,
 		context___ &Context );
 
 	inline status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const criterions___ &Criterions,
 		xml::writer_ &Writer )
 	{
@@ -775,7 +772,7 @@ namespace xpp {
 	ERRBegin
 		Context.Init();
 
-		Status = Process( IFlow, Criterions, Writer, Context );
+		Status = Process( XFlow, Criterions, Writer, Context );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -783,7 +780,7 @@ namespace xpp {
 	}
 
 	inline status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const criterions___ &Criterions,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow )
@@ -794,7 +791,7 @@ namespace xpp {
 	ERRBegin
 		Context.Init();
 
-		Status =  Process( IFlow, Criterions, Outfit, OFlow, Context );
+		Status =  Process( XFlow, Criterions, Outfit, OFlow, Context );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -803,18 +800,18 @@ namespace xpp {
 
 
 	inline status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		xml::writer_ &Writer )
 	{
-		return Process( IFlow, str::string( "" ), Writer );
+		return Process( XFlow, str::string( "" ), Writer );
 	}
 
 	inline status__ Process(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		xml::outfit__ Outfit,
 		txf::text_oflow__ &OFlow )
 	{
-		return Process( IFlow, str::string( "" ), Outfit, OFlow );
+		return Process( XFlow, str::string( "" ), Outfit, OFlow );
 	}
 
 }

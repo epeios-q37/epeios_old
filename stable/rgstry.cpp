@@ -932,7 +932,7 @@ ERREpilog
 }
 
 row__ rgstry::Parse(
-	flw::iflow__ &Flow,
+	xtf::extended_text_iflow__ &XFlow,
 	const xpp::criterions___ &Criterions,
 	registry_ &Registry,
 	row__ Root,
@@ -941,14 +941,12 @@ row__ rgstry::Parse(
 ERRProlog
 	callback___ Callback( Registry );
 	xpp::preprocessing_iflow___ PFlow;
-	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	Callback.Init( Root );
 
-	Flow.EOFD( XTF_EOXT );
+	XFlow.UndelyingFlow().EOFD( XTF_EOXT );
 
-	PFlow.Init( Flow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
-	XFlow.Init( PFlow );
+	PFlow.Init( XFlow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
 
 	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {
 	case xml::sOK:
@@ -1196,7 +1194,7 @@ ERREpilog
 
 
 status__ rgstry::FillRegistry(
-	flw::iflow__ &IFlow,
+	xtf::extended_text_iflow__ &XFlow,
 	const xpp::criterions___ &Criterions,
 	const char *RootPath,
 	rgstry::registry_ &Registry,
@@ -1208,7 +1206,7 @@ status__ rgstry::FillRegistry(
 	if ( RegistryRoot == NONE )
 		RegistryRoot = Registry.CreateRegistry( str::string( "_registry" ) );
 
-	if ( ( RegistryRoot = rgstry::Parse( IFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
+	if ( ( RegistryRoot = rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
 		return Context.Status = sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
@@ -1246,7 +1244,7 @@ ERRBegin
 	if ( Criterions.Directory.Amount() != 0 )
 		ERRu();
 
-	Status = FillRegistry( FFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
+	Status = FillRegistry( xtf::extended_text_iflow__( FFlow ), xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
 
 	if ( Status == sParseError )
 		if ( Context.FileName.Amount() == 0 )

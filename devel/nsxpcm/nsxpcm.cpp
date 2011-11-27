@@ -1549,7 +1549,7 @@ ERREpilog
 }
 
 static void Preprocess_(
-	flw::iflow__ &IFlow,
+	xtf::extended_text_iflow__ XFlow,
 	const str::string_ &BaseDirectory,
 	str::string_ &ProcessedXMLString )
 {
@@ -1560,7 +1560,7 @@ ERRBegin
 	SFlow.Init( ProcessedXMLString );
 	TFlow.Init( SFlow );
 
-	if ( xpp::Process( IFlow, BaseDirectory, xml::oCompact, TFlow ) != xpp::sOK )
+	if ( xpp::Process( XFlow, BaseDirectory, xml::oCompact, TFlow ) != xpp::sOK )
 		ERRu();
 ERRErr
 ERREnd

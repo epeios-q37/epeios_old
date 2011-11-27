@@ -128,7 +128,7 @@ namespace xulftk {
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
 			const frdkrn::compatibility_informations__ &CompatibilityInformations,
-			const rgstry::multi_level_registry_ &Registry );
+			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
 		virtual void XULFTKApplySession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
@@ -137,10 +137,7 @@ namespace xulftk {
 		}
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
-		void _DropSession( void )
-		{
-			Kernel().Close();
-		}
+		void _DropSession( void );
 		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
 			ERRu();	//	Si pas surchargé, alors 'xulfmn::close_project_command__::NSXPCMOnEvent()' doit être redéfini.
@@ -150,9 +147,7 @@ namespace xulftk {
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void )
 		{
-			SaveUserRegistry();
 			UI().Main().Widgets.Window.Close();
-			Kernel().Close();
 		}
 		virtual void XULFTKExit( void )
 		{
@@ -238,26 +233,6 @@ namespace xulftk {
 		const str::string_ &Message( void ) const
 		{
 			return Kernel().Message();
-		}
-		void SaveUserRegistry( void )
-		{
-		ERRProlog
-			str::string Data;
-			flx::E_STRING_OFLOW___ SOFlow;
-			txf::text_oflow__ TOFlow;
-		ERRBegin
-			Data.Init();
-			TOFlow.Init( SOFlow );
-			SOFlow.Init( Data );
-
-			Kernel().DumpUserRegistry( TOFlow );
-
-			SOFlow.reset();	// To flush buffer.
-
-			UI().SaveUserData( Data );
-		ERRErr
-		ERREnd
-		ERREpilog
 		}
 		void UpdateUI( void )
 		{

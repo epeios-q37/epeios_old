@@ -57,6 +57,13 @@ public:
 
 using namespace xulfrg;
 
+#define SEPARATOR	FRDRGY_PATH_SEPARATOR
+
+#define PARAMETERS	"Parameters" SEPARATOR
+
+const char *xulfrg::paths::parameters::Storage = PARAMETERS "@Storage";
+const char *xulfrg::paths::parameters::Target = PARAMETERS;
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

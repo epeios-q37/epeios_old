@@ -72,7 +72,7 @@ namespace xulfrg {
 		struct parameters {
 			static const char *Storage;
 			static const char *Target;
-		} Parameters;
+		};
 	};
 
 	using frdrgy::registry_;

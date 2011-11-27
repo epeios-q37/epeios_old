@@ -832,14 +832,14 @@ namespace rgstry {
 #endif
 
 	row__ Parse(
-		flw::iflow__ &Flow,
+		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
 		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
 		xpp::context___ &Context );
 
 	inline row__ Parse(
-		flw::iflow__ &Flow,
+		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
 		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
@@ -850,7 +850,7 @@ namespace rgstry {
 	ERRBegin
 		Context.Init();
 
-		Row = Parse( Flow, Criterions, Registry, Root, Context );
+		Row = Parse( XFlow, Criterions, Registry, Root, Context );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -909,7 +909,7 @@ namespace rgstry {
 		str::string_ &Translation );
 
 	status__ FillRegistry(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
@@ -917,7 +917,7 @@ namespace rgstry {
 		context___ &Context );
 
 	inline status__ FillRegistry(
-		flw::iflow__ &IFlow,
+		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		const char *RootPath,
 		rgstry::registry_ &Registry,
@@ -929,7 +929,7 @@ namespace rgstry {
 	ERRBegin
 		Context.Init();
 
-		Status = FillRegistry( IFlow, Criterions, RootPath, Registry, RegistryRoot, Context );
+		Status = FillRegistry( XFlow, Criterions, RootPath, Registry, RegistryRoot, Context );
 	ERRErr
 	ERREnd
 	ERREpilog
@@ -1456,7 +1456,7 @@ namespace rgstry {
 		}
 		status__ Fill(
 			level__ Level,
-			flw::iflow__ &IFlow,
+			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			context___ &Context )
@@ -1464,7 +1464,7 @@ namespace rgstry {
 			status__ Status = s_Undefined;
 			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( IFlow, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
+			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
 			Entries.Set( entry__( Root ), Level );
 
@@ -1474,14 +1474,14 @@ namespace rgstry {
 		}
 		status__ Fill(
 			level__ Level,
-			flw::iflow__ &IFlow,
+			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath )
 		{
 			status__ Status = s_Undefined;
 			row__ Root = _GetRoot( Level );
 			
-			Status = FillRegistry( IFlow, Criterions, RootPath, _GetRegistry( Level ), Root ); 
+			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
 			Entries.Set( entry__( Root ), Level );
 

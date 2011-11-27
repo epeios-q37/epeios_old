@@ -320,6 +320,8 @@ static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 	return true;
 }
 
+#define PROJECT_ROOT_PATH	"Projects/Project[@target=\"%1\"]"
+
 #define PROJECT_ID_RELATIVE_PATH "@id"
 
 report__ frdkrn::kernel___::_FillProjectRegistry(
@@ -334,11 +336,10 @@ ERRProlog
 	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
-	Path.Init( "Projects/Project[@target=\"" );
-	Path.Append( Target );
-	Path.Append( "\"]" );
+	Path.Init( PROJECT_ROOT_PATH );
+	str::ReplaceTag( Path, 1, str::string( Target ), '%' );
 
-	if ( _Registry.FillUser( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
+	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
 		Report = rProjectParsingError;
 		ERRReturn;
 	}
@@ -351,7 +352,6 @@ ERRBegin
 		ERRReturn;
 	}
 
-
 	Report = r_OK;
 ERRErr
 ERREnd
@@ -359,27 +359,23 @@ ERREpilog
 	return Report;
 }
 
-report__ frdkrn::kernel___::_FillUserRegistry(
-	flw::iflow__ &UserDataFlow,
-	const str::string_ &Id,
+#define PARAMETERS_ROOT_PATH	"Parameters"
+
+report__ frdkrn::kernel___::_FillParametersRegistry(
+	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
 ERRProlog
-	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
-
-	Path.Init( "Projects/Project[@id=\"" );
-	Path.Append( Id );
-	Path.Append( "\"]" );
-
-	switch ( _Registry.FillUser( UserDataFlow, Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) ) {
+	
+	switch ( _Registry.FillParameters( ParametersXFlow, Criterions, PARAMETERS_ROOT_PATH, ErrorSet.Context ) ) {
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		_Registry.CreateUserPath( Path );
+		_Registry.CreateParametersPath( str::string( PARAMETERS_ROOT_PATH ) );
 		break;
 	default:
 		Report = rProjectParsingError;
@@ -397,7 +393,7 @@ ERREpilog
 report__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	flw::iflow__ &UserDataFlow,
+	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations,
 	error_reporting_functions__ &ErrorReportingFunctions,
@@ -413,7 +409,7 @@ ERRBegin
 		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
 			ERRReturn;
 
-	 if ( ( Report = _FillUserRegistry( UserDataFlow, ProjectId, Criterions, ErrorSet ) ) != r_OK )
+	 if ( ( Report = _FillParametersRegistry( ParametersXFlow, Criterions, ErrorSet ) ) != r_OK )
 		 ERRReturn;
 
 	_ProjectOriginalTimeStamp = time( NULL );
@@ -427,7 +423,7 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	flw::iflow__ &UserDataFlow,
+	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations )
 {
@@ -438,7 +434,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, UserDataFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, ParametersXFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

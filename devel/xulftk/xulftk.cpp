@@ -141,15 +141,6 @@ static bso::bool__ IsValid_( const str::string_ &Value )
 	return true;
 }
 
-static struct bag___ {
-	str::string Embedded;
-	flf::file_iflow___ FileFlow;
-	flx::E_STRING_IFLOW__  EmbeddedFlow;
-	void Init( void )
-	{
-		// Standardisation.
-	}
-};
 
 static const char *GetTarget_( 
 	nsIDOMWindow *Window,
@@ -179,13 +170,13 @@ ERREpilog
 	return Result;
 }
 
-static flw::iflow__ *GetEmbeddedFlow_(
-	bag___ &Bag,
+template <typename bag, typename flow> static flow *GetEmbeddedFlow_(
+	bag &Bag,
 	nsIDOMWindow *Window,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
-	flw::iflow__ *Flow = NULL;
+	flow *Flow = NULL;
 ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
@@ -203,13 +194,13 @@ ERREpilog
 	return Flow;
 }
 
-static flw::iflow__ *GetFileFlow_(
-	bag___ &Bag,
+template <typename bag, typename flow> static flow *GetFileFlow_(
+	bag &Bag,
 	nsIDOMWindow *Window,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
-	flw::iflow__ *Flow = NULL;
+	flow *Flow = NULL;
 ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
@@ -218,7 +209,7 @@ ERRBegin
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
-		Flow = &flx::VoidIFlow;
+		Flow = &Bag.VoidFlow;
 	else
 		Flow = &Bag.FileFlow;
 ERRErr
@@ -227,30 +218,30 @@ ERREpilog
 	return Flow;
 }
 
-static flw::iflow__ *GetVolatileFlow_( bag___ &Bag )
+template <typename bag, typename flow> static flow  *GetVolatileFlow_( bag &Bag )
 {
-	return &flx::VoidIFlow;
+	return &Bag.VoidFlow;
 }
 
-static flw::iflow__ *GetFlow_(
-	bag___ &Bag,
+template <typename bag, typename flow> static flow  *GetFlow_(
+	bag &Bag,
 	nsIDOMWindow *Window,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
-	flw::iflow__ *Flow = NULL;
+	flow *Flow = NULL;
 ERRProlog
 	str::string Translation;
 ERRBegin
 	switch ( GetStorage_( Registry )  ) {
 	case sEmbedded:
-		Flow = GetEmbeddedFlow_( Bag, Window, Registry, Rack );
+		Flow = GetEmbeddedFlow_<bag, flow>( Bag, Window, Registry, Rack );
 		break;
 	case sFile:
-		Flow = GetFileFlow_( Bag, Window, Registry, Rack );
+		Flow = GetFileFlow_<bag, flow>( Bag, Window, Registry, Rack );
 		break;
 	case sVolatile:
-		Flow = GetVolatileFlow_( Bag );
+		Flow = GetVolatileFlow_<bag, flow>( Bag );
 		break;
 	case s_Undefined:
 			Translation.Init();
@@ -268,6 +259,20 @@ ERREpilog
 	return Flow;
 }
 
+struct ibag___ {
+	str::string Embedded;
+	flf::file_iflow___ FileFlow;
+	flx::E_STRING_IFLOW__  EmbeddedFlow;
+	flw::iflow__ &VoidFlow;
+	ibag___ ( void )
+	: VoidFlow( flx::VoidIFlow )
+	{}
+	void Init( void )
+	{
+		// Standardisation.
+	}
+};
+
 void xulftk::trunk___::_ApplySession(
 	const str::string_ &FileName,
 	const xpp::criterions___ &Criterions,
@@ -276,14 +281,14 @@ void xulftk::trunk___::_ApplySession(
 {
 ERRProlog
 	flw::iflow__ *Flow = NULL;
-	bag___ Bag;
+	ibag___ Bag;
 ERRBegin
 	Bag.Init();
-
-	if ( ( Flow = GetFlow_( Bag, UI().Main().Window(), Registry, Kernel().LocaleRack() ) ) == NULL )
+	
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI().Main().Window(), Registry, Kernel().LocaleRack() ) ) == NULL )
 		ERRReturn;
 
-	if ( Kernel().LoadProject( FileName, _TargetName, *Flow, Criterions, CompatibilityInformations ) != frdkrn::sOK )
+	if ( Kernel().LoadProject( FileName, _TargetName, xtf::extended_text_iflow__( *Flow ), Criterions, CompatibilityInformations ) != frdkrn::sOK )
 		UI().Alert( Kernel().Message() );
 ERRErr
 ERREnd
@@ -308,11 +313,36 @@ ERREpilog
 	return Confirmed;
 }
 
+struct obag___ {
+	str::string Embedded;
+	flf::file_oflow___ FileFlow;
+	flx::E_STRING_OFLOW___  EmbeddedFlow;
+	flw::oflow__ &VoidFlow;
+	obag___ ( void )
+	: VoidFlow( flx::VoidOFlow )
+	{}
+	void Init( void )
+	{
+		// Standardisation.
+	}
+};
+
 void xulftk::trunk___::_DropSession( void )
 {
-	Kernel().Close();
-}
+ERRProlog
+	flw::oflow__ *Flow = NULL;
+	obag___ Bag;
+ERRBegin
+	Bag.Init();
+	
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI().Main().Window(), Registry(), Kernel().LocaleRack() ) ) == NULL )
+		ERRReturn;
 
+	Kernel().CloseProject( txf::text_oflow__( *Flow ) );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 
 

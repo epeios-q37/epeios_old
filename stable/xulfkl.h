@@ -87,19 +87,9 @@ namespace xulfkl {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P )
-				Close();
-
 			_kernel___::reset( P );
 		}
-		kernel___( void )
-		{
-			reset( false );
-		}
-		~kernel___( void )
-		{
-			reset();
-		}
+		E_CVDTOR( kernel___ );
 		status__ Init(
 			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const char *TargetName,
@@ -112,11 +102,11 @@ namespace xulfkl {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
+			xtf::extended_text_iflow__ &ParametersXFlow,
 			const xpp::criterions___ &Criterions,
 			const frdkrn::compatibility_informations__ &CompatibilityInformations )
 		{
-			return _kernel___::LoadProject( FileName, TargetName, UserDataFlow, Criterions, CompatibilityInformations );
+			return _kernel___::LoadProject( FileName, TargetName, ParametersXFlow, Criterions, CompatibilityInformations );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

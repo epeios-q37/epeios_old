@@ -124,6 +124,155 @@ ERREpilog
 	return Storage;
 }
 
+static bso::bool__ IsValid_( const str::string_ &Value )
+{
+	epeios::row__ Row = Value.First();
+
+	if ( Value.Amount() == 0 )
+		return false;
+
+	while ( Row != NONE ) {
+		if ( !isalnum( Value( Row ) || ( Value( Row ) != '_' ) ) )
+			return false;
+
+		Row = Value.Next( Row );
+	}
+
+	return true;
+}
+
+
+static const char *GetTarget_( 
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack,
+	STR_BUFFER___ &Buffer )
+{
+	const char *Result = NULL;
+ERRProlog
+	str::string Target, Translation;
+ERRBegin
+	Target.Init();
+
+	xulfrg::GetParametersTarget( Registry, Target );
+
+	if ( !IsValid_( Target ) ) {
+		Translation.Init();
+		Rack.GetTranslation( "MissingOrBadParametersTargetDefinition", PREFIX, Translation );
+		nsxpcm::Alert( Window, Translation );
+		ERRReturn;
+	}
+
+	Result = Target.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
+template <typename bag, typename flow> static flow *GetEmbeddedFlow_(
+	bag &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flow *Flow = NULL;
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *Target = NULL;
+ERRBegin
+	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+		ERRReturn;
+
+	Bag.Embedded.Init();
+	nsxpcm::GetAttribute( nsxpcm::GetElement( Window ), Target, Bag.Embedded );
+	Bag.EmbeddedFlow.Init( Bag.Embedded );
+	Flow = &Bag.EmbeddedFlow;
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+template <typename bag, typename flow> static flow *GetFileFlow_(
+	bag &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flow *Flow = NULL;
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *Target = NULL;
+ERRBegin
+	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+		ERRReturn;
+
+	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
+		Flow = &Bag.VoidFlow;
+	else
+		Flow = &Bag.FileFlow;
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+template <typename bag, typename flow> static flow  *GetVolatileFlow_( bag &Bag )
+{
+	return &Bag.VoidFlow;
+}
+
+template <typename bag, typename flow> static flow  *GetFlow_(
+	bag &Bag,
+	nsIDOMWindow *Window,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
+{
+	flow *Flow = NULL;
+ERRProlog
+	str::string Translation;
+ERRBegin
+	switch ( GetStorage_( Registry )  ) {
+	case sEmbedded:
+		Flow = GetEmbeddedFlow_<bag, flow>( Bag, Window, Registry, Rack );
+		break;
+	case sFile:
+		Flow = GetFileFlow_<bag, flow>( Bag, Window, Registry, Rack );
+		break;
+	case sVolatile:
+		Flow = GetVolatileFlow_<bag, flow>( Bag );
+		break;
+	case s_Undefined:
+			Translation.Init();
+			Rack.GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
+			nsxpcm::Alert( Window, Translation );
+			ERRReturn;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+struct ibag___ {
+	str::string Embedded;
+	flf::file_iflow___ FileFlow;
+	flx::E_STRING_IFLOW__  EmbeddedFlow;
+	flw::iflow__ &VoidFlow;
+	ibag___ ( void )
+	: VoidFlow( flx::VoidIFlow )
+	{}
+	void Init( void )
+	{
+		// Standardisation.
+	}
+};
+
 void xulftk::trunk___::_ApplySession(
 	const str::string_ &FileName,
 	const xpp::criterions___ &Criterions,
@@ -131,49 +280,15 @@ void xulftk::trunk___::_ApplySession(
 	const rgstry::multi_level_registry_ &Registry )
 {
 ERRProlog
-	str::string Embedded;
-	flf::file_iflow___ FileFlow;
-	flx::E_STRING_IFLOW__  EmbeddedFlow;
-	flw::iflow__ *Flow = NULL;	
-	str::string FileName, Translation;
-	STR_BUFFER___ Buffer;
+	flw::iflow__ *Flow = NULL;
+	ibag___ Bag;
 ERRBegin
-	switch ( GetStorage_( Registry )  ) {
-	case sEmbedded:
-		Embedded.Init();
-		nsxpcm::GetAttribute( nsxpcm::GetElement( UI().Main().Window() ), "Parameters", Embedded );
-		EmbeddedFlow.Init( Embedded );
-		Flow = &EmbeddedFlow;
-		break;
-	case sFile:
-		FileName.Init();
-		if ( !xulfrg::GetParametersFileName( Registry, FileName ) ) {
-			Translation.Init();
-			Kernel().LocaleRack().GetTranslation( "MissingOrBadParametersFileDefinition", PREFIX, Translation );
-			UI().Alert( Translation );
-			ERRReturn;
-		}
-		if ( FileFlow.Init( FileName.Convert( Buffer ), err::hUserDefined ) != fil::sSuccess )
-			Flow = &flx::VoidIFlow;
-		else
-			Flow = &FileFlow;
-		break;
-	case sVolatile:
-			Flow = &FileFlow;
-		break;
-	case s_Undefined:
-			Translation.Init();
-			Kernel().LocaleRack().GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
-			UI().Alert( Translation );
-			ERRReturn;
-		break;
-	default:
-		ERRc();
-		break;
-	}
+	Bag.Init();
+	
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI().Main().Window(), Registry, Kernel().LocaleRack() ) ) == NULL )
+		ERRReturn;
 
-
-	if ( Kernel().LoadProject( FileName, _TargetName, *Flow, Criterions, CompatibilityInformations ) != frdkrn::sOK )
+	if ( Kernel().LoadProject( FileName, _TargetName, xtf::extended_text_iflow__( *Flow ), Criterions, CompatibilityInformations ) != frdkrn::sOK )
 		UI().Alert( Kernel().Message() );
 ERRErr
 ERREnd
@@ -196,6 +311,37 @@ ERRErr
 ERREnd
 ERREpilog
 	return Confirmed;
+}
+
+struct obag___ {
+	str::string Embedded;
+	flf::file_oflow___ FileFlow;
+	flx::E_STRING_OFLOW___  EmbeddedFlow;
+	flw::oflow__ &VoidFlow;
+	obag___ ( void )
+	: VoidFlow( flx::VoidOFlow )
+	{}
+	void Init( void )
+	{
+		// Standardisation.
+	}
+};
+
+void xulftk::trunk___::_DropSession( void )
+{
+ERRProlog
+	flw::oflow__ *Flow = NULL;
+	obag___ Bag;
+ERRBegin
+	Bag.Init();
+	
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI().Main().Window(), Registry(), Kernel().LocaleRack() ) ) == NULL )
+		ERRReturn;
+
+	Kernel().CloseProject( txf::text_oflow__( *Flow ) );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 

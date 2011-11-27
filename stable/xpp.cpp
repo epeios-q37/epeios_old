@@ -1188,7 +1188,7 @@ mdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 }
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
+	xtf::extended_text_iflow__ &XFlow,
 	const criterions___ &Criterions,
 	xml::writer_ &Writer,
 	context___ &Context )
@@ -1196,12 +1196,11 @@ status__ xpp::Process(
 	status__ Status = sOK;
 ERRProlog
 	preprocessing_iflow___ PFlow;
-	xtf::extended_text_iflow__ XFlow;
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
 ERRBegin
-	PFlow.Init( IFlow, Criterions );
+	PFlow.Init( XFlow, Criterions );
 	XFlow.Init( PFlow );
 
 	Parser.Init( XFlow, xml::ehKeep );
@@ -1451,7 +1450,7 @@ ERREpilog
 
 
 status__ xpp::Process(
-	flw::iflow__ &IFlow,
+	xtf::extended_text_iflow__ &XFlow,
 	const criterions___ &Criterions,
 	xml::outfit__ Outfit,
 	txf::text_oflow__ &OFlow,
@@ -1463,7 +1462,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
-	Status = Process( IFlow, Criterions, Writer, Context );
+	Status = Process( XFlow, Criterions, Writer, Context );
 ERRErr
 ERREnd
 ERREpilog

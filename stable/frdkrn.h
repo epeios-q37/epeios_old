@@ -197,11 +197,16 @@ namespace frdkrn {
 			const xpp::criterions___ &Criterions,
 			str::string_ &Id,
 			error_set___ &ErrorSet );
-		report__ _FillUserRegistry(
-			flw::iflow__ &UserDataFlow,
-			const str::string_ &Id,
+		report__ _FillParametersRegistry(
+			xtf::extended_text_iflow__ &ParametersXFlow,
 			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
+		report__ _DumpParametersRegistry( txf::text_oflow__ &ParametersFlow )
+		{
+			_Registry.DumpParameters( ParametersFlow );
+
+			return r_OK;
+		}
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
@@ -218,7 +223,7 @@ namespace frdkrn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				Close();
+				CloseProject( txf::text_oflow__( flx::VoidOFlow ) );
 
 			_Backend.reset( P );
 			_ClientCore.reset( P );
@@ -260,7 +265,7 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
+			xtf::extended_text_iflow__ &ParametersXFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
@@ -268,7 +273,7 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &UserDataFlow,
+			xtf::extended_text_iflow__ &ParametersXFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations );
 		void Touch( void )
@@ -300,12 +305,13 @@ namespace frdkrn {
 		{
 			_Backend.ThrowError();
 		}
-		void Close( void )
+		void CloseProject( txf::text_oflow__ &ParametersFlow )
 		{
 			if ( IsConnected() ) {
 				_CloseConnection();
+				_DumpParametersRegistry( ParametersFlow );
 			}
-
+			
 			_Registry.reset();
 		}
 		bso::bool__ IsConnected( void ) const
@@ -316,9 +322,9 @@ namespace frdkrn {
 		{
 			_Registry.DumpProject( OFlow );
 		}
-		void DumpUserRegistry( txf::text_oflow__ &OFlow ) const
+		void DumpPArametersRegistry( txf::text_oflow__ &OFlow ) const
 		{
-			_Registry.DumpUser( OFlow );
+			_Registry.DumpParameters( OFlow );
 		}
 		bso::bool__ GetRegistryValue(
 			const char *Path,

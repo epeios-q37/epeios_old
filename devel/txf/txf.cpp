@@ -58,17 +58,12 @@ public:
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-#include "flx.h"
-
-txf::text_oflow__ txf::VoidTOFlow;
-
 class txfpersonnalization
 : public txftutor
 {
 public:
 	txfpersonnalization( void )
 	{
-		txf::VoidTOFlow.Init( flx::VoidOFlow );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

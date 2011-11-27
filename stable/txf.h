@@ -65,6 +65,7 @@ extern class ttr_tutor &TXFTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "tol.h"
 
 #ifndef TXF_64_BITS_FORBIDDEN
 #	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined(TXF_64_BITS_TYPES_ALLOWED )
@@ -105,13 +106,12 @@ namespace txf {
 		{
 			_Flow = NULL;
 		}
-		text_iflow__( void )
+		E_CVDTOR( text_iflow__ );
+		text_iflow__( flw::iflow__ &Flow )
 		{
 			reset( false );
-		}
-		~text_iflow__( void )
-		{
-			reset( false );
+
+			Init( Flow );
 		}
 		void Init( flw::iflow__ &Flow )
 		{
@@ -288,13 +288,12 @@ namespace txf {
 
 			_Flow = NULL;
 		}
-		text_oflow__( void )
+		E_CVDTOR( text_oflow__ )
+		text_oflow__( flw::oflow__ &Flow )
 		{
 			reset( false );
-		}
-		~text_oflow__( void )
-		{
-			reset();
+
+			Init( Flow );
 		}
 		void Init( flw::oflow__ &Flow )
 		{
@@ -449,11 +448,6 @@ namespace txf {
 	{
 		return Flow << '\r';
 	}
-
-	//o All written in this object is erased.
-	extern text_oflow__ VoidTOFlow;
-
-
 }
 
 /*$END$*/
