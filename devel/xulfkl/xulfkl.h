@@ -99,15 +99,6 @@ namespace xulfkl {
 		{
 			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
 		}
-		status__ LoadProject(
-			const str::string_ &FileName,
-			const char *TargetName,
-			xtf::extended_text_iflow__ &ParametersXFlow,
-			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations )
-		{
-			return _kernel___::LoadProject( FileName, TargetName, ParametersXFlow, Criterions, CompatibilityInformations );
-		}
 		const str::string_ &GetTranslation(
 			message__ Message,
 			str::string_ &Translation );

@@ -835,14 +835,14 @@ namespace rgstry {
 		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
-		row__ Root,	// 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
+		row__ &Root,	// Peut être = 'NONE', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
 		xpp::context___ &Context );
 
 	inline row__ Parse(
 		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
-		row__ Root	) // 'Root' peut être = 'NONE', auquel cas une nouvelle 'registry' est créee.
+		row__ &Root	) // Peut être = 'NONE', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
 	{
 		row__ Row = NONE;
 	ERRProlog
@@ -1285,6 +1285,16 @@ namespace rgstry {
 		row__ GetRoot( level__ Level ) const
 		{
 			return _GetRoot( Level );
+		}
+		void SetRoot(
+			level__ Level,
+			row__ Root )
+		{
+			entry__ Entry = Entries( Level );
+
+			Entry.Root = Root;
+
+			Entries.Store( Entry, Level );
 		}
 /*		level__ CreateImportedLevel(
 			row__ Row,

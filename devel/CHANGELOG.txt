@@ -1,5 +1,17 @@
 $Id$
 
+29/11/2011 :
+	- FRDKRN :
+		- Changement du traitement des paramètres.
+	- FRDRGY :
+		- Ajout variantes 'Dump(...).
+	- RGSTRY :
+		- Correction bogue détection erreur.
+		- Réorganisation valeurs retournées par 'Parse(...)'.
+		- Ajout 'multi_level_registry_::SetRoot(...)'.
+	- XULFxx :
+		- Adaptation.
+
 27/11/2011 :
 	- Général :
 		- Adpatation.

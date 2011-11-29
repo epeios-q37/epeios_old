@@ -101,9 +101,17 @@ namespace frdrgy {
 	private:
 		epeios::size__ _DumpRegistry(
 			rgstry::level__ Level,
+			bso::bool__ RootToo,
 			txf::text_oflow__ &TFlow ) const
 		{
-			return _registry_::Dump( Level, true, xml::oIndent, TFlow );
+			return _registry_::Dump( Level, RootToo, xml::oIndent, TFlow );
+		}
+		epeios::size__ _DumpRegistry(
+			rgstry::level__ Level,
+			bso::bool__ RootToo,
+			xml::writer_ &Writer ) const
+		{
+			return _registry_::Dump( Level, RootToo, Writer );
 		}
 	public:
 		struct s
@@ -144,13 +152,17 @@ namespace frdrgy {
 			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
 			S_.Parameters= _registry_::AddEmbeddedLevel( rgstry::name( "Parameters" ) );
 		}
-		void DumpProject( txf::text_oflow__ &TFlow ) const
+		void DumpProject(
+			bso::bool__ RootToo,
+			xml::writer_ &Writer ) const
 		{
-			_DumpRegistry( S_.Project, TFlow );
+			_DumpRegistry( S_.Project, RootToo, Writer );
 		}
-		void DumpParameters( txf::text_oflow__ &TFlow ) const
+		void DumpParameters(
+			bso::bool__ RootToo,
+			xml::writer_ &Writer ) const
 		{
-			_DumpRegistry( S_.Parameters, TFlow );
+			_DumpRegistry( S_.Parameters, RootToo, Writer );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,

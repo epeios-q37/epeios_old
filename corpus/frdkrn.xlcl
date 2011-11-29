@@ -5,6 +5,10 @@
 		<Translation language="fr">%1</Translation>
 		<Translation language="en">%1</Translation>
 	</Translations>
+	<Translations text="FRDKRN_ParametersParsingError">
+		<Translation language="fr">%1</Translation>
+		<Translation language="en">%1</Translation>
+	</Translations>
 	<Translations text="FRDKRN_NoOrBadProjectId">
 		<Translation language="fr">Identifiant de projet absent ou incorrect ('%1')</Translation>
 		<Translation language="en">Bad Or no project id ('%1')</Translation>
@@ -28,6 +32,10 @@
 	<Translations text="FRDKRN_BackendError">
 		<Translation language="fr">%1</Translation>
 		<Translation language="en">%1</Translation>
+	</Translations>
+	<Translations text="FRDKRN_UnableToOpenFile">
+		<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
+		<Translation language="en">Unable to open file '%1'</Translation>
 	</Translations>
 	<!--
 	<Translations text="FRDKRN_">

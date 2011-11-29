@@ -99,18 +99,20 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum report__ {
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
+		rParametersParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
 		rNoOrBadProjectId,
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
 		rUnableToConnect,
 		rIncompatibleBackend,
 		rBackendError,
+		rUnableToOpenFile,
 		r_amount,
 		r_Undefined,
 		r_OK,
 	};
 
-#define FRDKRN__R_AMOUNT	7	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
+#define FRDKRN__R_AMOUNT	9	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
 	const char *GetLabel( report__ Report );
 
@@ -167,6 +169,7 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
+		str::string _Id;	// Indentifiant du projet.
 		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
@@ -202,15 +205,6 @@ namespace frdkrn {
 			const char *TargetName,
 			const str::string_ &Id,
 			error_set___ &ErrorSet );
-		report__ _FillParametersRegistry(
-			xtf::extended_text_iflow__ &ParametersXFlow,
-			const xpp::criterions___ &Criterions,
-			error_set___ &ErrorSet );
-		report__ _DumpParameterstRegistry(
-			const str::string_ &FileName,
-			const char *TargetName,
-			const str::string_ &Id,
-			error_set___ &ErrorSet );
 		report__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
@@ -227,8 +221,9 @@ namespace frdkrn {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
-				CloseProject( txf::text_oflow__( flx::VoidOFlow ) );
+				CloseProject();
 
+			_Id.reset( P );
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
@@ -253,6 +248,7 @@ namespace frdkrn {
 			const char *Language,
 			error_reporting_functions__ &ErrorReportingFunctions )
 		{
+			_Id.Init();
 			_Registry.Init( ConfigurationRegistry );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
@@ -262,6 +258,20 @@ namespace frdkrn {
 
 			return sOK;
 		}
+		const str::string_ &GetId( void ) const
+		{
+			if ( !IsProjectInProgress() )
+				ERRc();
+
+			return _Id;
+		}
+		void SetId( const str::string_ &Id )
+		{
+			if ( !IsProjectInProgress() )
+				ERRc();
+
+			_Id = Id;
+		}
 		const frdrgy::registry_ &Registry( void ) const
 		{
 			return _Registry;
@@ -269,7 +279,6 @@ namespace frdkrn {
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &ParametersSetFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
@@ -277,18 +286,28 @@ namespace frdkrn {
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::iflow__ &ParametersSetFlow,
 			const xpp::criterions___ &Criterions,
 			const compatibility_informations__ &CompatibilityInformations );
 		report__ SaveProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			flw::oflow__ &ParametersSetFlow,
 			error_set___ &ErrorSet );
 		status__ SaveProject(
 			const str::string_ &FileName,
-			const char *TargetName,
-			flw::oflow__ &ParametersSetFlow );
+			const char *TargetName );
+		report__ FillParametersRegistry(
+			xtf::extended_text_iflow__ &ParametersXFlow,
+			const xpp::criterions___ &Criterions,
+			error_set___ &ErrorSet );
+		status__ FillParametersRegistry(
+			xtf::extended_text_iflow__ &ParametersXFlow,
+			const xpp::criterions___ &Criterions );
+		report__ DumpParametersRegistry( xml::writer_ &Writer ) const
+		{
+			_Registry.DumpParameters( true, Writer);
+
+			return r_OK;
+		}
 		void Touch( void )
 		{
 			_ProjectModificationTimeStamp = time( NULL );
@@ -318,14 +337,11 @@ namespace frdkrn {
 		{
 			_Backend.ThrowError();
 		}
-		void CloseProject( txf::text_oflow__ &ParametersFlow )
+		void CloseProject( void )
 		{
 			if ( IsConnected() ) {
 				_CloseConnection();
-				_DumpParametersRegistry( ParametersFlow );
 			}
-			
-			_Registry.reset();
 		}
 		bso::bool__ IsConnected( void ) const
 		{

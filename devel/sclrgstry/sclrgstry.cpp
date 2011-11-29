@@ -86,7 +86,13 @@ static rgstry::status__ FillRegistry_(
 	const char *RootPath,
 	rgstry::context___ &Context )
 {
-	return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry_.GetRegistry( RootLevel_), Registry_.GetRoot( RootLevel_), Context );
+	rgstry::status__ Status = rgstry::s_Undefined;
+	rgstry::row__ Root = Registry_.GetRoot( RootLevel_) ;
+
+	if ( ( Status = rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry_.GetRegistry( RootLevel_), Root, Context ) ) == rgstry::sOK )
+		Registry_.SetRoot( RootLevel_, Root );
+
+	return Status;
 }
 
 bso::bool__ sclrgstry::GetValue(

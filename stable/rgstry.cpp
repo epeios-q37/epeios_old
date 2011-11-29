@@ -110,12 +110,12 @@ ERRBegin
 		lcl::ReplaceTags( Message, TagValues );
 		break;
 	case sParseError:
-	case sUnableToFindRootPath:
 		xpp::GetTranslation( Context, LocaleRack, Message );
 		break;
 	case sRootPathError:
 		if ( Context.PathErrorRow != NONE )
 			ERRu();
+	case sUnableToFindRootPath:
 		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Message );
 		break;
 	default:
@@ -584,7 +584,7 @@ class callback___
 {
 private:
 	registry_ &_Registry;
-	row__ _Root, _Current;
+	row__ _Target, _Current;
 protected:
 	virtual bso::bool__ XMLProcessingInstruction( const xml::dump_ & )
 	{
@@ -594,13 +594,14 @@ protected:
 		const str::string_ &TagName,
 		const xml::dump_ &Dump )
 	{
-		if ( _Current == NONE )
-			if ( _Root == NONE )
-				_Root = _Current = _Registry.CreateRegistry( str::string( "_root" ) );
-			else
-				ERRc();
 
+		if ( _Current == NONE )
+			_Current = _Registry.CreateRegistry( str::string( "_root" ) );
+		
 		_Current = _Registry.AddKey( TagName, _Current );
+
+		if ( _Target == NONE )
+			_Target = _Current;
 
 		return true;
 	}
@@ -636,7 +637,7 @@ protected:
 
 		_Current = _Registry.GetParentRow( _Current );
 
-		if ( ( _Current == NONE ) && ( _Root == NONE ) )
+		if ( _Current == NONE )
 			return false;
 
 		return true;
@@ -651,15 +652,20 @@ public:
 	callback___( registry_ &Registry )
 	: _Registry( Registry )
 	{
-		_Root = _Current = NONE;
+		_Target = _Current = NONE;
 	}
 	void Init( row__ Root )
 	{
-		_Root = _Current = Root;
+		_Target = NONE;
+		_Current = Root;
+	}
+	row__ GetTarget( void ) const
+	{
+		return _Target;
 	}
 	row__ GetRoot( void ) const
 	{
-		return _Root;
+		return _Current;
 	}
 };
 
@@ -935,21 +941,25 @@ row__ rgstry::Parse(
 	xtf::extended_text_iflow__ &XFlow,
 	const xpp::criterions___ &Criterions,
 	registry_ &Registry,
-	row__ Root,
+	row__ &Root,
 	xpp::context___ &Context )
 {
+	row__ Target = NONE;
 ERRProlog
 	callback___ Callback( Registry );
 	xpp::preprocessing_iflow___ PFlow;
+	xtf::extended_text_iflow__ PXFlow;
 ERRBegin
 	Callback.Init( Root );
 
 	XFlow.UndelyingFlow().EOFD( XTF_EOXT );
 
 	PFlow.Init( XFlow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
+	PXFlow.Init( PFlow );
 
-	switch ( xml::Parse( XFlow, xml::ehReplace, Callback ) ) {
+	switch ( xml::Parse( PXFlow, xml::ehReplace, Callback ) ) {
 	case xml::sOK:
+		Target = Callback.GetTarget();
 		Root = Callback.GetRoot();
 		break;
 	case xml::sUnexpectedEOF:
@@ -964,7 +974,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Root;
+	return Target;
 }
 #if 1
 const value_ &rgstry::overloaded_registry___::GetValue(
@@ -1192,7 +1202,6 @@ ERREpilog
 	return Row;
 }
 
-
 status__ rgstry::FillRegistry(
 	xtf::extended_text_iflow__ &XFlow,
 	const xpp::criterions___ &Criterions,
@@ -1203,10 +1212,7 @@ status__ rgstry::FillRegistry(
 {
 	epeios::row__ PathErrorRow = NONE;
 
-	if ( RegistryRoot == NONE )
-		RegistryRoot = Registry.CreateRegistry( str::string( "_registry" ) );
-
-	if ( ( RegistryRoot = rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) ) == NONE )
+	if ( rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) == NONE )
 		return Context.Status = sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
@@ -1214,10 +1220,11 @@ status__ rgstry::FillRegistry(
 			if ( PathErrorRow != NONE ) {
 				Context.PathErrorRow = PathErrorRow;
 				return Context.Status = sRootPathError;
-			} else  if ( Registry.GetNature( RegistryRoot ) == nAttribute )
-				return Context.Status = sRootPathError;
-			else
+			} else
 				return Context.Status = sUnableToFindRootPath;
+		else  if ( Registry.GetNature( RegistryRoot ) == nAttribute )
+			return Context.Status = sRootPathError;
+
 
 	return sOK;
 }

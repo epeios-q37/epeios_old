@@ -259,6 +259,163 @@ ERREpilog
 	return Flow;
 }
 
+class parameters_
+{
+public:
+	struct s {
+		str::string_::s
+			Id,
+			Content;
+	};
+	str::string_
+		Id,
+		Content;
+	parameters_( s &S )
+	: Id( S.Id ),
+	  Content( S.Content )
+	{}
+	void reset( bso::bool__ P = true )
+	{
+		Id.reset( P );
+		Content.reset( P );
+	}
+	void plug( mmm::E_MULTIMEMORY_ &MM )
+	{
+		Id.plug( MM );
+		Content.plug( MM );
+	}
+	parameters_ &operator =( const parameters_ &P )
+	{
+		Id = P.Id;
+		Content = P.Content;
+
+		return *this;
+	}
+	void Init( void )
+	{
+		Id.Init();
+		Content.Init();
+	}
+};
+
+E_AUTO( parameters )
+
+static void Write_(
+	const parameters_ &Parameters,
+	flw::oflow__ &Flow )
+{
+	Parameters.Id.NewWriteToFlow( Flow, true );
+	Parameters.Content.NewWriteToFlow( Flow, true );
+}
+
+static void Read_(
+	flw::iflow__ &Flow,
+	parameters_ &Parameters )
+{
+	Parameters.Id.NewReadFromFlow( Flow, 0 );
+	Parameters.Content.NewReadFromFlow( Flow, 0 );
+}
+
+typedef ctn::E_XCONTAINER_( parameters_ ) parameters_set_;
+E_AUTO( parameters_set );
+
+static void Write_(
+	const parameters_set_ &Set,
+	flw::oflow__ &Flow )
+{
+	epeios::row__ Row = Set.First();
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	dtfptb::NewPutSize( Set.Amount(), Flow );
+
+	Parameters.Init( Set );
+
+	while ( Row != NONE ) {
+		Write_( Parameters( Row ), Flow );
+
+		Row = Set.Next( Row );
+	}
+}
+
+static void Read_(
+	flw::iflow__ &Flow,
+	parameters_set_ &Set )
+{
+ERRProlog
+	epeios::size__ Amount = 0;
+	parameters Parameters;
+ERRBegin
+	Amount = dtfptb::NewGetSize( Flow );
+
+	while ( Amount-- != 0 ) {
+		Parameters.Init();
+
+		Read_( Flow, Parameters );
+
+		Set.Append( Parameters );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static epeios::row__ Search_(
+	const str::string_ &Id,
+	const parameters_set_ &Set )
+{
+	epeios::row__ Row = Set.First();
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	Parameters.Init( Set );
+
+	while ( ( Row != NONE ) && ( Parameters( Row ).Id != Id ) )
+		Row = Set.Next( Row );
+
+	return Row;
+}
+
+static bso::bool__ Get_(
+	const str::string_ &Id,
+	const parameters_set_ &Set,
+	str::string_ &Content )
+{
+	epeios::row__ Row = Search_( Id, Set );
+	ctn::E_CITEM( parameters_ ) Parameters;
+
+	if ( Row != NONE ) {
+		Parameters.Init( Set );
+
+		Content = Parameters( Row ).Content;
+	}
+
+	return Row != NONE;
+}
+
+static void Set_(
+	const str::string_ &Id,
+	const str::string_ &Content,
+	parameters_set_ &Set )
+{
+ERRProlog
+	epeios::row__ Row = NONE;
+	parameters Parameters;
+ERRBegin
+	Row = Search_( Id, Set );
+
+	Parameters.Init();
+
+	Parameters.Id = Id;
+	Parameters.Content = Content;
+
+	if ( Row != NONE )
+		Set.Store( Parameters, Row );
+	else
+		Set.Append( Parameters );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 struct ibag___ {
 	str::string Embedded;
 	flf::file_iflow___ FileFlow;
@@ -273,6 +430,36 @@ struct ibag___ {
 	}
 };
 
+static bso::bool__ RetrieveParametersSet_(
+	xulfui::ui___ &UI,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack,
+	parameters_set_ &Set )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	flw::iflow__ *Flow = NULL;
+	ibag___ Bag;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Bag.Init();
+	
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI.Main().Window(), Registry, Rack ) ) == NULL ) {
+		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveParameters", PREFIX, Buffer ) );
+		ERRReturn;
+	}
+
+	Flow->EOFD( "\0" );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
+
+	Read_( *Flow, Set );
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
 void xulftk::trunk___::_ApplySession(
 	const str::string_ &FileName,
 	const xpp::criterions___ &Criterions,
@@ -280,16 +467,30 @@ void xulftk::trunk___::_ApplySession(
 	const rgstry::multi_level_registry_ &Registry )
 {
 ERRProlog
-	flw::iflow__ *Flow = NULL;
-	ibag___ Bag;
+	xtf::extended_text_iflow__ XFlow;
+	parameters_set Set;
+	str::string Parameters;
+	flx::E_STRING_IFLOW__ Flow;
 ERRBegin
-	Bag.Init();
-	
-	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI().Main().Window(), Registry, Kernel().LocaleRack() ) ) == NULL )
-		ERRReturn;
-
-	if ( Kernel().LoadProject( FileName, _TargetName, xtf::extended_text_iflow__( *Flow ), Criterions, CompatibilityInformations ) != frdkrn::sOK )
+	if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK ) {
 		UI().Alert( Kernel().Message() );
+		ERRReturn;
+	}
+
+	Set.Init();
+
+	RetrieveParametersSet_( UI(), Registry, Kernel().LocaleRack(), Set );
+
+	Parameters.Init();
+
+	Get_( Kernel().GetId(), Set, Parameters );
+
+	Flow.Init( Parameters );
+	Flow.EOFD( XTF_EOXT );
+
+	XFlow.Init( Flow );
+
+	Kernel().FillParametersRegistry( XFlow, xpp::criterions___() );
 ERRErr
 ERREnd
 ERREpilog
@@ -327,18 +528,73 @@ struct obag___ {
 	}
 };
 
-void xulftk::trunk___::_DropSession( void )
+static bso::bool__ StoreParametersSet_(
+	const parameters_set_ &Set,
+	xulfui::ui___ &UI,
+	const rgstry::multi_level_registry_ &Registry,
+	const lcl::rack__ &Rack )
 {
+	bso::bool__ Success = false;
 ERRProlog
 	flw::oflow__ *Flow = NULL;
 	obag___ Bag;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI().Main().Window(), Registry(), Kernel().LocaleRack() ) ) == NULL )
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI.Main().Window(), Registry, Rack ) ) == NULL ) {
+		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreParameters", PREFIX, Buffer ) );
 		ERRReturn;
+	}
 
-	Kernel().CloseProject( txf::text_oflow__( *Flow ) );
+	Write_( Set, *Flow );
+
+	Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+static void GetParameters_(
+	const xulfkl::kernel___ &Kernel,
+	str::string_ &Parameters )
+{
+ERRProlog
+	flx::E_STRING_OFLOW___ Flow;
+	txf::text_oflow__ TFlow;
+	xml::writer Writer;
+ERRBegin
+	Flow.Init( Parameters );
+	TFlow.Init( Flow );
+	Writer.Init( TFlow, xml::oCompact, xml::e_Default );
+
+	Kernel.DumpParametersRegistry( Writer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void xulftk::trunk___::_DropSession( void )
+{
+ERRProlog
+	str::string Parameters;
+	parameters_set Set;
+ERRBegin
+
+	Set.Init();
+
+	if ( RetrieveParametersSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) {
+		Parameters.Init();
+		GetParameters_( Kernel(), Parameters );
+
+		Set_( Kernel().GetId(), Parameters, Set );
+
+		StoreParametersSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
+	}
+
+	Kernel().CloseProject();
 ERRErr
 ERREnd
 ERREpilog

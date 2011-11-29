@@ -67,18 +67,20 @@ using namespace frdkrn;
 
 const char *frdkrn::GetLabel( report__ Report )
 {
-#if FRDKRN__R_AMOUNT != 7
+#if FRDKRN__R_AMOUNT != 9
 #	error "'report__' modified !"
 #endif
 
 	switch( Report ) {
 		CASE( ProjectParsingError );
+		CASE( ParametersParsingError );
 		CASE( NoOrBadProjectId );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
 		CASE( UnableToConnect );
 		CASE( IncompatibleBackend );
 		CASE( BackendError );
+		CASE( UnableToOpenFile );
 		default:
 			ERRu();
 			break;
@@ -88,7 +90,7 @@ const char *frdkrn::GetLabel( report__ Report )
 }
 
 
-#if FRDKRN__R_AMOUNT != 7
+#if FRDKRN__R_AMOUNT != 9
 # error "'report__' modified !"
 #endif
 
@@ -105,6 +107,7 @@ ERRBegin
 
 	switch ( Report ) {
 		case rProjectParsingError:
+		case rParametersParsingError:
 			EmbeddedMessage.Init();
 			rgstry::GetTranslation( ErrorSet.Context, LocaleRack, EmbeddedMessage );
 			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
@@ -119,6 +122,7 @@ ERRBegin
 		case rUnableToConnect:
 		case rIncompatibleBackend:
 		case rBackendError:
+		case rUnableToOpenFile:
 			lcl::ReplaceTag( Translation, 1, ErrorSet.Misc );
 			break;
 		default:
@@ -276,29 +280,13 @@ ERREpilog
 	return Report;
 }
 
-static const str::string_ &Report_(
+inline static const str::string_ &Report_(
 	report__ Report,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &Locale,
 	str::string_ &Message )
 {
 	GetTranslation( Report, ErrorSet, Locale, Message );
-
-	switch ( Report ) {
-	case rProjectParsingError:
-		break;
-	case rNoOrBadBackendDefinition:
-		break;
-	case rNoBackendLocation:
-		break;
-	case rUnableToConnect:
-		break;
-	case rIncompatibleBackend:
-		break;
-	default:
-		ERRc();
-		break;
-	}
 
 	return Message;
 }
@@ -359,9 +347,56 @@ ERREpilog
 	return Report;
 }
 
+report__ frdkrn::kernel___::_DumpProjectRegistry(
+	const str::string_ &FileName,
+	const char *TargetName,
+	const str::string_ &Id,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+ERRProlog
+	flf::file_oflow___ FFlow;
+	txf::text_oflow__ TFlow;
+	xml::writer Writer;
+	bso::bool__ Backuped = false;
+	STR_BUFFER___ FileNameBuffer;
+ERRBegin
+
+	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, LocaleRack(), txf::text_oflow__( flx::VoidOFlow ) ) == fil::bsOK )
+		Backuped = true;
+
+	if ( FFlow.Init( FileNameBuffer, err::hUserDefined ) != fil::sSuccess ) {
+		Report = rUnableToOpenFile;
+		ErrorSet.Misc = FileName;
+		ERRReturn;
+	}
+
+	TFlow.Init( FFlow );
+
+	Writer.Init( TFlow, xml::oCompact, xml::e_Default );
+
+	Writer.PushTag( "Projects" );
+
+	Writer.PushTag( "Project" );
+
+	Writer.PutAttribute( "target", TargetName );
+	Writer.PutAttribute( "id", Id );
+
+	_Registry.DumpProject( false, Writer );
+	
+	Report = r_OK;
+ERRErr
+	if ( Backuped )
+		fil::RecoverBackupFile( FileNameBuffer, LocaleRack(), txf::text_oflow__( flx::VoidOFlow ) );
+ERREnd
+ERREpilog
+	return Report;
+}
+
+
 #define PARAMETERS_ROOT_PATH	"Parameters"
 
-report__ frdkrn::kernel___::_FillParametersRegistry(
+report__ frdkrn::kernel___::FillParametersRegistry(
 	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
@@ -378,7 +413,7 @@ ERRBegin
 		_Registry.CreateParametersPath( str::string( PARAMETERS_ROOT_PATH ) );
 		break;
 	default:
-		Report = rProjectParsingError;
+		Report = rParametersParsingError;
 		ERRReturn;
 		break;
 	}
@@ -390,10 +425,36 @@ ERREpilog
 	return Report;
 }
 
+status__ frdkrn::kernel___::FillParametersRegistry(
+	xtf::extended_text_iflow__ &ParametersXFlow,
+	const xpp::criterions___ &Criterions )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	error_set___ ErrorSet;
+	report__ Report = r_Undefined;
+ERRBegin
+	ErrorSet.Init();
+
+	if ( ( Report = FillParametersRegistry( ParametersXFlow, Criterions, ErrorSet ) ) != r_OK ) {
+		_Message.Init();
+		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		_Message.Append( " !" );
+		Status = sError;
+		ERRReturn;
+	} else
+		Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+
+
 report__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations,
 	error_reporting_functions__ &ErrorReportingFunctions,
@@ -401,16 +462,13 @@ report__ frdkrn::kernel___::LoadProject(
 {
 	report__ Report = r_Undefined;
 ERRProlog
-	str::string ProjectId;
 ERRBegin
-	ProjectId.Init();
+	_Id.Init();
 
-	if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, ProjectId, ErrorSet ) ) == r_OK )
+	if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, _Id, ErrorSet ) ) == r_OK )
 		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
 			ERRReturn;
 
-	 if ( ( Report = _FillParametersRegistry( ParametersXFlow, Criterions, ErrorSet ) ) != r_OK )
-		 ERRReturn;
 
 	_ProjectOriginalTimeStamp = time( NULL );
 	_ProjectModificationTimeStamp = 0;
@@ -423,7 +481,6 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	xtf::extended_text_iflow__ &ParametersXFlow,
 	const xpp::criterions___ &Criterions,
 	const compatibility_informations__ &CompatibilityInformations )
 {
@@ -434,7 +491,47 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, ParametersXFlow, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+		_Message.Init();
+		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		_Message.Append( " !" );
+		Status = sError;
+		ERRReturn;
+	} else
+		Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+report__ frdkrn::kernel___::SaveProject(
+	const str::string_ &FileName,
+	const char *TargetName,
+	error_set___ &ErrorSet )
+{
+	report__ Report = r_Undefined;
+
+	if ( ( Report = _DumpProjectRegistry( FileName, TargetName, _Id, ErrorSet ) ) == r_OK ) {
+		_ProjectOriginalTimeStamp = time( NULL );
+		_ProjectModificationTimeStamp = 0;
+	}
+
+	return Report;
+}
+
+status__ frdkrn::kernel___::SaveProject(
+	const str::string_ &FileName,
+	const char *TargetName  )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	error_set___ ErrorSet;
+	report__ Report = r_Undefined;
+ERRBegin
+	ErrorSet.Init();
+
+	if ( ( Report = SaveProject( FileName, TargetName, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
