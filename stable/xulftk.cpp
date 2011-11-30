@@ -124,15 +124,20 @@ ERREpilog
 	return Storage;
 }
 
-static bso::bool__ IsValid_( const str::string_ &Value )
+static bso::bool__ IsValid_(
+	const str::string_ &Value,
+	bso::bool__ AlpahaNumericOnly )	// A 'true' si la valeur doit être alpha-numérique, comme un libellé d'attribut, par example.
 {
 	epeios::row__ Row = Value.First();
 
 	if ( Value.Amount() == 0 )
 		return false;
 
+	if ( !AlpahaNumericOnly )
+		return true;
+
 	while ( Row != NONE ) {
-		if ( !isalnum( Value( Row ) || ( Value( Row ) != '_' ) ) )
+		if ( !isalnum( Value( Row ) ) && ( Value( Row ) != '_' ) )
 			return false;
 
 		Row = Value.Next( Row );
@@ -146,6 +151,7 @@ static const char *GetTarget_(
 	nsIDOMWindow *Window,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack,
+	bso::bool__ AlphaNumericOnly,	
 	STR_BUFFER___ &Buffer )
 {
 	const char *Result = NULL;
@@ -156,7 +162,7 @@ ERRBegin
 
 	xulfrg::GetParametersTarget( Registry, Target );
 
-	if ( !IsValid_( Target ) ) {
+	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
 		Rack.GetTranslation( "MissingOrBadParametersTargetDefinition", PREFIX, Translation );
 		nsxpcm::Alert( Window, Translation );
@@ -181,7 +187,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+	if ( ( Target = GetTarget_( Window, Registry, Rack, true, Buffer ) ) == NULL )
 		ERRReturn;
 
 	Bag.Embedded.Init();
@@ -205,7 +211,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( Window, Registry, Rack, Buffer ) ) == NULL )
+	if ( ( Target = GetTarget_( Window, Registry, Rack, false, Buffer ) ) == NULL )
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
@@ -449,7 +455,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Flow->EOFD( "\0" );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
+	Flow->EOFD( (const void *)"\0", 1 );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
 
 	Read_( *Flow, Set );
 
@@ -472,10 +478,7 @@ ERRProlog
 	str::string Parameters;
 	flx::E_STRING_IFLOW__ Flow;
 ERRBegin
-	if ( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) != frdkrn::sOK ) {
-		UI().Alert( Kernel().Message() );
-		ERRReturn;
-	}
+	Handle_( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) );
 
 	Set.Init();
 
@@ -490,7 +493,7 @@ ERRBegin
 
 	XFlow.Init( Flow );
 
-	Kernel().FillParametersRegistry( XFlow, xpp::criterions___() );
+	Handle_( Kernel().FillParametersRegistry( XFlow, xpp::criterions___() ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -594,7 +597,7 @@ ERRBegin
 		StoreParametersSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
 	}
 
-	Kernel().CloseProject();
+	Handle_( Kernel().CloseProject() );
 ERRErr
 ERREnd
 ERREpilog

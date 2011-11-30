@@ -1,5 +1,11 @@
 $Id$
 
+30/11/2011 :
+	- RGSTRY :
+		- Correction bogue 'Add(...)'.
+	- XULFTK :
+		- Correction bogue et élargissement contrôle validité 'target' de 'Parameters'.
+
 29/11/2011 :
 	- FRDKRN :
 		- Changement du traitement des paramètres.

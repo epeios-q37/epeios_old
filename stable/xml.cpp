@@ -543,7 +543,7 @@ ERRBegin
 		}
 
 		if ( TEOX && _Flow.EOX() )
-			if ( _Token != tEndTag )
+			if ( ( _Token != tEndTag ) && ( _Token != t_Undefined ) )
 				RETURN( sUnexpectedEOF );
 
 		switch ( _Context ) {
@@ -553,7 +553,9 @@ ERRBegin
 
 			switch ( _Token ) {
 			case t_Undefined:
-				if ( _Flow.View() != '<' )
+				if ( _Flow.EOX() )
+					Continue = false;	// Fichier vide.
+				else if ( _Flow.View() != '<' )
 					RETURN( sUnexpectedCharacter )
 				else {
 					_Flow.Get();

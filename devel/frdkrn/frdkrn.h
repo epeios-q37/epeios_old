@@ -337,11 +337,13 @@ namespace frdkrn {
 		{
 			_Backend.ThrowError();
 		}
-		void CloseProject( void )
+		status__ CloseProject( void )
 		{
 			if ( IsConnected() ) {
 				_CloseConnection();
 			}
+
+			return sOK;
 		}
 		bso::bool__ IsConnected( void ) const
 		{

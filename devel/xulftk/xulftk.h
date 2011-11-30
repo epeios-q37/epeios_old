@@ -123,6 +123,23 @@ namespace xulftk {
 		{
 			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
+		void Handle_( frdkrn::status__ Status )
+		{
+			switch( Status ) {
+			case frdkrn::sOK:
+				break;
+			case frdkrn::sWarning:
+				_UI->LogAndPrompt( _Kernel->Message() );
+				break;
+			case frdkrn::sError:
+				_UI->Alert( _Kernel->Message() );
+				ERRAbort();
+				break;
+			default:
+				ERRc();
+				break;
+			}
+		}
 		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
 		void _ApplySession(
 			const str::string_ &FileName,

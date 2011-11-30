@@ -1319,12 +1319,12 @@ namespace rgstry {
 		}
 		void Add( const multi_level_registry_ &Registry )
 		{
-			level__ Level = First();
+			level__ Level = Registry.First();
 
 			while ( Level != RGSTRY_UNDEFINED_LEVEL ) {
 				AddImportedLevel( Registry.GetRoot( Level ), Registry.GetRegistry( Level ) );
 
-				Level = Next( Level );
+				Level = Registry.Next( Level );
 			}
 		}
 		void Create(
