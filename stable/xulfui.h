@@ -60,11 +60,12 @@ extern class ttr_tutor &XULFUITutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "xulfdg.h"
-#include "xulfmn.h"
+# include "xulfdg.h"
+# include "xulfsf.h"
+# include "xulfmn.h"
 
 namespace xulfui {
 
@@ -72,6 +73,7 @@ namespace xulfui {
 	{
 	private:
 		xulfmn::main__ *_Main;
+		xulfsf::session_form__ *_SessionForm;
 		nsIDOMWindow *_JSConsoleWindow;
 	protected:
 		virtual void XULFUIUpdate( void ) = 0;	// Mise à jour de l'interface.
@@ -84,6 +86,7 @@ namespace xulfui {
 					nsxpcm::Close( _JSConsoleWindow );
 
 			_Main = NULL;
+			_SessionForm = NULL;
 			_JSConsoleWindow = NULL;
 		}
 		ui___( void )
@@ -94,11 +97,14 @@ namespace xulfui {
 		{
 			reset();
 		}
-		void Init( xulfmn::main__ &Main )
+		void Init(
+			xulfmn::main__ &Main,
+			xulfsf::session_form__ &SessionForm )
 		{
 			reset();
 
 			_Main = &Main;
+			_SessionForm = &SessionForm;
 			// 'Debug' est initialisé plus tard.
 		}
 		void Update( void )
@@ -112,6 +118,14 @@ namespace xulfui {
 				ERRu();
 #endif
 			return *_Main;
+		}
+		xulfsf::session_form__ &SessionForm( void ) const
+		{
+#ifdef XULFUI_DBG
+			if ( _SessionForm == NULL )
+				ERRu();
+#endif
+			return *_SessionForm;
 		}
 		void SaveParameters(
 			const char *AttributeName,

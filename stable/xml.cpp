@@ -543,7 +543,7 @@ ERRBegin
 		}
 
 		if ( TEOX && _Flow.EOX() )
-			if ( ( _Token != tEndTag ) && ( _Token != t_Undefined ) )
+			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
 
 		switch ( _Context ) {

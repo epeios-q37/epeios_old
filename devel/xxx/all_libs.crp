@@ -316,7 +316,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &xulfmn		&epeios		&\
 	&XUL Frontend MaiN
 &xulfrg		&epeios		&\
-	&XUL Fro,te,d ReGistryWiDGets
+	&XUL Frontend ReGistryWiDGets
+&xulfsf		&epeios		&\
+	&XUL Frontend Session Form
 &xulftk		&epeios		&\
 	&XUL Frontend TrunK
 &xulfui		&epeios		&\

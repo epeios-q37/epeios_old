@@ -171,6 +171,8 @@ ERRBegin
 
 	Register_( Trunk, Trunk.UI().Debug.Widgets, Window );
 
+	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Debug.Document() );
+
 	Trunk.UI().Debug.Update();
 ERRErr
 ERREnd

@@ -439,8 +439,7 @@ ERRBegin
 	if ( ( Report = FillParametersRegistry( ParametersXFlow, Criterions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
-		_Message.Append( " !" );
-		Status = sError;
+		Status = sWarning;
 		ERRReturn;
 	} else
 		Status = sOK;

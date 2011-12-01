@@ -2459,13 +2459,13 @@ namespace nsxpcm {
 		nsICommandLine *CommandLine,
 		arguments_ &Arguments );
 
-	void PatchBadCommandBehaviorForListeningMenuItems( nsIDOMDocument *Document );
+	void DuplicateBroadcasterCommand( nsIDOMDocument *Document );
 
 	void PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Document );
 
 	inline void PatchOverallBadCommandBehavior( nsIDOMDocument *Document )
 	{
-		PatchBadCommandBehaviorForListeningMenuItems( Document );
+		DuplicateBroadcasterCommand( Document );
 		PatchCommandBadCommandBehaviorforKeysetListener( Document );
 	}
 

@@ -148,7 +148,7 @@ static bso::bool__ IsValid_(
 
 
 static const char *GetTarget_( 
-	nsIDOMWindow *Window,
+	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack,
 	bso::bool__ AlphaNumericOnly,	
@@ -165,7 +165,7 @@ ERRBegin
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
 		Rack.GetTranslation( "MissingOrBadParametersTargetDefinition", PREFIX, Translation );
-		nsxpcm::Alert( Window, Translation );
+		UI.LogAndPrompt( Translation );
 		ERRReturn;
 	}
 
@@ -178,7 +178,7 @@ ERREpilog
 
 template <typename bag, typename flow> static flow *GetEmbeddedFlow_(
 	bag &Bag,
-	nsIDOMWindow *Window,
+	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
@@ -187,11 +187,11 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( Window, Registry, Rack, true, Buffer ) ) == NULL )
+	if ( ( Target = GetTarget_( UI, Registry, Rack, true, Buffer ) ) == NULL )
 		ERRReturn;
 
 	Bag.Embedded.Init();
-	nsxpcm::GetAttribute( nsxpcm::GetElement( Window ), Target, Bag.Embedded );
+	nsxpcm::GetAttribute( nsxpcm::GetElement( UI.Main().Window() ), Target, Bag.Embedded );
 	Bag.EmbeddedFlow.Init( Bag.Embedded );
 	Flow = &Bag.EmbeddedFlow;
 ERRErr
@@ -202,7 +202,7 @@ ERREpilog
 
 template <typename bag, typename flow> static flow *GetFileFlow_(
 	bag &Bag,
-	nsIDOMWindow *Window,
+	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
@@ -211,7 +211,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( Window, Registry, Rack, false, Buffer ) ) == NULL )
+	if ( ( Target = GetTarget_( UI, Registry, Rack, false, Buffer ) ) == NULL )
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
@@ -231,7 +231,7 @@ template <typename bag, typename flow> static flow  *GetVolatileFlow_( bag &Bag 
 
 template <typename bag, typename flow> static flow  *GetFlow_(
 	bag &Bag,
-	nsIDOMWindow *Window,
+	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
 {
@@ -241,10 +241,10 @@ ERRProlog
 ERRBegin
 	switch ( GetStorage_( Registry )  ) {
 	case sEmbedded:
-		Flow = GetEmbeddedFlow_<bag, flow>( Bag, Window, Registry, Rack );
+		Flow = GetEmbeddedFlow_<bag, flow>( Bag, UI, Registry, Rack );
 		break;
 	case sFile:
-		Flow = GetFileFlow_<bag, flow>( Bag, Window, Registry, Rack );
+		Flow = GetFileFlow_<bag, flow>( Bag, UI, Registry, Rack );
 		break;
 	case sVolatile:
 		Flow = GetVolatileFlow_<bag, flow>( Bag );
@@ -252,7 +252,7 @@ ERRBegin
 	case s_Undefined:
 			Translation.Init();
 			Rack.GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
-			nsxpcm::Alert( Window, Translation );
+			UI.LogAndPrompt( Translation );
 			ERRReturn;
 		break;
 	default:
@@ -450,7 +450,7 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI.Main().Window(), Registry, Rack ) ) == NULL ) {
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
 		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveParameters", PREFIX, Buffer ) );
 		ERRReturn;
 	}
@@ -488,12 +488,14 @@ ERRBegin
 
 	Get_( Kernel().GetId(), Set, Parameters );
 
-	Flow.Init( Parameters );
-	Flow.EOFD( XTF_EOXT );
+	if ( Parameters.Amount() != 0 ) {
+		Flow.Init( Parameters );
+		Flow.EOFD( XTF_EOXT );
 
-	XFlow.Init( Flow );
+		XFlow.Init( Flow );
 
-	Handle_( Kernel().FillParametersRegistry( XFlow, xpp::criterions___() ) );
+		Handle_( Kernel().FillParametersRegistry( XFlow, xpp::criterions___() ) );
+	}
 ERRErr
 ERREnd
 ERREpilog
@@ -545,7 +547,7 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI.Main().Window(), Registry, Rack ) ) == NULL ) {
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
 		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreParameters", PREFIX, Buffer ) );
 		ERRReturn;
 	}

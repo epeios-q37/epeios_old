@@ -78,6 +78,7 @@ namespace xulfmn {
 	XULFBS_COMMAND( open_project_command__ );
 	XULFBS_COMMAND( close_project_command__ );
 	XULFBS_COMMAND( exit_command__ );
+	XULFBS_UWIDGET( xulwdg::deck__, main_deck__ );
 
 	struct main__
 	: public _ui_core__
@@ -96,6 +97,7 @@ namespace xulfmn {
 				debug_command__ Debug;
 				exit_command__ Exit;
 			} Commands;
+			main_deck__ MainDeck;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,

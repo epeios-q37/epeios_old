@@ -4,13 +4,18 @@
 	<xpp:expand href="xml.xlcl"/>"
 	<Translations message="XPP_ErrorAtLineColumn">
 		<!-- One of the 2 generic message displayed before error description. -->
-		<Translation language="fr">Erreur ligne %1, colonne %2</Translation>
-		<Translation language="en">Error line %1, column %2</Translation>
+		<Translation language="fr">ligne %1, colonne %2 : </Translation>
+		<Translation language="en">line %1, column %2</Translation>
 	</Translations>
 	<Translations message="XPP_ErrorInFileAtLineColumn">
 		<!-- One of the 2 generic message displayed before error description. -->
-		<Translation language="fr">Erreur dans le fichier '%1' à la ligne %2, colonne %3</Translation>
-		<Translation language="en">Error in file '%1' at line %2, column %3</Translation>
+		<Translation language="fr">fichier '%1' à la ligne %2, colonne %3 :</Translation>
+		<Translation language="en">file '%1' at line %2, column %3 :</Translation>
+	</Translations>
+	<Translations message="XPP_ErrorInFile">
+		<!-- One of the 2 generic message displayed before error description. -->
+		<Translation language="fr">fichier '%1' </Translation>
+		<Translation language="en">file '%1' </Translation>
 	</Translations>
 	<Translations message="XPP_NoTagsAllowedHere">
 		<Translation language="fr">balises non autorisées ici</Translation>

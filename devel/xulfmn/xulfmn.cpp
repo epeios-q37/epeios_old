@@ -160,6 +160,7 @@ static void Register_(
 {
 	Widgets.Window.Init( Trunk, Window, Window );
 	Register_( Trunk, Widgets.Commands, Window );
+	Widgets.MainDeck.Init( Trunk, Window, "dckMain" );
 }
 
 void xulfmn::RegisterMainUI(

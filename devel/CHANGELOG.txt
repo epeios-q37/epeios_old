@@ -1,5 +1,9 @@
 $Id$
 
+01/12/2011 :
+	- XULFTK :
+		- Mise en peuvre de (user_functions__'.
+
 30/11/2011 :
 	- RGSTRY :
 		- Correction bogue 'Add(...)'.

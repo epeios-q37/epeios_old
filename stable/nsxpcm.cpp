@@ -1906,18 +1906,29 @@ static void CopyBroadcastCommand_(
 	}
 }
 
-void nsxpcm::PatchBadCommandBehaviorForListeningMenuItems( nsIDOMDocument *Document )
+void nsxpcm::DuplicateBroadcasterCommand( nsIDOMDocument *Document )
 {
-	nsIDOMNodeList *List = NULL;
-	nsEmbedString EId;
+	nsIDOMNode *Node = GetElement( Document );
+	bso::bool__ Ascending = false;
 
-	nsxpcm::Transform( "menuitem", EId );
+	while ( ( Node != Document ) || ( !Ascending ) ) {
+		if ( !Ascending  ) {
+			CopyBroadcastCommand_( Document, Node );
+		}
 
-	T( Document->GetElementsByTagName( EId, &List ) );
-
-	CopyBroadcastCommand_( Document, List );
+		if ( ( GetFirstChild( Node ) != NULL ) && !Ascending ) {
+			Ascending = false;
+			Node = GetFirstChild( Node );
+		} else if ( GetNextSibling( Node ) != NULL ) {
+			Ascending = false;
+			Node = GetNextSibling( Node );
+		} else if ( GetParentNode( Node ) != NULL ) {
+			Ascending = true;
+			Node = GetParentNode( Node );
+		} else
+			ERRc();
+	}
 }
-
 
 static void AddSemiColonCommand_(nsIDOMNodeList *List )
 {

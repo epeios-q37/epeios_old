@@ -1,7 +1,7 @@
 /*
-	Header for the 'xulfmn' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	Header for the 'xulfsf' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef XULFMN__INC
-#define XULFMN__INC
+#ifndef XULFSF__INC
+#define XULFSF__INC
 
-#define XULFMN_NAME		"XULFMN"
+#define XULFSF_NAME		"XULFSF"
 
-#define	XULFMN_VERSION	"$Revision$"
+#define	XULFSF_VERSION	"$Revision$"
 
-#define XULFMN_OWNER		"Claude SIMON"
+#define XULFSF_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &XULFMNTutor;
+extern class ttr_tutor &XULFSFTutor;
 
-#if defined( XXX_DBG ) && !defined( XULFMN_NODBG )
-#define XULFMN_DBG
+#if defined( XXX_DBG ) && !defined( XULFSF_NODBG )
+#define XULFSF_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,7 +55,7 @@ extern class ttr_tutor &XULFMNTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D XUL Frontend MaiN 
+//D XUL Frontend Session Form 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -65,39 +65,25 @@ extern class ttr_tutor &XULFMNTutor;
 
 # include "xulfbs.h"
 
-# define XULFMN_WINDOW_ID	"wdwMain"
+# define XULFSF_PAGE_ID	"pgeSessionForm"
 
-namespace xulfmn {
+namespace xulfsf {
 	using namespace xulfbs;
 
-	XULFBS_WINDOW( window__ );
-	XULFBS_COMMAND( about_command__ );
-	XULFBS_COMMAND( web_site_command__ );
-	XULFBS_COMMAND( debug_command__ );
-	XULFBS_COMMAND( new_project_command__ );
-	XULFBS_COMMAND( open_project_command__ );
-	XULFBS_COMMAND( close_project_command__ );
-	XULFBS_COMMAND( exit_command__ );
-	XULFBS_UWIDGET( xulwdg::deck__, main_deck__ );
+	XULFBS_COMMAND( select_project_command__ );
+	XULFBS_UWIDGET( xulwdg::textbox__, project_filename_textbox__ );
 
-	struct main__
+	struct session_form__
 	: public _ui_core__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
 	public:
 		struct widgets__ {
-			window__ Window;
 			struct commands__ {
-				new_project_command__ NewProject;
-				open_project_command__ OpenProject;
-				close_project_command__ CloseProject;
-				about_command__ About;
-				web_site_command__ WebSite;
-				debug_command__ Debug;
-				exit_command__ Exit;
+				select_project_command__ SelectProject;
 			} Commands;
-			main_deck__ MainDeck;
+			project_filename_textbox__ ProjectFileNameTextbox;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,
@@ -109,11 +95,9 @@ namespace xulfmn {
 		void Update( void );
 	};
 
-	void RegisterMainUI(
+	void RegisterSessionFormUI(
 		xulftk::trunk___ &Trunk,
 		nsIDOMWindow *Window );
-
-
 }
 
 /*$END$*/

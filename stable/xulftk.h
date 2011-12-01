@@ -105,24 +105,118 @@ namespace xulftk {
 		}
 	};
 
+	class _user_functions__
+	{
+	private:
+		trunk___ *_Trunk;
+	protected:
+		trunk___ &_T( void )
+		{
+			if ( _Trunk == NULL )
+				ERRc();
+
+			return *_Trunk;
+		}
+		void _ApplySession(
+			const str::string_ &FileName,
+			const xpp::criterions___ &Criterions,
+			const frdkrn::compatibility_informations__ &CompatibilityInformations,
+			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
+		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
+		bso::bool__ _DefendSession( void );
+		void _DropSession( void );
+		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
+		void _Exit( void );
+		virtual void XULFTKFormatedInformations( str::string_ &Informations )
+		{
+			ERRc();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		virtual void XULFTKSiteURL( str::string_ &URL )
+		{
+			ERRc();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		virtual void XULFTKApplySession(
+			const str::string_ &FileName,
+			const xpp::criterions___ &XMLPreprocessorCriterions )
+		{
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
+		{
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::close_project_command__::NSXPCMOnEvent()' doit être redéfini.
+
+			return false;	// Pour éviter un 'warning'.
+		}
+		virtual void XULFTKExit( void )
+		{
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::exit_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Trunk = NULL;
+		}
+		E_CVDTOR( _user_functions__ );
+		void Init( trunk___ &Trunk )
+		{
+			_Trunk = &Trunk;
+		}
+		void FormatedInformations( str::string_ &Informations )
+		{
+			XULFTKFormatedInformations( Informations );
+		}
+		void SiteURL( str::string_ &URL )
+		{
+			XULFTKSiteURL( URL );
+		}
+		void ApplySession(
+			const str::string_ &FileName,
+			const xpp::criterions___ &XMLPreprocessorCriterions )
+		{
+			XULFTKApplySession( FileName, XMLPreprocessorCriterions );
+		}
+		bso::bool__ DropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
+		{
+			return XULFTKDropSession();
+		}
+		void Exit( void )
+		{
+			XULFTKExit();
+		}
+	};
+
+	template <typename trunk> class user_functions__
+	: public _user_functions__
+	{
+	protected:
+		trunk &_T( void )
+		{
+			return *(trunk *)&_user_functions__::_T();	// On peut caster, parce que 'Init(...)' garantit que l'objet est du bon type.
+		}
+	public:
+		void Init( trunk &Trunk )
+		{
+			_user_functions__::Init( Trunk );
+		}
+	};
 
 	class trunk___
 	{
 	private:
 		xulfui::ui___ *_UI;
 		xulfkl::kernel___ *_Kernel;
+		_user_functions__ *_UserFunctions;
 		geckoo::user_functions__  *_Steering;
 		const char *_TargetName;
 		error_reporting_functions__ _DefaultErrorReportingFunctions;
+		_user_functions__ &_UF( void )
+		{
+			if ( _UserFunctions == NULL )
+				ERRc();
+
+			return *_UserFunctions;
+		}
 	protected:
-		virtual void XULFTKFormatedInformations( str::string_ &Informations )
-		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent()' doit être redéfini.
-		}
-		virtual void XULFTKSiteURL( str::string_ &URL )
-		{
-			ERRu();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
-		}
 		void Handle_( frdkrn::status__ Status )
 		{
 			switch( Status ) {
@@ -146,35 +240,20 @@ namespace xulftk {
 			const xpp::criterions___ &Criterions,
 			const frdkrn::compatibility_informations__ &CompatibilityInformations,
 			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
-		virtual void XULFTKApplySession(
-			const str::string_ &FileName,
-			const xpp::criterions___ &XMLPreprocessorCriterions )
-		{
-			ERRu();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
-		}
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
 		void _DropSession( void );
-		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
-		{
-			ERRu();	//	Si pas surchargé, alors 'xulfmn::close_project_command__::NSXPCMOnEvent()' doit être redéfini.
-
-			return false;	// Pour éviter un 'warning'.
-		}
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void )
 		{
 			UI().Main().Widgets.Window.Close();
-		}
-		virtual void XULFTKExit( void )
-		{
-			ERRu();	//	Si pas surchargé, alors 'xulfmn::exit_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_UI = NULL;
 			_Kernel =  NULL;
+			_UserFunctions = NULL;
 			_Steering = NULL;
 			_DefaultErrorReportingFunctions.reset( P );
 //			_TrunkFunctions.reset();
@@ -191,6 +270,7 @@ namespace xulftk {
 			const char *TargetName,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
+			_user_functions__ &UserFunctions,
 			geckoo::user_functions__ &Steering,
 			const lcl::locale_ &Locale,
 			const char *Language )
@@ -198,6 +278,7 @@ namespace xulftk {
 			_UI = &UI;
 			_Kernel = &Kernel;
 			_TargetName = TargetName;
+			_UserFunctions = &UserFunctions;
 			_Steering = &Steering;
 			_DefaultErrorReportingFunctions.Init( UI, Locale, Language );
 
@@ -262,7 +343,7 @@ namespace xulftk {
 		ERRBegin
 			Informations.Init();
 
-			XULFTKFormatedInformations( Informations ),
+			_UF().FormatedInformations( Informations ),
 
 			UI().Alert( Informations );
 		ERRErr
@@ -276,7 +357,7 @@ namespace xulftk {
 		ERRBegin
 			URL.Init();
 
-			XULFTKSiteURL( URL );
+			_UF().SiteURL( URL );
 
 			nsxpcm::LaunchURI( URL );
 		ERRErr
@@ -293,7 +374,7 @@ namespace xulftk {
 			FileName.Init();
 
 			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) ) {
-				XULFTKApplySession( FileName, XMLPreprocessorCriterions );
+				_UF().ApplySession( FileName, XMLPreprocessorCriterions );
 				UpdateUI();
 			}
 		ERRErr
@@ -302,7 +383,7 @@ namespace xulftk {
 		}
 		bso::bool__ DropSession( void )
 		{
-			if ( XULFTKDropSession() ) {
+			if ( _UF().DropSession() ) {
 				UpdateUI();
 				return true;
 			} else
@@ -314,7 +395,7 @@ namespace xulftk {
 			STR_BUFFER___ Buffer;
 		ERRBegin
 			if ( nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
-				XULFTKExit();
+				_UF().Exit();
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -323,7 +404,33 @@ namespace xulftk {
 		{
 			UpdateUI();
 		}
+		friend _user_functions__;
 	};
+
+	inline void _user_functions__::_ApplySession(
+		const str::string_ &FileName,
+		const xpp::criterions___ &Criterions,
+		const frdkrn::compatibility_informations__ &CompatibilityInformations,
+		const rgstry::multi_level_registry_ &Registry )
+	{
+		_T()._ApplySession( FileName, Criterions, CompatibilityInformations, Registry );
+	}
+
+	inline bso::bool__ _user_functions__::_DefendSession( void )
+	{
+		return _T()._DefendSession();
+	}
+
+	inline void _user_functions__::_DropSession( void )
+	{
+		_T()._DropSession();
+	}
+
+	inline void _user_functions__::_Exit( void )
+	{
+		_T()._Exit();
+	}
+
 }
 
 /*$END$*/

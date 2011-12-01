@@ -135,41 +135,70 @@ const char *xpp::Label( status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
+static void PutFileLineColumn_(
+	const context___ &Context,
+	const lcl::rack__ &Rack,
+	str::string_ &Message )
+{
+ERRProlog
+	STR_BUFFER___ SBuffer;
+	lcl::strings Values;
+	bso::integer_buffer__ IBuffer;
+ERRBegin
+
+	Values.Init();	
+
+	if ( Context.FileName.Amount() != 0 ) {
+		Message.Append( Rack.GetTranslation( "ErrorInFileAtLineColumn", MESSAGE_PREFIX, SBuffer)  );
+		Values.Append( Context.FileName );
+	} else
+		Message.Append( Rack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, SBuffer)  );
+
+	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
+	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
+
+	lcl::ReplaceTags( Message, Values );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void PutFile_(
+	const context___ &Context,
+	const lcl::rack__ &Rack,
+	str::string_ &Message )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+
+	if ( Context.FileName.Amount() == 0 )
+		ERRc();
+
+	Message.Append( Rack.GetTranslation( "ErrorInFile", MESSAGE_PREFIX, Buffer)  );
+
+	lcl::ReplaceTag( Message, 1, Context.FileName );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 const str::string_ &xpp::GetTranslation(
 	const context___ &Context,
 	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
 {
 ERRProlog
-	str::string Message;
-	STR_BUFFER___ SBuffer;
-	bso::integer_buffer__ IBuffer;
 	lcl::strings Values;
 ERRBegin
-	if ( Context.FileName.Amount() == 0 )
-		Message.Init( LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
-	else
-		Message.Init( LocaleRack.GetTranslation( "ErrorInFileAtLineColumn", MESSAGE_PREFIX, SBuffer ) );
-
-	
-	Values.Init();	
-
-	if ( Context.FileName.Amount() != 0 )
-		Values.Append( Context.FileName );
-
-	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
-	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
-
-	lcl::ReplaceTags( Message, Values );
-
-	Translation.Append( Message );
-
-	Translation.Append( " : " );
-
-	if ( Context.Status < (xpp::status__)xml::s_amount )
+	if ( Context.Status < (xpp::status__)xml::s_amount ) {
+		if ( Context.FileName.Amount() != 0 )
+			PutFile_( Context, LocaleRack, Translation );
 		xml::GetTranslation( (xml::status__)Context.Status, LocaleRack, Context.Coord, Translation );
-	else {
+	} else {
 		Values.Init();
+
+		PutFileLineColumn_( Context, LocaleRack, Translation );
 
 		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Translation );
 		lcl::ReplaceTags( Translation, Values );	// Pour enlever le '%0' en cas de traduation introuvable.
