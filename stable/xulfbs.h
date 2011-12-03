@@ -100,7 +100,7 @@ namespace xulfrd {
 
 #define XULFBS_WINDOW( name )		XULFBS_SWIDGET( xulwdg::window__, name )
 #define XULFBS_COMMAND( name )		XULFBS_SWIDGET( xulwdg::command__, name )
-#define XULFBS_BROADCAST( name )	XULFBS_UWIDGET( xulwdg::broadcast__, name )
+#define XULFBS_BROADCASTER( name )	XULFBS_UWIDGET( xulwdg::broadcaster__, name )
 
 
 namespace xulfbs {
@@ -110,7 +110,7 @@ namespace xulfbs {
 
 	typedef nsxpcm::ui_core__ _ui_core__;
 
-	typedef xulwdg::broadcast__<trunk___> broadcast__;
+	typedef xulwdg::broadcaster__<trunk___> broadcaster__;
 	typedef xulwdg::command__<trunk___> command__;
 
 	void _Report(

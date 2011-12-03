@@ -61,8 +61,43 @@ using namespace xulfsf;
 
 using nsxpcm::event__;
 
+static void DisableAllButSelected_(
+	const str::string_ &Value,
+	session_form__::widgets__::broadcasters__ &Broadcasters )
+{
+	bso::bool__ Embedded = true, Daemon = true, Predefined = true;
+
+	if ( Value == "Embedded" )
+		Embedded = false;
+	else if ( Value == "Daemon" )
+		Daemon = false;
+	else if ( Value == "Predefined" )
+		Predefined = false;
+
+	Broadcasters.Embedded.Disable( Embedded );
+	Broadcasters.Daemon.Disable( Daemon );
+	Broadcasters.Predefined.Disable( Predefined );
+}
+
+
+void xulfsf::backend_location_radiogroup__::XULWDGOnEvent( nsxpcm::event__ Event )
+{
+	Target().UI().SessionForm().Update();
+}
+
 void xulfsf::session_form__::Update( void )
 {
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+
+	_Trunk->UI().SessionForm().Widgets.BackendLocationRadiogroup.GetSelectedItemValue( Value );
+
+	DisableAllButSelected_( Value, _Trunk->UI().SessionForm().Widgets.Broadcasters );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void xulfsf::select_project_command__::XULWDGOnEvent( event__ )
@@ -82,31 +117,36 @@ ERREnd
 ERREpilog
 }
 
+static void Register_(
+	trunk___ &Trunk,
+	broadcaster__ &Broadcaster,
+	const char *Id )
+{
+	Broadcaster.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
+}
 
 static void Register_(
 	trunk___ &Trunk,
-	broadcast__ &Broadcast,
-	nsIDOMWindow *Window,
-	const char *Id )
+	session_form__::widgets__::broadcasters__ &Broadcasters )
 {
-	Broadcast.Init( Trunk, Window, Id );
+	Register_( Trunk, Broadcasters.Embedded ,"bdcEmbedded" );
+	Register_( Trunk, Broadcasters.Daemon ,"bdcDaemon" );
+	Register_( Trunk, Broadcasters.Predefined ,"bdcPredefined" );
 }
 
 static void Register_(
 	trunk___ &Trunk,
 	command__ &Command,
-	nsIDOMWindow *Window,
 	const char *Id )
 {
-	Command.Init( Trunk, Window, Id );
+	Command.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
 }
 
 static void Register_(
 	trunk___ &Trunk,
-	session_form__::widgets__::commands__ &Commands,
-	nsIDOMWindow *Window )
+	session_form__::widgets__::commands__ &Commands )
 {
-	Register_( Trunk, Commands.SelectProject, Window, "cmdSelectProject" );
+	Register_( Trunk, Commands.SelectProject, "cmdSelectProject" );
 }
 
 static void Register_(
@@ -114,8 +154,11 @@ static void Register_(
 	session_form__::widgets__ &Widgets,
 	nsIDOMWindow *Window )
 {
-	Register_( Trunk, Widgets.Commands, Window );
+	Register_( Trunk, Widgets.Broadcasters );
+	Register_( Trunk, Widgets.Commands );
+
 	Widgets.ProjectFileNameTextbox.Init( Trunk, Window, "txbProjectFileName" );
+	Widgets.BackendLocationRadiogroup.Init( Trunk, Window, "rgpBackendLocation" );
 }
 
 void xulfsf::RegisterSessionFormUI(

@@ -123,11 +123,11 @@ void xulfmn::debug_command__::XULWDGOnEvent( event__ )
 
 static void Register_(
 	trunk___ &Trunk,
-	broadcast__ &Broadcast,
+	broadcaster__ &Broadcaster,
 	nsIDOMWindow *Window,
 	const char *Id )
 {
-	Broadcast.Init( Trunk, Window, Id );
+	Broadcaster.Init( Trunk, Window, Id );
 }
 
 static void Register_(

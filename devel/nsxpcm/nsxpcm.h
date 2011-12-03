@@ -60,16 +60,16 @@ extern class ttr_tutor &NSXPCMTutor;
 
 /*$BEGIN$*/
 
-#include "cpe.h"
-#include "err.h"
-#include "flw.h"
-#include "epeios.h"
-#include "str.h"
-#include "ctn.h"
-#include "lstbch.h"
-#include "lcl.h"
+# include "cpe.h"
+# include "err.h"
+# include "flw.h"
+# include "epeios.h"
+# include "str.h"
+# include "ctn.h"
+# include "lstbch.h"
+# include "lcl.h"
 
-#include "xpcom-config.h"
+# include "xpcom-config.h"
 
 # if NSXPCM_GECKO_V1
 #  define NSXPCM__GECKO_V1
@@ -80,36 +80,37 @@ extern class ttr_tutor &NSXPCMTutor;
 # endif
 
 
-#include "nsITreeView.h"
-#include "nsITreeContentView.h"
-#include "nsITreeSelection.h"
-#include "nsIListBoxObject.h"
+# include "nsITreeView.h"
+# include "nsITreeContentView.h"
+# include "nsITreeSelection.h"
+# include "nsIListBoxObject.h"
 
-#include "nsIDOMDocument.h"
-#include "nsIDOMElement.h"
-#include "nsIDOMXULMultSelectCntrlEl.h"
-#include "nsIDOMXULSelectCntrlItemEl.h"
-#include "nsIDOMXULTextboxElement.h"
-#include "nsIDOMXULMenuListElement.h"
-#include "nsIDOMXULCheckboxElement.h"
-#include "nsIDOMXULButtonElement.h"
-#include "nsIDOMXULTreeElement.h"
-#include "nsIDOMXULDescriptionElement.h"
-#include "nsIDOMWindowInternal.h"
-#include "nsIDOMXULLabelElement.h"
-#include "nsIDOMMutationEvent.h"
-#include "nsIDOMKeyEvent.h"
+# include "nsIDOMDocument.h"
+# include "nsIDOMElement.h"
+# include "nsIDOMXULMultSelectCntrlEl.h"
+#  include "nsIDOMXULSelectCntrlEl.h"
+# include "nsIDOMXULSelectCntrlItemEl.h"
+# include "nsIDOMXULTextboxElement.h"
+# include "nsIDOMXULMenuListElement.h"
+# include "nsIDOMXULCheckboxElement.h"
+# include "nsIDOMXULButtonElement.h"
+# include "nsIDOMXULTreeElement.h"
+# include "nsIDOMXULDescriptionElement.h"
+# include "nsIDOMWindowInternal.h"
+# include "nsIDOMXULLabelElement.h"
+# include "nsIDOMMutationEvent.h"
+# include "nsIDOMKeyEvent.h" 
 
 #include "nsIXULWindow.h"
 
 // #include "content/nsIXSLTProcessor.h"
 
-#include "nsEmbedString.h"
-#include "nsCOMPtr.h"
-#include "nsComponentManagerUtils.h"
-#include "nsServiceManagerUtils.h"
-#include "nsIInterfaceRequestor.h"
-#include "nsIDOMEventListener.h"
+# include "nsEmbedString.h"
+# include "nsCOMPtr.h"
+# include "nsComponentManagerUtils.h"
+# include "nsServiceManagerUtils.h"
+# include "nsIInterfaceRequestor.h"
+# include "nsIDOMEventListener.h"
 # ifdef NSXPCM__GECKO_V1
 #  include "nsIGenericFactory.h"
 # elif defined( NSXPCM__GECKO_V2 )
@@ -117,36 +118,36 @@ extern class ttr_tutor &NSXPCMTutor;
 # else
 #  error
 # endif
-#include "nsIDOMHTMLAnchorElement.h"
-#include "nsIDOMDocumentFragment.h"
-#include "nsICommandLine.h" // Situé dans 'toolkitcomps'.
+# include "nsIDOMHTMLAnchorElement.h"
+# include "nsIDOMDocumentFragment.h"
+# include "nsICommandLine.h" // Situé dans 'toolkitcomps'.
 
-#include "nsICommandManager.h"
+# include "nsICommandManager.h"
 
-#undef NSXPCM__ENABLE_FORMHISTORY
+# undef NSXPCM__ENABLE_FORMHISTORY
 
-#ifdef NSXPCM_FORCE_FORMHISTORY
-#	define NSXPCM__ENABLE_FORMHISTORY
-#endif
+# ifdef NSXPCM_FORCE_FORMHISTORY
+#  define NSXPCM__ENABLE_FORMHISTORY
+# endif
 
 
-#ifdef NSXPCM_FBL
-#	define NSXPCM__FBL
-#endif
+# ifdef NSXPCM_FBL
+#  define NSXPCM__FBL
+# endif
 
-#ifdef NSXPCM__FBL
-#	include "fblfrd.h"
-#endif
+# ifdef NSXPCM__FBL
+# include "fblfrd.h"
+# endif
 
-#if defined( __ARMEL__ ) || defined( NSXPCM_USE_ARMEL_WORKAROUND )
-#	ifndef NSXPCM_NO_ARMEL_WORKAROUND
-#		define NSXPCM__USE_ARMEL_WORKAROUND
-#	endif
-#endif
+# if defined( __ARMEL__ ) || defined( NSXPCM_USE_ARMEL_WORKAROUND )
+#  ifndef NSXPCM_NO_ARMEL_WORKAROUND
+#   define NSXPCM__USE_ARMEL_WORKAROUND
+#  endif
+# endif
 
-#define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
+# define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
 
-#define NSXPCM_IEVENT_LISTENER_IID \
+# define NSXPCM_IEVENT_LISTENER_IID \
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
@@ -1608,6 +1609,36 @@ namespace nsxpcm {
 		}
 	};
 
+	class radiogroup__
+	: public _widget__<nsIDOMXULSelectControlElement>
+	{
+	public:
+		nsIDOMXULSelectControlItemElement *GetSelectedItem( bso::bool__ ErrorIfInexistant = true )
+		{
+			nsIDOMXULSelectControlItemElement *Item = NULL;
+
+			T( GetObject()->GetSelectedItem( &Item ) );
+
+			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
+				ERRu();
+
+			return Item;
+		}
+		int SelectedIndex( void )
+		{
+			return nsxpcm::GetSelectedIndex( GetObject() );
+		}
+		const str::string_ &GetSelectedItemValue( str::string_ &Value )
+		{
+			nsIDOMXULSelectControlItemElement *Item = GetSelectedItem( false );
+
+			if ( Item != NULL )
+				GetValue( Item, Value );
+
+			return Value;
+		}
+	};
+
 	class listitem__
 	: public _widget__<nsIDOMXULSelectControlItemElement>
 	{};
@@ -1793,21 +1824,9 @@ namespace nsxpcm {
 		}
 	};
 
-	class broadcast__
+	class broadcaster__
 	: public _widget__<nsIDOMElement>
-	{
-	public:
-		void Enable( bso::bool__ = true )
-		{
-			ERRu();
-			// L'attribut 'disable' d'un 'broadcaster' lorsque mis à 'true' n'est pas repercuté sur les éléments qui 'observe'.
-			// Lancer 'Disable()/Enable()' sue le 'command' correspondant.
-		}
-		void Disable( bso::bool__ Value = true )
-		{
-			Enable( !Value );
-		}
-	};
+	{};
 
 	class command__
 	: public _widget__<nsIDOMElement>

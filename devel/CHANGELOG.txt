@@ -1,5 +1,19 @@
 $Id$
 
+03/12/2011 :
+	- NSXPCM :
+		- Ajout paramètre 'Event' à '_generic__::Init(...)'.
+
+02/12/2011 :
+	- NSXPCM :
+		- Rajout 'radiogroup__'.
+		- 'broadcast__' -> 'broadcaster__'.
+	- XULFxx :
+		- Adaptation.
+	- XULWDG :
+		- Adaptation.
+		- Ajout 'radiogroup__'.
+
 01/12/2011 :
 	- XULFTK :
 		- Mise en peuvre de (user_functions__'.

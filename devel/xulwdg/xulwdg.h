@@ -82,7 +82,7 @@ extern class ttr_tutor &XULWDGTutor;
 #endif
 
 #define XULWDG_ALL_WIDGETS( target )\
-	typedef xulwdg::broadcast__<target> broadcast__;\
+	typedef xulwdg::broadcaster__<target> broadcaster__;\
 	typedef xulwdg::command__<target> command__;\
 	typedef xulwdg::button__<target> button__;\
 	typedef xulwdg::textbox__<target> textbox__;\
@@ -137,24 +137,27 @@ namespace xulwdg {
 		void Init(
 			target &Target,
 			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			nsIDOMWindow *Window,
+			int Events = events )
 		{
 			_Target = &Target;
-			widget::Init( Supports, Window, events );
+			widget::Init( Supports, Window, Events );
 		}
 		void Init( target &Target,
 			nsIDOMWindow *Window,
-			const str::string_ &Id )
+			const str::string_ &Id,
+			int Events = events )
 		{
 			_Target = &Target;
-			widget::Init( Window, Id, events );
+			widget::Init( Window, Id, Events );
 		}
 		void Init( target &Target,
 			nsIDOMWindow *Window,
-			const char *Id )
+			const char *Id,
+			int Events = events )
 		{
 			_Target = &Target;
-			widget::Init( Window, Id, events );
+			widget::Init( Window, Id, Events );
 		}
 		const target &Target( void ) const
 		{
@@ -173,11 +176,12 @@ namespace xulwdg {
 
 	XULWDG__W( textbox, nsxpcm::ef_None );
 	XULWDG__W( radio, nsxpcm::efCommand );
+	XULWDG__W( radiogroup, nsxpcm::efCommand );	// 'efCommand', parce que via '<radiogroup observes=...>' et '<radiogroup command=...>', cela ne fonctionne pas, il faur mettre le gestionnaire d'évènement directement sur l'élément.
 	XULWDG__W( button, nsxpcm::efCommand );
 	XULWDG__W( listbox, nsxpcm::efCommand );
 	XULWDG__W( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
 	XULWDG__W( deck, nsxpcm::ef_None );
-	XULWDG__W( broadcast, nsxpcm::ef_None );
+	XULWDG__W( broadcaster, nsxpcm::ef_None );
 	XULWDG__W( command, nsxpcm::efCommand );
 	XULWDG__W( menu, nsxpcm::ef_None );
 	XULWDG__W( menu_item, nsxpcm::efCommand );
