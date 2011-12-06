@@ -75,6 +75,7 @@ namespace xulfsf {
 	XULFBS_BROADCASTER( embedded_broadcaster__ );
 	XULFBS_BROADCASTER( daemon_broadcaster__ );
 	XULFBS_BROADCASTER( predefined_broadcaster__ );
+	XULFBS_BROADCASTER( multi_backend_selection_mode_broadcaster__ );
 	XULFBS_SWIDGET( xulwdg::radiogroup__, backend_location_radiogroup__ );	// '<radiogroup observes=...>' et '<radiogroup command=...>' ne fonctionne pas.
 
 	struct session_form__
@@ -88,6 +89,7 @@ namespace xulfsf {
 				embedded_broadcaster__ Embedded;
 				daemon_broadcaster__ Daemon;
 				predefined_broadcaster__ Predefined;
+				multi_backend_selection_mode_broadcaster__ MultiBackendSelectionMode;
 			} Broadcasters;
 			struct commands__ {
 				select_project_command__ SelectProject;

@@ -169,6 +169,7 @@ namespace xpp {
 		str::string BlocTag;
 		str::string CypherTag;
 		str::string AttributeAttribute;	//'<tag xpp:attribute="..." ...>'//
+		str::string XMLNS;	// <... xmlns:xpp="..." ...> ('xpp' ou ce qui a été choidi par l'utilisateur ...).
 		void reset( bso::bool__ P = true )
 		{
 			NamespaceWithSeparator.reset( P );
@@ -179,6 +180,7 @@ namespace xpp {
 			IfeqTag.reset( P );
 			BlocTag.reset( P );
 			AttributeAttribute.reset( P );
+			XMLNS.reset( P );
 		}
 		_qualified_preprocessor_directives___( void )
 		{

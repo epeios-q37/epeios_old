@@ -1487,9 +1487,9 @@ namespace nsxpcm {
 		{
 			nsxpcm::SetAttribute( GetObject(), "hidden", Value ? "false" : "true" );
 		}
-		void Hide( void )
+		void Hide( bso::bool__ Value = true )
 		{
-			Show( false );
+			Show( !Value );
 		}
 		void SetLabel( str::string_ &Label )
 		{

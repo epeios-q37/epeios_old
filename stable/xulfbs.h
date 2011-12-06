@@ -76,15 +76,8 @@ namespace xulfrd {
 
 #define XULFBS__WIDGET_COMMON( widget, name )\
 	class name\
-	: public widget<xulftk::trunk___>\
-	{\
-	protected:\
-		virtual void XULWDGReport( const char *Message )\
-		{\
-			_Report( Target(), Message );\
-		}
-
-
+	: public _widget__<widget<xulftk::trunk___>>\
+	{
 
 // Sensitive widget (reacts to events).
 #define XULFBS_SWIDGET( widget, name )\
@@ -100,7 +93,7 @@ namespace xulfrd {
 
 #define XULFBS_WINDOW( name )		XULFBS_SWIDGET( xulwdg::window__, name )
 #define XULFBS_COMMAND( name )		XULFBS_SWIDGET( xulwdg::command__, name )
-#define XULFBS_BROADCASTER( name )	XULFBS_UWIDGET( xulwdg::broadcaster__, name )
+//#define XULFBS_BROADCASTER( name )	XULFBS_UWIDGET( xulwdg::broadcaster__, name )
 
 
 namespace xulfbs {
@@ -110,8 +103,17 @@ namespace xulfbs {
 
 	typedef nsxpcm::ui_core__ _ui_core__;
 
-	typedef xulwdg::broadcaster__<trunk___> broadcaster__;
-	typedef xulwdg::command__<trunk___> command__;
+	template <typename widget> class _widget__
+	: public widget
+	{
+	protected:
+		virtual void XULWDGReport( const char *Message )
+		{
+			_Report( Target(), Message );
+		}
+	};
+
+	typedef _widget__<xulwdg::broadcaster__<trunk___>> broadcaster__;
 
 	void _Report(
 		xulftk::trunk___ &Trunk,

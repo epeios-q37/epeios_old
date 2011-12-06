@@ -234,6 +234,9 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 
 	AttributeAttribute.Init( NamespaceWithSeparator );
 	AttributeAttribute.Append( ATTRIBUTE_ATTRIBUTE );
+
+	XMLNS.Init( "xmlns:" );
+	XMLNS.Append( Namespace );
 }
 
 static mdr::size__ Fill_(
@@ -1096,7 +1099,7 @@ status__ xpp::_extended_parser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tSpecialAttribute:
-			Continue = true;
+			Status = sOK;
 			break;
 		case xml::tStartTagClosed:
 			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
@@ -1228,14 +1231,15 @@ ERRProlog
 	xml::token__ Token = xml::t_Undefined;
 	bso::bool__ Continue = true;
 	xml::parser___ Parser;
+	xtf::extended_text_iflow__ RelayXFlow;
 ERRBegin
 	PFlow.Init( XFlow, Criterions );
-	XFlow.Init( PFlow );
+	RelayXFlow.Init( PFlow );
 
-	Parser.Init( XFlow, xml::ehKeep );
+	Parser.Init( RelayXFlow, xml::ehKeep );
 
 	while ( Continue ) {
-		switch( Parser.Parse( xml::tfAllButUseless ) ) {
+		switch( Parser.Parse( xml::tfAll & ~xml::tfStartTagClosed ) ) {
 		case xml::tProcessingInstruction:
 			Writer.GetFlow() << Parser.DumpData();
 			
@@ -1247,6 +1251,7 @@ ERRBegin
 			Writer.PushTag( Parser.TagName() );
 			break;
 		case xml::tAttribute:
+		case xml::tSpecialAttribute:
 			Writer.PutAttribute( Parser.AttributeName(), Parser.Value() );
 			break;
 		case xml::tValue:

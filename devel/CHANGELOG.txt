@@ -1,5 +1,9 @@
 $Id$
 
+05/11/2011 :
+	- FRDRGY :
+		- Rajout 'paths::backend_selection__'.
+
 03/12/2011 :
 	- NSXPCM :
 		- Ajout paramètre 'Event' à '_generic__::Init(...)'.

@@ -1240,6 +1240,7 @@ status__ rgstry::FillRegistry(
 	status__ Status = s_Undefined;
 ERRProlog
 	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
 	FNM_BUFFER___ DirectoryBuffer;
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
@@ -1248,10 +1249,12 @@ ERRBegin
 		ERRReturn;
 	}
 
+	XFlow.Init( FFlow );
+
 	if ( Criterions.Directory.Amount() != 0 )
 		ERRu();
 
-	Status = FillRegistry( xtf::extended_text_iflow__( FFlow ), xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
+	Status = FillRegistry( XFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
 
 	if ( Status == sParseError )
 		if ( Context.FileName.Amount() == 0 )

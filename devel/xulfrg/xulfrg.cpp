@@ -64,6 +64,9 @@ using namespace xulfrg;
 const char *xulfrg::paths::parameters::Storage = PARAMETERS "@Storage";
 const char *xulfrg::paths::parameters::Target = PARAMETERS;
 
+#define BACKEND_SELECTION	"BackendSelection" SEPARATOR
+const char *xulfrg::paths::backend_selection__::Mode = BACKEND_SELECTION "@Mode";
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

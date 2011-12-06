@@ -73,6 +73,10 @@ namespace xulfrg {
 			static const char *Storage;
 			static const char *Target;
 		};
+		struct backend_selection__
+		{
+			static const char *Mode;
+		};
 	};
 
 	using frdrgy::registry_;
@@ -92,6 +96,12 @@ namespace xulfrg {
 		return Registry.GetValue( paths::parameters::Target, Value );
 	}
 
+	inline bso::bool__ GetRawBackendSelectionMode(
+		const rgstry::multi_level_registry_ &Registry,
+		str::string_ &Value )
+	{
+		return Registry.GetValue( paths::backend_selection__::Mode, Value );
+	}
 }
 
 /*$END$*/

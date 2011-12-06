@@ -56,10 +56,18 @@ public:
 /*$BEGIN$*/
 
 #include "xulftk.h"
+#include "xulfrg.h"
+
+#define PREFIX XULFSF_NAME	"_"
 
 using namespace xulfsf;
 
 using nsxpcm::event__;
+
+void xulfsf::backend_location_radiogroup__::XULWDGOnEvent( nsxpcm::event__ Event )
+{
+	Target().UI().SessionForm().Update();
+}
 
 static void DisableAllButSelected_(
 	const str::string_ &Value,
@@ -79,22 +87,82 @@ static void DisableAllButSelected_(
 	Broadcasters.Predefined.Disable( Predefined );
 }
 
-
-void xulfsf::backend_location_radiogroup__::XULWDGOnEvent( nsxpcm::event__ Event )
+enum backend_selection_mode__
 {
-	Target().UI().SessionForm().Update();
+	bsmBasic,		// Sélection dans une liste seulement.
+	bsmAdvanced,	// + possibilité de sasir adresse:port pour un 'daemon'.
+	bsmExpert,		// + possibilité de sélctionné une bibliothèque dynamique.
+	bsm_amount,
+	bsm_Undefined
+};
+
+static backend_selection_mode__ GetBackendSelectionMode_( const rgstry::multi_level_registry_ &Registry )
+{
+	backend_selection_mode__ Mode = bsmBasic;	// Mode par défaut.
+ERRProlog
+	str::string RawMode;
+ERRBegin
+	RawMode.Init();
+	
+	if ( xulfrg::GetRawBackendSelectionMode( Registry, RawMode ) ) {
+		if ( RawMode == "Export" )
+			Mode = bsmExpert;
+		else if ( RawMode == "Advanced" )
+			Mode = bsmAdvanced;
+		else if ( RawMode == "Basic" ) 
+			Mode = bsmBasic;
+		else
+			Mode = bsm_Undefined;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Mode;
+}
+
+bso::bool__ HideUnusedBackendSelectionMode_( 
+	const rgstry::multi_level_registry_ &Registry,
+	xulfsf::session_form__::widgets__::broadcasters__ &Broadcasters )
+{
+	bso::bool__ Success = true;
+	bso::bool__ Embedded = true, Daemon = true, Predefined = true, MultiBackendSelectionMode = true;
+
+	switch ( GetBackendSelectionMode_( Registry ) ) {
+	default:
+		Success = false;
+	case bsmBasic:
+		Daemon = false;
+		MultiBackendSelectionMode = false;
+	case bsmAdvanced:
+		Embedded = false;
+		break;
+	case bsmExpert:
+		break;
+	}
+
+	Broadcasters.Embedded.Show( Embedded );
+	Broadcasters.Daemon.Show( Daemon );
+	Broadcasters.Predefined.Show( Predefined );
+	Broadcasters.MultiBackendSelectionMode.Show(  MultiBackendSelectionMode );
+
+	return Success;
+
 }
 
 void xulfsf::session_form__::Update( void )
 {
 ERRProlog
 	str::string Value;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Value.Init();
 
 	_Trunk->UI().SessionForm().Widgets.BackendLocationRadiogroup.GetSelectedItemValue( Value );
 
-	DisableAllButSelected_( Value, _Trunk->UI().SessionForm().Widgets.Broadcasters );
+	DisableAllButSelected_( Value, Widgets.Broadcasters );
+
+	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Widgets.Broadcasters ) )
+		_Trunk->UI().LogAndPrompt( _Trunk->Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -132,6 +200,7 @@ static void Register_(
 	Register_( Trunk, Broadcasters.Embedded ,"bdcEmbedded" );
 	Register_( Trunk, Broadcasters.Daemon ,"bdcDaemon" );
 	Register_( Trunk, Broadcasters.Predefined ,"bdcPredefined" );
+	Register_( Trunk, Broadcasters.MultiBackendSelectionMode ,"bdcMultiBackendSelectionMode" );
 }
 
 static void Register_(
