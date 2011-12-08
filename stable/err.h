@@ -108,7 +108,7 @@ namespace err {
 		phb = 256,
 		// prohibibition error; a prohibited fonction was called.
 		lmt = 512,
-		// limitation error; a software limitation xas reached.
+		// limitation error; a software limitation was reached.
 		mem = 1024,
 		// memory error (all memory type).
 		ext = 2048,

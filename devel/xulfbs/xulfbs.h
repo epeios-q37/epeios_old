@@ -74,50 +74,43 @@ namespace xulfrd {
 	class ui___;
 }
 
-#define XULFBS__WIDGET_COMMON( widget, name )\
-	class name\
-	: public _widget__<widget<xulftk::trunk___>>\
-	{
+# define XULFBS_REH( name )	XULFBS_EH( name, nsxpcm::efCommand );
 
-// Sensitive widget (reacts to events).
-#define XULFBS_SWIDGET( widget, name )\
-	XULFBS__WIDGET_COMMON( widget, name )\
-	protected:\
-		virtual void XULWDGOnEvent( nsxpcm::event__ Event );\
-	}
-
-// Unsensitive widget (reacts to no event).
-#define XULFBS_UWIDGET( widget, name )\
-	XULFBS__WIDGET_COMMON( widget, name )\
-	}
-
-#define XULFBS_WINDOW( name )		XULFBS_SWIDGET( xulwdg::window__, name )
-#define XULFBS_COMMAND( name )		XULFBS_SWIDGET( xulwdg::command__, name )
-//#define XULFBS_BROADCASTER( name )	XULFBS_UWIDGET( xulwdg::broadcaster__, name )
-
+# define XULFBS_W( widget, name )	typedef xulfbs::widget__<nsxpcm::widget> name;
 
 namespace xulfbs {
 
 	using xulftk::trunk___;
-	using xulfrd::ui___;
+
+	void _Report(
+		trunk___ &Trunk,
+		const char *Message );
 
 	typedef nsxpcm::ui_core__ _ui_core__;
 
-	template <typename widget> class _widget__
-	: public widget
+	template <typename widget> E_TTCLONE__( xulwdg::widget__<E_COVER2( xulftk::trunk___, widget )>, widget__ );
+
+	template <int events> E_TTCLONE__( xulwdg::event_handler__<E_COVER2( xulftk::trunk___, events )>, _event_handler__ );
+
+	template <int events> class event_handler__
+	: public _event_handler__<events>
 	{
 	protected:
-		virtual void XULWDGReport( const char *Message )
+		virtual void NSXPCMOnErr( const char *Message )
 		{
 			_Report( Target(), Message );
 		}
 	};
 
-	typedef _widget__<xulwdg::broadcaster__<trunk___>> broadcaster__;
+# define XULFBS_EH( name, events )\
+	class name\
+	: public event_handler__<events>\
+	{\
+	protected:\
+		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
+	};
 
-	void _Report(
-		xulftk::trunk___ &Trunk,
-		const char *Message );
+	XULFBS_W( broadcaster__, broadcaster__ );
 }
 
 /*$END$*/

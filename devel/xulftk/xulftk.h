@@ -284,6 +284,10 @@ namespace xulftk {
 
 			return frdkrn::sOK;
 		}
+		void XULWDGReport( const char *Message )	// Pseudo méthode virtuelle.
+		{
+			_UI->LogAndPrompt( Message );
+		}
 		_error_reporting_functions__ &DefaultErrorReportingFunctions( void )
 		{
 			return _DefaultErrorReportingFunctions;

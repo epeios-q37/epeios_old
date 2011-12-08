@@ -70,10 +70,10 @@ extern class ttr_tutor &XULFDGTutor;
 namespace xulfdg {
 	using namespace xulfbs;
 
-	XULFBS_COMMAND( jsconsole_command__ );
-	XULFBS_COMMAND( dominspector_command__ );
-	XULFBS_COMMAND( frontend_error_command__ );
-	XULFBS_COMMAND( backend_error_command__ );
+	XULFBS_REH( jsconsole_eh__ );
+	XULFBS_REH( dominspector_eh__ );
+	XULFBS_REH( frontend_error_eh__ );
+	XULFBS_REH( backend_error_eh__ );
 
 	struct debug_dialog__
 	: public _ui_core__
@@ -81,35 +81,21 @@ namespace xulfdg {
 	private:
 		xulftk::trunk___ *_Trunk;
 	public:
-		struct widgets__ {
-			struct broadcasters__ {
-				void reset( bso::bool__ )
-				{
-				}
-			} Broadcasters;
-			struct commands__ {
-				jsconsole_command__ JSConsole;
-				dominspector_command__ DOMInspector;
-				frontend_error_command__ FrontendError;
-				backend_error_command__ BackendError;
-				void reset( bso::bool__ P  )
-				{
-					JSConsole.reset( P );
-					DOMInspector.reset( P );
-					FrontendError.reset( P );
-					BackendError.reset( P );
-				}
-			} Commands;
-			void reset( bso::bool__ P = true )
-			{
-				Broadcasters.reset( P );
-				Commands.reset( P );
-			}
-		} Widgets;
+		struct broadcasters__ {
+			broadcaster__
+				JSConsole,
+				DOMInspector,
+				FrontendError,
+				BackendError;
+		} Broadcasters;
+		struct event_handlers__ {
+			jsconsole_eh__ JSConsole;
+			dominspector_eh__ DOMInspector;
+			frontend_error_eh__ FrontendError;
+			backend_error_eh__ BackendError;
+		} EventHandlers;
 		void reset( bso::bool__ P = true )
 		{
-			Widgets.reset( P );
-
 			_Trunk = NULL;
 		}
 		debug_dialog__( void )

@@ -70,6 +70,8 @@ public:
 #include "nsIDirectoryService.h"
 #include "nsIFormHistory.h"
 #include "nsIDOMNodeList.h"
+#include "nsIDOMNamedNodeMap.h"
+#include "nsIDOMAttr.h"
 
 #include "xpp.h"
 #include "txf.h"
@@ -1307,114 +1309,21 @@ ERREnd
 ERREpilog
 }
 
-
-
-static event__ Convert_( const char *RawEvent )
+void nsxpcm::event_handler__::Init( void )
 {
-	event__ Event = e_Undefined;
-
-	if ( !strcmp( RawEvent, "command" ) )
-		Event = eCommand;
-	else if ( !strcmp( RawEvent, "input" ) )
-		Event = eInput;
-	else if ( !strcmp( RawEvent, "click" ) )
-		Event = eClick;
-	else if ( !strcmp( RawEvent, "dblclick" ) )
-		Event = eDblClick;
-	else if ( !strcmp( RawEvent, "focus" ) )
-		Event = eFocus;
-	else if ( !strcmp( RawEvent, "blur" ) )
-		Event = eBlur;
-	else if ( !strcmp( RawEvent, "select" ) )
-		Event = eSelect;
-	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
-		Event = eAttributeChange;
-	else if ( !strcmp( RawEvent, "keypress" ) )
-		Event = eKeyPress;
-	else if ( !strcmp( RawEvent, "load" ) )
-		Event = eLoad;
-	else if ( !strcmp( RawEvent, "close" ) )
-		Event = eClose;
-	else
-		ERRl();
-
-	return Event;
-}
-
-bso::bool__ nsxpcm::widget_core__::Handle( nsIDOMEvent *RawEvent )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	nsEmbedString String;
-	str::string EventString;
-	event__ Event = e_Undefined;
-	STR_BUFFER___ StrBuffer;
-ERRBegin
-	// Sauvegarde pour la gestion d'évènements imbriqués.
-	nsIDOMEvent *RawEventBuffer = _EventData._RawEvent;
-	nsIDOMMutationEvent *MutationEventBuffer = _EventData._MutationEvent;
-	nsIDOMKeyEvent *KeyEventBuffer = _EventData._KeyEvent;
-
-	_EventData._RawEvent = RawEvent;
-
-	T( RawEvent->GetType( String ) );
-
-	EventString.Init();
-
-	nsxpcm::Transform( String, EventString );
-
-	Event = Convert_( EventString.Convert( StrBuffer ) );
-
-	if ( EventString == "DOMAttrModified" )
-		_EventData._MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
-
-	if ( EventString == "keypress" )
-		_EventData._KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
-
-	if ( _EventData._EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
-		ERRl();
-
-	if ( !( _EventData._EventsToIgnore & ( 1 << Event ) ) )
-		if ( _EventHandler != NULL )
-			_EventHandler->OnEvent( _EventData, Event );
-		else
-			NSXPCMOnEvent( Event );
-
-	if ( _EventData._EventImbricationLevel-- < -1 )
-		ERRc();
-
-	_EventData._RawEvent = RawEventBuffer;
-	_EventData._MutationEvent = MutationEventBuffer;
-	_EventData._KeyEvent = KeyEventBuffer;
-
-	Success = true;
-ERRErr
-	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iAbort ) )
-		Success = true;	// L'erreur a été déjà traite (ou va l'être ci-dessous) ; plus la peine de la remonter.
-	NSXPCM_ERR( _Window );
-ERREnd
-ERREpilog
-	return Success;
-}
-
-
-void nsxpcm::widget_core__::Init(
-	nsISupports *Supports,
-	nsIDOMWindow *Window,
-	int Events )
-{
-#ifdef NSXPCM_DBG
-	if ( _Supports != NULL )
-		ERRu();
-#endif
 	reset();
 
-	_Window = GetWindowInternal( Window );
-	_Supports = Supports;
-
-	nsIDOMEventTarget *EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
-
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventData._EventListener );
+
+	_EventData._EventListener->Init( *this );
+}
+
+
+void nsxpcm::event_handler__::Add(
+	nsISupports *Supports,
+	int Events )
+{
+	nsIDOMEventTarget *EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
 	if ( Events & efCommand )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventData._EventListener, false ) != NS_OK )
@@ -1459,18 +1368,193 @@ void nsxpcm::widget_core__::Init(
 	if ( Events & efClose )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
-
-	_EventData._EventListener->Init( *this );
 }
 
-NS_IMPL_ISUPPORTS1(nsxpcm::event_listener, nsxpcm::ievent_listener)
+static event__ Convert_( const char *RawEvent )
+{
+	event__ Event = e_Undefined;
+
+	if ( !strcmp( RawEvent, "command" ) )
+		Event = eCommand;
+	else if ( !strcmp( RawEvent, "input" ) )
+		Event = eInput;
+	else if ( !strcmp( RawEvent, "click" ) )
+		Event = eClick;
+	else if ( !strcmp( RawEvent, "dblclick" ) )
+		Event = eDblClick;
+	else if ( !strcmp( RawEvent, "focus" ) )
+		Event = eFocus;
+	else if ( !strcmp( RawEvent, "blur" ) )
+		Event = eBlur;
+	else if ( !strcmp( RawEvent, "select" ) )
+		Event = eSelect;
+	else if ( !strcmp( RawEvent, "DOMAttrModified" ) )
+		Event = eAttributeChange;
+	else if ( !strcmp( RawEvent, "keypress" ) )
+		Event = eKeyPress;
+	else if ( !strcmp( RawEvent, "load" ) )
+		Event = eLoad;
+	else if ( !strcmp( RawEvent, "close" ) )
+		Event = eClose;
+
+	return Event;
+}
+
+bso::bool__ nsxpcm::event_handler__::Handle( nsIDOMEvent *RawEvent )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	nsEmbedString String;
+	str::string EventString;
+	event__ Event = e_Undefined;
+	STR_BUFFER___ StrBuffer;
+ERRBegin
+	// Sauvegarde pour la gestion d'évènements imbriqués.
+	nsIDOMEvent *RawEventBuffer = _EventData._RawEvent;
+	nsIDOMMutationEvent *MutationEventBuffer = _EventData._MutationEvent;
+	nsIDOMKeyEvent *KeyEventBuffer = _EventData._KeyEvent;
+
+	_EventData._RawEvent = RawEvent;
+
+	T( RawEvent->GetType( String ) );
+
+	EventString.Init();
+
+	nsxpcm::Transform( String, EventString );
+
+	Event = Convert_( EventString.Convert( StrBuffer ) );
+
+	if ( Event == e_Undefined )
+		ERRl();
+
+	if ( EventString == "DOMAttrModified" )
+		_EventData._MutationEvent = QueryInterface<nsIDOMMutationEvent>( RawEvent );
+
+	if ( EventString == "keypress" )
+		_EventData._KeyEvent = QueryInterface<nsIDOMKeyEvent> ( RawEvent );
+
+	if ( _EventData._EventImbricationLevel++ == NSXPCM__EVENT_IMBRICATION_LEVEL_MAX )
+		ERRl();
+
+	if ( !( _EventData._EventsToIgnore & ( 1 << Event ) ) )
+/*		if ( _EventHandler != NULL )
+			_EventHandler->OnEvent( _EventData, Event );
+		else
+	*/		_OnEvent( _EventData, Event );
+
+	if ( _EventData._EventImbricationLevel-- < -1 )
+		ERRc();
+
+	_EventData._RawEvent = RawEventBuffer;
+	_EventData._MutationEvent = MutationEventBuffer;
+	_EventData._KeyEvent = KeyEventBuffer;
+
+	Success = true;
+ERRErr
+	if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iAbort ) )
+		Success = true;	// L'erreur a été déjà traite (ou va l'être ci-dessous) ; plus la peine de la remonter.
+//	NSXPCM_ERR( _Window );
+ERREnd
+ERREpilog
+	return Success;
+}
+
+static event__ GetEventIfConcerned_(
+	nsIDOMNode *Node,
+	const str::string_ &Id,
+	const str::string_ &NameSpaceWithSeparator )
+{
+	event__ Event = e_Undefined;
+ERRProlog
+	nsEmbedString RawName, RawValue;
+	str::string Name, Value;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	nsIDOMAttr *Attribute = nsxpcm::QueryInterface<nsIDOMAttr>( Node );
+
+	Attribute->GetName( RawName );
+
+	Name.Init();
+	nsxpcm::Transform( RawName, Name );
+
+	if ( Name.Amount() < NameSpaceWithSeparator.Amount() )
+		ERRReturn;
+
+	if ( str::Compare( Name, NameSpaceWithSeparator, Name.First(), NameSpaceWithSeparator.First(), NameSpaceWithSeparator.Amount() ) != 0 )
+		ERRReturn;
+
+	Name.Remove( Name.First(), NameSpaceWithSeparator.Amount() );
+
+	Event = Convert_( Name.Convert( Buffer ) );
+
+	Attribute->GetValue( RawValue );
+
+	Value.Init();
+	nsxpcm::Transform( RawValue, Value );
+
+	if ( Value != Id )
+		Event = e_Undefined;
+ERRErr
+ERREnd
+ERREpilog
+	return Event;
+}
+
+static void AttachIfConcerned_(
+	nsIDOMNode *Node,
+	nsIDOMNamedNodeMap *Attributes,
+	const str::string_ &Id,
+	event_handler__ &EventHandler )
+{
+	PRUint32 Amount;
+	nsIDOMNode *AttributeNode = NULL;
+	event__ Event = e_Undefined;
+	
+	Attributes->GetLength( &Amount );
+
+	while ( Amount-- != 0 )  {
+		Attributes->Item( Amount, &AttributeNode );
+
+		if ( ( Event = GetEventIfConcerned_( AttributeNode, Id, str::string( "xx:" ) ) ) != e_Undefined )
+			EventHandler.Add( Node, 1 << Event );
+	}
+}
+
+void nsxpcm::Attach(
+	nsIDOMDocument *Document,
+	const str::string_ &Id,
+	event_handler__ &EventHandler )
+{
+ERRProlog
+	nsxpcm::browser__ Browser;
+	nsIDOMNode *Node = NULL;
+	nsIDOMNamedNodeMap *Attributes = NULL;
+ERRBegin
+	Node = Document;
+	Browser.Init( Node );
+
+	while ( Node != NULL ) {
+		Node->GetAttributes( &Attributes ); 
+
+		if ( Attributes != NULL )
+			AttachIfConcerned_( Node, Attributes, Id, EventHandler );
+
+		Node = Browser.GetNext();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+NS_IMPL_ISUPPORTS1(nsxpcm::event_listener__, nsxpcm::ievent_listener__)
 
 // ATTENTION, IMPORTANT : en cas de comportement étrange, voir remarque concernant cet objet dans le '.h' !
-NS_IMETHODIMP nsxpcm::event_listener::HandleEvent(nsIDOMEvent *Event)
+NS_IMETHODIMP nsxpcm::event_listener__::HandleEvent(nsIDOMEvent *Event)
 {
 	nsresult NSResult = NS_OK;
 
-	if ( !_Widget->Handle( Event ) )
+	if ( !_EventHandler->Handle( Event ) )
 		NSResult = NS_ERROR_FAILURE;
 
     return NSResult;

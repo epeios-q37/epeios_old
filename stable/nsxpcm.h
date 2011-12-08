@@ -168,10 +168,6 @@ extern class ttr_tutor &NSXPCMTutor;
 	}\
 	ERRRst()
 
-// Permet de redonner la main immédiatement à 'Gecko'.
-# define ERRGecko()	ERRI( iGecko )
-
-
 namespace nsxpcm {
 	using str::string_;
 	using str::string;
@@ -401,6 +397,9 @@ namespace nsxpcm {
 
 		T( Document->GetElementById( EId, &Element ) );
 
+		if ( Element == NULL )	// Chercher un élément inexistant ne provoque pas d'erreur.
+			ERRc();
+
 		return Element;
 	}
 
@@ -414,6 +413,9 @@ namespace nsxpcm {
 		Transform( Id, EId );
 
 		T( Document->GetElementById( EId, &Element ) );
+
+		if ( Element == NULL )	// Chercher un élément inexistant ne provoque pas d'erreur.
+			ERRc();
 
 		return Element;
 	}
@@ -1140,7 +1142,7 @@ namespace nsxpcm {
 	class event_data__
 	{
 	private:
-		nsCOMPtr<struct event_listener> _EventListener;
+		nsCOMPtr<struct event_listener__> _EventListener;
 		nsIDOMEvent *_RawEvent;
 		nsIDOMMutationEvent *_MutationEvent;
 		nsIDOMKeyEvent *_KeyEvent;
@@ -1214,13 +1216,51 @@ namespace nsxpcm {
 
 			return Buffer;
 		}
-		friend class widget_core__;
+		friend class event_handler__;
 	};
 
-	class _event_handler__ {
+	class event_handler__ {
+	private:
+		event_data__ _EventData;
+		void _OnErr( void )
+		{
+			if ( ERRMajor != err::ok ) {
+				err::buffer__ Buffer;
+
+				NSXPCMOnErr( err::Message( Buffer )  );
+			} else
+				NSXPCMOnErr( NULL );
+		}
+		void _ErrHandling( void )
+		{
+			if ( ERRMajor == err::itn ) {
+				if ( ERRMinor != err::iAbort )
+					_OnErr(); 
+			} else
+				_OnErr(); 
+
+			if ( ERRMajor != err::ok )
+				ERRRst()
+		}
+		void _OnEvent(
+			event_data__ &Data,
+			event__ Event )
+		{
+		ERRProlog
+		ERRBegin
+			NSXPCMOnEvent( Data, Event );
+		ERRErr
+			_ErrHandling();
+		ERREnd
+		ERREpilog
+		}
 	protected:
+		event_data__ &EventData( void )
+		{
+			return _EventData;
+		}
 		virtual void NSXPCMOnEvent(
-			event_data__ &,
+			event_data__ &EventData,
 			event__ Event )
 		{
 			NSXPCMOnEvent( Event );
@@ -1229,56 +1269,60 @@ namespace nsxpcm {
 		{
 			ERRu();
 		}
+		virtual void NSXPCMOnErr( const char *Message ) = 0;	// Appelé lors d'un 'ERR...(...)'.
+																/* ATTENTION : si 'Message' == 'NULL', alors les informations relatives à l'erreur ne sont pas disponibles
+																(erreur lancée à partir d'une bibliothèque dynamique, par exemple), et on doit se débrouller pour les récupèrer
+																et faire une remise à 0 de l'erreur. */
 	public:
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
-			// A des fins de standardisation.
+			_EventData.reset( P );
 		}
-		_event_handler__( void )
+		E_CVDTOR( event_handler__ );
+		void Init( void );
+		void nsxpcm::event_handler__::Add(
+			nsISupports *Supports,
+			int Events );
+		void Add(
+			nsIDOMWindow *Window,
+			const str::string_ &Id,
+			int Events )
 		{
-			reset( false );
+			Add( nsxpcm::GetElementById( GetDocument( Window ), Id ), Events );
 		}
-		~_event_handler__( void )
+		void Add(
+			nsIDOMWindow *Window,
+			const char *Id,
+			int Events )
 		{
-			reset();
+			Add( Window, str::string( Id ), Events );
 		}
-		void Init( void )
+		bso::bool__ Handle( nsIDOMEvent *RawEvent );
+		int SetEventsToIgnore( int Events )
 		{
-			// A des fins de standardisation.
+			return _EventData.SetEventsToIgnore( Events );
 		}
-		void OnEvent(
-			event_data__ &Data,
-			event__ Event )
+		int AddEventsToIgnore( int Events )
 		{
-			NSXPCMOnEvent( Data, Event );
+			return _EventData.AddEventsToIgnore( Events );
 		}
 	};
 
-	typedef _event_handler__ event_handler__;
+	void Attach(
+		nsIDOMDocument *Document,
+		const str::string_ &Id,
+		event_handler__ &EventHandler );
 
 	class widget_core__
 	{
 	private:
 		nsIDOMWindowInternal *_Window;
 		nsISupports *_Supports;
-		event_data__ _EventData;
-		_event_handler__ *_EventHandler;	// Si défini, est prioritaire sur le traitement des évènements défini par surcharge.
-	protected:
-		virtual void NSXPCMOnEvent( event__ Event )
-		{
-			ERRu();
-		}
-		event_data__ &EventData( void )
-		{
-			return _EventData;
-		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_Window = NULL;
 			_Supports = NULL;
-			_EventData.reset( P );
-			_EventHandler = NULL;
 		}
 		widget_core__( void )
 		{
@@ -1290,25 +1334,28 @@ namespace nsxpcm {
 		}
 		void Init(
 			nsISupports *Supports,
-			nsIDOMWindow *Window,
-			int Events );
-		void Init(
-			nsIDOMWindow *Window,
-			const str::string_ &Id,
-			int Events )
+			nsIDOMWindow *Window )
 		{
-			Init( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window, Events );
+# ifdef NSXPCM_DBG
+			if ( _Supports != NULL )
+				ERRu();
+# endif
+			reset();
+
+			_Window = GetWindowInternal( Window );
+			_Supports = Supports;
 		}
 		void Init(
 			nsIDOMWindow *Window,
-			const char *Id,
-			int Events )
+			const str::string_ &Id )
 		{
-			Init( Window, str::string( Id ), Events );
+			Init( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window );
 		}
-		void SupersedEventHandling( _event_handler__ &EventHandler )
+		void Init(
+			nsIDOMWindow *Window,
+			const char *Id )
 		{
-			_EventHandler = &EventHandler;
+			Init( Window, str::string( Id ) );
 		}
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
 		nsIDOMWindowInternal *GetWindow( void ) const
@@ -1335,14 +1382,6 @@ namespace nsxpcm {
 		nsIDOMElement *GetElement( void )
 		{
 			return QueryInterface<nsIDOMElement>( _Supports );
-		}
-		int SetEventsToIgnore( int Events )
-		{
-			return _EventData.SetEventsToIgnore( Events );
-		}
-		int AddEventsToIgnore( int Events )
-		{
-			return _EventData.AddEventsToIgnore( Events );
 		}
 	};
 
@@ -1814,6 +1853,7 @@ namespace nsxpcm {
 		}
 		/* Par défaut (avec 'SkipSelectEvent' à false, un 'ClearSelection' lance un évènement 'select'.
 		Cela peut être évité en mettant 'SkipSelectEvent' à 'true'. */
+#if 0
 		void ClearSelection( bso::bool__ SkipSelectEvent )
 		{
 			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : ef_None );
@@ -1822,6 +1862,7 @@ namespace nsxpcm {
 
 			SetEventsToIgnore( Buffer );
 		}
+#endif
 	};
 
 	class broadcaster__
@@ -2598,7 +2639,7 @@ interface eevent_listener
 */
 
 namespace nsxpcm {
-	class NS_NO_VTABLE NS_SCRIPTABLE ievent_listener
+	class NS_NO_VTABLE NS_SCRIPTABLE ievent_listener__
 	: public nsIDOMEventListener
 	{
 	public: 
@@ -2613,46 +2654,39 @@ namespace nsxpcm {
 	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modifications
 	de cet objet soient prises en compte.
 	*/
-	struct event_listener
-	: ievent_listener
+	struct event_listener__
+	: ievent_listener__
 	{
+	private:
+		event_handler__ *_EventHandler;
+	protected:
+		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	public:
 		NS_DECL_ISUPPORTS
 	//  NS_DECL_IEEVENT_LISTENER
-		  event_listener()
-		  {
-			  reset( false );
-		  }
-		  ~event_listener()
-		  {
-			  reset();
-		  }
 		  void reset( bso::bool__ = true )
 		  {
-			  _Widget = NULL;
+			  _EventHandler = NULL;
 		  }
-	protected:
-		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
-	private:
-		widget_core__ *_Widget;
+		E_CVDTOR( event_listener__ );
 	public:
-		void Init( widget_core__ &Widget )
+		void Init( event_handler__ &EventHandler )
 		{
 #ifdef NSXPCM_DBG
-			if ( _Widget != NULL )
+			if ( _EventHandler != NULL )
 				ERRu();
 #endif
 			reset();
 
-			_Widget = &Widget;
+			_EventHandler = &EventHandler;
 		}
 	};
 
-	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener)
+	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
 }
 
 
-	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener, NSXPCM_IEVENT_LISTENER_IID)
+	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener__, NSXPCM_IEVENT_LISTENER_IID)
 
 #define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;1"
 #define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
@@ -2716,7 +2750,7 @@ namespace nsxpcm {
        NSXPCM_EVENT_LISTENER_CLASSNAME,\
        NSXPCM_EVENT_LISTENER_CID,\
        NSXPCM_EVENT_LISTENER_CONTRACTID,\
-	   nsxpcm::event_listenerConstructor,\
+	   nsxpcm::event_listener__Constructor,\
     }
 
 #ifdef NSXPCM__T_BUFFER

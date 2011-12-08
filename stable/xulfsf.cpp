@@ -64,14 +64,14 @@ using namespace xulfsf;
 
 using nsxpcm::event__;
 
-void xulfsf::backend_location_radiogroup__::XULWDGOnEvent( nsxpcm::event__ Event )
+void xulfsf::backend_location_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 	Target().UI().SessionForm().Update();
 }
 
 static void DisableAllButSelected_(
 	const str::string_ &Value,
-	session_form__::widgets__::broadcasters__ &Broadcasters )
+	session_form__::broadcasters__ &Broadcasters )
 {
 	bso::bool__ Embedded = true, Daemon = true, Predefined = true;
 
@@ -122,7 +122,7 @@ ERREpilog
 
 bso::bool__ HideUnusedBackendSelectionMode_( 
 	const rgstry::multi_level_registry_ &Registry,
-	xulfsf::session_form__::widgets__::broadcasters__ &Broadcasters )
+	xulfsf::session_form__::broadcasters__ &Broadcasters )
 {
 	bso::bool__ Success = true;
 	bso::bool__ Embedded = true, Daemon = true, Predefined = true, MultiBackendSelectionMode = true;
@@ -159,16 +159,16 @@ ERRBegin
 
 	_Trunk->UI().SessionForm().Widgets.BackendLocationRadiogroup.GetSelectedItemValue( Value );
 
-	DisableAllButSelected_( Value, Widgets.Broadcasters );
+	DisableAllButSelected_( Value, Broadcasters );
 
-	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Widgets.Broadcasters ) )
+	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Broadcasters ) )
 		_Trunk->UI().LogAndPrompt( _Trunk->Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void xulfsf::select_project_command__::XULWDGOnEvent( event__ )
+void xulfsf::select_project_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string Translation;
@@ -195,7 +195,7 @@ static void Register_(
 
 static void Register_(
 	trunk___ &Trunk,
-	session_form__::widgets__::broadcasters__ &Broadcasters )
+	session_form__::broadcasters__ &Broadcasters )
 {
 	Register_( Trunk, Broadcasters.Embedded ,"bdcEmbedded" );
 	Register_( Trunk, Broadcasters.Daemon ,"bdcDaemon" );
@@ -203,31 +203,29 @@ static void Register_(
 	Register_( Trunk, Broadcasters.MultiBackendSelectionMode ,"bdcMultiBackendSelectionMode" );
 }
 
-static void Register_(
+template <int events> static void Register_(
 	trunk___ &Trunk,
-	command__ &Command,
+	xulfbs::event_handler__<events> &EventHandler,
 	const char *Id )
 {
-	Command.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
+	EventHandler.Init( Trunk );
+	EventHandler.Add( Trunk.UI().SessionForm().Window(), Id );
 }
 
 static void Register_(
 	trunk___ &Trunk,
-	session_form__::widgets__::commands__ &Commands )
+	session_form__::event_handlers__ &EventHandlers )
 {
-	Register_( Trunk, Commands.SelectProject, "cmdSelectProject" );
+	Register_( Trunk, EventHandlers.BackendLocation, "rgpBackendLocation" );
+	Register_( Trunk, EventHandlers.SelectProject, "cmdSelectProject" );
 }
 
 static void Register_(
 	trunk___ &Trunk,
-	session_form__::widgets__ &Widgets,
-	nsIDOMWindow *Window )
+	session_form__::widgets__ &Widgets )
 {
-	Register_( Trunk, Widgets.Broadcasters );
-	Register_( Trunk, Widgets.Commands );
-
-	Widgets.ProjectFileNameTextbox.Init( Trunk, Window, "txbProjectFileName" );
-	Widgets.BackendLocationRadiogroup.Init( Trunk, Window, "rgpBackendLocation" );
+	Widgets.ProjectFileNameTextbox.Init( Trunk, Trunk.UI().SessionForm().Window(), "txbProjectFileName" );
+	Widgets.BackendLocationRadiogroup.Init( Trunk, Trunk.UI().SessionForm().Window(), "rgpBackendLocation" );
 }
 
 void xulfsf::RegisterSessionFormUI(
@@ -236,7 +234,9 @@ void xulfsf::RegisterSessionFormUI(
 {
 	Trunk.UI().SessionForm().Init( Window, Trunk );
 
-	Register_( Trunk, Trunk.UI().SessionForm().Widgets, Window );
+	Register_( Trunk, Trunk.UI().SessionForm().Broadcasters );
+	Register_( Trunk, Trunk.UI().SessionForm().EventHandlers );
+	Register_( Trunk, Trunk.UI().SessionForm().Widgets );
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().SessionForm().Document() );
 }

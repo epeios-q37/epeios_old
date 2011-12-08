@@ -1,5 +1,18 @@
 $Id$
 
+08/12/2011 :
+	- NSXPCM :
+		- Ajout variantes 'event_handler__::Init(...)'.
+	- XULFxx :
+		- Adaptation.
+	- XULWDG :
+		- Ajout variantes 'event_handler__::Init(...)'.
+
+
+07/12/2011 :
+	- NSXPCM :
+		- Refonte gestion d'évènements.
+
 05/11/2011 :
 	- FRDRGY :
 		- Rajout 'paths::backend_selection__'.

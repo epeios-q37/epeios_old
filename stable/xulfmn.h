@@ -70,15 +70,19 @@ extern class ttr_tutor &XULFMNTutor;
 namespace xulfmn {
 	using namespace xulfbs;
 
-	XULFBS_WINDOW( window__ );
-	XULFBS_COMMAND( about_command__ );
-	XULFBS_COMMAND( web_site_command__ );
-	XULFBS_COMMAND( debug_command__ );
-	XULFBS_COMMAND( new_project_command__ );
-	XULFBS_COMMAND( open_project_command__ );
-	XULFBS_COMMAND( close_project_command__ );
-	XULFBS_COMMAND( exit_command__ );
-	XULFBS_UWIDGET( xulwdg::deck__, main_deck__ );
+	XULFBS_EH( window_eh__, nsxpcm::efClose );
+	XULFBS_REH( about_eh__ );
+	XULFBS_REH( web_site_eh__ );
+	XULFBS_REH( debug_eh__ );
+	XULFBS_REH( new_project_eh__ );
+	XULFBS_REH( open_project_eh__ );
+	XULFBS_REH( close_project_eh__ );
+	XULFBS_REH( exit_eh__ );
+
+	XULFBS_REH( test_eh__ );
+
+	XULFBS_W( deck__, main_deck__ );
+	XULFBS_W( window__, window__ );
 
 	struct main__
 	: public _ui_core__
@@ -86,17 +90,22 @@ namespace xulfmn {
 	private:
 		xulftk::trunk___ *_Trunk;
 	public:
+		struct event_handlers__ {
+			window_eh__ Window;
+			new_project_eh__ NewProject;
+			open_project_eh__ OpenProject;
+			close_project_eh__ CloseProject;
+			about_eh__ About;
+			web_site_eh__ WebSite;
+			debug_eh__ Debug;
+			exit_eh__ Exit;
+			test_eh__ Test;
+		} EventHandlers;
+		struct broadcasters__ {
+			broadcaster__ CloseProject;
+		} Broadcasters;
 		struct widgets__ {
 			window__ Window;
-			struct commands__ {
-				new_project_command__ NewProject;
-				open_project_command__ OpenProject;
-				close_project_command__ CloseProject;
-				about_command__ About;
-				web_site_command__ WebSite;
-				debug_command__ Debug;
-				exit_command__ Exit;
-			} Commands;
 			main_deck__ MainDeck;
 		} Widgets;
 		void Init(

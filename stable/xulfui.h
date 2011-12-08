@@ -74,11 +74,11 @@ namespace xulfui {
 	private:
 		xulfmn::main__ *_Main;
 		xulfsf::session_form__ *_SessionForm;
+		xulfdg::debug_dialog__ *_DebugDialog;
 		nsIDOMWindow *_JSConsoleWindow;
 	protected:
 		virtual void XULFUIUpdate( void ) = 0;	// Mise à jour de l'interface.
 	public:
-		xulfdg::debug_dialog__ Debug;
 		void reset( bso::bool__ P = true )
 		{
 			if ( P )
@@ -88,6 +88,7 @@ namespace xulfui {
 			_Main = NULL;
 			_SessionForm = NULL;
 			_JSConsoleWindow = NULL;
+			_DebugDialog = NULL;
 		}
 		ui___( void )
 		{
@@ -105,7 +106,6 @@ namespace xulfui {
 
 			_Main = &Main;
 			_SessionForm = &SessionForm;
-			// 'Debug' est initialisé plus tard.
 		}
 		void Update( void )
 		{
@@ -126,6 +126,31 @@ namespace xulfui {
 				ERRu();
 #endif
 			return *_SessionForm;
+		}
+		xulfdg::debug_dialog__ &DebugDialog( void ) const
+		{
+#ifdef XULFUI_DBG
+			if ( _DebugDialog == NULL )
+				ERRu();
+#endif
+			return *_DebugDialog;
+		}
+		void CreateDebugDialog( void )
+		{
+			if ( _DebugDialog != NULL )
+				ERRc();
+
+			if ( ( _DebugDialog = new xulfdg::debug_dialog__ ) == NULL )
+				ERRa();
+		}
+		void DeleteDebugDialog( void )
+		{
+			if ( _DebugDialog == NULL )
+				ERRc();
+
+			delete _DebugDialog;
+
+			_DebugDialog = NULL;
 		}
 		void SaveParameters(
 			const char *AttributeName,

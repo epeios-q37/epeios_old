@@ -64,41 +64,41 @@ using namespace xulftk;
 
 void xulfdg::debug_dialog__::Update( void )
 {
-	Widgets.Commands.BackendError.Enable( _Trunk->Kernel().IsConnected() );
+	Broadcasters.BackendError.Enable( _Trunk->Kernel().IsConnected() );
 }
 
 
-void xulfdg::jsconsole_command__::XULWDGOnEvent( event__ )
+void xulfdg::jsconsole_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().UI().GetJSConsole();
-	Target().UI().Debug.Close();
+	Target().UI().DebugDialog().Close();
 }
 
-void xulfdg::dominspector_command__::XULWDGOnEvent( event__ )
+void xulfdg::dominspector_eh__::NSXPCMOnEvent( event__ )
 {
 	nsxpcm::GetDOMInspector( Target().UI().Main().Window() );
-	Target().UI().Debug.Close();
+	Target().UI().DebugDialog().Close();
 }
 
-void xulfdg::frontend_error_command__::XULWDGOnEvent( event__ )
+void xulfdg::frontend_error_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
-	Target().UI().Debug.Close();
+	Target().UI().DebugDialog().Close();
 	ERRI( iTest );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void xulfdg::backend_error_command__::XULWDGOnEvent( event__ )
+void xulfdg::backend_error_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	xulftk::trunk___ *Target = NULL;
 ERRBegin
 	Target = &this->Target();	// Target() est perdu lors du 'Close()' qui suit.
 
-	Target->UI().Debug.Close();
+	Target->UI().DebugDialog().Close();
 	Target->Kernel().ThrowError();
 ERRErr
 ERREnd
@@ -109,46 +109,44 @@ ERREpilog
 static void Register_(
 	trunk___ &Trunk,
 	broadcaster__ &Broadcaster,
-	nsIDOMWindow *Window,
 	const char *Id )
 {
-	Broadcaster.Init( Trunk, Window, Id );
+	Broadcaster.Init( Trunk, Trunk.UI().DebugDialog().Window(), Id );
 }
+
+#define I( name ) Broadcasters.name.Init( Trunk, Trunk.UI().DebugDialog().Window(), "bdc" #name );	
 
 static void Register_(
 	trunk___ &Trunk,
-	command__ &Command,
-	nsIDOMWindow *Window,
+	debug_dialog__::broadcasters__ &Broadcasters )
+{
+	I( JSConsole );
+	I( DOMInspector );
+	I( FrontendError );
+	I( BackendError );
+}
+
+#undef I
+
+template <int events> static void Register_(
+	trunk___ &Trunk,
+	xulfbs::event_handler__<events> &EventHandler,
 	const char *Id )
 {
-	Command.Init( Trunk, Window, Id );
+	EventHandler.Init( Trunk );
+	EventHandler.Add( Trunk.UI().DebugDialog().Window(), Id );
 }
+
+#define I( name ) Register_( Trunk, EventHandlers.name, "cmd" #name );	
 
 static void Register_(
 	trunk___ &Trunk,
-	debug_dialog__::widgets__::broadcasters__ &Broadcasters,
-	nsIDOMWindow *Window )
+	debug_dialog__::event_handlers__ &EventHandlers )
 {
-}
-
-static void Register_(
-	trunk___ &Trunk,
-	debug_dialog__::widgets__::commands__ &Commands,
-	nsIDOMWindow *Window )
-{
-	Register_( Trunk, Commands.JSConsole, Window, "cmdJSConsole" );
-	Register_( Trunk, Commands.DOMInspector, Window, "cmdDOMInspector" );
-	Register_( Trunk, Commands.FrontendError, Window, "cmdFrontendError" );
-	Register_( Trunk, Commands.BackendError, Window, "cmdBackendError" );
-}
-
-static void Register_(
-	trunk___ &Trunk,
-	debug_dialog__::widgets__ &Widgets,
-	nsIDOMWindow *Window )
-{
-	Register_( Trunk, Widgets.Broadcasters, Window );
-	Register_( Trunk, Widgets.Commands, Window );
+	I( JSConsole );
+	I( DOMInspector );
+	I( FrontendError );
+	I( BackendError );
 }
 
 void xulfdg::Register(
@@ -167,13 +165,14 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Trunk.UI().Debug.Init( Trunk, Window );
+	Trunk.UI().DebugDialog().Init( Trunk, Window );
 
-	Register_( Trunk, Trunk.UI().Debug.Widgets, Window );
+	Register_( Trunk, Trunk.UI().DebugDialog().Broadcasters );
+	Register_( Trunk, Trunk.UI().DebugDialog().EventHandlers );
 
-	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Debug.Document() );
+	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().DebugDialog().Document() );
 
-	Trunk.UI().Debug.Update();
+	Trunk.UI().DebugDialog().Update();
 ERRErr
 ERREnd
 ERREpilog

@@ -63,57 +63,64 @@ using nsxpcm::event__;
 
 void xulfmn::main__::Update( void )
 {
-	Widgets.Commands.CloseProject.Enable( _Trunk->Kernel().IsProjectInProgress() );
+	Broadcasters.CloseProject.Enable( _Trunk->Kernel().IsProjectInProgress() );
 }
 
-void xulfmn::window__::XULWDGOnEvent( event__ )
+void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().Exit();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 
-void xulfmn::new_project_command__::XULWDGOnEvent( event__ )
+void xulfmn::new_project_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string Id;
 ERRBegin
 	Id.Init();
 
-	Target().UI().Alert( GetId( Id ) );
+	Target().UI().Alert( "A implémenter !" );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void xulfmn::open_project_command__::XULWDGOnEvent( event__ )
+void xulfmn::open_project_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().ApplySession( xpp::criterions___() );
 }
 
-void xulfmn::close_project_command__::XULWDGOnEvent( event__ )
+void xulfmn::close_project_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().DropSession();
 }
 
-void xulfmn::exit_command__::XULWDGOnEvent( event__ )
+void xulfmn::exit_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().Exit();
 }
 
-void xulfmn::about_command__::XULWDGOnEvent( event__ )
+void xulfmn::about_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().BrowseInformations();
 }
 
-void xulfmn::web_site_command__::XULWDGOnEvent( event__ )
+void xulfmn::web_site_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().BrowseWEBSite();
 }
 
-void xulfmn::debug_command__::XULWDGOnEvent( event__ )
+void xulfmn::debug_eh__::NSXPCMOnEvent( event__ )
 {
+	Target().UI().CreateDebugDialog();
 	Target().ExposeSteering();
-	nsxpcm::OpenDialog( GetWindow(), "debug.xul", "_blank" );
+	nsxpcm::OpenDialog( Target().UI().Main().Window(), "debug.xul", "_blank" );
+	Target().UI().DeleteDebugDialog();
+}
+
+void xulfmn::test_eh__::NSXPCMOnEvent( event__ )
+{
+	Target().UI().Alert( "TEST !" );
 }
 
 
@@ -124,33 +131,44 @@ void xulfmn::debug_command__::XULWDGOnEvent( event__ )
 static void Register_(
 	trunk___ &Trunk,
 	broadcaster__ &Broadcaster,
-	nsIDOMWindow *Window,
 	const char *Id )
 {
-	Broadcaster.Init( Trunk, Window, Id );
+	Broadcaster.Init( Trunk, Trunk.UI().Main().Window(), Id );
 }
 
 static void Register_(
 	trunk___ &Trunk,
-	command__ &Command,
-	nsIDOMWindow *Window,
+	main__::broadcasters__ &Broadcasters )
+{
+	Register_( Trunk, Broadcasters.CloseProject, "bdcCloseProject" );
+}
+
+template <int events> static void Register_(
+	trunk___ &Trunk,
+	xulfbs::event_handler__<events> &EventHandler,
 	const char *Id )
 {
-	Command.Init( Trunk, Window, Id );
+	EventHandler.Init( Trunk );
+	EventHandler.Add( Trunk.UI().Main().Window(), Id );
 }
+
+#define I( name ) Register_( Trunk, EventHandlers.name, "cmd" #name );	
 
 static void Register_(
 	trunk___ &Trunk,
-	main__::widgets__::commands__ &Commands,
-	nsIDOMWindow *Window )
+	main__::event_handlers__ &EventHandlers )
 {
-	Register_( Trunk, Commands.NewProject, Window, "cmdNewProject" );
-	Register_( Trunk, Commands.OpenProject, Window, "cmdOpenProject" );
-	Register_( Trunk, Commands.CloseProject, Window, "cmdCloseProject" );
-	Register_( Trunk, Commands.Exit, Window, "cmdExit" );
-	Register_( Trunk, Commands.About, Window, "cmdAbout" );
-	Register_( Trunk, Commands.WebSite, Window, "cmdWebSite" );
-	Register_( Trunk, Commands.Debug, Window, "cmdDebug" );
+	I( NewProject );
+	I( OpenProject );
+	I( CloseProject );
+	I( Exit );
+	I( About );
+	I( WebSite );
+	I( Debug );
+
+	EventHandlers.Test.Init( Trunk );
+
+	nsxpcm::Attach( Trunk.UI().Main().Document(), str::string( "ehTest" ), EventHandlers.Test );
 }
 
 static void Register_(
@@ -159,7 +177,6 @@ static void Register_(
 	nsIDOMWindow *Window )
 {
 	Widgets.Window.Init( Trunk, Window, Window );
-	Register_( Trunk, Widgets.Commands, Window );
 	Widgets.MainDeck.Init( Trunk, Window, "dckMain" );
 }
 
@@ -169,6 +186,12 @@ void xulfmn::RegisterMainUI(
 {
 	Trunk.UI().Main().Init( Window, Trunk );
 
+	Trunk.UI().Main().EventHandlers.Window.Init( Trunk );
+	Trunk.UI().Main().EventHandlers.Window.Add( Window );
+
+
+	Register_( Trunk, Trunk.UI().Main().Broadcasters );
+	Register_( Trunk, Trunk.UI().Main().EventHandlers );
 	Register_( Trunk, Trunk.UI().Main().Widgets, Window );
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document() );

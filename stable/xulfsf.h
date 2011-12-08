@@ -70,13 +70,10 @@ extern class ttr_tutor &XULFSFTutor;
 namespace xulfsf {
 	using namespace xulfbs;
 
-	XULFBS_COMMAND( select_project_command__ );
-	XULFBS_UWIDGET( xulwdg::textbox__, project_filename_textbox__ );
-	XULFBS_BROADCASTER( embedded_broadcaster__ );
-	XULFBS_BROADCASTER( daemon_broadcaster__ );
-	XULFBS_BROADCASTER( predefined_broadcaster__ );
-	XULFBS_BROADCASTER( multi_backend_selection_mode_broadcaster__ );
-	XULFBS_SWIDGET( xulwdg::radiogroup__, backend_location_radiogroup__ );	// '<radiogroup observes=...>' et '<radiogroup command=...>' ne fonctionne pas.
+	XULFBS_REH( select_project_eh__ );
+	XULFBS_REH( backend_location_eh__ );
+	XULFBS_W( textbox__, project_filename_txb__ );
+	XULFBS_W( radiogroup__, backend_location_rgp__ );
 
 	struct session_form__
 	: public _ui_core__
@@ -84,18 +81,20 @@ namespace xulfsf {
 	private:
 		xulftk::trunk___ *_Trunk;
 	public:
+		struct broadcasters__ {
+			broadcaster__
+				Embedded,
+				Daemon,
+				Predefined,
+				MultiBackendSelectionMode;
+		} Broadcasters;
+		struct event_handlers__ {
+			select_project_eh__ SelectProject;
+			backend_location_eh__ BackendLocation;
+		} EventHandlers;
 		struct widgets__ {
-			struct broadcasters__ {
-				embedded_broadcaster__ Embedded;
-				daemon_broadcaster__ Daemon;
-				predefined_broadcaster__ Predefined;
-				multi_backend_selection_mode_broadcaster__ MultiBackendSelectionMode;
-			} Broadcasters;
-			struct commands__ {
-				select_project_command__ SelectProject;
-			} Commands;
-			project_filename_textbox__ ProjectFileNameTextbox;
-			backend_location_radiogroup__ BackendLocationRadiogroup;
+			project_filename_txb__ ProjectFileNameTextbox;
+			backend_location_rgp__ BackendLocationRadiogroup;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,

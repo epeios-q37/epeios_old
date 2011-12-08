@@ -93,71 +93,39 @@ extern class ttr_tutor &XULWDGTutor;
 
 namespace xulwdg {
 
-	template <typename target, typename widget, int events> class _generic__
+	template <typename target, typename widget> class widget__
 	: public widget
 	{
 	private:
 		target *_Target;
-		void _ErrHandling( void )
-		{
-			if ( ERRMajor == err::itn ) {
-				if ( ERRMinor != err::iAbort ) {
-					err::buffer__ Buffer;
-					XULWDGReport( err::Message( Buffer ) ); 
-				}
-			} else {
-				err::buffer__ Buffer;
-				XULWDGReport( err::Message( Buffer ) ); 
-			}
-			ERRRst()
-		}
-	protected:
-		virtual void XULWDGReport( const char *Message ) = 0;
-		virtual void XULWDGOnEvent( nsxpcm::event__ Event )
-		{
-			ERRc();	// Se produit pour les éléments dont on a défini une sensibilité à un évènement, sans mettre en place de gestionnaire.
-		}
-		virtual void NSXPCMOnEvent( nsxpcm::event__ Event )
-		{
-		ERRProlog
-		ERRBegin
-			XULWDGOnEvent( Event );
-		ERRErr
-			_ErrHandling();
-		ERREnd
-		ERREpilog
-		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			widget::reset( P );
 			_Target = NULL;
 		}
-		E_CVDTOR( _generic__ );
+		E_CVDTOR( widget__ );
 		void Init(
 			target &Target,
 			nsISupports *Supports,
-			nsIDOMWindow *Window,
-			int Events = events )
+			nsIDOMWindow *Window )
 		{
 			_Target = &Target;
-			widget::Init( Supports, Window, Events );
+			widget::Init( Supports, Window );
 		}
 		void Init( target &Target,
 			nsIDOMWindow *Window,
-			const str::string_ &Id,
-			int Events = events )
+			const str::string_ &Id )
 		{
 			_Target = &Target;
-			widget::Init( Window, Id, Events );
+			widget::Init( Window, Id );
 		}
 		void Init( target &Target,
 			nsIDOMWindow *Window,
-			const char *Id,
-			int Events = events )
+			const char *Id )
 		{
 			_Target = &Target;
-			widget::Init( Window, Id, Events );
+			widget::Init( Window, Id );
 		}
 		const target &Target( void ) const
 		{
@@ -169,27 +137,90 @@ namespace xulwdg {
 		}
 	};
 
-#	define XULWDG__WN( widget, name, events )\
-	template <typename target> E_TTCLONE__( E_COVER2( _generic__< E_COVER2( target, nsxpcm::widget##__ ), events> ), name##__ );
+#	define XULWDG__WN( widget, name )\
+	template <typename target> E_TTCLONE__( widget__< E_COVER2( target, nsxpcm::widget##__ )>, name##__ );
 
-#	define XULWDG__W( widget, events )	XULWDG__WN( widget, widget, events )
+#	define XULWDG__W( widget )	XULWDG__WN( widget, widget )
 
-	XULWDG__W( textbox, nsxpcm::ef_None );
-	XULWDG__W( radio, nsxpcm::efCommand );
-	XULWDG__W( radiogroup, nsxpcm::efCommand );	// 'efCommand', parce que via '<radiogroup observes=...>' et '<radiogroup command=...>', cela ne fonctionne pas, il faur mettre le gestionnaire d'évènement directement sur l'élément.
-	XULWDG__W( button, nsxpcm::efCommand );
-	XULWDG__W( listbox, nsxpcm::efCommand );
-	XULWDG__W( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
-	XULWDG__W( deck, nsxpcm::ef_None );
-	XULWDG__W( broadcaster, nsxpcm::ef_None );
-	XULWDG__W( command, nsxpcm::efCommand );
-	XULWDG__W( menu, nsxpcm::ef_None );
-	XULWDG__W( menu_item, nsxpcm::efCommand );
-	XULWDG__W( panel, nsxpcm::ef_None );
-	XULWDG__WN( widget, box, nsxpcm::ef_None );
+	XULWDG__W( textbox );
+	XULWDG__W( radio );
+	XULWDG__W( radiogroup );
+	XULWDG__W( button );
+	XULWDG__W( listbox );
+	XULWDG__W( tree );
+	XULWDG__W( deck );
+	XULWDG__W( broadcaster );
+	XULWDG__W( command );
+	XULWDG__W( menu );
+	XULWDG__W( menu_item );
+	XULWDG__W( panel );
+	XULWDG__WN( widget, box );
 //	XULWDG__W( document, nsxpcm::efClose );
-	XULWDG__W( window, nsxpcm::efClose );
-	XULWDG__W( description, nsxpcm::ef_None );
+	XULWDG__W( window );
+	XULWDG__W( description );
+
+	typedef nsxpcm::event_handler__ _event_handler__;
+
+	template <typename target, int events> class event_handler__
+	: public _event_handler__
+	{
+	private:
+		target *_Target;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_event_handler__::reset( P );
+			_Target = NULL;
+		}
+		E_CVDTOR( event_handler__ );
+		void Init( target &Target )
+		{
+			_Target = &Target;
+			_event_handler__::Init();
+		}
+		void Add(
+			nsISupports *Supports,
+			int Events = events )
+		{
+			_event_handler__::Add( Supports, Events);
+		}
+		void Add(
+			nsIDOMWindow *Window,
+			const str::string_ &Id,
+			int Events = events )
+		{
+			Add( nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id ), Events );
+		}
+		void Add(
+			nsIDOMWindow *Window,
+			const char *Id,
+			int Events = events )
+		{
+			Add( Window, str::string( Id ), Events );
+		}
+		const target &Target( void ) const
+		{
+			return *_Target;
+		}
+		target &Target( void )
+		{
+			return *_Target;
+		}
+	};
+
+#	define XULWDG__EH( name, events )\
+	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target, events )>, name##_eh__ );
+
+	XULWDG__EH( regular, nsxpcm::efCommand );
+	XULWDG__EH( radio, nsxpcm::efCommand );
+	XULWDG__EH( radiogroup, nsxpcm::efCommand );
+	XULWDG__EH( button, nsxpcm::efCommand );
+	XULWDG__EH( listbox, nsxpcm::efCommand );
+	XULWDG__EH( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
+	XULWDG__EH( command, nsxpcm::efCommand );
+	XULWDG__EH( menu_item, nsxpcm::efCommand );
+	XULWDG__EH( window, nsxpcm::efClose );
+
 }
 
 /*$END$*/
