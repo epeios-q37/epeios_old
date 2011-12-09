@@ -203,21 +203,21 @@ static void Register_(
 	Register_( Trunk, Broadcasters.MultiBackendSelectionMode ,"bdcMultiBackendSelectionMode" );
 }
 
-template <int events> static void Register_(
+static void Register_(
 	trunk___ &Trunk,
-	xulfbs::event_handler__<events> &EventHandler,
+	xulfbs::event_handler__ &EventHandler,
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	EventHandler.Add( Trunk.UI().SessionForm().Window(), Id );
+	nsxpcm::Attach( Trunk.UI().SessionForm().Document(), str::string( Id ), EventHandler );
 }
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::event_handlers__ &EventHandlers )
 {
-	Register_( Trunk, EventHandlers.BackendLocation, "rgpBackendLocation" );
-	Register_( Trunk, EventHandlers.SelectProject, "cmdSelectProject" );
+	Register_( Trunk, EventHandlers.BackendLocation, "ehBackendLocation" );
+	Register_( Trunk, EventHandlers.SelectProject, "ehSelectProject" );
 }
 
 static void Register_(

@@ -81,16 +81,6 @@ extern class ttr_tutor &XULWDGTutor;
 	{}
 #endif
 
-#define XULWDG_ALL_WIDGETS( target )\
-	typedef xulwdg::broadcaster__<target> broadcaster__;\
-	typedef xulwdg::command__<target> command__;\
-	typedef xulwdg::button__<target> button__;\
-	typedef xulwdg::textbox__<target> textbox__;\
-	typedef xulwdg::listbox__<target> listbox__;\
-	typedef xulwdg::tree__<target> tree__;\
-	typedef xulwdg::window__<target> window__;\
-
-
 namespace xulwdg {
 
 	template <typename target, typename widget> class widget__
@@ -137,31 +127,29 @@ namespace xulwdg {
 		}
 	};
 
-#	define XULWDG__WN( widget, name )\
+# define XULWDG__WN( widget, name )\
 	template <typename target> E_TTCLONE__( widget__< E_COVER2( target, nsxpcm::widget##__ )>, name##__ );
 
-#	define XULWDG__W( widget )	XULWDG__WN( widget, widget )
+# define XULWDG__W( widget )	XULWDG__WN( widget, widget )
 
-	XULWDG__W( textbox );
-	XULWDG__W( radio );
-	XULWDG__W( radiogroup );
-	XULWDG__W( button );
-	XULWDG__W( listbox );
-	XULWDG__W( tree );
-	XULWDG__W( deck );
+	XULWDG__WN( widget, box );
 	XULWDG__W( broadcaster );
-	XULWDG__W( command );
+	XULWDG__W( button );
+	XULWDG__W( deck );
+	XULWDG__W( description );
+	XULWDG__W( listbox );
 	XULWDG__W( menu );
 	XULWDG__W( menu_item );
 	XULWDG__W( panel );
-	XULWDG__WN( widget, box );
-//	XULWDG__W( document, nsxpcm::efClose );
+	XULWDG__W( radio );
+	XULWDG__W( radiogroup );
+	XULWDG__W( textbox );
+	XULWDG__W( tree );
 	XULWDG__W( window );
-	XULWDG__W( description );
 
 	typedef nsxpcm::event_handler__ _event_handler__;
 
-	template <typename target, int events> class event_handler__
+	template <typename target> class event_handler__
 	: public _event_handler__
 	{
 	private:
@@ -180,14 +168,14 @@ namespace xulwdg {
 		}
 		void Add(
 			nsISupports *Supports,
-			int Events = events )
+			int Events )
 		{
 			_event_handler__::Add( Supports, Events);
 		}
 		void Add(
 			nsIDOMWindow *Window,
 			const str::string_ &Id,
-			int Events = events )
+			int Events )
 		{
 			Add( nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id ), Events );
 		}
@@ -208,20 +196,27 @@ namespace xulwdg {
 		}
 	};
 
-#	define XULWDG__EH( name, events )\
-	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target, events )>, name##_eh__ );
-
-	XULWDG__EH( regular, nsxpcm::efCommand );
-	XULWDG__EH( radio, nsxpcm::efCommand );
-	XULWDG__EH( radiogroup, nsxpcm::efCommand );
-	XULWDG__EH( button, nsxpcm::efCommand );
-	XULWDG__EH( listbox, nsxpcm::efCommand );
-	XULWDG__EH( tree, nsxpcm::efSelect | nsxpcm::efDblClick );
-	XULWDG__EH( command, nsxpcm::efCommand );
-	XULWDG__EH( menu_item, nsxpcm::efCommand );
-	XULWDG__EH( window, nsxpcm::efClose );
-
+#	define XULWDG__EH( name )\
+	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target )>, name##_eh__ );
 }
+
+#define XULWDG_WIDGET( name, target )	typedef xulwdg::name##__<target> name##__;\
+
+#define XULWDG_ALL_WIDGETS( target )\
+	XULWDG_WIDGET( box, target )\
+	XULWDG_WIDGET( broadcaster, target )\
+	XULWDG_WIDGET( button, target )\
+	XULWDG_WIDGET( deck, target )\
+	XULWDG_WIDGET( description, target )\
+	XULWDG_WIDGET( listbox, target )\
+	XULWDG_WIDGET( menu, target )\
+	XULWDG_WIDGET( menu_item, target )\
+	XULWDG_WIDGET( panel, target )\
+	XULWDG_WIDGET( radio, target )\
+	XULWDG_WIDGET( radiogroup, target )\
+	XULWDG_WIDGET( textbox, target )\
+	XULWDG_WIDGET( tree, target )\
+	XULWDG_WIDGET( window, target )
 
 /*$END$*/
 				  /********************************************/

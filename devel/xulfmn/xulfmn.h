@@ -70,28 +70,21 @@ extern class ttr_tutor &XULFMNTutor;
 namespace xulfmn {
 	using namespace xulfbs;
 
-	XULFBS_EH( window_eh__, nsxpcm::efClose );
-	XULFBS_REH( about_eh__ );
-	XULFBS_REH( web_site_eh__ );
-	XULFBS_REH( debug_eh__ );
-	XULFBS_REH( new_project_eh__ );
-	XULFBS_REH( open_project_eh__ );
-	XULFBS_REH( close_project_eh__ );
-	XULFBS_REH( exit_eh__ );
-
-	XULFBS_REH( test_eh__ );
-
-	XULFBS_W( deck__, main_deck__ );
-	XULFBS_W( window__, window__ );
+	XULFBS_EH( exit_eh__ );
+	XULFBS_EH( about_eh__ );
+	XULFBS_EH( web_site_eh__ );
+	XULFBS_EH( debug_eh__ );
+	XULFBS_EH( new_project_eh__ );
+	XULFBS_EH( open_project_eh__ );
+	XULFBS_EH( close_project_eh__ );
 
 	struct main__
-	: public _ui_core__
+	: public ui_core__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
 	public:
 		struct event_handlers__ {
-			window_eh__ Window;
 			new_project_eh__ NewProject;
 			open_project_eh__ OpenProject;
 			close_project_eh__ CloseProject;
@@ -99,20 +92,19 @@ namespace xulfmn {
 			web_site_eh__ WebSite;
 			debug_eh__ Debug;
 			exit_eh__ Exit;
-			test_eh__ Test;
 		} EventHandlers;
 		struct broadcasters__ {
 			broadcaster__ CloseProject;
 		} Broadcasters;
 		struct widgets__ {
 			window__ Window;
-			main_deck__ MainDeck;
+			deck__ MainDeck;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,
 			xulftk::trunk___ &Trunk )
 		{
-			_ui_core__::Init( Window );
+			ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
 		void Update( void );

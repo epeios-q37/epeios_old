@@ -74,26 +74,19 @@ namespace xulfrd {
 	class ui___;
 }
 
-# define XULFBS_REH( name )	XULFBS_EH( name, nsxpcm::efCommand );
-
-# define XULFBS_W( widget, name )	typedef xulfbs::widget__<nsxpcm::widget> name;
-
 namespace xulfbs {
 
+	using nsxpcm::ui_core__;
 	using xulftk::trunk___;
 
 	void _Report(
 		trunk___ &Trunk,
 		const char *Message );
 
-	typedef nsxpcm::ui_core__ _ui_core__;
+	typedef xulwdg::event_handler__<xulftk::trunk___> _event_handler__;
 
-	template <typename widget> E_TTCLONE__( xulwdg::widget__<E_COVER2( xulftk::trunk___, widget )>, widget__ );
-
-	template <int events> E_TTCLONE__( xulwdg::event_handler__<E_COVER2( xulftk::trunk___, events )>, _event_handler__ );
-
-	template <int events> class event_handler__
-	: public _event_handler__<events>
+	class event_handler__
+	: public _event_handler__
 	{
 	protected:
 		virtual void NSXPCMOnErr( const char *Message )
@@ -102,15 +95,15 @@ namespace xulfbs {
 		}
 	};
 
-# define XULFBS_EH( name, events )\
+	XULWDG_ALL_WIDGETS( trunk___ )
+
+# define XULFBS_EH( name )\
 	class name\
-	: public event_handler__<events>\
+	: public xulfbs::event_handler__\
 	{\
 	protected:\
 		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
 	};
-
-	XULFBS_W( broadcaster__, broadcaster__ );
 }
 
 /*$END$*/

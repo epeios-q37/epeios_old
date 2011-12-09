@@ -1370,9 +1370,17 @@ void nsxpcm::event_handler__::Add(
 			ERRc();
 }
 
-static event__ Convert_( const char *RawEvent )
+static event__ Convert_(
+	const char *RawEvent,
+	bso::bool__ WithOnPrefix )
 {
 	event__ Event = e_Undefined;
+
+	if ( WithOnPrefix )
+		if ( strncmp( RawEvent, "on", 2 ) )
+			return Event;
+		else
+			RawEvent += 2;
 
 	if ( !strcmp( RawEvent, "command" ) )
 		Event = eCommand;
@@ -1422,7 +1430,7 @@ ERRBegin
 
 	nsxpcm::Transform( String, EventString );
 
-	Event = Convert_( EventString.Convert( StrBuffer ) );
+	Event = Convert_( EventString.Convert( StrBuffer ), false );
 
 	if ( Event == e_Undefined )
 		ERRl();
@@ -1462,13 +1470,14 @@ ERREpilog
 static event__ GetEventIfConcerned_(
 	nsIDOMNode *Node,
 	const str::string_ &Id,
-	const str::string_ &NameSpaceWithSeparator )
+	const char *NameSpace )
 {
 	event__ Event = e_Undefined;
 ERRProlog
 	nsEmbedString RawName, RawValue;
 	str::string Name, Value;
 	STR_BUFFER___ Buffer;
+	str::string NameSpaceWithSeparator;
 ERRBegin
 	nsIDOMAttr *Attribute = nsxpcm::QueryInterface<nsIDOMAttr>( Node );
 
@@ -1476,6 +1485,9 @@ ERRBegin
 
 	Name.Init();
 	nsxpcm::Transform( RawName, Name );
+
+	NameSpaceWithSeparator.Init( NameSpace );
+	NameSpaceWithSeparator.Append( ':' );
 
 	if ( Name.Amount() < NameSpaceWithSeparator.Amount() )
 		ERRReturn;
@@ -1485,9 +1497,9 @@ ERRBegin
 
 	Name.Remove( Name.First(), NameSpaceWithSeparator.Amount() );
 
-	Event = Convert_( Name.Convert( Buffer ) );
+	Event = Convert_( Name.Convert( Buffer ), true );
 
-	Attribute->GetValue( RawValue );
+	T( Attribute->GetValue( RawValue ) );
 
 	Value.Init();
 	nsxpcm::Transform( RawValue, Value );
@@ -1500,11 +1512,46 @@ ERREpilog
 	return Event;
 }
 
+static nsIDOMNode *GetRoot_( nsIDOMNode *Node )
+{
+	nsIDOMNode *Candidate = Node;
+
+	while ( Candidate != NULL ) {
+		Node = Candidate;
+		T( Node->GetParentNode( &Candidate ) );
+	}
+
+	return Node;
+}
+
+static nsISupports *Patch_( nsIDOMNode *Node )
+{
+	nsISupports *Supports = Node;
+ERRProlog
+	nsEmbedString RawName;
+	str::string Name;
+	nsIDOMDocument *Document = NULL;
+ERRBegin
+	T( Node->GetNodeName( RawName ) );
+
+	Name.Init();
+	nsxpcm::Transform( RawName, Name );
+
+	if ( Name == "window" ) {
+		ERRl();	// J'ignore comment, à partir de cet élément, récupèrer un élément sur lequel un gestionnaire d'évènement soit actif.
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Supports;
+}
+
 static void AttachIfConcerned_(
 	nsIDOMNode *Node,
 	nsIDOMNamedNodeMap *Attributes,
 	const str::string_ &Id,
-	event_handler__ &EventHandler )
+	event_handler__ &EventHandler,
+	const char *NameSpace )
 {
 	PRUint32 Amount;
 	nsIDOMNode *AttributeNode = NULL;
@@ -1515,15 +1562,16 @@ static void AttachIfConcerned_(
 	while ( Amount-- != 0 )  {
 		Attributes->Item( Amount, &AttributeNode );
 
-		if ( ( Event = GetEventIfConcerned_( AttributeNode, Id, str::string( "xx:" ) ) ) != e_Undefined )
-			EventHandler.Add( Node, 1 << Event );
+		if ( ( Event = GetEventIfConcerned_( AttributeNode, Id, NameSpace ) ) != e_Undefined )
+			EventHandler.Add( Patch_( Node ), 1 << Event );
 	}
 }
 
 void nsxpcm::Attach(
 	nsIDOMDocument *Document,
 	const str::string_ &Id,
-	event_handler__ &EventHandler )
+	event_handler__ &EventHandler,
+	const char *NameSpace )
 {
 ERRProlog
 	nsxpcm::browser__ Browser;
@@ -1537,7 +1585,7 @@ ERRBegin
 		Node->GetAttributes( &Attributes ); 
 
 		if ( Attributes != NULL )
-			AttachIfConcerned_( Node, Attributes, Id, EventHandler );
+			AttachIfConcerned_( Node, Attributes, Id, EventHandler, NameSpace );
 
 		Node = Browser.GetNext();
 	}
@@ -1937,7 +1985,7 @@ ERREpilog
 	return (bso::ulong__ )Amount;
 }
 
-static void GetBroadcastAttributeValue_(
+static void GetBroadcasterAttributeValue_(
 	nsIDOMDocument *Document,
 	const str::string_ &Id,
 	const char *AttributeName,
@@ -1949,7 +1997,7 @@ static void GetBroadcastAttributeValue_(
 		nsxpcm::GetAttribute( Node, AttributeName, Value );
 }
 
-static void CopyBroadcastCommand_(
+static void CopyBroadcasterCommand_(
 	nsIDOMDocument *Document,
 	nsIDOMNode *Node )
 {
@@ -1963,7 +2011,7 @@ ERRBegin
 
 	if ( ObservesAttributeValue.Amount() != 0 ) {
 		CommandAttributeValue.Init();
-		GetBroadcastAttributeValue_( Document, ObservesAttributeValue, "command", CommandAttributeValue );
+		GetBroadcasterAttributeValue_( Document, ObservesAttributeValue, "command", CommandAttributeValue );
 
 		if ( CommandAttributeValue.Amount() != 0 )
 			if ( !HasAttribute( Node, "oncommand" ) )
@@ -1974,7 +2022,7 @@ ERREnd
 ERREpilog
 }
 
-static void CopyBroadcastCommand_(
+static void CopyBroadcasterCommand_(
 	nsIDOMDocument *Document,
 	nsIDOMNodeList *List )
 {
@@ -1986,7 +2034,7 @@ static void CopyBroadcastCommand_(
 	while ( Length-- ) {
 		T( List->Item( Length, &Node ) );
 
-		CopyBroadcastCommand_( Document, Node );
+		CopyBroadcasterCommand_( Document, Node );
 	}
 }
 
@@ -1997,7 +2045,7 @@ void nsxpcm::DuplicateBroadcasterCommand( nsIDOMDocument *Document )
 
 	while ( ( Node != Document ) || ( !Ascending ) ) {
 		if ( !Ascending  ) {
-			CopyBroadcastCommand_( Document, Node );
+			CopyBroadcasterCommand_( Document, Node );
 		}
 
 		if ( ( GetFirstChild( Node ) != NULL ) && !Ascending ) {
@@ -2034,7 +2082,7 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	nsIDOMNodeList *List = NULL;
 	nsEmbedString EId;
 
-	nsxpcm::Transform( "command", EId );
+	nsxpcm::Transform( "key", EId );
 
 	if ( Document->GetElementsByTagName( EId, &List ) != NS_OK )
 		ERRu();

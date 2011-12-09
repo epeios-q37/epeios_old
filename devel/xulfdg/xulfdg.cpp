@@ -128,16 +128,16 @@ static void Register_(
 
 #undef I
 
-template <int events> static void Register_(
+static void Register_(
 	trunk___ &Trunk,
-	xulfbs::event_handler__<events> &EventHandler,
+	xulfbs::event_handler__ &EventHandler,
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	EventHandler.Add( Trunk.UI().DebugDialog().Window(), Id );
+	nsxpcm::Attach( Trunk.UI().DebugDialog().Document(), str::string( Id ), EventHandler );
 }
 
-#define I( name ) Register_( Trunk, EventHandlers.name, "cmd" #name );	
+#define I( name ) Register_( Trunk, EventHandlers.name, "eh" #name );	
 
 static void Register_(
 	trunk___ &Trunk,

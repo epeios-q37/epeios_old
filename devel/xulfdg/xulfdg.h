@@ -70,13 +70,13 @@ extern class ttr_tutor &XULFDGTutor;
 namespace xulfdg {
 	using namespace xulfbs;
 
-	XULFBS_REH( jsconsole_eh__ );
-	XULFBS_REH( dominspector_eh__ );
-	XULFBS_REH( frontend_error_eh__ );
-	XULFBS_REH( backend_error_eh__ );
+	XULFBS_EH( jsconsole_eh__ );
+	XULFBS_EH( dominspector_eh__ );
+	XULFBS_EH( frontend_error_eh__ );
+	XULFBS_EH( backend_error_eh__ );
 
 	struct debug_dialog__
-	: public _ui_core__
+	: public ui_core__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
@@ -111,7 +111,7 @@ namespace xulfdg {
 			nsIDOMWindow *Window)
 		{
 			reset();
-			_ui_core__::Init( Window );
+			ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
 		void Update( void );

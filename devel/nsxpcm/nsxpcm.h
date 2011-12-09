@@ -168,6 +168,11 @@ extern class ttr_tutor &NSXPCMTutor;
 	}\
 	ERRRst()
 
+# ifdef NSCPM_XUL_EXTENSION_DEFAULT_NAMESPACE
+#  define NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE NSCPM_XUL_EXTENSION_DEFAULT_NAMESPACE
+# else
+#  define NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE "xex"
+# endif
 namespace nsxpcm {
 	using str::string_;
 	using str::string;
@@ -1311,7 +1316,8 @@ namespace nsxpcm {
 	void Attach(
 		nsIDOMDocument *Document,
 		const str::string_ &Id,
-		event_handler__ &EventHandler );
+		event_handler__ &EventHandler,
+		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );
 
 	class widget_core__
 	{

@@ -147,9 +147,11 @@ namespace xulftk {
 
 			return false;	// Pour éviter un 'warning'.
 		}
-		virtual void XULFTKExit( void )
+		virtual bso::bool__ XULFTKExit( void )
 		{
 			ERRc();	//	Si pas surchargé, alors 'xulfmn::exit_command__::NSXPCMOnEvent()' doit être redéfini.
+
+			return true;	// Pour éviter un 'warning'.
 		}
 	public:
 		void reset( bso::bool__ = true )
@@ -179,9 +181,9 @@ namespace xulftk {
 		{
 			return XULFTKDropSession();
 		}
-		void Exit( void )
+		bso::bool__ Exit( void )
 		{
-			XULFTKExit();
+			return XULFTKExit();
 		}
 	};
 
@@ -393,16 +395,18 @@ namespace xulftk {
 			} else
 				return false;
 		}
-		void Exit( void )
+		bso::bool__ Exit( void )
 		{
+			bso::bool__ Confirmation = false;
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
-			if ( nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
-				_UF().Exit();
+			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
+				Confirmation = _UF().Exit();
 		ERRErr
 		ERREnd
 		ERREpilog
+		return Confirmation;
 		}
 		void DefineSession( void )
 		{

@@ -70,13 +70,11 @@ extern class ttr_tutor &XULFSFTutor;
 namespace xulfsf {
 	using namespace xulfbs;
 
-	XULFBS_REH( select_project_eh__ );
-	XULFBS_REH( backend_location_eh__ );
-	XULFBS_W( textbox__, project_filename_txb__ );
-	XULFBS_W( radiogroup__, backend_location_rgp__ );
+	XULFBS_EH( select_project_eh__ );
+	XULFBS_EH( backend_location_eh__ );
 
 	struct session_form__
-	: public _ui_core__
+	: public ui_core__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
@@ -93,14 +91,14 @@ namespace xulfsf {
 			backend_location_eh__ BackendLocation;
 		} EventHandlers;
 		struct widgets__ {
-			project_filename_txb__ ProjectFileNameTextbox;
-			backend_location_rgp__ BackendLocationRadiogroup;
+			textbox__ ProjectFileNameTextbox;
+			radiogroup__ BackendLocationRadiogroup;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,
 			xulftk::trunk___ &Trunk )
 		{
-			_ui_core__::Init( Window );
+			ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
 		void Update( void );

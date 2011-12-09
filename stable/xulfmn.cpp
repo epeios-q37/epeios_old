@@ -65,12 +65,13 @@ void xulfmn::main__::Update( void )
 {
 	Broadcasters.CloseProject.Enable( _Trunk->Kernel().IsProjectInProgress() );
 }
-
+#if 0
 void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().Exit();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
+#endif
 
 void xulfmn::new_project_eh__::NSXPCMOnEvent( event__ )
 {
@@ -98,6 +99,7 @@ void xulfmn::close_project_eh__::NSXPCMOnEvent( event__ )
 void xulfmn::exit_eh__::NSXPCMOnEvent( event__ )
 {
 	Target().Exit();
+	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 
 void xulfmn::about_eh__::NSXPCMOnEvent( event__ )
@@ -118,12 +120,6 @@ void xulfmn::debug_eh__::NSXPCMOnEvent( event__ )
 	Target().UI().DeleteDebugDialog();
 }
 
-void xulfmn::test_eh__::NSXPCMOnEvent( event__ )
-{
-	Target().UI().Alert( "TEST !" );
-}
-
-
 /* Registrations */
 
 /* 'broadcaster's */
@@ -143,32 +139,28 @@ static void Register_(
 	Register_( Trunk, Broadcasters.CloseProject, "bdcCloseProject" );
 }
 
-template <int events> static void Register_(
+static void Register_(
 	trunk___ &Trunk,
-	xulfbs::event_handler__<events> &EventHandler,
+	xulfbs::event_handler__ &EventHandler,
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	EventHandler.Add( Trunk.UI().Main().Window(), Id );
+	nsxpcm::Attach( Trunk.UI().Main().Document(), str::string( Id ), EventHandler );
 }
 
-#define I( name ) Register_( Trunk, EventHandlers.name, "cmd" #name );	
+#define A( name ) Register_( Trunk, EventHandlers.name, "eh" #name );	
 
 static void Register_(
 	trunk___ &Trunk,
 	main__::event_handlers__ &EventHandlers )
 {
-	I( NewProject );
-	I( OpenProject );
-	I( CloseProject );
-	I( Exit );
-	I( About );
-	I( WebSite );
-	I( Debug );
-
-	EventHandlers.Test.Init( Trunk );
-
-	nsxpcm::Attach( Trunk.UI().Main().Document(), str::string( "ehTest" ), EventHandlers.Test );
+	A( NewProject );
+	A( OpenProject );
+	A( CloseProject );
+	A( Exit );
+	A( About );
+	A( WebSite );
+	A( Debug );
 }
 
 static void Register_(
@@ -186,13 +178,16 @@ void xulfmn::RegisterMainUI(
 {
 	Trunk.UI().Main().Init( Window, Trunk );
 
+#if 0
 	Trunk.UI().Main().EventHandlers.Window.Init( Trunk );
 	Trunk.UI().Main().EventHandlers.Window.Add( Window );
-
+#endif
 
 	Register_( Trunk, Trunk.UI().Main().Broadcasters );
 	Register_( Trunk, Trunk.UI().Main().EventHandlers );
 	Register_( Trunk, Trunk.UI().Main().Widgets, Window );
+
+	Trunk.UI().Main().EventHandlers.Exit.Add( Window, nsxpcm::efClose );	// Remplace le 'xex:onclose="..."' inopérant sur la balise 'windonw'.
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document() );
 }
