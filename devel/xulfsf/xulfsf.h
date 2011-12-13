@@ -70,8 +70,16 @@ extern class ttr_tutor &XULFSFTutor;
 namespace xulfsf {
 	using namespace xulfbs;
 
-	XULFBS_EH( select_project_eh__ );
-	XULFBS_EH( backend_location_eh__ );
+	XULFBS_EH( backend_type_selection_eh__ );
+
+	// Doit suivre l'ordre des 'panel's dans le 'deck' correspondant.
+	enum backend_type__ {
+		btPredefined,
+		btDaemon,
+		btEmbedded,
+		bt_amount,
+		bt_Undefined
+	};
 
 	struct session_form__
 	: public ui_core__
@@ -81,18 +89,19 @@ namespace xulfsf {
 	public:
 		struct broadcasters__ {
 			broadcaster__
-				Embedded,
-				Daemon,
-				Predefined,
-				MultiBackendSelectionMode;
+				EmbeddedBackend,
+				EmbeddedBackendSwitch,
+				DaemonBackend,
+				DaemonBackendSwitch,
+				PredefinedBackend,
+				PredefinedBackendSwitch;
 		} Broadcasters;
 		struct event_handlers__ {
-			select_project_eh__ SelectProject;
-			backend_location_eh__ BackendLocation;
+			backend_type_selection_eh__ BackendTypeSelection;
 		} EventHandlers;
 		struct widgets__ {
-			textbox__ ProjectFileNameTextbox;
-			radiogroup__ BackendLocationRadiogroup;
+			deck__ BackendTypeDeck;
+			textbox__ EmbeddedBackendFileNameTextbox;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,
@@ -101,7 +110,7 @@ namespace xulfsf {
 			ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
-		void Update( void );
+		void Update( backend_type__ Type = bt_Undefined );
 	};
 
 	void RegisterSessionFormUI(

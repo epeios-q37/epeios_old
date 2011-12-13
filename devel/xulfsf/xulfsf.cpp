@@ -58,15 +58,49 @@ public:
 #include "xulftk.h"
 #include "xulfrg.h"
 
+#include "nsIDOMEventTarget.h"
+
 #define PREFIX XULFSF_NAME	"_"
 
 using namespace xulfsf;
 
 using nsxpcm::event__;
 
-void xulfsf::backend_location_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+static backend_type__ GetBackendType_( const str::string_ &Type )
 {
-	Target().UI().SessionForm().Update();
+	if ( Type == "Embedded" )
+		return btEmbedded;
+	else if ( Type == "Daemon" )
+		return btDaemon;
+	else if ( Type == "Predefined" )
+		return btPredefined;
+	else
+		return bt_Undefined;
+}
+
+
+void xulfsf::backend_type_selection_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+ERRProlog
+	str::string Value;
+	backend_type__ Type = bt_Undefined;
+ERRBegin
+	Value.Init();
+	nsxpcm::GetAttribute( &EventData().GetTarget(), "value", Value );
+
+	switch ( Type = GetBackendType_( Value ) ) {
+	case btPredefined:
+	case btDaemon:
+	case btEmbedded:
+		this->Target().UI().SessionForm().Update( Type );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
 }
 
 static void DisableAllButSelected_(
@@ -82,9 +116,9 @@ static void DisableAllButSelected_(
 	else if ( Value == "Predefined" )
 		Predefined = false;
 
-	Broadcasters.Embedded.Disable( Embedded );
-	Broadcasters.Daemon.Disable( Daemon );
-	Broadcasters.Predefined.Disable( Predefined );
+	Broadcasters.EmbeddedBackend.Disable( Embedded );
+	Broadcasters.DaemonBackend.Disable( Daemon );
+	Broadcasters.PredefinedBackend.Disable( Predefined );
 }
 
 enum backend_selection_mode__
@@ -105,7 +139,7 @@ ERRBegin
 	RawMode.Init();
 	
 	if ( xulfrg::GetRawBackendSelectionMode( Registry, RawMode ) ) {
-		if ( RawMode == "Export" )
+		if ( RawMode == "Expert" )
 			Mode = bsmExpert;
 		else if ( RawMode == "Advanced" )
 			Mode = bsmAdvanced;
@@ -125,49 +159,62 @@ bso::bool__ HideUnusedBackendSelectionMode_(
 	xulfsf::session_form__::broadcasters__ &Broadcasters )
 {
 	bso::bool__ Success = true;
-	bso::bool__ Embedded = true, Daemon = true, Predefined = true, MultiBackendSelectionMode = true;
+	bso::bool__ Embedded = false, Daemon = false;
 
 	switch ( GetBackendSelectionMode_( Registry ) ) {
+	case bsmExpert:
+		Embedded = true;
+	case bsmAdvanced:
+		Daemon = true;
+		break;
 	default:
 		Success = false;
 	case bsmBasic:
-		Daemon = false;
-		MultiBackendSelectionMode = false;
-	case bsmAdvanced:
-		Embedded = false;
-		break;
-	case bsmExpert:
 		break;
 	}
 
-	Broadcasters.Embedded.Show( Embedded );
-	Broadcasters.Daemon.Show( Daemon );
-	Broadcasters.Predefined.Show( Predefined );
-	Broadcasters.MultiBackendSelectionMode.Show(  MultiBackendSelectionMode );
+	Broadcasters.EmbeddedBackend.Show( Embedded );
+	Broadcasters.EmbeddedBackendSwitch.Show( Embedded );
+
+	Broadcasters.DaemonBackendSwitch.Show( Daemon );
+	Broadcasters.DaemonBackend.Show( Daemon );
+
+	Broadcasters.PredefinedBackendSwitch.Show();	// A minima, celui-ci est toujours affiché.
+	Broadcasters.PredefinedBackend.Show();	// A minima, celui-ci est toujours affiché.
 
 	return Success;
 
 }
 
-void xulfsf::session_form__::Update( void )
+void xulfsf::session_form__::Update( backend_type__ Type )
 {
 ERRProlog
-	str::string Value;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	Value.Init();
-
-	_Trunk->UI().SessionForm().Widgets.BackendLocationRadiogroup.GetSelectedItemValue( Value );
-
-	DisableAllButSelected_( Value, Broadcasters );
-
 	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Broadcasters ) )
 		_Trunk->UI().LogAndPrompt( _Trunk->Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
+
+	if ( Type == bt_Undefined )
+		ERRReturn;
+
+
+	switch ( Type ) {
+	case btPredefined:
+	case btDaemon:
+	case btEmbedded:
+		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
 ERRErr
 ERREnd
 ERREpilog
 }
 
+#if 0
 void xulfsf::select_project_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
@@ -184,6 +231,7 @@ ERRErr
 ERREnd
 ERREpilog
 }
+#endif
 
 static void Register_(
 	trunk___ &Trunk,
@@ -193,14 +241,15 @@ static void Register_(
 	Broadcaster.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
 }
 
+#define R( name ) Register_( Trunk, Broadcasters.name, "bdc" #name );
+#define RX( name ) R( name );R( name##Switch )
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::broadcasters__ &Broadcasters )
 {
-	Register_( Trunk, Broadcasters.Embedded ,"bdcEmbedded" );
-	Register_( Trunk, Broadcasters.Daemon ,"bdcDaemon" );
-	Register_( Trunk, Broadcasters.Predefined ,"bdcPredefined" );
-	Register_( Trunk, Broadcasters.MultiBackendSelectionMode ,"bdcMultiBackendSelectionMode" );
+	RX( EmbeddedBackend );
+	RX( DaemonBackend );
+	RX( PredefinedBackend );
 }
 
 static void Register_(
@@ -209,23 +258,26 @@ static void Register_(
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	nsxpcm::Attach( Trunk.UI().SessionForm().Document(), str::string( Id ), EventHandler );
+	nsxpcm::Attach( Trunk.UI().SessionForm().Document(), Id, EventHandler );
 }
+
+#undef R
+
+#define R( name ) Register_( Trunk, EventHandlers.name, "eh" #name )
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::event_handlers__ &EventHandlers )
 {
-	Register_( Trunk, EventHandlers.BackendLocation, "ehBackendLocation" );
-	Register_( Trunk, EventHandlers.SelectProject, "ehSelectProject" );
+	R( BackendTypeSelection );
 }
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::widgets__ &Widgets )
 {
-	Widgets.ProjectFileNameTextbox.Init( Trunk, Trunk.UI().SessionForm().Window(), "txbProjectFileName" );
-	Widgets.BackendLocationRadiogroup.Init( Trunk, Trunk.UI().SessionForm().Window(), "rgpBackendLocation" );
+	Widgets.BackendTypeDeck.Init( Trunk, Trunk.UI().SessionForm().Window(), "dckBackendType" );
+	Widgets.EmbeddedBackendFileNameTextbox.Init( Trunk, Trunk.UI().SessionForm().Window(), "txbEmbeddedBackendFileName" );
 }
 
 void xulfsf::RegisterSessionFormUI(

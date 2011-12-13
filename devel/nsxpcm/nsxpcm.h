@@ -75,8 +75,10 @@ extern class ttr_tutor &NSXPCMTutor;
 #  define NSXPCM__GECKO_V1
 # elif NSXPCM_GECKO_V2
 #  define NSXPCM__GECKO_V2
+# elif NSXPCM_GECKO_V8
+#  define NSXPCM__GECKO_V8
 # else
-#  error "Missing adequate 'NSXPCM_GECKO_Vx' definition ! Accepted values for 'x' : 1 (Gecko 1.9) or 2 (Gecko 2)"
+#  error "Missing adequate 'NSXPCM_GECKO_Vx' definition ! Accepted values for 'x' : 1 (Gecko 1.9) or 2 (Gecko 2) or 8 (Gecko 8)"
 # endif
 
 
@@ -96,10 +98,15 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsIDOMXULButtonElement.h"
 # include "nsIDOMXULTreeElement.h"
 # include "nsIDOMXULDescriptionElement.h"
-# include "nsIDOMWindowInternal.h"
+# ifdef NSXPCM__GECKO_V8
+#  include "nsIDOMWindow.h"
+# else
+#  include "nsIDOMWindowInternal.h"
+# endif
 # include "nsIDOMXULLabelElement.h"
 # include "nsIDOMMutationEvent.h"
 # include "nsIDOMKeyEvent.h" 
+# include "nsIDOMEventTarget.h"
 
 #include "nsIXULWindow.h"
 
@@ -113,7 +120,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsIDOMEventListener.h"
 # ifdef NSXPCM__GECKO_V1
 #  include "nsIGenericFactory.h"
-# elif defined( NSXPCM__GECKO_V2 )
+# elif defined( NSXPCM__GECKO_V2 ) || defined ( NSXPCM__GECKO_V8 )
 #  include "mozilla/ModuleUtils.h"
 # else
 #  error
@@ -1040,7 +1047,11 @@ namespace nsxpcm {
 
 	inline nsIDOMWindowInternal* GetOpener( nsIDOMWindowInternal *Window )
 	{
+# ifdef NSXPCM__GECKO_V8
+		T( Window->GetOpener( (nsIDOMWindow **)&Window ) );
+# else
 		T( Window->GetOpener( &Window ) );
+#endif
 
 		return Window;
 	}
@@ -1186,6 +1197,14 @@ namespace nsxpcm {
 		{
 			return *_KeyEvent;
 		}
+		nsIDOMElement &GetTarget( void )
+		{
+			nsIDOMEventTarget *EventTarget = NULL;
+
+			RawEvent().GetTarget( &EventTarget );
+
+			return *QueryInterface<nsIDOMElement>( EventTarget );
+		}
 		E_RODISCLOSE__( event_imbrication_level__, EventImbricationLevel );
 		bso::bool__ IsEventImbricated( void ) const
 		{
@@ -1315,7 +1334,7 @@ namespace nsxpcm {
 
 	void Attach(
 		nsIDOMDocument *Document,
-		const str::string_ &Id,
+		const char *Id,
 		event_handler__ &EventHandler,
 		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );
 
@@ -2531,7 +2550,7 @@ namespace nsxpcm {
 
 	inline void PatchOverallBadCommandBehavior( nsIDOMDocument *Document )
 	{
-		DuplicateBroadcasterCommand( Document );
+//		DuplicateBroadcasterCommand( Document );
 		PatchCommandBadCommandBehaviorforKeysetListener( Document );
 	}
 

@@ -55,18 +55,19 @@ static flx::E_STRING_OFLOW_DRIVER___ CErrDriver_;
 #define MESSAGE_BAD_LONE_REGISTRATION_CONTEXT	"BadLoneRegistrationContext"
 #define MESSAGE_LONE_REGISTRATION_FAILURE		"LoneRegistrationFailure"
 
-class egeckocom
+class egeckocom___
 : public EIGeckoCOM
 {
 private:
 	geckof::gecko_wrapper___ _Wrapper;
 	geckoo::shared_data__ _Data;			// Only used by the master window.
-	~egeckocom();
+	tol::E_FPOINTER___( char ) _Buffer;		//				"
+	~egeckocom___();
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_EIGECKOCOM
 
-  egeckocom();
+  egeckocom___();
 private:
 protected:
   /* additional members */
@@ -120,7 +121,7 @@ ERREpilog
 	return Buffer;
 }
 
-NS_IMETHODIMP egeckocom::Initialize(
+NS_IMETHODIMP egeckocom___::Initialize(
 	const char *ComponentId,
 	const char *Language,
 	char **JSErrorMessage )
@@ -143,7 +144,14 @@ RB
 	if ( _CurrentSteering != NULL )
 		ERRc();
 
-	_Data.Init( Language );
+	_Buffer.Init();
+
+	if ( ( _Buffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
+		ERRa();
+
+	strcpy( _Buffer, Language );
+
+	_Data.Init( _Buffer, Language );
 
 	if ( !_Wrapper.Init( LibraryName.Convert( Buffer ), &_Data, err::hUserDefined ) ) {
 		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT ) );
@@ -166,7 +174,7 @@ RE
 }
 
 
-NS_IMETHODIMP egeckocom::Register(
+NS_IMETHODIMP egeckocom___::Register(
 	nsIDOMWindow *Window,
 	char **JSErrorMessage )
 {
@@ -199,7 +207,7 @@ RN
 RE
 }
 
-NS_IMETHODIMP egeckocom::Start(
+NS_IMETHODIMP egeckocom___::Start(
 	nsICommandLine *CommandLine,
 	char **JSErrorMessage )
 {
@@ -219,7 +227,7 @@ RN
 RE
 }
 
-NS_IMETHODIMP egeckocom::LoneRegister(
+NS_IMETHODIMP egeckocom___::LoneRegister(
 	nsIDOMWindow *Window,
 	const char *ComponentId,
 	char **JSErrorMessage )
@@ -268,7 +276,7 @@ RN
 RE
 }
 
-NS_IMETHODIMP egeckocom::Terminate( char **JSErrorMessage )
+NS_IMETHODIMP egeckocom___::Terminate( char **JSErrorMessage )
 {
 RP
 RB
@@ -278,20 +286,23 @@ RN
 RE
 }
 
-egeckocom::egeckocom( void )
+egeckocom___::egeckocom___( void )
 {
 }
 
-egeckocom::~egeckocom( void )
+egeckocom___::~egeckocom___( void )
 {
 }
 
 /* Gecko required part. */
 
-#include "nsIGenericFactory.h"
+using namespace nsxpcm;
 
-NS_IMPL_ISUPPORTS1(egeckocom, EIGeckoCOM)
-NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom)
+NS_IMPL_ISUPPORTS1(egeckocom___, EIGeckoCOM)
+NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom___)
+NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
+
+#ifdef NSXPCM__GECKO_V1
 
 static nsModuleComponentInfo components[] =
 {
@@ -305,6 +316,67 @@ static nsModuleComponentInfo components[] =
 };
 
 NS_IMPL_NSGETMODULE("EGeckoCOMModule", components) 
+
+
+#elif defined( NSXPCM__GECKO_V2 ) || defined ( NSXPCM__GECKO_V8 )
+# include "mozilla/ModuleUtils.h"
+
+
+//NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener)
+
+// The following line defines a kNS_SAMPLE_CID CID variable.
+NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
+NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
+
+// Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
+// should be completely unique UUIDs.
+// each entry has the form { CID, service, factoryproc, constructorproc }
+// where factoryproc is usually NULL.
+static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
+    { &kEGECKOCOM_CID, false, NULL, egeckocom___Constructor },
+	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listener__Constructor },
+    { NULL }
+};
+
+// Build a table which maps contract IDs to CIDs.
+// A contract is a string which identifies a particular set of functionality. In some
+// cases an extension component may override the contract ID of a builtin gecko component
+// to modify or extend functionality.
+static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
+    { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
+    { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
+    { NULL }
+};
+
+// Category entries are category/key/value triples which can be used
+// to register contract ID as content handlers or to observe certain
+// notifications. Most modules do not need to register any category
+// entries: this is just a sample of how you'd do it.
+// @see nsICategoryManager for information on retrieving category data.
+static const mozilla::Module::CategoryEntry kEGeckoCOMCategories[] = {
+    { NULL }
+};
+
+static const mozilla::Module EGeckoCOMModule = {
+    mozilla::Module::kVersion,
+    kEGeckoCOMCIDs,
+    kEGeckoCOMContracts,
+    kEGeckoCOMCategories
+};
+
+static const mozilla::Module EEventListenerModule = {
+    mozilla::Module::kVersion,
+    kEGeckoCOMCIDs,
+    kEGeckoCOMContracts,
+    kEGeckoCOMCategories
+};
+
+// The following line implements the one-and-only "NSModule" symbol exported from this
+// shared library.
+NSMODULE_DEFN(EGeckoCOMModule) = &EGeckoCOMModule;
+#else
+# error
+#endif
 
 
 static class cdtor__ {

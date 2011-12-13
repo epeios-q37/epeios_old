@@ -1,5 +1,13 @@
 $Id$
 
+13/11/2011 :
+	- NSXPCM :
+		- Ajout 'event_data__::GetTarget(...)'.
+
+12/12/2011 :
+	- NSXPCM :
+		- Attach(...)' prend maintenant un 'const char *' à la place d'un 'const str::string_'.
+
 08/12/2011 :
 	- NSXPCM :
 		- Ajout variantes 'event_handler__::Init(...)'.

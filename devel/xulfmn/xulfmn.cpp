@@ -145,7 +145,7 @@ static void Register_(
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	nsxpcm::Attach( Trunk.UI().Main().Document(), str::string( Id ), EventHandler );
+	nsxpcm::Attach( Trunk.UI().Main().Document(), Id, EventHandler );
 }
 
 #define A( name ) Register_( Trunk, EventHandlers.name, "eh" #name );	

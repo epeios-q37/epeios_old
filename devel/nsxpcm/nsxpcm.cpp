@@ -1469,7 +1469,7 @@ ERREpilog
 
 static event__ GetEventIfConcerned_(
 	nsIDOMNode *Node,
-	const str::string_ &Id,
+	const char *Id,
 	const char *NameSpace )
 {
 	event__ Event = e_Undefined;
@@ -1549,7 +1549,7 @@ ERREpilog
 static void AttachIfConcerned_(
 	nsIDOMNode *Node,
 	nsIDOMNamedNodeMap *Attributes,
-	const str::string_ &Id,
+	const char *Id,
 	event_handler__ &EventHandler,
 	const char *NameSpace )
 {
@@ -1569,7 +1569,7 @@ static void AttachIfConcerned_(
 
 void nsxpcm::Attach(
 	nsIDOMDocument *Document,
-	const str::string_ &Id,
+	const char *Id,
 	event_handler__ &EventHandler,
 	const char *NameSpace )
 {
@@ -1730,7 +1730,11 @@ static bso::bool__ _GetXSLStylesheet(
 
 	CreateInstance( NS_XMLHTTPREQUEST_CONTRACTID, HTTPRequest );
 
+#ifdef NSXPCM__GECKO_V8
+	Result = HTTPRequest->Open( Method, URL, false, Empty, Empty );
+#else
 	Result = HTTPRequest->OpenRequest( Method, URL, false, Empty, Empty );
+#endif
 
 	if ( Result != NS_OK )
 		ERRu();
