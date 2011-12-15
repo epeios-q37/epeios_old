@@ -99,14 +99,17 @@ namespace xulfkl {
 		{
 			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
 		}
-		const str::string_ &GetTranslation(
-			message__ Message,
-			str::string_ &Translation );
-		const char *GetTranslation(
-			message__ Message,
-			STR_BUFFER___ &Buffer );
 	};
 
+	const str::string_ &GetTranslation(
+		message__ Message,
+		const lcl::rack__ LocaleRack,
+		str::string_ &Translation );
+
+	const char *GetTranslation(
+		message__ Message,
+		const lcl::rack__ LocaleRack,
+		STR_BUFFER___ &Buffer );
 }
 
 /*$END$*/

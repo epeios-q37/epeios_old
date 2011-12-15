@@ -80,21 +80,21 @@ const char *frdrgy::paths::profiles::DefaultProfile				= PROFILES "Default";
 const char *frdrgy::paths::profiles::UserProfile				= PROFILES "User";
 
 static inline bso::bool__ GetFallbackProfileName_(
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	str::string_ &Name )
 {
 	return GetValue( paths::Profiles.FallbackProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetDefaultProfileName_(
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	str::string_ &Name )
 {
 	return GetValue( paths::Profiles.DefaultProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetUserProfileName_(
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	str::string_ &Name )
 {
 	return GetValue( paths::Profiles.UserProfile, Registry, Name );
@@ -103,7 +103,7 @@ static inline bso::bool__ GetUserProfileName_(
 static bso::bool__ GetProfileValue_(
 	const char *Path,
 	const str::string_ &ProfileName,
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	str::string_ &Value )
 {
 	bso::bool__ Success = false;
@@ -126,7 +126,7 @@ ERREpilog
 
 bso::bool__ frdrgy::GetProfileValue(
 	const char *Path,
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	str::string_ &Value )
 {
 	bso::bool__ Success = false;
@@ -157,7 +157,7 @@ ERREpilog
 
 bso::bool__ frdrgy::GetProfileIntegerValue(
 	const char *Path,
-	const registry_ &Registry,
+	const _registry_ &Registry,
 	bso::ulong__ &Id )
 {
 	bso::bool__ Success = false;
@@ -181,7 +181,7 @@ ERREpilog
 static void SetProfileValue_(
 	const char *Path,
 	const str::string_ &ProfileName,
-	registry_ &Registry,
+	_registry_ &Registry,
 	const str::string_ &Value )
 {
 ERRProlog
@@ -202,7 +202,7 @@ ERREpilog
 
 void frdrgy::SetProfileValue(
 	const char *Path,
-	registry_ &Registry,
+	_registry_ &Registry,
 	const str::string_ &Value )
 {
 	bso::bool__ Success = false;

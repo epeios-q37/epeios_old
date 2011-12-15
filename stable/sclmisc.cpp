@@ -64,7 +64,9 @@ public:
 
 using namespace sclmisc;
 
-void sclmisc::Initialize( const char *TargetName )
+void sclmisc::Initialize(
+	const char *TargetName,
+	const char *FilesSuggestedPath )
 {
 ERRProlog
 	str::string LocaleRootPath, RegistryRootPath;
@@ -78,11 +80,11 @@ ERRBegin
 	RegistryRootPath.Append( TargetName );
 	RegistryRootPath.Append( "\"]" );
 
-	scllocale::LoadTemporaryLocale( TargetName, LocaleRootPath.Convert( Buffer ) );
+	scllocale::LoadTemporaryLocale( TargetName, LocaleRootPath.Convert( Buffer ), FilesSuggestedPath );
 
-	sclrgstry::LoadRegistry( TargetName, RegistryRootPath.Convert( Buffer ) );
+	sclrgstry::LoadRegistry( TargetName, RegistryRootPath.Convert( Buffer ), FilesSuggestedPath );
 
-	scllocale::LoadLocale( TargetName, LocaleRootPath.Convert( Buffer ) );
+	scllocale::LoadLocale( TargetName, LocaleRootPath.Convert( Buffer ), FilesSuggestedPath );
 ERRErr
 ERREnd
 ERREpilog

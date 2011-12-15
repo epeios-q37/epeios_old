@@ -30,6 +30,7 @@
 #include "sclmisc.h"
 
 #include "flx.h"
+#include "fnm.h"
 
 
 #define COMPONENT_VERSION	"alpha 1"
@@ -130,9 +131,10 @@ RP
 	str::string LibraryName;
 	str::strings Tags;
 	STR_BUFFER___ Buffer;
+	FNM_BUFFER___ LocationBuffer;
 RB
 	if ( !IsInitialized_ ) {
-		sclmisc::Initialize( NAME );
+		sclmisc::Initialize( NAME, NULL );
 		IsInitialized_ = true;
 	}
 
@@ -151,9 +153,9 @@ RB
 
 	strcpy( _Buffer, Language );
 
-	_Data.Init( _Buffer, Language );
+	_Data.Init( _Buffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
 
-	if ( !_Wrapper.Init( LibraryName.Convert( Buffer ), &_Data, err::hUserDefined ) ) {
+	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT ) );
 		Tags.Init();
 		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );

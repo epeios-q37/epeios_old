@@ -58,6 +58,8 @@ public:
 #include "xulftk.h"
 #include "xulfrg.h"
 
+#include "cpe.h"
+
 #include "nsIDOMEventTarget.h"
 
 #define PREFIX XULFSF_NAME	"_"
@@ -66,38 +68,40 @@ using namespace xulfsf;
 
 using nsxpcm::event__;
 
-static backend_type__ GetBackendType_( const str::string_ &Type )
-{
-	if ( Type == "Embedded" )
-		return btEmbedded;
-	else if ( Type == "Daemon" )
-		return btDaemon;
-	else if ( Type == "Predefined" )
-		return btPredefined;
-	else
-		return bt_Undefined;
-}
-
-
 void xulfsf::backend_type_selection_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 ERRProlog
 	str::string Value;
-	backend_type__ Type = bt_Undefined;
+	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 ERRBegin
 	Value.Init();
 	nsxpcm::GetAttribute( &EventData().GetTarget(), "value", Value );
 
-	switch ( Type = GetBackendType_( Value ) ) {
-	case btPredefined:
-	case btDaemon:
-	case btEmbedded:
+	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
+	case frdkrn::bxtPredefined:
+	case frdkrn::bxtDaemon:
+	case frdkrn::bxtEmbedded:
 		this->Target().UI().SessionForm().Update( Type );
 		break;
 	default:
 		ERRc();
 		break;
 	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void xulfsf::emebedded_backend_selection_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+ERRProlog
+	str::string FileName;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	FileName.Init();
+
+	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Target().UI().SessionForm().Window(), str::string( Target().Kernel().LocaleRack().GetTranslation( "EmbeddedBackendFileSelectionDialogBoxTitle", PREFIX, Buffer ) ), Target().Kernel().LocaleRack(), FileName ) )
+		Target().UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.SetValue( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -174,19 +178,14 @@ bso::bool__ HideUnusedBackendSelectionMode_(
 	}
 
 	Broadcasters.EmbeddedBackend.Show( Embedded );
-	Broadcasters.EmbeddedBackendSwitch.Show( Embedded );
-
-	Broadcasters.DaemonBackendSwitch.Show( Daemon );
 	Broadcasters.DaemonBackend.Show( Daemon );
-
-	Broadcasters.PredefinedBackendSwitch.Show();	// A minima, celui-ci est toujours affiché.
 	Broadcasters.PredefinedBackend.Show();	// A minima, celui-ci est toujours affiché.
 
 	return Success;
 
 }
 
-void xulfsf::session_form__::Update( backend_type__ Type )
+void xulfsf::session_form__::Update( frdkrn::backend_extended_type__ Type )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
@@ -194,14 +193,23 @@ ERRBegin
 	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Broadcasters ) )
 		_Trunk->UI().LogAndPrompt( _Trunk->Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
 
-	if ( Type == bt_Undefined )
+	if ( Type == frdkrn::bxt_Undefined )
 		ERRReturn;
 
-
 	switch ( Type ) {
-	case btPredefined:
-	case btDaemon:
-	case btEmbedded:
+	case frdkrn::bxtPredefined:
+		Broadcasters.PredefinedBackend.Show();
+		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.PredefinedBackendSwitchMenuitem );
+		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		break;
+	case frdkrn::bxtDaemon:
+		Broadcasters.DaemonBackend.Show();
+		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.DaemonBackendSwitchMenuitem );
+		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		break;
+	case frdkrn::bxtEmbedded:
+		Broadcasters.EmbeddedBackend.Show();
+		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.EmbeddedBackendSwitchMenuitem );
 		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
 		break;
 	default:
@@ -242,14 +250,14 @@ static void Register_(
 }
 
 #define R( name ) Register_( Trunk, Broadcasters.name, "bdc" #name );
-#define RX( name ) R( name );R( name##Switch )
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::broadcasters__ &Broadcasters )
 {
-	RX( EmbeddedBackend );
-	RX( DaemonBackend );
-	RX( PredefinedBackend );
+	R( PredefinedBackend );
+	R( DaemonBackend );
+	R( EmbeddedBackend );
+	R( EmbeddedBackendSelection );
 }
 
 static void Register_(
@@ -263,21 +271,31 @@ static void Register_(
 
 #undef R
 
-#define R( name ) Register_( Trunk, EventHandlers.name, "eh" #name )
+#define A( name ) Register_( Trunk, EventHandlers.name, "eh" #name )
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::event_handlers__ &EventHandlers )
 {
-	R( BackendTypeSelection );
+	A( BackendTypeSelection );
+	A( EmbeddedBackendSelection );
 }
+
+#undef R
+
+#define R( name, suffix, prefix ) Widgets.name##suffix.Init( Trunk, Trunk.UI().SessionForm().Window(), #prefix #name );
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::widgets__ &Widgets )
 {
-	Widgets.BackendTypeDeck.Init( Trunk, Trunk.UI().SessionForm().Window(), "dckBackendType" );
-	Widgets.EmbeddedBackendFileNameTextbox.Init( Trunk, Trunk.UI().SessionForm().Window(), "txbEmbeddedBackendFileName" );
+	R( BackendTypeSwitch, Menulist, mlt );
+	R( PredefinedBackendSwitch, Menuitem, mim );
+	R( DaemonBackendSwitch, Menuitem, mim );
+	R( EmbeddedBackendSwitch, Menuitem, mim );
+	R( BackendType, Deck, dck );
+	R( DaemonBackendLocation, Textbox, txb );
+	R( EmbeddedBackendFileName, Textbox, txb );
 }
 
 void xulfsf::RegisterSessionFormUI(

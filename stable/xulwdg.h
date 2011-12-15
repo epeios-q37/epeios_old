@@ -83,7 +83,7 @@ extern class ttr_tutor &XULWDGTutor;
 
 namespace xulwdg {
 
-	template <typename target, typename widget> class widget__
+	template <typename target, typename widget> class _widget__
 	: public widget
 	{
 	private:
@@ -94,7 +94,7 @@ namespace xulwdg {
 			widget::reset( P );
 			_Target = NULL;
 		}
-		E_CVDTOR( widget__ );
+		E_CVDTOR( _widget__ );
 		void Init(
 			target &Target,
 			nsISupports *Supports,
@@ -128,7 +128,7 @@ namespace xulwdg {
 	};
 
 # define XULWDG__WN( widget, name )\
-	template <typename target> E_TTCLONE__( widget__< E_COVER2( target, nsxpcm::widget##__ )>, name##__ );
+	template <typename target> E_TTCLONE__( _widget__< E_COVER2( target, nsxpcm::widget##__ )>, name##__ );
 
 # define XULWDG__W( widget )	XULWDG__WN( widget, widget )
 
@@ -139,12 +139,14 @@ namespace xulwdg {
 	XULWDG__W( description );
 	XULWDG__W( listbox );
 	XULWDG__W( menu );
-	XULWDG__W( menu_item );
+	XULWDG__W( menuitem );
+	XULWDG__W( menulist );
 	XULWDG__W( panel );
 	XULWDG__W( radio );
 	XULWDG__W( radiogroup );
 	XULWDG__W( textbox );
 	XULWDG__W( tree );
+	XULWDG__W( widget );
 	XULWDG__W( window );
 
 	typedef nsxpcm::event_handler__ _event_handler__;
@@ -210,12 +212,14 @@ namespace xulwdg {
 	XULWDG_WIDGET( description, target )\
 	XULWDG_WIDGET( listbox, target )\
 	XULWDG_WIDGET( menu, target )\
-	XULWDG_WIDGET( menu_item, target )\
+	XULWDG_WIDGET( menulist, target )\
+	XULWDG_WIDGET( menuitem, target )\
 	XULWDG_WIDGET( panel, target )\
 	XULWDG_WIDGET( radio, target )\
 	XULWDG_WIDGET( radiogroup, target )\
 	XULWDG_WIDGET( textbox, target )\
 	XULWDG_WIDGET( tree, target )\
+	XULWDG_WIDGET( widget, target )\
 	XULWDG_WIDGET( window, target )
 
 /*$END$*/

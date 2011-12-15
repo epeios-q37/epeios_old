@@ -95,6 +95,7 @@ static inline const str::string_ &GetLanguage_( str::string_ &Language )
 
 static bso::bool__ GuessLocaleFileName_(
 	const char *Affix,
+	const char *SuggestedPath,
 	str::string_ &LocaleFileName )
 {
 	bso::bool__ Success = false;
@@ -107,9 +108,14 @@ ERRBegin
 	LocaleFileName.Append( LCL_DEFAULT_FILENAME_SUFFIX );
 
 	if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) ) {
-		LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), Affix, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
+		LocaleFileName.Init( fnm::BuildFileName( SuggestedPath, Affix, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
 
-		Success = fil::FileExists( LocaleFileName.Convert( STRBuffer ) );
+		if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) ) {
+				LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), Affix, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
+
+				Success = fil::FileExists( LocaleFileName.Convert( STRBuffer ) );
+		} else
+			Success = true;
 	} else
 		Success = true;
 ERRErr
@@ -146,7 +152,8 @@ ERREpilog
 static void LoadLocale_(
 	const str::string_ &SuggestedLocaleFileName,
 	const char *Affix,
-	const char *RootPath,
+	const char *RegistryRootPath,
+	const char *FileSuggestedPath,
 	bso::bool__ IgnoreUnableToOpenFileError )
 {
 ERRProlog
@@ -158,8 +165,8 @@ ERRBegin
 	LocaleFileName.Init( SuggestedLocaleFileName );
 	Context.Init();
 
-	if ( ( LocaleFileName.Amount() != 0 ) || ( GuessLocaleFileName_( Affix, LocaleFileName ) ) )
-		switch ( Locale_.Init( LocaleFileName.Convert( STRBuffer ), RootPath, Context ) ) {
+	if ( ( LocaleFileName.Amount() != 0 ) || ( GuessLocaleFileName_( Affix, FileSuggestedPath, LocaleFileName ) ) )
+		switch ( Locale_.Init( LocaleFileName.Convert( STRBuffer ), RegistryRootPath, Context ) ) {
 		case rgstry::sOK:
 			break;
 		case rgstry::sUnableToOpenFile:
@@ -190,21 +197,23 @@ ERREpilog
 // Try to find a locale file name, to avoid cryptic message until we have load the correct one.
 void scllocale::LoadTemporaryLocale(
 	const char *Affix,
-	const char *RootPath )
+	const char *RegistryRootPath,
+	const char *FileSuggestedPath )
 {
-	LoadLocale_( str::string(), Affix, RootPath, true );
+	LoadLocale_( str::string(), Affix, RegistryRootPath, FileSuggestedPath, true );
 }
 
 void scllocale::LoadLocale(
 	const char *Affix,
-	const char *RootPath )
+	const char *RegistryRootPath,
+	const char *FileSuggestedPath )
 {
 ERRProlog
 	str::string LocaleFileName;
 ERRBegin
 	LocaleFileName.Init();
 
-	LoadLocale_( sclrgstry::GetLocaleFileName( LocaleFileName ), Affix, RootPath, false );
+	LoadLocale_( sclrgstry::GetLocaleFileName( LocaleFileName ), Affix, RegistryRootPath, FileSuggestedPath ,false );
 ERRErr
 ERREnd
 ERREpilog

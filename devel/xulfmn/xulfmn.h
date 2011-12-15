@@ -99,6 +99,9 @@ namespace xulfmn {
 		struct widgets__ {
 			window__ Window;
 			deck__ MainDeck;
+			widget__
+				SessionViewFrame,
+				SessionFormFrame;
 		} Widgets;
 		void Init(
 			nsIDOMWindow *Window,

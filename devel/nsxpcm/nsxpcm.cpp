@@ -235,6 +235,7 @@ static const char *GetLabel_( text__ Text )
 {
 	switch ( Text ) {
 		CASE( XPRJFilterLabel );
+		CASE( DynamicLibraryFilterLabel );
 	default:
 		ERRu();
 		break;
@@ -471,13 +472,13 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::RemoveListboxContent( listbox_ *Listbox )
+void nsxpcm::listbox__::RemoveContent( void )
 {
 ERRProlog
 	str::string Name;
 	nsIDOMNode *Node = NULL, *Next = NULL;
 ERRBegin
-	Node = GetFirstChild( Listbox );
+	Node = GetFirstChild( GetObject() );
 
 	while ( Node != NULL ) {
 		Next = GetNextSibling( Node );
@@ -485,7 +486,7 @@ ERRBegin
 		Name.Init();
 
 		if ( GetNodeName( Node, Name ) == "listitem" )
-			RemoveChild( Listbox, Node );
+			RemoveChild( GetObject(), Node );
 
 		Node = Next;
 	}
@@ -668,6 +669,9 @@ ERRProlog
 ERRBegin
 	if ( Filters & fpmfXPRJ )
 		AddFilter_( GetTranslation( nsxpcm::tXPRJFilterLabel, LocaleRack, Buffer ), "*.xprj", FilePicker );
+
+	if ( Filters & fpmfDynamicLibrary )
+		AddFilter_( GetTranslation( nsxpcm::tDynamicLibraryFilterLabel, LocaleRack, Buffer ), "*." NSXPCM__DYNAMIC_LIBRARY_EXTENSION, FilePicker );
 ERRErr
 ERREnd
 ERREpilog

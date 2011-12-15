@@ -9,4 +9,8 @@
 		<Translation language="fr">Fichier XML de projet</Translation>
 		<Translation language="en">XML-Based project file</Translation>
 	</Translations>
+	<Translations text="NSXPCM_DynamicLibraryFilterLabel">
+		<Translation language="fr">Bibliothèque dynamique</Translation>
+		<Translation language="en">Dynamic library</Translation>
+	</Translations>
 </xpp:bloc>

@@ -65,7 +65,9 @@ extern class ttr_tutor &SCLMISCTutor;
 
 namespace sclmisc {
 
-	void Initialize( const char *TargetName );
+	void Initialize(
+		const char *TargetName,
+		const char *FilesSuggestedPath );
 
 	void Terminate( void );
 

@@ -77,11 +77,11 @@ ERRBegin
 		cio::Initialize( cio::tUser );
 
 		// Do not work when placed in 'global_cdtor'.
-		sclmisc::Initialize( TargetName );
+		sclmisc::Initialize( TargetName, Data->Path );
 		IsInitialized_ = true;
 	}
 
-	Steering = RetrieveSteering( scllocale::GetRack().Locale(), Data->Language, Data->User );
+	Steering = RetrieveSteering( scllocale::GetRack().Locale(), Data->Language, Data->UP );
 ERRErr
 ERREnd
 	if ( cio::IsInitialized() ) {

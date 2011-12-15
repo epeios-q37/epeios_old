@@ -68,6 +68,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "ctn.h"
 # include "lstbch.h"
 # include "lcl.h"
+# include "cpe.h"
 
 # include "xpcom-config.h"
 
@@ -210,6 +211,7 @@ namespace nsxpcm {
 	// Si modifié, modifier 'GetTranslation(...)' et le '.xlcl' en conséquence.
 	enum text__ {
 		tXPRJFilterLabel,
+		tDynamicLibraryFilterLabel,
 		t_amount,
 		t_Undefined
 	};
@@ -555,6 +557,7 @@ namespace nsxpcm {
 	};
 */
 
+#ifdef NSXPCM_USE_DEPRECATED
 	// 'name' nom du type 'doit correspondre au nom du tag XUL associé); 'Name' pour le fonctions associées.
 	#define NSXPCM_DEFINE( element, name, Name )\
 		typedef element name;\
@@ -585,6 +588,7 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMXULTreeElement, tree, Tree )
 	NSXPCM_DEFINE( nsIDOMXULLabelElement, label, Label );
 	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
+#endif 
 
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
@@ -994,6 +998,7 @@ namespace nsxpcm {
 		T( Element->SetChecked( State ) );
 	}
 
+#if 0
 	void RemoveListboxContent( listbox_ *Listbox );
 
 	inline void SelectListboxItem(
@@ -1013,6 +1018,7 @@ namespace nsxpcm {
 
 		T( Listbox->SelectItem( Listitem ) );
 	}
+#endif
 
 	nsIDOMNode *_FindParent(
 		nsIDOMNode *Node,
@@ -1710,8 +1716,22 @@ namespace nsxpcm {
 	class listbox__
 	: public _widget__<nsIDOMXULMultiSelectControlElement>
 	{
-	private:
 	public:
+		void SelectListboxItem( nsIDOMXULSelectControlItemElement *Item )
+		{
+			PRInt32 Index = -1;
+			nsIBoxObject *BoxObject = NULL;
+			nsIListBoxObject *ListBoxObject = NULL;
+
+			T( GetObject()->GetBoxObject( &BoxObject ) );
+
+			ListBoxObject = QueryInterface<nsIListBoxObject>( BoxObject );
+
+			T( ListBoxObject->GetIndexOfItem( Item, &Index ) );
+			T( ListBoxObject->ScrollToIndex( Index ) );
+
+			T( GetObject()->SelectItem( Item ) );
+		}
 		nsIDOMXULSelectControlItemElement *GetCurrentItem( bso::bool__ ErrorIfInexistant = true )
 		{
 			nsIDOMXULSelectControlItemElement *Item = NULL;
@@ -1741,6 +1761,7 @@ namespace nsxpcm {
 
 			return Count;
 		}
+		void RemoveContent( void );
 	};
 
 	class panel__
@@ -1899,7 +1920,7 @@ namespace nsxpcm {
 	{};
 
 
-	class html_anchor__
+	class anchor__
 	: public _widget__<nsIDOMHTMLAnchorElement>
 	{};
 
@@ -1907,9 +1928,28 @@ namespace nsxpcm {
 	: public _widget__<nsIDOMElement>	// Pas cherché le 'nsI...' correspondant ...
 	{};
 
-	class menu_item__
-	: public _widget__<nsIDOMElement>	// Pas trouvé le 'nsI...' correspondant ...
+	class menuitem__
+	: public _widget__< nsIDOMXULSelectControlItemElement>
 	{};
+
+	class menulist__
+	: public _widget__<nsIDOMXULMenuListElement>
+	{
+	public:
+		void SetSelectedIndex( bso::ulong__ Index )
+		{
+			T( GetObject()->SetSelectedIndex( Index ) );
+		}
+		void SetSelectedItem( nsIDOMXULSelectControlItemElement *Item )
+		{
+			T( GetObject()->SetSelectedItem( Item ) );
+		}
+		void SetSelectedItem( menuitem__ &Item )
+		{
+			SetSelectedItem( Item.GetObject() );
+		}
+	};
+
 /*
 	class document__
 	: public _widget__<nsIDOMDocument>
@@ -1991,6 +2031,7 @@ namespace nsxpcm {
 		fpmXUL,
 		fpmApps,
 		fpmXPRJ,
+		fpmDynamicLibrary,
 		fpm_amount,
 		fpm_Undefined
 	};
@@ -2011,6 +2052,7 @@ namespace nsxpcm {
 		MF( XUL ),
 		MF( Apps ),
 		MF( XPRJ ),
+		MF( DynamicLibrary ),
 		fpmf_None = 0,
 		fpmf_All = ( ( 1 << fpm_amount ) - 1 )	// Ne pas confondre avec 'fpmfAll', désignat que l'on désire tous les fichiers (filtre '*.*').
 	};
@@ -2123,6 +2165,29 @@ namespace nsxpcm {
 	{
 		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, LocaleRack, FileName );
 	}
+
+# ifdef CPE__T_MS
+#  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dll"
+# elif defined( CPE__T_LINUX )
+#  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "so"
+# elif defined( CPE__T_MAC )
+#  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dylib"
+# else
+#  error
+# endif
+
+	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
+	'false' si 'Cancel' a été sélectionné. */
+	inline bso::bool__ DynamicLibraryFileOpenDialogBox(
+		nsIDOMWindow *ParentWindow,	// Fonction bloquante, dont 'ParentWindow' ne peut être déduit de 'MasterWindow'.
+		const str::string_ &Title,
+		const lcl::rack__ &LocaleRack,
+		str::string_ &FileName )
+	{
+		return FileOpenDialogBox( ParentWindow, Title, NSXPCM__DYNAMIC_LIBRARY_EXTENSION, fpmfDynamicLibrary, LocaleRack, FileName );
+	}
+
+# undef NSXPCM__EXT
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),
 	'false' si 'Cancel' a été sélectionné. */

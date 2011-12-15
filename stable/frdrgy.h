@@ -221,7 +221,7 @@ namespace frdrgy {
 
 	inline bso::bool__ GetValue(
 		const char *Path,
-		const registry_ &Registry,
+		const _registry_ &Registry,
 		str::string_ &Value )
 	{
 		return Registry.GetValue( str::string( Path ), Value );
@@ -229,22 +229,22 @@ namespace frdrgy {
 
 	bso::bool__ GetProfileValue(
 		const char *Path,
-		const registry_ &Registry,
+		const _registry_ &Registry,
 		str::string_ &Value );
 
 	bso::bool__ GetProfileIntegerValue(
 		const char *Path,
-		const registry_ &Registry,
+		const _registry_ &Registry,
 		bso::ulong__ &Id );
 
 	void SetProfileValue(
 		const char *Path,
-		registry_ &Registry,
+		_registry_ &Registry,
 		const str::string_ &Value );
 
 	inline void SetProfileIntegerValue(
 		const char *Path,
-		registry_ &Registry,
+		_registry_ &Registry,
 		bso::ulong__ Id )
 	{
 		bso::integer_buffer__ Buffer;
@@ -257,27 +257,27 @@ namespace frdrgy {
 		return paths::Parameters.Backend.Root;
 	}
 
-	inline bso::bool__ GetBackendType(
-		const registry_ &Registry,
+	inline bso::bool__ GetRawBackendExtendedType(
+		const _registry_ &Registry,
 		str::string_ &Target )
 	{
 		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
 	}
 
-	inline bso::ulong__ GetBackendPingDelay( const registry_ &Registry )
+	inline bso::ulong__ GetBackendPingDelay( const _registry_ &Registry )
 	{
 		return rgstry::GetUL( Registry, paths::Parameters.Backend.PingDelay, 0 );
 	}
 
 	inline bso::bool__ GetBackendLocation(
-		const registry_ &Registry,
+		const _registry_ &Registry,
 		str::string_ &Target )
 	{
 		return GetValue( paths::Parameters.Backend.Location, Registry, Target );
 	}
 
 	inline bso::bool__ GetLocalesFileName(
-		const registry_ &Registry,
+		const _registry_ &Registry,
 		str::string_ &Locales )
 	{
 		return GetValue( paths::Parameters.Locale, Registry, Locales );

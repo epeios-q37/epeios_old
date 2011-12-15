@@ -75,20 +75,22 @@ void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
 
 void xulfmn::new_project_eh__::NSXPCMOnEvent( event__ )
 {
-ERRProlog
-	str::string Id;
-ERRBegin
-	Id.Init();
-
-	Target().UI().Alert( "A implémenter !" );
-ERRErr
-ERREnd
-ERREpilog
+	Target().DefineSession( str::string(), xpp::criterions___() );
 }
 
 void xulfmn::open_project_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().ApplySession( xpp::criterions___() );
+ERRProlog
+	str::string Translation, FileName;
+ERRBegin
+	Translation.Init();
+	FileName.Init();
+
+	if ( nsxpcm::XPRJFileOpenDialogBox( Target().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Target().Kernel().LocaleRack(), Translation ), Target().Kernel().LocaleRack(), FileName ) )
+		Target().DefineSession( FileName, xpp::criterions___() );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 void xulfmn::close_project_eh__::NSXPCMOnEvent( event__ )
@@ -170,6 +172,8 @@ static void Register_(
 {
 	Widgets.Window.Init( Trunk, Window, Window );
 	Widgets.MainDeck.Init( Trunk, Window, "dckMain" );
+	Widgets.SessionViewFrame.Init( Trunk, Window, "ifrSessionView" );
+	Widgets.SessionFormFrame.Init( Trunk, Window, "ifrSessionForm" );
 }
 
 void xulfmn::RegisterMainUI(

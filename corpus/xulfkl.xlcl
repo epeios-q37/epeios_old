@@ -2,7 +2,7 @@
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
   <Translations message="XULFKL_SelectProjectFile">
-    <Translation language="fr">Sélectionner un fichier de projet</Translation>
+    <Translation language="fr">Sélectionnez un fichier de projet</Translation>
     <Translation language="en">Select a project file</Translation>
   </Translations>
   <Translations message="XULFKL_ExitConfirmation">

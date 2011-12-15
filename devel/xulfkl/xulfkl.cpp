@@ -111,18 +111,20 @@ ERREpilog
 	return Buffer();
 }
 
-const str::string_ &xulfkl::kernel___::GetTranslation(
+const str::string_ &xulfkl::GetTranslation(
 	message__ MessageId,
+	const lcl::rack__ LocaleRack,
 	str::string_ &Message  )
 {
-	return GetMessage_( MessageId, LocaleRack(), Message );
+	return GetMessage_( MessageId, LocaleRack, Message );
 }
 
-const char *xulfkl::kernel___::GetTranslation(
+const char *xulfkl::GetTranslation(
 	message__ MessageId,
+	const lcl::rack__ LocaleRack,
 	STR_BUFFER___ &Buffer  )
 {
-	return GetMessage_( MessageId, LocaleRack(), Buffer );
+	return GetMessage_( MessageId, LocaleRack, Buffer );
 }
 
 

@@ -75,7 +75,31 @@ namespace frdkrn {
 	using namespace frdbkd;
 	using fblfrd::error_reporting_functions__;
 
-	csducl::type__ GetBackendType( const frdrgy::registry_ &Registry );
+	enum backend_extended_type__ {
+		bxtPredefined,
+		bxtDaemon,
+		bxtEmbedded,
+		bxt_amount,
+		bxt_Undefined
+	};
+
+	inline backend_extended_type__ GetBackendExtendedType( const str::string_ &RawType )
+	{
+		if ( RawType == "Embedded" )
+			return bxtEmbedded;
+		else if ( RawType == "Daemon" )
+			return bxtDaemon;
+		else if ( RawType == "Predefined" )
+			return bxtPredefined;
+		else
+			return bxt_Undefined;
+	}
+
+	backend_extended_type__ GetBackendExtendedType( const frdrgy::_registry_ &Registry );
+
+	csducl::type__ GetBackendTypeAndLocation(
+		const frdrgy::registry_ &Registry,
+		str::string_ &Location );
 
 	class log_functions__
 	: public csdsnc::log_functions__
@@ -280,14 +304,33 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
+			error_set___ &ErrorSet )	// Ne réalise qu'une mise à jour de la registry avec le contenu du projet. Ne réalise pas de connection.
+		{
+			report__ Report = r_Undefined;
+
+			_Id.Init();
+
+			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, _Id, ErrorSet ) ) == r_OK ) {
+				_ProjectOriginalTimeStamp = time( NULL );
+				_ProjectModificationTimeStamp = 0;
+			}
+
+			return Report;
+		}
+		report__ Connect(
 			const compatibility_informations__ &CompatibilityInformations,
 			error_reporting_functions__ &ErrorReportingFunctions,
-			error_set___ &ErrorSet );
+			error_set___ &ErrorSet )	// Les paramètres de connection sont récupèrés de la 'registry'.
+		{
+			return _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
+		}
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const xpp::criterions___ &Criterions,
-			const compatibility_informations__ &CompatibilityInformations );
+			const xpp::criterions___ &Criterions );
+		status__ Connect(
+			const compatibility_informations__ &CompatibilityInformations,
+			error_reporting_functions__ &ErrorReportingFunctions );
 		report__ SaveProject(
 			const str::string_ &FileName,
 			const char *TargetName,

@@ -117,11 +117,11 @@ namespace xulftk {
 
 			return *_Trunk;
 		}
-		void _ApplySession(
+		void _DefineSession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations,
 			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
+		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
 		void _DropSession( void );
@@ -135,9 +135,13 @@ namespace xulftk {
 		{
 			ERRc();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
-		virtual void XULFTKApplySession(
-			const str::string_ &FileName,
+		virtual void XULFTKDefineSession(
+			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
+		{
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		virtual void XULFTKApplySession( void )
 		{
 			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
 		}
@@ -171,11 +175,15 @@ namespace xulftk {
 		{
 			XULFTKSiteURL( URL );
 		}
-		void ApplySession(
-			const str::string_ &FileName,
+		void DefineSession(
+			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
-			XULFTKApplySession( FileName, XMLPreprocessorCriterions );
+			XULFTKDefineSession( ProjectFileName, XMLPreprocessorCriterions );
+		}
+		void ApplySession( void )
+		{
+			XULFTKApplySession();
 		}
 		bso::bool__ DropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
@@ -236,12 +244,12 @@ namespace xulftk {
 				break;
 			}
 		}
-		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
-		void _ApplySession(
-			const str::string_ &FileName,
+		void _DefineSession(
+			const str::string_ &ProjectFileName,	// Si non vide, contient le nom du fichier projet avec lequel préremplir le 'SessionForm'.
 			const xpp::criterions___ &Criterions,
-			const frdkrn::compatibility_informations__ &CompatibilityInformations,
 			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
+		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
+		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
 		void _DropSession( void );
@@ -370,22 +378,16 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void  ApplySession( const xpp::criterions___ &XMLPreprocessorCriterions )
+		void DefineSession(
+			const str::string_ &ProjectFileName,
+			const xpp::criterions___ &Criterions )
 		{
-		ERRProlog
-			str::string Translation;
-			str::string FileName;
-		ERRBegin
-			Translation.Init();
-			FileName.Init();
-
-			if ( nsxpcm::XPRJFileOpenDialogBox( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Kernel().LocaleRack(), FileName ) ) {
-				_UF().ApplySession( FileName, XMLPreprocessorCriterions );
-				UpdateUI();
-			}
-		ERRErr
-		ERREnd
-		ERREpilog
+			_UF().DefineSession( ProjectFileName, Criterions );
+		}
+		void ApplySession( void )
+		{
+			_UF().ApplySession();
+			UpdateUI();
 		}
 		bso::bool__ DropSession( void )
 		{
@@ -401,27 +403,27 @@ namespace xulftk {
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
-			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), Kernel().GetTranslation( xulfkl::mExitConfirmation, Buffer) ) )
+			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), GetTranslation( xulfkl::mExitConfirmation, Kernel().LocaleRack(), Buffer) ) )
 				Confirmation = _UF().Exit();
 		ERRErr
 		ERREnd
 		ERREpilog
 		return Confirmation;
 		}
-		void DefineSession( void )
-		{
-			UpdateUI();
-		}
 		friend _user_functions__;
 	};
 
-	inline void _user_functions__::_ApplySession(
-		const str::string_ &FileName,
+	inline void _user_functions__::_DefineSession(
+		const str::string_ &ProjectFileName,
 		const xpp::criterions___ &Criterions,
-		const frdkrn::compatibility_informations__ &CompatibilityInformations,
 		const rgstry::multi_level_registry_ &Registry )
 	{
-		_T()._ApplySession( FileName, Criterions, CompatibilityInformations, Registry );
+		_T()._DefineSession( ProjectFileName, Criterions, Registry );
+	}
+
+	inline void _user_functions__::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
+	{
+		_T()._ApplySession( CompatibilityInformations );
 	}
 
 	inline bso::bool__ _user_functions__::_DefendSession( void )

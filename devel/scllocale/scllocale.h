@@ -72,11 +72,13 @@ namespace scllocale {
 	// Tente de charger un fichier de 'locale" sans s'appuyer sur le 'registry'.
 	void LoadTemporaryLocale(
 		const char *Affix,
-		const char *RootPath );
+		const char *RegistryRootPath,
+		const char *FileSuggestedPath );
 
 	void LoadLocale(
 		const char *Affix,
-		const char *RootPath );
+		const char *RegistryRootPath,
+		const char *FileSuggestedPath );
 
 	const str::string_ &GetTranslation( const char *Message );
 }

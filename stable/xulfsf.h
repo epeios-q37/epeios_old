@@ -64,6 +64,7 @@ extern class ttr_tutor &XULFSFTutor;
 # include "flw.h"
 
 # include "xulfbs.h"
+# include "frdkrn.h"
 
 # define XULFSF_PAGE_ID	"pgeSessionForm"
 
@@ -71,15 +72,7 @@ namespace xulfsf {
 	using namespace xulfbs;
 
 	XULFBS_EH( backend_type_selection_eh__ );
-
-	// Doit suivre l'ordre des 'panel's dans le 'deck' correspondant.
-	enum backend_type__ {
-		btPredefined,
-		btDaemon,
-		btEmbedded,
-		bt_amount,
-		bt_Undefined
-	};
+	XULFBS_EH( emebedded_backend_selection_eh__ );
 
 	struct session_form__
 	: public ui_core__
@@ -89,18 +82,23 @@ namespace xulfsf {
 	public:
 		struct broadcasters__ {
 			broadcaster__
-				EmbeddedBackend,
-				EmbeddedBackendSwitch,
-				DaemonBackend,
-				DaemonBackendSwitch,
 				PredefinedBackend,
-				PredefinedBackendSwitch;
+				DaemonBackend,
+				EmbeddedBackend,
+				EmbeddedBackendSelection;
 		} Broadcasters;
 		struct event_handlers__ {
 			backend_type_selection_eh__ BackendTypeSelection;
+			emebedded_backend_selection_eh__ EmbeddedBackendSelection;
 		} EventHandlers;
 		struct widgets__ {
+			menulist__ BackendTypeSwitchMenulist;
+			menuitem__
+				PredefinedBackendSwitchMenuitem,
+				DaemonBackendSwitchMenuitem,
+				EmbeddedBackendSwitchMenuitem;
 			deck__ BackendTypeDeck;
+			textbox__ DaemonBackendLocationTextbox;
 			textbox__ EmbeddedBackendFileNameTextbox;
 		} Widgets;
 		void Init(
@@ -110,7 +108,7 @@ namespace xulfsf {
 			ui_core__::Init( Window );
 			_Trunk = &Trunk;
 		}
-		void Update( backend_type__ Type = bt_Undefined );
+		void Update( frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined );
 	};
 
 	void RegisterSessionFormUI(

@@ -57,9 +57,6 @@ public:
 
 using namespace frdkrn;
 
-#define DAEMON_BACKEND_TYPE		"daemon"
-#define LIBRARY_BACKEND_TYPE	"library"
-
 #define CASE( m )\
 	case r##m:\
 	return #m;\
@@ -136,20 +133,17 @@ ERREpilog
 	return Translation;
 }
 
-csducl::type__ frdkrn::GetBackendType( const frdrgy::registry_ &Registry )
+backend_extended_type__ frdkrn::GetBackendExtendedType( const frdrgy::_registry_ &Registry )
 {
-	csducl::type__ Type = csducl::t_Undefined;
+	backend_extended_type__ Type = bxt_Undefined;
 ERRProlog
-	str::string Target;
+	str::string RawType;
 ERRBegin
-	Target.Init();
+	RawType.Init();
 
-	frdrgy::GetBackendType( Registry, Target );
+	frdrgy::GetRawBackendExtendedType( Registry, RawType );
 
-	if ( Target == DAEMON_BACKEND_TYPE )
-		Type = csducl::tDaemon;
-	else if ( Target == LIBRARY_BACKEND_TYPE )
-		Type = csducl::tLibrary;
+	Type = GetBackendExtendedType( RawType );
 ERRErr
 ERREnd
 ERREpilog
@@ -245,6 +239,35 @@ ERREpilog
 	return Report;
 }
 
+csducl::type__ frdkrn::GetBackendTypeAndLocation(
+	const frdrgy::registry_ &Registry,
+	str::string_ &Location )
+{
+	csducl::type__ Type = csducl::t_Undefined;
+
+	switch ( GetBackendExtendedType( Registry ) ) {
+	case bxtEmbedded:
+		Type = csducl::tLibrary;
+		frdrgy::GetBackendLocation( Registry, Location );
+		break;
+	case bxtDaemon:
+		Type = csducl::tDaemon;
+		frdrgy::GetBackendLocation( Registry, Location );
+		break;
+	case bxtPredefined:
+		ERRl();
+		break;
+	case bxt_Undefined:
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return Type;
+}
+
+
 report__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	error_reporting_functions__ &ErrorReportingFunctions,
@@ -256,15 +279,11 @@ ERRProlog
 	str::string Location;
 	csducl::type__ Type = csducl::t_Undefined;
 ERRBegin
-	switch ( Type = GetBackendType( _Registry ) ) {
+	Location.Init();
+
+	switch ( Type = GetBackendTypeAndLocation( _Registry, Location ) ) {
 	case csducl::tLibrary:
 	case csducl::tDaemon:
-		Location.Init();
-		if ( !frdrgy::GetBackendLocation( _Registry, Location ) ) {
-			Report = rNoBackendLocation;
-			ERRReturn;
-		}
-
 		Report = _Connect( Location, CompatibilityInformations, Type, ErrorReportingFunctions, ErrorSet, LogFunctions );
 		break;
 	case csducl::t_Undefined:
@@ -449,39 +468,10 @@ ERREpilog
 	return Status;
 }
 
-
-
-report__ frdkrn::kernel___::LoadProject(
-	const str::string_ &FileName,
-	const char *TargetName,
-	const xpp::criterions___ &Criterions,
-	const compatibility_informations__ &CompatibilityInformations,
-	error_reporting_functions__ &ErrorReportingFunctions,
-	error_set___ &ErrorSet )
-{
-	report__ Report = r_Undefined;
-ERRProlog
-ERRBegin
-	_Id.Init();
-
-	if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, _Id, ErrorSet ) ) == r_OK )
-		if ( ( Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet ) ) != r_OK )
-			ERRReturn;
-
-
-	_ProjectOriginalTimeStamp = time( NULL );
-	_ProjectModificationTimeStamp = 0;
-ERRErr
-ERREnd
-ERREpilog
-	return Report;
-}
-
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	const xpp::criterions___ &Criterions,
-	const compatibility_informations__ &CompatibilityInformations )
+	const xpp::criterions___ &Criterions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -490,10 +480,32 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
-		_Message.Append( " !" );
+		Status = sError;
+		ERRReturn;
+	} else
+		Status = sOK;
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
+status__ frdkrn::kernel___::Connect( const compatibility_informations__ &CompatibilityInformations,
+	error_reporting_functions__ &ErrorReportingFunctions )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	error_set___ ErrorSet;
+	report__ Report = r_Undefined;
+ERRBegin
+	ErrorSet.Init();
+
+	if ( ( Report = Connect( CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+		_Message.Init();
+		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		Status = sError;
 		ERRReturn;
 	} else

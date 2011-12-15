@@ -85,7 +85,7 @@ ERRBegin
 		cio::Initialize( cio::tUser );
 
 		// Do not work when placed in 'global_cdtor'.
-		sclmisc::Initialize( TargetName );
+		sclmisc::Initialize( TargetName, (const char *)Data->UP );
 		IsInitialized_ = true;
 	}
 

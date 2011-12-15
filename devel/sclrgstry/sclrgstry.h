@@ -144,7 +144,8 @@ namespace sclrgstry {
 
 	void LoadRegistry(
 		const char *Affix,
-		const char *RootPath );
+		const char *RegistryRootPath,
+		const char *FileSuggestedPath );
 
 	bso::bool__ IsRegistryReady( void );
 

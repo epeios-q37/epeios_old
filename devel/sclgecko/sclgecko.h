@@ -74,7 +74,7 @@ namespace sclgecko {
 	geckoo::user_functions__ *RetrieveSteering(
 		const lcl::locale_ &Locale,
 		const char *Language,
-		const char *User );	// To overload !
+		void *UP );	// To overload !
 
 	// A définir par l'utilisateur.
 	void ReleaseSteering( geckoo::user_functions__ *Steering );	// To overload.

@@ -1,5 +1,34 @@
 $Id$
 
+15/11/2011 :
+	- GECKOO :
+		- 'const char *User' -> 'void * UP'.
+		+ Rajout de 'Path'.
+	- NSXPCM :
+		- Les fonctions concernant 'listbox[_]' sont inclus dans l'objet 'listbox__'.
+		- Les version '[_]' des 'widgets' sont marquées 'deprecated' (absents par défaut, mais réactivables avec la macro 'NSXPCM_USE_DEPRECATED').
+		- 'menu_item__' -> 'menuitem'.
+		- Ajout boite de dialogue dédiée à la sélection d'un bibliothèque dynamique.
+	- SCLLOCALE :
+		- 'Load[Temporary]Locale(...)' prend maintenant un paramètre permettant de suggérer un chemin dans lequel chercher le fichier (utilise pour les bibliothèques dynamiques).
+	- SCLRGSTRY :
+		- 'LoadRegistry(...)' prend maintenant un paramètre permettant de suggérer un chemin dans lequel chercher le fichier (utilise pour les bibliothèques dynamiques).
+	- SCLxxx :
+		- Adaptation.
+	- XULFKL :
+		- Déplacement de 'GetTranslation(...)'.
+	- XULFTK :
+		- Adaptation.
+	- XULWDG :
+		- Adaptation.
+
+14/11/2011 :
+	- FRDKRN :
+		- Déportation dans 'Connect(...)' de la partie connection de 'LoadProject(...)'.
+	- FRDRGY :
+		- 'GetBackendType(...)' -> 'GetRawBackendExtendedType(...)'.
+		- Utilisation de '_registry_' à la place de 'registry_'.
+
 13/11/2011 :
 	- NSXPCM :
 		- Ajout 'event_data__::GetTarget(...)'.
@@ -15,7 +44,6 @@ $Id$
 		- Adaptation.
 	- XULWDG :
 		- Ajout variantes 'event_handler__::Init(...)'.
-
 
 07/12/2011 :
 	- NSXPCM :

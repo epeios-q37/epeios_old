@@ -181,29 +181,55 @@ ERREnd
 ERREpilog
 }
 
-void sclrgstry::LoadRegistry(
+static bso::bool__ LoadRegistry_(
 	const char *Affix,
-	const char *RootPath )
+	const char *RegistryRootPath,
+	const char *FilePath,
+	bso::bool__ ReportUnableToFindFile )
 {
+	bso::bool__ Success = false;
 ERRProlog
-	rgstry::status__ Status = rgstry::s_Undefined;
 	rgstry::context___ Context;
-	DIR_BUFFER___ DIRBuffer;
 	FNM_BUFFER___ FNMBuffer;
 ERRBegin
 	Context.Init();
 
-	if ( ( Status = FillRegistry_( fnm::BuildFileName( "", Affix, REGISTRY_FILE_EXTENSION, FNMBuffer ), RootPath, Context ) ) != rgstry::sOK )
-		if ( Status == rgstry::sUnableToOpenFile ) {
-			Context.Init();
-			if ( ( Status = FillRegistry_( fnm::BuildFileName( dir::GetSelfPath( DIRBuffer ), Affix, REGISTRY_FILE_EXTENSION, FNMBuffer ), RootPath, Context ) ) != rgstry::sOK ) {
-				ReportConfigurationFileParsingError_( Context );
-				ERRExit( EXIT_FAILURE );
-			}
-		} else {
-			ReportConfigurationFileParsingError_( Context );
-			ERRExit( EXIT_FAILURE );
-		}
+	switch ( FillRegistry_( fnm::BuildFileName( FilePath, Affix, REGISTRY_FILE_EXTENSION, FNMBuffer ), RegistryRootPath, Context ) ) {
+	case rgstry::sOK:
+		Success = true;
+		break;
+	case rgstry::sUnableToOpenFile:
+		if ( !ReportUnableToFindFile )
+			break;
+	default:
+		ReportConfigurationFileParsingError_( Context );
+		ERRExit( EXIT_FAILURE );
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+void sclrgstry::LoadRegistry(
+	const char *Affix,
+	const char *RegistryRootPath,
+	const char *FileSuggestedPath )
+{
+ERRProlog
+	DIR_BUFFER___ DIRBuffer;
+ERRBegin
+
+	if ( LoadRegistry_( Affix, RegistryRootPath, "", false ) )
+		ERRReturn;
+
+	if ( LoadRegistry_( Affix, RegistryRootPath, FileSuggestedPath, false ) )
+		ERRReturn;
+
+	if ( !LoadRegistry_( Affix, RegistryRootPath, dir::GetSelfPath( DIRBuffer ), true ) )
+		ERRc();	// Si échec fonction ci-dessus, aurait dû sortir du programme avec signalement du message d'erreur à cause du 'true'.
 ERRErr
 ERREnd
 ERREpilog

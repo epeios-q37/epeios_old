@@ -4,4 +4,5 @@
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:expand href="xulfkl.xlcl"/>
 	<xpp:expand href="xulftk.xlcl"/>
+	<xpp:expand href="xulfsf.xlcl"/>
 </xpp:bloc>

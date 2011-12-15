@@ -466,11 +466,47 @@ ERREpilog
 	return Success;
 }
 
-void xulftk::trunk___::_ApplySession(
-	const str::string_ &FileName,
+void xulftk::trunk___::_DefineSession(
+	const str::string_ &ProjectFileName,	// Si non vide, contient le nom du fichier projet avec lequel préremplir le 'SessionForm'.
 	const xpp::criterions___ &Criterions,
-	const frdkrn::compatibility_informations__ &CompatibilityInformations,
 	const rgstry::multi_level_registry_ &Registry )
+{
+ERRProlog
+	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
+	str::string Location;
+ERRBegin
+
+	if ( ProjectFileName.Amount() != 0 ) {
+		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions ) );
+		Location.Init();
+		frdrgy::GetBackendLocation( Kernel().Registry(), Location );
+	}
+
+	switch ( Type = frdkrn::GetBackendExtendedType( Kernel().Registry() ) ) {
+	case frdkrn::bxtPredefined:
+		ERRl();
+		break;
+	case frdkrn::bxtDaemon:
+		UI().SessionForm().Widgets.DaemonBackendLocationTextbox.SetValue( Location );
+		break;
+	case frdkrn::bxtEmbedded:
+		UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.SetValue( Location );
+		break;
+	case frdkrn::bxt_Undefined:
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	UI().SessionForm().Update( Type );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
 {
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
@@ -478,11 +514,9 @@ ERRProlog
 	str::string Parameters;
 	flx::E_STRING_IFLOW__ Flow;
 ERRBegin
-	Handle_( Kernel().LoadProject( FileName, _TargetName, Criterions, CompatibilityInformations ) );
-
 	Set.Init();
 
-	RetrieveParametersSet_( UI(), Registry, Kernel().LocaleRack(), Set );
+	RetrieveParametersSet_( UI(), Registry(), Kernel().LocaleRack(), Set );
 
 	Parameters.Init();
 
