@@ -76,10 +76,8 @@ namespace xulfdg {
 	XULFBS_EH( backend_error_eh__ );
 
 	struct debug_dialog__
-	: public ui_core__
+	: public ui_core__<xulftk::trunk___>
 	{
-	private:
-		xulftk::trunk___ *_Trunk;
 	public:
 		struct broadcasters__ {
 			broadcaster__
@@ -94,26 +92,6 @@ namespace xulfdg {
 			frontend_error_eh__ FrontendError;
 			backend_error_eh__ BackendError;
 		} EventHandlers;
-		void reset( bso::bool__ P = true )
-		{
-			_Trunk = NULL;
-		}
-		debug_dialog__( void )
-		{
-			reset( false );
-		}
-		~debug_dialog__( void )
-		{
-			reset();
-		}
-		void Init(
-			xulftk::trunk___ &Trunk,
-			nsIDOMWindow *Window)
-		{
-			reset();
-			ui_core__::Init( Window );
-			_Trunk = &Trunk;
-		}
 		void Update( void );
 		void ExtractSelectedDatabase( void );
 		void Close( void )

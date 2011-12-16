@@ -386,6 +386,8 @@ namespace frdkrn {
 				_CloseConnection();
 			}
 
+			_ProjectOriginalTimeStamp =	_ProjectModificationTimeStamp = 0;
+
 			return sOK;
 		}
 		bso::bool__ IsConnected( void ) const
@@ -403,6 +405,19 @@ namespace frdkrn {
 			return _LocaleRack;
 		}
 	};
+
+	enum authentication_prompt_mode__ 
+	{
+		apmNone,	// Pas de prompt, 'login' et 'password' envoyés sont vides (droits minimaux).
+		apmAuto,	// Pas de prompt, 'login' et 'password' envoyés sont ceux stockés dans le fichier de configuration.
+		apmEmpty,	// Prompt affiché, avec champs vides.
+		apmPartial,	// Prompt affiché, avec champ 'login' prérenpli.
+		apmFull,	// Prompt affiché, avec champs 'login' et 'password' préremplis.
+		apm_amount,
+		apm_Undefined
+	};
+
+	authentication_prompt_mode__ GetAuthenticationPromptMode( const frdrgy::registry_ &Registry );
 
 	inline fblfrd::id32__ _ExtractId32( const str::string_ &Value )
 	{

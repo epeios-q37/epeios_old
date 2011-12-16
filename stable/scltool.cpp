@@ -69,7 +69,7 @@ int main(
 {
 ERRFProlog
 ERRFBegin
-	sclmisc::Initialize( TargetName );
+	sclmisc::Initialize( TargetName, NULL );
 	Main( argc, argv, scllocale::GetRack() );
 ERRFErr
 ERRFEnd

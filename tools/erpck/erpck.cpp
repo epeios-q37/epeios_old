@@ -598,7 +598,7 @@ ERRBegin
 		case xml::tValue:
 			ReportErrorAndExit_( "No value allowed here", IFlow );
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -664,7 +664,7 @@ static void ProcessRecord_(
 			}
 			Record.Content.Append( Parser.DumpData() );
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -740,7 +740,7 @@ ERRBegin
 		case xml::tEndTag:
 			Continue = false;	// '...<ercp:content ...></ercp:content>...'
 			break;				//                                      ^
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -789,7 +789,7 @@ ERRBegin
 		case xml::tEndTag:
 			Continue = false;	// '</erpck:content>...'
 			break;				//                  ^
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -903,7 +903,7 @@ ERRBegin
 				break;
 			}
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -954,7 +954,7 @@ ERRBegin
 		case xml::tEndTag:
 			Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -1003,7 +1003,7 @@ ERRBegin
 		case xml::tEndTag:
 			Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -1046,7 +1046,7 @@ ERRBegin
 			} else
 				Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -1065,13 +1065,14 @@ static void RetrieveData_(
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
 	xpp::preprocessing_iflow___ IFlow;
 	xml::parser___ Parser;
 	bso::bool__ Continue = true;
 	lcl::locale Locale;
 	bso::bool__ DataDetected = false;
 	FNM_BUFFER___ Buffer;
-	xtf::extended_text_iflow__ XFlow;
+	xtf::extended_text_iflow__ PXFlow;
 ERRBegin
 	if ( FFlow.Init( DataFileName, err::hUserDefined ) != fil::sSuccess ) {
 		CErr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
@@ -1080,11 +1081,13 @@ ERRBegin
 
 	FFlow.EOFD( XTF_EOXT );
 
-	IFlow.Init( FFlow, xpp::criterions___( str::string( fnm::GetLocation( DataFileName, Buffer ) ) ) );
+	XFlow.Init( FFlow );
 
-	XFlow.Init( IFlow );
+	IFlow.Init( XFlow, xpp::criterions___( str::string( fnm::GetLocation( DataFileName, Buffer ) ) ) );
 
-	Parser.Init( XFlow, xml::eh_Default );
+	PXFlow.Init( IFlow );
+
+	Parser.Init( PXFlow, xml::eh_Default );
 
 	Data.Init();
 
@@ -1101,14 +1104,14 @@ ERRBegin
 		case xml::tAttribute:
 			ReportErrorAndExit_( "Unexpected attribute", IFlow );
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			if ( !DataDetected ) {
 				CErr << "No '" << NAME << "' data in '" << DataFileName << "' !" << txf::nl;
 				ERRExit( EXIT_FAILURE );
 			} else
 				Continue = false;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
@@ -1129,10 +1132,12 @@ static void Display_(
 {
 ERRProlog
 	flx::E_STRING_IFLOW__ IFlow;
+	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	IFlow.Init( XML );
+	XFlow.Init( IFlow );
 
-	if ( xpp::Process( IFlow, Writer ) != xpp::sOK )
+	if ( xpp::Process( XFlow, Writer ) != xpp::sOK )
 		ERRc();
 ERRErr
 ERREnd
@@ -1549,7 +1554,7 @@ ERRBegin
 
 			rpkctx::Retrieve( Parser, Context );
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			Continue = false;
 			break;
 		default:
@@ -1667,7 +1672,7 @@ ERRProlog
 	rgstry::level__ Level = RGSTRY_UNDEFINED_LEVEL;
 ERRBegin
 	Registry.Init();
-	Level = Registry.AddNewLevel();
+	Level = Registry.AddEmbeddedLevel();
 
 	Context.Init();
 

@@ -55,7 +55,27 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "xulftk.h"
+
 using namespace xulfui;
+
+bso::bool__ xulfui::user_functions__::GECKOORegister(
+	nsIDOMWindow *Window,
+	const str::string_ &Id )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	err::buffer__ Buffer;
+ERRBegin
+	Success = XULFUIRegister( Window, Id );
+ERRErr
+	_Trunk->UI().Alert( err::Message( Buffer ) );
+	ERRRst();
+ERREnd
+ERREpilog
+	return Success;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -86,6 +86,13 @@ namespace frdrgy {
 					*PingDelay;
 			} Backend;
 		} Parameters;
+		static struct authentication {
+			static const char
+				*CypherKey,
+				*Mode,
+				*Login,
+				*Password;
+		} Authentication;
 		static struct profiles {
 			static const char *FallbackProfile;
 			static const char *DefaultProfile;
@@ -281,6 +288,34 @@ namespace frdrgy {
 		str::string_ &Locales )
 	{
 		return GetValue( paths::Parameters.Locale, Registry, Locales );
+	}
+
+	inline bso::bool__ GetAuthenticationCypherKey(
+		const _registry_ &Registry,
+		str::string_ &Key )
+	{
+		return GetValue( paths::authentication::CypherKey, Registry, Key );
+	}
+
+	inline bso::bool__ GetAuthenticationPromptRawMode(
+		const _registry_ &Registry,
+		str::string_ &Mode )
+	{
+		return GetValue( paths::authentication::Mode, Registry, Mode );
+	}
+
+	inline bso::bool__ GetAuthenticationPromptLogin(
+		const _registry_ &Registry,
+		str::string_ &Login )
+	{
+		return GetValue( paths::authentication::Login, Registry, Login );
+	}
+
+	inline bso::bool__ GetAuthenticationPromptPassword(
+		const _registry_ &Registry,
+		str::string_ &Password )
+	{
+		return GetValue( paths::authentication::Password, Registry, Password );
 	}
 
 	

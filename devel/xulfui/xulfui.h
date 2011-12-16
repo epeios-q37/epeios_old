@@ -65,7 +65,10 @@ extern class ttr_tutor &XULFUITutor;
 
 # include "xulfdg.h"
 # include "xulfsf.h"
+# include "xulfsv.h"
 # include "xulfmn.h"
+
+# include "geckoo.h"
 
 namespace xulfui {
 
@@ -74,6 +77,7 @@ namespace xulfui {
 	private:
 		xulfmn::main__ *_Main;
 		xulfsf::session_form__ *_SessionForm;
+		xulfsv::session_view__ *_SessionView;
 		xulfdg::debug_dialog__ *_DebugDialog;
 		nsIDOMWindow *_JSConsoleWindow;
 	protected:
@@ -87,25 +91,21 @@ namespace xulfui {
 
 			_Main = NULL;
 			_SessionForm = NULL;
+			_SessionView = NULL;
 			_JSConsoleWindow = NULL;
 			_DebugDialog = NULL;
 		}
-		ui___( void )
-		{
-			reset( false );
-		}
-		~ui___( void )
-		{
-			reset();
-		}
+		E_CVDTOR( ui___ );
 		void Init(
 			xulfmn::main__ &Main,
-			xulfsf::session_form__ &SessionForm )
+			xulfsf::session_form__ &SessionForm,
+			xulfsv::session_view__ &SessionView )
 		{
 			reset();
 
 			_Main = &Main;
 			_SessionForm = &SessionForm;
+			_SessionView = &SessionView;
 		}
 		void Update( void )
 		{
@@ -126,6 +126,14 @@ namespace xulfui {
 				ERRu();
 #endif
 			return *_SessionForm;
+		}
+		xulfsv::session_view__ &SessionView( void ) const
+		{
+#ifdef XULFUI_DBG
+			if ( _SessionForm == NULL )
+				ERRu();
+#endif
+			return *_SessionView;
 		}
 		xulfdg::debug_dialog__ &DebugDialog( void ) const
 		{
@@ -209,6 +217,35 @@ namespace xulfui {
 			GetJSConsole();
 		}
 	};
+
+	typedef geckoo::user_functions__ _user_functions__;
+
+	 class user_functions__
+	 : public _user_functions__
+	{
+	private:
+		xulftk::trunk___ *_Trunk;
+	protected:
+		virtual bso::bool__ GECKOORegister(
+			nsIDOMWindow *Window,
+			const str::string_ &Id );
+		virtual bso::bool__ XULFUIRegister(
+			nsIDOMWindow *Window,
+			const str::string_ &Id ) = 0;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_user_functions__::reset( P );
+			_Trunk = NULL;
+		}
+		E_CVDTOR( user_functions__ )
+		void Init( xulftk::trunk___ &Trunk )
+		{
+			_user_functions__::Init();
+			_Trunk = &Trunk;
+		}
+	};
+
 }
 
 /*$END$*/

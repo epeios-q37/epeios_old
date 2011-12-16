@@ -129,31 +129,31 @@ namespace xulftk {
 		void _Exit( void );
 		virtual void XULFTKFormatedInformations( str::string_ &Informations )
 		{
-			ERRc();	// Si pas surchargé, alors 'xulfmn::about_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	// Si pas surchargé, alors 'xulfmn::about_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKSiteURL( str::string_ &URL )
 		{
-			ERRc();	// Si pas surchargé, alors 'xulfmn::web_site_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	// Si pas surchargé, alors 'xulfmn::web_site_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKDefineSession(
 			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKApplySession( void )
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::close_project_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::close_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 
 			return false;	// Pour éviter un 'warning'.
 		}
 		virtual bso::bool__ XULFTKExit( void )
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::exit_command__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfmn::exit_eh__::NSXPCMOnEvent()' doit être redéfini.
 
 			return true;	// Pour éviter un 'warning'.
 		}

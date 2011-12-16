@@ -63,7 +63,7 @@ using nsxpcm::event__;
 
 void xulfmn::main__::Update( void )
 {
-	Broadcasters.CloseProject.Enable( _Trunk->Kernel().IsProjectInProgress() );
+	Broadcasters.CloseProject.Enable( Trunk().Kernel().IsProjectInProgress() );
 }
 #if 0
 void xulfmn::window_eh__::NSXPCMOnEvent( event__ )

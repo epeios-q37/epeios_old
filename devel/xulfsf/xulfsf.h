@@ -73,24 +73,25 @@ namespace xulfsf {
 
 	XULFBS_EH( backend_type_selection_eh__ );
 	XULFBS_EH( emebedded_backend_selection_eh__ );
+	XULFBS_EH( apply_eh__ );
 
 	struct session_form__
-	: public ui_core__
+	: public ui_core__<xulftk::trunk___>
 	{
-	private:
-		xulftk::trunk___ *_Trunk;
 	public:
 		struct broadcasters__ {
 			broadcaster__
 				PredefinedBackend,
 				DaemonBackend,
 				EmbeddedBackend,
-				EmbeddedBackendSelection;
-		} Broadcasters;
+				EmbeddedBackendSelection,
+				Authentication;
+		} &Broadcasters;
 		struct event_handlers__ {
 			backend_type_selection_eh__ BackendTypeSelection;
 			emebedded_backend_selection_eh__ EmbeddedBackendSelection;
-		} EventHandlers;
+			apply_eh__ Apply;
+		} &EventHandlers;
 		struct widgets__ {
 			menulist__ BackendTypeSwitchMenulist;
 			menuitem__
@@ -100,14 +101,17 @@ namespace xulfsf {
 			deck__ BackendTypeDeck;
 			textbox__ DaemonBackendLocationTextbox;
 			textbox__ EmbeddedBackendFileNameTextbox;
-		} Widgets;
-		void Init(
-			nsIDOMWindow *Window,
-			xulftk::trunk___ &Trunk )
-		{
-			ui_core__::Init( Window );
-			_Trunk = &Trunk;
-		}
+			textbox__ LoginTextbox;
+			textbox__ PasswordTextbox;
+		} &Widgets;
+		session_form__(
+			broadcasters__ &Broadcasters,
+			event_handlers__ &EventHandlers,
+			widgets__ &Widgets )
+		: Broadcasters( Broadcasters ),
+		  EventHandlers( EventHandlers ),
+		  Widgets( Widgets )
+		{}
 		void Update( frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined );
 	};
 

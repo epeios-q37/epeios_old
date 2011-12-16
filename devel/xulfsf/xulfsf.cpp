@@ -107,6 +107,11 @@ ERREnd
 ERREpilog
 }
 
+void xulfsf::apply_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+	Target().ApplySession();
+}
+
 static void DisableAllButSelected_(
 	const str::string_ &Value,
 	session_form__::broadcasters__ &Broadcasters )
@@ -185,13 +190,57 @@ bso::bool__ HideUnusedBackendSelectionMode_(
 
 }
 
+void HandleAuthenticationSubForm_(
+	const frdrgy::registry_ &Registry,
+	session_form__::broadcasters__ &Broadcasters,
+	session_form__::widgets__ &Widgets )
+{
+ERRProlog
+	str::string Login, Password;
+	bso::bool__ Disable = false;
+ERRBegin
+	Login.Init();
+	Password.Init();
+
+	switch ( frdkrn::GetAuthenticationPromptMode( Registry ) ) {
+	case frdkrn::apmNone:
+	case frdkrn::apmAuto:
+		Disable = true;
+		break;
+	case frdkrn::apmFull:
+		if ( !frdrgy::GetAuthenticationPromptPassword( Registry, Password ) )
+			ERRu();
+	case frdkrn::apmPartial:
+		if ( !frdrgy::GetAuthenticationPromptLogin( Registry, Login ) )
+			ERRu();
+	case frdkrn::apmEmpty:
+		break;
+	case frdkrn::apm_Undefined:
+		ERRl();
+		// Affichage d'un message d'erreur normalement.
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	Widgets.LoginTextbox.SetValue( Login );
+	Widgets.PasswordTextbox.SetValue( Password );
+	Broadcasters.Authentication.Disable( Disable );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void xulfsf::session_form__::Update( frdkrn::backend_extended_type__ Type )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	if ( !HideUnusedBackendSelectionMode_( _Trunk->Registry(), Broadcasters ) )
-		_Trunk->UI().LogAndPrompt( _Trunk->Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
+	if ( !HideUnusedBackendSelectionMode_( Trunk().Registry(), Broadcasters ) )
+		Trunk().UI().LogAndPrompt( Trunk().Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
+
+	HandleAuthenticationSubForm_( Trunk().Registry(), Broadcasters, Widgets );
 
 	if ( Type == frdkrn::bxt_Undefined )
 		ERRReturn;
@@ -216,7 +265,6 @@ ERRBegin
 		ERRc();
 		break;
 	}
-
 ERRErr
 ERREnd
 ERREpilog
@@ -258,6 +306,7 @@ static void Register_(
 	R( DaemonBackend );
 	R( EmbeddedBackend );
 	R( EmbeddedBackendSelection );
+	R( Authentication );
 }
 
 static void Register_(
@@ -279,6 +328,7 @@ static void Register_(
 {
 	A( BackendTypeSelection );
 	A( EmbeddedBackendSelection );
+	A( Apply );
 }
 
 #undef R
@@ -296,6 +346,8 @@ static void Register_(
 	R( BackendType, Deck, dck );
 	R( DaemonBackendLocation, Textbox, txb );
 	R( EmbeddedBackendFileName, Textbox, txb );
+	R( Login, Textbox, txb );
+	R( Password, Textbox, txb );
 }
 
 void xulfsf::RegisterSessionFormUI(

@@ -64,7 +64,7 @@ using namespace xulftk;
 
 void xulfdg::debug_dialog__::Update( void )
 {
-	Broadcasters.BackendError.Enable( _Trunk->Kernel().IsConnected() );
+	Broadcasters.BackendError.Enable( Trunk().Kernel().IsConnected() );
 }
 
 
@@ -165,7 +165,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Trunk.UI().DebugDialog().Init( Trunk, Window );
+	Trunk.UI().DebugDialog().Init( Window, Trunk );
 
 	Register_( Trunk, Trunk.UI().DebugDialog().Broadcasters );
 	Register_( Trunk, Trunk.UI().DebugDialog().EventHandlers );

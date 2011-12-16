@@ -76,12 +76,41 @@ namespace xulfrd {
 
 namespace xulfbs {
 
-	using nsxpcm::ui_core__;
 	using xulftk::trunk___;
 
 	void _Report(
 		trunk___ &Trunk,
 		const char *Message );
+
+	typedef nsxpcm::ui_core__ _ui_core__;
+
+	template <typename trunk> class ui_core__
+	: public _ui_core__
+	{
+	private:
+		trunk *_Trunk;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_ui_core__::reset( P );
+			_Trunk = NULL;
+		}
+		E_CVDTOR( ui_core__ );
+		void Init(
+			nsIDOMWindow *Window,
+			trunk &Trunk )
+		{
+			_ui_core__::Init( Window );
+			_Trunk = &Trunk;
+		}
+		trunk &Trunk( void ) const
+		{
+			if ( _Trunk == NULL )
+				ERRc();
+
+			return *_Trunk;
+		}
+	};
 
 	typedef xulwdg::event_handler__<xulftk::trunk___> _event_handler__;
 

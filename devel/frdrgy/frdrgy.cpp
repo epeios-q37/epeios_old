@@ -72,6 +72,13 @@ const char *frdrgy::paths::parameters::backend::AccessMode		= BACKEND "@AccessMo
 const char *frdrgy::paths::parameters::backend::PingDelay		= BACKEND "PingDelay";
 const char *frdrgy::paths::parameters::backend::Location		= BACKEND "Location";
 
+#define AUTHENTICATION	PARAMETERS "Authentication" S
+const char *frdrgy::paths::authentication::CypherKey			= AUTHENTICATION "@CypherKey";
+
+const char *frdrgy::paths::authentication::Mode					= AUTHENTICATION "@Mode";
+const char *frdrgy::paths::authentication::Login				= AUTHENTICATION "Login";
+const char *frdrgy::paths::authentication::Password				= AUTHENTICATION "Password";
+
 #define PROFILES	FRDRGY_PROFILES_PATH
 #define PROFILE		PROFILES "Profile[name=\"" T "\"]" S
 

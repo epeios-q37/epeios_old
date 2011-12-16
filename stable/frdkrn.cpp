@@ -556,6 +556,35 @@ ERREpilog
 	return Status;
 }
 
+authentication_prompt_mode__ frdkrn::GetAuthenticationPromptMode( const frdrgy::registry_ &Registry )
+{
+	authentication_prompt_mode__ Mode = apm_Undefined;
+ERRProlog
+	rgstry::value Value;
+ERRBegin
+	Value.Init();
+
+	if ( !frdrgy::GetAuthenticationPromptRawMode( Registry, Value ) )
+		Mode = apmNone;
+	else {
+		if ( Value == "None" )
+			Mode = apmNone;
+		else if ( Value =="Auto" )
+			Mode = apmAuto;
+		else if ( Value == "Empty" )
+			Mode = apmEmpty;
+		else if ( Value == "Partial" )
+			Mode = apmPartial;
+		else if ( Value == "Full" )
+			Mode = apmFull;
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Mode;
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -79,11 +79,12 @@ namespace xulfmn {
 	XULFBS_EH( close_project_eh__ );
 
 	struct main__
-	: public ui_core__
+	: public ui_core__<xulftk::trunk___>
 	{
-	private:
-		xulftk::trunk___ *_Trunk;
 	public:
+		struct broadcasters__ {
+			broadcaster__ CloseProject;
+		} &Broadcasters;
 		struct event_handlers__ {
 			new_project_eh__ NewProject;
 			open_project_eh__ OpenProject;
@@ -92,24 +93,22 @@ namespace xulfmn {
 			web_site_eh__ WebSite;
 			debug_eh__ Debug;
 			exit_eh__ Exit;
-		} EventHandlers;
-		struct broadcasters__ {
-			broadcaster__ CloseProject;
-		} Broadcasters;
+		} &EventHandlers;
 		struct widgets__ {
 			window__ Window;
 			deck__ MainDeck;
 			widget__
 				SessionViewFrame,
 				SessionFormFrame;
-		} Widgets;
-		void Init(
-			nsIDOMWindow *Window,
-			xulftk::trunk___ &Trunk )
-		{
-			ui_core__::Init( Window );
-			_Trunk = &Trunk;
-		}
+		} &Widgets;
+		main__(
+			broadcasters__ &Broadcasters,
+			event_handlers__ &EventHandlers,
+			widgets__ &Widgets )
+		: Broadcasters( Broadcasters ),
+		  EventHandlers( EventHandlers ),
+		  Widgets( Widgets )
+		{}
 		void Update( void );
 	};
 
