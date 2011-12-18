@@ -186,7 +186,7 @@ ERRBegin
 		break;
 	}
 
-	CErr << Translation << " !" << txf::nl << txf::commit;
+	CErr << Translation << txf::nl << txf::commit;
 
 	ERRExit( EXIT_FAILURE );
 ERRErr

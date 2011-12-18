@@ -1,8 +1,18 @@
 $Id$
 
 *********
+* 0.4.5 *
+*********
+
+18/12/2011 : Publication.
+
+18/12/2011 :
+	- Une troisième balise est maintennat disponiqle, affichant le libellé de l'enregistrement sélectionné.
+
+*********
 * 0.4.4 *
 *********
+
 04/10/2011 : Publication.
 
 04/10/2011 :

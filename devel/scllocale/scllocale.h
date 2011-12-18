@@ -80,7 +80,9 @@ namespace scllocale {
 		const char *RegistryRootPath,
 		const char *FileSuggestedPath );
 
-	const str::string_ &GetTranslation( const char *Message );
+	const str::string_ &GetTranslation(
+		const char *Message,
+		str::string_ &Translation );
 }
 
 /*$END$*/

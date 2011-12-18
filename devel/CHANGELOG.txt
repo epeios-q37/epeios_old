@@ -1,6 +1,17 @@
 $Id$
 
-15/11/2011 :
+18/12/2011 :
+	- FIL :
+		- Ajout 'GetBackendFileName(...)'.
+		- Ajout 'bm_Default'.
+	- SCLLOCALE :
+		- Modification 'GetTranslation(...)'.
+	- SCLMISC :
+		- Adaptation.
+	- XPP :
+		- Gestion des cas où le résultat de la transformation est vide.
+
+15/12/2011 :
 	- GECKOO :
 		- 'const char *User' -> 'void * UP'.
 		+ Rajout de 'Path'.
@@ -22,14 +33,14 @@ $Id$
 	- XULWDG :
 		- Adaptation.
 
-14/11/2011 :
+14/12/2011 :
 	- FRDKRN :
 		- Déportation dans 'Connect(...)' de la partie connection de 'LoadProject(...)'.
 	- FRDRGY :
 		- 'GetBackendType(...)' -> 'GetRawBackendExtendedType(...)'.
 		- Utilisation de '_registry_' à la place de 'registry_'.
 
-13/11/2011 :
+13/12/2011 :
 	- NSXPCM :
 		- Ajout 'event_data__::GetTarget(...)'.
 

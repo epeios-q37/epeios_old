@@ -55,7 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "fil.h"
 #include "str.h"
 #include "cio.h"
 
@@ -97,13 +96,15 @@ void sclmisc::Terminate( void )
 }
 
 
-void sclmisc::CreateBackupFile( const char *FileName )
+void sclmisc::CreateBackupFile(
+	const char *FileName,
+	fil::backup_mode__ Mode )
 {
 ERRProlog
 	fil::backup_status__ Status = fil::bs_Undefined;
 	str::string Translation;
 ERRBegin
-	if ( ( Status = fil::CreateBackupFile( FileName, fil::bmDuplicate, err::hUserDefined ) )!= fil::bsOK ) {
+	if ( ( Status = fil::CreateBackupFile( FileName, Mode, err::hUserDefined ) )!= fil::bsOK ) {
 		Translation.Init();
 		fil::GetTranslation( Status, FileName, scllocale::GetRack(), Translation );
 		cio::CErr << Translation << txf::nl;

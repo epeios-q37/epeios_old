@@ -48,7 +48,7 @@
 			</Translations>
 			<Translations message="ProcessingError">
 				<Translation language="fr">Erreur de traitement : %1</Translation>
-				<Translation language="en">Processing error : %1</Translation>
+				<Translation language="en">Processing error: %1</Translation>
 			</Translations>
 		</xpp:bloc>
 

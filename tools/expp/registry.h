@@ -39,7 +39,7 @@ namespace registry {
 		const char *FileName,
 		rgstry::context___ &Context )
 	{
-		return Registry.Fill( Registry.CreateNewLevel(), FileName, xpp::criterions___(),  "Configurations/Configuration[target=\"" NAME "\"]", Context );
+		return Registry.Fill( Registry.AddEmbeddedLevel(), FileName, xpp::criterions___(),  "Configurations/Configuration[target=\"" NAME "\"]", Context );
 	}
 
 	struct path {

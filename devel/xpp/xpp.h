@@ -101,6 +101,7 @@ namespace xpp {
 		sBadCypherKey,
 		sMissingCypherKey,
 		sMissingKeyOrFormatAttribute,
+		sEmptyResult,
 
 		s_amount,
 		s_Undefined,

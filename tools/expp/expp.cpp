@@ -339,10 +339,13 @@ static void Process_(
 ERRProlog
 	xpp::status__ Status = xpp::s_Undefined;
 	xpp::context___ Context;
+	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	Context.Init();
 
-	if ( ( Status = xpp::Process( IFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
+	XFlow.Init( IFlow );
+
+	if ( ( Status = xpp::Process( XFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
 								  Outfit, OFlow,  Context ) ) != xpp::sOK )
 		Report( eProcessingError, &Context );

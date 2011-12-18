@@ -93,4 +93,18 @@
 		<Translation language="fr">attribut 'key' ou 'format' manquant</Translation>
 		<Translation language="en">missing 'key' or 'format' attribute</Translation>
 	</Translations>
+	<Translations message="XPP_">
+		<Translation language="fr"></Translation>
+		<Translation language="en"></Translation>
+	</Translations>
+	<Translations message="XPP_EmptyResult">
+		<Translation language="fr">Résultat vide.</Translation>
+		<Translation language="en">Empty result.</Translation>
+	</Translations>
+	<!--
+	<Translations message="XPP_">
+		<Translation language="fr"></Translation>
+		<Translation language="en"></Translation>
+	</Translations>
+	-->
 </xpp:bloc>

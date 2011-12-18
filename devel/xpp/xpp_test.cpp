@@ -36,11 +36,11 @@
 #include "fnm.h"
 #include "lcl.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
-#define TEST_CASE	5
+#define TEST_CASE	7
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
@@ -72,6 +72,18 @@ using cio::cerr;
 #define NAMESPACE	"xcf"
 #endif
 
+#if TEST_CASE == 6
+#define LOCATION	"H:\\svn\\Partitions\\"	
+#define FILENAME	"Excerpts.xml"
+#define NAMESPACE	"xpp"
+#endif
+
+#if TEST_CASE == 7
+#define LOCATION	""	
+#define FILENAME	"empty.xml"
+#define NAMESPACE	"xpp"
+#endif
+
 #define FILE		LOCATION FILENAME
 
 
@@ -79,14 +91,16 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	flf::file_iflow___ Flow;
-	xpp::preprocessing_iflow___ PFlow;
 	xtf::extended_text_iflow__ XFlow;
+	xpp::preprocessing_iflow___ PFlow;
+	xtf::extended_text_iflow__ PXFlow;
 	FNM_BUFFER___ Buffer;
 	xml::parser___ Parser;
 	bso::bool__ Continue = true;
 	int TokenFlags = 0;
 	xpp::criterions___ Criterions( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) );
 	str::string Test;
+	xpp::context___ Context;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
 //	Flow.Init( Example );
@@ -99,32 +113,36 @@ ERRBegin
 
 	Test.Init();
 
-#if 1
-	PFlow.Init( Flow, xpp::criterions___( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) ) );
+	XFlow.Init( Flow );
+
+#if 0
+	PFlow.Init( XFlow, xpp::criterions___( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) ) );
 #else
-	PFlow.Init( Flow, Criterions );
+	PFlow.Init( XFlow, Criterions );
 #endif
 
-	XFlow.Init( PFlow );
+	PXFlow.Init( PFlow );
 
-	Parser.Init( XFlow, xml::eh_Default );
+	Parser.Init( PXFlow, xml::eh_Default );
 
 	TokenFlags |= xml::tfValue;
 
 	while ( Continue )
 		switch ( Parser.Parse( TokenFlags ) ) {
 		case xml::tValue:
-			cout << Parser.DumpData() << txf::commit;
+			COut << Parser.DumpData() << txf::commit;
 			break;
-		case xml::tProcessed:
-			cout << Parser.DumpData() << txf::commit;
+		case xml::t_Processed:
+			COut << Parser.DumpData() << txf::commit;
 			Continue = false;
 			break;
-		case xml::tError:
-			cerr << "Error '" << xpp::Label( PFlow.Status() ) << "' at line " << PFlow.Coord().Line << " column " << PFlow.Coord().Column;
-			if ( PFlow.LocalizedFileName().Amount() != 0 )
-				cerr << " in file '" << PFlow.LocalizedFileName() << '\'';
-			cerr << " !" << txf::nl << txf::commit;
+		case xml::t_Error:
+			Context.Init();
+			PFlow.GetContext( Context );
+			CErr << "Error '" << xpp::Label( Context.Status ) << "' at line " << Context.Coord.Line << " column " << Context.Coord.Column;
+			if ( Context.FileName.Amount() != 0 )
+				CErr << " in file '" << Context.FileName << '\'';
+			CErr << " !" << txf::nl << txf::commit;
 			Continue = false;
 			break;
 		default:
@@ -132,7 +150,7 @@ ERRBegin
 			break;
 		}
 	
-	cout << txf::nl << txf::commit;
+	COut << txf::nl << txf::commit;
 
 ERRErr
 ERREnd
@@ -143,7 +161,7 @@ int main( int argc, char *argv[] )
 {
 ERRFProlog
 ERRFBegin
-	cout << "Test of library " << XPPTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	COut << "Test of library " << XPPTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -152,13 +170,13 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cout );
+			TTR.Advertise( COut );
 			break;
 		}
 	default:
-		cout << txf::commit;
-		cerr << "\nBad arguments.\n";
-		cout << "Usage: " << XPPTutor.Name << " [/i]\n\n";
+		COut << txf::commit;
+		CErr << "\nBad arguments.\n";
+		COut << "Usage: " << XPPTutor.Name << " [/i]\n\n";
 		ERRi();
 	}
 

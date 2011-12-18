@@ -62,6 +62,7 @@ extern class ttr_tutor &SCLMISCTutor;
 
 #include "err.h"
 #include "flw.h"
+#include "fil.h"
 
 namespace sclmisc {
 
@@ -71,7 +72,11 @@ namespace sclmisc {
 
 	void Terminate( void );
 
-	void CreateBackupFile( const char *FileName );
+	using fil::GetBackupFileName;
+
+	void CreateBackupFile(
+		const char *FileName,
+		fil::backup_mode__ Mode = fil::bm_Default );
 
 	void RecoverBackupFile( const char *FileName );
 }

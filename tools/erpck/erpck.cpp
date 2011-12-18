@@ -41,7 +41,7 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.4.4"
+#define VERSION					"0.4.5"
 #define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
 #define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
@@ -59,6 +59,7 @@ using cio::CErr;
 
 typedef bso::ulong__	id__;
 #define ALL				BSO_ULONG_MAX
+#define UNDEFINED		ALL
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -1154,6 +1155,7 @@ static void Display_(
 static void Display_(
 	rrow__ Row,						
 	const records_ &Records,
+	str::string_ &Label,
 	xml::writer_ &Writer )
 {
 	ctn::E_CITEMt( record_, rrow__ ) Record;
@@ -1161,6 +1163,8 @@ static void Display_(
 	Record.Init( Records );
 
 	Display_( Record( Row ), Writer );
+
+	Label = Record().Label;
 }
 
 static void DisplayAll_(
@@ -1213,6 +1217,7 @@ id__  Display_(
 	counter__ Skipped,
 	bso::ulong__ SessionMaxDuration,
 	const records_ &Records,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
 {
@@ -1264,7 +1269,7 @@ id__  Display_(
 		}
 
 		if ( Row != NONE )
-			Display_( Row, Records, Writer );
+			Display_( Row, Records, Label, Writer );
 	}
 
 	return Id;
@@ -1274,12 +1279,13 @@ static id__ Display_(
 	id__ Id,
 	const table_ &Table,
 	bso::ulong__ SessionMaxDuration,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
 {
 	Writer.PushTag( Table.Label );
 
-	Id = Display_( Id, Table.Skipped(), SessionMaxDuration, Table.Records, Context, Writer );	
+	Id = Display_( Id, Table.Skipped(), SessionMaxDuration, Table.Records, Label, Context, Writer );	
 
 	Writer.PopTag();
 
@@ -1291,6 +1297,7 @@ static id__ Display_(
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	bso::ulong__ SessionMaxDuration,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	txf::text_oflow__ &Output )
 {
@@ -1346,7 +1353,7 @@ ERRBegin
 
 	Writer.PushTag( "Data" );
 
-	Id = Display_( Id, Table( Data.Last() ), SessionMaxDuration, Context, Writer );
+	Id = Display_( Id, Table( Data.Last() ), SessionMaxDuration, Label, Context, Writer );
 
 	Writer.PopTag();
 
@@ -1362,6 +1369,7 @@ static id__ DisplayWithoutBackup_(
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	bso::ulong__ SessionMaxDuration,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const char *FileName )
 {
@@ -1376,7 +1384,7 @@ ERRBegin
 
 	TFlow.Init( FFlow );
 
-	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, TFlow );
+	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, TFlow );
 ERRErr
 ERREnd
 ERREpilog
@@ -1388,6 +1396,7 @@ static id__ Display_(
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	bso::ulong__ SessionMaxDuration,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const char *FileName )
 {
@@ -1401,7 +1410,7 @@ ERRBegin
 
 	Backuped = true;
 
-	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, SessionMaxDuration, Context, FileName );
+	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, FileName );
 ERRErr
 	if ( Backuped )
 		fil::RecoverBackupFile( FileName );
@@ -1415,6 +1424,7 @@ static id__ Display_(
 	const data_ &Data,
 	const str::string_ &XSLFileName,
 	bso::ulong__ SessionMaxDuration,
+	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const str::string_ &OutputFileName )
 {
@@ -1422,9 +1432,9 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( OutputFileName.Amount() == 0 )
-		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, COut );
+		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, COut );
 	else
-		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, OutputFileName.Convert( Buffer ) );
+		Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, OutputFileName.Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -1441,6 +1451,7 @@ ERREpilog
 void LaunchCommand_(
 	const str::string_ &Command,
 	id__ Id,
+	const str::string_ &Label,
 	const str::string_ &OutputFileName )
 {
 ERRProlog
@@ -1451,6 +1462,7 @@ ERRBegin
 		CompleteCommand.Init( Command );
 		str::ReplaceTag( CompleteCommand, 1, OutputFileName, '$' );
 		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
+		str::ReplaceTag( CompleteCommand, 3, Label, '$' );
 		COut << "Launching '" << CompleteCommand << "\'." << txf::nl << txf::commit;
 		system( CompleteCommand.Convert( Buffer ) );
 	}
@@ -1614,6 +1626,7 @@ ERRProlog
 	str::string ContextFileName;
 	bso::ulong__ SessionMaxDuration = 0;
 	bso::bool__ Error = false;
+	str::string Label;
 ERRBegin
 	DataFileName.Init();
 
@@ -1645,14 +1658,15 @@ ERRBegin
 
 	SessionMaxDuration = rgstry::GetUL( Registry, str::string( SESSION_MAX_DURATION_TAG ), 0, &Error );
 
-	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Context, OutputFileName );
+	Label.Init();
+	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, OutputFileName );
 
 	Command.Init();
 	Registry.GetValue( str::string( COMMAND_TAG ), Command );
 
 	DumpContext_( Context, ContextFileName.Convert( Buffer ) );
 
-	LaunchCommand_( Command, Id, OutputFileName );
+	LaunchCommand_( Command, Id, Label, OutputFileName );
 ERRErr
 ERREnd
 ERREpilog

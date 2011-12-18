@@ -313,13 +313,16 @@ namespace fil {
 		bmRename,
 		bmDuplicate,
 		bm_amount,
-		bm_Undefined
+		bm_Undefined,
+		bm_Default = bmRename,
 	};
 
+# define FIL_BUFFER___	tol::free_pointer___< char>
 
-	/*f Make a backup file from the file 'File', if exist, in adding 'Extension'.
-	If 'Mode' == 'fil::mDuplicate', the backup file is create by duplicating the original one.
-	If 'Mode' == 'fil::mRename', the bachup file is create by renaming the original one. */
+	const char* GetBackupFileName(
+		const char *FileName,
+		FIL_BUFFER___ &Buffer );
+
 	backup_status__ CreateBackupFile(
 		const char *FileName,
 		backup_mode__ Mode,

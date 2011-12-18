@@ -219,12 +219,13 @@ ERREnd
 ERREpilog
 }
 
-const str::string_ &scllocale::GetTranslation( const char *Message )
+const str::string_ &scllocale::GetTranslation(
+	const char *Message,
+	str::string_ &Translation )
 {
-	Translation_.Init();
-	LocaleRack_.GetTranslation( Message, "", Translation_ );
+	LocaleRack_.GetTranslation( Message, "", Translation );
 
-	return Translation_;
+	return Translation;
 }
 
 

@@ -234,6 +234,9 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 
 	AttributeAttribute.Init( NamespaceWithSeparator );
 	AttributeAttribute.Append( ATTRIBUTE_ATTRIBUTE );
+
+	XMLNS.Init( "xmlns:" );
+	XMLNS.Append( Namespace );
 }
 
 static mdr::size__ Fill_(
@@ -1096,6 +1099,11 @@ status__ xpp::_extended_parser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tSpecialAttribute:
+			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
+				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
+					ERRc();
+				else
+					_Parser.PurgeDumpData();
 			Status = sOK;
 			break;
 		case xml::tStartTagClosed:
@@ -1188,13 +1196,12 @@ mdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 			if ( Parser != NULL )
 				ERRc();
 #endif
-			delete _CurrentParser;
-			_CurrentParser = NULL;
-
-			if ( _Parsers.Amount() )
+			if ( _Parsers.Amount() != 0 ) {
+				delete _CurrentParser;
 				_CurrentParser = _Parsers.Pop();
-
-			_Status = _Parser().Handle( Parser, _Data );
+				_Status = _Parser().Handle( Parser, _Data );
+			} else
+				_Status = (xpp::status__)xml::sUnexpectedEOF;
 
 		} 
 		

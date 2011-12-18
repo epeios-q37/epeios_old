@@ -222,11 +222,9 @@ ERREpilog
 	return Success;
 }
 
-#define BUFFER___	tol::free_pointer___< char>
-
-static const char* BuildBackupFileName_(
+const char* fil::GetBackupFileName(
 	const char *FileName,
-	BUFFER___ &Buffer )
+	FIL_BUFFER___ &Buffer )
 {
 
 	if ( ( Buffer = (char *)malloc( strlen( FileName ) + sizeof( FIL__BACKUP_FILE_EXTENSION  ) + 1 ) ) == NULL )
@@ -262,7 +260,7 @@ const str::string_ &fil::GetTranslation(
 ERRProlog
 	str::string Message;
 	const char *BackupFileName = NULL;
-	BUFFER___ Buffer;
+	FIL_BUFFER___ Buffer;
 ERRBegin
 	Message.Init();
 
@@ -274,7 +272,7 @@ ERRBegin
 		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
 		break;
 	case bsUnableToSuppress:
-		lcl::ReplaceTag( Message, 1, str::string( BuildBackupFileName_( FileName, Buffer ) ) );
+		lcl::ReplaceTag( Message, 1, str::string( GetBackupFileName( FileName, Buffer ) ) );
 		break;
 	default:
 		ERRu();
@@ -294,11 +292,11 @@ backup_status__ fil::CreateBackupFile(
 	backup_status__ Status = bs_Undefined;
 ERRProlog
 	const char *NomFichierSecurite = NULL;
-	BUFFER___ Buffer;
+	FIL_BUFFER___ Buffer;
 ERRBegin
 	if ( FileExists( NomFichier ) )
 	{
-		NomFichierSecurite = BuildBackupFileName_( NomFichier, Buffer );
+		NomFichierSecurite = GetBackupFileName( NomFichier, Buffer );
 
 		if ( FileExists( NomFichierSecurite ) )
 			if ( remove( NomFichierSecurite ) ) {
@@ -393,15 +391,15 @@ const str::string_ &fil::GetTranslation(
 ERRProlog
 	str::string Message;
 	const char *BackupFileName = NULL;
-	BUFFER___ Buffer;
+	FIL_BUFFER___ Buffer;
 ERRBegin
 	Message.Init();
 
-	LocaleRack.GetTranslation( Label( Status ), "EFIL_", Translation );
+	LocaleRack.GetTranslation( Label( Status ), "FIL_", Translation );
 
 	switch ( Status ) {
 	case rsUnableToRename:
-		lcl::ReplaceTag( Message, 1, str::string( BuildBackupFileName_( FileName, Buffer ) ) );
+		lcl::ReplaceTag( Message, 1, str::string( GetBackupFileName( FileName, Buffer ) ) );
 		break;
 	case rsUnableToSuppress:
 		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
@@ -423,7 +421,7 @@ recover_status__ fil::RecoverBackupFile(
 	recover_status__ Status = rs_Undefined;
 ERRProlog
 	const char *NomFichierSecurite = NULL;
-	BUFFER___ Buffer;
+	FIL_BUFFER___ Buffer;
 ERRBegin
 	if ( FileExists( NomFichier ) )
 		if ( remove( NomFichier ) ) {
@@ -431,7 +429,7 @@ ERRBegin
 			ERRReturn;
 		}
 
-	NomFichierSecurite = BuildBackupFileName_( NomFichier, Buffer );
+	NomFichierSecurite = GetBackupFileName( NomFichier, Buffer );
 
 	if ( FileExists( NomFichierSecurite ) )
 		if ( rename( NomFichierSecurite, NomFichier ) ) {
