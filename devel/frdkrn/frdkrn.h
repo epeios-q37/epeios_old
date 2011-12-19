@@ -83,19 +83,13 @@ namespace frdkrn {
 		bxt_Undefined
 	};
 
-	inline backend_extended_type__ GetBackendExtendedType( const str::string_ &RawType )
-	{
-		if ( RawType == "Embedded" )
-			return bxtEmbedded;
-		else if ( RawType == "Daemon" )
-			return bxtDaemon;
-		else if ( RawType == "Predefined" )
-			return bxtPredefined;
-		else
-			return bxt_Undefined;
-	}
+	backend_extended_type__ GetBackendExtendedType( const str::string_ &RawType );
 
 	backend_extended_type__ GetBackendExtendedType( const frdrgy::_registry_ &Registry );
+
+	void SetBackendExtendedType(
+		frdrgy::_registry_ &Registry,
+		backend_extended_type__ Type );
 
 	csducl::type__ GetBackendTypeAndLocation(
 		const frdrgy::registry_ &Registry,
@@ -123,7 +117,7 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum report__ {
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
-		rParametersParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
+		rSettingsParsingError,		// Error during settings data handling. See 'ErrorSet' for more details.
 		rNoOrBadProjectId,
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
@@ -300,6 +294,10 @@ namespace frdkrn {
 		{
 			return _Registry;
 		}
+		frdrgy::registry_ &Registry( void )
+		{
+			return _Registry;
+		}
 		report__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
@@ -338,16 +336,16 @@ namespace frdkrn {
 		status__ SaveProject(
 			const str::string_ &FileName,
 			const char *TargetName );
-		report__ FillParametersRegistry(
-			xtf::extended_text_iflow__ &ParametersXFlow,
+		report__ FillSettingsRegistry(
+			xtf::extended_text_iflow__ &SettingsXFlow,
 			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
-		status__ FillParametersRegistry(
-			xtf::extended_text_iflow__ &ParametersXFlow,
+		status__ FillSettingsRegistry(
+			xtf::extended_text_iflow__ &SettingsXFlow,
 			const xpp::criterions___ &Criterions );
-		report__ DumpParametersRegistry( xml::writer_ &Writer ) const
+		report__ DumpSettingsRegistry( xml::writer_ &Writer ) const
 		{
-			_Registry.DumpParameters( true, Writer);
+			_Registry.DumpSettings( true, Writer);
 
 			return r_OK;
 		}

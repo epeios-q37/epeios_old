@@ -1,5 +1,17 @@
 $Id$
 
+19/12/2011 :
+	- FRDKRN :
+		- Adaptation.
+	- FRDRGY :
+		- Dans 'registry_' : 'parameters' -> 'settings'.
+	- RGSTRY :
+		- 'multi_level_registry_::SetValue(...)' sans paramètre 'Level' n'effectue l'écriture que si la valeur n'existe pas déjà dans la 'registry'.
+	- XULFRG :
+		- 'parameters' -> 'annex'.
+	- XULFTK :
+		- Adaptation.
+
 18/12/2011 :
 	- FIL :
 		- Ajout 'GetBackendFileName(...)'.

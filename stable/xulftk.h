@@ -342,6 +342,10 @@ namespace xulftk {
 		{
 			return Kernel().Registry();
 		}
+		frdrgy::registry_ &Registry( void )
+		{
+			return Kernel().Registry();
+		}
 		const str::string_ &Message( void ) const
 		{
 			return Kernel().Message();

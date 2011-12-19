@@ -160,7 +160,7 @@ namespace xulfui {
 
 			_DebugDialog = NULL;
 		}
-		void SaveParameters(
+		void SaveAnnex(
 			const char *AttributeName,
 			const str::string_ &Data )
 		{

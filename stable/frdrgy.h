@@ -126,7 +126,7 @@ namespace frdrgy {
 		{
 			rgstry::level__
 				Project,
-				Parameters;
+				Settings;
 		} &S_;
 		registry_( s &S )
 		: S_( S ),
@@ -136,7 +136,7 @@ namespace frdrgy {
 		{
 			_registry_::reset( P );
 
-			S_.Project = S_.Parameters = RGSTRY_UNDEFINED_LEVEL;
+			S_.Project = S_.Settings = RGSTRY_UNDEFINED_LEVEL;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -147,7 +147,7 @@ namespace frdrgy {
 			_registry_::operator =( R );
 
 			S_.Project = R.S_.Project;
-			S_.Parameters = R.S_.Parameters;
+			S_.Settings = R.S_.Settings;
 
 			return *this;
 		}
@@ -157,7 +157,7 @@ namespace frdrgy {
 
 			_registry_::Add( ConfigurationRegistry );
 			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
-			S_.Parameters= _registry_::AddEmbeddedLevel( rgstry::name( "Parameters" ) );
+			S_.Settings= _registry_::AddEmbeddedLevel( rgstry::name( "Settings" ) );
 		}
 		void DumpProject(
 			bso::bool__ RootToo,
@@ -165,11 +165,11 @@ namespace frdrgy {
 		{
 			_DumpRegistry( S_.Project, RootToo, Writer );
 		}
-		void DumpParameters(
+		void DumpSettings(
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const
 		{
-			_DumpRegistry( S_.Parameters, RootToo, Writer );
+			_DumpRegistry( S_.Settings, RootToo, Writer );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
@@ -179,33 +179,33 @@ namespace frdrgy {
 		{
 			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillParameters(
+		rgstry::status__ FillSettings(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Parameters, FileName, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Settings, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillParameters(
+		rgstry::status__ FillSettings(
 			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Parameters, XFlow, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Settings, XFlow, Criterions, RootPath, Context );
 		}
-		void CreateParametersPath( const str::string_ &Path )
+		void CreateSettingsPath( const str::string_ &Path )
 		{
-			_registry_::Create( S_.Parameters, Path );
+			_registry_::Create( S_.Settings, Path );
 		}
 		time_t ProjectTimeStamp( void ) const
 		{
 			return TimeStamp( S_.Project );
 		}
-		time_t ParametersTimeStamp( void ) const
+		time_t SettingsTimeStamp( void ) const
 		{
-			return TimeStamp( S_.Parameters );
+			return TimeStamp( S_.Settings );
 		}
 		bso::bool__ GetProjectValue(
 			const str::string_ &Path,
@@ -213,11 +213,11 @@ namespace frdrgy {
 		{
 			return _registry_::GetValue( S_.Project, Path, Value );
 		}
-		bso::bool__ GetParametersValue(
+		bso::bool__ GetSettingsValue(
 			const str::string_ &Path,
 			str::string_ &Value ) const
 		{
-			return _registry_::GetValue( S_.Parameters, Path, Value );
+			return _registry_::GetValue( S_.Settings, Path, Value );
 		}
 	};
 

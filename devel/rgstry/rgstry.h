@@ -1422,13 +1422,10 @@ namespace rgstry {
 
 			_Touch( Level );
 		}
-		void SetValue(
+		bso::bool__ SetValue(
 			const str::string_ &PathString,
 			const value_ &Value,
-			epeios::row__ *PathErrorRow = NULL )
-		{
-			SetValue( Entries.Last(), PathString, Value, PathErrorRow );
-		}
+			epeios::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		row__ Search(
 			level__ Level,
 			const path_ &Path ) const

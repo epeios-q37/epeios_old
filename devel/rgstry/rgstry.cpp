@@ -1173,7 +1173,39 @@ ERRErr
 ERREnd
 ERREpilog
 	return Found;
+
 }
+
+bso::bool__ rgstry::multi_level_registry_::SetValue(
+	const str::string_ &PathString,
+	const value_ &Value,
+	epeios::row__ *PathErrorRow )
+{
+	bso::bool__ Set = false;
+ERRProlog
+	value CurrentValue;
+	epeios::row__ LocalPathErrorRow = NONE;
+ERRBegin
+	CurrentValue.Init();
+
+	if ( !GetValue( PathString, CurrentValue, &LocalPathErrorRow ) ) {
+		if ( LocalPathErrorRow != NONE ) {
+			*PathErrorRow = LocalPathErrorRow;
+			ERRReturn;
+		}
+	} else 
+		if ( CurrentValue == Value )
+			ERRReturn;
+
+	SetValue( Entries.Last(), PathString, Value, PathErrorRow );
+
+	Set = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Set;
+}
+
 
 row__ rgstry::multi_level_registry_::Search(
 	const str::string_ &PathString,

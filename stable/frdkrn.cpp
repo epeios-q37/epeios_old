@@ -70,7 +70,7 @@ const char *frdkrn::GetLabel( report__ Report )
 
 	switch( Report ) {
 		CASE( ProjectParsingError );
-		CASE( ParametersParsingError );
+		CASE( SettingsParsingError );
 		CASE( NoOrBadProjectId );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
@@ -104,7 +104,7 @@ ERRBegin
 
 	switch ( Report ) {
 		case rProjectParsingError:
-		case rParametersParsingError:
+		case rSettingsParsingError:
 			EmbeddedMessage.Init();
 			rgstry::GetTranslation( ErrorSet.Context, LocaleRack, EmbeddedMessage );
 			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
@@ -133,6 +133,43 @@ ERREpilog
 	return Translation;
 }
 
+#define BACKEND_EXTENDED_TYPE_EMBEDDED		"Embedded"
+#define BACKEND_EXTENDED_TYPE_DAEMON		"Daemon"
+#define BACKEND_EXTENDED_TYPE_PREDEFINED	"Predefined"
+
+inline backend_extended_type__ frdkrn::GetBackendExtendedType( const str::string_ &RawType )
+{
+	if ( RawType == BACKEND_EXTENDED_TYPE_EMBEDDED )
+		return bxtEmbedded;
+	else if ( RawType == BACKEND_EXTENDED_TYPE_DAEMON )
+		return bxtDaemon;
+	else if ( RawType == BACKEND_EXTENDED_TYPE_PREDEFINED )
+		return bxtPredefined;
+	else
+		return bxt_Undefined;
+}
+
+static const char *GetBackendExtendedTypeLabel_( backend_extended_type__ Type )
+{
+	switch ( Type ) {
+	case bxtPredefined:
+		return BACKEND_EXTENDED_TYPE_PREDEFINED;
+		break;
+	case bxtDaemon:
+		return BACKEND_EXTENDED_TYPE_DAEMON;
+		break;
+	case bxtEmbedded:
+		return BACKEND_EXTENDED_TYPE_EMBEDDED;
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	return NULL;	// Pour éviter un 'warning'.
+}
+
+
 backend_extended_type__ frdkrn::GetBackendExtendedType( const frdrgy::_registry_ &Registry )
 {
 	backend_extended_type__ Type = bxt_Undefined;
@@ -149,6 +186,14 @@ ERREnd
 ERREpilog
 	return Type;
 }
+
+void SetBackendExtendedType(
+	frdrgy::_registry_ &Registry,
+	backend_extended_type__ Type )
+{
+	Registry.SetValue( str::string( frdrgy::paths::parameters::backend::Type ), str::string( GetBackendExtendedTypeLabel_( Type ) ) );
+}
+
 
 bso::bool__ frdkrn::GetDefaultConfigurationFileName(
 	const char *Affix,
@@ -413,10 +458,10 @@ ERREpilog
 }
 
 
-#define PARAMETERS_ROOT_PATH	"Parameters"
+#define SETTINGS_ROOT_PATH	"Settings"
 
-report__ frdkrn::kernel___::FillParametersRegistry(
-	xtf::extended_text_iflow__ &ParametersXFlow,
+report__ frdkrn::kernel___::FillSettingsRegistry(
+	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
@@ -425,14 +470,14 @@ ERRProlog
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
 	
-	switch ( _Registry.FillParameters( ParametersXFlow, Criterions, PARAMETERS_ROOT_PATH, ErrorSet.Context ) ) {
+	switch ( _Registry.FillSettings( SettingsXFlow, Criterions, SETTINGS_ROOT_PATH, ErrorSet.Context ) ) {
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		_Registry.CreateParametersPath( str::string( PARAMETERS_ROOT_PATH ) );
+		_Registry.CreateSettingsPath( str::string( SETTINGS_ROOT_PATH ) );
 		break;
 	default:
-		Report = rParametersParsingError;
+		Report = rSettingsParsingError;
 		ERRReturn;
 		break;
 	}
@@ -444,8 +489,8 @@ ERREpilog
 	return Report;
 }
 
-status__ frdkrn::kernel___::FillParametersRegistry(
-	xtf::extended_text_iflow__ &ParametersXFlow,
+status__ frdkrn::kernel___::FillSettingsRegistry(
+	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions )
 {
 	status__ Status = s_Undefined;
@@ -455,7 +500,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = FillParametersRegistry( ParametersXFlow, Criterions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		Status = sWarning;

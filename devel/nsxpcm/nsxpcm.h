@@ -1579,6 +1579,18 @@ namespace nsxpcm {
 		}
 	};
 
+# define NSXPCM__VALUE_HANDLING\
+		void SetValue( const str::string_ &Value )\
+		{\
+			nsxpcm::SetValue( GetObject(), Value );\
+		}\
+		const str::string_ &GetValue( str::string_ &Value )\
+		{\
+			nsxpcm::GetValue( GetObject(), Value );\
+\
+			return Value;\
+		}\
+
 	class widget__	// Classe générique.
 	: public _widget__<nsIDOMElement>
 	{};
@@ -1591,16 +1603,7 @@ namespace nsxpcm {
 	: public _widget__<nsIDOMXULTextBoxElement>
 	{
 	public:
-		void SetValue( const str::string_ &Value )
-		{
-			nsxpcm::SetValue( GetObject(), Value );
-		}
-		const str::string_ &GetValue( str::string_ &Value )
-		{
-			nsxpcm::GetValue( GetObject(), Value );
-
-			return Value;
-		}
+		NSXPCM__VALUE_HANDLING
 		void Select( void )
 		{
 			T( GetObject()->Select() );
@@ -1635,28 +1638,14 @@ namespace nsxpcm {
 	: public _widget__<nsIDOMXULDescriptionElement>
 	{
 	public:
-		void SetValue( const str::string_ &Value )
-		{
-			nsxpcm::SetValue( GetObject(), Value );
-		}
-		void GetValue( str::string_ &Value )
-		{
-			nsxpcm::GetValue( GetObject(), Value );
-		}
+		NSXPCM__VALUE_HANDLING
 	};
 
 	class label__
 	: public _widget__<nsIDOMXULLabelElement>
 	{
 	public:
-		void SetValue( const str::string_ &Value )
-		{
-			nsxpcm::SetValue( GetObject(), Value );
-		}
-		void GetValue( str::string_ &Value )
-		{
-			nsxpcm::GetValue( GetObject(), Value );
-		}
+		NSXPCM__VALUE_HANDLING
 	};
 
 	class checkbox__
@@ -1929,13 +1918,17 @@ namespace nsxpcm {
 	{};
 
 	class menuitem__
-	: public _widget__< nsIDOMXULSelectControlItemElement>
-	{};
+	: public _widget__<nsIDOMXULSelectControlItemElement>
+	{
+	public:
+		NSXPCM__VALUE_HANDLING
+	};
 
 	class menulist__
 	: public _widget__<nsIDOMXULMenuListElement>
 	{
 	public:
+		NSXPCM__VALUE_HANDLING
 		void SetSelectedIndex( bso::ulong__ Index )
 		{
 			T( GetObject()->SetSelectedIndex( Index ) );

@@ -69,11 +69,11 @@ namespace xulfrg {
 	struct paths
 	: public frdrgy::paths
 	{
-		struct parameters {
-			static const char *Storage;
+		struct annex {
+			static const char *Type;
 			static const char *Target;
 		};
-		struct backend_selection__
+		struct backend_selection
 		{
 			static const char *Mode;
 		};
@@ -82,25 +82,25 @@ namespace xulfrg {
 	using frdrgy::registry_;
 	using frdrgy::registry;
 
-	inline bso::bool__ GetRawParametersStorage(
+	inline bso::bool__ GetRawAnnexType(
 		const rgstry::multi_level_registry_ &Registry,
 		str::string_ &Value )
 	{
-		return Registry.GetValue( paths::parameters::Storage, Value );
+		return Registry.GetValue( paths::annex::Type, Value );
 	}
 
-	inline bso::bool__ GetParametersTarget(
+	inline bso::bool__ GetAnnexTarget(
 		const rgstry::multi_level_registry_ &Registry,
 		str::string_ &Value )
 	{
-		return Registry.GetValue( paths::parameters::Target, Value );
+		return Registry.GetValue( paths::annex::Target, Value );
 	}
 
 	inline bso::bool__ GetRawBackendSelectionMode(
 		const rgstry::multi_level_registry_ &Registry,
 		str::string_ &Value )
 	{
-		return Registry.GetValue( paths::backend_selection__::Mode, Value );
+		return Registry.GetValue( paths::backend_selection::Mode, Value );
 	}
 }
 

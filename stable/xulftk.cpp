@@ -92,36 +92,36 @@ ERREnd
 ERREpilog
 }
 
-enum storage__
+enum annex_type__
 {
-	sEmbedded,
-	sFile,
-	sVolatile,
-	s_amount,
-	s_Undefined
+	atEmbedded,
+	atFile,
+	atVolatile,
+	at_amount,
+	at_Undefined
 };
 
 
-static storage__ GetStorage_( const rgstry::multi_level_registry_ &Registry )
+static annex_type__ GetAnnexType_( const rgstry::multi_level_registry_ &Registry )
 {
-	storage__ Storage = s_Undefined;
+	annex_type__ Type = at_Undefined;
 ERRProlog
 	str::string Value;
 ERRBegin
 	Value.Init();
 
-	if ( xulfrg::GetRawParametersStorage( Registry, Value ) ) {
+	if ( xulfrg::GetRawAnnexType( Registry, Value ) ) {
 		if ( Value == "Embedded" )
-			Storage = sEmbedded;
+			Type = atEmbedded;
 		else if ( Value == "File" )
-			Storage = sFile;
+			Type = atFile;
 		else if ( Value == "Volatile " )
-			Storage = sVolatile;
+			Type = atVolatile;
 	}
 ERRErr
 ERREnd
 ERREpilog
-	return Storage;
+	return Type;
 }
 
 static bso::bool__ IsValid_(
@@ -147,7 +147,7 @@ static bso::bool__ IsValid_(
 }
 
 
-static const char *GetTarget_( 
+static const char *GetAnnexTarget_( 
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack,
@@ -160,11 +160,11 @@ ERRProlog
 ERRBegin
 	Target.Init();
 
-	xulfrg::GetParametersTarget( Registry, Target );
+	xulfrg::GetAnnexTarget( Registry, Target );
 
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
-		Rack.GetTranslation( "MissingOrBadParametersTargetDefinition", PREFIX, Translation );
+		Rack.GetTranslation( "MissingOrBadAnnexTargetDefinition", PREFIX, Translation );
 		UI.LogAndPrompt( Translation );
 		ERRReturn;
 	}
@@ -187,7 +187,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( UI, Registry, Rack, true, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Rack, true, Buffer ) ) == NULL )
 		ERRReturn;
 
 	Bag.Embedded.Init();
@@ -211,7 +211,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetTarget_( UI, Registry, Rack, false, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Rack, false, Buffer ) ) == NULL )
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
@@ -239,19 +239,19 @@ template <typename bag, typename flow> static flow  *GetFlow_(
 ERRProlog
 	str::string Translation;
 ERRBegin
-	switch ( GetStorage_( Registry )  ) {
-	case sEmbedded:
+	switch ( GetAnnexType_( Registry )  ) {
+	case atEmbedded:
 		Flow = GetEmbeddedFlow_<bag, flow>( Bag, UI, Registry, Rack );
 		break;
-	case sFile:
+	case atFile:
 		Flow = GetFileFlow_<bag, flow>( Bag, UI, Registry, Rack );
 		break;
-	case sVolatile:
+	case atVolatile:
 		Flow = GetVolatileFlow_<bag, flow>( Bag );
 		break;
-	case s_Undefined:
+	case at_Undefined:
 			Translation.Init();
-			Rack.GetTranslation( "MissingOrBadParametersStorageDefinition", PREFIX, Translation );
+			Rack.GetTranslation( "MissingOrBadAnnexTypeDefinition", PREFIX, Translation );
 			UI.LogAndPrompt( Translation );
 			ERRReturn;
 		break;
@@ -265,7 +265,7 @@ ERREpilog
 	return Flow;
 }
 
-class parameters_
+class settings_
 {
 public:
 	struct s {
@@ -276,7 +276,7 @@ public:
 	str::string_
 		Id,
 		Content;
-	parameters_( s &S )
+	settings_( s &S )
 	: Id( S.Id ),
 	  Content( S.Content )
 	{}
@@ -290,10 +290,10 @@ public:
 		Id.plug( MM );
 		Content.plug( MM );
 	}
-	parameters_ &operator =( const parameters_ &P )
+	settings_ &operator =( const settings_ &S )
 	{
-		Id = P.Id;
-		Content = P.Content;
+		Id = S.Id;
+		Content = S.Content;
 
 		return *this;
 	}
@@ -304,40 +304,40 @@ public:
 	}
 };
 
-E_AUTO( parameters )
+E_AUTO( settings )
 
 static void Write_(
-	const parameters_ &Parameters,
+	const settings_ &Settings,
 	flw::oflow__ &Flow )
 {
-	Parameters.Id.NewWriteToFlow( Flow, true );
-	Parameters.Content.NewWriteToFlow( Flow, true );
+	Settings.Id.NewWriteToFlow( Flow, true );
+	Settings.Content.NewWriteToFlow( Flow, true );
 }
 
 static void Read_(
 	flw::iflow__ &Flow,
-	parameters_ &Parameters )
+	settings_ &Settings )
 {
-	Parameters.Id.NewReadFromFlow( Flow, 0 );
-	Parameters.Content.NewReadFromFlow( Flow, 0 );
+	Settings.Id.NewReadFromFlow( Flow, 0 );
+	Settings.Content.NewReadFromFlow( Flow, 0 );
 }
 
-typedef ctn::E_XCONTAINER_( parameters_ ) parameters_set_;
-E_AUTO( parameters_set );
+typedef ctn::E_XCONTAINER_( settings_ ) settings_set_;
+E_AUTO( settings_set );
 
 static void Write_(
-	const parameters_set_ &Set,
+	const settings_set_ &Set,
 	flw::oflow__ &Flow )
 {
 	epeios::row__ Row = Set.First();
-	ctn::E_CITEM( parameters_ ) Parameters;
+	ctn::E_CITEM( settings_ ) Settings;
 
 	dtfptb::NewPutSize( Set.Amount(), Flow );
 
-	Parameters.Init( Set );
+	Settings.Init( Set );
 
 	while ( Row != NONE ) {
-		Write_( Parameters( Row ), Flow );
+		Write_( Settings( Row ), Flow );
 
 		Row = Set.Next( Row );
 	}
@@ -345,20 +345,20 @@ static void Write_(
 
 static void Read_(
 	flw::iflow__ &Flow,
-	parameters_set_ &Set )
+	settings_set_ &Set )
 {
 ERRProlog
 	epeios::size__ Amount = 0;
-	parameters Parameters;
+	settings Settings;
 ERRBegin
 	Amount = dtfptb::NewGetSize( Flow );
 
 	while ( Amount-- != 0 ) {
-		Parameters.Init();
+		Settings.Init();
 
-		Read_( Flow, Parameters );
+		Read_( Flow, Settings );
 
-		Set.Append( Parameters );
+		Set.Append(Settings );
 	}
 ERRErr
 ERREnd
@@ -367,14 +367,14 @@ ERREpilog
 
 static epeios::row__ Search_(
 	const str::string_ &Id,
-	const parameters_set_ &Set )
+	const settings_set_ &Set )
 {
 	epeios::row__ Row = Set.First();
-	ctn::E_CITEM( parameters_ ) Parameters;
+	ctn::E_CITEM( settings_ ) Settings;
 
-	Parameters.Init( Set );
+	Settings.Init( Set );
 
-	while ( ( Row != NONE ) && ( Parameters( Row ).Id != Id ) )
+	while ( ( Row != NONE ) && ( Settings( Row ).Id != Id ) )
 		Row = Set.Next( Row );
 
 	return Row;
@@ -382,16 +382,16 @@ static epeios::row__ Search_(
 
 static bso::bool__ Get_(
 	const str::string_ &Id,
-	const parameters_set_ &Set,
+	const settings_set_ &Set,
 	str::string_ &Content )
 {
 	epeios::row__ Row = Search_( Id, Set );
-	ctn::E_CITEM( parameters_ ) Parameters;
+	ctn::E_CITEM( settings_ ) Settings;
 
 	if ( Row != NONE ) {
-		Parameters.Init( Set );
+		Settings.Init( Set );
 
-		Content = Parameters( Row ).Content;
+		Content = Settings( Row ).Content;
 	}
 
 	return Row != NONE;
@@ -400,23 +400,23 @@ static bso::bool__ Get_(
 static void Set_(
 	const str::string_ &Id,
 	const str::string_ &Content,
-	parameters_set_ &Set )
+	settings_set_ &Set )
 {
 ERRProlog
 	epeios::row__ Row = NONE;
-	parameters Parameters;
+	settings Settings;
 ERRBegin
 	Row = Search_( Id, Set );
 
-	Parameters.Init();
+	Settings.Init();
 
-	Parameters.Id = Id;
-	Parameters.Content = Content;
+	Settings.Id = Id;
+	Settings.Content = Content;
 
 	if ( Row != NONE )
-		Set.Store( Parameters, Row );
+		Set.Store( Settings, Row );
 	else
-		Set.Append( Parameters );
+		Set.Append( Settings );
 ERRErr
 ERREnd
 ERREpilog
@@ -436,11 +436,11 @@ struct ibag___ {
 	}
 };
 
-static bso::bool__ RetrieveParametersSet_(
+static bso::bool__ RetrieveSettingsSet_(
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack,
-	parameters_set_ &Set )
+	settings_set_ &Set )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -451,7 +451,7 @@ ERRBegin
 	Bag.Init();
 	
 	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
-		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveParameters", PREFIX, Buffer ) );
+		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveSettings", PREFIX, Buffer ) );
 		ERRReturn;
 	}
 
@@ -510,26 +510,43 @@ void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__
 {
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
-	parameters_set Set;
-	str::string Parameters;
+	settings_set Set;
+	str::string Settings;
 	flx::E_STRING_IFLOW__ Flow;
+	str::string Value;
+	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 ERRBegin
 	Set.Init();
 
-	RetrieveParametersSet_( UI(), Registry(), Kernel().LocaleRack(), Set );
+	RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set );
 
-	Parameters.Init();
+	Settings.Init();
 
-	Get_( Kernel().GetId(), Set, Parameters );
+	Get_( Kernel().GetId(), Set, Settings );
 
-	if ( Parameters.Amount() != 0 ) {
-		Flow.Init( Parameters );
+	if ( Settings.Amount() != 0 ) {
+		Flow.Init( Settings );
 		Flow.EOFD( XTF_EOXT );
 
 		XFlow.Init( Flow );
 
-		Handle_( Kernel().FillParametersRegistry( XFlow, xpp::criterions___() ) );
+		Handle_( Kernel().FillSettingsRegistry( XFlow, xpp::criterions___() ) );
 	}
+
+	Value.Init();
+	UI().SessionForm().Widgets.BackendTypeSwitchMenulist.GetValue( Value );
+
+#if 0	// Reportté.
+	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
+	case frdkrn::bxtPredefined:
+		Value.Init();
+		UI().SessionForm().Widgets.PredefinedBackendSwitchMenuitem.GetValue( Value );
+		Registry().SetValue( xulfrg::paths::backend_selection::Value );
+
+	frdkrn::SetBackendExtendedType( Registry(), UI().SessionForm().Widgets.PredefinedBackendSwitchMenuitem.
+
+	Registry().SetValue( xulfrg::paths::backend_selection::Mode, 
+#endif
 ERRErr
 ERREnd
 ERREpilog
@@ -567,8 +584,8 @@ struct obag___ {
 	}
 };
 
-static bso::bool__ StoreParametersSet_(
-	const parameters_set_ &Set,
+static bso::bool__ StoreSettingsSet_(
+	const settings_set_ &Set,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
@@ -582,7 +599,7 @@ ERRBegin
 	Bag.Init();
 	
 	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
-		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreParameters", PREFIX, Buffer ) );
+		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreSettings", PREFIX, Buffer ) );
 		ERRReturn;
 	}
 
@@ -595,20 +612,20 @@ ERREpilog
 	return Success;
 }
 
-static void GetParameters_(
+static void GetSettings_(
 	const xulfkl::kernel___ &Kernel,
-	str::string_ &Parameters )
+	str::string_ &Settings )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
 	txf::text_oflow__ TFlow;
 	xml::writer Writer;
 ERRBegin
-	Flow.Init( Parameters );
+	Flow.Init( Settings );
 	TFlow.Init( Flow );
 	Writer.Init( TFlow, xml::oCompact, xml::e_Default );
 
-	Kernel.DumpParametersRegistry( Writer );
+	Kernel.DumpSettingsRegistry( Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -618,19 +635,19 @@ ERREpilog
 void xulftk::trunk___::_DropSession( void )
 {
 ERRProlog
-	str::string Parameters;
-	parameters_set Set;
+	str::string Settings;
+	settings_set Set;
 ERRBegin
 
 	Set.Init();
 
-	if ( RetrieveParametersSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) {
-		Parameters.Init();
-		GetParameters_( Kernel(), Parameters );
+	if ( RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) {
+		Settings.Init();
+		GetSettings_( Kernel(), Settings );
 
-		Set_( Kernel().GetId(), Parameters, Set );
+		Set_( Kernel().GetId(), Settings, Set );
 
-		StoreParametersSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
+		StoreSettingsSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
 	}
 
 	Handle_( Kernel().CloseProject() );

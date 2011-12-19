@@ -59,13 +59,13 @@ using namespace xulfrg;
 
 #define SEPARATOR	FRDRGY_PATH_SEPARATOR
 
-#define PARAMETERS	"Parameters" SEPARATOR
+#define ANNEX	FRDRGY_PARAMETERS_PATH	"Annex" SEPARATOR
 
-const char *xulfrg::paths::parameters::Storage = PARAMETERS "@Storage";
-const char *xulfrg::paths::parameters::Target = PARAMETERS;
+const char *xulfrg::paths::annex::Type = ANNEX "@Type";
+const char *xulfrg::paths::annex::Target = ANNEX;
 
 #define BACKEND_SELECTION	"BackendSelection" SEPARATOR
-const char *xulfrg::paths::backend_selection__::Mode = BACKEND_SELECTION "@Mode";
+const char *xulfrg::paths::backend_selection::Mode = BACKEND_SELECTION "@Mode";
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
