@@ -57,6 +57,12 @@ public:
 
 using namespace xulfrg;
 
+rgstry::entry xulfrg::Annex;
+rgstry::entry xulfrg::AnnexType;
+
+rgstry::entry xulfrg::BackendSelectionMode;
+
+
 #define SEPARATOR	FRDRGY_PATH_SEPARATOR
 
 #define ANNEX	FRDRGY_PARAMETERS_PATH	"Annex" SEPARATOR
@@ -76,6 +82,8 @@ class xulfrgpersonnalization
 public:
 	xulfrgpersonnalization( void )
 	{
+		Annex.Init( "Annex", frdrgy::Parameters );
+		AnnexType.Init( "@Type", Annex );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

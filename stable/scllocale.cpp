@@ -80,10 +80,11 @@ const lcl::rack__ &scllocale::GetRack( void )
 
 static inline const str::string_ &GetLanguage_( str::string_ &Language )
 {
+
 	bso::bool__ Missing = false;
 
 	if ( sclrgstry::IsRegistryReady() )
-		sclrgstry::GetLanguage( Language, &Missing );
+		Missing = sclrgstry::Language.GetValue( sclrgstry::GetRegistry(), Language  );
 	else
 		Missing = true;
 
@@ -213,7 +214,9 @@ ERRProlog
 ERRBegin
 	LocaleFileName.Init();
 
-	LoadLocale_( sclrgstry::GetLocaleFileName( LocaleFileName ), Affix, RegistryRootPath, FileSuggestedPath ,false );
+	sclrgstry::LocaleFileName.GetValue( sclrgstry::GetRegistry(), LocaleFileName );
+
+	LoadLocale_( LocaleFileName, Affix, RegistryRootPath, FileSuggestedPath ,false );
 ERRErr
 ERREnd
 ERREpilog

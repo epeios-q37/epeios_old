@@ -74,10 +74,10 @@ namespace sclrgstry {
 
 	const rgstry::multi_level_registry_ &GetRegistry( void );
 
-	struct paths {
-		static const char *Language;
-		static const char *LocaleFileName;
-	};
+	extern rgstry::entry Parameters;
+
+	extern rgstry::entry LocaleFileName;
+	extern rgstry::entry Language;
 
 	class xpath___ {
 	private:
@@ -236,10 +236,6 @@ namespace sclrgstry {
 	{\
 		return GetOptionalRegistryValue( path, Value, Missing );\
 	}
-
-	SCLRGSTRY_ORV( GetLocaleFileName, paths::LocaleFileName );
-	SCLRGSTRY_ORV( GetLanguage, paths::Language );
-
 }
 
 /*$END$*/

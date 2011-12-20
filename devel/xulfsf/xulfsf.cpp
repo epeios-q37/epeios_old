@@ -208,10 +208,10 @@ ERRBegin
 		Disable = true;
 		break;
 	case frdkrn::apmFull:
-		if ( !frdrgy::GetAuthenticationPromptPassword( Registry, Password ) )
+		if ( !frdrgy::AuthenticationPassword.GetValue( Registry, Password ) )
 			ERRu();
 	case frdkrn::apmPartial:
-		if ( !frdrgy::GetAuthenticationPromptLogin( Registry, Login ) )
+		if ( !frdrgy::AuthenticationLogin.GetValue( Registry, Login ) )
 			ERRu();
 	case frdkrn::apmEmpty:
 		break;

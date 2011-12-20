@@ -57,27 +57,26 @@ public:
 
 using namespace frdrgy;
 
+rgstry::entry frdrgy::Parameters;
+
+rgstry::entry frdrgy::LocaleFileName;
+
+rgstry::entry frdrgy::Backend;
+rgstry::entry frdrgy::BackendLocation;
+rgstry::entry frdrgy::BackendAccessMode;
+rgstry::entry frdrgy::BackendType;
+rgstry::entry frdrgy::BackendPingDelay;
+
+rgstry::entry frdrgy::Authentication;
+rgstry::entry frdrgy::AuthenticationCypherKey;
+rgstry::entry frdrgy::AuthenticationMode;
+rgstry::entry frdrgy::AuthenticationLogin;
+rgstry::entry frdrgy::AuthenticationPassword;
+
+
 #define S		FRDRGY_PATH_SEPARATOR 
 #define T		FRDRGY_PATH_TAG_STRING 
 #define CTAG	FRDRGY_PATH_TAG_CHAR
-
-#define PARAMETERS	FRDRGY_PARAMETERS_PATH
-
-const char *frdrgy::paths::parameters::Locale					= "Locale";
-
-#define BACKEND		PARAMETERS "Backend" S
-const char *frdrgy::paths::parameters::backend::Root			= BACKEND;
-const char *frdrgy::paths::parameters::backend::Type			= BACKEND "@Type";
-const char *frdrgy::paths::parameters::backend::AccessMode		= BACKEND "@AccessMode";
-const char *frdrgy::paths::parameters::backend::PingDelay		= BACKEND "PingDelay";
-const char *frdrgy::paths::parameters::backend::Location		= BACKEND "Location";
-
-#define AUTHENTICATION	PARAMETERS "Authentication" S
-const char *frdrgy::paths::authentication::CypherKey			= AUTHENTICATION "@CypherKey";
-
-const char *frdrgy::paths::authentication::Mode					= AUTHENTICATION "@Mode";
-const char *frdrgy::paths::authentication::Login				= AUTHENTICATION "Login";
-const char *frdrgy::paths::authentication::Password				= AUTHENTICATION "Password";
 
 #define PROFILES	FRDRGY_PROFILES_PATH
 #define PROFILE		PROFILES "Profile[name=\"" T "\"]" S
@@ -90,21 +89,21 @@ static inline bso::bool__ GetFallbackProfileName_(
 	const _registry_ &Registry,
 	str::string_ &Name )
 {
-	return GetValue( paths::Profiles.FallbackProfile, Registry, Name );
+	return GetValue( paths::profiles::FallbackProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetDefaultProfileName_(
 	const _registry_ &Registry,
 	str::string_ &Name )
 {
-	return GetValue( paths::Profiles.DefaultProfile, Registry, Name );
+	return GetValue( paths::profiles::DefaultProfile, Registry, Name );
 }
 
 static inline bso::bool__ GetUserProfileName_(
 	const _registry_ &Registry,
 	str::string_ &Name )
 {
-	return GetValue( paths::Profiles.UserProfile, Registry, Name );
+	return GetValue( paths::profiles::UserProfile, Registry, Name );
 }
 
 static bso::bool__ GetProfileValue_(
@@ -239,6 +238,22 @@ class frdrgypersonnalization
 public:
 	frdrgypersonnalization( void )
 	{
+		Parameters.Init( "Parameters" );
+
+		Backend.Init( "Backend", Parameters );
+		BackendAccessMode.Init( "@AccessMode", Backend );
+		BackendType.Init( "@Type", Backend );
+		BackendPingDelay.Init( "PingDelay", Backend );
+		BackendLocation.Init( "Location", Backend );
+
+		Authentication.Init( "Authentication", Parameters );
+		AuthenticationCypherKey.Init( "@CypherKey", Authentication );
+		AuthenticationMode.Init( "@Mode", Authentication );
+		AuthenticationLogin.Init( "Login", Authentication );
+		AuthenticationPassword.Init( "Password", Authentication );
+
+
+
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

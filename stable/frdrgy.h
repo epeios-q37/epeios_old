@@ -74,30 +74,29 @@ extern class ttr_tutor &FRDRGYTutor;
 #define FRDRGY_PROFILES_PATH	"Profiles" FRDRGY_PATH_SEPARATOR
 
 namespace frdrgy {
+
+	extern rgstry::entry Parameters;
+
+	extern rgstry::entry LocaleFileName;
+
+	extern rgstry::entry Backend;
+	extern rgstry::entry BackendLocation;
+	extern rgstry::entry BackendAccessMode;
+	extern rgstry::entry BackendType;
+	extern rgstry::entry BackendPingDelay;
+
+	extern rgstry::entry Authentication;
+	extern rgstry::entry AuthenticationCypherKey;
+	extern rgstry::entry AuthenticationMode;
+	extern rgstry::entry AuthenticationLogin;
+	extern rgstry::entry AuthenticationPassword;
+
 	struct paths {
-		static struct parameters {
-			static const char *Locale;
-			static struct backend {
-				static const char
-					*Root,
-					*Location,
-					*AccessMode,
-					*Type,
-					*PingDelay;
-			} Backend;
-		} Parameters;
-		static struct authentication {
-			static const char
-				*CypherKey,
-				*Mode,
-				*Login,
-				*Password;
-		} Authentication;
 		static struct profiles {
 			static const char *FallbackProfile;
 			static const char *DefaultProfile;
 			static const char *UserProfile;
-		} Profiles;
+		};
 	};
 
 	typedef rgstry::multi_level_registry_ _registry_;
@@ -258,67 +257,6 @@ namespace frdrgy {
 
 		SetProfileValue( Path, Registry, str::string( bso::Convert( Id, Buffer ) ) );
 	}
-
-	inline const char *GetBackendRootPath( void )
-	{
-		return paths::Parameters.Backend.Root;
-	}
-
-	inline bso::bool__ GetRawBackendExtendedType(
-		const _registry_ &Registry,
-		str::string_ &Target )
-	{
-		return GetValue( paths::Parameters.Backend.Type, Registry, Target );
-	}
-
-	inline bso::ulong__ GetBackendPingDelay( const _registry_ &Registry )
-	{
-		return rgstry::GetUL( Registry, paths::Parameters.Backend.PingDelay, 0 );
-	}
-
-	inline bso::bool__ GetBackendLocation(
-		const _registry_ &Registry,
-		str::string_ &Target )
-	{
-		return GetValue( paths::Parameters.Backend.Location, Registry, Target );
-	}
-
-	inline bso::bool__ GetLocalesFileName(
-		const _registry_ &Registry,
-		str::string_ &Locales )
-	{
-		return GetValue( paths::Parameters.Locale, Registry, Locales );
-	}
-
-	inline bso::bool__ GetAuthenticationCypherKey(
-		const _registry_ &Registry,
-		str::string_ &Key )
-	{
-		return GetValue( paths::authentication::CypherKey, Registry, Key );
-	}
-
-	inline bso::bool__ GetAuthenticationPromptRawMode(
-		const _registry_ &Registry,
-		str::string_ &Mode )
-	{
-		return GetValue( paths::authentication::Mode, Registry, Mode );
-	}
-
-	inline bso::bool__ GetAuthenticationPromptLogin(
-		const _registry_ &Registry,
-		str::string_ &Login )
-	{
-		return GetValue( paths::authentication::Login, Registry, Login );
-	}
-
-	inline bso::bool__ GetAuthenticationPromptPassword(
-		const _registry_ &Registry,
-		str::string_ &Password )
-	{
-		return GetValue( paths::authentication::Password, Registry, Password );
-	}
-
-	
 
 }
 

@@ -66,6 +66,13 @@ extern class ttr_tutor &XULFRGTutor;
 # include "frdrgy.h"
 
 namespace xulfrg {
+
+	extern rgstry::entry AnnexTarget;
+	extern rgstry::entry AnnexTargetType;
+
+	extern rgstry::entry BackendSelection;
+	extern rgstry::entry BackendSelectionMode;
+
 	struct paths
 	: public frdrgy::paths
 	{

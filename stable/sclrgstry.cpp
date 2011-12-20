@@ -68,8 +68,10 @@ static rgstry::multi_level_registry Registry_;
 static rgstry::level__ RootLevel_ = RGSTRY_UNDEFINED_LEVEL;
 static STR_BUFFER___ Translation_;
 
-const char *sclrgstry::paths::LocaleFileName = "LocaleFileName";
-const char *sclrgstry::paths::Language = "Language";
+rgstry::entry sclrgstry::Parameters;
+
+rgstry::entry sclrgstry::LocaleFileName;
+rgstry::entry sclrgstry::Language;
 
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
@@ -438,6 +440,11 @@ public:
 		Registry_.Init();
 
 		RootLevel_ = Registry_.AddEmbeddedLevel();
+
+		Parameters.Init( "Parameters" );
+
+		LocaleFileName.Init( "LocaleFileName", Parameters );
+		Language.Init( "Language", Parameters );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

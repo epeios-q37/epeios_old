@@ -479,7 +479,7 @@ ERRBegin
 	if ( ProjectFileName.Amount() != 0 ) {
 		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions ) );
 		Location.Init();
-		frdrgy::GetBackendLocation( Kernel().Registry(), Location );
+		frdrgy::BackendLocation.GetValue( Kernel().Registry(), Location );
 	}
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Kernel().Registry() ) ) {

@@ -1588,34 +1588,6 @@ namespace rgstry {
 		return Value;
 	}
 
-#ifdef _M
-#	define RGSRTY__M_BACKUP	_M
-#endif
-
-#define _M( name, type, min, max )\
-	template <typename registry, typename path> inline type Get##name(\
-		const registry &Registry,\
-		const path &Path,\
-		type Default,\
-		bso::bool__ *Error = NULL,\
-		type Min = min,\
-		type Max = max )\
-	{\
-		return (type)_GetUnsigned( Registry, Path, Default, Error, Min, Max );\
-	}
-
-#ifdef CPE__64_BITS_TYPES_ALLOWED
-	_M( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
-#endif
-	_M( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
-	_M( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
-	_M( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
-
-#ifdef RGSRTY__M_BACKUP
-#	define _M RGSRTY__M_BACKUP
-#else
-#	undef _M
-#endif
 
 	template <typename registry, typename path> inline str::_gsint__ _GetSigned(
 		const registry &Registry,
@@ -1651,12 +1623,195 @@ namespace rgstry {
 		return Value;
 	}
 
+# ifdef _MU
+#  define RGSRTY__MS_BACKUP	_MU
+# endif
+	
+#define _MU( name, type, min, max )\
+	type Get##name(\
+		const multi_level_registry_ &Registry,\
+		type Default,\
+		bso::bool__ *Error = NULL,\
+		type Min = min,\
+		type Max = max )\
+	{\
+		return (type)_GetUnsigned( Registry, GetPath(), Default, Error, Min, Max );\
+	}
+
+
+# ifdef _MS
+#  define RGSRTY__MU_BACKUP	_MS
+# endif
+
+#define _MS( name, type, min, max )\
+	type Get##name(\
+		const multi_level_registry_ &Registry,\
+		type Default,\
+		bso::bool__ *Error = NULL,\
+		type Min = min,\
+		type Max = max )\
+	{\
+		return (type)_GetSigned( Registry, GetPath(), Default, Error, Min, Max );\
+	}
+
+	class entry_
+	{
+	private:
+		mutable str::string _Buffer;
+		void GetParentPath_( str::string_ &Path ) const
+		{
+			if ( S_.Parent != NULL ) {
+				Path.Append( S_.Parent->GetPath() );
+
+				if ( ( Path.Amount() != 0 ) && ( Path( Path.Last() != '/' ) ) )
+					Path.Append( '/' );
+			}
+		}
+	public:
+		struct s {
+			const entry_ *Parent;
+			str::string_::s Path;
+			values_::s Parameters;
+		} &S_;
+		str::string_ Path;
+		values_ Parameters;
+		entry_( s &S )
+		: S_( S ),
+		  Path( S_.Path ),
+		  Parameters( S_.Parameters )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			S_.Parent = NULL;
+			Path.reset( P );
+			Parameters.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Path.plug( MM );
+			Parameters.plug( MM );
+		}
+		entry_ &operator =( const entry_ &E )
+		{
+			S_.Parent = E.S_.Parent;
+			Path = E.Path;
+			Parameters = E.Parameters;
+
+			return *this;
+		}
+		void Init(
+			const char *Path = NULL,
+			const entry_ &Parent = *(const entry_ *)NULL )
+		{
+			S_.Parent = &Parent;
+			this->Path.Init( Path );
+			Parameters.Init();
+		}
+		void SetParameters(
+			bso::ubyte__ Indice,
+			const str::string_ &Value )
+		{
+			if ( Parameters.Amount() < Indice )
+				Parameters.Allocate( Indice );
+
+			Parameters( Parameters.First( Indice - 1 ) ) = Value;
+		}
+		void ResetParameters( void )
+		{
+			Parameters.Init();
+		}
+		void AddParameter( const str::string_ &Value )
+		{
+			Parameters.Append( Value );
+		}
+		const str::string_ &GetPath( void ) const
+		{
+			_Buffer.Init();
+
+			GetParentPath_( _Buffer );
+
+			_Buffer.Append( this->Path );
+
+			str::ReplaceTags( _Buffer, Parameters, '%' );
+
+			return _Buffer;
+		}
+		bso::bool__ SetValue(
+			multi_level_registry_ &Registry,
+			const str::string_ &Value ) const
+		{
+			return Registry.SetValue( GetPath(), Value );
+		}
+		bso::bool__ GetValue(
+			const multi_level_registry_ &Registry,
+			str::string_ &Value ) const
+		{
+			return Registry.GetValue( GetPath(), Value );
+		}
+		bso::bool__ GetValues(
+			const multi_level_registry_ &Registry,
+			values_ &Values ) const
+		{
+			return Registry.GetValues( GetPath(), Values );
+		}
+# ifdef CPE__64_BITS_TYPES_ALLOWED
+		_MU( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
+		_MS( SLL, bso::ullong__, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
+# endif
+		_MU( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
+		_MS( SL, bso::slong__, BSO_SLONG_MIN, BSO_SLONG_MAX )
+		_MU( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
+		_MS( SS, bso::sshort__, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
+		_MU( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
+		_MS( SB, bso::sbyte__, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
+	};
+
+# undef _MU
+# undef _MS
+
+# ifdef RGSRTY__MS_BACKUP
+#  define _MS RGSRTY__MS_BACKUP
+# endif
+
+	E_AUTO( entry );
+
+
 #ifdef _M
 #	define RGSRTY__M_BACKUP	_M
 #endif
 
 #define _M( name, type, min, max )\
-	template <typename registry, typename path> inline bso::ulong__ Get##name(\
+	template <typename registry, typename path> inline type Get##name(\
+		const registry &Registry,\
+		const path &Path,\
+		type Default,\
+		bso::bool__ *Error = NULL,\
+		type Min = min,\
+		type Max = max )\
+	{\
+		return (type)_GetUnsigned( Registry, Path, Default, Error, Min, Max );\
+	}
+
+#ifdef CPE__64_BITS_TYPES_ALLOWED
+	_M( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
+#endif
+	_M( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
+	_M( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
+	_M( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
+
+# undef _M
+
+# ifdef RGSRTY__M_BACKUP
+#  define _M RGSRTY__M_BACKUP
+# endif
+
+
+#ifdef _M
+#	define RGSRTY__M_BACKUP	_M
+#endif
+
+#define _M( name, type, min, max )\
+	template <typename registry, typename path> inline type Get##name(\
 		const registry &Registry,\
 		const path &Path,\
 		type Default,\
@@ -1674,11 +1829,12 @@ namespace rgstry {
 	_M( SS, bso::sshort__, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
 	_M( SB, bso::sbyte__, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
 
-#ifdef RGSRTY__M_BACKUP
-#	define _M RGSRTY__M_BACKUP
-#else
-#	undef _M
-#endif
+
+# undef _M
+
+# ifdef RGSRTY__M_BACKUP
+# define _M RGSRTY__M_BACKUP
+# endif
 
 }
 

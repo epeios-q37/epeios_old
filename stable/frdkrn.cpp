@@ -177,8 +177,7 @@ ERRProlog
 	str::string RawType;
 ERRBegin
 	RawType.Init();
-
-	frdrgy::GetRawBackendExtendedType( Registry, RawType );
+	frdrgy::BackendType.GetValue( Registry, RawType );
 
 	Type = GetBackendExtendedType( RawType );
 ERRErr
@@ -187,11 +186,12 @@ ERREpilog
 	return Type;
 }
 
-void SetBackendExtendedType(
+static void SetBackendExtendedType_(
 	frdrgy::_registry_ &Registry,
 	backend_extended_type__ Type )
 {
-	Registry.SetValue( str::string( frdrgy::paths::parameters::backend::Type ), str::string( GetBackendExtendedTypeLabel_( Type ) ) );
+
+	frdrgy::BackendType.SetValue( Registry, str::string( GetBackendExtendedTypeLabel_( Type ) ) );
 }
 
 
@@ -225,6 +225,11 @@ static str::string_ &AppendTargetAttributePathItem_(
 	return Target;
 }
 
+static inline bso::ulong__ GetBackendPingDelay_( rgstry::multi_level_registry_ &Registry )
+{
+	return frdrgy::BackendPingDelay.GetUL( Registry, 0 );
+}
+
 report__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
@@ -238,11 +243,14 @@ ERRProlog
 	flx::E_STRING_OFLOW_DRIVER___ OFlowDriver;
 	csdlec::library_data__ LibraryData;
 	csdleo::mode__ Mode = csdleo::m_Undefined;
+	str::string Pingdelay, Buffer;
 ERRBegin
 	OFlowDriver.Init( ErrorSet.Misc, fdr::ts_Default );
 	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver );
 
-	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type, frdrgy::GetBackendPingDelay( Registry() ) ) ) {
+	Buffer.Init();
+
+	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type, GetBackendPingDelay_( Registry() ) ) ) {
 		OFlowDriver.reset();	// Pour vider les caches.
 		if ( ErrorSet.Misc.Amount() != 0 )
 			Report = rBackendError;
@@ -293,11 +301,11 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	switch ( GetBackendExtendedType( Registry ) ) {
 	case bxtEmbedded:
 		Type = csducl::tLibrary;
-		frdrgy::GetBackendLocation( Registry, Location );
+		frdrgy::BackendLocation.GetValue( Registry, Location );
 		break;
 	case bxtDaemon:
 		Type = csducl::tDaemon;
-		frdrgy::GetBackendLocation( Registry, Location );
+		frdrgy::BackendLocation.GetValue( Registry, Location );
 		break;
 	case bxtPredefined:
 		ERRl();
@@ -609,7 +617,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	if ( !frdrgy::GetAuthenticationPromptRawMode( Registry, Value ) )
+	if ( !frdrgy::AuthenticationMode.GetValue( Registry, Value ) )
 		Mode = apmNone;
 	else {
 		if ( Value == "None" )

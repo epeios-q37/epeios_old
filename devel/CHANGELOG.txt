@@ -1,5 +1,15 @@
 $Id$
 
+20/12/2011 :
+	- RGSTRY :
+		- Ajout  'entry[_]'.
+	- SCLLOCALE :
+		- Adaptation.
+	- SCLRGSTRY :
+		- Utilisation de 'rgstry:(marker|entry)' à la place de 'path'.
+	- XULFxx :
+		- Adaptation.
+
 19/12/2011 :
 	- FRDKRN :
 		- Adaptation.
