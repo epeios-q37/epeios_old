@@ -91,6 +91,14 @@ namespace frdrgy {
 	extern rgstry::entry AuthenticationLogin;
 	extern rgstry::entry AuthenticationPassword;
 
+	extern rgstry::entry PredefinedBackends;
+	extern rgstry::entry PredefinedBackend;
+	extern rgstry::entry PredefinedBackendId;
+	extern rgstry::entry TaggedPredefinedBackend;
+	extern rgstry::entry PredefinedBackendAlias;
+	extern rgstry::entry PredefinedBackendType;
+	extern rgstry::entry PredefinedBackendLocation;
+
 	struct paths {
 		static struct profiles {
 			static const char *FallbackProfile;

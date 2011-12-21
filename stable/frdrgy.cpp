@@ -57,21 +57,32 @@ public:
 
 using namespace frdrgy;
 
-rgstry::entry frdrgy::Parameters;
+rgstry::entry frdrgy::Parameters( "Parameters" );
 
-rgstry::entry frdrgy::LocaleFileName;
+rgstry::entry frdrgy::LocaleFileName( "LocaleFileName", Parameters );
 
-rgstry::entry frdrgy::Backend;
-rgstry::entry frdrgy::BackendLocation;
-rgstry::entry frdrgy::BackendAccessMode;
-rgstry::entry frdrgy::BackendType;
-rgstry::entry frdrgy::BackendPingDelay;
+rgstry::entry frdrgy::Backend( "Backend", Parameters );
+rgstry::entry frdrgy::BackendLocation( "Location", Backend );
+rgstry::entry frdrgy::BackendAccessMode( "@AccessMode", Backend );
+rgstry::entry frdrgy::BackendType( "@Type", Backend );
+rgstry::entry frdrgy::BackendPingDelay( "PingDelay", Backend );
 
-rgstry::entry frdrgy::Authentication;
-rgstry::entry frdrgy::AuthenticationCypherKey;
-rgstry::entry frdrgy::AuthenticationMode;
-rgstry::entry frdrgy::AuthenticationLogin;
-rgstry::entry frdrgy::AuthenticationPassword;
+rgstry::entry frdrgy::Authentication( "Authentication", Parameters );
+rgstry::entry frdrgy::AuthenticationCypherKey( "@CypherKey", Authentication );
+rgstry::entry frdrgy::AuthenticationMode( "@Mode", Authentication );
+rgstry::entry frdrgy::AuthenticationLogin( "Login", Authentication );
+rgstry::entry frdrgy::AuthenticationPassword( "Password", Authentication );
+
+#define PREDEFINED_BACKEND_ID	"id"
+
+rgstry::entry frdrgy::PredefinedBackends( "PredefinedBackends", Parameters );
+rgstry::entry frdrgy::PredefinedBackend( "PredefinedBackend", PredefinedBackends ); 
+rgstry::entry frdrgy::PredefinedBackendId( "@" PREDEFINED_BACKEND_ID, PredefinedBackend);
+rgstry::entry frdrgy::TaggedPredefinedBackend( "[" PREDEFINED_BACKEND_ID "=\"%\"]", PredefinedBackend);
+rgstry::entry frdrgy::PredefinedBackendAlias( "@Alias", TaggedPredefinedBackend );
+rgstry::entry frdrgy::PredefinedBackendType( "@Type", TaggedPredefinedBackend );
+rgstry::entry frdrgy::PredefinedBackendLocation( "Location", TaggedPredefinedBackend );
+
 
 
 #define S		FRDRGY_PATH_SEPARATOR 
@@ -238,22 +249,6 @@ class frdrgypersonnalization
 public:
 	frdrgypersonnalization( void )
 	{
-		Parameters.Init( "Parameters" );
-
-		Backend.Init( "Backend", Parameters );
-		BackendAccessMode.Init( "@AccessMode", Backend );
-		BackendType.Init( "@Type", Backend );
-		BackendPingDelay.Init( "PingDelay", Backend );
-		BackendLocation.Init( "Location", Backend );
-
-		Authentication.Init( "Authentication", Parameters );
-		AuthenticationCypherKey.Init( "@CypherKey", Authentication );
-		AuthenticationMode.Init( "@Mode", Authentication );
-		AuthenticationLogin.Init( "Login", Authentication );
-		AuthenticationPassword.Init( "Password", Authentication );
-
-
-
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

@@ -432,6 +432,10 @@ namespace frdkrn {
 		return Value.ToUB();
 	}
 
+	void GetPredefinedBackends(
+		const frdrgy::registry_ &Registry,
+		xml::writer_ &Writer );
+
 }
 
 /*$END$*/

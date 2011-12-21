@@ -147,7 +147,7 @@ ERRProlog
 ERRBegin
 	RawMode.Init();
 	
-	if ( xulfrg::GetRawBackendSelectionMode( Registry, RawMode ) ) {
+	if ( xulfrg::BackendSelectionMode.GetValue( Registry, RawMode ) ) {
 		if ( RawMode == "Expert" )
 			Mode = bsmExpert;
 		else if ( RawMode == "Advanced" )
@@ -232,15 +232,45 @@ ERREnd
 ERREpilog
 }
 
+static void GetPredefinedBackends_(
+	const frdrgy::registry_ &Registry,
+	str::string_ &PredefinedBackends )
+{
+ERRProlog
+	flx::E_STRING_OFLOW___ OFlow;
+	txf::text_oflow__ TFlow;
+	xml::writer Writer;
+ERRBegin
+	OFlow.Init( PredefinedBackends );
+	TFlow.Init( OFlow );
+	Writer.Init( TFlow, xml::oIndent, xml::e_Default );
+
+	Writer.PushTag( "PredefinedBackends" );
+
+	frdkrn::GetPredefinedBackends( Registry, Writer );
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void xulfsf::session_form__::Update( frdkrn::backend_extended_type__ Type )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
+	str::string PredefinedBackends;
 ERRBegin
 	if ( !HideUnusedBackendSelectionMode_( Trunk().Registry(), Broadcasters ) )
 		Trunk().UI().LogAndPrompt( Trunk().Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
 
 	HandleAuthenticationSubForm_( Trunk().Registry(), Broadcasters, Widgets );
+
+	PredefinedBackends.Init();
+
+	GetPredefinedBackends_( Trunk().Registry(), PredefinedBackends );
+
+	Trunk().UI().LogAndPrompt( PredefinedBackends );
 
 	if ( Type == frdkrn::bxt_Undefined )
 		ERRReturn;

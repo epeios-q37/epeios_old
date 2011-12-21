@@ -637,7 +637,65 @@ ERREpilog
 	return Mode;
 }
 
+static void GetPredefinedBackend_(
+	const str::string_ &Id,
+	const frdrgy::registry_ &Registry,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	str::string Value;
+	rgstry::parameters Parameters;
+ERRBegin
+	Parameters.Init();
+	Parameters.Append( Id );
 
+	Value.Init();
+	frdrgy::PredefinedBackendAlias.GetValue( Registry, Parameters, Value );
+
+	Writer.PutAttribute( "Alias", Value );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void GetPredefinedBackends_(
+	const rgstry::values_ &Ids,
+	const frdrgy::registry_ &Registry,
+	xml::writer_ &Writer )
+{
+	ctn::E_CMITEM( rgstry::value_ ) Id;
+	epeios::row__ Row = Ids.First();
+
+	Id.Init( Ids );
+
+	while ( Row != NONE ) {
+		Writer.PushTag( "PredefinedBackend" );
+		Writer.PutAttribute( "id", Id( Row ) );
+
+		GetPredefinedBackend_( Id( Row ), Registry, Writer );
+
+		Writer.PopTag();
+
+		Row = Ids.Next( Row );
+	}
+}
+
+void frdkrn::GetPredefinedBackends(
+	const frdrgy::registry_ &Registry,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	rgstry::values Ids;
+ERRBegin
+	Ids.Init();
+
+	frdrgy::PredefinedBackendId.GetValues( Registry, Ids );
+
+	GetPredefinedBackends_( Ids, Registry, Writer );
+ERRErr
+ERREnd
+ERREpilog
+}
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -307,8 +307,7 @@ Utile pour afficher le numéro de ligne dans un #pragma message (...). */
 
 
 
-//m Create the autonomous definition of the 'name' object based on the 'name'_ object.
-# define E_AUTO( Name )	\
+# define E_AUTO_( Name )	\
 class Name\
 : public Name##_\
 {\
@@ -342,7 +341,10 @@ public:\
 	const Name##_ &operator *( void ) const\
 	{\
 		return *this;\
-	}\
+	}
+
+# define E_AUTO( name )\
+E_AUTO_( name )\
 };
 
 

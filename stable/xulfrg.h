@@ -66,42 +66,12 @@ extern class ttr_tutor &XULFRGTutor;
 # include "frdrgy.h"
 
 namespace xulfrg {
-	struct paths
-	: public frdrgy::paths
-	{
-		struct annex {
-			static const char *Type;
-			static const char *Target;
-		};
-		struct backend_selection
-		{
-			static const char *Mode;
-		};
-	};
 
-	using frdrgy::registry_;
-	using frdrgy::registry;
+	extern rgstry::entry AnnexTarget;
+	extern rgstry::entry AnnexTargetType;
 
-	inline bso::bool__ GetRawAnnexType(
-		const rgstry::multi_level_registry_ &Registry,
-		str::string_ &Value )
-	{
-		return Registry.GetValue( paths::annex::Type, Value );
-	}
-
-	inline bso::bool__ GetAnnexTarget(
-		const rgstry::multi_level_registry_ &Registry,
-		str::string_ &Value )
-	{
-		return Registry.GetValue( paths::annex::Target, Value );
-	}
-
-	inline bso::bool__ GetRawBackendSelectionMode(
-		const rgstry::multi_level_registry_ &Registry,
-		str::string_ &Value )
-	{
-		return Registry.GetValue( paths::backend_selection::Mode, Value );
-	}
+	extern rgstry::entry BackendSelection;
+	extern rgstry::entry BackendSelectionMode;
 }
 
 /*$END$*/

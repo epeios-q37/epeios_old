@@ -69,6 +69,8 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "cpe.h"
 #include "xpp.h"
 
+# define RGSTRY__TAG_MARKER	'%'
+
 // Prédéclaration.
 namespace lcl {
 	struct rack__;
@@ -1631,11 +1633,21 @@ namespace rgstry {
 	type Get##name(\
 		const multi_level_registry_ &Registry,\
 		type Default,\
+		const parameters_ &Parameters = parameters(),\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\
 		type Max = max )\
 	{\
-		return (type)_GetUnsigned( Registry, GetPath(), Default, Error, Min, Max );\
+		type Value = 0;\
+	ERRProlog\
+		str::string Buffer;\
+	ERRBegin\
+		Buffer.Init();\
+		Value = (type)_GetUnsigned( Registry, GetPath( Buffer, Parameters ), Default, Error, Min, Max );\
+	ERRErr\
+	ERREnd\
+	ERREpilog\
+		return Value;\
 	}
 
 
@@ -1647,112 +1659,156 @@ namespace rgstry {
 	type Get##name(\
 		const multi_level_registry_ &Registry,\
 		type Default,\
+		const parameters_ &Parameters = parameters(),\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\
 		type Max = max )\
 	{\
-		return (type)_GetSigned( Registry, GetPath(), Default, Error, Min, Max );\
+		type Value = 0;\
+	ERRProlog\
+		str::string Buffer;\
+	ERRBegin\
+		Buffer.Init();\
+		Value = (type)_GetSigned( Registry, GetPath( Buffer, Parameters ), Default, Error, Min, Max );\
+	ERRErr\
+	ERREnd\
+	ERREpilog\
+		return Value;\
 	}
+
+	typedef values_	parameters_;
+	E_AUTO( parameters );
 
 	class entry_
 	{
 	private:
-		mutable str::string _Buffer;
-		void GetParentPath_( str::string_ &Path ) const
+		void GetParentPath_(
+			str::string_ &Path,
+			const parameters_ &Parameters,
+			bso::bool__ NoTailingSlash) const
 		{
 			if ( S_.Parent != NULL ) {
-				Path.Append( S_.Parent->GetPath() );
+				S_.Parent->GetPath( Path );	// Les 'tag's seront remplacé ultèrieurement
 
-				if ( ( Path.Amount() != 0 ) && ( Path( Path.Last() != '/' ) ) )
-					Path.Append( '/' );
+				if ( Path.Amount() != 0 ) {
+					if ( Path( Path.Last() ) == '/' ) {
+						if ( NoTailingSlash )
+							Path.Remove( Path.Last() );
+					} else if ( !NoTailingSlash )
+						Path.Append( '/' );
+				}
 			}
 		}
 	public:
 		struct s {
 			const entry_ *Parent;
 			str::string_::s Path;
-			values_::s Parameters;
 		} &S_;
 		str::string_ Path;
-		values_ Parameters;
 		entry_( s &S )
 		: S_( S ),
-		  Path( S_.Path ),
-		  Parameters( S_.Parameters )
+		  Path( S_.Path )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			S_.Parent = NULL;
 			Path.reset( P );
-			Parameters.reset( P );
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			Path.plug( MD );
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
 			Path.plug( MM );
-			Parameters.plug( MM );
 		}
 		entry_ &operator =( const entry_ &E )
 		{
 			S_.Parent = E.S_.Parent;
 			Path = E.Path;
-			Parameters = E.Parameters;
 
 			return *this;
 		}
 		void Init(
 			const char *Path = NULL,
-			const entry_ &Parent = *(const entry_ *)NULL )
+			const entry_ &Parent = *(const entry_ *)NULL );
+		const str::string_ &GetPath(
+			str::string_ &Path,
+			const parameters_ &Parameters = parameters() ) const
 		{
-			S_.Parent = &Parent;
-			this->Path.Init( Path );
-			Parameters.Init();
+			GetParentPath_( Path, Parameters, this->Path( this->Path.First() ) == '[' );
+
+			Path.Append( this->Path );
+
+			str::ReplaceTags( Path, Parameters, '%' );
+
+			return Path;
 		}
-		void SetParameters(
-			bso::ubyte__ Indice,
-			const str::string_ &Value )
+		bso::bool__ SetValue(
+			multi_level_registry_ &Registry,
+			const parameters_ &Parameters,
+			const str::string_ &Value ) const
 		{
-			if ( Parameters.Amount() < Indice )
-				Parameters.Allocate( Indice );
-
-			Parameters( Parameters.First( Indice - 1 ) ) = Value;
-		}
-		void ResetParameters( void )
-		{
-			Parameters.Init();
-		}
-		void AddParameter( const str::string_ &Value )
-		{
-			Parameters.Append( Value );
-		}
-		const str::string_ &GetPath( void ) const
-		{
-			_Buffer.Init();
-
-			GetParentPath_( _Buffer );
-
-			_Buffer.Append( this->Path );
-
-			str::ReplaceTags( _Buffer, Parameters, '%' );
-
-			return _Buffer;
+			bso::bool__ Made = false;
+		ERRProlog
+			str::string Buffer;
+		ERRBegin
+			Buffer.Init();
+			Made = Registry.SetValue( GetPath( Buffer, Parameters ), Value );
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Made;
 		}
 		bso::bool__ SetValue(
 			multi_level_registry_ &Registry,
 			const str::string_ &Value ) const
 		{
-			return Registry.SetValue( GetPath(), Value );
+			return SetValue( Registry, parameters(), Value );
+		}
+		bso::bool__ GetValue(
+			const multi_level_registry_ &Registry,
+			const parameters_ &Parameters,
+			str::string_ &Value ) const
+		{
+			bso::bool__ Made = false;
+		ERRProlog
+			str::string Buffer;
+		ERRBegin
+			Buffer.Init();
+			Made = Registry.GetValue( GetPath( Buffer, Parameters ), Value );
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Made;
 		}
 		bso::bool__ GetValue(
 			const multi_level_registry_ &Registry,
 			str::string_ &Value ) const
 		{
-			return Registry.GetValue( GetPath(), Value );
+			return GetValue( Registry, parameters(), Value );
+		}
+		bso::bool__ GetValues(
+			const multi_level_registry_ &Registry,
+			const parameters_ &Parameters,
+			values_ &Values ) const
+		{
+			bso::bool__ Made = false;
+		ERRProlog
+			str::string Buffer;
+		ERRBegin
+			Buffer.Init();
+			Made = Registry.GetValues( GetPath( Buffer, Parameters ), Values );
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Made;
 		}
 		bso::bool__ GetValues(
 			const multi_level_registry_ &Registry,
 			values_ &Values ) const
 		{
-			return Registry.GetValues( GetPath(), Values );
+			return GetValues( Registry, parameters(), Values );
 		}
 # ifdef CPE__64_BITS_TYPES_ALLOWED
 		_MU( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
@@ -1773,7 +1829,19 @@ namespace rgstry {
 #  define _MS RGSRTY__MS_BACKUP
 # endif
 
-	E_AUTO( entry );
+	E_AUTO_( entry )
+		entry(
+			const char *Path,
+			const entry_ &Parent = *(const entry_ *)NULL )
+		: entry_( static_ )
+		{
+			reset( false );
+
+			Init( Path, Parent );
+		}
+	};
+
+
 
 
 #ifdef _M

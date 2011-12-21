@@ -1297,6 +1297,79 @@ ERREpilog
 	return Status;
 }
 
+#define LIMIT 9
+
+static bso::ubyte__ GetTagAmount_( const str::string_ &String )
+{
+	bso::ubyte__ Amount = 0;
+
+	epeios::row__ Row = String.First();
+
+	while ( ( Row != NONE ) && ( ( Row = String.Search( RGSTRY__TAG_MARKER, Row ) ) != NONE ) )
+	{
+		Row = String.Next( Row );
+
+		if ( Row == NONE )
+			ERRc();
+
+		if ( String( Row ) != RGSTRY__TAG_MARKER )
+			if ( Amount == LIMIT )
+				ERRl();
+			else
+				Amount++;
+
+		Row = String.Next( Row );
+	}
+
+	return Amount;
+}
+
+static void HandleTag_(
+	bso::ubyte__ Indice,
+	const char *Source,
+	str::string_ &Target )
+{
+	while ( *Source ) {
+		if ( *Source == RGSTRY__TAG_MARKER ) {
+			Target.Append( '%' );
+
+			Source++;
+
+			if ( *Source != RGSTRY__TAG_MARKER ) {
+				if ( Indice > LIMIT )
+					ERRl();
+
+				Target.Append( '0' + Indice++ );
+			} else if ( *Source == 0 )
+				ERRc();
+
+		} 
+
+		Target.Append( *Source++ );
+	}
+}
+
+void rgstry::entry_::Init(
+	const char *Path,
+	const entry_ &Parent )
+{
+ERRProlog
+	str::string Buffer;
+ERRBegin
+	S_.Parent = &Parent;
+	this->Path.Init();
+
+	if ( Path != NULL ) {
+		Buffer.Init();
+		GetParentPath_( Buffer, parameters(), false );
+		HandleTag_( GetTagAmount_( Buffer ) + 1, Path, this->Path );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

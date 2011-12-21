@@ -1,5 +1,11 @@
 $Id$
 
+21/12/2011 :
+	- TOL :
+		- Création de E_AUTO_(...)'.
+	- XULFxx :
+		- Adaptation.
+
 20/12/2011 :
 	- RGSTRY :
 		- Ajout  'entry[_]'.

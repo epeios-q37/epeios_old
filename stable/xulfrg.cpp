@@ -57,15 +57,11 @@ public:
 
 using namespace xulfrg;
 
-#define SEPARATOR	FRDRGY_PATH_SEPARATOR
+rgstry::entry xulfrg::AnnexTarget;
+rgstry::entry xulfrg::AnnexTargetType;
 
-#define ANNEX	FRDRGY_PARAMETERS_PATH	"Annex" SEPARATOR
-
-const char *xulfrg::paths::annex::Type = ANNEX "@Type";
-const char *xulfrg::paths::annex::Target = ANNEX;
-
-#define BACKEND_SELECTION	"BackendSelection" SEPARATOR
-const char *xulfrg::paths::backend_selection::Mode = BACKEND_SELECTION "@Mode";
+rgstry::entry xulfrg::BackendSelection;
+rgstry::entry xulfrg::BackendSelectionMode;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
@@ -76,6 +72,11 @@ class xulfrgpersonnalization
 public:
 	xulfrgpersonnalization( void )
 	{
+		AnnexTarget.Init( "AnnexTarget", frdrgy::Parameters );
+		AnnexTargetType.Init( "@Type", AnnexTarget );
+
+		BackendSelection.Init( "BackendSelection", frdrgy::Parameters );
+		BackendSelectionMode.Init( "Mode", BackendSelection );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

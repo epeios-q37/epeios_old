@@ -110,7 +110,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	if ( xulfrg::GetRawAnnexType( Registry, Value ) ) {
+	if ( xulfrg::AnnexTargetType.GetValue( Registry, Value ) ) {
 		if ( Value == "Embedded" )
 			Type = atEmbedded;
 		else if ( Value == "File" )
@@ -160,7 +160,7 @@ ERRProlog
 ERRBegin
 	Target.Init();
 
-	xulfrg::GetAnnexTarget( Registry, Target );
+	xulfrg::AnnexTarget.GetValue( Registry, Target );
 
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
