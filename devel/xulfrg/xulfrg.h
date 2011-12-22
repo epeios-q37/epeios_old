@@ -67,6 +67,9 @@ extern class ttr_tutor &XULFRGTutor;
 
 namespace xulfrg {
 
+	using frdrgy::registry_;
+	using frdrgy::registry;
+
 	extern rgstry::entry AnnexTarget;
 	extern rgstry::entry AnnexTargetType;
 

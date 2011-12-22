@@ -92,6 +92,7 @@ namespace frdrgy {
 	extern rgstry::entry AuthenticationPassword;
 
 	extern rgstry::entry PredefinedBackends;
+	extern rgstry::entry DefaultPredefinedBackend;
 	extern rgstry::entry PredefinedBackend;
 	extern rgstry::entry PredefinedBackendId;
 	extern rgstry::entry TaggedPredefinedBackend;

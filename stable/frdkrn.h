@@ -434,6 +434,7 @@ namespace frdkrn {
 
 	void GetPredefinedBackends(
 		const frdrgy::registry_ &Registry,
+		const lcl::rack__ &Locale,
 		xml::writer_ &Writer );
 
 }

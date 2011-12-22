@@ -1,5 +1,9 @@
 $Id$
 
+22/12/2011 :
+	- NSXPCM :
+		- 'GetObject(...)'  -> 'GetWidget(...)'.
+
 21/12/2011 :
 	- TOL :
 		- Création de E_AUTO_(...)'.

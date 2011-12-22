@@ -640,11 +640,14 @@ ERREpilog
 static void GetPredefinedBackend_(
 	const str::string_ &Id,
 	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
 	xml::writer_ &Writer )
 {
 ERRProlog
 	str::string Value;
+	str::string Translation;
 	rgstry::parameters Parameters;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Parameters.Init();
 	Parameters.Append( Id );
@@ -652,7 +655,10 @@ ERRBegin
 	Value.Init();
 	frdrgy::PredefinedBackendAlias.GetValue( Registry, Parameters, Value );
 
-	Writer.PutAttribute( "Alias", Value );
+	Translation.Init();
+	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );
+
+	Writer.PutAttribute( "Alias", Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -661,6 +667,7 @@ ERREpilog
 static void GetPredefinedBackends_(
 	const rgstry::values_ &Ids,
 	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Rack,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
@@ -672,7 +679,7 @@ static void GetPredefinedBackends_(
 		Writer.PushTag( "PredefinedBackend" );
 		Writer.PutAttribute( "id", Id( Row ) );
 
-		GetPredefinedBackend_( Id( Row ), Registry, Writer );
+		GetPredefinedBackend_( Id( Row ), Registry, Rack, Writer );
 
 		Writer.PopTag();
 
@@ -682,6 +689,7 @@ static void GetPredefinedBackends_(
 
 void frdkrn::GetPredefinedBackends(
 	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -691,7 +699,7 @@ ERRBegin
 
 	frdrgy::PredefinedBackendId.GetValues( Registry, Ids );
 
-	GetPredefinedBackends_( Ids, Registry, Writer );
+	GetPredefinedBackends_( Ids, Registry, Locale, Writer );
 ERRErr
 ERREnd
 ERREpilog

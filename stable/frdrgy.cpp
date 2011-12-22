@@ -76,6 +76,7 @@ rgstry::entry frdrgy::AuthenticationPassword( "Password", Authentication );
 #define PREDEFINED_BACKEND_ID	"id"
 
 rgstry::entry frdrgy::PredefinedBackends( "PredefinedBackends", Parameters );
+rgstry::entry frdrgy::DefaultPredefinedBackend( "@Default", PredefinedBackends );
 rgstry::entry frdrgy::PredefinedBackend( "PredefinedBackend", PredefinedBackends ); 
 rgstry::entry frdrgy::PredefinedBackendId( "@" PREDEFINED_BACKEND_ID, PredefinedBackend);
 rgstry::entry frdrgy::TaggedPredefinedBackend( "[" PREDEFINED_BACKEND_ID "=\"%\"]", PredefinedBackend);

@@ -234,12 +234,14 @@ ERREpilog
 
 static void GetPredefinedBackends_(
 	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
 	str::string_ &PredefinedBackends )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ OFlow;
 	txf::text_oflow__ TFlow;
 	xml::writer Writer;
+	str::string Default;
 ERRBegin
 	OFlow.Init( PredefinedBackends );
 	TFlow.Init( OFlow );
@@ -247,9 +249,39 @@ ERRBegin
 
 	Writer.PushTag( "PredefinedBackends" );
 
-	frdkrn::GetPredefinedBackends( Registry, Writer );
+	Default.Init();
+	frdrgy::DefaultPredefinedBackend.GetValue( Registry, Default );
+
+	if ( Default.Amount() != 0 )
+		Writer.PutAttribute( "Default", Default );
+
+	frdkrn::GetPredefinedBackends( Registry, Locale, Writer );
 
 	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void FillPredefinedBackendsWidget_( trunk___ &Trunk )
+{
+ERRProlog
+	str::string PredefinedBackends;
+	nsIDOMDocumentFragment *Fragment;
+ERRBegin
+	PredefinedBackends.Init();
+
+	GetPredefinedBackends_( Trunk.Registry(),Trunk.Kernel().LocaleRack(), PredefinedBackends );
+
+	Trunk.UI().LogQuietly( PredefinedBackends );
+
+	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget() );
+
+	Fragment = nsxpcm::XSLTransformByFileName( PredefinedBackends, str::string( "chrome://esketch/content/xsl/PredefinedBackendMenuList.xsl" ), Trunk.UI().SessionForm().Document(), nsxpcm::xslt_parameters() );
+
+	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget(), Fragment );
+
+	nsxpcm::SetSelectedItem( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget() );
 ERRErr
 ERREnd
 ERREpilog
@@ -259,18 +291,13 @@ void xulfsf::session_form__::Update( frdkrn::backend_extended_type__ Type )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
-	str::string PredefinedBackends;
 ERRBegin
 	if ( !HideUnusedBackendSelectionMode_( Trunk().Registry(), Broadcasters ) )
 		Trunk().UI().LogAndPrompt( Trunk().Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
 
 	HandleAuthenticationSubForm_( Trunk().Registry(), Broadcasters, Widgets );
 
-	PredefinedBackends.Init();
-
-	GetPredefinedBackends_( Trunk().Registry(), PredefinedBackends );
-
-	Trunk().UI().LogAndPrompt( PredefinedBackends );
+	FillPredefinedBackendsWidget_( Trunk() );
 
 	if ( Type == frdkrn::bxt_Undefined )
 		ERRReturn;
@@ -374,6 +401,7 @@ static void Register_(
 	R( DaemonBackendSwitch, Menuitem, mim );
 	R( EmbeddedBackendSwitch, Menuitem, mim );
 	R( BackendType, Deck, dck );
+	R( PredefinedBackend, Menulist, mnl );
 	R( DaemonBackendLocation, Textbox, txb );
 	R( EmbeddedBackendFileName, Textbox, txb );
 	R( Login, Textbox, txb );

@@ -181,6 +181,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # else
 #  define NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE "xex"
 # endif
+
 namespace nsxpcm {
 	using str::string_;
 	using str::string;
@@ -516,47 +517,6 @@ namespace nsxpcm {
 #endif
 	}
 
-/*
-	template <typename element> struct _element__
-	{
-	private:
-		element *_Element;
-	public:
-		_element__( element *Element = NULL )
-		{
-			_Element = Element;
-		}
-		operator element *( void )
-		{
-			return _Element;
-		}
-		const element *operator ->( void ) const
-		{
-			return _Element;
-		}
-		element *operator ->( void )
-		{
-			return _Element;
-		}
-		element *&operator()( void )
-		{
-			return _Element;
-		}
-		const element *&operator()( void ) const
-		{
-			return _Element;
-		}
-		bool operator ==( const element *Op )
-		{
-			return ( Op == _Element );
-		}
-		bool operator !=( const element *Op )
-		{
-			return ( Op != _Element );
-		}
-	};
-*/
-
 #ifdef NSXPCM_USE_DEPRECATED
 	// 'name' nom du type 'doit correspondre au nom du tag XUL associé); 'Name' pour le fonctions associées.
 	#define NSXPCM_DEFINE( element, name, Name )\
@@ -642,6 +602,32 @@ namespace nsxpcm {
 		SetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
 	}
 
+	inline void SetAttribute(
+		nsIDOMElement *Element,
+		const char *Name,
+		const str::string_ &Value )
+	{
+		nsEmbedString EName, EValue;
+
+		Transform( Name, EName );
+		Transform( Value, EValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		T( Element->SetAttribute( EName, EValue ) );
+	}
+
+	inline void SetAttribute(
+		nsIDOMNode *Node,
+		const char *Name,
+		const str::string_ &Value )
+	{
+		SetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+	}
+
 	inline void RemoveAttribute(
 		nsIDOMElement *Element,
 		const char *Name )
@@ -656,22 +642,6 @@ namespace nsxpcm {
 #endif
 		
 		T( Element->RemoveAttribute( EName ) );
-	}
-
-	template <typename t> inline void SetValue(
-		t *Element,
-		const char *Value )
-	{
-		nsEmbedString EValue;
-
-		Transform( Value, EValue );
-
-#ifdef NSXPCM_DBG
-		if ( Element == NULL )
-			ERRu();
-#endif
-		
-		T( Element->SetValue( EValue ) );
 	}
 
 	inline const str::string_ &GetAttribute(
@@ -702,53 +672,6 @@ namespace nsxpcm {
 			return Value;
 	}
 
-	template <typename t> inline const str::string_ &GetValue(
-		t *Element,
-		str::string_ &Value )
-	{
-		nsEmbedString EValue;
-
-		T( Element->GetValue( EValue ) );
-
-		Transform( EValue, Value );
-
-		return Value;
-	}
-/*
-	template <typename t> inline const str::string_ &GetValue(
-		_element__<t> &Element,
-		str::string_ &Value )
-	{
-		return GetValue( Element.operator->(), Value );
-	}
-*/
-	inline void SetAttribute(
-		nsIDOMElement *Element,
-		const char *Name,
-		const str::string_ &Value )
-	{
-		nsEmbedString EName, EValue;
-
-		Transform( Name, EName );
-		Transform( Value, EValue );
-
-#ifdef NSXPCM_DBG
-		if ( Element == NULL )
-			ERRu();
-#endif
-		
-		T( Element->SetAttribute( EName, EValue ) );
-	}
-
-	inline void SetAttribute(
-		nsIDOMNode *Node,
-		const char *Name,
-		const str::string_ &Value )
-	{
-		SetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
-	}
-
-
 	template <typename t> inline void SetValue(
 		t *Element,
 		const str::string_ &Value )
@@ -763,6 +686,77 @@ namespace nsxpcm {
 #endif
 		
 		T( Element->SetValue( EValue ) );
+	}
+
+	template <typename t> inline const str::string_ &GetValue(
+		t *Element,
+		str::string_ &Value )
+	{
+		nsEmbedString EValue;
+
+		T( Element->GetValue( EValue ) );
+
+		Transform( EValue, Value );
+
+		return Value;
+	}
+
+	inline bso::slong__ GetSelectedIndex( nsIDOMXULSelectControlElement *Element )
+	{
+		PRInt32 Index;
+
+		T( Element->GetSelectedIndex( &Index ) );
+
+		return Index;
+	}
+
+	inline bso::slong__ GetSelectedIndex( nsIDOMNode *Node )
+	{
+		return GetSelectedIndex( QueryInterface<nsIDOMXULSelectControlElement>( Node ) );
+	}
+	
+	inline void SetSelectedIndex(
+		nsIDOMXULSelectControlElement *Element,
+		bso::slong__ Index )
+	{
+		T( Element->SetSelectedIndex( Index ) );
+	}
+
+	inline void SetSelectedIndex(
+		nsIDOMNode *Node,
+		bso::slong__ Index )
+	{
+		SetSelectedIndex( QueryInterface<nsIDOMXULSelectControlElement>( Node ), Index );
+	}
+
+	void SetSelectedItem( nsIDOMNode *Node );	// Cherche parmis les enfants de 'Node' le premier élément ayant l'attribut 'xex:selected' à 'true' et le sélectionne.
+
+	inline nsIDOMXULSelectControlItemElement *GetSelectedItem( nsIDOMXULSelectControlElement *Element )
+	{
+		nsIDOMXULSelectControlItemElement *Item;
+
+		T( Element->GetSelectedItem( &Item ) );
+
+		return Item;
+	}
+
+	inline nsIDOMXULSelectControlItemElement *GetSelectedItem( nsIDOMNode *Node )
+	{
+		return GetSelectedItem( QueryInterface<nsIDOMXULSelectControlElement>( Node ) );
+	}
+
+	inline void SetSelectedItem(
+		nsIDOMXULSelectControlElement *Element,
+		nsIDOMXULSelectControlItemElement *Item )
+	{
+		T( Element->SetSelectedItem( Item ) );
+	}
+
+	inline void SetSelectedItem(
+		nsIDOMNode *Node,
+		nsIDOMNode *Item )
+	{
+		SetSelectedItem( QueryInterface<nsIDOMXULSelectControlElement>( Node ), QueryInterface<nsIDOMXULSelectControlItemElement>( Item ) );
 	}
 
 	inline const str::string_ &GetId(
@@ -966,13 +960,18 @@ namespace nsxpcm {
 		{
 			reset();
 
-			_Root = Root;
-			_Current = _Root;
+			_Current = GetFirstChild( Root );
+
+			if ( _Current != NULL )
+				_Root = _Current = GetParentNode( _Current );	// Bien que, dans ce cas, '_Root' soit le même que 'Root,
+																// ils peuvent ne pas avoir la même valeur,
+																// posant alors problème pour pour 'GetNext()'.
 		}
 		// Retourne le prochain noeud, ou 'NULL' si tous ont été lus.
 		nsIDOMNode *GetNext( void );
 	};
 
+/*
 	template <typename element> bso::slong__ GetSelectedIndex( element *Element )
 	{
 		PRInt32 Index;
@@ -981,7 +980,7 @@ namespace nsxpcm {
 
 		return Index;
 	}
-
+*/
 	template <typename element> inline bool IsChecked( element *Element )
 	{
 		PRBool Checked;
@@ -1472,55 +1471,55 @@ namespace nsxpcm {
 		nsIDOMEvent *Event,
 		const element_cores_ &Cores );
 */
-	template <typename object> class _widget__
+	template <typename widget> class _widget__
 	: public widget_core__
 	{
 	public:
-		object *GetObject( void )
+		widget *GetWidget( void )
 		{
-			return QueryInterface<object>( GetSupports() );
+			return QueryInterface<widget>( GetSupports() );
 		}
 		const str::string_ &GetAttribute(
 			const str::string_ &Name,
 			str::string_ &Value )
 		{
-			return nsxpcm::GetAttribute( GetObject(), Name, Value );
+			return nsxpcm::GetAttribute( GetWidget(), Name, Value );
 		}
 		const str::string_ &GetAttribute(
 			const char *Name,
 			str::string_ &Value )
 		{
-			return nsxpcm::GetAttribute( GetObject(), Name, Value );
+			return nsxpcm::GetAttribute( GetWidget(), Name, Value );
 		}
 		void SetAttribute(
 			const str::string_ &Name,
 			str::string_ &Value )
 		{
-			nsxpcm::SetAttribute( GetObject(), Name, Value );
+			nsxpcm::SetAttribute( GetWidget(), Name, Value );
 		}
 		void SetAttribute(
 			const char *Name,
 			str::string_ &Value )
 		{
-			nsxpcm::SetAttribute( GetObject(), Name, Value );
+			nsxpcm::SetAttribute( GetWidget(), Name, Value );
 		}
 		void SetAttribute(
 			const char *Name,
 			const char *Value )
 		{
-			nsxpcm::SetAttribute( GetObject(), Name, Value );
+			nsxpcm::SetAttribute( GetWidget(), Name, Value );
 		}
 		void RemoveAttribute( const str::string_ &Name )
 		{
-			nsxpcm::RemoveAttribute( GetObject(), Name );
+			nsxpcm::RemoveAttribute( GetWidget(), Name );
 		}
 		void RemoveAttribute( const char *Name )
 		{
-			nsxpcm::RemoveAttribute( GetObject(), Name );
+			nsxpcm::RemoveAttribute( GetWidget(), Name );
 		}
 		const str::string_ &GetId( str::string_ &Value )
 		{
-			return nsxpcm::GetId( GetObject(), Value );
+			return nsxpcm::GetId( GetWidget(), Value );
 		}
 		void Enable( bso::bool__ Value = true )
 		{
@@ -1555,7 +1554,7 @@ namespace nsxpcm {
 		}
 		void Show( bso::bool__ Value = true )
 		{
-			nsxpcm::SetAttribute( GetObject(), "hidden", Value ? "false" : "true" );
+			nsxpcm::SetAttribute( GetWidget(), "hidden", Value ? "false" : "true" );
 		}
 		void Hide( bso::bool__ Value = true )
 		{
@@ -1571,25 +1570,54 @@ namespace nsxpcm {
 		}
 		void RemoveChildren( void )
 		{
-			nsxpcm::RemoveChildren( GetObject() );
+			nsxpcm::RemoveChildren( GetWidget() );
 		}
 		void AppendChild( nsIDOMNode *Node )
 		{
-			nsxpcm::AppendChild( GetObject(), Node );
+			nsxpcm::AppendChild( GetWidget(), Node );
 		}
 	};
 
 # define NSXPCM__VALUE_HANDLING\
 		void SetValue( const str::string_ &Value )\
 		{\
-			nsxpcm::SetValue( GetObject(), Value );\
+			nsxpcm::SetValue( GetWidget(), Value );\
 		}\
 		const str::string_ &GetValue( str::string_ &Value )\
 		{\
-			nsxpcm::GetValue( GetObject(), Value );\
+			nsxpcm::GetValue( GetWidget(), Value );\
 \
 			return Value;\
 		}\
+
+# define NSXPCM__INDEX_HANDLING\
+		void SetSelectedIndex( bso::slong__ Index )\
+		{\
+			nsxpcm::SetSelectedIndex( GetWidget(), Index );\
+		}\
+		bso::slong__ GetSelectedIndex( void )\
+		{\
+			return nsxpcm::GetSelectedIndex( GetWidget() );\
+		}
+
+# define NSXPCM__ITEM_HANDLING\
+		void SetSelectedItem( nsIDOMXULSelectControlItemElement *Item )\
+		{\
+			nsxpcm::SetSelectedItem( GetWidget(), Item );\
+		}\
+		void SetSelectedItem( nsIDOMNode *Item )\
+		{\
+			nsxpcm::SetSelectedItem( GetWidget(), Item );\
+		}\
+		void SetSelectedItem( widget_core__ &Item )\
+		{\
+			nsxpcm::SetSelectedItem( GetWidget(), Item.GetElement() );\
+		}\
+		nsIDOMXULSelectControlItemElement *GetSelectedItem( void )\
+		{\
+			return nsxpcm::GetSelectedItem( GetWidget() );\
+		}
+
 
 	class widget__	// Classe générique.
 	: public _widget__<nsIDOMElement>
@@ -1606,29 +1634,29 @@ namespace nsxpcm {
 		NSXPCM__VALUE_HANDLING
 		void Select( void )
 		{
-			T( GetObject()->Select() );
+			T( GetWidget()->Select() );
 		}
 		void SetSize( bso::size__ Size )
 		{
-			T( GetObject()->SetSize( Size ) );
+			T( GetWidget()->SetSize( Size ) );
 		}
 		bso::size__ GetSize( void )
 		{
 			PRInt32 Buffer;
 
-			T( GetObject()->GetSize( &Buffer )  );
+			T( GetWidget()->GetSize( &Buffer )  );
 
 			return Buffer;
 		}
 		void SetMaxLength( bso::size__ Size )
 		{
-			T( GetObject()->SetMaxLength( Size ) );
+			T( GetWidget()->SetMaxLength( Size ) );
 		}
 		bso::size__ GetMaxLength( void )
 		{
 			PRInt32 Buffer;
 
-			T( GetObject()->GetMaxLength( &Buffer ) );
+			T( GetWidget()->GetMaxLength( &Buffer ) );
 
 			return Buffer;
 		}
@@ -1654,7 +1682,7 @@ namespace nsxpcm {
 	public:
 		bso::bool__ IsChecked( void )
 		{
-			return nsxpcm::IsChecked( GetObject() );
+			return nsxpcm::IsChecked( GetWidget() );
 		}
 	};
 
@@ -1664,7 +1692,7 @@ namespace nsxpcm {
 	public:
 		bso::bool__ IsChecked( void )
 		{
-			return nsxpcm::IsChecked( GetObject() );
+			return nsxpcm::IsChecked( GetWidget() );
 		}
 	};
 
@@ -1672,11 +1700,12 @@ namespace nsxpcm {
 	: public _widget__<nsIDOMXULSelectControlElement>
 	{
 	public:
+#if 0
 		nsIDOMXULSelectControlItemElement *GetSelectedItem( bso::bool__ ErrorIfInexistant = true )
 		{
 			nsIDOMXULSelectControlItemElement *Item = NULL;
 
-			T( GetObject()->GetSelectedItem( &Item ) );
+			T( GetWidget()->GetSelectedItem( &Item ) );
 
 			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
 				ERRu();
@@ -1685,11 +1714,15 @@ namespace nsxpcm {
 		}
 		int SelectedIndex( void )
 		{
-			return nsxpcm::GetSelectedIndex( GetObject() );
+			return nsxpcm::GetSelectedIndex( GetWidget() );
 		}
+#else
+		NSXPCM__INDEX_HANDLING
+		NSXPCM__ITEM_HANDLING
+#endif
 		const str::string_ &GetSelectedItemValue( str::string_ &Value )
 		{
-			nsIDOMXULSelectControlItemElement *Item = GetSelectedItem( false );
+			nsIDOMXULSelectControlItemElement *Item = GetSelectedItem();
 
 			if ( Item != NULL )
 				GetValue( Item, Value );
@@ -1712,20 +1745,20 @@ namespace nsxpcm {
 			nsIBoxObject *BoxObject = NULL;
 			nsIListBoxObject *ListBoxObject = NULL;
 
-			T( GetObject()->GetBoxObject( &BoxObject ) );
+			T( GetWidget()->GetBoxObject( &BoxObject ) );
 
 			ListBoxObject = QueryInterface<nsIListBoxObject>( BoxObject );
 
 			T( ListBoxObject->GetIndexOfItem( Item, &Index ) );
 			T( ListBoxObject->ScrollToIndex( Index ) );
 
-			T( GetObject()->SelectItem( Item ) );
+			T( GetWidget()->SelectItem( Item ) );
 		}
 		nsIDOMXULSelectControlItemElement *GetCurrentItem( bso::bool__ ErrorIfInexistant = true )
 		{
 			nsIDOMXULSelectControlItemElement *Item = NULL;
 
-			T( GetObject()->GetCurrentItem( &Item ) );
+			T( GetWidget()->GetCurrentItem( &Item ) );
 
 			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
 				ERRu();
@@ -1746,7 +1779,7 @@ namespace nsxpcm {
 		{
 			PRInt32 Count = 0;
 
-			T( GetObject()->GetSelectedCount( &Count ) );
+			T( GetWidget()->GetSelectedCount( &Count ) );
 
 			return Count;
 		}
@@ -1762,6 +1795,7 @@ namespace nsxpcm {
 	{
 	private:
 	public:
+#if 1
 		bso::slong__ GetSelectedIndex( void )
 		{
 			bso::slong__ Index = -1;
@@ -1770,7 +1804,7 @@ namespace nsxpcm {
 			epeios::row__ Error = NONE;
 		ERRBegin
 			Value.Init();
-			nsxpcm::GetAttribute( GetObject(), "selectedIndex", Value );
+			nsxpcm::GetAttribute( GetWidget(), "selectedIndex", Value );
 
 			Index = Value.ToSL( &Error );
 
@@ -1785,9 +1819,9 @@ namespace nsxpcm {
 		{
 			bso::integer_buffer__ Buffer;
 
-			nsxpcm::SetAttribute( GetObject(), "selectedIndex", bso::Convert( Index, Buffer ) );
+			nsxpcm::SetAttribute( GetWidget(), "selectedIndex", bso::Convert( Index, Buffer ) );
 		}
-		void SetSelectedPanel( nsIDOMNode *Node )
+		void SetSelectedItem( nsIDOMNode *Node )
 		{
 			bso::slong__ Index = -1;
 
@@ -1798,10 +1832,14 @@ namespace nsxpcm {
 
 			SetSelectedIndex( Index );
 		}
-		void SetSelectedPanel( panel__ &Panel )
+		void SetSelectedItem( panel__ &Item )
 		{
-			SetSelectedPanel( Panel.GetElement() );
+			SetSelectedItem( Item.GetElement() );
 		}
+#else
+		NSXPCM__INDEX_HANDLING
+		NSXPCM__ITEM_HANDLING
+#endif
 	};
 
 
@@ -1813,7 +1851,7 @@ namespace nsxpcm {
 		{
 			nsITreeView *View = NULL;
 
-			T( GetObject()->GetView( &View ) );
+			T( GetWidget()->GetView( &View ) );
 
 			if ( View == NULL )
 				ERRu();
@@ -1929,18 +1967,23 @@ namespace nsxpcm {
 	{
 	public:
 		NSXPCM__VALUE_HANDLING
+#if 0
 		void SetSelectedIndex( bso::ulong__ Index )
 		{
-			T( GetObject()->SetSelectedIndex( Index ) );
+			T( GetWidget()->SetSelectedIndex( Index ) );
 		}
 		void SetSelectedItem( nsIDOMXULSelectControlItemElement *Item )
 		{
-			T( GetObject()->SetSelectedItem( Item ) );
+			T( GetWidget()->SetSelectedItem( Item ) );
 		}
 		void SetSelectedItem( menuitem__ &Item )
 		{
-			SetSelectedItem( Item.GetObject() );
+			SetSelectedItem( Item.GetWidget() );
 		}
+#else
+		NSXPCM__INDEX_HANDLING
+		NSXPCM__ITEM_HANDLING
+#endif
 	};
 
 /*
@@ -1954,11 +1997,11 @@ namespace nsxpcm {
 	public:
 		void Close( void )
 		{
-			nsxpcm::Close( GetObject() );
+			nsxpcm::Close( GetWidget() );
 		}
 		bso::bool__ IsClosed( void )
 		{
-			return nsxpcm::IsClosed( GetObject() );
+			return nsxpcm::IsClosed( GetWidget() );
 		}
 	};
 

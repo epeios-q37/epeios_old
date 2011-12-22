@@ -472,13 +472,42 @@ ERREnd
 ERREpilog
 }
 
+void nsxpcm::SetSelectedItem( nsIDOMNode *Node )
+{
+ERRProlog
+	str::string Value;
+	browser__ Browser;
+	nsIDOMNode *Current = Node, *Selected = NULL;
+ERRBegin
+	Browser.Init( Node );
+
+	while ( ( Current != NULL ) && ( Selected == NULL ) ) {
+		Value.Init();
+
+		GetAttribute( Current, NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE ":selected", Value );
+
+		if ( Value == "true" )
+			Selected = Current;
+
+		Current = Browser.GetNext();
+	}
+
+	if ( Selected != NULL )
+		SetSelectedItem( Node, Selected );
+	
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void nsxpcm::listbox__::RemoveContent( void )
 {
 ERRProlog
 	str::string Name;
 	nsIDOMNode *Node = NULL, *Next = NULL;
 ERRBegin
-	Node = GetFirstChild( GetObject() );
+	Node = GetFirstChild( GetWidget() );
 
 	while ( Node != NULL ) {
 		Next = GetNextSibling( Node );
@@ -486,7 +515,7 @@ ERRBegin
 		Name.Init();
 
 		if ( GetNodeName( Node, Name ) == "listitem" )
-			RemoveChild( GetObject(), Node );
+			RemoveChild( GetWidget(), Node );
 
 		Node = Next;
 	}

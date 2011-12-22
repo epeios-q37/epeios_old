@@ -99,6 +99,7 @@ namespace xulfsf {
 				DaemonBackendSwitchMenuitem,
 				EmbeddedBackendSwitchMenuitem;
 			deck__ BackendTypeDeck;
+			menulist__ PredefinedBackendMenulist;
 			textbox__ DaemonBackendLocationTextbox;
 			textbox__ EmbeddedBackendFileNameTextbox;
 			textbox__ LoginTextbox;

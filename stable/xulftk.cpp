@@ -639,6 +639,9 @@ ERRProlog
 	settings_set Set;
 ERRBegin
 
+	if ( !Kernel().IsProjectInProgress() )
+		ERRReturn;
+
 	Set.Init();
 
 	if ( RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) {
