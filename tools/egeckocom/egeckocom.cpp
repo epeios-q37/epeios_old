@@ -25,8 +25,8 @@
 
 #include "geckof.h"
 
-#include "scllocale.h"
-#include "sclrgstry.h"
+#include "locale.h"
+#include "registry.h"
 #include "sclmisc.h"
 
 #include "flx.h"
@@ -104,22 +104,21 @@ protected:
 	ERREpilog\
 	return NSResult;
 
-static const char *GetComponentPath_(
+static const str::string_ &GetComponent_(
 	const char *ComponentId,
-	STR_BUFFER___ &Buffer )
+	str::string_ &Component )
 {
 ERRProlog
-	str::string Path;
+	registry::parameters Parameters;
 ERRBegin
-	Path.Init( "Components/Component[@id=\"" );
-	Path.Append( ComponentId );
-	Path.Append( "\"]" );
+	Parameters.Init();
+	Parameters.Append( str::string( ComponentId ) );
 
-	Path.Convert( Buffer );
+	registry::GetMandatoryRegistryValue( registry::TaggedComponent, Parameters, Component );
 ERRErr
 ERREnd
 ERREpilog
-	return Buffer;
+	return Component;
 }
 
 NS_IMETHODIMP egeckocom___::Initialize(
@@ -130,8 +129,9 @@ NS_IMETHODIMP egeckocom___::Initialize(
 RP
 	str::string LibraryName;
 	str::strings Tags;
-	STR_BUFFER___ Buffer;
 	FNM_BUFFER___ LocationBuffer;
+	str::string Translation;
+	STR_BUFFER___ Buffer;
 RB
 	if ( !IsInitialized_ ) {
 		sclmisc::Initialize( NAME, NULL );
@@ -139,7 +139,7 @@ RB
 	}
 
 	LibraryName.Init();
-	sclrgstry::GetMandatoryRegistryValue( GetComponentPath_( ComponentId, Buffer ), LibraryName );
+	GetComponent_( ComponentId, LibraryName );
 
 	mtx::Lock( _Mutex );
 
@@ -156,7 +156,8 @@ RB
 	_Data.Init( _Buffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT ) );
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT, Translation ) );
 		Tags.Init();
 		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
 		Tags.Append( LibraryName );
@@ -184,6 +185,7 @@ NS_IMETHODIMP egeckocom___::Register(
 RP
 	str::string Id;
 	str::strings Tags;
+	str::string Translation;
 RB
 	if ( !mtx::IsLocked( _Mutex ) )
 		ERRu();
@@ -196,7 +198,8 @@ RB
 	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !_CurrentSteering->Register( Window, Id ) ) {
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT ) );
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT, Translation ) );
 		Tags.Init();
 		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
 		Tags.Append( Id );
@@ -240,19 +243,22 @@ RP
 	str::string Id, LibraryName;
 	str::strings Tags;
 	STR_BUFFER___ Buffer;
+	str::string Translation;
 RB
 	LibraryName.Init();
-	sclrgstry::GetMandatoryRegistryValue( GetComponentPath_( ComponentId, Buffer ), LibraryName );
+	GetComponent_( ComponentId, LibraryName );
 
 	if ( _CurrentSteering != NULL ) {
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_BAD_LONE_REGISTRATION_CONTEXT ) );
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_BAD_LONE_REGISTRATION_CONTEXT, Translation ) );
 		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
 		ErrorMessage.Append( " !" );
 		ERRBeam();
 	}
 
 	if ( ( Steering = geckof::RetrieveLoneSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_LONE_REGISTRATION_FAILURE ) );
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_LONE_REGISTRATION_FAILURE, Translation ) );
 		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
 		ErrorMessage.Append( " !" );
 		ERRBeam();
@@ -263,7 +269,8 @@ RB
 	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !Steering->Register( Window, Id ) ) {
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT ) );
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT, Translation ) );
 		Tags.Init();
 		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
 		Tags.Append( Id );

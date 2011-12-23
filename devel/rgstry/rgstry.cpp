@@ -1173,7 +1173,6 @@ ERRErr
 ERREnd
 ERREpilog
 	return Found;
-
 }
 
 bso::bool__ rgstry::multi_level_registry_::SetValue(
@@ -1206,6 +1205,60 @@ ERREpilog
 	return Set;
 }
 
+bso::bool__ rgstry::multi_level_registry_::Delete(
+	const str::string_ &PathString,
+	epeios::row__ *PathErrorRow )
+{
+	bso::bool__ Deleted = false;
+ERRProlog
+	level__ Level = NONE;
+	path Path;
+ERRBegin
+	Path.Init();
+
+	if ( !BuildPath_( PathString, Path, PathErrorRow ) )
+		ERRReturn;
+
+	Level = Entries.Last();
+
+	while ( Level != NONE ) {
+		Deleted |= Delete( Path, Level );
+
+		Level = Entries.Previous( Level );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Deleted;
+}
+
+
+bso::bool__ rgstry::multi_level_registry_::MoveTo(
+	const str::string_ &Path,
+	level__ Level )
+{
+	bso::bool__ Moved = false;
+ERRProlog
+	str::string Value;
+	str::string LevelValue;
+ERRBegin
+	Value.Init();
+
+	if ( GetValue( Path, Value ) ) {
+		LevelValue.Init();
+
+		if ( GetValue( Level, Path, LevelValue ) || ( Value != LevelValue ) ) {
+			Delete( Path );
+			SetValue( Level, Path, Value );
+
+			Moved = true;
+		}
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Moved;
+}
 
 row__ rgstry::multi_level_registry_::Search(
 	const str::string_ &PathString,
@@ -1361,7 +1414,7 @@ ERRBegin
 
 	if ( Path != NULL ) {
 		Buffer.Init();
-		GetParentPath_( Buffer, parameters(), false );
+		GetParentPath_( parameters(), false, Buffer );
 		HandleTag_( GetTagAmount_( Buffer ) + 1, Path, this->Path );
 	}
 ERRErr

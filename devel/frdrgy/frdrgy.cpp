@@ -84,6 +84,10 @@ rgstry::entry frdrgy::PredefinedBackendAlias( "@Alias", TaggedPredefinedBackend 
 rgstry::entry frdrgy::PredefinedBackendType( "@Type", TaggedPredefinedBackend );
 rgstry::entry frdrgy::PredefinedBackendLocation( "Location", TaggedPredefinedBackend );
 
+rgstry::entry frdrgy::Internals( "Internals" );
+rgstry::entry frdrgy::ProjectId( "ProjectId", Internals );
+
+
 
 
 #define S		FRDRGY_PATH_SEPARATOR 

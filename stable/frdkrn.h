@@ -187,7 +187,6 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		str::string _Id;	// Indentifiant du projet.
 		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
@@ -241,7 +240,6 @@ namespace frdkrn {
 			if ( P )
 				CloseProject();
 
-			_Id.reset( P );
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
@@ -266,7 +264,6 @@ namespace frdkrn {
 			const char *Language,
 			error_reporting_functions__ &ErrorReportingFunctions )
 		{
-			_Id.Init();
 			_Registry.Init( ConfigurationRegistry );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
@@ -275,20 +272,6 @@ namespace frdkrn {
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 
 			return sOK;
-		}
-		const str::string_ &GetId( void ) const
-		{
-			if ( !IsProjectInProgress() )
-				ERRc();
-
-			return _Id;
-		}
-		void SetId( const str::string_ &Id )
-		{
-			if ( !IsProjectInProgress() )
-				ERRc();
-
-			_Id = Id;
 		}
 		const frdrgy::registry_ &Registry( void ) const
 		{
@@ -302,40 +285,43 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
+			str::string_ &Id,
 			error_set___ &ErrorSet )	// Ne réalise qu'une mise à jour de la registry avec le contenu du projet. Ne réalise pas de connection.
 		{
-			report__ Report = r_Undefined;
+			return _FillProjectRegistry( FileName, TargetName, Criterions, Id, ErrorSet );
+		}
+		report__ LaunchProject(
+			const compatibility_informations__ &CompatibilityInformations,
+			error_reporting_functions__ &ErrorReportingFunctions,
+			error_set___ &ErrorSet )	// Les paramètres de connection sont récupèrés de la 'registry'.
+		{
+			report__ Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
 
-			_Id.Init();
-
-			if ( ( Report = _FillProjectRegistry( FileName, TargetName, Criterions, _Id, ErrorSet ) ) == r_OK ) {
+			if ( Report == r_OK ) {
 				_ProjectOriginalTimeStamp = time( NULL );
 				_ProjectModificationTimeStamp = 0;
 			}
 
 			return Report;
 		}
-		report__ Connect(
-			const compatibility_informations__ &CompatibilityInformations,
-			error_reporting_functions__ &ErrorReportingFunctions,
-			error_set___ &ErrorSet )	// Les paramètres de connection sont récupèrés de la 'registry'.
-		{
-			return _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
-		}
 		status__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
-			const xpp::criterions___ &Criterions );
-		status__ Connect(
+			const xpp::criterions___ &Criterions,
+			str::string_ &Id );
+		status__ LaunchProject(
 			const compatibility_informations__ &CompatibilityInformations,
+			str::string_ &Id,
 			error_reporting_functions__ &ErrorReportingFunctions );
 		report__ SaveProject(
 			const str::string_ &FileName,
 			const char *TargetName,
+			const str::string_ &Id, 
 			error_set___ &ErrorSet );
 		status__ SaveProject(
 			const str::string_ &FileName,
-			const char *TargetName );
+			const char *TargetName,
+			const str::string_ &Id );
 		report__ FillSettingsRegistry(
 			xtf::extended_text_iflow__ &SettingsXFlow,
 			const xpp::criterions___ &Criterions,

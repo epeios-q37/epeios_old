@@ -455,7 +455,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Flow->EOFD( (const void *)"\0", 1 );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
+	Flow->EOFD( (const void *)"", 1 );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
 
 	Read_( *Flow, Set );
 
@@ -468,19 +468,24 @@ ERREpilog
 
 void xulftk::trunk___::_DefineSession(
 	const str::string_ &ProjectFileName,	// Si non vide, contient le nom du fichier projet avec lequel préremplir le 'SessionForm'.
-	const xpp::criterions___ &Criterions,
-	const rgstry::multi_level_registry_ &Registry )
+	const xpp::criterions___ &Criterions )
 {
 ERRProlog
 	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 	str::string Location;
+	str::string ProjectId;
+	bso::integer_buffer__ Buffer;
 ERRBegin
+	ProjectId.Init();
 
 	if ( ProjectFileName.Amount() != 0 ) {
-		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions ) );
+		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions, ProjectId ) );
 		Location.Init();
 		frdrgy::BackendLocation.GetValue( Kernel().Registry(), Location );
-	}
+	} else
+		ProjectId.Init( bso::Convert( tol::Clock( true ), Buffer ) );
+
+	frdrgy::ProjectId.SetValue( Kernel().Registry(), ProjectId );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Kernel().Registry() ) ) {
 	case frdkrn::bxtPredefined:
@@ -505,6 +510,23 @@ ERREnd
 ERREpilog
 }
 
+static const str::string_ &GetProjectId_(
+	trunk___ &Trunk,
+	str::string_ &ProjectId )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	if ( !frdrgy::ProjectId.GetValue( Trunk.Registry(), ProjectId ) || (  ProjectId.Amount() == 0 ) ) {
+		Trunk.UI().LogAndPrompt( Trunk.Kernel().LocaleRack().GetTranslation( "BadOrNoProjectId", PREFIX, Buffer ) );
+		ERRAbort();
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return ProjectId;
+}
+
 
 void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
 {
@@ -515,14 +537,18 @@ ERRProlog
 	flx::E_STRING_IFLOW__ Flow;
 	str::string Value;
 	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
+	str::string ProjectId;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Set.Init();
 
 	RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set );
 
-	Settings.Init();
+	ProjectId.Init();
+	GetProjectId_( *this, ProjectId );
 
-	Get_( Kernel().GetId(), Set, Settings );
+	Settings.Init();
+	Get_( ProjectId, Set, Settings );
 
 	if ( Settings.Amount() != 0 ) {
 		Flow.Init( Settings );
@@ -637,6 +663,7 @@ void xulftk::trunk___::_DropSession( void )
 ERRProlog
 	str::string Settings;
 	settings_set Set;
+	str::string ProjectId;
 ERRBegin
 
 	if ( !Kernel().IsProjectInProgress() )
@@ -648,7 +675,10 @@ ERRBegin
 		Settings.Init();
 		GetSettings_( Kernel(), Settings );
 
-		Set_( Kernel().GetId(), Settings, Set );
+		ProjectId.Init();
+		GetProjectId_( *this, ProjectId );
+
+		Set_( ProjectId, Settings, Set );
 
 		StoreSettingsSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
 	}

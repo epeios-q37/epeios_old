@@ -524,7 +524,8 @@ ERREpilog
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
-	const xpp::criterions___ &Criterions )
+	const xpp::criterions___ &Criterions,
+	str::string_ &Id )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -533,7 +534,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LoadProject( FileName, TargetName, Criterions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LoadProject( FileName, TargetName, Criterions, Id, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		Status = sError;
@@ -546,7 +547,9 @@ ERREpilog
 	return Status;
 }
 
-status__ frdkrn::kernel___::Connect( const compatibility_informations__ &CompatibilityInformations,
+status__ frdkrn::kernel___::LaunchProject(
+	const compatibility_informations__ &CompatibilityInformations,
+	str::string_ &Id,
 	error_reporting_functions__ &ErrorReportingFunctions )
 {
 	status__ Status = s_Undefined;
@@ -556,7 +559,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = Connect( CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = LaunchProject( CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		Status = sError;
@@ -572,11 +575,12 @@ ERREpilog
 report__ frdkrn::kernel___::SaveProject(
 	const str::string_ &FileName,
 	const char *TargetName,
+	const str::string_ &Id,
 	error_set___ &ErrorSet )
 {
 	report__ Report = r_Undefined;
 
-	if ( ( Report = _DumpProjectRegistry( FileName, TargetName, _Id, ErrorSet ) ) == r_OK ) {
+	if ( ( Report = _DumpProjectRegistry( FileName, TargetName, Id, ErrorSet ) ) == r_OK ) {
 		_ProjectOriginalTimeStamp = time( NULL );
 		_ProjectModificationTimeStamp = 0;
 	}
@@ -586,7 +590,8 @@ report__ frdkrn::kernel___::SaveProject(
 
 status__ frdkrn::kernel___::SaveProject(
 	const str::string_ &FileName,
-	const char *TargetName  )
+	const char *TargetName,
+	const str::string_ &Id )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -595,7 +600,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = SaveProject( FileName, TargetName, ErrorSet ) ) != r_OK ) {
+	if ( ( Report = SaveProject( FileName, TargetName, Id, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
 		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );

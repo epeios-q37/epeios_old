@@ -100,6 +100,9 @@ namespace frdrgy {
 	extern rgstry::entry PredefinedBackendType;
 	extern rgstry::entry PredefinedBackendLocation;
 
+	extern rgstry::entry Internals;
+	extern rgstry::entry ProjectId;
+
 	struct paths {
 		static struct profiles {
 			static const char *FallbackProfile;

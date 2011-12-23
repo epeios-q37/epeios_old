@@ -1,5 +1,11 @@
 $Id$
 
+23/12/2011 :
+	- RGSTRY :
+		- Ajout 'multi_level_registry_::MoveTo(...)' et ''multi_level_registry_::Delete(...)'.
+	- SCLRGSTRY :
+		- Mise en oeuvre de 'rgstry:entry[_]' à la place de 'xpath'.
+
 22/12/2011 :
 	- NSXPCM :
 		- 'GetObject(...)'  -> 'GetWidget(...)'.

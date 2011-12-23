@@ -28,15 +28,8 @@ namespace registry {
 
 	using namespace sclrgstry;
 
-	struct paths
-	: public sclrgstry::paths
-	{
-		struct component {
-			static const char *Name;
-		};
-	};
-
-	SCLRGSTRY_MRV( GetComponentName, paths::component::Name );
+	extern rgstry::entry Components;
+	extern rgstry::entry TaggedComponent;
 }
 
 #endif

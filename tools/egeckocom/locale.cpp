@@ -58,33 +58,6 @@ const char *locale::Label( message__ Message )
 	return NULL;	// To avoir a 'warning'.
 }
 
-const str::string_ &locale::GetTranslation(
-	message__ Message,
-	... )
-{
-#if	GLOBAL__MESSAGE_AMOUNT != 0
-#	error "Amount of 'message__' entries changed ! Update !"
-#endif
-	const str::string_ *Translation = NULL;
-ERRProlog
-	va_list Args;
-	str::string TagValue;
-ERRBegin
-	va_start( Args, Message );
-
-	Translation = &scllocale::GetTranslation( Label( Message ) );	// Store the result in '::_Translation'.
-
-	switch ( Message ) {
-	default:
-		ERRc();
-		break;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return *Translation;
-}
-
 static struct global_cdtor {
 	global_cdtor( void )
 	{

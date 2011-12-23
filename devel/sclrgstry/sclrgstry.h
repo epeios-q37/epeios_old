@@ -70,6 +70,9 @@ extern class ttr_tutor &SCLRGSTRYTutor;
 
 namespace sclrgstry {
 
+	using rgstry::parameters_;
+	using rgstry::parameters;
+
 	extern const lcl::rack__ *LocaleRack;	// A définir.
 
 	const rgstry::multi_level_registry_ &GetRegistry( void );
@@ -78,66 +81,6 @@ namespace sclrgstry {
 
 	extern rgstry::entry LocaleFileName;
 	extern rgstry::entry Language;
-
-	class xpath___ {
-	private:
-		const char *_Path;
-		str::strings _Tags;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_Path = NULL;
-			_Tags.reset( P );
-		}
-		E_CVDTOR( xpath___ );
-		void Init( const char *Path )
-		{
-			_Path = Path;
-			_Tags.Init();
-		}
-		void Init(
-			const char *Path,
-			const str::string_ &Tag )
-		{
-			_Path = Path;
-
-			_Tags.Init();
-			_Tags.Append( Tag );
-		}
-		void Init(
-			const char *Path,
-			const str::strings_ &Tags )
-		{
-			_Path = Path;
-
-			_Tags.Init();
-			_Tags = Tags;
-		}
-		xpath___( const char *Path )
-		{
-			Init( Path );
-		}
-		xpath___(
-			const char *Path,
-			const str::string_ &Tag )
-		{
-			Init( Path, Tag );
-		}
-		xpath___(
-			const char *Path,
-			const str::strings_ &Tags )
-		{
-			Init( Path, Tags );
-		}
-		const str::string_ &GetTargetedPath( str::string_ &TargetedPath ) const
-		{
-			TargetedPath.Init( _Path );
-
-			str::ReplaceTags( TargetedPath, _Tags, SCLREGSITRY_TAG_MARKER_CHAR );
-
-			return TargetedPath;
-		}
-	};
 
 	using rgstry::value;
 	using rgstry::value_;
@@ -150,37 +93,45 @@ namespace sclrgstry {
 	bso::bool__ IsRegistryReady( void );
 
 	bso::bool__ GetValue(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		str::string_ &Value );
 
 	bso::bool__ GetValues(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		str::strings_ &Values );
 
 	const str::string_ &GetOptionalRegistryValue(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		str::string_ &Value,
 		bso::bool__ *Missing = NULL );
 
 	const char *GetOptionalRegistryValue(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		STR_BUFFER___ &Buffer,
 		bso::bool__ *Missing = NULL );
 
 	const str::string_ &GetMandatoryRegistryValue(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		str::string_ &Value );
 
 	const char *GetMandatoryRegistryValue(
-		const xpath___ &Path,
+		const rgstry::entry_ &Entry,
+		const rgstry::parameters_ &Parameters,
 		STR_BUFFER___ &Buffer );
 
 # define SCLRGSTRY__RUN( type, name, limit )\
 	type GetMandatoryRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type Limit = limit );\
 	type GetRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type DefaultValue,\
 		type Limit = limit );
 
@@ -193,11 +144,13 @@ namespace sclrgstry {
 
 # define SCLRGSTRY__RSN( type, name, min, max )\
 	type GetMandatoryRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type Min = min,\
 		type Max = max );\
 	type GetRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type DefaultValue,\
 		type Min = min,\
 		type Max = max );
@@ -210,31 +163,31 @@ namespace sclrgstry {
 	SCLRGSTRY__RSN( bso::sbyte__, SByte, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
 
 // To define function retrieving mandatory registry value.
-# define SCLRGSTRY_MRV( name, path )\
+# define SCLRGSTRY_MRV( name, entry )\
 	inline const char *name(\
 		STR_BUFFER___ &Buffer )\
 	{\
-		return GetMandatoryRegistryValue( path, Buffer );\
+		return GetMandatoryRegistryValue( entry, Buffer );\
 	}\
 	inline const str::string_ &name(\
 		str::string_ &Value )\
 	{\
-		return GetMandatoryRegistryValue( path, Value );\
+		return GetMandatoryRegistryValue( entry, Value );\
 	}
 
 // To define function retrieving optional registry value.
-# define SCLRGSTRY_ORV( name, path )\
+# define SCLRGSTRY_ORV( name, entry )\
 	inline const char *name(\
 		STR_BUFFER___ &Buffer,\
 		bso::bool__ *Missing = NULL )\
 	{\
-		return GetOptionalRegistryValue( path, Buffer, Missing );\
+		return GetOptionalRegistryValue( entry, Buffer, Missing );\
 	}\
 	inline const str::string_ &name(\
 		str::string_ &Value,\
 		bso::bool__ *Missing = NULL )\
 	{\
-		return GetOptionalRegistryValue( path, Value, Missing );\
+		return GetOptionalRegistryValue( entry, Value, Missing );\
 	}
 }
 

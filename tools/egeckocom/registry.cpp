@@ -23,11 +23,6 @@
 
 using namespace registry;
 
-# define ROOT	""
-
-# define S "/"
-
-#define COMPONENT	ROOT "Component" S
-
-const char *registry::paths::component::Name = COMPONENT "Name";
+extern rgstry::entry registry::Components( "Components" );
+extern rgstry::entry registry::TaggedComponent( "Component[@id=\"%\"]", Components );
 

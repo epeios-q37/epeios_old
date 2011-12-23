@@ -1428,6 +1428,52 @@ namespace rgstry {
 			const str::string_ &PathString,
 			const value_ &Value,
 			epeios::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		bso::bool__ Delete(
+			const path_ &Path,
+			level__ Level )
+		{
+			if ( _GetRegistry( Level ).Delete( Path, _GetRoot( Level ) ) ) {
+				_Touch( Level );
+				return true;
+			} else
+				return false;
+		}
+		bso::bool__ Delete( 
+			const str::string_ &PathString,
+			level__ Level,
+			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		{
+			if ( _GetRegistry( Level ).Delete( PathString, _GetRoot( Level ), PathErrorRow ) ) {
+				_Touch( Level );
+				return true;
+			} else
+				return false;
+		}
+		bso::bool__ Delete( 
+			const char *PathString,
+			level__ Level,
+			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		{
+			return Delete( str::string( PathString ), Level, PathErrorRow );
+		}
+		bso::bool__ Delete(
+			const str::string_ &PathString,
+			epeios::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		bso::bool__ Delete(
+			const char *PathString,
+			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		{
+			return Delete( str::string( PathString ), PathErrorRow );
+		}
+		bso::bool__ MoveTo(
+			const str::string_ &Path,
+			level__ Level );
+		bso::bool__ MoveTo(
+			const char *Path,
+			level__ Level )
+		{
+			return MoveTo( str::string( Path ), Level );
+		}
 		row__ Search(
 			level__ Level,
 			const path_ &Path ) const
@@ -1643,7 +1689,7 @@ namespace rgstry {
 		str::string Buffer;\
 	ERRBegin\
 		Buffer.Init();\
-		Value = (type)_GetUnsigned( Registry, GetPath( Buffer, Parameters ), Default, Error, Min, Max );\
+		Value = (type)_GetUnsigned( Registry, GetPath( Parameters, Buffer ), Default, Error, Min, Max );\
 	ERRErr\
 	ERREnd\
 	ERREpilog\
@@ -1669,7 +1715,7 @@ namespace rgstry {
 		str::string Buffer;\
 	ERRBegin\
 		Buffer.Init();\
-		Value = (type)_GetSigned( Registry, GetPath( Buffer, Parameters ), Default, Error, Min, Max );\
+		Value = (type)_GetSigned( Registry, GetPath( Parameters, Buffer ), Default, Error, Min, Max );\
 	ERRErr\
 	ERREnd\
 	ERREpilog\
@@ -1683,9 +1729,9 @@ namespace rgstry {
 	{
 	private:
 		void GetParentPath_(
-			str::string_ &Path,
 			const parameters_ &Parameters,
-			bso::bool__ NoTailingSlash) const
+			bso::bool__ NoTailingSlash,
+			str::string_ &Path ) const
 		{
 			if ( S_.Parent != NULL ) {
 				S_.Parent->GetPath( Path );	// Les 'tag's seront remplacé ultèrieurement
@@ -1733,16 +1779,20 @@ namespace rgstry {
 			const char *Path = NULL,
 			const entry_ &Parent = *(const entry_ *)NULL );
 		const str::string_ &GetPath(
-			str::string_ &Path,
-			const parameters_ &Parameters = parameters() ) const
+			const parameters_ &Parameters,
+			str::string_ &Path ) const
 		{
-			GetParentPath_( Path, Parameters, this->Path( this->Path.First() ) == '[' );
+			GetParentPath_( Parameters, this->Path( this->Path.First() ) == '[', Path );
 
 			Path.Append( this->Path );
 
 			str::ReplaceTags( Path, Parameters, '%' );
 
 			return Path;
+		}
+		const str::string_ &GetPath( str::string_ &Path ) const
+		{
+			return GetPath( parameters(), Path );
 		}
 		bso::bool__ SetValue(
 			multi_level_registry_ &Registry,
@@ -1754,7 +1804,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.SetValue( GetPath( Buffer, Parameters ), Value );
+			Made = Registry.SetValue( GetPath( Parameters, Buffer ), Value );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -1776,7 +1826,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.GetValue( GetPath( Buffer, Parameters ), Value );
+			Made = Registry.GetValue( GetPath( Parameters, Buffer ), Value );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -1798,7 +1848,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.GetValues( GetPath( Buffer, Parameters ), Values );
+			Made = Registry.GetValues( GetPath( Parameters, Buffer ), Values );
 		ERRErr
 		ERREnd
 		ERREpilog

@@ -98,7 +98,8 @@ static rgstry::status__ FillRegistry_(
 }
 
 bso::bool__ sclrgstry::GetValue(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	str::string_ &Value )
 {
 	bso::bool__ Missing = true;
@@ -107,7 +108,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Registry_.GetValue( Path.GetTargetedPath( TargetedPath ), Value );
+	Missing = Entry.GetValue( Registry_, Parameters, Value );
 ERRErr
 ERREnd
 ERREpilog
@@ -115,8 +116,9 @@ ERREpilog
 }
 
 bso::bool__ sclrgstry::GetValues(
-	const xpath___ &Path,
-		str::strings_ &Values )
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
+	str::strings_ &Values )
 {
 	bso::bool__ Missing = true;
 ERRProlog
@@ -124,7 +126,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Registry_.GetValues( Path.GetTargetedPath( TargetedPath ), Values );
+	Missing = Entry.GetValues( Registry_, Parameters, Values );
 ERRErr
 ERREnd
 ERREpilog
@@ -143,18 +145,20 @@ static str::string_ &GetTranslation_(
 	return Translation;
 }
 
-static inline void ReportBadOrNoValueForRegistryEntryError_( const xpath___ &Path )
+static inline void ReportBadOrNoValueForRegistryEntryError_(
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters )
 {
 ERRProlog
 	str::string Translation;
-	str::string TargetedPath;
+	str::string Path;
 ERRBegin
 	Translation.Init();
 
 	GetTranslation_( "BadOrNoValueForRegistryEntry", Translation );
 
-	TargetedPath.Init();
-	lcl::ReplaceTag( Translation, 1, Path.GetTargetedPath( TargetedPath ) );
+	Path.Init();
+	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Parameters, Path ) );
 
 	cio::CErr << Translation << " !" << txf::nl << txf::commit;
 ERRErr
@@ -238,11 +242,12 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	str::string_ &Value,
 	bso::bool__ *Missing )
 {
-	if ( !GetValue( Path, Value ) )
+	if ( !GetValue( Entry, Parameters, Value ) )
 		if ( Missing != NULL )
 			*Missing = true;
 	
@@ -250,7 +255,8 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 }
 
 const char *sclrgstry::GetOptionalRegistryValue(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
 {
@@ -260,7 +266,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetOptionalRegistryValue( Path, Value, &LocalMissing );
+	GetOptionalRegistryValue( Entry, Parameters, Value, &LocalMissing );
 
 	if ( LocalMissing ) {
 		if ( Missing != NULL )
@@ -274,11 +280,12 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	str::string_ &Value )
 {
-	if ( !GetValue( Path, Value ) ) {
-		ReportBadOrNoValueForRegistryEntryError_( Path );
+	if ( !GetValue( Entry, Parameters, Value ) ) {
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -286,7 +293,8 @@ const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 }
 
 const char *sclrgstry::GetMandatoryRegistryValue(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	STR_BUFFER___ &Buffer )
 {
 ERRProlog
@@ -294,7 +302,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetMandatoryRegistryValue( Path, Value );
+	GetMandatoryRegistryValue( Entry, Parameters, Value );
 
 	Value.Convert( Buffer );
 ERRErr
@@ -304,7 +312,8 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	t Limit,
 	t &Value )
 {
@@ -315,13 +324,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Path, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, Parameters, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( Limit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Path );
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -331,7 +340,8 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistrySignedNumber_(
-	const xpath___ &Path,
+	const rgstry::entry_ &Entry,
+	const rgstry::parameters_ &Parameters,
 	t LowerLimit,
 	t UpperLimit,
 	t &Value )
@@ -343,13 +353,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Path, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, Parameters, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Path );
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -360,25 +370,28 @@ ERREpilog
 
 #define RUN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type Limit  )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Path, Limit, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Path );\
+		if ( !GetRegistryUnsignedNumber_( Entry, Parameters, Limit, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );\
 			ERRExit( EXIT_FAILURE );\
 		}\
+\
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type DefaultValue,\
 		type Limit )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Path, Limit, Value ) )\
+		if ( !GetRegistryUnsignedNumber_( Entry, Parameters, Limit, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -395,27 +408,29 @@ RUN( UByte, bso::ubyte__ )
 
 #define RSN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type Min,\
 		type Max)\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Path, Min, Max, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Path );\
+		if ( !GetRegistrySignedNumber_( Entry, Parameters, Min, Max, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const xpath___ &Path,\
+		const rgstry::entry_ &Entry,\
+		const rgstry::parameters_ &Parameters,\
 		type DefaultValue,\
 		type Min,\
 		type Max )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Path, Min, Max, Value ) )\
+		if ( !GetRegistrySignedNumber_( Entry, Parameters, Min, Max, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\

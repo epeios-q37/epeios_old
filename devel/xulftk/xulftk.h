@@ -119,8 +119,7 @@ namespace xulftk {
 		}
 		void _DefineSession(
 			const str::string_ &FileName,
-			const xpp::criterions___ &Criterions,
-			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
+			const xpp::criterions___ &Criterions );
 		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
@@ -246,8 +245,7 @@ namespace xulftk {
 		}
 		void _DefineSession(
 			const str::string_ &ProjectFileName,	// Si non vide, contient le nom du fichier projet avec lequel préremplir le 'SessionForm'.
-			const xpp::criterions___ &Criterions,
-			const rgstry::multi_level_registry_ &Registry );	// 'registry' qui contient la configuration de l'application.
+			const xpp::criterions___ &Criterions );	// 'registry' qui contient la configuration de l'application.
 		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
 		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
@@ -419,10 +417,9 @@ namespace xulftk {
 
 	inline void _user_functions__::_DefineSession(
 		const str::string_ &ProjectFileName,
-		const xpp::criterions___ &Criterions,
-		const rgstry::multi_level_registry_ &Registry )
+		const xpp::criterions___ &Criterions )
 	{
-		_T()._DefineSession( ProjectFileName, Criterions, Registry );
+		_T()._DefineSession( ProjectFileName, Criterions );
 	}
 
 	inline void _user_functions__::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )

@@ -26,14 +26,14 @@
 #ifndef LOCALE__INC
 # define LOCALE__INC
 
-# include "registry.h"
-
 # include "lcl.h"
 # include "cio.h"
 
+# include "scllocale.h"
+
 namespace locale {
 
-	using namespace registry;
+	using namespace scllocale;
 
 	enum message__ {
 		m_amount,
@@ -42,32 +42,14 @@ namespace locale {
 
 # define LOCALE__MESSAGE_AMOUNT	0
 
-/**********************************/
-/* BEGIN OF LIBRARY STANDARD PART */
-/*         Do not modify          */
-/**********************************/
-
-
-/********************************/
-/* END OF LIBRARY STANDARD PART */
-/*       Do not modify          */
-/********************************/
-
-
-/**************************/
-/* BEGIN OF STANDARD PART */
-/*     Do not modify      */
-/**************************/
-
 	const char *Label( message__ Message );
 
-	const str::string_ &GetTranslation(
+	inline const str::string_ &GetTranlation(
 		message__ Message,
-		... );
-
-/**************************/
-/* END OF STANDARD PART */
-/**************************/
+		str::string_ &Translation )
+	{
+		return scllocale::GetTranslation( Label( Message ), Translation );
+	}
 }
 
 #endif
