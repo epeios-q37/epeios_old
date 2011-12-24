@@ -109,7 +109,7 @@ void err::Unlock( void )
 
 	M.Init( MutexHandler_ );
 
-	ERR.Error = false;
+	ERR.Major = err::ok;
 
 	M.Unlock();
 }
@@ -193,7 +193,7 @@ void err_::Handler(
 	int Mineur )
 {
 #ifdef ERR__THREAD_SAFE
-	if ( ( this->Error == false ) || !err::Concerned() )
+	if ( ( !ERRError() ) || !err::Concerned() )
 	{
 		mtx::mutex___ M;
 
@@ -204,15 +204,18 @@ void err_::Handler(
 		ThreadID_ = mtk::GetTID();
 	}
 #endif
-	if ( Fichier && !this->Error )
+	if ( Fichier && !ERRError() )
 	{
 		this->Major = Majeur;
 		this->Minor = Mineur;
 		this->File = Fichier;
 		this->Line = Ligne;
-	}
+	} else if ( !ERRError() )
+		ERRc();
 
+#if 0
 	this->Error = true;
+#endif
 
 /* Following lines are here to allowing the insertion of a breakpoint which
 is not concerned by the 'ITN' error. Concenrs the whole software, and
@@ -287,7 +290,11 @@ public:
 #ifdef ERR__THREAD_SAFE
 		MutexHandler_ = mtx::Create( mtx::mFree );
 #endif
+#if 0
 		ERR.Error = false;
+#else
+		ERR.Major = err::ok;
+#endif
 	}
 	~errpersonnalization( void )
 	{

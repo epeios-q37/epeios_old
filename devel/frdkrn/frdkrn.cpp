@@ -186,7 +186,7 @@ ERREpilog
 	return Type;
 }
 
-static void SetBackendExtendedType_(
+void frdkrn::SetBackendExtendedType(
 	frdrgy::_registry_ &Registry,
 	backend_extended_type__ Type )
 {
@@ -292,23 +292,66 @@ ERREpilog
 	return Report;
 }
 
+static csducl::type__ GetPredefinedBackendTypeAndLocation_(
+	const frdrgy::registry_ &Registry,
+	str::string_ &Location )
+{
+	csducl::type__ Type = csducl::t_Undefined;
+ERRProlog
+	str::string Id;
+	str::string RawType;
+	rgstry::parameters Parameters;
+ERRBegin
+	Id.Init();
+	if ( !frdrgy::Backend.GetValue( Registry, Id ) )
+		ERRReturn;
+
+	Parameters.Init();
+	Parameters.Append( Id );
+
+	RawType.Init();
+	if ( !frdrgy::PredefinedBackendType.GetValue( Registry, Parameters, RawType ) )
+		ERRReturn;
+
+	if ( !frdrgy::PredefinedBackend.GetValue( Registry, Parameters, Location ) )
+		ERRReturn;
+
+	switch ( GetBackendExtendedType( RawType ) ) {
+	case bxtEmbedded:
+		Type = csducl::tLibrary;
+		break;
+	case bxtDaemon:
+		Type = csducl::tDaemon;
+		break;
+	default:
+		ERRReturn;
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Type;
+}
+
 csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	const frdrgy::registry_ &Registry,
 	str::string_ &Location )
 {
+
 	csducl::type__ Type = csducl::t_Undefined;
 
 	switch ( GetBackendExtendedType( Registry ) ) {
 	case bxtEmbedded:
 		Type = csducl::tLibrary;
-		frdrgy::BackendLocation.GetValue( Registry, Location );
+		frdrgy::Backend.GetValue( Registry, Location );
 		break;
 	case bxtDaemon:
 		Type = csducl::tDaemon;
-		frdrgy::BackendLocation.GetValue( Registry, Location );
+		frdrgy::Backend.GetValue( Registry, Location );
 		break;
 	case bxtPredefined:
-		ERRl();
+		Type = GetPredefinedBackendTypeAndLocation_( Registry, Location );
 		break;
 	case bxt_Undefined:
 		break;

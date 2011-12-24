@@ -25,21 +25,21 @@ $_RAW_$
 //	$Id$
 
 #ifndef ERR__INC
-#define ERR__INC
+# define ERR__INC
 
-#define ERR_NAME		"ERR"
+# define ERR_NAME		"ERR"
 
-#define	ERR_VERSION	"$Revision$"
+# define	ERR_VERSION	"$Revision$"
 
-#define ERR_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+# define ERR_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
 
-#include "ttr.h"
+# include "ttr.h"
 
 extern class ttr_tutor &ERRTutor;
 
-#if defined( XXX_DBG ) && !defined( ERR_NODBG )
-#define ERR_DBG
-#endif
+# if defined( XXX_DBG ) && !defined( ERR_NODBG )
+#  define ERR_DBG
+# endif
 
 /* Begin of automatic documentation generation part. */
 
@@ -60,18 +60,18 @@ extern class ttr_tutor &ERRTutor;
 
 /*$BEGIN$*/
 
-#include <stdio.h>
+# include <stdio.h>
 #include <stdlib.h>
 
-#ifdef ERR_JMPUSE
-#include <setjmp.h>
-#endif
+# ifdef ERR_JMPUSE
+#  include <setjmp.h>
+# endif
 
-#include "cpe.h"
+# include "cpe.h"
 
-#ifdef CPE__T_MT
-#define ERR__THREAD_SAFE
-#endif
+# ifdef CPE__T_MT
+#  define ERR__THREAD_SAFE
+# endif
 
 
 namespace err {
@@ -194,13 +194,15 @@ namespace err {
 		static int Line;
 		// file where the error occurs
 		static const char *File;
-	#ifdef ERR_JMPUSE
+# ifdef ERR_JMPUSE
 		// where to jump
 		static jmp_buf *Jump;
-	#endif
-		
+# endif
+
+# if 0	// Utilisation de 'Majot' à la place.
 		int
 			Error: 1;	// Erreur en cours de traitement (Entre un 'ERRErr' et un 'ERREnd'.
+# endif
 		// Major code of error.
 		static err::type Major;
 		// Minor code of error
@@ -220,143 +222,143 @@ namespace err {
 	extern err_ ERR;
 //#endif
 
-#ifdef ERR__THREAD_SAFE
+# ifdef ERR__THREAD_SAFE
 	// If an error occurs, test if the current thread is concerned.
 	bool Concerned( void );
 	void Unlock( void );
-#else
+# else
 	inline bool Concerned( void )
 	{
 		return true;
 	}
 	inline void Unlock( void )
 	{
-		err::ERR.Error = false;
+		err::ERR.Major = err::ok;
 	}
-#endif
+# endif
 
 
-#define ERRCommon( M, m )	err::ERR.Handler( __FILE__, __LINE__, M, err::m )
+# define ERRCommon( M, m )	err::ERR.Handler( __FILE__, __LINE__, M, err::m )
 
-#define	ERRA( m )		ERRCommon( err::alc, m )
+# define	ERRA( m )		ERRCommon( err::alc, m )
 //m Throw an allocation error (only RAM).
-#define	ERRa()			ERRA( aGeneric )
+# define	ERRa()			ERRA( aGeneric )
 
-#define	ERRD( m )		ERRCommon( err::dvc, m )
+# define	ERRD( m )		ERRCommon( err::dvc, m )
 //m Throw a device error.
-#define ERRd()			ERRD( dGeneric )
+# define ERRd()			ERRD( dGeneric )
 
-#define	ERRS( m )		ERRCommon( err::sys, m )
+# define	ERRS( m )		ERRCommon( err::sys, m )
 //m Throw a system error.
-#define ERRs()			ERRS( sGeneric )
+# define ERRs()			ERRS( sGeneric )
 
-#define ERRU( m )		ERRCommon( err::usr, m )
+# define ERRU( m )		ERRCommon( err::usr, m )
 //m Throw an user error.
-#define ERRu()			ERRU( uGeneric )
+# define ERRu()			ERRU( uGeneric )
 
-#define ERRB( m )		ERRCommon( err::bkd, m )
+# define ERRB( m )		ERRCommon( err::bkd, m )
 //m Throw a backend error.
-#define ERRb()			ERRB( bGeneric )
+# define ERRb()			ERRB( bGeneric )
 
-#define ERRI( m )		ERRCommon( err::itn, m )
+# define ERRI( m )		ERRCommon( err::itn, m )
 //m Throw an intentional, error without an error.
-#define ERRi()			ERRI( iGeneric )
+# define ERRi()			ERRI( iGeneric )
 
-#define ERRC( m )		ERRCommon( err::ccp, m )
+# define ERRC( m )		ERRCommon( err::ccp, m )
 //m Throw en conception error.
-#define ERRc()			ERRC( cGeneric )
+# define ERRc()			ERRC( cGeneric )
 
-#define ERRF( m )		ERRCommon( err::frm, m )
+# define ERRF( m )		ERRCommon( err::frm, m )
 //m Throw a format error.
-#define ERRf()			ERRF( fGeneric )
+# define ERRf()			ERRF( fGeneric )
 
-#define ERRP( m )		ERRCommon( err::phb, m )
+# define ERRP( m )		ERRCommon( err::phb, m )
 //m Throw a prohibited function call error.
-#define ERRp()			ERRP( pGeneric )
+# define ERRp()			ERRP( pGeneric )
 
-#define ERRL( m )		ERRCommon( err::lmt, m )
+# define ERRL( m )		ERRCommon( err::lmt, m )
 //m Throw a limit exceed ferror.
-#define ERRl()			ERRL( lGeneric )
+# define ERRl()			ERRL( lGeneric )
 
-#define ERRM( m )		ERRCommon( err::mem, m )
+# define ERRM( m )		ERRCommon( err::mem, m )
 //m Throw a memory error.
-#define ERRm()			ERRM( mGeneric )
+# define ERRm()			ERRM( mGeneric )
 
-#define ERRX( m )		ERRCommon( err::ext, m )
+# define ERRX( m )		ERRCommon( err::ext, m )
 //m Throw a memory error.
-#define ERRx()			ERRX( xGeneric )
+# define ERRx()			ERRX( xGeneric )
 
-#ifdef ERR_JMPUSE
+# ifdef ERR_JMPUSE
 //m Throw the handler.
-#define ERRR()		{longjmp( *err::ERR.Jump, 1 );}
-#else
-#define ERRR()		throw( err::ERR )
-#endif
+#  define ERRR()		{longjmp( *err::ERR.Jump, 1 );}
+# else
+#  define ERRR()		throw( err::ERR )
+# endif
 
-#define ERRRst()	{ err::Unlock(); }
+# define ERRRst()	{ err::Unlock(); }
 
 //d Major code.
-#define ERRMajor		err::ERR.Major
+# define ERRMajor		err::ERR.Major
 
 //d Minor code.
-#define ERRMinor		err::ERR.Minor
+# define ERRMinor		err::ERR.Minor
 
 //d File in which the error was thrown.
-#define ERRFile			err::ERR.File
+# define ERRFile			err::ERR.File
 
 //d Line where the error was thrown.
-#define ERRLine			err::ERR.Line
+# define ERRLine			err::ERR.Line
 
-#ifdef ERR_JMPUSE
-#define ERRGetJ()		err::FGetJ( err::ERR )
-#define ERRPutJ( J )	err::FSetJ( err::ERR, J )
-#endif
+# ifdef ERR_JMPUSE
+#  define ERRGetJ()		err::FGetJ( err::ERR )
+#  define ERRPutJ( J )	err::FSetJ( err::ERR, J )
+# endif
 
-#ifdef ERR_JMPUSE
+# ifdef ERR_JMPUSE
 
 //d Put the declaration after this.
-#define ERRProlog	bso::bool__ ERRNoError = true; { jmp_buf ERRJmp, *ERROJmp = ERRGetJ();\
+#  define ERRProlog	bso::bool__ ERRNoError = true; { jmp_buf ERRJmp, *ERROJmp = ERRGetJ();\
 	ERRPutJ( &ERRJmp );
 
 //d Put the instructions to survey after this.
-#define ERRBegin	if ( !setjmp( ERRJmp ) ) {
+#  define ERRBegin	if ( !setjmp( ERRJmp ) ) {
 
 //d Put the instruction to launch if an error occurs.
-#define ERRErr		} else { ERRPutJ( ERROJmp ); ERRNoError = false;
+#  define ERRErr		} else { ERRPutJ( ERROJmp ); ERRNoError = false;
 
 //d Put the instruction to launch, error or not.
-#define ERREnd		}
+#  define ERREnd		}
 
-#define ERRCommonEpilog	ERRPutJ( ERROJmp ); }
+#  define ERRCommonEpilog	ERRPutJ( ERROJmp ); }
 
-#else
+# else
 
-#define ERRProlog	bso::bool__ ERRNoError = true; {
+#  define ERRProlog	bso::bool__ ERRNoError = true; {
 // précède les déclarations
-#define ERRBegin	try {
+#  define ERRBegin	try {
 // précède les instructions proprement dites
-#define ERRErr		} catch ( err::err_ ) { ERRNoError = false;
+#  define ERRErr		} catch ( err::err_ ) { ERRNoError = false;
 // précède les instructions à effectuer lors d'une erreur
-#define ERREnd		}
+#  define ERREnd		}
 // précède les instructions à exécuter, erreur ou pas
-#define ERRCommonEpilog	}
+#  define ERRCommonEpilog	}
 // boucle la partie de traitement d'erreur
 
-#endif
+# endif
 
-#define ERRTestEpilog	if ( err::ERR.Error && !ERRNoError && err::Concerned() )\
+# define ERRTestEpilog	if ( ERRError() && !ERRNoError && err::Concerned() )\
 							if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iReturn ) )\
 								ERRRst()
 
 //d End of the error bloc.
-#define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRR();
-#define ERRFEpilog	ERRCommonEpilog ERRTestEpilog else err::Final();
-#define ERRFProlog	ERRProlog
-#define ERRFBegin	ERRBegin
-#define ERRFErr		ERRErr
-#define ERRFEnd		ERREnd
+# define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRR();
+# define ERRFEpilog	ERRCommonEpilog ERRTestEpilog else err::Final();
+# define ERRFProlog	ERRProlog
+# define ERRFBegin	ERRBegin
+# define ERRFErr		ERRErr
+# define ERRFEnd		ERREnd
 
-#ifdef ERR_JMPUSE
+# ifdef ERR_JMPUSE
 	inline jmp_buf *FGetJ( struct err_ &ERR_ )
 	{
 		return ERR_.Jump;
@@ -368,7 +370,7 @@ namespace err {
 	{
 		ERR_.Jump = Jump;
 	}
-#endif
+# endif
 
 	//f Return the error message which goes along the given parameters
 	const char *Message(
@@ -378,27 +380,29 @@ namespace err {
 		int Minor,
 		buffer__ &Buffer );
 
-#ifndef ERR__COMPILATION
+# ifndef ERR__COMPILATION
 	inline const char *Message( buffer__ &Buffer )
 	{
 		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor, Buffer );
 	}
-#endif
+# endif
+
+# define ERRError()	( ERRMajor != err::ok )
 
 
 // quitte le logiciel an retournant la valeur 'v'.
-#define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iExit ); }
+# define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iExit ); }
 
 // Pour retourner rapidement à un point donné (test de cette valeur + remise à zéro de l'erreur à la charge de l'utilisateur).
 # define ERRBeam()		ERRI( iBeam )
 
 // Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
-#define	ERRReturn		ERRI( iReturn )
+# define	ERRReturn		ERRI( iReturn )
 
 // Abandonne l'action en cours ; typiquement pour retourner à à la boucle d'attente d'un évènement utilisateur.
 # define ERRAbort()		ERRI( iAbort )
 
-#define ERRExitValue	err::ERR.ExitValue
+# define ERRExitValue	err::ERR.ExitValue
 }
 
 /*$END$*/

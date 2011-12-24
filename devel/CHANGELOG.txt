@@ -1,4 +1,7 @@
 $Id$
+24/12/2011 :
+	- ERR :
+		- Simplification et ajout de 'ERRError()'.
 
 23/12/2011 :
 	- RGSTRY :

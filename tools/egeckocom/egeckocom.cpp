@@ -93,7 +93,7 @@ protected:
 		else if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )\
 			ErrorMessage = err::Message( ERRBuffer );\
 \
-		if ( err::ERR.Error )\
+		if ( ERRError() )\
 	 		ERRRst();\
 \
 		nsxpcm::Transform( ErrorMessage, JSErrorMessage );\

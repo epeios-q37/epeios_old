@@ -80,7 +80,6 @@ namespace frdrgy {
 	extern rgstry::entry LocaleFileName;
 
 	extern rgstry::entry Backend;
-	extern rgstry::entry BackendLocation;
 	extern rgstry::entry BackendAccessMode;
 	extern rgstry::entry BackendType;
 	extern rgstry::entry BackendPingDelay;
@@ -93,12 +92,10 @@ namespace frdrgy {
 
 	extern rgstry::entry PredefinedBackends;
 	extern rgstry::entry DefaultPredefinedBackend;
-	extern rgstry::entry PredefinedBackend;
 	extern rgstry::entry PredefinedBackendId;
-	extern rgstry::entry TaggedPredefinedBackend;
+	extern rgstry::entry PredefinedBackend;
 	extern rgstry::entry PredefinedBackendAlias;
 	extern rgstry::entry PredefinedBackendType;
-	extern rgstry::entry PredefinedBackendLocation;
 
 	extern rgstry::entry Internals;
 	extern rgstry::entry ProjectId;

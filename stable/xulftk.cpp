@@ -481,7 +481,7 @@ ERRBegin
 	if ( ProjectFileName.Amount() != 0 ) {
 		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions, ProjectId ) );
 		Location.Init();
-		frdrgy::BackendLocation.GetValue( Kernel().Registry(), Location );
+		frdrgy::Backend.GetValue( Kernel().Registry(), Location );
 	} else
 		ProjectId.Init( bso::Convert( tol::Clock( true ), Buffer ) );
 
@@ -562,17 +562,28 @@ ERRBegin
 	Value.Init();
 	UI().SessionForm().Widgets.BackendTypeSwitchMenulist.GetValue( Value );
 
-#if 0	// Reportté.
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
 	case frdkrn::bxtPredefined:
 		Value.Init();
-		UI().SessionForm().Widgets.PredefinedBackendSwitchMenuitem.GetValue( Value );
-		Registry().SetValue( xulfrg::paths::backend_selection::Value );
+		UI().SessionForm().Widgets.PredefinedBackendMenulist.GetValue( Value );
+		break;
+	case frdkrn::bxtDaemon:
+		Value.Init();
+		UI().SessionForm().Widgets.DaemonBackendLocationTextbox.GetValue( Value );
+		break;
+	case frdkrn::bxtEmbedded:
+		UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.GetValue( Value );
+		break;
+	default:
+		UI().LogAndPrompt( Kernel().LocaleRack().GetTranslation( "BadOrNoBackendType", PREFIX, Buffer ) );
+		ERRAbort();
+		break;
+	}
 
-	frdkrn::SetBackendExtendedType( Registry(), UI().SessionForm().Widgets.PredefinedBackendSwitchMenuitem.
+	frdrgy::Backend.SetValue( Registry(), Value );
+	frdkrn::SetBackendExtendedType( Registry(), Type );
 
-	Registry().SetValue( xulfrg::paths::backend_selection::Mode, 
-#endif
+	Handle_( Kernel().LaunchProject( CompatibilityInformations, ProjectId, DefaultErrorReportingFunctions() ) );
 ERRErr
 ERREnd
 ERREpilog
