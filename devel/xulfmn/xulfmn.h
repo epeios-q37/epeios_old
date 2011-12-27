@@ -83,23 +83,23 @@ namespace xulfmn {
 	{
 	public:
 		struct broadcasters__ {
-			broadcaster__ CloseProject;
+			broadcaster__ bdcCloseProject;
 		} &Broadcasters;
 		struct event_handlers__ {
-			new_project_eh__ NewProject;
-			open_project_eh__ OpenProject;
-			close_project_eh__ CloseProject;
-			about_eh__ About;
-			web_site_eh__ WebSite;
-			debug_eh__ Debug;
-			exit_eh__ Exit;
+			new_project_eh__ ehNewProject;
+			open_project_eh__ ehOpenProject;
+			close_project_eh__ ehCloseProject;
+			about_eh__ ehAbout;
+			web_site_eh__ ehWebSite;
+			debug_eh__ ehDebug;
+			exit_eh__ ehExit;
 		} &EventHandlers;
 		struct widgets__ {
-			window__ Window;
-			deck__ MainDeck;
+			window__ wdwMain;
+			deck__ dckMain;
 			widget__
-				SessionViewFrame,
-				SessionFormFrame;
+				ifrSessionView,
+				ifrSessionForm;
 		} &Widgets;
 		main__(
 			broadcasters__ &Broadcasters,

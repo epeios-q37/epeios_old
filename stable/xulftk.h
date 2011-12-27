@@ -254,7 +254,7 @@ namespace xulftk {
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void )
 		{
-			UI().Main().Widgets.Window.Close();
+			UI().Main().Widgets.wdwMain.Close();
 		}
 	public:
 		void reset( bso::bool__ P = true )

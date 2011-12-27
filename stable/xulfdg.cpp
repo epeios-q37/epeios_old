@@ -137,16 +137,16 @@ static void Register_(
 	nsxpcm::Attach( Trunk.UI().DebugDialog().Document(), Id, EventHandler );
 }
 
-#define I( name ) Register_( Trunk, EventHandlers.name, "eh" #name );	
+#define I( name ) Register_( Trunk, EventHandlers.name, #name );	
 
 static void Register_(
 	trunk___ &Trunk,
 	debug_dialog__::event_handlers__ &EventHandlers )
 {
-	I( JSConsole );
-	I( DOMInspector );
-	I( FrontendError );
-	I( BackendError );
+	I( ehJSConsole );
+	I( ehDOMInspector );
+	I( ehFrontendError );
+	I( ehBackendError );
 }
 
 void xulfdg::Register(

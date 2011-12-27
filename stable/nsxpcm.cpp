@@ -1641,6 +1641,8 @@ NS_IMETHODIMP nsxpcm::event_listener__::HandleEvent(nsIDOMEvent *Event)
     return NSResult;
 }
 
+NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
+
 void nsxpcm::xslt_parameters_::Append(
 	const str::string_ &Name,
 	const str::string_ &Value )

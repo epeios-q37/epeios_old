@@ -101,7 +101,7 @@ ERRBegin
 	FileName.Init();
 
 	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Target().UI().SessionForm().Window(), str::string( Target().Kernel().LocaleRack().GetTranslation( "EmbeddedBackendFileSelectionDialogBoxTitle", PREFIX, Buffer ) ), Target().Kernel().LocaleRack(), FileName ) )
-		Target().UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.SetValue( FileName );
+		Target().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -125,9 +125,9 @@ static void DisableAllButSelected_(
 	else if ( Value == "Predefined" )
 		Predefined = false;
 
-	Broadcasters.EmbeddedBackend.Disable( Embedded );
-	Broadcasters.DaemonBackend.Disable( Daemon );
-	Broadcasters.PredefinedBackend.Disable( Predefined );
+	Broadcasters.bdcEmbeddedBackend.Disable( Embedded );
+	Broadcasters.bdcDaemonBackend.Disable( Daemon );
+	Broadcasters.bdcPredefinedBackend.Disable( Predefined );
 }
 
 enum backend_selection_mode__
@@ -182,9 +182,9 @@ bso::bool__ HideUnusedBackendSelectionMode_(
 		break;
 	}
 
-	Broadcasters.EmbeddedBackend.Show( Embedded );
-	Broadcasters.DaemonBackend.Show( Daemon );
-	Broadcasters.PredefinedBackend.Show();	// A minima, celui-ci est toujours affiché.
+	Broadcasters.bdcEmbeddedBackend.Show( Embedded );
+	Broadcasters.bdcDaemonBackend.Show( Daemon );
+	Broadcasters.bdcPredefinedBackend.Show();	// A minima, celui-ci est toujours affiché.
 
 	return Success;
 
@@ -224,9 +224,9 @@ ERRBegin
 		break;
 	}
 
-	Widgets.LoginTextbox.SetValue( Login );
-	Widgets.PasswordTextbox.SetValue( Password );
-	Broadcasters.Authentication.Disable( Disable );
+	Widgets.txbLogin.SetValue( Login );
+	Widgets.txbPassword.SetValue( Password );
+	Broadcasters.bdcAuthentication.Disable( Disable );
 ERRErr
 ERREnd
 ERREpilog
@@ -275,13 +275,13 @@ ERRBegin
 
 	Trunk.UI().LogQuietly( PredefinedBackends );
 
-	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget() );
+	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget() );
 
 	Fragment = nsxpcm::XSLTransformByFileName( PredefinedBackends, str::string( "chrome://esketch/content/xsl/PredefinedBackendMenuList.xsl" ), Trunk.UI().SessionForm().Document(), nsxpcm::xslt_parameters() );
 
-	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget(), Fragment );
+	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget(), Fragment );
 
-	nsxpcm::SetSelectedItem( Trunk.UI().SessionForm().Widgets.PredefinedBackendMenulist.GetWidget() );
+	nsxpcm::SetSelectedItem( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget() );
 ERRErr
 ERREnd
 ERREpilog
@@ -304,19 +304,19 @@ ERRBegin
 
 	switch ( Type ) {
 	case frdkrn::bxtPredefined:
-		Broadcasters.PredefinedBackend.Show();
-		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.PredefinedBackendSwitchMenuitem );
-		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		Broadcasters.bdcPredefinedBackend.Show();
+		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniPredefinedBackend );
+		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	case frdkrn::bxtDaemon:
-		Broadcasters.DaemonBackend.Show();
-		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.DaemonBackendSwitchMenuitem );
-		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		Broadcasters.bdcDaemonBackend.Show();
+		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniDaemonBackend );
+		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	case frdkrn::bxtEmbedded:
-		Broadcasters.EmbeddedBackend.Show();
-		Widgets.BackendTypeSwitchMenulist.SetSelectedItem( Widgets.EmbeddedBackendSwitchMenuitem );
-		Widgets.BackendTypeDeck.SetSelectedIndex( Type );
+		Broadcasters.bdcEmbeddedBackend.Show();
+		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniEmbeddedBackend );
+		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	default:
 		ERRc();
@@ -354,16 +354,16 @@ static void Register_(
 	Broadcaster.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
 }
 
-#define R( name ) Register_( Trunk, Broadcasters.name, "bdc" #name );
+#define R( name ) Register_( Trunk, Broadcasters.name, #name );
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::broadcasters__ &Broadcasters )
 {
-	R( PredefinedBackend );
-	R( DaemonBackend );
-	R( EmbeddedBackend );
-	R( EmbeddedBackendSelection );
-	R( Authentication );
+	R( bdcPredefinedBackend );
+	R( bdcDaemonBackend );
+	R( bdcEmbeddedBackend );
+	R( bdcEmbeddedBackendSelection );
+	R( bdcAuthentication );
 }
 
 static void Register_(
@@ -377,35 +377,35 @@ static void Register_(
 
 #undef R
 
-#define A( name ) Register_( Trunk, EventHandlers.name, "eh" #name )
+#define A( name ) Register_( Trunk, EventHandlers.name, #name )
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::event_handlers__ &EventHandlers )
 {
-	A( BackendTypeSelection );
-	A( EmbeddedBackendSelection );
-	A( Apply );
+	A( ehBackendTypeSelection );
+	A( ehEmbeddedBackendSelection );
+	A( ehApply );
 }
 
 #undef R
 
-#define R( name, suffix, prefix ) Widgets.name##suffix.Init( Trunk, Trunk.UI().SessionForm().Window(), #prefix #name );
+#define R( name ) Widgets.name.Init( Trunk, Trunk.UI().SessionForm().Window(), #name );
 
 static void Register_(
 	trunk___ &Trunk,
 	session_form__::widgets__ &Widgets )
 {
-	R( BackendTypeSwitch, Menulist, mlt );
-	R( PredefinedBackendSwitch, Menuitem, mim );
-	R( DaemonBackendSwitch, Menuitem, mim );
-	R( EmbeddedBackendSwitch, Menuitem, mim );
-	R( BackendType, Deck, dck );
-	R( PredefinedBackend, Menulist, mnl );
-	R( DaemonBackendLocation, Textbox, txb );
-	R( EmbeddedBackendFileName, Textbox, txb );
-	R( Login, Textbox, txb );
-	R( Password, Textbox, txb );
+	R( mnlBackendType );
+	R( mniPredefinedBackend );
+	R( mniDaemonBackend );
+	R( mniEmbeddedBackend );
+	R( dckBackendType );
+	R( mnlPredefinedBackend );
+	R( txbDaemonBackend );
+	R( txbEmbeddedBackend );
+	R( txbLogin );
+	R( txbPassword );
 }
 
 void xulfsf::RegisterSessionFormUI(

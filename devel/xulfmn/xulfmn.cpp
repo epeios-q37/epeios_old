@@ -63,7 +63,7 @@ using nsxpcm::event__;
 
 void xulfmn::main__::Update( void )
 {
-	Broadcasters.CloseProject.Enable( Trunk().Kernel().IsProjectInProgress() );
+	Broadcasters.bdcCloseProject.Enable( Trunk().Kernel().IsProjectInProgress() );
 }
 #if 0
 void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
@@ -138,7 +138,7 @@ static void Register_(
 	trunk___ &Trunk,
 	main__::broadcasters__ &Broadcasters )
 {
-	Register_( Trunk, Broadcasters.CloseProject, "bdcCloseProject" );
+	Register_( Trunk, Broadcasters.bdcCloseProject, "bdcCloseProject" );
 }
 
 static void Register_(
@@ -150,30 +150,32 @@ static void Register_(
 	nsxpcm::Attach( Trunk.UI().Main().Document(), Id, EventHandler );
 }
 
-#define A( name ) Register_( Trunk, EventHandlers.name, "eh" #name );	
+#define A( name ) Register_( Trunk, EventHandlers.name, #name );	
 
 static void Register_(
 	trunk___ &Trunk,
 	main__::event_handlers__ &EventHandlers )
 {
-	A( NewProject );
-	A( OpenProject );
-	A( CloseProject );
-	A( Exit );
-	A( About );
-	A( WebSite );
-	A( Debug );
+	A( ehNewProject );
+	A( ehOpenProject );
+	A( ehCloseProject );
+	A( ehExit );
+	A( ehAbout );
+	A( ehWebSite );
+	A( ehDebug );
 }
+
+#define R( name ) Widgets.name.Init( Trunk, Trunk.UI().Main().Window(), #name );
 
 static void Register_(
 	trunk___ &Trunk,
 	main__::widgets__ &Widgets,
 	nsIDOMWindow *Window )
 {
-	Widgets.Window.Init( Trunk, Window, Window );
-	Widgets.MainDeck.Init( Trunk, Window, "dckMain" );
-	Widgets.SessionViewFrame.Init( Trunk, Window, "ifrSessionView" );
-	Widgets.SessionFormFrame.Init( Trunk, Window, "ifrSessionForm" );
+	Widgets.wdwMain.Init( Trunk, Window, Window );	// Le type n'est pas correct di on passe par l'id.
+	R( dckMain );
+	R( ifrSessionView );
+	R( ifrSessionForm );
 }
 
 void xulfmn::RegisterMainUI(
@@ -191,7 +193,7 @@ void xulfmn::RegisterMainUI(
 	Register_( Trunk, Trunk.UI().Main().EventHandlers );
 	Register_( Trunk, Trunk.UI().Main().Widgets, Window );
 
-	Trunk.UI().Main().EventHandlers.Exit.Add( Window, nsxpcm::efClose );	// Remplace le 'xex:onclose="..."' inopérant sur la balise 'windonw'.
+	Trunk.UI().Main().EventHandlers.ehExit.Add( Window, nsxpcm::efClose );	// Remplace le 'xex:onclose="..."' inopérant sur la balise 'windonw'.
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document() );
 }

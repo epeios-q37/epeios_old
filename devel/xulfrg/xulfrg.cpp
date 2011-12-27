@@ -57,11 +57,11 @@ public:
 
 using namespace xulfrg;
 
-rgstry::entry xulfrg::AnnexTarget;
-rgstry::entry xulfrg::AnnexTargetType;
+rgstry::entry xulfrg::AnnexTarget( "AnnexTarget", frdrgy::Parameters );
+rgstry::entry xulfrg::AnnexTargetType( "@Type", AnnexTarget );
 
-rgstry::entry xulfrg::BackendSelection;
-rgstry::entry xulfrg::BackendSelectionMode;
+static rgstry::entry BackendSelection_( "BackendSelection", frdrgy::Parameters );
+rgstry::entry xulfrg::BackendSelectionMode( "Mode", BackendSelection_ );
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
@@ -72,11 +72,6 @@ class xulfrgpersonnalization
 public:
 	xulfrgpersonnalization( void )
 	{
-		AnnexTarget.Init( "AnnexTarget", frdrgy::Parameters );
-		AnnexTargetType.Init( "@Type", AnnexTarget );
-
-		BackendSelection.Init( "BackendSelection", frdrgy::Parameters );
-		BackendSelectionMode.Init( "Mode", BackendSelection );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

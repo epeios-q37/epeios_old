@@ -133,6 +133,11 @@ RP
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 RB
+		nsCOMPtr<nsxpcm::clh__>CLH;
+
+	nsxpcm::GetService( CLH_CONTRACTID, CLH );
+
+
 	if ( !IsInitialized_ ) {
 		sclmisc::Initialize( NAME, NULL );
 		IsInitialized_ = true;
@@ -310,6 +315,7 @@ using namespace nsxpcm;
 NS_IMPL_ISUPPORTS1(egeckocom___, EIGeckoCOM)
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom___)
 NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
+NS_GENERIC_FACTORY_CONSTRUCTOR(clh__)
 
 #ifdef NSXPCM__GECKO_V1
 
@@ -336,6 +342,7 @@ NS_IMPL_NSGETMODULE("EGeckoCOMModule", components)
 // The following line defines a kNS_SAMPLE_CID CID variable.
 NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
+NS_DEFINE_NAMED_CID(CLH_CID);
 
 // Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
 // should be completely unique UUIDs.
@@ -344,6 +351,7 @@ NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
 static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
     { &kEGECKOCOM_CID, false, NULL, egeckocom___Constructor },
 	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listener__Constructor },
+	{ &kCLH_CID, false, NULL, nsxpcm::clh__Constructor },
     { NULL }
 };
 
@@ -354,6 +362,7 @@ static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
 static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
     { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
     { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
+    { CLH_CONTRACTID, &kCLH_CID },
     { NULL }
 };
 
@@ -363,6 +372,7 @@ static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
 // entries: this is just a sample of how you'd do it.
 // @see nsICategoryManager for information on retrieving category data.
 static const mozilla::Module::CategoryEntry kEGeckoCOMCategories[] = {
+	{ "command-line-handler", "m-geckocom", CLH_CONTRACTID },
     { NULL }
 };
 

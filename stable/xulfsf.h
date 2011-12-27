@@ -81,29 +81,29 @@ namespace xulfsf {
 	public:
 		struct broadcasters__ {
 			broadcaster__
-				PredefinedBackend,
-				DaemonBackend,
-				EmbeddedBackend,
-				EmbeddedBackendSelection,
-				Authentication;
+				bdcPredefinedBackend,
+				bdcDaemonBackend,
+				bdcEmbeddedBackend,
+				bdcEmbeddedBackendSelection,
+				bdcAuthentication;
 		} &Broadcasters;
 		struct event_handlers__ {
-			backend_type_selection_eh__ BackendTypeSelection;
-			emebedded_backend_selection_eh__ EmbeddedBackendSelection;
-			apply_eh__ Apply;
+			backend_type_selection_eh__ ehBackendTypeSelection;
+			emebedded_backend_selection_eh__ ehEmbeddedBackendSelection;
+			apply_eh__ ehApply;
 		} &EventHandlers;
 		struct widgets__ {
-			menulist__ BackendTypeSwitchMenulist;
+			menulist__ mnlBackendType;
 			menuitem__
-				PredefinedBackendSwitchMenuitem,
-				DaemonBackendSwitchMenuitem,
-				EmbeddedBackendSwitchMenuitem;
-			deck__ BackendTypeDeck;
-			menulist__ PredefinedBackendMenulist;
-			textbox__ DaemonBackendLocationTextbox;
-			textbox__ EmbeddedBackendFileNameTextbox;
-			textbox__ LoginTextbox;
-			textbox__ PasswordTextbox;
+				mniPredefinedBackend,
+				mniDaemonBackend,
+				mniEmbeddedBackend;
+			deck__ dckBackendType;
+			menulist__ mnlPredefinedBackend;
+			textbox__ txbDaemonBackend;
+			textbox__ txbEmbeddedBackend;
+			textbox__ txbLogin;
+			textbox__ txbPassword;
 		} &Widgets;
 		session_form__(
 			broadcasters__ &Broadcasters,

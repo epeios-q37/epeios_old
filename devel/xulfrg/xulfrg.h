@@ -73,7 +73,6 @@ namespace xulfrg {
 	extern rgstry::entry AnnexTarget;
 	extern rgstry::entry AnnexTargetType;
 
-	extern rgstry::entry BackendSelection;
 	extern rgstry::entry BackendSelectionMode;
 }
 

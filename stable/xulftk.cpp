@@ -492,10 +492,10 @@ ERRBegin
 		ERRl();
 		break;
 	case frdkrn::bxtDaemon:
-		UI().SessionForm().Widgets.DaemonBackendLocationTextbox.SetValue( Location );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
 		break;
 	case frdkrn::bxtEmbedded:
-		UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.SetValue( Location );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
 		break;
 	case frdkrn::bxt_Undefined:
 		break;
@@ -560,19 +560,20 @@ ERRBegin
 	}
 
 	Value.Init();
-	UI().SessionForm().Widgets.BackendTypeSwitchMenulist.GetValue( Value );
+	UI().SessionForm().Widgets.mnlBackendType.GetValue( Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
 	case frdkrn::bxtPredefined:
 		Value.Init();
-		UI().SessionForm().Widgets.PredefinedBackendMenulist.GetValue( Value );
+		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValue( Value );
 		break;
 	case frdkrn::bxtDaemon:
 		Value.Init();
-		UI().SessionForm().Widgets.DaemonBackendLocationTextbox.GetValue( Value );
+		UI().SessionForm().Widgets.txbDaemonBackend.GetValue( Value );
 		break;
 	case frdkrn::bxtEmbedded:
-		UI().SessionForm().Widgets.EmbeddedBackendFileNameTextbox.GetValue( Value );
+		Value.Init();
+		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValue( Value );
 		break;
 	default:
 		UI().LogAndPrompt( Kernel().LocaleRack().GetTranslation( "BadOrNoBackendType", PREFIX, Buffer ) );

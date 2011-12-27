@@ -131,6 +131,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsICommandLine.h" // Situé dans 'toolkitcomps'.
 
 # include "nsICommandManager.h"
+# include "nsICommandLineHandler.h"
 
 # undef NSXPCM__ENABLE_FORMHISTORY
 
@@ -158,6 +159,14 @@ extern class ttr_tutor &NSXPCMTutor;
 # define NSXPCM_IEVENT_LISTENER_IID \
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
+
+# define CLH_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a67"
+
+# define ICLH_IID \
+  {0xd333cd20, 0xc453, 0x11dd, \
+    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x67 }}
+
+
 
 // Permet de 'logger' une erreur et d'éviter qu'elle soit ne remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
 # define NSXPCM_ERR( window )\
@@ -2810,14 +2819,64 @@ namespace nsxpcm {
 
 	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
 }
-
-
 	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener__, NSXPCM_IEVENT_LISTENER_IID)
 
 #define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;1"
 #define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
 // {d333cd20-c453-11dd-ad8b-0800200c9a66}
 #define NSXPCM_EVENT_LISTENER_CID  NSXPCM_IEVENT_LISTENER_IID
+
+namespace nsxpcm {
+	class NS_NO_VTABLE NS_SCRIPTABLE iclh__
+	: public nsICommandLineHandler
+	{
+	public: 
+		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_ICLH_IID)
+	};
+
+	/*
+	ATTENTION, IMPORTANT : pour des raison de simplification de mise en oeuvre et de par le système
+	d'enregistrement de 'XULRunner', cet object est commun à tous les composants utilisant la gestion d'évènement
+	des bibliothèques Epeios. Une modification de cet objet	peut ne donc par être répercuté dans le composant,
+	parce que l'ancienne version de ce composant est encore	actif car existant dans un autre composant.
+	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modifications
+	de cet objet soient prises en compte.
+	*/
+	struct clh__
+	: iclh__
+	{
+	protected:
+		NS_IMETHOD Handle(nsICommandLine *aCommandLine)
+		{
+			return NS_OK;
+		}
+		NS_IMETHOD GetHelpInfo(nsACString & aHelpInfo)
+		{
+			return NS_OK;
+		}
+	public:
+		NS_DECL_ISUPPORTS
+	//  NS_DECL_IEEVENT_LISTENER
+		  void reset( bso::bool__ = true )
+		  {
+		  }
+		E_CVDTOR( clh__ );
+	public:
+		void Init( void )
+		{
+		}
+	};
+
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR(clh__)
+}
+	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::iclh__, ICLH_IID)
+
+#define CLH_CONTRACTID "@mozilla.org/commandlinehandler/general-startup;1?type=egeckocom"
+#define CLH_CLASSNAME "CLH"
+// {d333cd20-c453-11dd-ad8b-0800200c9a66}
+#define CLH_CID  ICLH_IID
+
 
 // Fin de la partie concernant l''event_listener'.
 

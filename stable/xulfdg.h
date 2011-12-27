@@ -87,10 +87,10 @@ namespace xulfdg {
 				BackendError;
 		} Broadcasters;
 		struct event_handlers__ {
-			jsconsole_eh__ JSConsole;
-			dominspector_eh__ DOMInspector;
-			frontend_error_eh__ FrontendError;
-			backend_error_eh__ BackendError;
+			jsconsole_eh__ ehJSConsole;
+			dominspector_eh__ ehDOMInspector;
+			frontend_error_eh__ ehFrontendError;
+			backend_error_eh__ ehBackendError;
 		} EventHandlers;
 		void Update( void );
 		void ExtractSelectedDatabase( void );
