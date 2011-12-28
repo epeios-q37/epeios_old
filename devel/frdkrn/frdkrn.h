@@ -190,7 +190,11 @@ namespace frdkrn {
 		lcl::rack__ _LocaleRack;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
+# if 0
 		frdbkd::_backend___ _Backend;
+# else
+		frdbkd::backend___ _Backend;
+# endif
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
@@ -206,6 +210,8 @@ namespace frdkrn {
 		{
 			if ( !IsConnected() )
 				ERRu();
+
+			FRDKRNDisconnection();
 
 			_Backend.reset();
 			_ClientCore.reset();
@@ -234,6 +240,8 @@ namespace frdkrn {
 			error_reporting_functions__ &ErrorReportingFunctions,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
+		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
+		virtual void FRDKRNDisconnection( void ) = 0;	// Appelé avant déconnexion du 'backend'.
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -272,6 +280,13 @@ namespace frdkrn {
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 
 			return sOK;
+		}
+		fblfrd::backend_access___ &BackendAccess( void )
+		{
+			if ( !_Backend.IsConnected() )
+				ERRc();
+
+			return _Backend.BackendAccess();
 		}
 		const frdrgy::registry_ &Registry( void ) const
 		{

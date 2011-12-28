@@ -79,27 +79,7 @@ namespace xulfkl {
 		m_Undefined
 	};
 
-	typedef frdkrn::kernel___ _kernel___;
-
-	class kernel___
-	: public _kernel___
-	{
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_kernel___::reset( P );
-		}
-		E_CVDTOR( kernel___ );
-		status__ Init(
-			const rgstry::multi_level_registry_ &ConfigurationRegistry,
-			const char *TargetName,
-			const lcl::locale_ &Locale,
-			const char *Language,
-			frdkrn::error_reporting_functions__ &ErrorReportingFunctions )
-		{
-			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
-		}
-	};
+	using frdkrn::kernel___;
 
 	const str::string_ &GetTranslation(
 		message__ Message,

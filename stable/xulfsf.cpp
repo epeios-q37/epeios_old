@@ -59,6 +59,7 @@ public:
 #include "xulfrg.h"
 
 #include "cpe.h"
+#include "fnm.h"
 
 #include "nsIDOMEventTarget.h"
 
@@ -263,11 +264,12 @@ ERREnd
 ERREpilog
 }
 
-static void FillPredefinedBackendsWidget_( trunk___ &Trunk )
+static void FillPredefinedBackendsWidget_(	trunk___ &Trunk )
 {
 ERRProlog
 	str::string PredefinedBackends;
 	nsIDOMDocumentFragment *Fragment;
+	FNM_BUFFER___ FileNameBuffer;
 ERRBegin
 	PredefinedBackends.Init();
 
@@ -277,7 +279,7 @@ ERRBegin
 
 	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget() );
 
-	Fragment = nsxpcm::XSLTransformByFileName( PredefinedBackends, str::string( "chrome://esketch/content/xsl/PredefinedBackendMenuList.xsl" ), Trunk.UI().SessionForm().Document(), nsxpcm::xslt_parameters() );
+	Fragment = nsxpcm::XSLTransformByFileName( PredefinedBackends, str::string( fnm::BuildFileName( Trunk.DefaultXSLRootPath(), "PredefinedBackendMenuList", ".xsl", FileNameBuffer ) ), Trunk.UI().SessionForm().Document(), nsxpcm::xslt_parameters() );
 
 	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget(), Fragment );
 

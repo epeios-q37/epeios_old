@@ -264,6 +264,8 @@ ERRBegin
 		ERRReturn;
 	}
 
+	FRDKRNConnection( BackendAccess() );
+
 	Report = r_OK;
 ERRErr
 ERREnd

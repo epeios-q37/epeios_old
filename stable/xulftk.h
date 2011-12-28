@@ -217,6 +217,7 @@ namespace xulftk {
 		_user_functions__ *_UserFunctions;
 		geckoo::user_functions__  *_Steering;
 		const char *_TargetName;
+		const char *_DefaultXSLRootPath;
 		error_reporting_functions__ _DefaultErrorReportingFunctions;
 		_user_functions__ &_UF( void )
 		{
@@ -263,6 +264,7 @@ namespace xulftk {
 			_Kernel =  NULL;
 			_UserFunctions = NULL;
 			_Steering = NULL;
+			_DefaultXSLRootPath = NULL;
 			_DefaultErrorReportingFunctions.reset( P );
 //			_TrunkFunctions.reset();
 		}
@@ -276,6 +278,7 @@ namespace xulftk {
 		}
 		status__ Init(
 			const char *TargetName,	// ATTENTION : pointeur copié, contenu NON dupliqué.
+			const char *DefaultXSLRootPath,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
 			_user_functions__ &UserFunctions,
@@ -288,6 +291,7 @@ namespace xulftk {
 			_TargetName = TargetName;
 			_UserFunctions = &UserFunctions;
 			_Steering = &Steering;
+			_DefaultXSLRootPath = DefaultXSLRootPath;
 			_DefaultErrorReportingFunctions.Init( UI, Locale, Language );
 
 			return frdkrn::sOK;
@@ -380,11 +384,15 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		void DefineSession(
+		bso::bool__ DefineSession(
 			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &Criterions )
 		{
-			_UF().DefineSession( ProjectFileName, Criterions );
+			if ( _UF().DropSession() ) {
+				_UF().DefineSession( ProjectFileName, Criterions );
+				return true;
+			} else
+				return false;
 		}
 		void ApplySession( void )
 		{
@@ -411,6 +419,13 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		return Confirmation;
+		}
+		const char *DefaultXSLRootPath( void ) const
+		{
+			if ( _DefaultXSLRootPath == NULL )
+				ERRu();
+
+			return _DefaultXSLRootPath;
 		}
 		friend _user_functions__;
 	};

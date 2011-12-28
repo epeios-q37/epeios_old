@@ -73,7 +73,11 @@ namespace frdbkd {
 	using fblfub::incompatibility_informations_;
 	using fblfub::incompatibility_informations;
 
+# if 0
 	class _backend___
+# else
+	class backend___
+# endif
 	{
 	private:
 		csducl::universal_client_ioflow___ _Flow;
@@ -135,6 +139,7 @@ namespace frdbkd {
 		}
 	};
 
+# if 0
 	template <typename statics> class backend___
 	: public _backend___,
 	  public statics
@@ -176,6 +181,7 @@ namespace frdbkd {
 	};
 
 	template <typename object> E_TMIMIC__( object, backend_object___ );
+# endif
 }
 
 /*$END$*/

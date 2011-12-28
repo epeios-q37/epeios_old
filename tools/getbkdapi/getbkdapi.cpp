@@ -669,11 +669,11 @@ void Generate(
 	Writer.PopTag();
 }
 
-class dummy_error_handling_functions__
-: public fblfrd::error_handling_functions__
+class dummy_error_reporting_functions__
+: public fblfrd::error_reporting_functions__
 {
 protected:
-	void FBLFRDHandleError(
+	void FBLFRDReportError(
 		fblovl::reply__ Reply,
 		const char *Message )
 	{
@@ -696,8 +696,8 @@ ERRProlog
 	fblfrd::incompatibility_informations Dummy;
 	fblfub::mode__ FBLMode = fblfub::m_Undefined;
 	csdleo::mode__ CSDMode = csdleo::m_Undefined;
-	dummy_error_handling_functions__ DummyErrorHandlingFunctions;
-	csdleo::shared_data__ SharedData;
+	dummy_error_reporting_functions__ DummyErrorReportingFunctions;
+	csdlec::library_data__ LibraryData;
 ERRBegin
 	switch ( Type ) {
 	case csducl::tDaemon:
@@ -713,9 +713,9 @@ ERRBegin
 		break;
 	}
 
-	SharedData.Init( CSDMode );
+	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, flx::VoidOFlowDriver );
 
-	if ( !Core.Init( Location, &SharedData, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
+	if ( !Core.Init( Location, LibraryData, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
 		CErr << "Unable to access the backend !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
@@ -725,7 +725,7 @@ ERRBegin
 
 	Dummy.Init();
 
-	BackendAccess.Init( "", fblfrd::compatibility_informations__(), Flow, FBLMode, DummyErrorHandlingFunctions, Dummy );
+	BackendAccess.Init( "", fblfrd::compatibility_informations__(), Flow, FBLMode, DummyErrorReportingFunctions, Dummy );
 
 	GetDescription( BackendAccess, Types );
 	
