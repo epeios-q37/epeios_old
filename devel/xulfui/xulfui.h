@@ -72,10 +72,12 @@ extern class ttr_tutor &XULFUITutor;
 
 namespace xulfui {
 
+	typedef xulfmn::main__ _main__;
+
 	class ui___
 	{
 	private:
-		xulfmn::main__ *_Main;
+		_main__ *_Main;
 		xulfsf::session_form__ *_SessionForm;
 		xulfsv::session_view__ *_SessionView;
 		xulfdg::debug_dialog__ *_DebugDialog;
@@ -97,7 +99,7 @@ namespace xulfui {
 		}
 		E_CVDTOR( ui___ );
 		void Init(
-			xulfmn::main__ &Main,
+			_main__ &Main,
 			xulfsf::session_form__ &SessionForm,
 			xulfsv::session_view__ &SessionView )
 		{
@@ -111,7 +113,7 @@ namespace xulfui {
 		{
 			XULFUIUpdate();
 		}
-		xulfmn::main__ &Main( void ) const
+		_main__ &Main( void ) const
 		{
 #ifdef XULFUI_DBG
 			if ( _Main == NULL )

@@ -60,6 +60,8 @@ public:
 
 using namespace xulfsv;
 
+using xulftk::trunk___;
+
 void xulfsv::session_view__::Update( frdkrn::backend_extended_type__ Type )
 {
 ERRProlog

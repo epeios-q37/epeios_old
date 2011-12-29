@@ -76,10 +76,8 @@ namespace xulfrd {
 
 namespace xulfbs {
 
-	using xulftk::trunk___;
-
 	void _Report(
-		trunk___ &Trunk,
+		xulftk::trunk___ &Trunk,
 		const char *Message );
 
 	typedef nsxpcm::ui_core__ _ui_core__;
@@ -124,7 +122,7 @@ namespace xulfbs {
 		}
 	};
 
-	XULWDG_ALL_WIDGETS( trunk___ )
+	XULWDG_ALL_WIDGETS( xulftk::trunk___ )
 
 # define XULFBS_EH( name )\
 	class name\

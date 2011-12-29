@@ -57,6 +57,8 @@ public:
 
 #include "xulfrg.h"
 
+#include "fnm.h"
+
 using namespace xulftk;
 
 #define PREFIX	XULFKL_NAME "_" 
@@ -193,7 +195,8 @@ ERRBegin
 	Bag.Embedded.Init();
 	nsxpcm::GetAttribute( nsxpcm::GetElement( UI.Main().Window() ), Target, Bag.Embedded );
 	Bag.EmbeddedFlow.Init( Bag.Embedded );
-	Flow = &Bag.EmbeddedFlow;
+	Bag.EmbeddedB64Flow.Init( Bag.EmbeddedFlow );
+	Flow = &Bag.EmbeddedB64Flow;
 ERRErr
 ERREnd
 ERREpilog
@@ -426,6 +429,7 @@ struct ibag___ {
 	str::string Embedded;
 	flf::file_iflow___ FileFlow;
 	flx::E_STRING_IFLOW__  EmbeddedFlow;
+	cdgb64::decoding_iflow___ EmbeddedB64Flow;
 	flw::iflow__ &VoidFlow;
 	ibag___ ( void )
 	: VoidFlow( flx::VoidIFlow )
@@ -492,7 +496,7 @@ ERRBegin
 		ERRl();
 		break;
 	case frdkrn::bxtDaemon:
-		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
+		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
 		break;
 	case frdkrn::bxtEmbedded:
 		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
@@ -612,6 +616,7 @@ struct obag___ {
 	str::string Embedded;
 	flf::file_oflow___ FileFlow;
 	flx::E_STRING_OFLOW___  EmbeddedFlow;
+	cdgb64::encoding_oflow___ EmbeddedB64Flow;
 	flw::oflow__ &VoidFlow;
 	obag___ ( void )
 	: VoidFlow( flx::VoidOFlow )
@@ -642,6 +647,10 @@ ERRBegin
 	}
 
 	Write_( Set, *Flow );
+
+	Bag.EmbeddedFlow.reset();
+
+	UI.SaveAnnex( "Annex", Bag.Embedded );
 
 	Success = true;
 ERRErr
@@ -699,6 +708,20 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+const str::string_ &xulftk::trunk___::BuildXSLDefaultLocalizedFileName(
+	const char *XSLFileNameAffix,
+	str::string_ &LocalizedFileName )
+{
+ERRProlog
+	FNM_BUFFER___ Buffer;
+ERRBegin
+	LocalizedFileName.Append( fnm::BuildFileName( DefaultXSLRootPath(), XSLFileNameAffix, ".xsl", Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return LocalizedFileName;
 }
 
 

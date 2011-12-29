@@ -427,6 +427,9 @@ namespace xulftk {
 
 			return _DefaultXSLRootPath;
 		}
+		const str::string_ &BuildXSLDefaultLocalizedFileName(
+			const char *XSLFileNameAffix,
+			str::string_ &LocalizedFileName );
 		friend _user_functions__;
 	};
 

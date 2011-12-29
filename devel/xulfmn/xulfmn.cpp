@@ -57,6 +57,8 @@ public:
 
 #include "xulftk.h"
 
+using xulftk::trunk___;
+
 using namespace xulfmn;
 
 using nsxpcm::event__;
@@ -65,6 +67,7 @@ void xulfmn::main__::Update( void )
 {
 	Broadcasters.bdcCloseProject.Enable( Trunk().Kernel().IsProjectInProgress() );
 }
+
 #if 0
 void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
 {

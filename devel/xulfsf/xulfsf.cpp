@@ -69,6 +69,8 @@ using namespace xulfsf;
 
 using nsxpcm::event__;
 
+using xulftk::trunk___;
+
 void xulfsf::backend_type_selection_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
 ERRProlog
@@ -264,7 +266,7 @@ ERREnd
 ERREpilog
 }
 
-static void FillPredefinedBackendsWidget_(	trunk___ &Trunk )
+static void FillPredefinedBackendsWidget_( trunk___ &Trunk )
 {
 ERRProlog
 	str::string PredefinedBackends;
