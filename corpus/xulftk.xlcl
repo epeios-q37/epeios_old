@@ -33,6 +33,10 @@
 		<Translation language="fr">Impossible de récupèrer les réglages.</Translation>
 		<Translation language="en">Unable to retrieve settings.</Translation>
 	</Translations>
+	<Translations message="XULFKL_UnableToRFiendSettings">
+		<Translation language="fr">Règlages introuvables.</Translation>
+		<Translation language="en">Unable to find settings.</Translation>
+	</Translations>
 	<Translations message="XULFKL_BadOrNoProjectId">
 		<Translation language="fr">Identifiant de projet absent ou incorrect.</Translation>
 		<Translation language="en">Bad or no project id.</Translation>

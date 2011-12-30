@@ -771,6 +771,7 @@ namespace rgstry {
 			row__ Root,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
+			xml::encoding__ Encoding,
 			txf::text_oflow__ &Flow ) const;	// Retourne le nombre d'enfants.
 	};
 
@@ -1188,7 +1189,7 @@ namespace rgstry {
 	private:
 		void _Touch( level__ Level )
 		{
-			TimeStamps.Set( time( NULL ), Level );
+			TimeStamps.Store( time( NULL ), Level );
 		}
 		level__ _RawCreateLevel( void )
 		{
@@ -1205,7 +1206,7 @@ namespace rgstry {
 		{
 			level__ Level = RGSTRY_UNDEFINED_LEVEL;
 
-			Entries.Set( Entry, Level = _RawCreateLevel() );
+			Entries.Store( Entry, Level = _RawCreateLevel() );
 
 			return Level;
 		}
@@ -1521,7 +1522,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Entries.Set( entry__( Root ), Level );
+			Entries.Store( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1538,7 +1539,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Entries.Set( entry__( Root ), Level );
+			Entries.Store( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1556,7 +1557,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Entries.Set( entry__( Root ), Level );
+			Entries.Store( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1573,7 +1574,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Entries.Set( entry__( Root ), Level );
+			Entries.Store( entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1590,9 +1591,10 @@ namespace rgstry {
 			level__ Level,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
+			xml::encoding__ Encoding,
 			txf::text_oflow__ &TFlow ) const
 		{
-			return _GetRegistry( Level ).Dump( _GetRoot( Level ), RootToo, Outfit, TFlow );
+			return _GetRegistry( Level ).Dump( _GetRoot( Level ), RootToo, Outfit, Encoding, TFlow );
 		}
 		time_t TimeStamp( level__ Level ) const
 		{

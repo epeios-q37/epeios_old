@@ -906,7 +906,7 @@ void nsxpcm::Delete( widget_cores_ &Widgets )
 	while ( Row != NONE ) {
 		delete Widgets( Row );
 
-		Widgets.Set( NULL, Row );
+		Widgets.Store( NULL, Row );
 
 		Row = Widgets.Next( Row );
 	}

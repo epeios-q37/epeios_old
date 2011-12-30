@@ -166,7 +166,7 @@ namespace ndbbsc {
 			Links.Init();
 
 			List.Allocate( Size );
-			List.Set( NONE );
+			List.FillWith( NONE );
 
 			S_.AmountMax = AmountMax;
 		}
@@ -179,7 +179,7 @@ namespace ndbbsc {
 			else if ( CurrentSize < Size ) {
 				List.Allocate( Size );
 
-				List.Set( NONE, CurrentSize );
+				List.FillWith( NONE, CurrentSize );
 			}
 		}
 		bso::bool__ Retrieve(

@@ -1,4 +1,15 @@
 $Id$
+
+30/12/2011 :
+	- BCH :
+		- 'Set...(...)'->'FillWith...(...)' pour éviter source de bogue.
+	- NDBBSC :
+		- Adaptation.
+	- NSXPCM :
+		- Correction bogue dû à l'utilisation de 'Set(...)' à la place de 'Store(...)'.
+	- RGSTRY :
+		- Correction bogue dû à l'utilisation de 'Set(...)' à la place de 'Store(...)'.
+
 24/12/2011 :
 	- ERR :
 		- Simplification et ajout de 'ERRError()'.

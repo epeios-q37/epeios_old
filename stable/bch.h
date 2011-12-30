@@ -235,11 +235,15 @@ namespace bch {
 			StoreAndAjust( Buffer, sh::SizeOf( Buffer ), Offset );
 		}
 		// Remplit tout le conteneur avec 'object' à partir de la position 'offset'.
-		void Set(
+		void FillWith(
 			const type &Object,
 			row Offset = 0 )
 		{
 			Store( Object, Offset, this->Amount() - *Offset );
+		}
+		void Set( void )
+		{
+			ERRu();	// Replacé par 'FillWith(...)'.
 		}
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
@@ -426,7 +430,7 @@ namespace bch {
 			return Search( Object, Begin, mng::Amount() );
 		}
 		//f Store 'Count' 'Object' at 'Row'. Adjust the size of the bunch.
-		void SetAndAdjust(
+		void FillWithAndAdjust(
 			const type &Object,
 			row Row,
 			epeios::size__ Count )
@@ -434,6 +438,10 @@ namespace bch {
 			Allocate( *Row + Count );
 
 			mmr::Set( Object, Row, Count );
+		}
+		void SetAndAdjust( void )
+		{
+			ERRu();	// Remplacé par 'FillWithAndAdjust(...)'.
 		}
 		//f Return reference to memory.
 		mmr &Memory( void )

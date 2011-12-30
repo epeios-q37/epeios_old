@@ -178,7 +178,17 @@ ERREpilog
 	return Result;
 }
 
+enum dir__
+{
+	dIn,
+	dOut,
+	d_amount,
+	d_Undefined,
+};
+
+
 template <typename bag, typename flow> static flow *GetEmbeddedFlow_(
+	dir__ Direction,
 	bag &Bag,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
@@ -193,10 +203,19 @@ ERRBegin
 		ERRReturn;
 
 	Bag.Embedded.Init();
-	nsxpcm::GetAttribute( nsxpcm::GetElement( UI.Main().Window() ), Target, Bag.Embedded );
+	switch ( Direction ) {
+	case dIn:
+		nsxpcm::GetAttribute( nsxpcm::GetElement( UI.Main().Window() ), Target, Bag.Embedded );
+		break;
+	case dOut:
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
 	Bag.EmbeddedFlow.Init( Bag.Embedded );
-	Bag.EmbeddedB64Flow.Init( Bag.EmbeddedFlow );
-	Flow = &Bag.EmbeddedB64Flow;
+	Flow = &Bag.EmbeddedFlow;
 ERRErr
 ERREnd
 ERREpilog
@@ -233,6 +252,7 @@ template <typename bag, typename flow> static flow  *GetVolatileFlow_( bag &Bag 
 }
 
 template <typename bag, typename flow> static flow  *GetFlow_(
+	dir__ Direction,
 	bag &Bag,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
@@ -244,7 +264,7 @@ ERRProlog
 ERRBegin
 	switch ( GetAnnexType_( Registry )  ) {
 	case atEmbedded:
-		Flow = GetEmbeddedFlow_<bag, flow>( Bag, UI, Registry, Rack );
+		Flow = GetEmbeddedFlow_<bag, flow>( Direction, Bag, UI, Registry, Rack );
 		break;
 	case atFile:
 		Flow = GetFileFlow_<bag, flow>( Bag, UI, Registry, Rack );
@@ -268,158 +288,86 @@ ERREpilog
 	return Flow;
 }
 
-class settings_
-{
-public:
-	struct s {
-		str::string_::s
-			Id,
-			Content;
-	};
-	str::string_
-		Id,
-		Content;
-	settings_( s &S )
-	: Id( S.Id ),
-	  Content( S.Content )
-	{}
-	void reset( bso::bool__ P = true )
-	{
-		Id.reset( P );
-		Content.reset( P );
-	}
-	void plug( mmm::E_MULTIMEMORY_ &MM )
-	{
-		Id.plug( MM );
-		Content.plug( MM );
-	}
-	settings_ &operator =( const settings_ &S )
-	{
-		Id = S.Id;
-		Content = S.Content;
-
-		return *this;
-	}
-	void Init( void )
-	{
-		Id.Init();
-		Content.Init();
-	}
-};
-
-E_AUTO( settings )
 
 static void Write_(
-	const settings_ &Settings,
+	const rgstry::registry_ &Set,
+	rgstry::row__ Root,
 	flw::oflow__ &Flow )
-{
-	Settings.Id.NewWriteToFlow( Flow, true );
-	Settings.Content.NewWriteToFlow( Flow, true );
-}
-
-static void Read_(
-	flw::iflow__ &Flow,
-	settings_ &Settings )
-{
-	Settings.Id.NewReadFromFlow( Flow, 0 );
-	Settings.Content.NewReadFromFlow( Flow, 0 );
-}
-
-typedef ctn::E_XCONTAINER_( settings_ ) settings_set_;
-E_AUTO( settings_set );
-
-static void Write_(
-	const settings_set_ &Set,
-	flw::oflow__ &Flow )
-{
-	epeios::row__ Row = Set.First();
-	ctn::E_CITEM( settings_ ) Settings;
-
-	dtfptb::NewPutSize( Set.Amount(), Flow );
-
-	Settings.Init( Set );
-
-	while ( Row != NONE ) {
-		Write_( Settings( Row ), Flow );
-
-		Row = Set.Next( Row );
-	}
-}
-
-static void Read_(
-	flw::iflow__ &Flow,
-	settings_set_ &Set )
 {
 ERRProlog
-	epeios::size__ Amount = 0;
-	settings Settings;
+	txf::text_oflow__ TFlow;
 ERRBegin
-	Amount = dtfptb::NewGetSize( Flow );
-
-	while ( Amount-- != 0 ) {
-		Settings.Init();
-
-		Read_( Flow, Settings );
-
-		Set.Append(Settings );
-	}
+	TFlow.Init( Flow );
+	Set.Dump( Root, true, xml::oCompact, xml::e_None, TFlow );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-static epeios::row__ Search_(
-	const str::string_ &Id,
-	const settings_set_ &Set )
+static rgstry::row__ Read_(
+	flw::iflow__ &Flow,
+	rgstry::registry_ &Set )
 {
-	epeios::row__ Row = Set.First();
-	ctn::E_CITEM( settings_ ) Settings;
+	rgstry::row__ Root = NONE;
+ERRProlog
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	XFlow.Init( Flow );
 
-	Settings.Init( Set );
+	if ( rgstry::FillRegistry( XFlow, xpp::criterions___(), "SettingsSet", Set, Root ) != rgstry::sOK )
+		Root = NONE;
+ERRErr
+ERREnd
+ERREpilog
+	return Root;
+}
 
-	while ( ( Row != NONE ) && ( Settings( Row ).Id != Id ) )
-		Row = Set.Next( Row );
+static const str::string_ &BuildPath_(
+	const str::string_ &Id,
+	str::string_ &Path )
+{
+	Path.Append( "Settings[id=\"" );
+	Path.Append( Id );
+	Path.Append( "\"]" );
 
-	return Row;
+	return Path;
 }
 
 static bso::bool__ Get_(
 	const str::string_ &Id,
-	const settings_set_ &Set,
-	str::string_ &Content )
+	const rgstry::registry_ &Set,
+	rgstry::row__ Root,
+	str::string_ &Settings )
 {
-	epeios::row__ Row = Search_( Id, Set );
-	ctn::E_CITEM( settings_ ) Settings;
+	bso::bool__ Success = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
 
-	if ( Row != NONE ) {
-		Settings.Init( Set );
+	BuildPath_( Id, Path );
 
-		Content = Settings( Row ).Content;
-	}
-
-	return Row != NONE;
+	Success = Set.GetValue( Path, Root, Settings );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
 }
 
 static void Set_(
 	const str::string_ &Id,
-	const str::string_ &Content,
-	settings_set_ &Set )
+	const str::string_ &Settings,
+	rgstry::registry_ &Set,
+	rgstry::row__ Root )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
-	settings Settings;
+	str::string Path;
 ERRBegin
-	Row = Search_( Id, Set );
+	Path.Init();
 
-	Settings.Init();
+	BuildPath_( Id, Path );
 
-	Settings.Id = Id;
-	Settings.Content = Content;
-
-	if ( Row != NONE )
-		Set.Store( Settings, Row );
-	else
-		Set.Append( Settings );
+	Set.SetValue( Path, Settings, Root );
 ERRErr
 ERREnd
 ERREpilog
@@ -429,7 +377,6 @@ struct ibag___ {
 	str::string Embedded;
 	flf::file_iflow___ FileFlow;
 	flx::E_STRING_IFLOW__  EmbeddedFlow;
-	cdgb64::decoding_iflow___ EmbeddedB64Flow;
 	flw::iflow__ &VoidFlow;
 	ibag___ ( void )
 	: VoidFlow( flx::VoidIFlow )
@@ -440,13 +387,13 @@ struct ibag___ {
 	}
 };
 
-static bso::bool__ RetrieveSettingsSet_(
+static rgstry::row__ RetrieveSet_(
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack,
-	settings_set_ &Set )
+	rgstry::registry_ &Set )
 {
-	bso::bool__ Success = false;
+	rgstry::row__ Root = NONE;
 ERRProlog
 	flw::iflow__ *Flow = NULL;
 	ibag___ Bag;
@@ -454,20 +401,19 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( dIn, Bag, UI, Registry, Rack ) ) == NULL ) {
 		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveSettings", PREFIX, Buffer ) );
 		ERRReturn;
 	}
 
-	Flow->EOFD( (const void *)"", 1 );	// Si vide, pour signaler une taille de 0 à la fonction ci-dessous.
-
-	Read_( *Flow, Set );
-
-	Success = true;
+	if ( ( Root = Read_( *Flow, Set ) ) == NONE ) {
+		UI.LogAndPrompt( Rack.GetTranslation( "UnableToFindSettings", PREFIX, Buffer ) );
+		ERRReturn;
+	}
 ERRErr
 ERREnd
 ERREpilog
-	return Success;
+	return Root;
 }
 
 void xulftk::trunk___::_DefineSession(
@@ -536,7 +482,8 @@ void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__
 {
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
-	settings_set Set;
+	rgstry::registry Set;
+	rgstry::row__ Root = NONE;
 	str::string Settings;
 	flx::E_STRING_IFLOW__ Flow;
 	str::string Value;
@@ -546,13 +493,14 @@ ERRProlog
 ERRBegin
 	Set.Init();
 
-	RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set );
+	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) == NONE )
+		ERRReturn;
 
 	ProjectId.Init();
 	GetProjectId_( *this, ProjectId );
 
 	Settings.Init();
-	Get_( ProjectId, Set, Settings );
+	Get_( ProjectId, Set, Root, Settings );
 
 	if ( Settings.Amount() != 0 ) {
 		Flow.Init( Settings );
@@ -616,7 +564,6 @@ struct obag___ {
 	str::string Embedded;
 	flf::file_oflow___ FileFlow;
 	flx::E_STRING_OFLOW___  EmbeddedFlow;
-	cdgb64::encoding_oflow___ EmbeddedB64Flow;
 	flw::oflow__ &VoidFlow;
 	obag___ ( void )
 	: VoidFlow( flx::VoidOFlow )
@@ -627,8 +574,9 @@ struct obag___ {
 	}
 };
 
-static bso::bool__ StoreSettingsSet_(
-	const settings_set_ &Set,
+static bso::bool__ StoreSet_(
+	const rgstry::registry_ &Set,
+	rgstry::row__ Root,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::rack__ &Rack )
@@ -641,12 +589,12 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( Bag, UI, Registry, Rack ) ) == NULL ) {
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( dOut, Bag, UI, Registry, Rack ) ) == NULL ) {
 		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreSettings", PREFIX, Buffer ) );
 		ERRReturn;
 	}
 
-	Write_( Set, *Flow );
+	Write_( Set, Root, *Flow );
 
 	Bag.EmbeddedFlow.reset();
 
@@ -683,7 +631,8 @@ void xulftk::trunk___::_DropSession( void )
 {
 ERRProlog
 	str::string Settings;
-	settings_set Set;
+	rgstry::registry Set;
+	rgstry::row__ Root = NONE;
 	str::string ProjectId;
 ERRBegin
 
@@ -692,16 +641,16 @@ ERRBegin
 
 	Set.Init();
 
-	if ( RetrieveSettingsSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) {
+	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) != NONE ) {
 		Settings.Init();
 		GetSettings_( Kernel(), Settings );
 
 		ProjectId.Init();
 		GetProjectId_( *this, ProjectId );
 
-		Set_( ProjectId, Settings, Set );
+		Set_( ProjectId, Settings, Set, Root );
 
-		StoreSettingsSet_( Set, UI(), Registry(), Kernel().LocaleRack() );
+		StoreSet_( Set, Root, UI(), Registry(), Kernel().LocaleRack() );
 	}
 
 	Handle_( Kernel().CloseProject() );

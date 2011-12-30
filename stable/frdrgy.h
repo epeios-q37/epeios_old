@@ -117,9 +117,11 @@ namespace frdrgy {
 		epeios::size__ _DumpRegistry(
 			rgstry::level__ Level,
 			bso::bool__ RootToo,
+			xml::outfit__ Outfit,
+			xml::encoding__ Encoding,
 			txf::text_oflow__ &TFlow ) const
 		{
-			return _registry_::Dump( Level, RootToo, xml::oIndent, TFlow );
+			return _registry_::Dump( Level, RootToo, Outfit, Encoding, TFlow );
 		}
 		epeios::size__ _DumpRegistry(
 			rgstry::level__ Level,

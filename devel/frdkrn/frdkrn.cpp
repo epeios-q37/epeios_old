@@ -511,8 +511,6 @@ ERREpilog
 }
 
 
-#define SETTINGS_ROOT_PATH	"Settings"
-
 report__ frdkrn::kernel___::FillSettingsRegistry(
 	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions,
@@ -523,11 +521,11 @@ ERRProlog
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
 	
-	switch ( _Registry.FillSettings( SettingsXFlow, Criterions, SETTINGS_ROOT_PATH, ErrorSet.Context ) ) {
+	switch ( _Registry.FillSettings( SettingsXFlow, Criterions, "Settings", ErrorSet.Context ) ) {
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		_Registry.CreateSettingsPath( str::string( SETTINGS_ROOT_PATH ) );
+		ERRc();
 		break;
 	default:
 		Report = rSettingsParsingError;

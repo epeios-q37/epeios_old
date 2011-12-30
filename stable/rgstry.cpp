@@ -784,6 +784,7 @@ epeios::size__ rgstry::registry_::Dump(
 	row__ Root,
 	bso::bool__ RootToo,
 	xml::outfit__ Outfit,
+	xml::encoding__ Encoding,
 	txf::text_oflow__ &Flow ) const
 {
 	epeios::size__ ChildAmount = 0;
@@ -793,7 +794,7 @@ ERRProlog
 ERRBegin
 	Buffer.Init( Nodes );
 
-	Writer.Init( Flow, Outfit, xml::e_Default );
+	Writer.Init( Flow, Outfit, Encoding );
 
 	ChildAmount = Dump( Root, RootToo, Writer );
 ERRErr
