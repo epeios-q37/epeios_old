@@ -31,6 +31,7 @@
 
 #include "flx.h"
 #include "fnm.h"
+#include "mtx.h"
 
 
 #define COMPONENT_VERSION	"alpha 1"

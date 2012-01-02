@@ -1,5 +1,11 @@
 $Id$
 
+01/01/2012 :
+	- NSXPCM :
+		- Ajout 'ReplaceChild(...)'.
+	- XULFMN :
+		- Ajout gestion 'Home'.
+
 30/12/2011 :
 	- BCH :
 		- 'Set...(...)'->'FillWith...(...)' pour éviter source de bogue.

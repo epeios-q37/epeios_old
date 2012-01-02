@@ -370,6 +370,24 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
+		bso::bool__ HandleDefaulttProject( void )
+		{
+			bso::bool__ Defined = false;
+		ERRProlog
+			str::string DefaultProjectFileName;
+		ERRBegin
+			DefaultProjectFileName.Init();
+
+			if ( frdrgy::DefaultProject.GetValue( Registry(), DefaultProjectFileName ) ) {
+				DefineSession( DefaultProjectFileName, xpp::criterions___() );
+				Defined = true;
+			}
+
+		ERRErr
+		ERREnd
+		ERREpilog
+			return Defined;
+		}
 		void BrowseWEBSite( void )
 		{
 		ERRProlog

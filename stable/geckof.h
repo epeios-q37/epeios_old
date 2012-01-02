@@ -78,7 +78,7 @@ namespace geckof {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( _Library.IsInitialized() != NULL ) {
+			if ( _Library.IsInitialized() ) {
 				if ( _Steering != NULL )
 					if ( !_ReleaseSteering() ) {
 						_Library.reset();

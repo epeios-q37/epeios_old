@@ -79,6 +79,8 @@ namespace frdrgy {
 
 	extern rgstry::entry LocaleFileName;
 
+	extern rgstry::entry DefaultProject;
+
 	extern rgstry::entry Backend;
 	extern rgstry::entry BackendAccessMode;
 	extern rgstry::entry BackendType;

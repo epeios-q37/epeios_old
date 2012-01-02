@@ -61,6 +61,8 @@ rgstry::entry frdrgy::Parameters( "Parameters" );
 
 rgstry::entry frdrgy::LocaleFileName( "LocaleFileName", Parameters );
 
+rgstry::entry frdrgy::DefaultProject( "DefaultProject", Parameters );
+
 rgstry::entry frdrgy::Backend( "Backend", Parameters );
 rgstry::entry frdrgy::BackendAccessMode( "@AccessMode", Backend );
 rgstry::entry frdrgy::BackendType( "@Type", Backend );

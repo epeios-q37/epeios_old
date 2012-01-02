@@ -784,6 +784,26 @@ namespace nsxpcm {
 		T( Node->CloneNode( Deep, Clone ) );
 	}
 
+	inline void ReplaceChild(
+		nsIDOMNode *Node,
+		nsIDOMNode *OldChild,
+		nsIDOMNode *NewChild )
+	{
+		nsIDOMNode *Dummy = NULL;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRu();
+
+		if ( OldChild == NULL )
+			ERRu();
+
+		if ( NewChild == NULL )
+			ERRu();
+#endif
+		T( Node->ReplaceChild( NewChild, OldChild, &Dummy ) );
+	}
+
 	inline void AppendChild(
 		nsIDOMNode *Node,
 		nsIDOMNode *Child )
@@ -1318,7 +1338,7 @@ namespace nsxpcm {
 		}
 		E_CVDTOR( event_handler__ );
 		void Init( void );
-		void nsxpcm::event_handler__::Add(
+		void Add(
 			nsISupports *Supports,
 			int Events );
 		void Add(
@@ -1581,9 +1601,20 @@ namespace nsxpcm {
 		{
 			nsxpcm::RemoveChildren( GetWidget() );
 		}
-		void AppendChild( nsIDOMNode *Node )
+		void AppendChild( nsIDOMNode *Child )
 		{
-			nsxpcm::AppendChild( GetWidget(), Node );
+			nsxpcm::AppendChild( GetWidget(), Child );
+		}
+		void ReplaceChild( nsIDOMNode *NewChild )
+		{
+# ifdef NSXPCM_DBG
+			if ( GetFirstChild( GetWidget() ) != GetLastChild( GetWidget() ) )
+				ERRc();
+# endif
+			if ( GetFirstChild( GetWidget() ) == NULL )
+				AppendChild( NewChild );
+			else
+				nsxpcm::ReplaceChild( GetWidget(), GetFirstChild( GetWidget() ), NewChild );
 		}
 	};
 
