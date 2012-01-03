@@ -57,60 +57,60 @@ public:
 
 using namespace geckof;
 
-extern "C" typedef geckoo::retrieve_steering retrieve_steering;
+extern "C" typedef geckoo::create_steering create_steering;
 
-bso::bool__ geckof::gecko_wrapper___::_RetrieveSteering( geckoo::shared_data__ *Data )
+bso::bool__ geckof::gecko_wrapper___::_CreateSteering( geckoo::shared_data__ *Data )
 {
-	retrieve_steering *RetrieveSteering = dlbrry::GetFunction<retrieve_steering *>( E_STRING( GECKOO_RETRIEVE_STEERING_FUNCTION_NAME ), _Library );
+	create_steering *CreateSteering = dlbrry::GetFunction<create_steering *>( E_STRING( GECKOO_CREATE_STEERING_FUNCTION_NAME ), _Library );
 
-	if ( RetrieveSteering == NULL )
+	if ( CreateSteering == NULL )
 		return false;
 
 	if ( _Steering != NULL )
 		ERRc();
 
-	if ( ( _Steering = RetrieveSteering( Data ) ) == NULL )
+	if ( ( _Steering = CreateSteering( Data ) ) == NULL )
 		return false;
 
 	return true;
 }
 
-extern "C" typedef geckoo::release_steering release_steering;
+extern "C" typedef geckoo::delete_steering delete_steering;
 
-bso::bool__ geckof::gecko_wrapper___::_ReleaseSteering( void )
+bso::bool__ geckof::gecko_wrapper___::_DeleteSteering( void )
 {
-	release_steering *ReleaseSteering = dlbrry::GetFunction<release_steering *>( E_STRING( GECKOO_RELEASE_STEERING_FUNCTION_NAME ), _Library );
+	delete_steering *DeleteSteering = dlbrry::GetFunction<delete_steering *>( E_STRING( GECKOO_DELETE_STEERING_FUNCTION_NAME ), _Library );
 
-	if ( ReleaseSteering == NULL )
+	if ( DeleteSteering == NULL )
 		return false;
 
 	if ( _Steering == NULL )
 		ERRc();
 
-	ReleaseSteering( _Steering );
+	DeleteSteering( _Steering );
 
 	_Steering = NULL;
 
 	return true;
 }
 
-extern "C" typedef geckoo::retrieve_lone_steering retrieve_lone_steering;
+extern "C" typedef geckoo::retrieve_steering retrieve_steering;
 
-geckoo::user_functions__ *geckof::RetrieveLoneSteering(
+geckoo::user_functions__ *geckof::RetrieveSteering(
 	const char *LibraryName,
 	err::handling__ ERRHandling )
 {
 	geckoo::user_functions__ *Steering = NULL;
 ERRProlog
 	dlbrry::dynamic_library___ Library;
-	retrieve_lone_steering *RetrieveLoneSteering = NULL;
+	retrieve_steering *RetrieveSteering = NULL;
 ERRBegin
 
 	if ( Library.Init( LibraryName ) ) {
-		RetrieveLoneSteering = dlbrry::GetFunction<retrieve_lone_steering *>( E_STRING( GECKOO_RETRIEVE_LONE_STEERING_FUNCTION_NAME ), Library );
+		RetrieveSteering = dlbrry::GetFunction<retrieve_steering *>( E_STRING( GECKOO_RETRIEVE_STEERING_FUNCTION_NAME ), Library );
 
-		if ( RetrieveLoneSteering != NULL )
-			Steering = RetrieveLoneSteering();
+		if ( RetrieveSteering != NULL )
+			Steering = RetrieveSteering();
 	}
 
 	if ( ( Steering == NULL ) && ( ERRHandling != err::hUserDefined ) )

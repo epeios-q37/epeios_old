@@ -1628,9 +1628,8 @@ ERREpilog
 }
 
 
-NS_IMPL_ISUPPORTS1(nsxpcm::event_listener__, nsxpcm::ievent_listener__)
+NS_IMPL_ISUPPORTS1(nsxpcm::event_listener__, nsxpcm::event_listener__ );
 
-// ATTENTION, IMPORTANT : en cas de comportement étrange, voir remarque concernant cet objet dans le '.h' !
 NS_IMETHODIMP nsxpcm::event_listener__::HandleEvent(nsIDOMEvent *Event)
 {
 	nsresult NSResult = NS_OK;

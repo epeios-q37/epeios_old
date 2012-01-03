@@ -73,14 +73,14 @@ namespace geckof {
 	private:
 		dlbrry::dynamic_library___ _Library;
 		geckoo::user_functions__ *_Steering;
-		bso::bool__ _RetrieveSteering( geckoo::shared_data__ *Data );
-		bso::bool__ _ReleaseSteering( void );
+		bso::bool__ _CreateSteering( geckoo::shared_data__ *Data );
+		bso::bool__ _DeleteSteering( void );
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			if ( _Library.IsInitialized() ) {
 				if ( _Steering != NULL )
-					if ( !_ReleaseSteering() ) {
+					if ( !_DeleteSteering() ) {
 						_Library.reset();
 						ERRs();
 					}
@@ -106,7 +106,7 @@ namespace geckof {
 			reset();
 
 			if ( _Library.Init( LibraryName, ERRHandling ) )
-				if ( _RetrieveSteering( SharedData ) )
+				if ( _CreateSteering( SharedData ) )
 					return true;
 
 			if ( ERRHandling != err::hUserDefined )
@@ -127,7 +127,7 @@ namespace geckof {
 		}
 	};
 
-	geckoo::user_functions__ *RetrieveLoneSteering(
+	geckoo::user_functions__ *RetrieveSteering(
 		const char *LibraryName,
 		err::handling__ ERRHandling = err::h_Default );
 }

@@ -64,7 +64,7 @@ using namespace sclgecko;
 
 static bso::bool__ IsInitialized_ = false;
 
-geckoo::user_functions__ *geckob::GECKOBRetrieveSteering( geckoo::shared_data__ *Data )
+geckoo::user_functions__ *geckob::GECKOBCreateSteering( geckoo::shared_data__ *Data )
 {
 	geckoo::user_functions__ *Steering = NULL;
 ERRProlog
@@ -81,7 +81,7 @@ ERRBegin
 		IsInitialized_ = true;
 	}
 
-	Steering = RetrieveSteering( scllocale::GetRack().Locale(), Data->Language, Data->UP );
+	Steering = CreateSteering( scllocale::GetRack().Locale(), Data->Language, Data->UP );
 ERRErr
 ERREnd
 	if ( cio::IsInitialized() ) {
@@ -92,9 +92,9 @@ ERREpilog
 	return Steering;
 }
 
-void geckob::GECKOBReleaseSteering( geckoo::user_functions__ *Steering )
+void geckob::GECKOBDeleteSteering( geckoo::user_functions__ *Steering )
 {
-	ReleaseSteering( Steering );
+	DeleteSteering( Steering );
 }
 
 

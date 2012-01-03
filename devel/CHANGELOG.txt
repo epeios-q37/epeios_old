@@ -1,5 +1,15 @@
 $Id$
 
+03/01/2012 :
+	- GECKOx :
+		- Refonte.
+	- NSXPCM :
+		- Suppression 'ievent_listener__'.
+	- SCLGECKO :
+		 - Adaptation.
+	- XULFTK :
+		 - Adaptation.
+
 01/01/2012 :
 	- NSXPCM :
 		- Ajout 'ReplaceChild(...)'.

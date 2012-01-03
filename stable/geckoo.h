@@ -66,9 +66,9 @@ extern class ttr_tutor &GECKOOTutor;
 
 # include "nsxpcm.h"
 
+# define GECKOO_CREATE_STEERING_FUNCTION_NAME			GECKOOCreateSteering
 # define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME			GECKOORetrieveSteering
-# define GECKOO_RETRIEVE_LONE_STEERING_FUNCTION_NAME	GECKOORetrieveLoneSteering
-# define GECKOO_RELEASE_STEERING_FUNCTION_NAME			GECKOOReleaseSteering
+# define GECKOO_DELETE_STEERING_FUNCTION_NAME			GECKOODeleteSteering
 
 # define GECKOO_SHARED_DATA_VERSION	"alpha 2"
 
@@ -147,9 +147,9 @@ namespace geckoo {
 	};
 #pragma pack( pop )
 
-	typedef user_functions__ *(retrieve_steering)( shared_data__ * );
-	typedef user_functions__ *(retrieve_lone_steering)( void );
-	typedef void (release_steering)( user_functions__ * );
+	typedef user_functions__ *(create_steering)( shared_data__ * );
+	typedef user_functions__ *(retrieve_steering)( void );
+	typedef void (delete_steering)( user_functions__ * );
 
 }
 

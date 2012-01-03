@@ -66,10 +66,10 @@ extern class ttr_tutor &GECKOBTutor;
 #include "geckoo.h"
 
 namespace geckob {
-	geckoo::user_functions__ *GECKOBRetrieveSteering( geckoo::shared_data__ *Data );	// A surcharger.
-	void GECKOBReleaseSteering( geckoo::user_functions__ * );	// A surcharger.
+	geckoo::user_functions__ *GECKOBCreateSteering( geckoo::shared_data__ *Data );	// A surcharger.
+	void GECKOBDeleteSteering( geckoo::user_functions__ * );	// A surcharger.
 
-	void SetLoneSteering( geckoo::user_functions__ &Steering );
+	void SetSteering( geckoo::user_functions__ &Steering );
 }
 
 /*$END$*/

@@ -177,7 +177,7 @@ static void Register_(
 {
 	Widgets.wdwMain.Init( Trunk, Window, Window );	// Le type n'est pas correct di on passe par l'id.
 	R( dckMain );
-	R( boxHome );
+	R( ifrHome );
 	R( ifrSessionForm );
 	R( ifrSessionView );
 }

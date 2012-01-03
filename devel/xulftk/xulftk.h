@@ -306,7 +306,7 @@ namespace xulftk {
 		}
 		void ExposeSteering( void )
 		{
-			geckob::SetLoneSteering( *_Steering );
+			geckob::SetSteering( *_Steering );
 		}
 		const xulfkl::kernel___ &Kernel( void ) const
 		{

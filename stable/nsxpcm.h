@@ -156,7 +156,7 @@ extern class ttr_tutor &NSXPCMTutor;
 
 # define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
 
-# define NSXPCM_IEVENT_LISTENER_IID \
+# define NSXPCM_EVENT_LISTENER_IID \
   {0xd333cd20, 0xc453, 0x11dd, \
     { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
@@ -1898,6 +1898,11 @@ namespace nsxpcm {
 
 			return View;
 		}
+		void _SetView( nsITreeView *View )
+		{
+			nsresult Error = NS_OK;
+			T( Error = GetWidget()->SetView( View ) );
+		}
 		nsITreeSelection *_GetSelection( void )
 		{
 			nsITreeSelection *Selection = NULL;
@@ -1914,6 +1919,10 @@ namespace nsxpcm {
 			return nsxpcm::QueryInterface<nsITreeContentView>( _GetView() );
 		}
 	public:
+		void SetView( nsITreeView *View )
+		{
+			_SetView( View );
+		}
 		bso::slong__ GetCurrentIndex( void )
 		{
 			PRInt32 Count = 0;
@@ -2805,31 +2814,17 @@ interface eevent_listener
 */
 
 namespace nsxpcm {
-	class NS_NO_VTABLE NS_SCRIPTABLE ievent_listener__
-	: public nsIDOMEventListener
-	{
-	public: 
-		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_IEVENT_LISTENER_IID)
-	};
 
-	/*
-	ATTENTION, IMPORTANT : pour des raison de simplification de mise en oeuvre et de par le système
-	d'enregistrement de 'XULRunner', cet object est commun à tous les composants utilisant la gestion d'évènement
-	des bibliothèques Epeios. Une modification de cet objet	peut ne donc par être répercuté dans le composant,
-	parce que l'ancienne version de ce composant est encore	actif car existant dans un autre composant.
-	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modifications
-	de cet objet soient prises en compte.
-	*/
 	struct event_listener__
-	: ievent_listener__
+	: public nsIDOMEventListener
 	{
 	private:
 		event_handler__ *_EventHandler;
 	protected:
 		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	public:
+		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_EVENT_LISTENER_IID)
 		NS_DECL_ISUPPORTS
-	//  NS_DECL_IEEVENT_LISTENER
 		  void reset( bso::bool__ = true )
 		  {
 			  _EventHandler = NULL;
@@ -2850,12 +2845,12 @@ namespace nsxpcm {
 
 	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
 }
-	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::ievent_listener__, NSXPCM_IEVENT_LISTENER_IID)
+	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::event_listener__, NSXPCM_EVENT_LISTENER_IID)
 
-#define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;1"
-#define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
+# define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;alpha 3"
+# define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
 // {d333cd20-c453-11dd-ad8b-0800200c9a66}
-#define NSXPCM_EVENT_LISTENER_CID  NSXPCM_IEVENT_LISTENER_IID
+# define NSXPCM_EVENT_LISTENER_CID  NSXPCM_EVENT_LISTENER_IID
 
 namespace nsxpcm {
 	class NS_NO_VTABLE NS_SCRIPTABLE iclh__
@@ -2865,14 +2860,6 @@ namespace nsxpcm {
 		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_ICLH_IID)
 	};
 
-	/*
-	ATTENTION, IMPORTANT : pour des raison de simplification de mise en oeuvre et de par le système
-	d'enregistrement de 'XULRunner', cet object est commun à tous les composants utilisant la gestion d'évènement
-	des bibliothèques Epeios. Une modification de cet objet	peut ne donc par être répercuté dans le composant,
-	parce que l'ancienne version de ce composant est encore	actif car existant dans un autre composant.
-	Il faut donc effacer touts les composants et les donnée utilisateurs associées pour que lea modifications
-	de cet objet soient prises en compte.
-	*/
 	struct clh__
 	: iclh__
 	{

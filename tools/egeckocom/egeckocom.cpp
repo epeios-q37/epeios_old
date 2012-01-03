@@ -34,7 +34,7 @@
 #include "mtx.h"
 
 
-#define COMPONENT_VERSION	"alpha 1"
+#define COMPONENT_VERSION	"alpha 2"
 
 #define NAME "egeckocom"
 
@@ -52,10 +52,10 @@ static flx::E_STRING_OFLOW_DRIVER___ COutDriver_;
 static str::string CErrString_;
 static flx::E_STRING_OFLOW_DRIVER___ CErrDriver_;
 
-#define MESSAGE_UNABLE_TO_REGISTER_ELEMENT		"UnableToRegisterElement"
-#define MESSAGE_UNABLE_TO_OPEN_COMPONENT		"UnableToOpenComponent"
-#define MESSAGE_BAD_LONE_REGISTRATION_CONTEXT	"BadLoneRegistrationContext"
-#define MESSAGE_LONE_REGISTRATION_FAILURE		"LoneRegistrationFailure"
+#define MESSAGE_UNABLE_TO_REGISTER_ELEMENT	"UnableToRegisterElement"
+#define MESSAGE_UNABLE_TO_OPEN_COMPONENT	"UnableToOpenComponent"
+#define MESSAGE_BAD_RETRIEVE_CONTEXT		"BadRetrieveContext"
+#define MESSAGE_RETRIEVE_FAILURE		"RetrieveFailure"
 
 class egeckocom___
 : public EIGeckoCOM
@@ -122,7 +122,7 @@ ERREpilog
 	return Component;
 }
 
-NS_IMETHODIMP egeckocom___::Initialize(
+NS_IMETHODIMP egeckocom___::Create(
 	const char *ComponentId,
 	const char *Language,
 	char **JSErrorMessage )
@@ -134,10 +134,9 @@ RP
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 RB
-		nsCOMPtr<nsxpcm::clh__>CLH;
+	nsCOMPtr<nsxpcm::clh__>CLH;
 
 	nsxpcm::GetService( CLH_CONTRACTID, CLH );
-
 
 	if ( !IsInitialized_ ) {
 		sclmisc::Initialize( NAME, NULL );
@@ -182,6 +181,46 @@ RN
 RE
 }
 
+NS_IMETHODIMP egeckocom___::Retrieve(
+	const char *ComponentId,
+	char **JSErrorMessage )
+{
+	// Don't know how to get a 'window' fro its 'document'.
+RP
+	str::string LibraryName;
+	str::strings Tags;
+	STR_BUFFER___ Buffer;
+	str::string Translation;
+RB
+	LibraryName.Init();
+	GetComponent_( ComponentId, LibraryName );
+
+	mtx::Lock( _Mutex );
+
+	if ( _CurrentSteering != NULL ) {
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_BAD_RETRIEVE_CONTEXT, Translation ) );
+		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
+		ErrorMessage.Append( " !" );
+		ERRBeam();
+	}
+
+	if ( ( _CurrentSteering = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
+		Translation.Init();
+		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_RETRIEVE_FAILURE, Translation ) );
+		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
+		ErrorMessage.Append( " !" );
+		ERRBeam();
+	}
+
+RR
+	_CurrentSteering = NULL;
+
+	if ( mtx::IsLocked( _Mutex ) )
+		mtx::Unlock( _Mutex );
+RN
+RE
+}
 
 NS_IMETHODIMP egeckocom___::Register(
 	nsIDOMWindow *Window,
@@ -218,7 +257,7 @@ RN
 RE
 }
 
-NS_IMETHODIMP egeckocom___::Start(
+NS_IMETHODIMP egeckocom___::Stop(
 	nsICommandLine *CommandLine,
 	char **JSErrorMessage )
 {
@@ -234,59 +273,6 @@ RB
 
 	mtx::Unlock( _Mutex );
 RR
-RN
-RE
-}
-
-NS_IMETHODIMP egeckocom___::LoneRegister(
-	nsIDOMWindow *Window,
-	const char *ComponentId,
-	char **JSErrorMessage )
-{
-	// Don't know how to get a 'window' fro its 'document'.
-RP
-	geckoo::user_functions__ *Steering = NULL;
-	str::string Id, LibraryName;
-	str::strings Tags;
-	STR_BUFFER___ Buffer;
-	str::string Translation;
-RB
-	LibraryName.Init();
-	GetComponent_( ComponentId, LibraryName );
-
-	if ( _CurrentSteering != NULL ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_BAD_LONE_REGISTRATION_CONTEXT, Translation ) );
-		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
-	}
-
-	if ( ( Steering = geckof::RetrieveLoneSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_LONE_REGISTRATION_FAILURE, Translation ) );
-		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
-	}
-
-	Id.Init();
-
-	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
-
-	if ( !Steering->Register( Window, Id ) ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT, Translation ) );
-		Tags.Init();
-		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		Tags.Append( Id );
-		lcl::ReplaceTags( ErrorMessage, Tags );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
-	}
-RR
-	if ( Window != NULL )
-		nsxpcm::Close( Window );
 RN
 RE
 }

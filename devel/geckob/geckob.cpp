@@ -70,9 +70,9 @@ static geckoo::user_functions__ *LoneSteering_ = NULL;
 
 #define DEF( name, function ) extern "C" FUNCTION_SPEC function name
 
+DEF( GECKOO_CREATE_STEERING_FUNCTION_NAME, geckoo::create_steering );
 DEF( GECKOO_RETRIEVE_STEERING_FUNCTION_NAME, geckoo::retrieve_steering );
-DEF( GECKOO_RETRIEVE_LONE_STEERING_FUNCTION_NAME, geckoo::retrieve_lone_steering );
-DEF( GECKOO_RELEASE_STEERING_FUNCTION_NAME, geckoo::release_steering );
+DEF( GECKOO_DELETE_STEERING_FUNCTION_NAME, geckoo::delete_steering );
 
 #if 0
 #ifdef CPE__T_MS
@@ -101,7 +101,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #endif
 #endif
 
-geckoo::user_functions__ *GECKOORetrieveSteering( geckoo::shared_data__ *Data )
+geckoo::user_functions__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
 {
 	if ( Data == NULL )
 		ERRu();
@@ -112,10 +112,10 @@ geckoo::user_functions__ *GECKOORetrieveSteering( geckoo::shared_data__ *Data )
 	if ( Data->Control != Data->ControlComputing() )
 		ERRc();
 
-	return geckob::GECKOBRetrieveSteering( Data );
+	return geckob::GECKOBCreateSteering( Data );
 }
 
-geckoo::user_functions__ *GECKOORetrieveLoneSteering( void )
+geckoo::user_functions__ *GECKOORetrieveSteering( void )
 {
 	geckoo::user_functions__ *Steering = NULL;
 
@@ -134,12 +134,12 @@ geckoo::user_functions__ *GECKOORetrieveLoneSteering( void )
 
 }
 
-void GECKOOReleaseSteering( geckoo::user_functions__ *Steering )
+void GECKOODeleteSteering( geckoo::user_functions__ *Steering )
 {
-	geckob::GECKOBReleaseSteering( Steering );
+	geckob::GECKOBDeleteSteering( Steering );
 }
 
-void geckob::SetLoneSteering( geckoo::user_functions__ &Steering )
+void geckob::SetSteering( geckoo::user_functions__ &Steering )
 {
 	mtx::Lock( Mutex_ );
 

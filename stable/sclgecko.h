@@ -71,13 +71,13 @@ namespace sclgecko {
 	extern const char *TargetName;
 
 	// A définir par l'utilisateur.
-	geckoo::user_functions__ *RetrieveSteering(
+	geckoo::user_functions__ *CreateSteering(
 		const lcl::locale_ &Locale,
 		const char *Language,
 		void *UP );	// To overload !
 
 	// A définir par l'utilisateur.
-	void ReleaseSteering( geckoo::user_functions__ *Steering );	// To overload.
+	void DeleteSteering( geckoo::user_functions__ *Steering );
 
 }
 
