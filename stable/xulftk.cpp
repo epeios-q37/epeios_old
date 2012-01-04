@@ -89,6 +89,8 @@ ERRBegin
 	Message.Append( RawMessage );
 
 	_UI->LogAndPrompt( Message );
+
+	ERRAbort();
 ERRErr
 ERREnd
 ERREpilog
