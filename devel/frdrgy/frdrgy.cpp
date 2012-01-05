@@ -74,13 +74,11 @@ rgstry::entry frdrgy::AuthenticationMode( "@Mode", Authentication );
 rgstry::entry frdrgy::AuthenticationLogin( "Login", Authentication );
 rgstry::entry frdrgy::AuthenticationPassword( "Password", Authentication );
 
-#define PREDEFINED_BACKEND_ID	"id"
-
 rgstry::entry frdrgy::PredefinedBackends( "PredefinedBackends", Parameters );
 rgstry::entry frdrgy::DefaultPredefinedBackend( "@Default", PredefinedBackends );
-static rgstry::entry GenericPredefinedBackend_( "PredefinedBackend", PredefinedBackends ); 
-rgstry::entry frdrgy::PredefinedBackendId( "@" PREDEFINED_BACKEND_ID, GenericPredefinedBackend_ );
-rgstry::entry frdrgy::PredefinedBackend( "[" PREDEFINED_BACKEND_ID "=\"%\"]", GenericPredefinedBackend_);
+static rgstry::entry FreePredefinedBackend_( "PredefinedBackend", PredefinedBackends ); 
+rgstry::entry frdrgy::PredefinedBackendId( "@id", FreePredefinedBackend_ );
+rgstry::entry frdrgy::PredefinedBackend( FRDRGY_TAGGING_ATTRIBUTE( "id" ), FreePredefinedBackend_);
 rgstry::entry frdrgy::PredefinedBackendAlias( "@Alias", PredefinedBackend );
 rgstry::entry frdrgy::PredefinedBackendType( "@Type", PredefinedBackend );
 

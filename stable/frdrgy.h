@@ -60,18 +60,22 @@ extern class ttr_tutor &FRDRGYTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "rgstry.h"
+# include "rgstry.h"
 
-#define FRDRGY_PATH_SEPARATOR	"/"	// Path item separator
+# define FRDRGY_PATH_SEPARATOR	"/"	// Path item separator
 
-#define FRDRGY_PATH_TAG_CHAR	'$'	// Joker for tags as character. NOTA : if modified, modify below too !
-#define FRRRGY_PATH_TAG_STRING	"$"	// Joker for tags as string
+# define FRDRGY_PATH_TAG_CHAR	'$'	// Joker for tags as character. NOTA : if modified, modify below too !
+# define FRRRGY_PATH_TAG_STRING	"$"	// Joker for tags as string
 
-#define FRDRGY_PARAMETERS_PATH	"Parameters" FRDRGY_PATH_SEPARATOR
-#define FRDRGY_PROFILES_PATH	"Profiles" FRDRGY_PATH_SEPARATOR
+# define FRDRGY_PARAMETERS_PATH	"Parameters" FRDRGY_PATH_SEPARATOR
+# define FRDRGY_PROFILES_PATH	"Profiles" FRDRGY_PATH_SEPARATOR
+
+# define FRDRGY_TAGGING_ATTRIBUTE( attribute ) "[" attribute "=\"%\"]"
+
+# define FRDRGY_TAGGED_ENTRY( tag, attribute )	tag FRDRGY_TAGGING_ATTRIBUTE( attribute )
 
 namespace frdrgy {
 
