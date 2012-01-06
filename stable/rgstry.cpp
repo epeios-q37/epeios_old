@@ -1415,7 +1415,7 @@ ERRBegin
 
 	if ( Path != NULL ) {
 		Buffer.Init();
-		GetParentPath_( parameters(), false, Buffer );
+		GetParentPath_( tags(), false, Buffer );
 		HandleTag_( GetTagAmount_( Buffer ) + 1, Path, this->Path );
 	}
 ERRErr

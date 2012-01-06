@@ -1,5 +1,14 @@
 $Id$
 
+
+06/01/2012 :
+	- FRDKRN :
+		- Adaptation.
+	- RGSTRY :
+		- 'parameters[_]' -> 'tags[_]'.
+	- SCLREGISTRY :
+		- Adaptation.
+
 03/01/2012 :
 	- GECKOx :
 		- Refonte.

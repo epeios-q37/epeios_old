@@ -302,20 +302,20 @@ static csducl::type__ GetPredefinedBackendTypeAndLocation_(
 ERRProlog
 	str::string Id;
 	str::string RawType;
-	rgstry::parameters Parameters;
+	rgstry::tags Tags;
 ERRBegin
 	Id.Init();
 	if ( !frdrgy::Backend.GetValue( Registry, Id ) )
 		ERRReturn;
 
-	Parameters.Init();
-	Parameters.Append( Id );
+	Tags.Init();
+	Tags.Append( Id );
 
 	RawType.Init();
-	if ( !frdrgy::PredefinedBackendType.GetValue( Registry, Parameters, RawType ) )
+	if ( !frdrgy::PredefinedBackendType.GetValue( Registry, Tags, RawType ) )
 		ERRReturn;
 
-	if ( !frdrgy::PredefinedBackend.GetValue( Registry, Parameters, Location ) )
+	if ( !frdrgy::PredefinedBackend.GetValue( Registry, Tags, Location ) )
 		ERRReturn;
 
 	switch ( GetBackendExtendedType( RawType ) ) {
@@ -694,14 +694,14 @@ static void GetPredefinedBackend_(
 ERRProlog
 	str::string Value;
 	str::string Translation;
-	rgstry::parameters Parameters;
+	rgstry::tags Tags;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	Parameters.Init();
-	Parameters.Append( Id );
+	Tags.Init();
+	Tags.Append( Id );
 
 	Value.Init();
-	frdrgy::PredefinedBackendAlias.GetValue( Registry, Parameters, Value );
+	frdrgy::PredefinedBackendAlias.GetValue( Registry, Tags, Value );
 
 	Translation.Init();
 	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );

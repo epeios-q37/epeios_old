@@ -68,10 +68,10 @@ static rgstry::multi_level_registry Registry_;
 static rgstry::level__ RootLevel_ = RGSTRY_UNDEFINED_LEVEL;
 static STR_BUFFER___ Translation_;
 
-rgstry::entry sclrgstry::Parameters;
+rgstry::entry sclrgstry::Parameters( "Parameters" );
 
-rgstry::entry sclrgstry::LocaleFileName;
-rgstry::entry sclrgstry::Language;
+rgstry::entry sclrgstry::LocaleFileName( "LocaleFileName", Parameters );
+rgstry::entry sclrgstry::Language( "Language", Parameters );
 
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
@@ -99,7 +99,7 @@ static rgstry::status__ FillRegistry_(
 
 bso::bool__ sclrgstry::GetValue(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	str::string_ &Value )
 {
 	bso::bool__ Missing = true;
@@ -108,7 +108,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Entry.GetValue( Registry_, Parameters, Value );
+	Missing = Entry.GetValue( Registry_, Tags, Value );
 ERRErr
 ERREnd
 ERREpilog
@@ -117,7 +117,7 @@ ERREpilog
 
 bso::bool__ sclrgstry::GetValues(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	str::strings_ &Values )
 {
 	bso::bool__ Missing = true;
@@ -126,7 +126,7 @@ ERRProlog
 ERRBegin
 	TargetedPath.Init();
 
-	Missing = Entry.GetValues( Registry_, Parameters, Values );
+	Missing = Entry.GetValues( Registry_, Tags, Values );
 ERRErr
 ERREnd
 ERREpilog
@@ -147,7 +147,7 @@ static str::string_ &GetTranslation_(
 
 static inline void ReportBadOrNoValueForRegistryEntryError_(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters )
+	const rgstry::tags_ &Tags )
 {
 ERRProlog
 	str::string Translation;
@@ -158,7 +158,7 @@ ERRBegin
 	GetTranslation_( "BadOrNoValueForRegistryEntry", Translation );
 
 	Path.Init();
-	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Parameters, Path ) );
+	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Tags, Path ) );
 
 	cio::CErr << Translation << " !" << txf::nl << txf::commit;
 ERRErr
@@ -243,11 +243,11 @@ ERREpilog
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	str::string_ &Value,
 	bso::bool__ *Missing )
 {
-	if ( !GetValue( Entry, Parameters, Value ) )
+	if ( !GetValue( Entry, Tags, Value ) )
 		if ( Missing != NULL )
 			*Missing = true;
 	
@@ -256,7 +256,7 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 
 const char *sclrgstry::GetOptionalRegistryValue(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
 {
@@ -266,7 +266,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetOptionalRegistryValue( Entry, Parameters, Value, &LocalMissing );
+	GetOptionalRegistryValue( Entry, Tags, Value, &LocalMissing );
 
 	if ( LocalMissing ) {
 		if ( Missing != NULL )
@@ -281,11 +281,11 @@ ERREpilog
 
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	str::string_ &Value )
 {
-	if ( !GetValue( Entry, Parameters, Value ) ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
+	if ( !GetValue( Entry, Tags, Value ) ) {
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -294,7 +294,7 @@ const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 
 const char *sclrgstry::GetMandatoryRegistryValue(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	STR_BUFFER___ &Buffer )
 {
 ERRProlog
@@ -302,7 +302,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetMandatoryRegistryValue( Entry, Parameters, Value );
+	GetMandatoryRegistryValue( Entry, Tags, Value );
 
 	Value.Convert( Buffer );
 ERRErr
@@ -313,7 +313,7 @@ ERREpilog
 
 template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	t Limit,
 	t &Value )
 {
@@ -324,13 +324,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Entry, Parameters, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, Tags, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( Limit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -341,7 +341,7 @@ ERREpilog
 
 template <typename t> static bso::bool__ GetRegistrySignedNumber_(
 	const rgstry::entry_ &Entry,
-	const rgstry::parameters_ &Parameters,
+	const rgstry::tags_ &Tags,
 	t LowerLimit,
 	t UpperLimit,
 	t &Value )
@@ -353,13 +353,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Entry, Parameters, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, Tags, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );
+		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -371,13 +371,13 @@ ERREpilog
 #define RUN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
 		const rgstry::entry_ &Entry,\
-		const rgstry::parameters_ &Parameters,\
+		const rgstry::tags_ &Tags,\
 		type Limit  )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Parameters, Limit, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );\
+		if ( !GetRegistryUnsignedNumber_( Entry, Tags, Limit, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 \
@@ -385,13 +385,13 @@ ERREpilog
 	}\
 	type sclrgstry::GetRegistry##name(\
 		const rgstry::entry_ &Entry,\
-		const rgstry::parameters_ &Parameters,\
+		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Limit )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Parameters, Limit, Value ) )\
+		if ( !GetRegistryUnsignedNumber_( Entry, Tags, Limit, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -409,28 +409,28 @@ RUN( UByte, bso::ubyte__ )
 #define RSN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
 		const rgstry::entry_ &Entry,\
-		const rgstry::parameters_ &Parameters,\
+		const rgstry::tags_ &Tags,\
 		type Min,\
 		type Max)\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Parameters, Min, Max, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry, Parameters );\
+		if ( !GetRegistrySignedNumber_( Entry, Tags, Min, Max, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
 		const rgstry::entry_ &Entry,\
-		const rgstry::parameters_ &Parameters,\
+		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Min,\
 		type Max )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Parameters, Min, Max, Value ) )\
+		if ( !GetRegistrySignedNumber_( Entry, Tags, Min, Max, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -456,10 +456,6 @@ public:
 
 		RootLevel_ = Registry_.AddEmbeddedLevel();
 
-		Parameters.Init( "Parameters" );
-
-		LocaleFileName.Init( "LocaleFileName", Parameters );
-		Language.Init( "Language", Parameters );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

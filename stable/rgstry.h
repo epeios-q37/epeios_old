@@ -1681,7 +1681,7 @@ namespace rgstry {
 	type Get##name(\
 		const multi_level_registry_ &Registry,\
 		type Default,\
-		const parameters_ &Parameters = parameters(),\
+		const tags_ &Tags = tags(),\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\
 		type Max = max )\
@@ -1691,7 +1691,7 @@ namespace rgstry {
 		str::string Buffer;\
 	ERRBegin\
 		Buffer.Init();\
-		Value = (type)_GetUnsigned( Registry, GetPath( Parameters, Buffer ), Default, Error, Min, Max );\
+		Value = (type)_GetUnsigned( Registry, GetPath( Tags, Buffer ), Default, Error, Min, Max );\
 	ERRErr\
 	ERREnd\
 	ERREpilog\
@@ -1707,7 +1707,7 @@ namespace rgstry {
 	type Get##name(\
 		const multi_level_registry_ &Registry,\
 		type Default,\
-		const parameters_ &Parameters = parameters(),\
+		const tags_ &Tags = tags(),\
 		bso::bool__ *Error = NULL,\
 		type Min = min,\
 		type Max = max )\
@@ -1717,21 +1717,21 @@ namespace rgstry {
 		str::string Buffer;\
 	ERRBegin\
 		Buffer.Init();\
-		Value = (type)_GetSigned( Registry, GetPath( Parameters, Buffer ), Default, Error, Min, Max );\
+		Value = (type)_GetSigned( Registry, GetPath( Tags, Buffer ), Default, Error, Min, Max );\
 	ERRErr\
 	ERREnd\
 	ERREpilog\
 		return Value;\
 	}
 
-	typedef values_	parameters_;
-	E_AUTO( parameters );
+	typedef values_	tags_;
+	E_AUTO( tags );
 
 	class entry_
 	{
 	private:
 		void GetParentPath_(
-			const parameters_ &Parameters,
+			const tags_ &Tags,
 			bso::bool__ NoTailingSlash,
 			str::string_ &Path ) const
 		{
@@ -1781,24 +1781,24 @@ namespace rgstry {
 			const char *Path = NULL,
 			const entry_ &Parent = *(const entry_ *)NULL );
 		const str::string_ &GetPath(
-			const parameters_ &Parameters,
+			const tags_ &Tags,
 			str::string_ &Path ) const
 		{
-			GetParentPath_( Parameters, this->Path( this->Path.First() ) == '[', Path );
+			GetParentPath_( Tags, this->Path( this->Path.First() ) == '[', Path );
 
 			Path.Append( this->Path );
 
-			str::ReplaceTags( Path, Parameters, '%' );
+			str::ReplaceTags( Path, Tags, '%' );
 
 			return Path;
 		}
 		const str::string_ &GetPath( str::string_ &Path ) const
 		{
-			return GetPath( parameters(), Path );
+			return GetPath( tags(), Path );
 		}
 		bso::bool__ SetValue(
 			multi_level_registry_ &Registry,
-			const parameters_ &Parameters,
+			const tags_ &Tags,
 			const str::string_ &Value ) const
 		{
 			bso::bool__ Made = false;
@@ -1806,7 +1806,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.SetValue( GetPath( Parameters, Buffer ), Value );
+			Made = Registry.SetValue( GetPath( Tags, Buffer ), Value );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -1816,11 +1816,11 @@ namespace rgstry {
 			multi_level_registry_ &Registry,
 			const str::string_ &Value ) const
 		{
-			return SetValue( Registry, parameters(), Value );
+			return SetValue( Registry, tags(), Value );
 		}
 		bso::bool__ GetValue(
 			const multi_level_registry_ &Registry,
-			const parameters_ &Parameters,
+			const tags_ &Tags,
 			str::string_ &Value ) const
 		{
 			bso::bool__ Made = false;
@@ -1828,7 +1828,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.GetValue( GetPath( Parameters, Buffer ), Value );
+			Made = Registry.GetValue( GetPath( Tags, Buffer ), Value );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -1838,11 +1838,11 @@ namespace rgstry {
 			const multi_level_registry_ &Registry,
 			str::string_ &Value ) const
 		{
-			return GetValue( Registry, parameters(), Value );
+			return GetValue( Registry, tags(), Value );
 		}
 		bso::bool__ GetValues(
 			const multi_level_registry_ &Registry,
-			const parameters_ &Parameters,
+			const tags_ &Tags,
 			values_ &Values ) const
 		{
 			bso::bool__ Made = false;
@@ -1850,7 +1850,7 @@ namespace rgstry {
 			str::string Buffer;
 		ERRBegin
 			Buffer.Init();
-			Made = Registry.GetValues( GetPath( Parameters, Buffer ), Values );
+			Made = Registry.GetValues( GetPath( Tags, Buffer ), Values );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -1860,7 +1860,7 @@ namespace rgstry {
 			const multi_level_registry_ &Registry,
 			values_ &Values ) const
 		{
-			return GetValues( Registry, parameters(), Values );
+			return GetValues( Registry, tags(), Values );
 		}
 # ifdef CPE__64_BITS_TYPES_ALLOWED
 		_MU( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
