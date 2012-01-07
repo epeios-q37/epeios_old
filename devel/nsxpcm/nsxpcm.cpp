@@ -76,6 +76,7 @@ public:
 #include "xpp.h"
 #include "txf.h"
 #include "mtk.h"
+#include "fnm.h"
 
 #define T( f )\
 	if ( ( f ) != NS_OK )\
@@ -1810,7 +1811,7 @@ ERREpilog
 	return Fragment;
 }
 
-nsIDOMDocumentFragment *nsxpcm::XSLTransformByFileName(
+static nsIDOMDocumentFragment *XSLTransformProvidingChromeXSLFileName_(
 	const str::string_ &XMLString,
 	const str::string_ &XSLFileName,
 	nsIDOMDocument *Owner,
@@ -1832,6 +1833,71 @@ ERRErr
 ERREnd
 ERREpilog
 	return Fragment;
+}
+
+static inline void Process_(
+	const str::string_ &FileName,
+	str::string_ &Result )
+{
+ERRProlog
+	flx::E_STRING_OFLOW___ SFlow;
+	txf::text_oflow__ TFlow;
+	flf::file_iflow___ FFlow;
+	xtf::extended_text_iflow__ XFlow;
+	STR_BUFFER___ STRBuffer;
+	FNM_BUFFER___ FNMBuffer;
+	const char *XSLLocation = NULL;
+ERRBegin
+	if ( FFlow.Init( FileName.Convert( STRBuffer ) ) != fil::sSuccess )
+		ERRl();	// Devrait normalement faire remonter un message d'erreur explicatif.
+
+	XFlow.Init( FFlow );
+
+	XSLLocation = fnm::GetLocation( FileName.Convert( STRBuffer ), FNMBuffer );
+
+	SFlow.Init( Result );
+	TFlow.Init( SFlow );
+
+	if ( xpp::Process( XFlow, str::string( XSLLocation ), xml::oCompact, TFlow ) != xpp::sOK )
+		ERRu();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static inline nsIDOMDocumentFragment *XSLTransformProvidingXSLContent_(
+	const str::string_ &XMLContent,
+	const str::string_ &XSLFileName,
+	nsIDOMDocument *Owner,
+	const xslt_parameters_ &Parameters )
+{
+	nsIDOMDocumentFragment *Fragment = NULL;
+ERRProlog
+	str::string XSLContent;
+ERRBegin
+	XSLContent.Init();
+	Process_( XSLFileName, XSLContent );
+
+	Fragment = nsxpcm::XSLTransformByContent( XMLContent, XSLContent, Owner, Parameters );
+ERRErr
+ERREnd
+ERREpilog
+	return Fragment; 
+}
+
+nsIDOMDocumentFragment *nsxpcm::XSLTransformByFileName(
+	const str::string_ &XMLContent,
+	const str::string_ &XSLFileName,
+	nsIDOMDocument *Owner,
+	const xslt_parameters_ &Parameters )
+{
+	nsxpcm::Log( XMLContent );
+	nsxpcm::Log( XSLFileName );
+
+	if ( ( XSLFileName.Amount() > 9 ) && ( !str::Compare( XSLFileName, str::string ("chrome://" ), 0, 0, 9 ) ) )
+		return XSLTransformProvidingChromeXSLFileName_( XMLContent, XSLFileName, Owner, Parameters );
+	else
+		return XSLTransformProvidingXSLContent_( XMLContent, XSLFileName, Owner, Parameters );
 }
 
 nsIDOMNode *browser__::GetNext( void )

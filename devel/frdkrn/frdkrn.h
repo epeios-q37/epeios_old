@@ -403,6 +403,10 @@ namespace frdkrn {
 		{
 			return _LocaleRack;
 		}
+		const char *Language( void ) const
+		{
+			return _LocaleRack.Language();
+		}
 	};
 
 	enum authentication_prompt_mode__ 
