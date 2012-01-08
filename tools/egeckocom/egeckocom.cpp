@@ -110,12 +110,12 @@ static const str::string_ &GetComponent_(
 	str::string_ &Component )
 {
 ERRProlog
-	registry::parameters Parameters;
+	registry::tags Tags;
 ERRBegin
-	Parameters.Init();
-	Parameters.Append( str::string( ComponentId ) );
+	Tags.Init();
+	Tags.Append( str::string( ComponentId ) );
 
-	registry::GetMandatoryRegistryValue( registry::TaggedComponent, Parameters, Component );
+	registry::GetMandatoryRegistryValue( registry::TaggedComponent, Tags, Component );
 ERRErr
 ERREnd
 ERREpilog

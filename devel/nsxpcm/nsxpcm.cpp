@@ -1367,6 +1367,10 @@ void nsxpcm::event_handler__::Add(
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
 
+	if ( Events & efChange )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "change" ), _EventData._EventListener, false ) != NS_OK )
+			ERRc();
+
 	if ( Events & efClick )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
@@ -1420,6 +1424,8 @@ static event__ Convert_(
 		Event = eCommand;
 	else if ( !strcmp( RawEvent, "input" ) )
 		Event = eInput;
+	else if ( !strcmp( RawEvent, "change" ) )
+		Event = eChange;
 	else if ( !strcmp( RawEvent, "click" ) )
 		Event = eClick;
 	else if ( !strcmp( RawEvent, "dblclick" ) )

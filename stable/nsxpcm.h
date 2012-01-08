@@ -240,6 +240,7 @@ namespace nsxpcm {
 	{
 		eCommand,
 		eInput,
+		eChange,
 		eClick,
 		eDblClick,
 		eFocus,
@@ -263,6 +264,7 @@ namespace nsxpcm {
 	enum event_flag__ {
 		EF( Command ),
 		EF( Input ),
+		EF( Change ),
 		EF( Click ),
 		EF( DblClick ),
 		EF( Focus ),
@@ -680,6 +682,17 @@ namespace nsxpcm {
 		else
 			return Value;
 	}
+
+	template <typename t> inline void Focus( t *Element )
+	{
+		T( Element->Focus() );
+	}
+
+	template <typename t> inline void Blur( t *Element )
+	{
+		T( Element->Blur() );
+	}
+
 
 	template <typename t> inline void SetValue(
 		t *Element,
@@ -1583,7 +1596,10 @@ namespace nsxpcm {
 		}
 		void Show( bso::bool__ Value = true )
 		{
-			nsxpcm::SetAttribute( GetWidget(), "hidden", Value ? "false" : "true" );
+			if ( Value )
+				RemoveAttribute( "hidden" );
+			else
+				SetAttribute( "hidden", "true" );
 		}
 		void Hide( bso::bool__ Value = true )
 		{
@@ -1617,6 +1633,16 @@ namespace nsxpcm {
 				nsxpcm::ReplaceChild( GetWidget(), GetFirstChild( GetWidget() ), NewChild );
 		}
 	};
+
+# define NSXPCM__FOCUS_HANDLING\
+		void Focus( void )\
+		{\
+			nsxpcm::Focus( GetWidget() );\
+		}\
+		void Blur( void )\
+		{\
+			nsxpcm::Blur( GetWidget() );\
+		}\
 
 # define NSXPCM__VALUE_HANDLING\
 		void SetValue( const str::string_ &Value )\
@@ -1672,6 +1698,7 @@ namespace nsxpcm {
 	{
 	public:
 		NSXPCM__VALUE_HANDLING
+		NSXPCM__FOCUS_HANDLING
 		void Select( void )
 		{
 			T( GetWidget()->Select() );
@@ -1759,6 +1786,7 @@ namespace nsxpcm {
 #else
 		NSXPCM__INDEX_HANDLING
 		NSXPCM__ITEM_HANDLING
+		NSXPCM__FOCUS_HANDLING
 #endif
 		const str::string_ &GetSelectedItemValue( str::string_ &Value )
 		{

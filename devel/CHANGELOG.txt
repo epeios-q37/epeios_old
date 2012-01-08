@@ -1,5 +1,10 @@
 $Id$
 
+08/01/2012 :
+	- NSXPCM :
+		- Rajout gestion 'Focus(/Blur)'.
+		- Ajout gestion évènement 'onchange'.
+
 07/01/2012 :
 	- NSXPCM :
 		- 'XSLTransformProvidungFileName(...)' accepte dorénavant également les fichiers non issus de 'chrome://'.
