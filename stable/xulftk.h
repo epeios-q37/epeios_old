@@ -370,7 +370,7 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		bso::bool__ HandleDefaulttProject( void )
+		bso::bool__ HandleDefaultProject( void )
 		{
 			bso::bool__ Defined = false;
 		ERRProlog

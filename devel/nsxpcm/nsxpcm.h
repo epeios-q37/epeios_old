@@ -670,6 +670,23 @@ namespace nsxpcm {
 		return Value;
 	}
 
+	inline const str::string_ &GetAttributeNS(
+		nsIDOMElement *Element,
+		const char *URI,
+		const char *Name,
+		str::string_ &Value )
+	{
+		nsEmbedString EURI, EName, EValue;
+		Transform( URI, EURI );
+		Transform( Name, EName );
+
+		T( Element->GetAttributeNS( EURI, EName, EValue ) );
+
+		Transform( EValue, Value );
+
+		return Value;
+	}
+
 	inline const str::string_ &GetAttribute(
 		nsIDOMNode *Node,
 		const char *Name,
@@ -679,6 +696,20 @@ namespace nsxpcm {
 
 		if ( Element != NULL )
 			return GetAttribute( Element, Name, Value );
+		else
+			return Value;
+	}
+
+	inline const str::string_ &GetAttributeNS(
+		nsIDOMNode *Node,
+		const char *URI,
+		const char *Name,
+		str::string_ &Value )
+	{
+ 		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node );
+
+		if ( Element != NULL )
+			return GetAttributeNS( Element, URI, Name, Value );
 		else
 			return Value;
 	}
@@ -1290,8 +1321,15 @@ namespace nsxpcm {
 		friend class event_handler__;
 	};
 
+	// ATTENTION : cet objet ne doit PAS être stocké dans un 'bunch' ou un 'container', car il est référencé par son adresse !
 	class event_handler__ {
 	private:
+		event_handler__ *_Control;
+		void _Test( void )	// Vérifie que l'objet n'a pas été déplacé depuis sa création (voir remarque ci-dessus).
+		{
+			if ( _Control != this )
+				ERRc();
+		}
 		event_data__ _EventData;
 		void _OnErr( void )
 		{
@@ -1347,6 +1385,9 @@ namespace nsxpcm {
 	public:
 		void reset( bso::bool__ P = true )
 		{
+			if ( !P )
+				_Control = this;
+
 			_EventData.reset( P );
 		}
 		E_CVDTOR( event_handler__ );
@@ -1380,7 +1421,7 @@ namespace nsxpcm {
 	};
 
 	void Attach(
-		nsIDOMDocument *Document,
+		nsIDOMNode *Node,
 		const char *Id,
 		event_handler__ &EventHandler,
 		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );
@@ -1421,7 +1462,7 @@ namespace nsxpcm {
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
-			Init( nsxpcm::GetElementById( GetDocument( Window ), Id ), Window );
+			Init( nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id ), Window );
 		}
 		void Init(
 			nsIDOMWindow *Window,
@@ -1433,6 +1474,10 @@ namespace nsxpcm {
 		nsIDOMWindowInternal *GetWindow( void ) const
 		{
 			return _Window;
+		}
+		nsIDOMDocument *GetDocument( void )
+		{
+			return nsxpcm::GetDocument( GetWindow() );
 		}
 		nsIDOMWindowInternal *GetParent( void ) const
 		{
@@ -2732,7 +2777,7 @@ namespace nsxpcm {
 		PatchCommandBadCommandBehaviorforKeysetListener( Document );
 	}
 
-	nsIDOMWindowInternal *GetDocumentWindow( nsIDOMDocument *Document );
+	nsIDOMWindowInternal *GetWindow( nsIDOMDocument *Document );
 
 
 #ifdef NSXPCM__FBL

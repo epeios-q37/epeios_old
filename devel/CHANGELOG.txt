@@ -1,5 +1,9 @@
 $Id$
 
+09/01/2012 :
+	- NSXPCM :
+		- 'Attach(...)' prend dorénvant un 'nSIDOMNode *' comme argument à la place d'un 'nsIDOMDocument *'.
+
 08/01/2012 :
 	- NSXPCM :
 		- Rajout gestion 'Focus(/Blur)'.

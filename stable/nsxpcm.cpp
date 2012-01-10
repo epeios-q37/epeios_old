@@ -1345,6 +1345,8 @@ ERREpilog
 
 void nsxpcm::event_handler__::Init( void )
 {
+	_Test();
+
 	reset();
 
 	nsxpcm::CreateInstance( NSXPCM_EVENT_LISTENER_CONTRACTID, _EventData._EventListener );
@@ -1357,6 +1359,8 @@ void nsxpcm::event_handler__::Add(
 	nsISupports *Supports,
 	int Events )
 {
+	_Test();
+
 	nsIDOMEventTarget *EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
 	if ( Events & efCommand )
@@ -1450,6 +1454,8 @@ static event__ Convert_(
 
 bso::bool__ nsxpcm::event_handler__::Handle( nsIDOMEvent *RawEvent )
 {
+	_Test();
+
 	bso::bool__ Success = false;
 ERRProlog
 	nsEmbedString String;
@@ -1552,18 +1558,6 @@ ERREpilog
 	return Event;
 }
 
-static nsIDOMNode *GetRoot_( nsIDOMNode *Node )
-{
-	nsIDOMNode *Candidate = Node;
-
-	while ( Candidate != NULL ) {
-		Node = Candidate;
-		T( Node->GetParentNode( &Candidate ) );
-	}
-
-	return Node;
-}
-
 static nsISupports *Patch_( nsIDOMNode *Node )
 {
 	nsISupports *Supports = Node;
@@ -1577,9 +1571,11 @@ ERRBegin
 	Name.Init();
 	nsxpcm::Transform( RawName, Name );
 
-	if ( Name == "window" ) {
+	if ( Name == "window" )
 		ERRl();	// J'ignore comment, à partir de cet élément, récupèrer un élément sur lequel un gestionnaire d'évènement soit actif.
-	}
+/*	else if ( ( Name == "a" ) || ( Name == "A" ) )
+		Supports = nsxpcm::QueryInterface<nsIDOMHTMLAnchorElement>( Node );
+*/
 ERRErr
 ERREnd
 ERREpilog
@@ -1608,17 +1604,15 @@ static void AttachIfConcerned_(
 }
 
 void nsxpcm::Attach(
-	nsIDOMDocument *Document,
+	nsIDOMNode *Node,
 	const char *Id,
 	event_handler__ &EventHandler,
 	const char *NameSpace )
 {
 ERRProlog
 	nsxpcm::browser__ Browser;
-	nsIDOMNode *Node = NULL;
 	nsIDOMNamedNodeMap *Attributes = NULL;
 ERRBegin
-	Node = Document;
 	Browser.Init( Node );
 
 	while ( Node != NULL ) {
@@ -2200,7 +2194,7 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	AddSemiColonCommand_( List );
 }
 
-nsIDOMWindowInternal *nsxpcm::GetDocumentWindow( nsIDOMDocument *Document )
+nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
 {
 	nsEmbedString EId;
 	nsIDOMNodeList *List = NULL;
