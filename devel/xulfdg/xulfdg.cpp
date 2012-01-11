@@ -70,21 +70,21 @@ void xulfdg::debug_dialog__::Update( void )
 
 void xulfdg::jsconsole_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().UI().GetJSConsole();
-	Target().UI().DebugDialog().Close();
+	Trunk().UI().GetJSConsole();
+	Trunk().UI().DebugDialog().Close();
 }
 
 void xulfdg::dominspector_eh__::NSXPCMOnEvent( event__ )
 {
-	nsxpcm::GetDOMInspector( Target().UI().Main().Window() );
-	Target().UI().DebugDialog().Close();
+	nsxpcm::GetDOMInspector( Trunk().UI().Main().Window() );
+	Trunk().UI().DebugDialog().Close();
 }
 
 void xulfdg::frontend_error_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 ERRBegin
-	Target().UI().DebugDialog().Close();
+	Trunk().UI().DebugDialog().Close();
 	ERRI( iTest );
 ERRErr
 ERREnd
@@ -94,12 +94,12 @@ ERREpilog
 void xulfdg::backend_error_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
-	xulftk::trunk___ *Target = NULL;
+	xulftk::trunk___ *Trunk = NULL;
 ERRBegin
-	Target = &this->Target();	// Target() est perdu lors du 'Close()' qui suit.
+	Trunk = &this->Trunk();	// Trunk() est perdu lors du 'Close()' qui suit.
 
-	Target->UI().DebugDialog().Close();
-	Target->Kernel().ThrowError();
+	Trunk->UI().DebugDialog().Close();
+	Trunk->Kernel().ThrowError();
 ERRErr
 ERREnd
 ERREpilog

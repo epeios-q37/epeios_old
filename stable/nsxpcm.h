@@ -1263,7 +1263,7 @@ namespace nsxpcm {
 		{
 			reset();
 		}
-		nsIDOMEvent &RawEvent( void )
+		nsIDOMEvent &RawEvent( void ) const
 		{
 			return *_RawEvent;
 		}
@@ -1271,17 +1271,17 @@ namespace nsxpcm {
 		{
 			return *_MutationEvent;
 		}
-		nsIDOMKeyEvent &KeyEvent( void )
+		nsIDOMKeyEvent &KeyEvent( void ) const
 		{
 			return *_KeyEvent;
 		}
-		nsIDOMElement &GetTarget( void )
+		nsIDOMElement *GetTarget( void ) const
 		{
 			nsIDOMEventTarget *EventTarget = NULL;
 
 			RawEvent().GetTarget( &EventTarget );
 
-			return *QueryInterface<nsIDOMElement>( EventTarget );
+			return QueryInterface<nsIDOMElement>( EventTarget );
 		}
 		E_RODISCLOSE__( event_imbrication_level__, EventImbricationLevel );
 		bso::bool__ IsEventImbricated( void ) const

@@ -118,7 +118,7 @@ namespace xulfbs {
 	protected:
 		virtual void NSXPCMOnErr( const char *Message )
 		{
-			_Report( Target(), Message );
+			_Report( Trunk(), Message );
 		}
 	};
 

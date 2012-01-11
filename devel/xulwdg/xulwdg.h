@@ -83,52 +83,68 @@ extern class ttr_tutor &XULWDGTutor;
 
 namespace xulwdg {
 
-	template <typename target, typename widget> class _widget__
-	: public widget
+	template <typename trunk> class _trunk_depot__
 	{
 	private:
-		target *_Target;
+		 trunk *_Trunk;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Trunk = NULL;
+		}
+		E_CVDTOR( _trunk_depot__ );
+		void Init( trunk &Trunk )
+		{
+			_Trunk = &Trunk;
+		}
+		const trunk &Trunk( void ) const
+		{
+			return *_Trunk;
+		}
+		trunk &Trunk( void )
+		{
+			return *_Trunk;
+		}
+	};
+
+
+	template <typename trunk, typename widget> class _widget__
+	: public widget,
+	  public _trunk_depot__<trunk>
+	{
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			widget::reset( P );
-			_Target = NULL;
+			_trunk_depot__::reset( P );
 		}
 		E_CVDTOR( _widget__ );
 		void Init(
-			target &Target,
+			trunk &Trunk,
 			nsISupports *Supports,
 			nsIDOMWindow *Window )
 		{
-			_Target = &Target;
+			_trunk_depot__::Init( Trunk );
 			widget::Init( Supports, Window );
 		}
-		void Init( target &Target,
+		void Init( trunk &Trunk,
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
-			_Target = &Target;
+			_trunk_depot__::Init( Trunk );
 			widget::Init( Window, Id );
 		}
-		void Init( target &Target,
+		void Init( trunk &Trunk,
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
-			_Target = &Target;
+			_trunk_depot__::Init( Trunk );
 			widget::Init( Window, Id );
-		}
-		const target &Target( void ) const
-		{
-			return *_Target;
-		}
-		target &Target( void )
-		{
-			return *_Target;
 		}
 	};
 
 # define XULWDG__WN( widget, name )\
-	template <typename target> E_TTCLONE__( _widget__< E_COVER2( target, nsxpcm::widget##__ )>, name##__ );
+	template <typename trunk> E_TTCLONE__( _widget__< E_COVER2( trunk, nsxpcm::widget##__ )>, name##__ );
 
 # define XULWDG__W( widget )	XULWDG__WN( widget, widget )
 
@@ -151,21 +167,20 @@ namespace xulwdg {
 
 	typedef nsxpcm::event_handler__ _event_handler__;
 
-	template <typename target> class event_handler__
-	: public _event_handler__
+	template <typename trunk> class event_handler__
+	: public _event_handler__,
+	  public _trunk_depot__<trunk>
 	{
-	private:
-		target *_Target;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_event_handler__::reset( P );
-			_Target = NULL;
+			_trunk_depot__::reset( P );
 		}
 		E_CVDTOR( event_handler__ );
-		void Init( target &Target )
+		void Init( trunk &Trunk )
 		{
-			_Target = &Target;
+			_trunk_depot__::Init( Trunk );
 			_event_handler__::Init();
 		}
 		void Add(
@@ -187,14 +202,6 @@ namespace xulwdg {
 			int Events = events )
 		{
 			Add( Window, str::string( Id ), Events );
-		}
-		const target &Target( void ) const
-		{
-			return *_Target;
-		}
-		target &Target( void )
-		{
-			return *_Target;
 		}
 	};
 

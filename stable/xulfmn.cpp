@@ -71,14 +71,14 @@ void xulfmn::main__::Update( void )
 #if 0
 void xulfmn::window_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().Exit();
+	Trunk().Exit();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 #endif
 
 void xulfmn::new_project_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().DefineSession( str::string(), xpp::criterions___() );
+	Trunk().DefineSession( str::string(), xpp::criterions___() );
 }
 
 void xulfmn::open_project_eh__::NSXPCMOnEvent( event__ )
@@ -89,8 +89,8 @@ ERRBegin
 	Translation.Init();
 	FileName.Init();
 
-	if ( nsxpcm::XPRJFileOpenDialogBox( Target().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Target().Kernel().LocaleRack(), Translation ), Target().Kernel().LocaleRack(), FileName ) )
-		Target().DefineSession( FileName, xpp::criterions___() );
+	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Trunk().Kernel().LocaleRack(), Translation ), Trunk().Kernel().LocaleRack(), FileName ) )
+		Trunk().DefineSession( FileName, xpp::criterions___() );
 ERRErr
 ERREnd
 ERREpilog
@@ -98,31 +98,31 @@ ERREpilog
 
 void xulfmn::close_project_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().DropSession();
+	Trunk().DropSession();
 }
 
 void xulfmn::exit_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().Exit();
+	Trunk().Exit();
 	EventData().EventPreventDefault();	// Si l'application doit effectivement être fermée, ce sera fait par la fonctions précédente; inutile de poursuivre la prodédure de fermeture.
 }
 
 void xulfmn::about_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().BrowseInformations();
+	Trunk().BrowseInformations();
 }
 
 void xulfmn::web_site_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().BrowseWEBSite();
+	Trunk().BrowseWEBSite();
 }
 
 void xulfmn::debug_eh__::NSXPCMOnEvent( event__ )
 {
-	Target().UI().CreateDebugDialog();
-	Target().ExposeSteering();
-	nsxpcm::OpenDialog( Target().UI().Main().Window(), "debug.xul", "_blank" );
-	Target().UI().DeleteDebugDialog();
+	Trunk().UI().CreateDebugDialog();
+	Trunk().ExposeSteering();
+	nsxpcm::OpenDialog( Trunk().UI().Main().Window(), "debug.xul", "_blank" );
+	Trunk().UI().DeleteDebugDialog();
 }
 
 /* Registrations */

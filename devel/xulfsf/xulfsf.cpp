@@ -78,13 +78,13 @@ ERRProlog
 	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 ERRBegin
 	Value.Init();
-	nsxpcm::GetAttribute( &EventData().GetTarget(), "value", Value );
+	nsxpcm::GetAttribute( EventData().GetTarget(), "value", Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
 	case frdkrn::bxtPredefined:
 	case frdkrn::bxtDaemon:
 	case frdkrn::bxtEmbedded:
-		this->Target().UI().SessionForm().Update( Type );
+		Trunk().UI().SessionForm().Update( Type );
 		break;
 	default:
 		ERRc();
@@ -103,8 +103,8 @@ ERRProlog
 ERRBegin
 	FileName.Init();
 
-	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Target().UI().SessionForm().Window(), str::string( Target().Kernel().LocaleRack().GetTranslation( "EmbeddedBackendFileSelectionDialogBoxTitle", PREFIX, Buffer ) ), Target().Kernel().LocaleRack(), FileName ) )
-		Target().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( FileName );
+	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Trunk().UI().SessionForm().Window(), str::string( Trunk().Kernel().LocaleRack().GetTranslation( "EmbeddedBackendFileSelectionDialogBoxTitle", PREFIX, Buffer ) ), Trunk().Kernel().LocaleRack(), FileName ) )
+		Trunk().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -112,7 +112,7 @@ ERREpilog
 
 void xulfsf::apply_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 {
-	Target().ApplySession();
+	Trunk().ApplySession();
 }
 
 static void DisableAllButSelected_(
@@ -341,8 +341,8 @@ ERRBegin
 	Translation.Init();
 	FileName.Init();
 
-	if ( nsxpcm::XPRJFileOpenDialogBox( Target().UI().Main().Window(), Target().Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Target().Kernel().LocaleRack(), FileName ) ) {
-		Target().UI().SessionForm().Widgets.ProjectFileNameTextbox.SetValue( FileName );
+	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), Trunk().Kernel().GetTranslation( xulfkl::mSelectProjectFile, Translation ), Trunk().Kernel().LocaleRack(), FileName ) ) {
+		Trunk().UI().SessionForm().Widgets.ProjectFileNameTextbox.SetValue( FileName );
 	}
 ERRErr
 ERREnd
