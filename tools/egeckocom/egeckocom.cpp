@@ -185,7 +185,6 @@ NS_IMETHODIMP egeckocom___::Retrieve(
 	const char *ComponentId,
 	char **JSErrorMessage )
 {
-	// Don't know how to get a 'window' fro its 'document'.
 RP
 	str::string LibraryName;
 	str::strings Tags;
@@ -329,6 +328,7 @@ NS_IMPL_NSGETMODULE("EGeckoCOMModule", components)
 // The following line defines a kNS_SAMPLE_CID CID variable.
 NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
+NS_DEFINE_NAMED_CID(NSXPCM_TREE_VIEW_CID);
 NS_DEFINE_NAMED_CID(CLH_CID);
 
 // Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
@@ -338,6 +338,7 @@ NS_DEFINE_NAMED_CID(CLH_CID);
 static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
     { &kEGECKOCOM_CID, false, NULL, egeckocom___Constructor },
 	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listener__Constructor },
+	{ &kNSXPCM_TREE_VIEW_CID, false, NULL, nsxpcm::tree_view__Constructor },
 	{ &kCLH_CID, false, NULL, nsxpcm::clh__Constructor },
     { NULL }
 };
@@ -349,6 +350,7 @@ static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
 static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
     { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
     { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
+    { NSXPCM_TREE_VIEW_CONTRACTID, &kNSXPCM_TREE_VIEW_CID },
     { CLH_CONTRACTID, &kCLH_CID },
     { NULL }
 };

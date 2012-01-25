@@ -72,6 +72,7 @@ public:
 #include "nsIDOMNodeList.h"
 #include "nsIDOMNamedNodeMap.h"
 #include "nsIDOMAttr.h"
+#include "nsITreeColumns.h"
 
 #include "xpp.h"
 #include "txf.h"
@@ -1628,6 +1629,7 @@ ERREnd
 ERREpilog
 }
 
+/* Début 'event_listener__' */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::event_listener__, nsxpcm::event_listener__ );
 
@@ -1640,6 +1642,320 @@ NS_IMETHODIMP nsxpcm::event_listener__::HandleEvent(nsIDOMEvent *Event)
 
     return NSResult;
 }
+
+/* Fin 'event_listener__' */
+/*
+NS_GENERIC_FACTORY_CONSTRUCTOR(tree_view__)
+
+NS_DEFINE_STATIC_IID_ACCESSOR(tree_view__, NSXPCM_ITREE_VIEW_IID)
+
+NS_IMPL_ISUPPORTS0( tree_view__ )
+*/
+
+void nsxpcm::tree__::_SetTreeView( class tree_view_functions__ &Functions )
+{
+	CreateInstance( NSXPCM_TREE_VIEW_CONTRACTID, _TreeView );
+
+	_TreeView->Init( Functions );
+
+	T( GetWidget()->SetView( _TreeView ) );
+}
+
+void tree__::Init(
+	class tree_view_functions__ &Functions,
+	nsISupports *Supports,
+	nsIDOMWindow *Window )
+{
+	_widget__::Init( Supports, Window );
+
+	_SetTreeView( Functions );
+}
+
+void tree__::Init(
+	class tree_view_functions__ &Functions,
+	nsIDOMWindow *Window,
+	const str::string_ &Id )
+{
+	_widget__::Init( Window, Id );
+
+	_SetTreeView( Functions );
+}
+
+void tree__::Init(
+	class tree_view_functions__ &Functions,
+	nsIDOMWindow *Window,
+	const char *Id )
+{
+	_widget__::Init( Window, Id );
+
+	_SetTreeView( Functions );
+}
+
+
+/* Début 'tree_view__' */
+
+NS_IMPL_ISUPPORTS2(nsxpcm::tree_view__, nsxpcm::tree_view__, nsITreeView );
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetRowCount(PRInt32* aRowCount)
+{
+	*aRowCount = this->_F().GetRowCount();
+
+	return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetSelection(nsITreeSelection** aSelection)
+{
+  *aSelection = mSelection;
+  NS_IF_ADDREF(*aSelection);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::SetSelection(nsITreeSelection* aSelection)
+{
+  mSelection = aSelection;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetRowProperties(PRInt32 aIndex,
+                             nsISupportsArray* aProperties)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetCellProperties(PRInt32 aRow, nsITreeColumn* aCol,
+                              nsISupportsArray* aProperties)
+{
+#if 0
+  PRUint32 dirCount;
+  mDirList->Count(&dirCount);
+
+  if (aRow < (PRInt32) dirCount)
+    aProperties->AppendElement(mDirectoryAtom);
+  else if (aRow < mTotalRows)
+    aProperties->AppendElement(mFileAtom);
+#endif
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetColumnProperties(nsITreeColumn* aCol,
+                                nsISupportsArray* aProperties)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainer(PRInt32 aIndex, PRBool* aIsContainer)
+{
+  *aIsContainer = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainerOpen(PRInt32 aIndex, PRBool* aIsOpen)
+{
+  *aIsOpen = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainerEmpty(PRInt32 aIndex, PRBool* aIsEmpty)
+{
+  *aIsEmpty = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsSeparator(PRInt32 aIndex, PRBool* aIsSeparator)
+{
+  *aIsSeparator = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsSorted(PRBool* aIsSorted)
+{
+//  *aIsSorted = (mSortType >= 0);
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::CanDrop(PRInt32 aIndex, PRInt32 aOrientation,
+                    nsIDOMDataTransfer* dataTransfer, PRBool* aCanDrop)
+{
+  *aCanDrop = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::Drop(PRInt32 aRow, PRInt32 aOrientation, nsIDOMDataTransfer* dataTransfer)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetParentIndex(PRInt32 aRowIndex, PRInt32* aParentIndex)
+{
+  *aParentIndex = -1;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::HasNextSibling(PRInt32 aRowIndex, PRInt32 aAfterIndex, 
+                           PRBool* aHasSibling)
+{
+//  *aHasSibling = (aAfterIndex < (mTotalRows - 1));
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetLevel(PRInt32 aIndex, PRInt32* aLevel)
+{
+  *aLevel = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetImageSrc(PRInt32 aRow, nsITreeColumn* aCol,
+                        nsAString& aImageSrc)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetProgressMode(PRInt32 aRow, nsITreeColumn* aCol,
+                            PRInt32* aProgressMode)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetCellValue(PRInt32 aRow, nsITreeColumn* aCol,
+                         nsAString& aCellValue)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::GetCellText(PRInt32 aRow, nsITreeColumn* aCol,
+                        nsAString& aCellText)
+{
+#if 0
+  PRUint32 dirCount, fileCount;
+  mDirList->Count(&dirCount);
+  mFilteredFiles->Count(&fileCount);
+
+  bool isDirectory;
+  nsCOMPtr<nsIFile> curFile;
+
+  if (aRow < (PRInt32) dirCount) {
+    isDirectory = true;
+    curFile = do_QueryElementAt(mDirList, aRow);
+  } else if (aRow < mTotalRows) {
+    isDirectory = false;
+    curFile = do_QueryElementAt(mFilteredFiles, aRow - dirCount);
+  } else {
+    // invalid row
+    aCellText.SetCapacity(0);
+    return NS_OK;
+  }
+
+  const PRUnichar* colID;
+  aCol->GetIdConst(&colID);
+  if (NS_LITERAL_STRING("FilenameColumn").Equals(colID)) {
+    curFile->GetLeafName(aCellText);
+  } else if (NS_LITERAL_STRING("LastModifiedColumn").Equals(colID)) {
+    PRInt64 lastModTime;
+    curFile->GetLastModifiedTime(&lastModTime);
+    // XXX FormatPRTime could take an nsAString&
+    nsAutoString temp;
+    mDateFormatter->FormatPRTime(nsnull, kDateFormatShort, kTimeFormatSeconds,
+                                 lastModTime * 1000, temp);
+    aCellText = temp;
+  } else {
+    // file size
+    if (isDirectory)
+      aCellText.SetCapacity(0);
+    else {
+      PRInt64 fileSize;
+      curFile->GetFileSize(&fileSize);
+      CopyUTF8toUTF16(nsPrintfCString("%lld", fileSize), aCellText);
+    }
+  }
+#endif
+ ERRProlog
+	str::string Text;
+	PRInt32 Index = 0;
+	STR_BUFFER___ Buffer;
+ ERRBegin
+	 aCol->GetIndex( &Index );
+
+	Text.Init();
+	 _F().GetCellText( aRow, Index, Text );
+	 aCellText.AppendASCII( Text.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::SetTree(nsITreeBoxObject* aTree)
+{
+  mTree = aTree;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::ToggleOpenState(PRInt32 aIndex)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::CycleHeader(nsITreeColumn* aCol)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::SelectionChanged()
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::CycleCell(PRInt32 aRow, nsITreeColumn* aCol)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsEditable(PRInt32 aRow, nsITreeColumn* aCol,
+                       PRBool* aIsEditable)
+{
+  *aIsEditable = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::IsSelectable(PRInt32 aRow, nsITreeColumn* aCol,
+                        PRBool* aIsSelectable)
+{
+  *aIsSelectable = false;
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::SetCellValue(PRInt32 aRow, nsITreeColumn* aCol,
+                         const nsAString& aValue)
+{
+  return NS_OK;
+}
+
+
+NS_IMETHODIMP nsxpcm::tree_view__::SetCellText(PRInt32 aRow, nsITreeColumn* aCol,
+                        const nsAString& aValue)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::PerformAction(const PRUnichar* aAction)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnRow(const PRUnichar* aAction, PRInt32 aRow)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnCell(const PRUnichar* aAction, PRInt32 aRow,
+                                nsITreeColumn* aCol)
+{
+  return NS_OK;
+}
+
+/* Fin 'tree_view' */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
 
@@ -1891,9 +2207,6 @@ nsIDOMDocumentFragment *nsxpcm::XSLTransformByFileName(
 	nsIDOMDocument *Owner,
 	const xslt_parameters_ &Parameters )
 {
-	nsxpcm::Log( XMLContent );
-	nsxpcm::Log( XSLFileName );
-
 	if ( ( XSLFileName.Amount() > 9 ) && ( !str::Compare( XSLFileName, str::string ("chrome://" ), 0, 0, 9 ) ) )
 		return XSLTransformProvidingChromeXSLFileName_( XMLContent, XSLFileName, Owner, Parameters );
 	else

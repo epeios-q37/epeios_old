@@ -32,19 +32,19 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
   NS_DECLARE_STATIC_IID_ACCESSOR(EIGECKOCOM_IID)
 
   /* void Create (in string ComponentId, in string Language, out string ErrorMessage); */
-  NS_SCRIPTABLE NS_IMETHOD Create(const char *ComponentId, const char *Language, char **ErrorMessage NS_OUTPARAM) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Create(const char * ComponentId, const char * Language, char * *ErrorMessage NS_OUTPARAM) = 0;
 
   /* void Retrieve (in string ComponentId, out string ErrorMessage); */
-  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char *ComponentId, char **ErrorMessage NS_OUTPARAM) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM) = 0;
 
   /* void Register (in nsIDOMWindow Window, out string ErrorMessage); */
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char **ErrorMessage NS_OUTPARAM) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM) = 0;
 
   /* void Stop (in nsICommandLine CommandLine, out string ErrorMessage); */
-  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char **ErrorMessage NS_OUTPARAM) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM) = 0;
 
   /* void Terminate (out string ErrorMessage); */
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char **ErrorMessage NS_OUTPARAM) = 0;
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) = 0;
 
 };
 
@@ -52,27 +52,27 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_EIGECKOCOM \
-  NS_SCRIPTABLE NS_IMETHOD Create(const char *ComponentId, const char *Language, char **ErrorMessage NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char *ComponentId, char **ErrorMessage NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char **ErrorMessage NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char **ErrorMessage NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char **ErrorMessage NS_OUTPARAM); 
+  NS_SCRIPTABLE NS_IMETHOD Create(const char * ComponentId, const char * Language, char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_EIGECKOCOM(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Create(const char *ComponentId, const char *Language, char **ErrorMessage NS_OUTPARAM) { return _to Create(ComponentId, Language, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char *ComponentId, char **ErrorMessage NS_OUTPARAM) { return _to Retrieve(ComponentId, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char **ErrorMessage NS_OUTPARAM) { return _to Register(Window, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char **ErrorMessage NS_OUTPARAM) { return _to Stop(CommandLine, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char **ErrorMessage NS_OUTPARAM) { return _to Terminate(ErrorMessage); } 
+  NS_SCRIPTABLE NS_IMETHOD Create(const char * ComponentId, const char * Language, char * *ErrorMessage NS_OUTPARAM) { return _to Create(ComponentId, Language, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM) { return _to Retrieve(ComponentId, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM) { return _to Register(Window, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM) { return _to Stop(CommandLine, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return _to Terminate(ErrorMessage); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_EIGECKOCOM(_to) \
-  NS_SCRIPTABLE NS_IMETHOD Create(const char *ComponentId, const char *Language, char **ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Create(ComponentId, Language, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char *ComponentId, char **ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retrieve(ComponentId, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char **ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char **ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Stop(CommandLine, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char **ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Terminate(ErrorMessage); } 
+  NS_SCRIPTABLE NS_IMETHOD Create(const char * ComponentId, const char * Language, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Create(ComponentId, Language, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retrieve(ComponentId, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Stop(CommandLine, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Terminate(ErrorMessage); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -107,31 +107,31 @@ _MYCLASS_::~_MYCLASS_()
 }
 
 /* void Create (in string ComponentId, in string Language, out string ErrorMessage); */
-NS_IMETHODIMP _MYCLASS_::Create(const char *ComponentId, const char *Language, char **ErrorMessage NS_OUTPARAM)
+NS_IMETHODIMP _MYCLASS_::Create(const char * ComponentId, const char * Language, char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void Retrieve (in string ComponentId, out string ErrorMessage); */
-NS_IMETHODIMP _MYCLASS_::Retrieve(const char *ComponentId, char **ErrorMessage NS_OUTPARAM)
+NS_IMETHODIMP _MYCLASS_::Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void Register (in nsIDOMWindow Window, out string ErrorMessage); */
-NS_IMETHODIMP _MYCLASS_::Register(nsIDOMWindow *Window, char **ErrorMessage NS_OUTPARAM)
+NS_IMETHODIMP _MYCLASS_::Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void Stop (in nsICommandLine CommandLine, out string ErrorMessage); */
-NS_IMETHODIMP _MYCLASS_::Stop(nsICommandLine *CommandLine, char **ErrorMessage NS_OUTPARAM)
+NS_IMETHODIMP _MYCLASS_::Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void Terminate (out string ErrorMessage); */
-NS_IMETHODIMP _MYCLASS_::Terminate(char **ErrorMessage NS_OUTPARAM)
+NS_IMETHODIMP _MYCLASS_::Terminate(char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

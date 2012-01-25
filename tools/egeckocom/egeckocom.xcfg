@@ -4,7 +4,8 @@
 	<Configuration target="egeckocom">
 		<Components>
 			<Component id="eSketch">h:\bin\esketchgck</Component>
-			<Component id="Gesbib">h:\bin\gesbibgck</Component>
+			<Component id="Gesbib">h:\bin\gesbib6gck</Component>
+			<Component id="eDemo">h:\bin\edemogck</Component>
 		</Components>
 		<!-- Optional -->
 		<!--

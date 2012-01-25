@@ -170,21 +170,21 @@ namespace xulfui {
 		}
 		void Alert(
 			nsIDOMWindow *Window,
-			const char *Message )
+			const char *Message ) const
 		{
 			nsxpcm::Alert( Window, Message );
 		}
 		void Alert(
 			nsIDOMWindow *Window,
-			const str::string_ &Message )
+			const str::string_ &Message ) const
 		{
 			nsxpcm::Alert( Window, Message );
 		}
-		void Alert( const char *Message )
+		void Alert( const char *Message ) const
 		{
 			Alert( Main().Window(), Message );
 		}
-		void Alert( const str::string_ &Message )
+		void Alert( const str::string_ &Message ) const
 		{
 			Alert( Main().Window(), Message );
 		}

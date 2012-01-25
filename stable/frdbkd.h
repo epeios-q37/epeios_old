@@ -182,6 +182,58 @@ namespace frdbkd {
 
 	template <typename object> E_TMIMIC__( object, backend_object___ );
 # endif
+
+	template <typename type> inline void Put(
+		const char *Name,
+		type Value,
+		xml::writer_ &Writer )
+	{
+		bso::integer_buffer__ Buffer;
+
+		Writer.PutAttribute( Name, Convert( Value, Buffer ) );
+	}
+
+
+	template <typename type> inline void _PutId(
+		const char *Name,
+		type Id,
+		type UndefinedValue,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		if ( Id != UndefinedValue )
+			Put( Name, *Id, Writer );
+		else if ( Always )
+			Writer.PutAttribute( Name, "" );
+	}
+
+	inline void PutId(
+		const char *Name,
+		fbltyp::id32__ Id,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		_PutId( Name, Id, FBLTYP_UNDEFINED_ID32, Always, Writer );
+	}
+
+	inline void PutId(
+		const char *Name,
+		fbltyp::id16__ Id,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		_PutId( Name, Id, FBLTYP_UNDEFINED_ID16, Always, Writer );
+	}
+
+	inline void PutId(
+		const char *Name,
+		fbltyp::id8__ Id,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		_PutId( Name, Id, FBLTYP_UNDEFINED_ID8, Always, Writer );
+	}
+
 }
 
 /*$END$*/

@@ -154,20 +154,6 @@ extern class ttr_tutor &NSXPCMTutor;
 #  endif
 # endif
 
-# define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
-
-# define NSXPCM_EVENT_LISTENER_IID \
-  {0xd333cd20, 0xc453, 0x11dd, \
-    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
-
-# define CLH_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a67"
-
-# define ICLH_IID \
-  {0xd333cd20, 0xc453, 0x11dd, \
-    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x67 }}
-
-
-
 // Permet de 'logger' une erreur et d'éviter qu'elle soit ne remontée à 'XULRunner', qui ne saurait pas quoi en faire. A placer dans 'ERRErr'.
 # define NSXPCM_ERR( window )\
 	if ( ERRMajor == err::itn ) {\
@@ -782,6 +768,36 @@ namespace nsxpcm {
 		SetSelectedIndex( QueryInterface<nsIDOMXULSelectControlElement>( Node ), Index );
 	}
 
+	inline bso::slong__ GetSelectedIndexAttribute( nsIDOMNode *Node )
+	{
+		bso::slong__ Index = -1;
+	ERRProlog
+		str::string Value;
+		epeios::row__ Error = NONE;
+	ERRBegin
+		Value.Init();
+		nsxpcm::GetAttribute( Node, "selectedIndex", Value );
+
+		Index = Value.ToSL( &Error );
+
+		if ( Error != NONE )
+			ERRs();
+	ERRErr
+	ERREnd
+	ERREpilog
+		return Index;
+	}
+
+	inline void SetSelectedIndexAttribute(
+		nsIDOMNode *Node,
+		bso::slong__ Index )
+	{
+		bso::integer_buffer__ Buffer;
+
+		nsxpcm::SetAttribute( Node, "selectedIndex", bso::Convert( Index, Buffer ) );
+	}
+
+
 	void SetSelectedItem( nsIDOMNode *Node );	// Cherche parmis les enfants de 'Node' le premier élément ayant l'attribut 'xex:selected' à 'true' et le sélectionne.
 
 	inline nsIDOMXULSelectControlItemElement *GetSelectedItem( nsIDOMXULSelectControlElement *Element )
@@ -1236,7 +1252,7 @@ namespace nsxpcm {
 	class event_data__
 	{
 	private:
-		nsCOMPtr<struct event_listener__> _EventListener;
+		nsCOMPtr<class event_listener__> _EventListener;
 		nsIDOMEvent *_RawEvent;
 		nsIDOMMutationEvent *_MutationEvent;
 		nsIDOMKeyEvent *_KeyEvent;
@@ -1711,6 +1727,16 @@ namespace nsxpcm {
 			return nsxpcm::GetSelectedIndex( GetWidget() );\
 		}
 
+# define NSXPCM__INDEX_ATTRIBUTE_HANDLING\
+		void SetSelectedIndex( bso::slong__ Index )\
+		{\
+			nsxpcm::SetSelectedIndexAttribute( GetWidget(), Index );\
+		}\
+		bso::slong__ GetSelectedIndex( void )\
+		{\
+			return nsxpcm::GetSelectedIndexAttribute( GetWidget() );\
+		}
+
 # define NSXPCM__ITEM_HANDLING\
 		void SetSelectedItem( nsIDOMXULSelectControlItemElement *Item )\
 		{\
@@ -1909,6 +1935,7 @@ namespace nsxpcm {
 	private:
 	public:
 #if 1
+# if 0
 		bso::slong__ GetSelectedIndex( void )
 		{
 			bso::slong__ Index = -1;
@@ -1934,6 +1961,9 @@ namespace nsxpcm {
 
 			nsxpcm::SetAttribute( GetWidget(), "selectedIndex", bso::Convert( Index, Buffer ) );
 		}
+# else
+		NSXPCM__INDEX_ATTRIBUTE_HANDLING
+# endif
 		void SetSelectedItem( nsIDOMNode *Node )
 		{
 			bso::slong__ Index = -1;
@@ -1955,11 +1985,25 @@ namespace nsxpcm {
 #endif
 	};
 
+	class tabs__
+	: public _widget__<nsIDOMElement>
+	{
+	public:
+		NSXPCM__INDEX_HANDLING
+	};
+
+	class tabpanels__
+	: public _widget__<nsIDOMElement>
+	{};
+
+	// NOTA : pas de widget 'tabbox', car il ne sert à rien.
 
 	class tree__
 	: public _widget__<nsIDOMXULTreeElement>
 	{
 	private:
+		nsCOMPtr<class tree_view__> _TreeView;
+		void _SetTreeView( class tree_view_functions__ &Functions );
 		nsITreeView *_GetView( void )
 		{
 			nsITreeView *View = NULL;
@@ -1970,11 +2014,6 @@ namespace nsxpcm {
 				ERRu();
 
 			return View;
-		}
-		void _SetView( nsITreeView *View )
-		{
-			nsresult Error = NS_OK;
-			T( Error = GetWidget()->SetView( View ) );
 		}
 		nsITreeSelection *_GetSelection( void )
 		{
@@ -1992,10 +2031,18 @@ namespace nsxpcm {
 			return nsxpcm::QueryInterface<nsITreeContentView>( _GetView() );
 		}
 	public:
-		void SetView( nsITreeView *View )
-		{
-			_SetView( View );
-		}
+		void Init(
+			class tree_view_functions__ &Functions,
+			nsISupports *Supports,
+			nsIDOMWindow *Window );
+		void Init(
+			class tree_view_functions__ &Functions,
+			nsIDOMWindow *Window,
+			const char *Id );
+		void Init(
+			class tree_view_functions__ &Functions,
+			nsIDOMWindow *Window,
+			const str::string_ &Id );
 		bso::slong__ GetCurrentIndex( void )
 		{
 			PRInt32 Count = 0;
@@ -2876,28 +2923,25 @@ namespace nsxpcm {
 #endif
 }
 
-// Début de la partie concernant l''event_listener'.
-// Copié à partir du '.h' d'un '.idl' contenant cd qui suit :
+/* Debut partie concernant 'event_listener__' */
 
-/*
-[scriptable, uuid(d333cd20-c453-11dd-ad8b-0800200c9a66)]
-interface eevent_listener
-: nsIDOMEventListener
-{};
-*/
+# define NSXPCM_EVENT_LISTENER_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a66"
+
+# define NSXPCM_EVENT_LISTENER_IID \
+  {0xd333cd20, 0xc453, 0x11dd, \
+    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 }}
 
 namespace nsxpcm {
 
-	struct event_listener__
+	class event_listener__
 	: public nsIDOMEventListener
 	{
 	private:
 		event_handler__ *_EventHandler;
-	protected:
-		NS_IMETHOD HandleEvent(nsIDOMEvent *event);
 	public:
 		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_EVENT_LISTENER_IID)
 		NS_DECL_ISUPPORTS
+		NS_DECL_NSIDOMEVENTLISTENER
 		  void reset( bso::bool__ = true )
 		  {
 			  _EventHandler = NULL;
@@ -2918,12 +2962,109 @@ namespace nsxpcm {
 
 	NS_GENERIC_FACTORY_CONSTRUCTOR(event_listener__)
 }
-	NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::event_listener__, NSXPCM_EVENT_LISTENER_IID)
+
+NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::event_listener__, NSXPCM_EVENT_LISTENER_IID)
 
 # define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;alpha 3"
 # define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
-// {d333cd20-c453-11dd-ad8b-0800200c9a66}
 # define NSXPCM_EVENT_LISTENER_CID  NSXPCM_EVENT_LISTENER_IID
+
+/* Fin partie concernant 'event_listener__' */
+
+
+/* Debut partie concernant 'tree_view__' */
+
+# define NSXPCM_TREE_VIEW_IID_STR "c9f25991-b781-49c5-bdb9-29c8fbb9bfb1"
+
+# define NSXPCM_TREE_VIEW_IID \
+  {0xc9f25991, 0xb781, 0x49c5, \
+    { 0xbd, 0xb9, 0x29, 0xc8, 0xfb, 0xb9, 0xbf, 0xb1 }}
+
+namespace nsxpcm {
+
+	class tree_view_functions__
+	{
+	protected:
+		virtual bso::ulong__ NSXPCMGetRowCount( void ) = 0;
+		virtual void NSXPCMGetCellText(
+			bso::ulong__ Row,
+			bso::ulong__ Column,
+			str::string_ &Text ) = 0;
+	public:
+		bso::ulong__ GetRowCount( void )
+		{
+			return NSXPCMGetRowCount();
+		}
+		void GetCellText(
+			bso::ulong__ Row,
+			bso::ulong__ Column,
+			str::string_ &Text )
+		{
+			NSXPCMGetCellText( Row, Column, Text );
+		}
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		E_CVDTOR( tree_view_functions__ );
+		void Init( void )
+		{
+			// Standardisation.
+		}
+	};
+
+
+	class tree_view__
+	: public nsITreeView
+	{
+	private:
+		tree_view_functions__ *_Functions;
+		nsCOMPtr<nsITreeSelection> mSelection;
+		nsCOMPtr<nsITreeBoxObject> mTree;
+		PRInt32 mTotalRows;
+		tree_view_functions__ &_F( void )
+		{
+			if ( _Functions == NULL )
+				ERRc();
+
+			return *_Functions;
+		}
+	public: 
+		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_ITREE_VIEW_IID)
+		NS_DECL_ISUPPORTS
+		NS_DECL_NSITREEVIEW
+		void reset( bso::bool__ = true )
+		{
+			_Functions = NULL;
+		}
+		E_CVDTOR( tree_view__ );
+		void Init( tree_view_functions__ &Functions )
+		{
+			_Functions = &Functions;
+		}
+	};
+
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR(tree_view__)
+
+}
+
+NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::tree_view__, NSXPCM_TREE_VIEW_IID)
+
+# define NSXPCM_TREE_VIEW_CONTRACTID "@zeusw.org/nsxpcm_tree_view;1"
+# define NSXPCM_TREE_VIEW_CLASSNAME "NSXPCMTreeView"
+# define NSXPCM_TREE_VIEW_CID  NSXPCM_TREE_VIEW_IID
+
+/* Fin partie concernant 'tree_view____' */
+
+
+/* Debut partie concernant 'iclh__' */
+
+# define CLH_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a67"
+
+# define ICLH_IID \
+  {0xd333cd20, 0xc453, 0x11dd, \
+    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x67 }}
 
 namespace nsxpcm {
 	class NS_NO_VTABLE NS_SCRIPTABLE iclh__
@@ -2947,7 +3088,6 @@ namespace nsxpcm {
 		}
 	public:
 		NS_DECL_ISUPPORTS
-	//  NS_DECL_IEEVENT_LISTENER
 		  void reset( bso::bool__ = true )
 		  {
 		  }
@@ -2968,52 +3108,8 @@ namespace nsxpcm {
 // {d333cd20-c453-11dd-ad8b-0800200c9a66}
 #define CLH_CID  ICLH_IID
 
+/* Fin partie concernant 'iclh__' */
 
-// Fin de la partie concernant l''event_listener'.
-
-// Début de la partie concernant l'xslt_processor'.
-// Copié à partir du '.h' d'un '.idl' contenant ce qui suit :
-
-/*
-[scriptable, uuid(90d1d640-019d-4e60-bed1-3a5f3b208a2a)]
-interface iexslt_processor
-: nsIXSLTProcessor
-{};
-*/
-/*
-namespace nsxpcm {
-	class NS_NO_VTABLE NS_SCRIPTABLE iexslt_processor
-	: public nsIXSLTProcessor
-	{
-	public: 
-		NS_DECLARE_STATIC_IID_ACCESSOR(IEXSLT_PROCESSOR_IID)
-	};
-
-
-
-	class exslt_processor
-	: public iexslt_processor
-	{
-	public:
-		NS_DECL_ISUPPORTS
-		// NS_DECL_IEXSLT_PROCESSOR
-
-		exslt_processor()
-		{}
-		~exslt_processor()
-		{}
-	};
-
-	NS_GENERIC_FACTORY_CONSTRUCTOR(exslt_processor)
-
-	NS_DEFINE_STATIC_IID_ACCESSOR(iexslt_processor, IEXSLT_PROCESSOR_IID)
-
-#define NSXPCM_XSLT_PROCESSOR_CONTRACTID "@zeusw.org/nsxpcm_xslt_processor;1"
-#define NSXPCM_XSLT_PROCESSOR_CLASSNAME "NSXPCMXSLTProcessor"
-// {90d1d640-019d-4e60-bed1-3a5f3b208a2a}
-#define NSXPCM_XSLT_PROCESSOR_CID  NSXPCM_XSLT_PROCESSOR_IID
-*/
-// fin de la partie concernant l'xslt_processor'
 
 #define NSXPCM_COMPONENTS\
 /*    {\
@@ -3027,6 +3123,12 @@ namespace nsxpcm {
        NSXPCM_EVENT_LISTENER_CID,\
        NSXPCM_EVENT_LISTENER_CONTRACTID,\
 	   nsxpcm::event_listener__Constructor,\
+    }\
+	{\
+       NSXPCM_TREE_VIEW_CLASSNAME,\
+       NSXPCM_TREE_VIEW_CID,\
+       NSXPCM_TREE_VIEW_CONTRACTID,\
+	   nsxpcm::tree_view__Constructor,\
     }
 
 #ifdef NSXPCM__T_BUFFER

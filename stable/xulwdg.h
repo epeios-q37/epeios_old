@@ -127,14 +127,16 @@ namespace xulwdg {
 			_trunk_depot__::Init( Trunk );
 			widget::Init( Supports, Window );
 		}
-		void Init( trunk &Trunk,
+		void Init(
+			trunk &Trunk,
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
 			_trunk_depot__::Init( Trunk );
 			widget::Init( Window, Id );
 		}
-		void Init( trunk &Trunk,
+		void Init(
+			trunk &Trunk,
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
@@ -160,10 +162,54 @@ namespace xulwdg {
 	XULWDG__W( panel );
 	XULWDG__W( radio );
 	XULWDG__W( radiogroup );
+	XULWDG__W( tabs );
+	XULWDG__W( tabpanels );
 	XULWDG__W( textbox );
-	XULWDG__W( tree );
+	//	XULWDG__W( tree );	// Définit explictiement ci-dessous à cause de 'Init(...)' de 'nsxpcm::tree__'.
 	XULWDG__W( widget );
 	XULWDG__W( window );
+
+	typedef nsxpcm::tree__ _tree__;
+
+	template <typename trunk> class tree__
+	: public _tree__,
+	  public _trunk_depot__<trunk>
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_tree__::reset( P );
+			_trunk_depot__::reset( P );
+		}
+		E_CVDTOR( tree__ );
+		void Init(
+			nsxpcm::tree_view_functions__ &Functions,
+			trunk &Trunk,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			_trunk_depot__::Init( Trunk );
+			_tree__::Init( Functions, Supports, Window );
+		}
+		void Init(
+			nsxpcm::tree_view_functions__ &Functions,
+			trunk &Trunk,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			_trunk_depot__::Init( Trunk );
+			_tree__::Init( Functions, Window, Id );
+		}
+		void Init(
+			nsxpcm::tree_view_functions__ &Functions,
+			trunk &Trunk,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			_trunk_depot__::Init( Trunk );
+			_tree__::Init( Functions, Window, Id );
+		}
+	};
 
 	typedef nsxpcm::event_handler__ _event_handler__;
 
@@ -224,6 +270,8 @@ namespace xulwdg {
 	XULWDG_WIDGET( panel, target )\
 	XULWDG_WIDGET( radio, target )\
 	XULWDG_WIDGET( radiogroup, target )\
+	XULWDG_WIDGET( tabs, target )\
+	XULWDG_WIDGET( tabpanels, target )\
 	XULWDG_WIDGET( textbox, target )\
 	XULWDG_WIDGET( tree, target )\
 	XULWDG_WIDGET( widget, target )\
