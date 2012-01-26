@@ -72,6 +72,7 @@ namespace sclgecko {
 
 	// A définir par l'utilisateur.
 	geckoo::user_functions__ *CreateSteering(
+		const char *LauncherIdentification,
 		const lcl::locale_ &Locale,
 		const char *Language,
 		void *UP );	// To overload !

@@ -81,6 +81,7 @@ namespace xulfsf {
 	public:
 		struct broadcasters__ {
 			broadcaster__
+				bdcNoBackend,
 				bdcPredefinedBackend,
 				bdcDaemonBackend,
 				bdcEmbeddedBackend,
@@ -95,6 +96,7 @@ namespace xulfsf {
 		struct widgets__ {
 			menulist__ mnlBackendType;
 			menuitem__
+				mniNoBackend,
 				mniPredefinedBackend,
 				mniDaemonBackend,
 				mniEmbeddedBackend;

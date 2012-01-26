@@ -440,6 +440,8 @@ ERRBegin
 	frdrgy::ProjectId.SetValue( Kernel().Registry(), ProjectId );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Kernel().Registry() ) ) {
+	case frdkrn::bxtNone:
+		break;
 	case frdkrn::bxtPredefined:
 		ERRl();
 		break;
@@ -517,6 +519,9 @@ ERRBegin
 	UI().SessionForm().Widgets.mnlBackendType.GetValue( Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
+	case frdkrn::bxtNone:
+		Value.Init();
+		break;
 	case frdkrn::bxtPredefined:
 		Value.Init();
 		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValue( Value );

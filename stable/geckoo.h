@@ -70,8 +70,6 @@ extern class ttr_tutor &GECKOOTutor;
 # define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME			GECKOORetrieveSteering
 # define GECKOO_DELETE_STEERING_FUNCTION_NAME			GECKOODeleteSteering
 
-# define GECKOO_SHARED_DATA_VERSION	"alpha 2"
-
 namespace geckoo {
 	typedef epeios::row__ id__;
 
@@ -105,18 +103,22 @@ namespace geckoo {
 		}
 	};
 
+# define GECKOO_SHARED_DATA_VERSION	"3"
+
 #pragma pack( push, 1)
 	class shared_data__
 	{
 	public:
 		static const char *Version;	// Toujours en première position.
 		static bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		const char *LauncherIdentification;
 		const char *Language;
 		const char *Path;	// Chemin d la bibliothèque.
 		void *UP;				// A la discrétion de l'utilisateur.
 		fdr::oflow_driver___<> *COut, *CErr;
 		void reset( bso::bool__ P = true )
 		{
+			LauncherIdentification = NULL;
 			Path = NULL;
 			UP = NULL;
 		}
@@ -129,10 +131,12 @@ namespace geckoo {
 			reset();
 		}
 		void Init(
+			const char *LauncherIdentification,
 			const char *Language,
 			const char *Path,
 			void *UP = NULL )
 		{
+			this->LauncherIdentification = LauncherIdentification,
 			this->Language = Language;
 			this->Path = Path,
 			this->UP = UP;

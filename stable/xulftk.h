@@ -109,6 +109,7 @@ namespace xulftk {
 	{
 	private:
 		trunk___ *_Trunk;
+		const char *_LauncherIdentification;	// Identification du lanceur du composant (normalement 'egeckcom' avec sa version).
 	protected:
 		trunk___ &_T( void )
 		{
@@ -126,7 +127,9 @@ namespace xulftk {
 		void _DropSession( void );
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void );
-		virtual void XULFTKFormatedInformations( str::string_ &Informations )
+		virtual void XULFTKFormatedInformations(
+			const char *LauncherIdentification,
+			str::string_ &Informations )
 		{
 			ERRc();	// Si pas surchargé, alors 'xulfmn::about_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
@@ -160,15 +163,19 @@ namespace xulftk {
 		void reset( bso::bool__ = true )
 		{
 			_Trunk = NULL;
+			_LauncherIdentification = NULL;
 		}
 		E_CVDTOR( _user_functions__ );
-		void Init( trunk___ &Trunk )
+		void Init(
+			const char *LauncherIdentification,	// Contenu NON dupliqué !
+			trunk___ &Trunk )
 		{
 			_Trunk = &Trunk;
+			_LauncherIdentification = LauncherIdentification;
 		}
 		void FormatedInformations( str::string_ &Informations )
 		{
-			XULFTKFormatedInformations( Informations );
+			XULFTKFormatedInformations( _LauncherIdentification, Informations );
 		}
 		void SiteURL( str::string_ &URL )
 		{
@@ -203,9 +210,11 @@ namespace xulftk {
 			return *(trunk *)&_user_functions__::_T();	// On peut caster, parce que 'Init(...)' garantit que l'objet est du bon type.
 		}
 	public:
-		void Init( trunk &Trunk )
+		void Init(
+			const char *LauncherIdentification,
+			trunk &Trunk )
 		{
-			_user_functions__::Init( Trunk );
+			_user_functions__::Init( LauncherIdentification, Trunk );
 		}
 	};
 

@@ -1,5 +1,12 @@
 $Id$
 
+26/01/2012 :
+	- Général (relatif à Gecko).
+		- Mise en oeuvre du 'LauncherIdentification', permettant d'identifier le lanceur du compsant (normalement 'egeckcom').
+		- Mise en oeuvre possibilité d'utiliser une application sans se connecter à un backend.
+	- NSXPCM :
+		- Correction des erreurs détectées par 'g++'.
+
 11/01/2012 :
 	- NSXPCM :
 		- Mise en place de 'const's.

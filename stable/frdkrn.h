@@ -76,6 +76,7 @@ namespace frdkrn {
 	using fblfrd::error_reporting_functions__;
 
 	enum backend_extended_type__ {
+		bxtNone,	// Non utilisation de 'backend'.
 		bxtPredefined,
 		bxtDaemon,
 		bxtEmbedded,
@@ -310,7 +311,10 @@ namespace frdkrn {
 			error_reporting_functions__ &ErrorReportingFunctions,
 			error_set___ &ErrorSet )	// Les paramètres de connection sont récupèrés de la 'registry'.
 		{
-			report__ Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
+			report__ Report = r_OK;
+			
+			if ( GetBackendExtendedType( Registry() ) != bxtNone )
+				Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
 
 			if ( Report == r_OK ) {
 				_ProjectOriginalTimeStamp = time( NULL );

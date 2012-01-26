@@ -81,6 +81,7 @@ ERRBegin
 	nsxpcm::GetAttribute( EventData().GetTarget(), "value", Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
+	case frdkrn::bxtNone:
 	case frdkrn::bxtPredefined:
 	case frdkrn::bxtDaemon:
 	case frdkrn::bxtEmbedded:
@@ -188,6 +189,7 @@ bso::bool__ HideUnusedBackendSelectionMode_(
 	Broadcasters.bdcEmbeddedBackend.Show( Embedded );
 	Broadcasters.bdcDaemonBackend.Show( Daemon );
 	Broadcasters.bdcPredefinedBackend.Show();	// A minima, celui-ci est toujours affiché.
+	Broadcasters.bdcNoBackend.Show();			// A minima, celui-ci est toujours affiché.
 
 	return Success;
 
@@ -307,6 +309,11 @@ ERRBegin
 		ERRReturn;
 
 	switch ( Type ) {
+	case frdkrn::bxtNone:
+		Broadcasters.bdcNoBackend.Show();
+		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniNoBackend );
+		Widgets.dckBackendType.SetSelectedIndex( Type );
+		break;
 	case frdkrn::bxtPredefined:
 		Broadcasters.bdcPredefinedBackend.Show();
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniPredefinedBackend );
@@ -363,6 +370,7 @@ static void Register_(
 	trunk___ &Trunk,
 	session_form__::broadcasters__ &Broadcasters )
 {
+	R( bdcNoBackend );
 	R( bdcPredefinedBackend );
 	R( bdcDaemonBackend );
 	R( bdcEmbeddedBackend );
@@ -401,6 +409,7 @@ static void Register_(
 	session_form__::widgets__ &Widgets )
 {
 	R( mnlBackendType );
+	R( mniNoBackend );
 	R( mniPredefinedBackend );
 	R( mniDaemonBackend );
 	R( mniEmbeddedBackend );

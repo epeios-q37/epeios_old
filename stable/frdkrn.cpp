@@ -133,6 +133,7 @@ ERREpilog
 	return Translation;
 }
 
+#define BACKEND_EXTENDED_TYPE_NONE		"None"
 #define BACKEND_EXTENDED_TYPE_EMBEDDED		"Embedded"
 #define BACKEND_EXTENDED_TYPE_DAEMON		"Daemon"
 #define BACKEND_EXTENDED_TYPE_PREDEFINED	"Predefined"
@@ -145,6 +146,8 @@ inline backend_extended_type__ frdkrn::GetBackendExtendedType( const str::string
 		return bxtDaemon;
 	else if ( RawType == BACKEND_EXTENDED_TYPE_PREDEFINED )
 		return bxtPredefined;
+	else if ( RawType == BACKEND_EXTENDED_TYPE_NONE )
+		return bxtNone;
 	else
 		return bxt_Undefined;
 }
@@ -152,6 +155,9 @@ inline backend_extended_type__ frdkrn::GetBackendExtendedType( const str::string
 static const char *GetBackendExtendedTypeLabel_( backend_extended_type__ Type )
 {
 	switch ( Type ) {
+	case bxtNone:
+		return BACKEND_EXTENDED_TYPE_NONE;
+		break;
 	case bxtPredefined:
 		return BACKEND_EXTENDED_TYPE_PREDEFINED;
 		break;
@@ -340,7 +346,6 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	const frdrgy::registry_ &Registry,
 	str::string_ &Location )
 {
-
 	csducl::type__ Type = csducl::t_Undefined;
 
 	switch ( GetBackendExtendedType( Registry ) ) {
@@ -355,6 +360,7 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	case bxtPredefined:
 		Type = GetPredefinedBackendTypeAndLocation_( Registry, Location );
 		break;
+	case bxtNone:
 	case bxt_Undefined:
 		break;
 	default:

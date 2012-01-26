@@ -34,9 +34,10 @@
 #include "mtx.h"
 
 
-#define COMPONENT_VERSION	"alpha 2"
+#define COMPONENT_VERSION	"3"
 
 #define NAME "egeckocom"
+#define VERSION	"0.1.0"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -63,7 +64,7 @@ class egeckocom___
 private:
 	geckof::gecko_wrapper___ _Wrapper;
 	geckoo::shared_data__ _Data;			// Only used by the master window.
-	tol::E_FPOINTER___( char ) _Buffer;		//				"
+	tol::E_FPOINTER___( char ) _LanguageBuffer;		//				"
 	~egeckocom___();
 public:
   NS_DECL_ISUPPORTS
@@ -151,14 +152,14 @@ RB
 	if ( _CurrentSteering != NULL )
 		ERRc();
 
-	_Buffer.Init();
+	_LanguageBuffer.Init();
 
-	if ( ( _Buffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
+	if ( ( _LanguageBuffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
 		ERRa();
 
-	strcpy( _Buffer, Language );
+	strcpy( _LanguageBuffer, Language );
 
-	_Data.Init( _Buffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
+	_Data.Init( NAME " " VERSION, _LanguageBuffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		Translation.Init();

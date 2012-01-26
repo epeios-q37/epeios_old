@@ -1666,7 +1666,7 @@ void tree__::Init(
 	nsISupports *Supports,
 	nsIDOMWindow *Window )
 {
-	_widget__::Init( Supports, Window );
+	_widget__<nsIDOMXULTreeElement>::Init( Supports, Window );
 
 	_SetTreeView( Functions );
 }
@@ -1676,7 +1676,7 @@ void tree__::Init(
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
 {
-	_widget__::Init( Window, Id );
+	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
 
 	_SetTreeView( Functions );
 }
@@ -1686,7 +1686,7 @@ void tree__::Init(
 	nsIDOMWindow *Window,
 	const char *Id )
 {
-	_widget__::Init( Window, Id );
+	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
 
 	_SetTreeView( Functions );
 }
