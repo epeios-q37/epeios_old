@@ -1,0 +1,174 @@
+# 'zgzckocom' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
+# Builds executable for the 'egeckocom' component.
+# Requires GNU make (http://www.gnu.org/).
+# Copyright (C) 2011 Claude SIMON
+#
+#    This file is part of 'egeckocom'.
+#
+#   'egeckocom' is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    'egeckocom' is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with 'egeckocom'.  If not, see <http://www.gnu.org/licenses/>.
+#
+# $Id$
+
+sdk = /Users/csimon/xulrunner-sdk
+
+name = egeckocom
+copt =
+# Epeios general debugging features
+copt += -DXXX_DBG
+# Required for multitasking
+copt += -DCPE_MT
+# For using <setjmp.h> instead of C++ exceptions.
+# copt += -DERR_JMPUSE
+
+mods += locale registry
+
+# epeios/core
+mods += cdgb64 cio dlbrry err fil
+mods += flw flx fnm lcl mmi
+mods += mtk nsxpcm rgstry str tht
+mods += tol ttr uym xml xpp
+
+# epeios/gescko
+mods += geckof
+
+# epeios/scl
+mods += scllocale sclmisc sclrgstry
+
+copt += -DNSXPCM_GECKO_V8 -DXP_UNIX
+
+os := $(shell uname -o 2>/dev/null || uname -s)
+
+src = $(sdk)/include
+
+ifndef EPEIOS_SRC
+	src += epeios
+else
+	src += $(EPEIOS_SRC)
+endif
+
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs =
+	
+endif
+
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+	env = gnu
+	
+	co +=
+	
+	lo += -shared -W1,-soname,$(name).so -o $(name).so 
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
+endif
+
+##################################################
+# Specific for the Linux environment (N900/N810) #
+##################################################
+
+ifeq ("$(os)","Linux")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
+endif
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+	env = gnu
+	
+	lo +=
+	
+	libs =
+	
+endif
+
+##################################
+# Common to all GNU environment. #
+##################################
+
+ifeq ("$(env)","gnu")
+#	lo = -o $(name)
+
+	# Generates debugging data.
+	co += -g
+
+	# General optimization.
+	#co += -O
+
+	# To use with gprof
+	#co += -pg
+
+	co += -fPIC -fshort-wchar -std=c++0x
+
+	libs += -lm
+	libs += -L$(sdk)/lib -lnspr4 -lxpcom -lxpcomglue_s_nomozalloc
+	
+endif
+
+######################
+# Don't modify below #
+######################
+
+ifeq ("$(env)","gnu")
+	co := -c $(co)
+	ox = o
+	cc = g++ 
+	larg = $(lo) $(objs)
+	ds = :
+endif
+
+vpath %.cpp $(subst $(ds),:,$(src))
+
+srcd = $(subst $(ds), ,$(src))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+lo += $(EPEIOS_LOPT)
+
+objs = $(name).$(ox) $(mods:=.$(ox)) 
+
+$(name):  $(objs)
+	$(cc) $(larg) $(libs)
+	
+%.$(ox): %.cpp
+	$(cc) $(co) $<
