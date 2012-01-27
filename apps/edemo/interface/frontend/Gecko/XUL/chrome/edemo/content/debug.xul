@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!--
+	'debug.xul' by Claude SIMON (http://zeusw.org/).
+
+	 This file is part of 'eDemo' software.
+
+	'eDemo' is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	'eDemo' is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with 'eDemo'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- $Id$ -->
+
+<!DOCTYPE window SYSTEM "chrome://edemo/locale/debug.dtd">
+
+<dialog
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:xex="http://zeusw.org/epeios/xex"
+	id="dlgDebug_alpha1"
+	title="DebugDialogBox"
+	buttons=","
+	onload="register();stop();"
+>
+	<script type="text/javascript" src="egeckocom.js"/>
+	<script type="text/javascript">retrieve( 'eDemo' );</script>
+
+	<broadcasterset>
+		<broadcaster id="bdcJSConsole"/>
+		<broadcaster id="bdcDOMInspector"/>
+		<broadcaster id="bdcFrontendError"/>
+		<broadcaster id="bdcBackendError"/>
+	</broadcasterset>
+	<broadcasterset>
+		<broadcaster
+			id="eltJSConsole"
+			label="&JSConsole.label;"
+			tooltiptext="&JSConsole.tooltip;"
+			xex:oncommand="ehJSConsole"
+			/>
+		<broadcaster
+			id="eltDOMInspector"
+			xex:oncommand="ehDOMInspector"
+			label="&DOMInspector.label;"
+			tooltiptext="&DOMInspector.tooltip;"
+			/>
+		<broadcaster
+			id="eltFrontendError"
+			xex:oncommand="ehFrontendError"
+			label="&FrontendError.label;"
+			tooltiptext="&FrontendError.tooltip;"
+			/>
+		<broadcaster
+			id="eltBackendError"
+			label="&BackendError.label;"
+			tooltiptext="&BackendError.tooltip;"
+			xex:oncommand="ehBackendError"
+			/>
+	</broadcasterset>
+	<grid>
+		<columns>
+			<column flex="1"/>
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row>
+				<button observes="bdcJSConsole">
+					<observes element="eltJSConsole" attribute="*"/>
+				</button>
+				<button observes="bdcDOMInspector">
+					<observes element="eltDOMInspector" attribute="*"/>
+				</button>
+			</row>
+			<row>
+				<button observes="bdcFrontendError">
+					<observes element="eltFrontendError" attribute="*"/>
+				</button>
+				<button observes="bdcBackendError">
+					<observes element="eltBackendError" attribute="*"/>
+				</button>
+			</row>
+		</rows>
+	</grid>
+</dialog>
+	

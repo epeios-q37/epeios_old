@@ -20,6 +20,7 @@
 #
 # $Id$
 
+
 sdk = /Users/csimon/xulrunner-sdk
 
 name = egeckocom
@@ -45,7 +46,7 @@ mods += geckof
 # epeios/scl
 mods += scllocale sclmisc sclrgstry
 
-copt += -DNSXPCM_GECKO_V8 -DXP_UNIX
+copt += -DNSXPCM_GECKO_V8 -DXP_UNIX -DMOZ_NO_MOZALLOC
 
 os := $(shell uname -o 2>/dev/null || uname -s)
 
@@ -79,7 +80,7 @@ endif
 ifeq ("$(os)","GNU/Linux")
 	env = gnu
 	
-	co +=
+	co += -std=c++0x
 	
 	lo += -shared -W1,-soname,$(name).so -o $(name).so 
 	
@@ -117,8 +118,10 @@ endif
 ifeq ("$(os)","Darwin")
 	env = gnu
 	
-	lo +=
-	
+	lo = -o $(name).dylib
+	lo += -Wl,-executable_path,$(sdk)/bin
+	lo += -dynamiclib	
+
 	libs =
 	
 endif
@@ -139,7 +142,7 @@ ifeq ("$(env)","gnu")
 	# To use with gprof
 	#co += -pg
 
-	co += -fPIC -fshort-wchar -std=c++0x
+	co += -fPIC -fshort-wchar
 
 	libs += -lm
 	libs += -L$(sdk)/lib -lnspr4 -lxpcom -lxpcomglue_s_nomozalloc
@@ -153,7 +156,7 @@ endif
 ifeq ("$(env)","gnu")
 	co := -c $(co)
 	ox = o
-	cc = g++ 
+	cc = g++-4.0 
 	larg = $(lo) $(objs)
 	ds = :
 endif

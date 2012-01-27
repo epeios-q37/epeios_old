@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!--
+	'SessionForm.xul' by Claude SIMON (http://zeusw.org/).
+
+	 This file is part of 'eDemo' software.
+
+	'eDemo' is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	'eDemo' is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with 'eDemo'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- $Id$ -->
+
+<!DOCTYPE window SYSTEM "chrome://edemo/locale/SessionForm.dtd">
+
+<page
+	id="pgeSessionForm"
+	title="SessionForm"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:xex="http://zeusw.org/epeios/xex"
+	onload="register();"
+	>
+	
+	<script type="text/javascript" src="egeckocom.js"/>
+	<broadcasterset><!-- Gestion 'hidden'/'disabled' -->
+		<broadcaster id="bdcNoBackend"/>
+		<broadcaster id="bdcPredefinedBackend"/>
+		<broadcaster id="bdcDaemonBackend"/>
+		<broadcaster id="bdcEmbeddedBackend"/>
+		<broadcaster id="bdcEmbeddedBackendSelection"/>
+		<broadcaster id="bdcAuthentication"/>"
+	</broadcasterset>
+	<broadcasterset><!-- 'e': 'event (xex:on...') -->
+		<broadcaster
+			id="ltBackendType"
+			label="&backendType.lbl;"
+			tooltiptext="&backendType.ttt;"
+			/>
+
+		<broadcaster
+			id="ltNoBackend"
+			label="&noBackend.lbl;"
+			tooltiptext="&noBackend.ttt;"
+			/>
+		<broadcaster
+			id="eltvNoBackend"
+			xex:oncommand="ehBackendTypeSelection"
+			value="None"
+			observes="ltNoBackend"
+			/>
+
+		<broadcaster
+			id="ltPredefinedBackend"
+			label="&predefinedBackend.lbl;"
+			tooltiptext="&predefinedBackend.ttt;"
+			/>
+		<broadcaster
+			id="eltvPredefinedBackend"
+			xex:oncommand="ehBackendTypeSelection"
+			value="Predefined"
+			observes="ltPredefinedBackend"
+			/>
+
+		<broadcaster
+			id="lDaemonBackend"
+			label="&daemonBackend.lbl;"
+			/>
+		<broadcaster
+			id="elvDaemonBackend"
+			xex:oncommand="ehBackendTypeSelection"
+			value="Daemon"
+			observes="lDaemonBackend"
+			/>
+		<broadcaster
+			id="lptDaemonBackend"
+			tooltiptext="&daemonBackend.ttt;"
+			placeholder="&daemonBackend.phd;"
+			observes="lDaemonBackend"
+			/>
+
+		<broadcaster
+			id="lEmbeddedBackend"
+			label="&embeddedBackend.lbl;"
+			/>
+		<broadcaster
+			id="elvEmbeddedBackend"
+			xex:oncommand="ehBackendTypeSelection"
+			value="Embedded"
+			observes="lEmbeddedBackend"
+			/>
+		<broadcaster
+			id="lptEmbeddedBackend"
+			tooltiptext="&embeddedBackend.ttt;"
+			placeholder="&embeddedBackend.phd;"
+			observes="lEmbeddedBackend"
+			/>
+
+		<broadcaster
+			id="eltvEmbeddedBackendSelection"
+			xex:oncommand="ehEmbeddedBackendSelection"
+			label="&embeddedBackendSelection.lbl;"
+			tooltiptext="&embeddedBackendSelection.ttt;"
+			/>
+		
+		<broadcaster
+			id="ltLogin"
+			label="&login.lbl;"
+			tooltiptext="&login.ttt;"
+			/>
+		<broadcaster
+			id="ltvLogin"
+			value="&login.vlu;"
+			observes="ltLogin"
+			/>
+		
+		<broadcaster
+			id="ltPassword"
+			label="&password.lbl;"
+			tooltiptext="&password.ttt;"
+			/>
+		<broadcaster
+			id="ltvPassword"
+			value="&password.vlu;"
+			/>
+		<broadcaster
+			id="eltApply"
+			xex:oncommand="ehApply"
+			label="&apply.lbl;"
+			tooltiptext="&apply.ttt;"
+			/>
+	</broadcasterset>
+	<keyset>
+	</keyset>
+	<vbox>
+		<hbox>
+			<groupbox>
+				<caption label="&backendSelection.lbl;"/>
+				<hbox>
+					<menulist id="mnlBackendType" observes="ltBackendType">
+						<menupopup>
+							<menuitem id="mniNoBackend">
+								<observes element="eltvNoBackend" attribute="*"/>
+								<observes element="bdcNoBackend" attribute="*"/>
+							</menuitem>
+							<menuitem id="mniPredefinedBackend">
+								<observes element="eltvPredefinedBackend" attribute="*"/>
+								<observes element="bdcPredefinedBackend" attribute="*"/>
+							</menuitem>
+							<menuitem id="mniDaemonBackend">
+								<observes element="elvDaemonBackend" attribute="*"/>
+								<observes element="bdcDaemonBackend" attribute="*"/>
+							</menuitem>
+							<menuitem id="mniEmbeddedBackend" observes="bdcEmbeddedBackend">
+								<observes element="elvEmbeddedBackend" attribute="*"/>
+							</menuitem>
+						</menupopup>
+					</menulist>
+					<groupbox>
+						<deck id="dckBackendType">
+							<hbox/>
+							<hbox>
+								<menulist id="mnlPredefinedBackend">
+									<observes element="ltPredefinedBackend" attribute="*"/>
+									<observes element="bdcPredefinedBackend" attribute="*"/>
+								</menulist>
+							</hbox>
+							<hbox>
+								<textbox id="txbDaemonBackend">
+									<observes element="lptDaemonBackend" attribute="*"/>
+									<observes element="bdcDaemonBackend" attribute="*"/>
+								</textbox>
+							</hbox>
+							<hbox>
+								<textbox id="txbEmbeddedBackend">
+									<observes element="lptEmbeddedBackend" attribute="*"/>
+									<observes element="bdcEmbeddedBackend" attribute="*"/>
+								</textbox>
+								<button>
+									<observes element="eltvEmbeddedBackendSelection" attribute="*"/>
+									<observes element="bdcEmbeddedBackendSelection" attribute="*"/>
+								</button>
+							</hbox>
+						</deck>
+					</groupbox>
+				</hbox>
+			</groupbox>
+			<spacer/>
+		</hbox>
+		<hbox>
+			<groupbox>
+			<caption label="&authentication.lbl;" observes="bdcAuthentication"/>
+				<grid>
+					<columns>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<label control="txbLogin"  observes="ltvLogin"/>
+							<textbox id="txbLogin" observes="ltLogin"/>
+						</row>
+						<row>
+							<label control="txbPassword" observes="ltvPassword"/>
+							<textbox id="txbPassword" type="password" observes="ltPassword"/>
+						</row>
+					</rows>
+				</grid>
+		</groupbox>
+			<spacer/>
+		</hbox>
+		<hbox>
+			<button observes="eltApply"/>
+		</hbox>
+	</vbox>
+</page>
+	

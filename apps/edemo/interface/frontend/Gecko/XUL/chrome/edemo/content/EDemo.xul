@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!--
+	'EDemo.xul' by Claude SIMON (http://zeusw.org/).
+
+	 This file is part of 'eDemo' software.
+
+	'eDemo' is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	'eDemo' is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with 'eDemo'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- $Id$ -->
+
+<!DOCTYPE window SYSTEM "chrome://edemo/locale/EDemo.dtd">
+
+<window
+	id="wdwMain"
+	title="edemo"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:xex="http://zeusw.org/epeios/xex"
+	onload="register();stop();"
+	onunload="terminate();"
+	Annex="&lt;SettingsSet/&gt;"
+	persist="height width screenX screenY Annex"
+>
+<!-- A 'xex:onclose="..."' doesn't work on a 'window' element ... -->
+
+	<script type="text/javascript" src="egeckocom.js"/>
+	<script type="text/javascript">create( 'eDemo', "&language;" );</script>
+	<broadcasterset>
+		<broadcaster id="bdcNewProject"/>
+		<broadcaster id="bdcOpenProject"/>
+		<broadcaster id="bdcCloseProject"/>
+		<broadcaster id="bdcExit"/>
+		<broadcaster id="bdcAbout"/>
+		<broadcaster id="bdcWebSite"/>
+	</broadcasterset>
+	<broadcasterset>
+		<broadcaster
+			id="eltNewProject"
+			xex:oncommand="ehNewProject"
+			label="&projectNew.lbl;"
+			tooltiptext="&projectNew.ttt;"
+			/>
+		<broadcaster
+			id="eltOpenProject"
+			xex:oncommand="ehOpenProject"
+			label="&projectOpen.lbl;"
+			tooltiptext="&projectOpen.ttt;"
+			/>
+		<broadcaster
+			id="eltCloseProject"
+			xex:oncommand="ehCloseProject"
+			label="&projectClose.lbl;"
+			tooltiptext="&projectClose.ttt;"
+			/>
+		<broadcaster
+			id="eltExit"
+			xex:oncommand="ehExit"
+			label="&exit.lbl;"
+			tooltiptext="&exit.ttt;"
+			/>
+		<broadcaster
+			id="eltAbout"
+			xex:oncommand="ehAbout"
+			label="&about.lbl;"
+			tooltiptext="&about.ttt;"
+			/>
+		<broadcaster
+			id="eltWebSite"
+			xex:oncommand="ehWebSite"
+			label="&webSite.lbl;"
+			tooltiptext="&webSite.ttt;"
+			/>
+	</broadcasterset>
+	<keyset>
+		<key id="keyVersion" modifiers="accel shift" key="&version.key;" xex:oncommand="ehAbout"/>
+		<key id="keyDebug" modifiers="accel shift" key="&debug.key;" xex:oncommand="ehDebug"/>
+	</keyset>
+	<menubar>
+		<menu label="&file.lbl;">
+			<menupopup>
+				<menuitem observes="bdcNewProject">
+					<observes element="eltNewProject" attribute="*"/>
+				</menuitem>
+				<menuitem observes="bdcOpenProject">
+					<observes element="eltOpenProject" attribute="*"/>
+				</menuitem>
+				<menuitem observes="bdcCloseProject">
+					<observes element="eltCloseProject" attribute="*"/>
+				</menuitem>
+				<menuseparator/>
+				<menuitem observes="bdcExit">
+					<observes element="eltExit" attribute="*"/>
+				</menuitem>
+			</menupopup>
+		</menu>
+		<menu label="&misc.lbl;">
+			<menupopup>
+				<menuitem observes="bdcAbout">
+					<observes element="eltAbout" attribute="*"/>
+				</menuitem>
+				<menuitem observes="bdcWebSite">
+					<observes element="eltWebSite" attribute="*"/>
+				</menuitem>
+			</menupopup>
+		</menu>
+	</menubar>
+	<deck id="dckMain" flex="1">
+		<iframe id="ifrHome" src="Home.xul"/>
+		<iframe id="ifrSessionForm" src="SessionForm.xul"/>
+		<iframe id="ifrSessionView" src="SessionView.xul"/>
+	</deck>
+</window>
+	
