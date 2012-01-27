@@ -46,7 +46,7 @@ mods += geckof
 # epeios/scl
 mods += scllocale sclmisc sclrgstry
 
-copt += -DNSXPCM_GECKO_V8 -DXP_UNIX -DMOZ_NO_MOZALLOC
+copt += -DNSXPCM_GECKO_V8 -DMOZ_NO_MOZALLOC
 
 os := $(shell uname -o 2>/dev/null || uname -s)
 
@@ -81,6 +81,7 @@ ifeq ("$(os)","GNU/Linux")
 	env = gnu
 	
 	co += -std=c++0x
+	co += -DXP_UNIX
 	
 	lo += -shared -W1,-soname,$(name).so -o $(name).so 
 	
@@ -117,6 +118,8 @@ endif
 
 ifeq ("$(os)","Darwin")
 	env = gnu
+
+	co += -DXP_MAC
 	
 	lo = -o $(name).dylib
 	lo += -Wl,-executable_path,$(sdk)/bin

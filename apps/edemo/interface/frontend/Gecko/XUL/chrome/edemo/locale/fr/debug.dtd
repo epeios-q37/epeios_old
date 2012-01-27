@@ -1,0 +1,13 @@
+﻿<!-- $Id -->
+
+<!ENTITY JSConsole.label "JS Console">
+<!ENTITY JSConsole.tooltip "Ouvrir la console JavaScript">
+
+<!ENTITY DOMInspector.label "DOM Inspector">
+<!ENTITY DOMInspector.tooltip "Ouvrir 'DOM Inspector'">
+
+<!ENTITY FrontendError.label "Erreur 'Frontend'">
+<!ENTITY FrontendError.tooltip "Tester une erreur de type 'frontend'">
+
+<!ENTITY BackendError.label "Erreur 'Backend'">
+<!ENTITY BackendError.tooltip "Tester une erreur 'Backend'">

@@ -1,0 +1,41 @@
+<!-- $Id$ -->
+
+<!-- -->
+<!ENTITY language "fr">
+<!-- -->
+
+<!-- -->
+<!ENTITY version.key "v">
+<!ENTITY debug.key "d">
+<!-- -->
+
+<!-- -->
+<!-- * -->
+<!ENTITY file.lbl "Fichier">
+
+<!-- ** -->
+<!ENTITY projectNew.lbl "Nouveau">
+<!ENTITY projectNew.ttt "Créer un nouveau projet">
+
+<!ENTITY projectOpen.lbl "Ouvrir">
+<!ENTITY projectOpen.ttt "Ouvrir un projet">
+
+<!ENTITY projectClose.lbl "Fermer">
+<!ENTITY projectClose.ttt "Fermer le projet">
+
+<!ENTITY exit.lbl "Quitter">
+<!ENTITY exit.ttt "Quitter l'application">
+<!-- ** -->
+<!-- * -->
+
+<!-- * -->
+<!ENTITY misc.lbl "?">
+
+<!-- ** -->
+<!ENTITY about.lbl "A propos ...">
+<!ENTITY about.ttt "Afficher des informations à propos de cette application">
+
+<!ENTITY webSite.lbl "Site WEB">
+<!ENTITY webSite.ttt "Ouvrir la page WEB dédiée à 'eDemo'">
+<!-- ** -->
+<!-- * -->

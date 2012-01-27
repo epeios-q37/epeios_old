@@ -1,0 +1,37 @@
+<!-- $Id$ -->
+
+<!ENTITY backendSelection.lbl "&quot;Backend&quot;">
+
+<!ENTITY backendType.lbl "Type de 'backend'">
+<!ENTITY backendType.ttt "Sélectionner le type de 'backend'.">
+
+<!ENTITY noBackend.lbl "Aucun">
+<!ENTITY noBackend.phd "">
+<!ENTITY noBackend.ttt "Ne pas se connecter à un 'backend'.">
+
+<!ENTITY embeddedBackend.lbl "Enclavé">
+<!ENTITY embeddedBackend.phd "">
+<!ENTITY embeddedBackend.ttt "Localisation et nom de la bibliothèque dynamique contenant le 'backend', ou cliquez sur '&embeddedBackendSelection.lbl;'.">
+
+<!ENTITY daemonBackend.lbl "Daemon">
+<!ENTITY daemonBackend.phd "adresse:port">
+<!ENTITY daemonBackend.ttt "Adresse et port du 'daemon'.">
+
+<!ENTITY predefinedBackend.lbl "Prédéfini">
+<!ENTITY predefinedBackend.ttt "'Sélectionner un des backend's prédifinis">
+
+<!ENTITY embeddedBackendSelection.lbl "Parcourir ...">
+<!ENTITY embeddedBackendSelection.ttt "Sélectionner la bibliothèque dynamique contenant le 'backend'.">
+
+<!ENTITY login.lbl "Identifiant">
+<!ENTITY login.vlu "&login.lbl;">
+<!ENTITY login.ttt "Votre identifiant.">
+
+<!ENTITY authentication.lbl "Authentification">
+
+<!ENTITY password.lbl "Mot de passe">
+<!ENTITY password.vlu "&password.lbl;">
+<!ENTITY password.ttt "Votre mot de passe.">
+
+<!ENTITY apply.lbl "OK">
+<!ENTITY apply.ttt "Ouvrir d'une session.">
