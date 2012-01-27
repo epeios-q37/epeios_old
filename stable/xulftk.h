@@ -457,7 +457,7 @@ namespace xulftk {
 		const str::string_ &BuildXSLDefaultLocalizedFileName(
 			const char *XSLFileNameAffix,
 			str::string_ &LocalizedFileName );
-		friend _user_functions__;
+		friend class _user_functions__;
 	};
 
 	inline void _user_functions__::_DefineSession(

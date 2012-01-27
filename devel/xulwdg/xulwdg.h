@@ -116,7 +116,7 @@ namespace xulwdg {
 		void reset( bso::bool__ P = true )
 		{
 			widget::reset( P );
-			_trunk_depot__::reset( P );
+			_trunk_depot__<trunk>::reset( P );
 		}
 		E_CVDTOR( _widget__ );
 		void Init(
@@ -124,7 +124,7 @@ namespace xulwdg {
 			nsISupports *Supports,
 			nsIDOMWindow *Window )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			widget::Init( Supports, Window );
 		}
 		void Init(
@@ -132,7 +132,7 @@ namespace xulwdg {
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			widget::Init( Window, Id );
 		}
 		void Init(
@@ -140,7 +140,7 @@ namespace xulwdg {
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			widget::Init( Window, Id );
 		}
 	};
@@ -179,7 +179,7 @@ namespace xulwdg {
 		void reset( bso::bool__ P = true )
 		{
 			_tree__::reset( P );
-			_trunk_depot__::reset( P );
+			_trunk_depot__<trunk>::reset( P );
 		}
 		E_CVDTOR( tree__ );
 		void Init(
@@ -188,7 +188,7 @@ namespace xulwdg {
 			nsISupports *Supports,
 			nsIDOMWindow *Window )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			_tree__::Init( Functions, Supports, Window );
 		}
 		void Init(
@@ -197,7 +197,7 @@ namespace xulwdg {
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			_tree__::Init( Functions, Window, Id );
 		}
 		void Init(
@@ -206,7 +206,7 @@ namespace xulwdg {
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			_tree__::Init( Functions, Window, Id );
 		}
 	};
@@ -221,12 +221,12 @@ namespace xulwdg {
 		void reset( bso::bool__ P = true )
 		{
 			_event_handler__::reset( P );
-			_trunk_depot__::reset( P );
+			_trunk_depot__<trunk>::reset( P );
 		}
 		E_CVDTOR( event_handler__ );
 		void Init( trunk &Trunk )
 		{
-			_trunk_depot__::Init( Trunk );
+			_trunk_depot__<trunk>::Init( Trunk );
 			_event_handler__::Init();
 		}
 		void Add(
@@ -245,7 +245,7 @@ namespace xulwdg {
 		void Add(
 			nsIDOMWindow *Window,
 			const char *Id,
-			int Events = events )
+			int Events )
 		{
 			Add( Window, str::string( Id ), Events );
 		}

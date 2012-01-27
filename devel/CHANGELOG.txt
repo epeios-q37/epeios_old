@@ -1,5 +1,9 @@
 $Id$
 
+27/01/2012 :
+	Général :
+		- Correction des erreurs détectées par 'g++'.
+
 26/01/2012 :
 	- Général (relatif à Gecko).
 		- Mise en oeuvre du 'LauncherIdentification', permettant d'identifier le lanceur du compsant (normalement 'egeckcom').

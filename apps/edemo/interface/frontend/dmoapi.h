@@ -1,0 +1,180 @@
+/* DON'T MODIFY */
+/* This file was generated using getbkdapi	V0.2.4, and a special XSL file
+($RCSfile$ $Revision$ $Date$ $Author$) */
+// $Id$	(CVS feature).
+
+#ifndef EDEMO__INC
+#define EDEMO__INC
+
+
+#define EDEMO_TARGET "edemo"
+#define EDEMO_API_VERSION "1"
+
+#include "fblfrd.h"
+#include "cpe.h"
+
+namespace edemo {
+
+	class statics___
+	{
+	private:
+		fblfrd::object__ _ID;
+		fblfrd::backend_access___ *_Backend;
+		fblfrd::command__ _Commands[1];
+	public:
+		void reset( bso::bool__ = true )
+		{
+			
+			_Backend = NULL;
+			_ID = FBLFRD_UNDEFINED_OBJECT;
+		}
+		E_CVDTOR( statics___ )
+		void Init( fblfrd::backend_access___ &Backend )
+		{
+			fblfrd::commands_details CommandsDetails;
+			fblfrd::command_detail CommandDetail;
+			fblfrd::ids16 Commands;
+
+			fblfrd::id8__ Parameters[] = {
+				0, 
+			};
+
+			_Backend = &Backend;
+
+			_ID = FBLFRD_MASTER_OBJECT;
+			CommandsDetails.Init();
+
+			CommandDetail.Init();
+			CommandDetail.Name = "DMOTest";;
+			CommandDetail.Casts.Append( Parameters + 0, 1 );
+			CommandsDetails.Append( CommandDetail );
+
+
+			Commands.Init();
+			_Backend->GetCommands( FBLFRD_MASTER_TYPE, CommandsDetails, Commands );
+			Commands.Recall( 0, 1, _Commands );
+		}
+		fblovl::reply__ DMOTest( void ) const
+		{
+			Backend().PushHeader( _ID, Commands()[0] );
+
+			Backend().EndOfInParameters();
+
+
+			return Backend().Handle();
+		}
+		fblfrd::backend_access___ &Backend( void ) const
+		{
+			return *_Backend;
+		}
+		const fblfrd::command__ *Commands( void ) const
+		{
+			return _Commands;
+		}
+	};
+
+	class dmo_myobject_common__
+	{
+	private:
+		fblfrd::id16__ _ID;
+		fblfrd::backend_access___ *_Backend;
+		fblfrd::command__ _Commands[1];
+	public:
+		void reset( bso::bool__ = true )
+		{
+			
+			_Backend = NULL;
+			_ID = FBLFRD_UNDEFINED_OBJECT;
+		}
+		E_CVDTOR( dmo_myobject_common__ )
+		void Init( fblfrd::backend_access___ &Backend )
+		{
+			fblfrd::commands_details CommandsDetails;
+			fblfrd::command_detail CommandDetail;
+			fblfrd::ids16 Commands;
+
+			fblfrd::id8__ Parameters[] = {
+				0, 
+			};
+
+			_Backend = &Backend;
+
+			_ID = _Backend->GetType( str::string( "myobject" ) );
+
+			CommandsDetails.Init();
+
+			CommandDetail.Init();
+			CommandDetail.Name = "Test";;
+			CommandDetail.Casts.Append( Parameters + 0, 1 );
+			CommandsDetails.Append( CommandDetail );
+
+
+			Commands.Init();
+			_Backend->GetCommands( _ID, CommandsDetails, Commands );
+			Commands.Recall( 0, 1, _Commands );
+		}
+		fblfrd::object__ GetNewObject( void )
+		{
+			return _Backend->GetNewObject( _ID );
+		}
+		void RemoveObject( fblfrd::object__ Object )
+		{
+			_Backend->RemoveObject( Object );
+		}
+		fblfrd::backend_access___ &Backend( void ) const
+		{
+			return *_Backend;
+		}
+		const fblfrd::command__ *Commands( void ) const
+		{
+			return _Commands;
+		}
+	};
+
+	class dmo_myobject___
+	{
+	private:
+		fblfrd::object__ _ID;
+		dmo_myobject_common__ *Common_;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P == true )
+				if ( ( Common_ != NULL ) && ( _ID != FBLFRD_UNDEFINED_OBJECT ) )
+					Common_->RemoveObject( _ID );
+
+			Common_ = NULL;
+			_ID = FBLFRD_UNDEFINED_OBJECT;
+		}
+		dmo_myobject___( void )
+		{
+			reset( false );
+		}
+		~dmo_myobject___( void )
+		{
+			reset();
+		}
+		fblfrd::object__ ID( void ) const
+		{
+			return _ID;
+		}
+		void Init( dmo_myobject_common__ &Common )
+		{
+			Common_ = &Common;
+
+			_ID = Common_->GetNewObject();
+		}
+		fblovl::reply__ Test( void ) const
+		{
+			Common_->Backend().PushHeader( _ID, Common_->Commands()[0] );
+
+			Common_->Backend().EndOfInParameters();
+
+
+			return Common_->Backend().Handle();
+		}
+	};
+
+}
+
+#endif //#ifndef edemo__INC

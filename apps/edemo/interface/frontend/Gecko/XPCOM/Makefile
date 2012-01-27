@@ -1,22 +1,22 @@
-# 'egeckocom' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
-# Builds executable for the 'egeckocom' component.
+# 'edemo' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
+# Builds executable for the 'edemo' component.
 # Requires GNU make (http://www.gnu.org/).
 # Copyright (C) 2011 Claude SIMON
 #
-#    This file is part of 'egeckocom'.
+#    This file is part of 'edemo'.
 #
-#   'egeckocom' is free software: you can redistribute it and/or modify
+#   'edemo' is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    'egeckocom' is distributed in the hope that it will be useful,
+#    'edemo' is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with 'egeckocom'.  If not, see <http://www.gnu.org/licenses/>.
+#    along with 'edemo'.  If not, see <http://www.gnu.org/licenses/>.
 #
 # $Id$
 
@@ -27,7 +27,7 @@ else
 	sdk = $(XULRUNNER_SDK)
 endif
 
-name = egeckocom
+name = edemogck
 copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
@@ -36,19 +36,38 @@ copt += -DCPE_MT
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 
-mods = locale registry
+mods = binding registry trunk
+
+# frd
+mods += frdkernl frdrgstry
+
+# ui
+mods += ui ui_base ui_grid ui_main ui_ssn_frm
+mods += ui_ssn_vew
 
 # epeios/core
-mods += cdgb64 cio dlbrry err fil
-mods += flw flx fnm lcl mmi
-mods += mtk nsxpcm rgstry str tht
+mods += cdgb64 cio dlbrry dtfptb err
+mods += fil flw flx fnm lcl mmi
+mods += mtk nsxpcm rgstry sck str tht
 mods += tol ttr uym xml xpp
 
-# epeios/gescko
-mods += geckof
+# epeios/csd
+mods += csdbnc csdlec csdsnc csducl
+
+# epeios/fbl
+mods += fblcmd fblcst fblfrb fblfrd fblovl fbltyp
+
+# epeios/frd
+mods += frdkrn frdrgy
+
+# epeios/gesko
+mods += geckoo geckob
 
 # epeios/scl
-mods += scllocale sclmisc sclrgstry
+mods += sclgecko scllocale sclmisc sclrgstry
+
+# epeios/xulf
+mods += xulfbs xulfdg xulfkl xulfmn xulfrg xulfsf xulfsv xulftk xulfui
 
 copt += -DNSXPCM_GECKO_V8 -DMOZ_NO_MOZALLOC
 
@@ -61,6 +80,8 @@ ifndef EPEIOS_SRC
 else
 	src += $(EPEIOS_SRC)
 endif
+
+src += ..:../..:../../..:../../../..
 
 ##################################
 # Specific to Cygwin environment #

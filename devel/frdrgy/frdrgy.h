@@ -107,7 +107,7 @@ namespace frdrgy {
 	extern rgstry::entry ProjectId;
 
 	struct paths {
-		static struct profiles {
+		struct profiles {
 			static const char *FallbackProfile;
 			static const char *DefaultProfile;
 			static const char *UserProfile;

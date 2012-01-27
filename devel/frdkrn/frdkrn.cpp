@@ -91,7 +91,7 @@ const char *frdkrn::GetLabel( report__ Report )
 # error "'report__' modified !"
 #endif
 
-static const str::string_ &frdkrn::GetTranslation(
+const str::string_ &frdkrn::GetTranslation(
 	report__ Report,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &LocaleRack,
@@ -483,9 +483,11 @@ ERRProlog
 	xml::writer Writer;
 	bso::bool__ Backuped = false;
 	STR_BUFFER___ FileNameBuffer;
+	txf::text_oflow__ TVoidOFlow;
 ERRBegin
+	TVoidOFlow.Init( flx::VoidOFlow );
 
-	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, LocaleRack(), txf::text_oflow__( flx::VoidOFlow ) ) == fil::bsOK )
+	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, LocaleRack(), TVoidOFlow ) == fil::bsOK )
 		Backuped = true;
 
 	if ( FFlow.Init( FileNameBuffer, err::hUserDefined ) != fil::sSuccess ) {
@@ -510,7 +512,7 @@ ERRBegin
 	Report = r_OK;
 ERRErr
 	if ( Backuped )
-		fil::RecoverBackupFile( FileNameBuffer, LocaleRack(), txf::text_oflow__( flx::VoidOFlow ) );
+		fil::RecoverBackupFile( FileNameBuffer, LocaleRack(), TVoidOFlow );
 ERREnd
 ERREpilog
 	return Report;
