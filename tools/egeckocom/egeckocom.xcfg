@@ -5,7 +5,8 @@
 		<Components>
 			<Component id="eSketch">h:\bin\esketchgck</Component>
 			<Component id="Gesbib">h:\bin\gesbib6gck</Component>
-			<Component id="eDemo">h:\bin\edemogck</Component>
+			<Component id="eDemo">/home/csimon/bin/edemogck.so</Component>
+			<Component id="eDemo">h:/bin/edemogck</Component>
 		</Components>
 		<!-- Optional -->
 		<!--
