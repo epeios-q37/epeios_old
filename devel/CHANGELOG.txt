@@ -1,5 +1,9 @@
 $Id$
 
+28/01/2012 :
+	- SCLGECKO :
+		- Interception des execptions au niveau de 'geckob::GECKOBCreateSteering(...)'
+
 27/01/2012 :
 	Général :
 		- Correction des erreurs détectées par 'g++'.
