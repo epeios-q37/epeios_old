@@ -57,6 +57,9 @@ mods += csdbnc csdlec csdsnc csducl
 # epeios/fbl
 mods += fblcmd fblcst fblfrb fblfrd fblovl fbltyp
 
+# epeios/xulf
+mods += xulfbs xulfdg xulfkl xulfmn xulfsf xulfsv xulftk xulfui
+
 # epeios/frd
 mods += frdkrn xulfrg frdrgy
 
@@ -65,9 +68,6 @@ mods += geckoo geckob
 
 # epeios/scl
 mods += sclgecko scllocale sclmisc sclrgstry
-
-# epeios/xulf
-mods += xulfbs xulfdg xulfkl xulfmn xulfsf xulfsv xulftk xulfui
 
 copt += -DNSXPCM_GECKO_V8 -DMOZ_NO_MOZALLOC
 
