@@ -88,11 +88,12 @@ protected:
 
 #define RR	\
 	ERRErr
-// BE CAREFUL : the exception can come from the library. In this case, he error data are NOT available. The library has its own 'ERR' library data.
+// BE CAREFUL : the exception can come from the library. In this case, the error data are NOT available. The library has its own 'ERR' library data.
 #define RN\
-		if ( CErrString_.Amount() != 0 )\
+		if ( CErrString_.Amount() != 0 ) {\
 			ErrorMessage = CErrString_.Convert( ErrorMessageBuffer );\
-		else if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )\
+			CErrString_.Init();\
+		} else if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )\
 			ErrorMessage = err::Message( ERRBuffer );\
 \
 		if ( ERRError() )\
@@ -162,13 +163,15 @@ RB
 	_Data.Init( NAME " " VERSION, _LanguageBuffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT, Translation ) );
-		Tags.Init();
-		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		Tags.Append( LibraryName );
-		lcl::ReplaceTags( ErrorMessage, Tags );
-		ErrorMessage.Append( " !" );
+		if ( CErrString_.Amount() == 0 ) {
+			Translation.Init();
+			ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT, Translation ) );
+			Tags.Init();
+			Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
+			Tags.Append( LibraryName );
+			lcl::ReplaceTags( ErrorMessage, Tags );
+			ErrorMessage.Append( " !" );
+		}
 		ERRBeam();
 	}
 

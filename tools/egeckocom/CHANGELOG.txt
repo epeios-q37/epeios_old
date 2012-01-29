@@ -1,0 +1,4 @@
+$Id$
+
+26/01/2012 :
+	- During a 'Create(...)', an error when loading the library is no more reported by an exeception, but by a returned value of NULL. Exceptions through libraries are not handled the same way under Linux and under Windows.

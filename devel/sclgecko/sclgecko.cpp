@@ -83,6 +83,8 @@ ERRBegin
 
 	Steering = CreateSteering( Data->LauncherIdentification, scllocale::GetRack().Locale(), Data->Language, Data->UP );
 ERRErr
+	Steering = NULL;
+	ERRRst();
 ERREnd
 	if ( cio::IsInitialized() ) {
 		cio::COut << txf::commit;
