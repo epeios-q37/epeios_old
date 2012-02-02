@@ -43,98 +43,68 @@
 	</broadcasterset>
 	<broadcasterset><!-- 'e': 'event (xex:on...') -->
 		<broadcaster
-			id="ltBackendType"
+			id="dspBackendType"
 			label="&backendType.lbl;"
 			tooltiptext="&backendType.ttt;"
 			/>
 
 		<broadcaster
-			id="ltNoBackend"
+			id="dspNoBackend"
+			xex:oncommand="ehBackendTypeSelection"
 			label="&noBackend.lbl;"
 			tooltiptext="&noBackend.ttt;"
-			/>
-		<broadcaster
-			id="eltvNoBackend"
-			xex:oncommand="ehBackendTypeSelection"
 			value="None"
-			observes="ltNoBackend"
 			/>
 
 		<broadcaster
-			id="ltPredefinedBackend"
+			id="dspPredefinedBackend"
+			xex:oncommand="ehBackendTypeSelection"
 			label="&predefinedBackend.lbl;"
 			tooltiptext="&predefinedBackend.ttt;"
-			/>
-		<broadcaster
-			id="eltvPredefinedBackend"
-			xex:oncommand="ehBackendTypeSelection"
 			value="Predefined"
-			observes="ltPredefinedBackend"
 			/>
 
 		<broadcaster
-			id="lDaemonBackend"
-			label="&daemonBackend.lbl;"
-			/>
-		<broadcaster
-			id="elvDaemonBackend"
+			id="dspDaemonBackend"
 			xex:oncommand="ehBackendTypeSelection"
+			label="&daemonBackend.lbl;"
 			value="Daemon"
-			observes="lDaemonBackend"
-			/>
-		<broadcaster
-			id="lptDaemonBackend"
 			tooltiptext="&daemonBackend.ttt;"
 			placeholder="&daemonBackend.phd;"
-			observes="lDaemonBackend"
 			/>
 
 		<broadcaster
-			id="lEmbeddedBackend"
-			label="&embeddedBackend.lbl;"
-			/>
-		<broadcaster
-			id="elvEmbeddedBackend"
+			id="dspEmbeddedBackend"
 			xex:oncommand="ehBackendTypeSelection"
+			label="&embeddedBackend.lbl;"
 			value="Embedded"
-			observes="lEmbeddedBackend"
-			/>
-		<broadcaster
-			id="lptEmbeddedBackend"
 			tooltiptext="&embeddedBackend.ttt;"
 			placeholder="&embeddedBackend.phd;"
-			observes="lEmbeddedBackend"
 			/>
 
 		<broadcaster
-			id="eltvEmbeddedBackendSelection"
+			id="dspEmbeddedBackendSelection"
 			xex:oncommand="ehEmbeddedBackendSelection"
 			label="&embeddedBackendSelection.lbl;"
 			tooltiptext="&embeddedBackendSelection.ttt;"
 			/>
 		
 		<broadcaster
-			id="ltLogin"
+			id="dspLogin"
 			label="&login.lbl;"
 			tooltiptext="&login.ttt;"
-			/>
-		<broadcaster
-			id="ltvLogin"
 			value="&login.vlu;"
-			observes="ltLogin"
 			/>
 		
 		<broadcaster
-			id="ltPassword"
+			id="dspPassword"
 			label="&password.lbl;"
 			tooltiptext="&password.ttt;"
-			/>
-		<broadcaster
-			id="ltvPassword"
 			value="&password.vlu;"
 			/>
+		
 		<broadcaster
-			id="eltApply"
+			id="dspApply"
 			xex:oncommand="ehApply"
 			label="&apply.lbl;"
 			tooltiptext="&apply.ttt;"
@@ -147,22 +117,19 @@
 			<groupbox>
 				<caption label="&backendSelection.lbl;"/>
 				<hbox>
-					<menulist id="mnlBackendType" observes="ltBackendType">
+					<menulist id="mnlBackendType" observes="dspBackendType">
 						<menupopup>
-							<menuitem id="mniNoBackend">
-								<observes element="eltvNoBackend" attribute="*"/>
-								<observes element="bdcNoBackend" attribute="*"/>
+							<menuitem id="mniNoBackend" observes="bdcNoBackend">
+								<observes element="dspNoBackend" attribute="*"/>
 							</menuitem>
-							<menuitem id="mniPredefinedBackend">
-								<observes element="eltvPredefinedBackend" attribute="*"/>
-								<observes element="bdcPredefinedBackend" attribute="*"/>
+							<menuitem id="mniPredefinedBackend" observes="bdcPredefinedBackend">
+								<observes element="dspPredefinedBackend" attribute="*"/>
 							</menuitem>
-							<menuitem id="mniDaemonBackend">
-								<observes element="elvDaemonBackend" attribute="*"/>
-								<observes element="bdcDaemonBackend" attribute="*"/>
+							<menuitem id="mniDaemonBackend" observes="bdcDaemonBackend">
+								<observes element="dspDaemonBackend" attribute="*"/>
 							</menuitem>
 							<menuitem id="mniEmbeddedBackend" observes="bdcEmbeddedBackend">
-								<observes element="elvEmbeddedBackend" attribute="*"/>
+								<observes element="dspEmbeddedBackend" attribute="*"/>
 							</menuitem>
 						</menupopup>
 					</menulist>
@@ -170,25 +137,21 @@
 						<deck id="dckBackendType">
 							<hbox/>
 							<hbox>
-								<menulist id="mnlPredefinedBackend">
-									<observes element="ltPredefinedBackend" attribute="*"/>
-									<observes element="bdcPredefinedBackend" attribute="*"/>
+								<menulist id="mnlPredefinedBackend" observes="bdcPredefinedBackend">
+									<observes element="dspPredefinedBackend" attribute="*"/>
 								</menulist>
 							</hbox>
 							<hbox>
-								<textbox id="txbDaemonBackend">
-									<observes element="lptDaemonBackend" attribute="*"/>
-									<observes element="bdcDaemonBackend" attribute="*"/>
+								<textbox id="txbDaemonBackend" observes="bdcDaemonBackend">
+									<observes element="dspDaemonBackend" attribute="*"/>
 								</textbox>
 							</hbox>
 							<hbox>
-								<textbox id="txbEmbeddedBackend">
-									<observes element="lptEmbeddedBackend" attribute="*"/>
-									<observes element="bdcEmbeddedBackend" attribute="*"/>
+								<textbox id="txbEmbeddedBackend" observes="bdcEmbeddedBackend" value="">
+									<observes element="dspEmbeddedBackend" attribute="*"/>
 								</textbox>
-								<button>
-									<observes element="eltvEmbeddedBackendSelection" attribute="*"/>
-									<observes element="bdcEmbeddedBackendSelection" attribute="*"/>
+								<button observes="bdcEmbeddedBackendSelection">
+									<observes element="dspEmbeddedBackendSelection" attribute="*"/>
 								</button>
 							</hbox>
 						</deck>
@@ -207,12 +170,12 @@
 					</columns>
 					<rows>
 						<row>
-							<label control="txbLogin"  observes="ltvLogin"/>
-							<textbox id="txbLogin" observes="ltLogin"/>
+							<label control="txbLogin"  observes="dspLogin"/>
+							<textbox id="txbLogin" observes="dspLogin"/>
 						</row>
 						<row>
-							<label control="txbPassword" observes="ltvPassword"/>
-							<textbox id="txbPassword" type="password" observes="ltPassword"/>
+							<label control="txbPassword" observes="dspPassword"/>
+							<textbox id="txbPassword" type="password" observes="dspPassword"/>
 						</row>
 					</rows>
 				</grid>
@@ -220,7 +183,7 @@
 			<spacer/>
 		</hbox>
 		<hbox>
-			<button observes="eltApply"/>
+			<button observes="dspApply"/>
 		</hbox>
 	</vbox>
 </page>

@@ -1,5 +1,9 @@
 $Id$
 
+29/01/2012 :
+	 NSXPCM :
+		- Changement de nuémrotation et de nom de l''event_listener__'.
+
 28/01/2012 :
 	- SCLGECKO :
 		- Interception des execptions au niveau de 'geckob::GECKOBCreateSteering(...)'

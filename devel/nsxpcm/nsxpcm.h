@@ -2965,7 +2965,7 @@ namespace nsxpcm {
 
 NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::event_listener__, NSXPCM_EVENT_LISTENER_IID)
 
-# define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/nsxpcm_event_listener;alpha 3"
+# define NSXPCM_EVENT_LISTENER_CONTRACTID "@zeusw.org/event_listener;4"
 # define NSXPCM_EVENT_LISTENER_CLASSNAME "NSXPCMEventListener"
 # define NSXPCM_EVENT_LISTENER_CID  NSXPCM_EVENT_LISTENER_IID
 
