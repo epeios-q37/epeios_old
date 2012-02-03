@@ -177,9 +177,9 @@ static void Register_(
 {
 	Widgets.wdwMain.Init( Trunk, Window, Window );	// Le type n'est pas correct di on passe par l'id.
 	R( dckMain );
-	R( ifrHome );
-	R( ifrSessionForm );
-	R( ifrSessionView );
+	R( vewHome );
+	R( vewSessionForm );
+	R( vewSessionView );
 }
 
 void xulfmn::RegisterMainUI(

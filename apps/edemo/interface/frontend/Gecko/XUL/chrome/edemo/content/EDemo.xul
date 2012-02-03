@@ -48,16 +48,22 @@
 	</broadcasterset>
 	<broadcasterset>
 		<broadcaster
-			id="eltNewProject"
+			id="glbNewProject"
 			xex:oncommand="ehNewProject"
 			label="&projectNew.lbl;"
 			tooltiptext="&projectNew.ttt;"
+			accesskey="&projectNew.ack;"
+			acceltext="&projectNew.act;"
+			observes="bdcNewProject"
 			/>
 		<broadcaster
-			id="eltOpenProject"
+			id="glbOpenProject"
 			xex:oncommand="ehOpenProject"
 			label="&projectOpen.lbl;"
 			tooltiptext="&projectOpen.ttt;"
+			accesskey="&projectOpen.ack;"
+			acceltext="&projectOpen.act;"
+			observes="bdcOpenProject"
 			/>
 		<broadcaster
 			id="eltCloseProject"
@@ -89,14 +95,10 @@
 		<key id="keyDebug" modifiers="accel shift" key="&debug.key;" xex:oncommand="ehDebug"/>
 	</keyset>
 	<menubar>
-		<menu label="&file.lbl;">
+		<menu label="&file.lbl;" accesskey="&file.ack;">
 			<menupopup>
-				<menuitem observes="bdcNewProject">
-					<observes element="eltNewProject" attribute="*"/>
-				</menuitem>
-				<menuitem observes="bdcOpenProject">
-					<observes element="eltOpenProject" attribute="*"/>
-				</menuitem>
+				<menuitem observes="glbNewProject"/>
+				<menuitem observes="glbOpenProject"/>
 				<menuitem observes="bdcCloseProject">
 					<observes element="eltCloseProject" attribute="*"/>
 				</menuitem>
@@ -118,9 +120,20 @@
 		</menu>
 	</menubar>
 	<deck id="dckMain" flex="1">
-		<iframe id="ifrHome" src="Home.xul"/>
-		<iframe id="ifrSessionForm" src="SessionForm.xul"/>
-		<iframe id="ifrSessionView" src="SessionView.xul"/>
+		<box id="vewHome" flex="1" pack="center" align="center">
+			<groupbox>
+				<vbox>
+					<button observes="glbNewProject"/>
+					<button observes="glbOpenProject"/>
+				</vbox>
+			</groupbox>
+		</box>
+		<box id="vewSessionForm">
+			<iframe src="SessionForm.xul" flex="1"/>
+		</box>
+		<box id="vewSessionView">
+			<iframe src="SessionView.xul" flex="1"/>
+		</box>
 	</deck>
 </window>
 	

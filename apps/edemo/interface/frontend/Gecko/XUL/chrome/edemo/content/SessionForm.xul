@@ -22,6 +22,7 @@
 <!-- $Id$ -->
 
 <!DOCTYPE window SYSTEM "chrome://edemo/locale/SessionForm.dtd">
+<!--<!DOCTYPE window SYSTEM "../locale/fr/SessionForm.dtd">-->
 
 <page
 	id="pgeSessionForm"
@@ -49,44 +50,59 @@
 			/>
 
 		<broadcaster
-			id="dspNoBackend"
+			id="glbNoBackend"
 			xex:oncommand="ehBackendTypeSelection"
 			label="&noBackend.lbl;"
-			tooltiptext="&noBackend.ttt;"
 			value="None"
+			observes="bdcNoBackend"
 			/>
 
 		<broadcaster
-			id="dspPredefinedBackend"
+			id="glbPredefinedBackend"
 			xex:oncommand="ehBackendTypeSelection"
 			label="&predefinedBackend.lbl;"
 			tooltiptext="&predefinedBackend.ttt;"
 			value="Predefined"
+			observes="bdcPredefinedBackend"
 			/>
 
 		<broadcaster
-			id="dspDaemonBackend"
+			id="glbDaemonBackend"
 			xex:oncommand="ehBackendTypeSelection"
 			label="&daemonBackend.lbl;"
 			value="Daemon"
-			tooltiptext="&daemonBackend.ttt;"
-			placeholder="&daemonBackend.phd;"
+			observes="bdcDaemonBackend"
 			/>
 
 		<broadcaster
-			id="dspEmbeddedBackend"
+			id="dspDaemonBackendLocation"
+			tooltiptext="&daemonBackendLocation.ttt;"
+			placeholder="&daemonBackendLocation.phd;"
+			observes="bdcDaemonBackend"
+			/>
+
+		<broadcaster
+			id="glbEmbeddedBackend"
 			xex:oncommand="ehBackendTypeSelection"
 			label="&embeddedBackend.lbl;"
 			value="Embedded"
-			tooltiptext="&embeddedBackend.ttt;"
-			placeholder="&embeddedBackend.phd;"
+			observes="bdcEmbeddedBackend"
 			/>
 
 		<broadcaster
-			id="dspEmbeddedBackendSelection"
+			id="dspEmbeddedBackendLocation"
+			tooltiptext="&embeddedBackendLocation.ttt;"
+			placeholder="&embeddedBackendLocation.phd;"
+			observes="bdcEmbeddedBackend"
+			/>
+
+		<broadcaster
+			id="glbEmbeddedBackendSelection"
 			xex:oncommand="ehEmbeddedBackendSelection"
 			label="&embeddedBackendSelection.lbl;"
 			tooltiptext="&embeddedBackendSelection.ttt;"
+			accesskey="&embeddedBackendSelection.ack;"
+			observes="bdcEmbeddedBackendSelection"
 			/>
 		
 		<broadcaster
@@ -112,79 +128,63 @@
 	</broadcasterset>
 	<keyset>
 	</keyset>
-	<vbox>
-		<hbox>
-			<groupbox>
-				<caption label="&backendSelection.lbl;"/>
-				<hbox>
-					<menulist id="mnlBackendType" observes="dspBackendType">
-						<menupopup>
-							<menuitem id="mniNoBackend" observes="bdcNoBackend">
-								<observes element="dspNoBackend" attribute="*"/>
-							</menuitem>
-							<menuitem id="mniPredefinedBackend" observes="bdcPredefinedBackend">
-								<observes element="dspPredefinedBackend" attribute="*"/>
-							</menuitem>
-							<menuitem id="mniDaemonBackend" observes="bdcDaemonBackend">
-								<observes element="dspDaemonBackend" attribute="*"/>
-							</menuitem>
-							<menuitem id="mniEmbeddedBackend" observes="bdcEmbeddedBackend">
-								<observes element="dspEmbeddedBackend" attribute="*"/>
-							</menuitem>
-						</menupopup>
-					</menulist>
-					<groupbox>
+	<hbox pack="center" align="center">
+		<groupbox>
+			<hbox>
+				<groupbox>
+					<caption label="&backendSelection.lbl;"/>
+					<hbox>
+						<menulist id="mnlBackendType" observes="dspBackendType">
+							<menupopup>
+								<menuitem id="mniNoBackend" observes="glbNoBackend"/>
+								<menuitem id="mniPredefinedBackend" observes="glbPredefinedBackend"/>
+								<menuitem id="mniDaemonBackend" observes="glbDaemonBackend"/>
+								<menuitem id="mniEmbeddedBackend" observes="glbEmbeddedBackend"/>
+							</menupopup>
+						</menulist>
 						<deck id="dckBackendType">
 							<hbox/>
-							<hbox>
-								<menulist id="mnlPredefinedBackend" observes="bdcPredefinedBackend">
-									<observes element="dspPredefinedBackend" attribute="*"/>
-								</menulist>
-							</hbox>
-							<hbox>
-								<textbox id="txbDaemonBackend" observes="bdcDaemonBackend">
-									<observes element="dspDaemonBackend" attribute="*"/>
-								</textbox>
-							</hbox>
-							<hbox>
-								<textbox id="txbEmbeddedBackend" observes="bdcEmbeddedBackend" value="">
-									<observes element="dspEmbeddedBackend" attribute="*"/>
-								</textbox>
-								<button observes="bdcEmbeddedBackendSelection">
-									<observes element="dspEmbeddedBackendSelection" attribute="*"/>
-								</button>
-							</hbox>
-						</deck>
-					</groupbox>
-				</hbox>
-			</groupbox>
-			<spacer/>
-		</hbox>
-		<hbox>
-			<groupbox>
-			<caption label="&authentication.lbl;" observes="bdcAuthentication"/>
-				<grid>
-					<columns>
-						<column/>
-						<column/>
-					</columns>
-					<rows>
-						<row>
-							<label control="txbLogin"  observes="dspLogin"/>
-							<textbox id="txbLogin" observes="dspLogin"/>
-						</row>
-						<row>
-							<label control="txbPassword" observes="dspPassword"/>
-							<textbox id="txbPassword" type="password" observes="dspPassword"/>
-						</row>
-					</rows>
-				</grid>
+								<hbox>
+									<menulist id="mnlPredefinedBackend" observes="glbPredefinedBackend"/>
+								</hbox>
+								<hbox>
+									<textbox id="txbDaemonBackend" observes="dspDaemonBackendLocation"/>
+								</hbox>
+								<hbox>
+									<textbox id="txbEmbeddedBackend" observes="dspEmbeddedBackendLocation"/>
+									<button observes="glbEmbeddedBackendSelection"/>
+								</hbox>
+							</deck>
+					</hbox>
+				</groupbox>
+				<spacer/>
+			</hbox>
+			<hbox>
+				<groupbox>
+					<caption label="&authentication.lbl;" observes="bdcAuthentication"/>
+					<grid>
+						<columns>
+							<column/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								<label control="txbLogin"  observes="dspLogin"/>
+								<textbox id="txbLogin" observes="dspLogin"/>
+							</row>
+							<row>
+								<label control="txbPassword" observes="dspPassword"/>
+								<textbox id="txbPassword" type="password" observes="dspPassword"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<spacer/>
+			</hbox>
+			<hbox pack="center">
+				<button observes="dspApply"/>
+			</hbox>
 		</groupbox>
-			<spacer/>
-		</hbox>
-		<hbox>
-			<button observes="dspApply"/>
-		</hbox>
-	</vbox>
+	</hbox>
 </page>
 	

@@ -31,13 +31,13 @@ void ui::ui___::_SwitchTo( panel__ Panel )
 
 	switch ( Panel ) {
 	case pHome:
-		MainPanel = Main.Widgets.ifrHome.GetWidget();
+		MainPanel = Main.Widgets.vewHome.GetWidget();
 		break;
 	case pSessionForm:
-		MainPanel = Main.Widgets.ifrSessionForm.GetWidget();
+		MainPanel = Main.Widgets.vewSessionForm.GetWidget();
 		break;
 	case pSessionView:
-		MainPanel = Main.Widgets.ifrSessionView.GetWidget();
+		MainPanel = Main.Widgets.vewSessionView.GetWidget();
 		break;
 	default:
 		ERRc();

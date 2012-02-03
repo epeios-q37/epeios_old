@@ -1,5 +1,9 @@
 $Id$
 
+03/02/2012 :
+	- XULFMN :
+		- 'ifr...' -> 'vew...'.
+
 29/01/2012 :
 	 NSXPCM :
 		- Changement de nuémrotation et de nom de l''event_listener__'.

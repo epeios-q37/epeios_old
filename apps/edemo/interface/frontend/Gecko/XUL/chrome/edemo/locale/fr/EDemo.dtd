@@ -12,13 +12,18 @@
 <!-- -->
 <!-- * -->
 <!ENTITY file.lbl "Fichier">
+<!ENTITY file.ack "F">
 
 <!-- ** -->
-<!ENTITY projectNew.lbl "Nouveau">
+<!ENTITY projectNew.lbl "Nouveau projet ...">
 <!ENTITY projectNew.ttt "Créer un nouveau projet">
+<!ENTITY projectNew.ack "N">
+<!ENTITY projectNew.act "Ctrl+Shift+N">
 
-<!ENTITY projectOpen.lbl "Ouvrir">
-<!ENTITY projectOpen.ttt "Ouvrir un projet">
+<!ENTITY projectOpen.lbl "Ouvrir un projet ...">
+<!ENTITY projectOpen.ttt "Ouvrir un projet existant">
+<!ENTITY projectOpen.ack "O">
+<!ENTITY projectOpen.act "Ctrl+Shift+O">
 
 <!ENTITY projectClose.lbl "Fermer">
 <!ENTITY projectClose.ttt "Fermer le projet">

@@ -98,9 +98,9 @@ namespace xulfmn {
 			window__ wdwMain;
 			deck__ dckMain;
 			widget__
-				ifrHome,
-				ifrSessionForm,
-				ifrSessionView;
+				vewHome,
+				vewSessionForm,
+				vewSessionView;
 		} &Widgets;
 		main__(
 			broadcasters__ &Broadcasters,
