@@ -35,7 +35,7 @@
 	<script type="text/javascript" src="egeckocom.js"/>
 	<broadcasterset>
 		<broadcaster
-			id="ltGrid"
+			id="dspGrid"
 			label="&grid.lbl;"
 			tooltiptext="&grid.ttt;"
 			/>
@@ -45,7 +45,7 @@
 	<vbox flex="1">
 		<tabbox flex="1">
 			<tabs>
-				<tab observes="ltGrid"/>
+				<tab observes="dspGrid"/>
 			</tabs>
 			<tabpanels flex="1">
 				<tabpanel flex="1">

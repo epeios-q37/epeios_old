@@ -1,5 +1,11 @@
 $Id$
 
+04/02/2012 :
+	- NSXPCM :
+		- Suppresionn de 'panel__' ; remplacement par un 'widget' générique base sur 'nsIDOMNode' dans 'deck__'.
+	- XULWDG :
+		- Adaptation.
+
 03/02/2012 :
 	- XULFMN :
 		- 'ifr...' -> 'vew...'.

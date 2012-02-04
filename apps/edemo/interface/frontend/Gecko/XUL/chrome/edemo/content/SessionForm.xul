@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?> 
+<?xml version="1.0" encoding="utf-8" ?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!--
 	'SessionForm.xul' by Claude SIMON (http://zeusw.org/).
@@ -31,10 +31,12 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:xex="http://zeusw.org/epeios/xex"
 	onload="register();"
+	pack="center"
 	>
-	
+
 	<script type="text/javascript" src="egeckocom.js"/>
-	<broadcasterset><!-- Gestion 'hidden'/'disabled' -->
+	<broadcasterset>
+		<!-- Gestion 'hidden'/'disabled' -->
 		<broadcaster id="bdcNoBackend"/>
 		<broadcaster id="bdcPredefinedBackend"/>
 		<broadcaster id="bdcDaemonBackend"/>
@@ -42,7 +44,8 @@
 		<broadcaster id="bdcEmbeddedBackendSelection"/>
 		<broadcaster id="bdcAuthentication"/>"
 	</broadcasterset>
-	<broadcasterset><!-- 'e': 'event (xex:on...') -->
+	<broadcasterset>
+		<!-- 'label', 'tooltiptext'... -->
 		<broadcaster
 			id="dspBackendType"
 			label="&backendType.lbl;"
@@ -104,29 +107,39 @@
 			accesskey="&embeddedBackendSelection.ack;"
 			observes="bdcEmbeddedBackendSelection"
 			/>
-		
+
 		<broadcaster
 			id="dspLogin"
 			label="&login.lbl;"
 			tooltiptext="&login.ttt;"
 			value="&login.vlu;"
 			/>
-		
+
 		<broadcaster
 			id="dspPassword"
 			label="&password.lbl;"
 			tooltiptext="&password.ttt;"
 			value="&password.vlu;"
 			/>
-		
+
 		<broadcaster
 			id="dspApply"
 			xex:oncommand="ehApply"
 			label="&apply.lbl;"
 			tooltiptext="&apply.ttt;"
+			accesskey="&apply.ack;"
+			/>
+
+		<broadcaster
+			id="dspCancel"
+			xex:oncommand="ehCancel"
+			label="&cancel.lbl;"
+			tooltiptext="&cancel.ttt;"
+			accesskey="&cancel.ack;"
 			/>
 	</broadcasterset>
 	<keyset>
+		<!--<key id="keyApply" keycode="O" xex:oncommand="ehApply"/>-->
 	</keyset>
 	<hbox pack="center" align="center">
 		<groupbox>
@@ -144,17 +157,17 @@
 						</menulist>
 						<deck id="dckBackendType">
 							<hbox/>
-								<hbox>
-									<menulist id="mnlPredefinedBackend" observes="glbPredefinedBackend"/>
-								</hbox>
-								<hbox>
-									<textbox id="txbDaemonBackend" observes="dspDaemonBackendLocation"/>
-								</hbox>
-								<hbox>
-									<textbox id="txbEmbeddedBackend" observes="dspEmbeddedBackendLocation"/>
-									<button observes="glbEmbeddedBackendSelection"/>
-								</hbox>
-							</deck>
+							<hbox>
+								<menulist id="mnlPredefinedBackend" observes="dspPredefinedBackend"/>
+							</hbox>
+							<hbox>
+								<textbox id="txbDaemonBackend" observes="dspDaemonBackendLocation"/>
+							</hbox>
+							<hbox>
+								<textbox id="txbEmbeddedBackend" observes="dspEmbeddedBackendLocation"/>
+								<button observes="glbEmbeddedBackendSelection"/>
+							</hbox>
+						</deck>
 					</hbox>
 				</groupbox>
 				<spacer/>
@@ -183,8 +196,9 @@
 			</hbox>
 			<hbox pack="center">
 				<button observes="dspApply"/>
+				<button observes="dspCancel"/>
 			</hbox>
 		</groupbox>
 	</hbox>
 </page>
-	
+

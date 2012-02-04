@@ -1,13 +1,17 @@
 ﻿<!-- $Id -->
 
-<!ENTITY JSConsole.label "JS Console">
-<!ENTITY JSConsole.tooltip "Ouvrir la console JavaScript">
+<!ENTITY JSConsole.lbl "JS Console">
+<!ENTITY JSConsole.ttt "Ouvrir la console JavaScript">
+<!ENTITY JSConsole.ack "J">
 
-<!ENTITY DOMInspector.label "DOM Inspector">
-<!ENTITY DOMInspector.tooltip "Ouvrir 'DOM Inspector'">
+<!ENTITY DOMInspector.lbl "DOM Inspector">
+<!ENTITY DOMInspector.ttt "Ouvrir 'DOM Inspector'">
+<!ENTITY DOMInspector.ack "D">
 
-<!ENTITY FrontendError.label "Erreur 'Frontend'">
-<!ENTITY FrontendError.tooltip "Tester une erreur de type 'frontend'">
+<!ENTITY FrontendError.lbl "Erreur 'Frontend'">
+<!ENTITY FrontendError.ttt "Tester une erreur de type 'frontend'">
+<!ENTITY FrontendError.ack "F">
 
-<!ENTITY BackendError.label "Erreur 'Backend'">
-<!ENTITY BackendError.tooltip "Tester une erreur 'Backend'">
+<!ENTITY BackendError.lbl "Erreur 'Backend'">
+<!ENTITY BackendError.ttt "Tester une erreur 'Backend'">
+<!ENTITY BackendError.ack "B">

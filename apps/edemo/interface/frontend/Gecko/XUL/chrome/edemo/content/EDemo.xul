@@ -66,56 +66,59 @@
 			observes="bdcOpenProject"
 			/>
 		<broadcaster
-			id="eltCloseProject"
+			id="glbCloseProject"
 			xex:oncommand="ehCloseProject"
 			label="&projectClose.lbl;"
 			tooltiptext="&projectClose.ttt;"
+			accesskey="&projectClose.ack;"
+			acceltext="&projectClose.act;"
+			observes="bdcCloseProject"
 			/>
 		<broadcaster
-			id="eltExit"
+			id="glbExit"
 			xex:oncommand="ehExit"
 			label="&exit.lbl;"
 			tooltiptext="&exit.ttt;"
+			accesskey="&exit.ack;"
+			acceltext="&exit.act;"
+			observes="bdcExit"
 			/>
 		<broadcaster
-			id="eltAbout"
+			id="glbAbout"
 			xex:oncommand="ehAbout"
 			label="&about.lbl;"
 			tooltiptext="&about.ttt;"
+			observes="bdcAbout"
 			/>
 		<broadcaster
-			id="eltWebSite"
+			id="glbWebSite"
 			xex:oncommand="ehWebSite"
 			label="&webSite.lbl;"
 			tooltiptext="&webSite.ttt;"
+			observes="bdcWebSite"
 			/>
 	</broadcasterset>
 	<keyset>
 		<key id="keyVersion" modifiers="accel shift" key="&version.key;" xex:oncommand="ehAbout"/>
 		<key id="keyDebug" modifiers="accel shift" key="&debug.key;" xex:oncommand="ehDebug"/>
+		<key id="keyOpenNew" modifiers="accel" key="&projectNew.key;" xex:oncommand="ehNewProject"/>
+		<key id="keyOpenProject" modifiers="accel" key="&projectOpen.key;" xex:oncommand="ehOpenProject"/>
+		<key id="keyCloseProject" modifiers="accel" key="&projectClose.key;" xex:oncommand="ehCloseProject"/>
 	</keyset>
 	<menubar>
 		<menu label="&file.lbl;" accesskey="&file.ack;">
 			<menupopup>
 				<menuitem observes="glbNewProject"/>
 				<menuitem observes="glbOpenProject"/>
-				<menuitem observes="bdcCloseProject">
-					<observes element="eltCloseProject" attribute="*"/>
-				</menuitem>
+				<menuitem observes="glbCloseProject"/>
 				<menuseparator/>
-				<menuitem observes="bdcExit">
-					<observes element="eltExit" attribute="*"/>
-				</menuitem>
+				<menuitem observes="glbExit"/>
 			</menupopup>
 		</menu>
 		<menu label="&misc.lbl;">
 			<menupopup>
-				<menuitem observes="bdcAbout">
-					<observes element="eltAbout" attribute="*"/>
-				</menuitem>
-				<menuitem observes="bdcWebSite">
-					<observes element="eltWebSite" attribute="*"/>
-				</menuitem>
+				<menuitem observes="glbAbout"/>
+				<menuitem observes="glbWebSite"/>
 			</menupopup>
 		</menu>
 	</menubar>

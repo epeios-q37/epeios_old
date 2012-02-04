@@ -1925,10 +1925,6 @@ namespace nsxpcm {
 		void RemoveContent( void );
 	};
 
-	class panel__
-	: public _widget__<nsIDOMElement>
-	{};
-
 	class deck__
 	: public _widget__<nsIDOMElement>
 	{
@@ -1975,7 +1971,7 @@ namespace nsxpcm {
 
 			SetSelectedIndex( Index );
 		}
-		void SetSelectedItem( panel__ &Item )
+		void SetSelectedItem( _widget__<nsIDOMNode> &Item )
 		{
 			SetSelectedItem( Item.GetElement() );
 		}

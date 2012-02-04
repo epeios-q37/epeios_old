@@ -159,7 +159,6 @@ namespace xulwdg {
 	XULWDG__W( menu );
 	XULWDG__W( menuitem );
 	XULWDG__W( menulist );
-	XULWDG__W( panel );
 	XULWDG__W( radio );
 	XULWDG__W( radiogroup );
 	XULWDG__W( tabs );
@@ -267,7 +266,6 @@ namespace xulwdg {
 	XULWDG_WIDGET( menu, target )\
 	XULWDG_WIDGET( menulist, target )\
 	XULWDG_WIDGET( menuitem, target )\
-	XULWDG_WIDGET( panel, target )\
 	XULWDG_WIDGET( radio, target )\
 	XULWDG_WIDGET( radiogroup, target )\
 	XULWDG_WIDGET( tabs, target )\

@@ -44,28 +44,36 @@
 	</broadcasterset>
 	<broadcasterset>
 		<broadcaster
-			id="eltJSConsole"
-			label="&JSConsole.label;"
-			tooltiptext="&JSConsole.tooltip;"
+			id="glbJSConsole"
 			xex:oncommand="ehJSConsole"
+			label="&JSConsole.lbl;"
+			tooltiptext="&JSConsole.ttt;"
+			accesskey="&JSConsole.ack;"
+			observes="bdcJConscole"
 			/>
 		<broadcaster
-			id="eltDOMInspector"
+			id="glbDOMInspector"
 			xex:oncommand="ehDOMInspector"
-			label="&DOMInspector.label;"
-			tooltiptext="&DOMInspector.tooltip;"
+			label="&DOMInspector.lbl;"
+			tooltiptext="&DOMInspector.ttt;"
+			accesskey="&DOMInspector.ack;"
+			observes="bdcDOMInspector"
 			/>
 		<broadcaster
-			id="eltFrontendError"
+			id="glbFrontendError"
 			xex:oncommand="ehFrontendError"
-			label="&FrontendError.label;"
-			tooltiptext="&FrontendError.tooltip;"
+			label="&FrontendError.lbl;"
+			tooltiptext="&FrontendError.ttt;"
+			accesskey="&FrontendError.ack;"
+			observes="bdcFrontendError"
 			/>
 		<broadcaster
-			id="eltBackendError"
-			label="&BackendError.label;"
-			tooltiptext="&BackendError.tooltip;"
+			id="glbBackendError"
 			xex:oncommand="ehBackendError"
+			label="&BackendError.lbl;"
+			tooltiptext="&BackendError.ttt;"
+			accesskey="&BackendError.ack;"
+			observes="bdcBackendError"
 			/>
 	</broadcasterset>
 	<grid>
@@ -75,20 +83,12 @@
 		</columns>
 		<rows>
 			<row>
-				<button observes="bdcJSConsole">
-					<observes element="eltJSConsole" attribute="*"/>
-				</button>
-				<button observes="bdcDOMInspector">
-					<observes element="eltDOMInspector" attribute="*"/>
-				</button>
+				<button observes="glbJSConsole"/>
+				<button observes="glbDOMInspector"/>
 			</row>
 			<row>
-				<button observes="bdcFrontendError">
-					<observes element="eltFrontendError" attribute="*"/>
-				</button>
-				<button observes="bdcBackendError">
-					<observes element="eltBackendError" attribute="*"/>
-				</button>
+				<button observes="glbFrontendError"/>
+				<button observes="glbBackendError"/>
 			</row>
 		</rows>
 	</grid>

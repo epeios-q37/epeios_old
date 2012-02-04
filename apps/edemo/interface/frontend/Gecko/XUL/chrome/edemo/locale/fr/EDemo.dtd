@@ -18,18 +18,26 @@
 <!ENTITY projectNew.lbl "Nouveau projet ...">
 <!ENTITY projectNew.ttt "Créer un nouveau projet">
 <!ENTITY projectNew.ack "N">
-<!ENTITY projectNew.act "Ctrl+Shift+N">
+<!ENTITY projectNew.key "N">
+<!ENTITY projectNew.act "Ctrl+&projectNew.key;">
 
 <!ENTITY projectOpen.lbl "Ouvrir un projet ...">
 <!ENTITY projectOpen.ttt "Ouvrir un projet existant">
 <!ENTITY projectOpen.ack "O">
-<!ENTITY projectOpen.act "Ctrl+Shift+O">
+<!ENTITY projectOpen.key "O">
+<!ENTITY projectOpen.act "Ctrl+&projectOpen.key;">
 
 <!ENTITY projectClose.lbl "Fermer">
 <!ENTITY projectClose.ttt "Fermer le projet">
+<!ENTITY projectClose.ack "F">
+<!ENTITY projectClose.key "F">
+<!ENTITY projectClose.act "Ctrl+&projectClose.key;">
 
 <!ENTITY exit.lbl "Quitter">
 <!ENTITY exit.ttt "Quitter l'application">
+<!ENTITY exit.ack "Q">
+<!ENTITY exit.key "Q">
+<!ENTITY exit.act "Ctrl+&exit.key;">
 <!-- ** -->
 <!-- * -->
 

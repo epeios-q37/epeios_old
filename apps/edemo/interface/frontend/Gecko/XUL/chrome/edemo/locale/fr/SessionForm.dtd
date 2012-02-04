@@ -35,4 +35,9 @@
 <!ENTITY password.ttt "Votre mot de passe.">
 
 <!ENTITY apply.lbl "OK">
-<!ENTITY apply.ttt "Ouvrir d'une session.">
+<!ENTITY apply.ttt "Lancer la session.">
+<!ENTITY apply.ack "O">
+
+<!ENTITY cancel.lbl "Annuler">
+<!ENTITY cancel.ttt "Annuler la session.">
+<!ENTITY cancel.ack "A">
