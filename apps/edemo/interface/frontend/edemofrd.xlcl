@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<xpp:expand href="epeios.xlcl"/>
+	<Translations message="NotImplementedYet">
+		<Translation language="fr">Non encore implémenté !</Translation>
+		<Translation language="en-US">Not implemented yet !</Translation>
+	</Translations>
+	<Translations message="RemotePredefinedBackend">
+		<Translation language="fr">Backend distant</Translation>
+		<Translation language="en-US"></Translation>
+	</Translations>
+	<Translations message="EmbeddedPredefinedBackend">
+		<Translation language="fr">Backend enclavé</Translation>
+		<Translation language="en-US"></Translation>
+	</Translations>
+	<!--Translations message="">
+		<Translation language="fr"></Translation>
+		<Translation language="en-US"></Translation>
+	</Translations-->
+</xpp:bloc>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<xpp:expand href="../../../../corpus/epeios.xlcl"/>
+</xpp:bloc>
