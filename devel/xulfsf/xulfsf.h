@@ -74,6 +74,7 @@ namespace xulfsf {
 	XULFBS_EH( backend_type_selection_eh__ );
 	XULFBS_EH( emebedded_backend_selection_eh__ );
 	XULFBS_EH( apply_eh__ );
+	XULFBS_EH( cancel_eh__ );
 
 	struct session_form__
 	: public ui_core__<xulftk::trunk___>
@@ -92,6 +93,7 @@ namespace xulfsf {
 			backend_type_selection_eh__ ehBackendTypeSelection;
 			emebedded_backend_selection_eh__ ehEmbeddedBackendSelection;
 			apply_eh__ ehApply;
+			cancel_eh__ ehCancel;
 		} &EventHandlers;
 		struct widgets__ {
 			menulist__ mnlBackendType;

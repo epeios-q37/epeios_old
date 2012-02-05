@@ -1,0 +1,4 @@
+<!-- $Id$ -->
+
+<!ENTITY grid.lbl "Grid">
+<!ENTITY grid.ttt "Display a grid example.">

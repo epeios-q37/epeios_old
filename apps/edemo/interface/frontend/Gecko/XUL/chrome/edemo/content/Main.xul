@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!--
-	'EDemo.xul' by Claude SIMON (http://zeusw.org/).
+	'Main.xul' by Claude SIMON (http://zeusw.org/).
 
 	 This file is part of 'eDemo' software.
 
@@ -21,7 +21,7 @@
 
 <!-- $Id$ -->
 
-<!DOCTYPE window SYSTEM "chrome://edemo/locale/EDemo.dtd">
+<!DOCTYPE window SYSTEM "chrome://edemo/locale/Main.dtd">
 
 <window
 	id="wdwMain"
@@ -29,6 +29,8 @@
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:xex="http://zeusw.org/epeios/xex"
+	width="400"
+	height="300"
 	onload="register();stop();"
 	onunload="terminate();"
 	Annex="&lt;SettingsSet/&gt;"

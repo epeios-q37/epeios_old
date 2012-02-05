@@ -5,7 +5,7 @@
 # décommenter la ligne ci-dessous, et commenter la ligne d'aprés.
 #content edemo jar:edemo.jar!
 content	edemo			chrome/edemo/content/
-locale	edemo	en-US 	chrome/edemo/locale/en-US/
+locale	edemo	en	 	chrome/edemo/locale/en/
 locale	edemo	fr 		chrome/edemo/locale/fr/
 
 # Concerne la mise en oeuvre du DOM Inspector.

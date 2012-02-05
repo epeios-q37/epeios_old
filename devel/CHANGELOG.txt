@@ -1,5 +1,9 @@
 $Id$
 
+05/02/2012 :
+	- XULFxx :
+		- Ajout annulation de session.
+
 04/02/2012 :
 	- NSXPCM :
 		- Suppresionn de 'panel__' ; remplacement par un 'widget' générique base sur 'nsIDOMNode' dans 'deck__'.

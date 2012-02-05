@@ -1,0 +1,54 @@
+<!-- $Id$ -->
+
+<!-- -->
+<!ENTITY language "en">
+<!-- -->
+
+<!-- -->
+<!ENTITY version.key "v">
+<!ENTITY debug.key "d">
+<!-- -->
+
+<!-- -->
+<!-- * -->
+<!ENTITY file.lbl "File">
+<!ENTITY file.ack "F">
+
+<!-- ** -->
+<!ENTITY projectNew.lbl "New project ...">
+<!ENTITY projectNew.ttt "Create a new project.">
+<!ENTITY projectNew.ack "N">
+<!ENTITY projectNew.key "N">
+<!ENTITY projectNew.act "Ctrl+&projectNew.key;">
+
+<!ENTITY projectOpen.lbl "Open a project ...">
+<!ENTITY projectOpen.ttt "Open an existing existant">
+<!ENTITY projectOpen.ack "O">
+<!ENTITY projectOpen.key "O">
+<!ENTITY projectOpen.act "Ctrl+&projectOpen.key;">
+
+<!ENTITY projectClose.lbl "Close">
+<!ENTITY projectClose.ttt "Close the project">
+<!ENTITY projectClose.ack "C">
+<!ENTITY projectClose.key "C">
+<!ENTITY projectClose.act "Ctrl+&projectClose.key;">
+
+<!ENTITY exit.lbl "Exit">
+<!ENTITY exit.ttt "Exit eDemo">
+<!ENTITY exit.ack "X">
+<!ENTITY exit.key "X">
+<!ENTITY exit.act "Ctrl+&exit.key;">
+<!-- ** -->
+<!-- * -->
+
+<!-- * -->
+<!ENTITY misc.lbl "?">
+
+<!-- ** -->
+<!ENTITY about.lbl "About ...">
+<!ENTITY about.ttt "Display informations about eDemo.">
+
+<!ENTITY webSite.lbl "WEB Site">
+<!ENTITY webSite.ttt "Go to the eDemo WEB Site.">
+<!-- ** -->
+<!-- * -->

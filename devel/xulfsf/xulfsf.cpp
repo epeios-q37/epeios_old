@@ -116,6 +116,11 @@ void xulfsf::apply_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 	Trunk().ApplySession();
 }
 
+void xulfsf::cancel_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+	Trunk().CancelSession();
+}
+
 static void DisableAllButSelected_(
 	const str::string_ &Value,
 	session_form__::broadcasters__ &Broadcasters )
@@ -398,6 +403,7 @@ static void Register_(
 	A( ehBackendTypeSelection );
 	A( ehEmbeddedBackendSelection );
 	A( ehApply );
+	A( ehCancel );
 }
 
 #undef R

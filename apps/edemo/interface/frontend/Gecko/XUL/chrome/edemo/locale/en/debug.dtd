@@ -1,0 +1,17 @@
+﻿<!-- $Id -->
+
+<!ENTITY JSConsole.lbl "JS Console">
+<!ENTITY JSConsole.ttt "Open the JavaScript console.">
+<!ENTITY JSConsole.ack "J">
+
+<!ENTITY DOMInspector.lbl "DOM Inspector">
+<!ENTITY DOMInspector.ttt "Open 'DOM Inspector'">
+<!ENTITY DOMInspector.ack "D">
+
+<!ENTITY FrontendError.lbl "Frontend error">
+<!ENTITY FrontendError.ttt "Test a 'frontend' error">
+<!ENTITY FrontendError.ack "F">
+
+<!ENTITY BackendError.lbl "Backend error">
+<!ENTITY BackendError.ttt "Test a backend error">
+<!ENTITY BackendError.ack "B">

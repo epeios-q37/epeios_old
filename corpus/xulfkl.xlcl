@@ -7,6 +7,6 @@
   </Translations>
   <Translations message="XULFKL_ExitConfirmation">
     <Translation language="fr">Êtes-vous sûr de vouloir fermer l'application ?</Translation>
-    <Translation language="en">Are you sure to exit ?</Translation>
+    <Translation language="en">Are you sure you want to exit ?</Translation>
   </Translations>
 </xpp:bloc>

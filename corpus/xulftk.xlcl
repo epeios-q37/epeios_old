@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Translations message="XULFKL_ErrorType">
+	<Translations message="XULFTK_ErrorType">
 		<Translation language="fr">Type d'erreur</Translation>
 		<Translation language="en">Error type</Translation>
 	</Translations>
-	<Translations message="XULFKL_ErrorMessage">
+	<Translations message="XULFTK_ErrorMessage">
 		<Translation language="fr">Message d'erreur</Translation>
 		<Translation language="en">Error message</Translation>
 	</Translations>
-	<Translations message="XULFKL_ProjectClosingAsking">
+	<Translations message="XULFTK_ProjectClosingAsking">
 		<Translation language="fr">Êtes-vous sûr de vouloir fermer ce projet ?</Translation>
 		<Translation language="en">Are you sure you want to close this project ?</Translation>
 	</Translations>
-	<Translations message="XULFKL_ProjectClosingWarning">
+	<Translations message="XULFTK_ProjectClosingWarning">
 		<Translation language="fr">Toutes les modifications vont être perdues !</Translation>
 		<Translation language="en">All modifications will be lost !</Translation>
 	</Translations>
-	<Translations message="XULFKL_MissingOrBadAnnexTargetDefinition">
+	<Translations message="XULFTK_MissingOrBadAnnexTargetDefinition">
 		<Translation language="fr">Absence ou mauvaise valeur pour la définition de la cible de l'annexe.</Translation>
 		<Translation language="en">Bad or no value for annex target value.</Translation>
 	</Translations>
-	<Translations message="XULFKL_MissingOrBadAnnexStorageDefinition">
+	<Translations message="XULFTK_MissingOrBadAnnexStorageDefinition">
 		<Translation language="fr">Absence ou mauvaise valeur pour la définition du stockage de l'annexe.</Translation>
 		<Translation language="en">Bad or no value for annex storage definition.</Translation>
 	</Translations>
-	<Translations message="XULFKL_UnableToStoreSettings">
+	<Translations message="XULFTK_UnableToStoreSettings">
 		<Translation language="fr">Impossible de stocker les réglages.</Translation>
 		<Translation language="en">Unable to store settings.</Translation>
 	</Translations>
-	<Translations message="XULFKL_UnableToRetrieveSettings">
+	<Translations message="XULFTK_UnableToRetrieveSettings">
 		<Translation language="fr">Impossible de récupèrer les réglages.</Translation>
 		<Translation language="en">Unable to retrieve settings.</Translation>
 	</Translations>
-	<Translations message="XULFKL_UnableToRFiendSettings">
+	<Translations message="XULFTK_UnableToFindSettings">
 		<Translation language="fr">Règlages introuvables.</Translation>
 		<Translation language="en">Unable to find settings.</Translation>
 	</Translations>
-	<Translations message="XULFKL_BadOrNoProjectId">
+	<Translations message="XULFTK_BadOrNoProjectId">
 		<Translation language="fr">Identifiant de projet absent ou incorrect.</Translation>
 		<Translation language="en">Bad or no project id.</Translation>
 	</Translations>

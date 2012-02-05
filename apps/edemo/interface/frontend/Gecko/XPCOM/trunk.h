@@ -99,6 +99,10 @@ namespace trunk {
 		{
 			UI().Show( ui::pSessionView );
 		}
+		void FinalizeCancelSession( void )
+		{
+			UI().Show( ui::pHome );
+		}
 		void FinalizeDropSession( bso::bool__ SavingProject )
 		{
 			if ( SavingProject ) {
@@ -161,6 +165,11 @@ namespace trunk {
 		{
 			_ApplySession( fblfrd::compatibility_informations__( DMOINF_LC_AFFIX, EDEMO_API_VERSION ) );
 			_T().FinalizeApplySession();
+		}
+		virtual	void XULFTKCancelSession( void )
+		{
+			_CancelSession();
+			_T().FinalizeCancelSession();
 		}
 		virtual bso::bool__ XULFTKDropSession( void )
 		{

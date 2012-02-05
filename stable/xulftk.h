@@ -121,7 +121,8 @@ namespace xulftk {
 		void _DefineSession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions );
-		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
+		void _ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations );
+		void _CancelSession( void );
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
 		void _DropSession( void );
@@ -141,11 +142,15 @@ namespace xulftk {
 			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfsf::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKApplySession( void )
 		{
-			ERRc();	//	Si pas surchargé, alors 'xulfmn::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRc();	//	Si pas surchargé, alors 'xulfsf::apply_eh__::NSXPCMOnEvent()' doit être redéfini.
+		}
+		virtual void XULFTKCancelSession( void )
+		{
+			ERRc();	//	Si pas surchargé, alors 'xulfsf::cancel_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
@@ -190,6 +195,10 @@ namespace xulftk {
 		void ApplySession( void )
 		{
 			XULFTKApplySession();
+		}
+		void CancelSession( void )
+		{
+			XULFTKCancelSession();
 		}
 		bso::bool__ DropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
@@ -258,6 +267,9 @@ namespace xulftk {
 			const xpp::criterions___ &Criterions );	// 'registry' qui contient la configuration de l'application.
 		// Normalement appelée par la redéfintion de 'XULFTKApplySession()'. Charge le projet correspondant au fichier 'FileName'.
 		void _ApplySession(	const frdkrn::compatibility_informations__ &CompatibilityInformations );
+		// Normalement appelée par la redéfintion de 'XULFTKCacnelSession()', même si ne fait rien (standardisation).
+		void _CancelSession( void )
+		{}
 		// Demande de confirmation de la fermeture d'une session (projet). Normalement appelé par la redéfintion de 'XULFTKDropSession()' lorsque projet modifié.
 		bso::bool__ _DefendSession( void );
 		void _DropSession( void );
@@ -426,6 +438,11 @@ namespace xulftk {
 			_UF().ApplySession();
 			UpdateUI();
 		}
+		void CancelSession( void )
+		{
+			_UF().CancelSession();
+			UpdateUI();
+		}
 		bso::bool__ DropSession( void )
 		{
 			if ( _UF().DropSession() ) {
@@ -470,6 +487,11 @@ namespace xulftk {
 	inline void _user_functions__::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
 	{
 		_T()._ApplySession( CompatibilityInformations );
+	}
+
+	inline void _user_functions__::_CancelSession( void )
+	{
+		_T()._CancelSession();
 	}
 
 	inline bso::bool__ _user_functions__::_DefendSession( void )
