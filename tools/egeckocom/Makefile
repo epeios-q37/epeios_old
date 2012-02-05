@@ -22,7 +22,7 @@
 
 
 ifndef XULRUNNER_SDK
-	sdk = $(HOME)/xulrunner-sdk
+	sdk = /cygdrive/h/xulrunner-sdk
 else
 	sdk = $(XULRUNNER_SDK)
 endif
