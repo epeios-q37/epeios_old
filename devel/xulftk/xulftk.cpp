@@ -61,7 +61,7 @@ public:
 
 using namespace xulftk;
 
-#define PREFIX	XULFKL_NAME "_" 
+#define PREFIX	XULFTK_NAME "_" 
 
 void xulftk::error_reporting_functions__::FBLFRDReportError(
 	fblovl::reply__ Reply,
