@@ -1,0 +1,65 @@
+# $Id$
+rm -rf workdir
+mkdir workdir
+cd workdir
+export DIR=edemogck
+GET=../../get_cvs
+
+mkdir -p $DIR
+mkdir $DIR/XPCOM
+mkdir -p $DIR/XPCOM/epeios
+
+$GET epeios $DIR/XPCOM/epeios stable/*.h
+$GET epeios $DIR/XPCOM/epeios stable/*.cpp
+
+$GET epeios $DIR/XPCOM/ corpus/*.xlcl
+
+$GET epeios $DIR documentation/licenses/gnu_gpl.txt
+$GET epeios $DIR documentation/packages/edemogck/README.txt
+$GET epeios $DIR apps/edemo/interface/frontend/Gecko/CHANGELOG.txt
+
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
+mv $DIR/gnu_gpl.txt $DIR/LICENSE
+mv $DIR/README.txt $DIR/README
+
+cp /cygdrive/h/bin/edemogck.dll $DIR/XPCOM
+
+$GET epeios $DIR/XPCOM apps/edemo/*.h
+
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/*.h
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/*.cpp
+
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/Gecko/XPCOM/*.h
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/Gecko/XPCOM/*.cpp
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/Gecko/XPCOM/Makefile
+
+$GET epeios $DIR/XPCOM apps/edemo/interface/frontend/edemofrd.xlcl
+mv $DIR/XPCOM/edemofrd.xlcl $DIR/XPCOM/edemogck.xlcl
+
+mkdir $DIR/XUL
+$GET epeios $DIR/XUL apps/edemo/interface/frontend/Gecko/XUL/edemo.ini
+
+mkdir $DIR/XUL/chrome
+$GET epeios $DIR/XUL apps/edemo/interface/frontend/Gecko/XUL/*.manifest
+
+mkdir $DIR/XUL/chrome/edemo
+
+mkdir $DIR/XUL/chrome/edemo/content
+$GET epeios $DIR/XUL/chrome/edemo/content apps/edemo/interface/frontend/Gecko/XUL/chrome/edemo/content/*
+
+mkdir $DIR/XUL/chrome/edemo/locale
+
+mkdir $DIR/XUL/chrome/edemo/locale/en
+$GET epeios $DIR/XUL/chrome/edemo/locale/en apps/edemo/interface/frontend/Gecko/XUL/chrome/edemo/locale/en/*
+
+
+mkdir $DIR/XUL/chrome/edemo/locale/fr
+$GET epeios $DIR/XUL/chrome/edemo/locale/fr apps/edemo/interface/frontend/Gecko/XUL/chrome/edemo/locale/fr/*
+
+mkdir $DIR/XUL/defaults
+
+mkdir $DIR/XUL/defaults/preferences
+$GET epeios $DIR/XUL/defaults/preferences apps/edemo/interface/frontend/Gecko/XUL/defaults/preferences/debug.js
+$GET epeios $DIR/XUL/defaults/preferences apps/edemo/interface/frontend/Gecko/XUL/defaults/preferences/edemo.js
+
+../../create_pkg $DIR
