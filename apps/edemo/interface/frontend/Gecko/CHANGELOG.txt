@@ -1,0 +1,13 @@
+$Id$
+
+MAINTAINER REMINDER :
+	- Before publication, merge with the content of ../CHANGELOG.txt.
+	- This file is for both C++ and XUL part of the program.
+
+/*********/
+/* 0.1.0 */
+/*********/
+
+07/02/2012 : Publication.
+
+	

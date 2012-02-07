@@ -336,12 +336,12 @@ ERRBegin
 				break;
 			case sAttributeValue:
 				switch ( C ) {
-				case '[':
+/*				case '[':
 				case ']':
 				case '/':
 					Continue = false;
 					break;
-				case '"':
+*/				case '"':
 					if ( ( Row = PathString.Next( Row ) ) == NONE )
 						Continue = false;
 					else if ( PathString( Row ) != ']' )
