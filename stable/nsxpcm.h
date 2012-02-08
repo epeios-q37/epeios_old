@@ -139,6 +139,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #  define NSXPCM__ENABLE_FORMHISTORY
 # endif
 
+# define NSXPCM__BOOL	bool
 
 # ifdef NSXPCM_FBL
 #  define NSXPCM__FBL
@@ -552,7 +553,7 @@ namespace nsxpcm {
 		const char *Name )
 	{
 		nsEmbedString EName;
-		PRBool Result;
+		NSXPCM__BOOL Result;
 
 		Transform( Name, EName );
 
@@ -904,7 +905,7 @@ namespace nsxpcm {
 
 	inline bso::bool__ HasAttributes( nsIDOMNode *Node )
 	{
-		PRBool Result;
+		NSXPCM__BOOL Result;
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
@@ -1072,7 +1073,7 @@ namespace nsxpcm {
 */
 	template <typename element> inline bool IsChecked( element *Element )
 	{
-		PRBool Checked;
+		NSXPCM__BOOL Checked;
 
 		T( Element->GetChecked( &Checked ) );
 
@@ -1194,7 +1195,7 @@ namespace nsxpcm {
 
 	inline bso::bool__ IsClosed( nsIDOMWindowInternal *Window )
 	{
-		PRBool Value = false;
+		NSXPCM__BOOL Value = false;
 
 		T( Window->GetClosed( &Value ) );
 

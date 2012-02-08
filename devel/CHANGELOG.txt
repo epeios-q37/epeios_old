@@ -1,5 +1,9 @@
 $Id$
 
+08/02/2012 :
+	- NSXPCM :
+		- Adaptation à XULRunner 10.0
+
 07/02/2012 :
 	- RGSTRY :
 		- Certains caractères, notamment '/', étaient arbitrairement interdits dans une valeur d'attribut. Ce n'est désormais plus le cas.

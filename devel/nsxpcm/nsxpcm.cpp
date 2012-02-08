@@ -1293,7 +1293,7 @@ template <typename t> bso::bool__ Confirm_(
 	nsIDOMWindow *Window,
 	t Text )
 {
-	PRBool Answer = 0;
+	NSXPCM__BOOL Answer = 0;
 ERRProlog
 	nsEmbedString NSText;
 ERRBegin
@@ -1745,38 +1745,38 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetColumnProperties(nsITreeColumn* aCol,
   return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::tree_view__::IsContainer(PRInt32 aIndex, PRBool* aIsContainer)
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainer(PRInt32 aIndex, NSXPCM__BOOL* aIsContainer)
 {
   *aIsContainer = false;
   return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::tree_view__::IsContainerOpen(PRInt32 aIndex, PRBool* aIsOpen)
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainerOpen(PRInt32 aIndex, NSXPCM__BOOL* aIsOpen)
 {
   *aIsOpen = false;
   return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::tree_view__::IsContainerEmpty(PRInt32 aIndex, PRBool* aIsEmpty)
+NS_IMETHODIMP nsxpcm::tree_view__::IsContainerEmpty(PRInt32 aIndex, NSXPCM__BOOL* aIsEmpty)
 {
   *aIsEmpty = false;
   return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::tree_view__::IsSeparator(PRInt32 aIndex, PRBool* aIsSeparator)
+NS_IMETHODIMP nsxpcm::tree_view__::IsSeparator(PRInt32 aIndex, NSXPCM__BOOL* aIsSeparator)
 {
   *aIsSeparator = false;
   return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::tree_view__::IsSorted(PRBool* aIsSorted)
+NS_IMETHODIMP nsxpcm::tree_view__::IsSorted(NSXPCM__BOOL* aIsSorted)
 {
 //  *aIsSorted = (mSortType >= 0);
   return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::tree_view__::CanDrop(PRInt32 aIndex, PRInt32 aOrientation,
-                    nsIDOMDataTransfer* dataTransfer, PRBool* aCanDrop)
+                    nsIDOMDataTransfer* dataTransfer, NSXPCM__BOOL* aCanDrop)
 {
   *aCanDrop = false;
   return NS_OK;
@@ -1794,7 +1794,7 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetParentIndex(PRInt32 aRowIndex, PRInt32* aP
 }
 
 NS_IMETHODIMP nsxpcm::tree_view__::HasNextSibling(PRInt32 aRowIndex, PRInt32 aAfterIndex, 
-                           PRBool* aHasSibling)
+                           NSXPCM__BOOL* aHasSibling)
 {
 //  *aHasSibling = (aAfterIndex < (mTotalRows - 1));
   return NS_OK;
@@ -1913,14 +1913,14 @@ NS_IMETHODIMP nsxpcm::tree_view__::CycleCell(PRInt32 aRow, nsITreeColumn* aCol)
 }
 
 NS_IMETHODIMP nsxpcm::tree_view__::IsEditable(PRInt32 aRow, nsITreeColumn* aCol,
-                       PRBool* aIsEditable)
+                       NSXPCM__BOOL* aIsEditable)
 {
   *aIsEditable = false;
   return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::tree_view__::IsSelectable(PRInt32 aRow, nsITreeColumn* aCol,
-                        PRBool* aIsSelectable)
+                        NSXPCM__BOOL* aIsSelectable)
 {
   *aIsSelectable = false;
   return NS_OK;
@@ -2275,7 +2275,7 @@ ERRBegin
 	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
 	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
 
-	PRBool Persistent = false;
+	NSXPCM__BOOL Persistent = false;
 	T( DirectoryServiceProvider->GetFile( "CurWorkD", &Persistent, &File ) );
 
 	if ( ( Result = File->GetPath( Path ) ) != NS_OK )
