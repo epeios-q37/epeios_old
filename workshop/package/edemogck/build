@@ -39,6 +39,10 @@ mv $DIR/XPCOM/edemofrd.xlcl $DIR/XPCOM/edemogck.xlcl
 mkdir $DIR/XUL
 $GET epeios $DIR/XUL apps/edemo/interface/frontend/Gecko/XUL/edemo.ini
 
+mkdir $DIR/XUL/components
+cp /cygdrive/h/bin/egeckocom.dll $DIR/XUL/components
+cp /cygdrive/h/bin/egeckocom.xpt $DIR/XUL/components
+
 mkdir $DIR/XUL/chrome
 $GET epeios $DIR/XUL apps/edemo/interface/frontend/Gecko/XUL/*.manifest
 
