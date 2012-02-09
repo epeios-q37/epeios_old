@@ -39,8 +39,8 @@
 	</keyset>
 	<tree id="treGrid" flex="1">
 		<treecols>
-			<treecol id="namecol" label="Nom" flex="1"/>
-			<treecol id="datecol" label="Date" flex="1"/>
+			<treecol label="&col1.lbl;" flex="1"/>
+			<treecol label="&col1.lbl;" flex="1"/>
 		</treecols>
 		<treechildren/>
 	</tree>

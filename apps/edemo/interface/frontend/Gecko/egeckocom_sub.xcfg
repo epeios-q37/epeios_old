@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="iso-8859-15"?><!-- $Id$ --><xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">	<Component id="eDemo">h:/bin/edemogck.dll</Component>	<!--<Component id="eDemo">/home/csimon/bin/edemogck.so</Component>--></xpp:bloc>

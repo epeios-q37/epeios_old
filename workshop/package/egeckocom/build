@@ -19,10 +19,10 @@ $GET epeios $DIR tools/$DIR/CHANGELOG.txt
 $GET epeios $DIR tools/$DIR/Makefile
 $GET epeios $DIR tools/$DIR/*.cpp
 $GET epeios $DIR tools/$DIR/*.h
-$GET epeios $DIR tools/$DIR/egeckocom.xcfg
+# $GET epeios $DIR tools/$DIR/egeckocom.xcfg
 $GET epeios $DIR tools/$DIR/egeckocom.xlcl
-cp /cygdrive/h/xulrunner/components/egeckocom.dll $DIR
-cp /cygdrive/h/xulrunner/components/egeckocom.xpt $DIR
+cp /cygdrive/h/bin/egeckocom.dll $DIR
+cp /cygdrive/h/bin/egeckocom.xpt $DIR
 
 mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE

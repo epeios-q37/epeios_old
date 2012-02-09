@@ -1,7 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
-<Locales xmlns="http://zeusw.org/epeios/xlcl" xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Locale target="edemogck">
-		<xpp:expand href="../edemofrd.xlcl"/>
-	</Locale>
-</Locales>
+<xpp:expand xmlns:xpp="http://zeusw.org/epeios/xpp" href="../edemogck.xlcl"/>
