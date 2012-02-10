@@ -21,8 +21,7 @@ mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
 
 expp h:/cvs/epeios/apps/edemo/interface/frontend/Gecko/egeckocom.xcfg >$DIR/egeckocom.xcfg
-expp h:/cvs/epeios/tools/egeckocom/egeckocom.xlcl >$DIR/egeckocom.xlcl
-
+expp h:/bin/egeckocom.xlcl >$DIR/egeckocom.xlcl
 
 $GET epeios $DIR/XPCOM apps/edemo/*.h
 
@@ -36,8 +35,8 @@ $GET epeios $DIR/XPCOM apps/edemo/interface/frontend/Gecko/XPCOM/Makefile
 mkdir $DIR/XUL
 $GET epeios $DIR/XUL apps/edemo/interface/frontend/Gecko/XUL/edemo.ini
 cp /cygdrive/h/bin/edemogck.dll $DIR/XUL
-expp h:/cvs/epeios/apps/edemo/interface/frontend/Gecko/XPCOM/edemogck.xcfg >$DIR/XUL/edemogck.xcfg
-expp h:/cvs/epeios/apps/edemo/interface/frontend/Gecko/XPCOM/edemogck.xlcl >$DIR/XUL/edemogck.xlcl
+expp h:/bin/edemogck.xcfg >$DIR/XUL/edemogck.xcfg
+expp h:/bin/edemogck.xlcl >$DIR/XUL/edemogck.xlcl
 
 mkdir $DIR/XUL/components
 cp /cygdrive/h/bin/egeckocom.dll $DIR/XUL/components

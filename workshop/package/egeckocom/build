@@ -11,8 +11,6 @@ mkdir -p $DIR/epeios
 $GET epeios $DIR/epeios stable/*.h
 $GET epeios $DIR/epeios stable/*.cpp
 
-$GET epeios $DIR corpus/*.xlcl
-
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/$DIR/README.txt
 $GET epeios $DIR tools/$DIR/CHANGELOG.txt
@@ -20,7 +18,7 @@ $GET epeios $DIR tools/$DIR/Makefile
 $GET epeios $DIR tools/$DIR/*.cpp
 $GET epeios $DIR tools/$DIR/*.h
 # $GET epeios $DIR tools/$DIR/egeckocom.xcfg
-$GET epeios $DIR tools/$DIR/egeckocom.xlcl
+expp h:/bin/egeckocom.xlcl $DIR/egeckocom.xlcl
 cp /cygdrive/h/bin/egeckocom.dll $DIR
 cp /cygdrive/h/bin/egeckocom.xpt $DIR
 

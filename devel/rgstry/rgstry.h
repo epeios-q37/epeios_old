@@ -1156,7 +1156,7 @@ namespace rgstry {
 	E_ROW( level__ );
 #	define RGSTRY_UNDEFINED_LEVEL	NONE
 
-	struct entry__ {
+	struct _entry__ {
 		row__ Root;
 		const registry_ *Registry;
 		void reset( bso::bool__ = true )
@@ -1171,7 +1171,7 @@ namespace rgstry {
 			this->Root = Root;
 			this->Registry = &Registry;
 		}
-		entry__(
+		_entry__(
 			row__ Root = NONE,
 			const registry_ &Registry = *(const registry_ *)NULL )
 		{
@@ -1180,7 +1180,7 @@ namespace rgstry {
 	};
 
 
-	typedef bch::E_BUNCHt_( entry__, level__ ) _entries_;
+	typedef bch::E_BUNCHt_( _entry__, level__ ) _entries_;
 	typedef bch::E_BUNCHt_( time_t, level__ ) _timestamps_;
 
 	// Registre multi-niveau
@@ -1195,14 +1195,14 @@ namespace rgstry {
 		{
 			level__ Level = TimeStamps.New();
 
-			if ( Entries.Append( entry__() ) != Level )
+			if ( Entries.Append( _entry__() ) != Level )
 				ERRc();
 
 			_Touch( Level );
 
 			return Level;
 		}
-		level__ _RawAddLevel( const entry__ &Entry )
+		level__ _RawAddLevel( const _entry__ &Entry )
 		{
 			level__ Level = RGSTRY_UNDEFINED_LEVEL;
 
@@ -1210,13 +1210,13 @@ namespace rgstry {
 
 			return Level;
 		}
-		const entry__ _GetEntry( level__ Level ) const
+		const _entry__ _GetEntry( level__ Level ) const
 		{
 			return Entries( Level );
 		}
 		const registry_ &_GetRegistry( level__ Level ) const
 		{
-			entry__ Entry = _GetEntry( Level );
+			_entry__ Entry = _GetEntry( Level );
 
 			if ( Entry.Registry == NULL )
 				return EmbeddedRegistry;
@@ -1225,7 +1225,7 @@ namespace rgstry {
 		}
 		registry_ &_GetRegistry( level__ Level )
 		{
-			entry__ Entry = _GetEntry( Level );
+			_entry__ Entry = _GetEntry( Level );
 
 			if ( Entry.Registry != NULL )
 				ERRc();
@@ -1293,7 +1293,7 @@ namespace rgstry {
 			level__ Level,
 			row__ Root )
 		{
-			entry__ Entry = Entries( Level );
+			_entry__ Entry = Entries( Level );
 
 			Entry.Root = Root;
 
@@ -1303,22 +1303,22 @@ namespace rgstry {
 			row__ Row,
 			const registry_ &Registry )
 		{
-			return _RawCreateLevel( entry__( Row, Registry ) );
+			return _RawCreateLevel( _entry__( Row, Registry ) );
 		}
 		level__ CreatedEmbeddedLevel( void )
 		{
-			return _RawCreateLevel( entry__() );
+			return _RawCreateLevel( _entry__() );
 		}
 */
 		level__ AddImportedLevel(
 			row__ Root,
 			const registry_ &Registry )
 		{
-			return _RawAddLevel( entry__( Root, Registry ) );
+			return _RawAddLevel( _entry__( Root, Registry ) );
 		}
 		level__ AddEmbeddedLevel( const name_ &Name = name() )
 		{
-			return _RawAddLevel( entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
+			return _RawAddLevel( _entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
 		}
 		void Add( const multi_level_registry_ &Registry )
 		{
@@ -1522,7 +1522,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Entries.Store( entry__( Root ), Level );
+			Entries.Store( _entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1539,7 +1539,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( XFlow, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Entries.Store( entry__( Root ), Level );
+			Entries.Store( _entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1557,7 +1557,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root, Context ); 
 
-			Entries.Store( entry__( Root ), Level );
+			Entries.Store( _entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1574,7 +1574,7 @@ namespace rgstry {
 			
 			Status = FillRegistry( FileName, Criterions, RootPath, _GetRegistry( Level ), Root ); 
 
-			Entries.Store( entry__( Root ), Level );
+			Entries.Store( _entry__( Root ), Level );
 
 			_Touch( Level );
 
@@ -1727,16 +1727,15 @@ namespace rgstry {
 	typedef values_	tags_;
 	E_AUTO( tags );
 
-	class entry_
+	class entry__
 	{
 	private:
 		void GetParentPath_(
-			const tags_ &Tags,
 			bso::bool__ NoTailingSlash,
 			str::string_ &Path ) const
 		{
-			if ( S_.Parent != NULL ) {
-				S_.Parent->GetPath( Path );	// Les 'tag's seront remplacé ultèrieurement
+			if ( _Parent != NULL ) {
+				_Parent->GetPath( Path );
 
 				if ( Path.Amount() != 0 ) {
 					if ( Path( Path.Last() ) == '/' ) {
@@ -1747,51 +1746,32 @@ namespace rgstry {
 				}
 			}
 		}
+	private:
+		const entry__ *_Parent;
+		const char *_Path;
 	public:
-		struct s {
-			const entry_ *Parent;
-			str::string_::s Path;
-		} &S_;
-		str::string_ Path;
-		entry_( s &S )
-		: S_( S ),
-		  Path( S_.Path )
-		{}
 		void reset( bso::bool__ P = true )
 		{
-			S_.Parent = NULL;
-			Path.reset( P );
+			_Parent = NULL;
+			_Path = NULL;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		entry__(
+			const char *Path = NULL,	// Non dupliqué !
+			const entry__ &Parent = *(const entry__ *)NULL )
 		{
-			Path.plug( MD );
-		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			Path.plug( MM );
-		}
-		entry_ &operator =( const entry_ &E )
-		{
-			S_.Parent = E.S_.Parent;
-			Path = E.Path;
-
-			return *this;
+			reset( false );
+			Init( Path, Parent );
 		}
 		void Init(
-			const char *Path = NULL,
-			const entry_ &Parent = *(const entry_ *)NULL );
+			const char *Path = NULL,	// Non dupliqué !
+			const entry__ &Parent = *(const entry__ *)NULL )
+		{
+			_Parent = &Parent;
+			_Path = Path;
+		}
 		const str::string_ &GetPath(
 			const tags_ &Tags,
-			str::string_ &Path ) const
-		{
-			GetParentPath_( Tags, this->Path( this->Path.First() ) == '[', Path );
-
-			Path.Append( this->Path );
-
-			str::ReplaceTags( Path, Tags, '%' );
-
-			return Path;
-		}
+			str::string_ &Path ) const;
 		const str::string_ &GetPath( str::string_ &Path ) const
 		{
 			return GetPath( tags(), Path );
@@ -1880,20 +1860,6 @@ namespace rgstry {
 # ifdef RGSRTY__MS_BACKUP
 #  define _MS RGSRTY__MS_BACKUP
 # endif
-
-	E_AUTO_( entry )
-		entry(
-			const char *Path,
-			const entry_ &Parent = *(const entry_ *)NULL )
-		: entry_( static_ )
-		{
-			reset( false );
-
-			Init( Path, Parent );
-		}
-	};
-
-
 
 
 #ifdef _M

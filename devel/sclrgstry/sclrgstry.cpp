@@ -68,10 +68,10 @@ static rgstry::multi_level_registry Registry_;
 static rgstry::level__ RootLevel_ = RGSTRY_UNDEFINED_LEVEL;
 static STR_BUFFER___ Translation_;
 
-rgstry::entry sclrgstry::Parameters( "Parameters" );
+rgstry::entry__ sclrgstry::Parameters( "Parameters" );
 
-rgstry::entry sclrgstry::LocaleFileName( "LocaleFileName", Parameters );
-rgstry::entry sclrgstry::Language( "Language", Parameters );
+rgstry::entry__ sclrgstry::LocaleFileName( "LocaleFileName", Parameters );
+rgstry::entry__ sclrgstry::Language( "Language", Parameters );
 
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
@@ -98,7 +98,7 @@ static rgstry::status__ FillRegistry_(
 }
 
 bso::bool__ sclrgstry::GetValue(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	str::string_ &Value )
 {
@@ -116,7 +116,7 @@ ERREpilog
 }
 
 bso::bool__ sclrgstry::GetValues(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	str::strings_ &Values )
 {
@@ -146,7 +146,7 @@ static str::string_ &GetTranslation_(
 }
 
 static inline void ReportBadOrNoValueForRegistryEntryError_(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags )
 {
 ERRProlog
@@ -242,7 +242,7 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	str::string_ &Value,
 	bso::bool__ *Missing )
@@ -255,7 +255,7 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 }
 
 const char *sclrgstry::GetOptionalRegistryValue(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
@@ -280,7 +280,7 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	str::string_ &Value )
 {
@@ -293,7 +293,7 @@ const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 }
 
 const char *sclrgstry::GetMandatoryRegistryValue(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	STR_BUFFER___ &Buffer )
 {
@@ -312,7 +312,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	t Limit,
 	t &Value )
@@ -340,7 +340,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistrySignedNumber_(
-	const rgstry::entry_ &Entry,
+	const rgstry::entry__ &Entry,
 	const rgstry::tags_ &Tags,
 	t LowerLimit,
 	t UpperLimit,
@@ -370,7 +370,7 @@ ERREpilog
 
 #define RUN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const rgstry::entry_ &Entry,\
+		const rgstry::entry__ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type Limit  )\
 	{\
@@ -384,7 +384,7 @@ ERREpilog
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const rgstry::entry_ &Entry,\
+		const rgstry::entry__ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Limit )\
@@ -408,7 +408,7 @@ RUN( UByte, bso::ubyte__ )
 
 #define RSN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const rgstry::entry_ &Entry,\
+		const rgstry::entry__ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type Min,\
 		type Max)\
@@ -422,7 +422,7 @@ RUN( UByte, bso::ubyte__ )
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const rgstry::entry_ &Entry,\
+		const rgstry::entry__ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Min,\

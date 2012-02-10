@@ -1403,27 +1403,27 @@ static void HandleTag_(
 	}
 }
 
-void rgstry::entry_::Init(
-	const char *Path,
-	const entry_ &Parent )
+const str::string_ &rgstry::entry__::GetPath(
+	const tags_ &Tags,
+	str::string_ &Path ) const
 {
 ERRProlog
 	str::string Buffer;
 ERRBegin
-	S_.Parent = &Parent;
-	this->Path.Init();
+	Buffer.Init();
 
-	if ( Path != NULL ) {
-		Buffer.Init();
-		GetParentPath_( tags(), false, Buffer );
-		HandleTag_( GetTagAmount_( Buffer ) + 1, Path, this->Path );
-	}
+	GetParentPath_( ( _Path != NULL ) && ( *_Path == '[' ), Buffer );
+
+	HandleTag_( GetTagAmount_( Buffer ) + 1, _Path, Buffer );
+
+	str::ReplaceTags( Buffer, Tags, '%' );
+
+	Path.Append( Buffer  );
 ERRErr
 ERREnd
 ERREpilog
+	return Path;
 }
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

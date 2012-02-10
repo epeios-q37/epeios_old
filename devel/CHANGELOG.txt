@@ -1,5 +1,12 @@
 $Id$
 
+10/02/2012 :
+	- Général :
+		- Adaptation.
+	- RGSTRY :
+		- Le contructeur avec paramètre de 'entry__' se contente de stocker le 'Parent', et ne lit plus son contenu, dû au problème de non maîtrise de l'ordre d'initialisation de variables de bibliothèques, ordre qui dépend de l'ordre des bibliothèques lors de l'édition de lien.
+		- 'entry[_] -> 'entry__'.
+
 08/02/2012 :
 	- NSXPCM :
 		- Adaptation à XULRunner 10.0
