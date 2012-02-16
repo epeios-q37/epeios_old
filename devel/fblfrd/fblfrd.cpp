@@ -141,7 +141,7 @@ command__ fblfrd::backend_access___::GetBackendDefaultCommand_()
 namespace {
 	void FillCasts_(
 		const fblcst::cast *Source,
-		ids8_ &Dest )
+		bch::E_BUNCH_( id8__ ) &Dest )
 	{
 		int i = 0;
 

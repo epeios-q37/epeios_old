@@ -332,7 +332,7 @@ static void GetCommandsIDAndName_(
 	bso::bool__ &,
 	void * )
 {
-	type__ Type = *Requete.Id16In();
+	type__ Type = Requete.Id16In();
 
 	WriteCommandsIDAndName_( Backend.Module( Type ).Descriptions, Requete );
 
@@ -369,10 +369,10 @@ static void GetParameters_(
 	bso::bool__ &,
 	void * )
 {
-	type__ Type = *Requete.Id16In();
-	id16__ Command = *Requete.Id16In();;
+	type__ Type = Requete.Id16In();
+	id16__ Command = Requete.Id16In();;
 
-	WriteParameters_( Backend.Module( (type__)*Type ).Descriptions, *Command, Requete );
+	WriteParameters_( Backend.Module( (type__)*Type ).Descriptions, Command, Requete );
 
 	Requete.Complete();
 }
@@ -457,7 +457,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	object__ O;
 ERRBegin
-	T = *Request.Id16In();
+	T = Request.Id16In();
 
 	if ( *T >= Backend.Modules.Amount() )
 		ERRb();
@@ -626,7 +626,7 @@ ERRProlog
 	command__ Command;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	type__ Type = *Request.Id16In();
+	type__ Type = Request.Id16In();
 
 	Description.Init();
 	Description.Name  = Request.StringIn();
@@ -660,7 +660,7 @@ static void GetCommands_(
 	bso::bool__ &,
 	void * )
 {
-	type__ Type = *Requete.Id16In();
+	type__ Type = Requete.Id16In();
 	const commands_details_ &CommandsDetails = Requete.CommandsDetailsIn();
 	ids16_ &Commands = Requete.Ids16Out();
 

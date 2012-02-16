@@ -202,7 +202,7 @@ namespace frdbkd {
 		xml::writer_ &Writer )
 	{
 		if ( Id != UndefinedValue )
-			Put( Name, *Id, Writer );
+			Put( Name, Id, Writer );
 		else if ( Always )
 			Writer.PutAttribute( Name, "" );
 	}

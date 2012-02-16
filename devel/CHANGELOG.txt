@@ -1,5 +1,11 @@
 $Id$
 
+16/02/2012 :
+	- Général :
+		- Adaptation.
+	- FBLTYP :
+		- Récriture des types par rapport à leur équivalence pour simplification.
+
 10/02/2012 :
 	- Général :
 		- Adaptation.

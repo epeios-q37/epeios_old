@@ -252,34 +252,41 @@ namespace fbltyp {
 
 	typedef bso::ushort__	object_t__;
 	E_TMIMIC__( object_t__, object__ );
+
 	typedef bso::bool__ boolean_t__;
 	typedef boolean_t__	boolean__;
-	typedef bitbch::bit_bunch_<epeios::row__>	booleans_;
-	E_AUTO( booleans )
-	typedef bso::slong__	slong__;
-	typedef bch::E_BUNCH_( slong__ ) slongs_;
-	typedef bch::E_BUNCH( slong__ ) slongs;
+	typedef bitbch::bit_bunch_<epeios::row__>	booleans_t_;
+	E_TMIMIC( booleans_t, booleans );
+
+	typedef bso::slong__ slong__;
+	typedef bch::E_BUNCH_( slong__ ) slongs_t_;
+	E_TMIMIC( slongs_t, slongs );
+
 	typedef bso::ulong__	ulong__;
-	typedef bch::E_BUNCH_( ulong__ ) ulongs_;
-	typedef bch::E_BUNCH( ulong__ ) ulongs;
+	typedef bch::E_BUNCH_( ulong__ ) ulongs_t_;
+	E_TMIMIC( ulongs_t, ulongs );
+
 	typedef bso::ubyte__ id8_t__;
-	E_TMIMIC__( id8_t__,	id8__ );
-	typedef bch::E_BUNCH_( id8__ ) ids8_;
-	typedef bch::E_BUNCH( id8__ ) ids8;
-	typedef ctn::E_XMCONTAINER_( ids8_ ) xids8_;
-	typedef ctn::E_XMCONTAINER( ids8_ ) xids8;
+	typedef id8_t__ id8__;
+	typedef bch::E_BUNCH_( id8__ ) ids8_t_;
+	E_TMIMIC( ids8_t, ids8 );
+	typedef ctn::E_XMCONTAINER_( ids8_ ) xids8_t_;
+	E_TMIMIC( xids8_t, xids8 );
+
 	typedef bso::ushort__ id16_t__;
-	E_TMIMIC__( id16_t__,	id16__ );
-	typedef bch::E_BUNCH_( id16__ ) ids16_;
-	typedef bch::E_BUNCH( id16__ ) ids16;
-	typedef ctn::E_XMCONTAINER_( ids16_ ) xids16_;
-	typedef ctn::E_XMCONTAINER( ids16_ ) xids16;
+	typedef id16_t__ id16__;
+	typedef bch::E_BUNCH_( id16__ ) ids16_t_;
+	E_TMIMIC( ids16_t, ids16 );
+	typedef ctn::E_XMCONTAINER_( ids16_ ) xids16_t_;
+	E_TMIMIC( xids16_t, xids16 );
+
 	typedef bso::ulong__ id32_t__;
-	E_TMIMIC__( id32_t__,	id32__ );
-	typedef bch::E_BUNCH_( id32__ ) ids32_;
-	typedef bch::E_BUNCH( id32__ ) ids32;
-	typedef ctn::E_XMCONTAINER_( ids32_ ) xids32_;
-	typedef ctn::E_XMCONTAINER( ids32_ ) xids32;
+	typedef id32_t__ id32__;
+	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
+	E_TMIMIC( ids32_t, ids32 );
+	typedef ctn::E_XMCONTAINER_( ids32_ ) xids32_t_;
+	E_TMIMIC( xids32_t, xids32 );
+
 	typedef bso::char__ char_t__;
 	typedef char_t__	char__;
 	typedef str::string_	string_;

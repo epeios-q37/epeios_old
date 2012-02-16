@@ -68,7 +68,6 @@ extern class ttr_tutor &TOLTutor;
 #include <locale.h>
 
 #include "cpe.h"
-#include "bso.h"
 
 #if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
 #	define TOL__POSIX
@@ -94,6 +93,8 @@ extern class ttr_tutor &TOLTutor;
 #endif
 
 #include "err.h"
+
+# include "bso.h"
 
 namespace tol
 {
