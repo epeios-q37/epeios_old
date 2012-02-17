@@ -77,7 +77,7 @@ void fblber::embed_request_functions___::_GetAll(
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {
 
-		if ( Flow.Get() != *Casts( Row ) )
+		if ( Flow.Get() != Casts( Row ) )
 			ERRb();
 
 		if ( Repository_.Append( GetPointer_( Flow ) ) != Row )
@@ -98,7 +98,7 @@ void fblber::embed_request_functions___::_GetAll(
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
-		if ( Flow.Get() != *Casts( Row ) )
+		if ( Flow.Get() != Casts( Row ) )
 			ERRb();
 
 		if ( Repository_.Append( GetPointer_( Flow ) ) != Row )

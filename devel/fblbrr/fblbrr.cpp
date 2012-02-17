@@ -168,7 +168,7 @@ static parameter___ _CreateAndGet(
 
 static void Delete_( const parameter___ &Parameter )
 {
-	switch ( *Parameter.Cast ) {
+	switch ( Parameter.Cast ) {
 	CD( Object, object__)
 	CD( Boolean, boolean__ )
 	CD( Booleans, booleans )
@@ -218,10 +218,10 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {
 
-		if ( Flow.Get() != *Casts( Row ) )
+		if ( Flow.Get() != Casts( Row ) )
 			ERRb();
 
-		if ( _Parameters.Append( _CreateAndGet( Flow, (cast)*Casts( Row ) ) ) != Row )
+		if ( _Parameters.Append( _CreateAndGet( Flow, (cast)Casts( Row ) ) ) != Row )
 			ERRc();
 
 		Row = Casts.Next( Row );
@@ -236,7 +236,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
-		if ( _Parameters.Append( Create_( Flow, (cast)*Casts( Row ) ) ) != Row )
+		if ( _Parameters.Append( Create_( Flow, (cast)Casts( Row ) ) ) != Row )
 			ERRc();
 
 		Row = Casts.Next( Row );
@@ -271,7 +271,7 @@ void fblbrr::remote_request_functions___::_DeleteAll( void )
 
 #define CP( name, type )\
 	case c##name:\
-		Flow.Put( *Parameter.Cast );\
+		Flow.Put( Parameter.Cast );\
 		fbltyp::Put##name( *(fbltyp::type *)Parameter.Content, Flow );\
 		break;
 
@@ -284,7 +284,7 @@ static void Push_(
 	if ( Parameter.Cast != Cast )
 		ERRb();
 
-	switch ( *Parameter.Cast ) {
+	switch ( Parameter.Cast ) {
 	CP( Object, object__)
 	CP( Boolean, boolean__ )
 	CP( Booleans, booleans )
@@ -347,7 +347,7 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
-		Push_( Flow, _Parameters( Row ), (cast)*Casts( Row ) );
+		Push_( Flow, _Parameters( Row ), (cast)Casts( Row ) );
 
 		Row = Casts.Next( Row );
 	}

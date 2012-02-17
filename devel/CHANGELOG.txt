@@ -1,5 +1,9 @@
 $Id$
 
+17/02/2012 :
+	- FBLBER, FBLBRR :
+		- Adaptation.
+
 16/02/2012 :
 	- Général :
 		- Adaptation.
