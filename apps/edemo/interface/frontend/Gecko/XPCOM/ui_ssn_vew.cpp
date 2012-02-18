@@ -32,11 +32,17 @@ using nsxpcm::event__;
 
 using trunk::trunk___;
 
+void ui_ssn_vew::get_directory_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+	Trunk().GetDirectoryName();
+}
+
+
 /* Registrations */
 
 /* 'broadcaster's */
 
-#define R( name ) Trunk, Broadcasters.name.Init( Trunk, Trunk.UI().SessionForm.Window(), #name );
+#define R( name ) Trunk, Broadcasters.name.Init( Trunk, Trunk.UI().SessionView.Window(), #name );
 static void Register_(
 	trunk___ &Trunk,
 	session_view__::broadcasters__ &Broadcasters,
@@ -48,12 +54,13 @@ static void Register_(
 
 # define R( name )\
 	EventHandlers.name.Init( Trunk );\
-	nsxpcm::Attach( Trunk.UI().SessionForm.Document(), #name, EventHandlers.name );
+	nsxpcm::Attach( Trunk.UI().SessionView.Document(), #name, EventHandlers.name );
 static void Register_(
 	trunk___ &Trunk,
 	session_view__::event_handlers__ &EventHandlers,
 	nsIDOMWindow *Window )
 {
+	R( ehGetDirectory );
 }
 
 #undef R
@@ -65,6 +72,8 @@ static void Register_(
 	session_view__::widgets__ &Widgets,
 	nsIDOMWindow *Window )
 {
+	R( txbDirectorySymbolicName );
+	R( txbDirectory );
 }
 
 void ui_ssn_vew::session_view__::Init(

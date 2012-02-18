@@ -2761,6 +2761,11 @@ namespace nsxpcm {
 		nsIDOMDocument *Owner,
 		const xslt_parameters_ &Parameters );
 
+	bso::bool__ GetDirectory(
+		const char *Name,
+		str::string_ &Directory,
+		err::handling__ ErrHandling = err::h_Default );
+
 	void LaunchURI( const str::string_ &URI );
 
 	inline void LaunchURI( const char *URI )

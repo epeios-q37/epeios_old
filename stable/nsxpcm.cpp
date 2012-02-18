@@ -2258,6 +2258,40 @@ void nsxpcm::LaunchURI( const str::string_ &RawURI )
 		ERRu();
 }
 
+bso::bool__ nsxpcm::GetDirectory(
+	const char *Name,
+	str::string_ &Directory,
+	err::handling__ ErrHandling )
+{
+	nsresult Result = NS_OK;
+ERRProlog
+	nsCOMPtr<nsILocalFile> LocalFile = NULL;
+	nsCOMPtr<nsIDirectoryServiceProvider> DirectoryServiceProvider;
+	nsIFile *File = NULL;
+	nsEmbedString Path;
+	NSXPCM__BOOL Persistent = false;
+ERRBegin
+
+	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
+	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
+
+	if ( ( Result = DirectoryServiceProvider->GetFile( Name, &Persistent, &File ) ) != NS_OK )
+		if ( ErrHandling != err::hUserDefined )
+			ERRu();
+		else
+			ERRReturn;
+
+	T( File->GetPath( Path ) );
+	
+	Transform( Path, Directory );
+ERRErr
+ERREnd
+ERREpilog
+	return Result == NS_OK;
+}
+
+
+
 void nsxpcm::LaunchEmbedFile( const char *RawFile )
 {
 ERRProlog

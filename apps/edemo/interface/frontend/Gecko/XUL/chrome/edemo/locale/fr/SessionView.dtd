@@ -2,3 +2,13 @@
 
 <!ENTITY grid.lbl "Grille">
 <!ENTITY grid.ttt "Visualiser un exemple de grille.">
+
+<!ENTITY directory.lbl "Répertoire">
+<!ENTITY directory.ttt "Afficher les répertoires prédfinis.">
+
+<!ENTITY getDirectory.lbl "Exécuter">
+<!ENTITY getDirectory.ttt "Obtenir le répertoire.">
+<!ENTITY getDirectory.ack "E">
+
+<!ENTITY directorySymbolicName.ttt "Nom symbolique du répertoire.">
+<!ENTITY directorySymbolicName.phd "Nom symbolique">

@@ -22,6 +22,7 @@
 <!-- $Id$ -->
 
 <!DOCTYPE window SYSTEM "chrome://edemo/locale/SessionView.dtd">
+<!--<!DOCTYPE window SYSTEM "../locale/fr/SessionView.dtd">-->
 
 <page
 	id="pgeSessionView"
@@ -39,17 +40,47 @@
 			label="&grid.lbl;"
 			tooltiptext="&grid.ttt;"
 			/>
+		<broadcaster
+			id="dspDirectory"
+			label="&directory.lbl;"
+			tooltiptext="&directory.ttt;"
+			/>
+		<broadcaster
+			id="dspDirectorySympbolicName"
+			tooltiptext="&directorySymbolicName.ttt;"
+			placeholder="&directorySymbolicName.phd;"
+		/>
+		<broadcaster
+			id="glbGetDirectory"
+			xex:oncommand="ehGetDirectory"
+			label="&getDirectory.lbl;"
+			tooltiptext="&getDirectory.ttt;"
+			accesskey="&getDirectory.ack;"
+			/>
 	</broadcasterset>
 	<keyset>
+		<key keycode="VK_RETURN" xex:oncommand="ehGetDirectory"/>
 	</keyset>
 	<vbox flex="1">
 		<tabbox flex="1">
 			<tabs>
 				<tab observes="dspGrid"/>
+				<tab observes="dspDirectory"/>
 			</tabs>
 			<tabpanels flex="1">
 				<tabpanel flex="1">
 					<iframe src="Grid.xul" flex="1"/>
+				</tabpanel>
+				<tabpanel>
+					<groupbox>
+						<vbox>
+							<hbox>
+								<textbox id="txbDirectorySymbolicName" observes="glbDirectorySymbolicName"/>
+								<button observes="glbGetDirectory"/>
+							</hbox>
+							<textbox id="txbDirectory" disabled="true"/>
+						</vbox>
+					</groupbox>
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

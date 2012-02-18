@@ -64,3 +64,24 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void trunk::trunk___::GetDirectoryName( void )
+{
+ERRProlog
+	str::string SymbolicName, Directory;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	SymbolicName.Init();
+	UI().SessionView.Widgets.txbDirectorySymbolicName.GetValue( SymbolicName );
+
+	Directory.Init();
+	if ( !nsxpcm::GetDirectory( SymbolicName.Convert( Buffer ), Directory, err::hUserDefined ) )
+		UI().SessionView.Widgets.txbDirectory.SetAttribute( "placeholder", "Error" );
+
+	UI().SessionView.Widgets.txbDirectory.SetValue( Directory );
+
+ERRErr
+ERREnd
+ERREpilog
+
+}

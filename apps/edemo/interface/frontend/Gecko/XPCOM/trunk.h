@@ -138,6 +138,7 @@ namespace trunk {
 		{
 			return _UI;
 		}
+		void GetDirectoryName( void );
 	};
 
 	typedef xulftk::user_functions__<trunk___> _user_functions__;

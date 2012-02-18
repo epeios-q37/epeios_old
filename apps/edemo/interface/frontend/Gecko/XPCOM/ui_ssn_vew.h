@@ -29,6 +29,8 @@
 namespace ui_ssn_vew {
 	typedef xulfsv::session_view__ _session_view__;
 
+	UI_BASE_EH( get_directory_eh__ );
+
 	struct session_view__
 	: public _session_view__
 	{
@@ -41,10 +43,16 @@ namespace ui_ssn_vew {
 		{} Broadcasters;
 		struct event_handlers__
 		: public _session_view__::event_handlers__
-		{} EventHandlers;
+		{
+			get_directory_eh__ ehGetDirectory;
+		} EventHandlers;
 		struct widgets__
 		: public _session_view__::widgets__
-		{} Widgets;
+		{
+			ui_base::textbox__
+				txbDirectorySymbolicName,
+				txbDirectory;
+		} Widgets;
 		session_view__( void )
 		: _session_view__( Broadcasters, EventHandlers, Widgets )
 		{}
