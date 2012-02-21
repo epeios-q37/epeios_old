@@ -87,7 +87,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsITreeContentView.h"
 # include "nsITreeSelection.h"
 # include "nsIListBoxObject.h"
-
+# include "nsDirectoryServiceDefs.h"
 # include "nsIDOMDocument.h"
 # include "nsIDOMElement.h"
 # include "nsIDOMXULMultSelectCntrlEl.h"
@@ -2763,8 +2763,29 @@ namespace nsxpcm {
 
 	bso::bool__ GetDirectory(
 		const char *Name,
+		nsEmbedString &Directory,
+		err::handling__ ErrHandling = err::h_Default );
+
+	bso::bool__ GetDirectory(
+		const char *Name,
 		str::string_ &Directory,
 		err::handling__ ErrHandling = err::h_Default );
+
+	template <typename type> inline const type &GetWorkingDirectory( type &Directory )
+	{
+		if ( !GetDirectory( NS_OS_CURRENT_WORKING_DIR, Directory, err::hUserDefined ) )
+			ERRx();
+
+		return Directory;
+	}
+
+	template <typename type> inline const type &GetInstallationDirectory( type &Directory )
+	{
+		if ( !GetDirectory( NS_OS_CURRENT_PROCESS_DIR, Directory, err::hUserDefined ) )
+			ERRx();
+
+		return Directory;
+	}
 
 	void LaunchURI( const str::string_ &URI );
 

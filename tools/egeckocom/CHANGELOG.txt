@@ -1,5 +1,9 @@
 $Id$
 
+21/02/2012 :
+	- Le fichier de configuration et de locales est désormais chargé par défaut à partir du répertoire contenant 'egeckocom' (conformément au standard Epeios), avec le prérequis que ce dernier se trouve dans le répertoire 'components' situé à la racine de l'installation de l'application XUL.
+
+
 *********
 * 0.1.2 *
 *********

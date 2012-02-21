@@ -2260,19 +2260,15 @@ void nsxpcm::LaunchURI( const str::string_ &RawURI )
 
 bso::bool__ nsxpcm::GetDirectory(
 	const char *Name,
-	str::string_ &Directory,
+	nsEmbedString &Path,
 	err::handling__ ErrHandling )
 {
 	nsresult Result = NS_OK;
 ERRProlog
-	nsCOMPtr<nsILocalFile> LocalFile = NULL;
 	nsCOMPtr<nsIDirectoryServiceProvider> DirectoryServiceProvider;
 	nsIFile *File = NULL;
-	nsEmbedString Path;
 	NSXPCM__BOOL Persistent = false;
 ERRBegin
-
-	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
 	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
 
 	if ( ( Result = DirectoryServiceProvider->GetFile( Name, &Persistent, &File ) ) != NS_OK )
@@ -2282,41 +2278,41 @@ ERRBegin
 			ERRReturn;
 
 	T( File->GetPath( Path ) );
-	
-	Transform( Path, Directory );
 ERRErr
 ERREnd
 ERREpilog
 	return Result == NS_OK;
 }
 
+bso::bool__ nsxpcm::GetDirectory(
+	const char *Name,
+	str::string_ &Directory,
+	err::handling__ ErrHandling )
+{
+	nsEmbedString RawDirectory;
 
+	if ( !GetDirectory( Name, RawDirectory, ErrHandling ) )
+		return false;
+	
+	Transform( RawDirectory, Directory );
+
+	return true;
+}
 
 void nsxpcm::LaunchEmbedFile( const char *RawFile )
 {
 ERRProlog
 	nsCOMPtr<nsILocalFile> LocalFile = NULL;
-	nsCOMPtr<nsIDirectoryServiceProvider> DirectoryServiceProvider;
-	nsIFile *File = NULL;
-	nsEmbedString Path;
+	nsEmbedString Directory;
 	nsEmbedString Transformed;
 	str::string Joined;
 	strings Splitted;
 	epeios::row__ Row = NONE;
 ERRBegin
-	nsresult Result = NS_OK;	// Uniquement à des fins de débogage.
+	GetWorkingDirectory( Directory );
 
 	CreateInstance( "@mozilla.org/file/local;1", LocalFile );
-	GetService<nsIDirectoryServiceProvider>( "@mozilla.org/file/directory_service;1", DirectoryServiceProvider );
-
-	NSXPCM__BOOL Persistent = false;
-	T( DirectoryServiceProvider->GetFile( "CurWorkD", &Persistent, &File ) );
-
-	if ( ( Result = File->GetPath( Path ) ) != NS_OK )
-		ERRu();
-
-	if ( ( Result = LocalFile->InitWithPath( Path ) ) != NS_OK )
-		ERRu();
+	T( LocalFile->InitWithPath( Directory ) );
 
 	Joined.Init( RawFile );
 	Splitted.Init();
@@ -2331,14 +2327,12 @@ ERRBegin
 	while ( Row != NONE ) {
 		Transform( Splitted( Row ), Transformed );
 
-		if ( ( Result = LocalFile->AppendRelativePath( Transformed ) ) != NS_OK )
-			ERRu();
+		T( LocalFile->AppendRelativePath( Transformed ) );
 
 		Row = Splitted.Next( Row );
 	}
 
-	if ( ( Result = LocalFile->Launch() ) != NS_OK )
-		ERRu();
+	T( LocalFile->Launch() );
 ERRErr
 ERREnd
 ERREpilog

@@ -2,7 +2,8 @@
 <Configurations xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Configuration target="egeckocom">
 		<Components>
-			<xpp:expand href="H:\cvs\epeios\apps\edemo\interface\frontend\Gecko\egeckocom_sub.xcfg"/>
+				<Component id="eDemo">h:/bin/edemogck.dll</Component>
+				<!--<Component id="eDemo">/home/csimon/bin/edemogck.so</Component>-->
 		</Components>
 	</Configuration>
 </Configurations>

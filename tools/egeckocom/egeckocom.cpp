@@ -124,6 +124,35 @@ ERREpilog
 	return Component;
 }
 
+const char *GetConfigurationDirectory_( STR_BUFFER___ &Buffer )
+{
+ERRProlog
+	str::string Directory;
+ERRBegin
+	Directory.Init();
+
+	nsxpcm::GetInstallationDirectory( Directory );
+
+	Directory.Append( FNM_DIRECTORY_SEPARATOR_STRING "components" );
+
+	Directory.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+static void Initialize_( void )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	sclmisc::Initialize( NAME, GetConfigurationDirectory_( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 NS_IMETHODIMP egeckocom___::Create(
 	const char *ComponentId,
 	const char *Language,
@@ -135,13 +164,14 @@ RP
 	FNM_BUFFER___ LocationBuffer;
 	str::string Translation;
 	STR_BUFFER___ Buffer;
+	str::string ConfigurationDirectory;
 RB
 	nsCOMPtr<nsxpcm::clh__>CLH;
 
 	nsxpcm::GetService( CLH_CONTRACTID, CLH );
 
 	if ( !IsInitialized_ ) {
-		sclmisc::Initialize( NAME, NULL );
+		Initialize_();
 		IsInitialized_ = true;
 	}
 
