@@ -89,6 +89,51 @@ extern class ttr_tutor &FBLTYPTutor;
 	typedef ctn::E_XCONTAINER_( item##_ )	name##_;\
 	E_AUTO( name )
 
+# define FBLTYP_MIMIC( stype, sname )	E_TMIMIC__( stype##__, sname##__ )
+
+# define FBLTYP_MIMICS( stype, btype, sname, bname )\
+	FBLTYP_MIMIC( stype, sname );\
+	class bname##_\
+	: public bch::E_BUNCH_( sname##__ )\
+	{\
+	public:\
+		struct s\
+		: public bch::E_BUNCH_( sname##__ )::s\
+		{};\
+		bname##_( s &S )\
+		: bch::E_BUNCH_( sname##__ )( S )\
+		{}\
+		btype##_ &operator *( void )\
+		{\
+			return *(btype##_ *)this;\
+		}\
+		const btype##_ &operator *( void ) const\
+		{\
+			return *(const btype##_ *)this;\
+		}\
+	};\
+	E_AUTO( bname )
+
+# define FBLTYP_MIMICX( stype, btype, xtype, sname, bname, xname )\
+	FBLTYP_MIMICS( stype, btype, sname, bname );\
+	E_TMIMIC( xtype, xname );
+
+# define FBLTYP_MIMIC_ID8( sname ) FBLTYP_MIMIC( fbltyp::id8, sname )
+# define FBLTYP_MIMIC_ID16( sname ) FBLTYP_MIMIC( fbltyp::id16, sname )
+# define FBLTYP_MIMIC_ID32( sname ) FBLTYP_MIMIC( fbltyp::id32, sname )
+
+# define FBLTYP_MIMIC_IDS8( sname, bname ) FBLTYP_MIMICS( fbltyp::id8, fbltyp::ids8, sname, bname )
+# define FBLTYP_MIMIC_IDS16( sname, bname ) FBLTYP_MIMICS( fbltyp::id16, fbltyp::ids16, sname, bname )
+# define FBLTYP_MIMIC_IDS32( sname, bname ) FBLTYP_MIMICS( fbltyp::id32, fbltyp::ids32, sname, bname )
+
+# define FBLTYP_MIMIC_XIDS8( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id8, fbltyp::ids8, fbltyp::xids8, sname, bname, xname )
+# define FBLTYP_MIMIC_XIDS16( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::ids16, fbltyp::xids16, sname, bname, xname )
+# define FBLTYP_MIMIC_XIDS32( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::ids32, fbltyp::xids32, sname, bname, xname )
+
+# define FBLTYP_MIMIC_ULONG( sname ) FBLTYP_MIMIC( fbltyp::ulong, sname )
+# define FBLTYP_MIMIC_ULONGS( sname, bname ) FBLTYP_MIMICS( fbltyp::ulong, fbltyp::ulongs, sname, bname )
+
+
 namespace fbltyp {
 	//t Value.
 	typedef str::string_ value_;

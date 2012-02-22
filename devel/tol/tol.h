@@ -334,14 +334,6 @@ public:\
 		Name##_::operator =( S );\
 \
 		return *this;\
-	}\
-	Name##_ &operator *( void )\
-	{\
-		return *this;\
-	}\
-	const Name##_ &operator *( void ) const\
-	{\
-		return *this;\
 	}
 
 # define E_AUTO( name )\
