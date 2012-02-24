@@ -70,10 +70,10 @@ namespace xulfrg {
 	using frdrgy::registry_;
 	using frdrgy::registry;
 
-	extern rgstry::entry__ AnnexTarget;
-	extern rgstry::entry__ AnnexTargetType;
+	extern rgstry::entry___ AnnexTarget;
+	extern rgstry::entry___ AnnexTargetType;
 
-	extern rgstry::entry__ BackendSelectionMode;
+	extern rgstry::entry___ BackendSelectionMode;
 }
 
 /*$END$*/

@@ -1403,22 +1403,27 @@ static void HandleTag_(
 	}
 }
 
-const str::string_ &rgstry::entry__::GetPath(
+void rgstry::entry___::_PostInitialize( void ) const
+{
+	_Path.Init();
+
+	_GetParentPath( ( _RawPath != NULL ) && ( *_RawPath == '[' ), _Path );
+
+	HandleTag_( GetTagAmount_( _Path ) + 1, _RawPath, _Path );
+}
+
+const str::string_ &rgstry::entry___::_GetPath(
 	const tags_ &Tags,
 	str::string_ &Path ) const
 {
 ERRProlog
 	str::string Buffer;
 ERRBegin
-	Buffer.Init();
-
-	GetParentPath_( ( _Path != NULL ) && ( *_Path == '[' ), Buffer );
-
-	HandleTag_( GetTagAmount_( Buffer ) + 1, _Path, Buffer );
+	Buffer.Init( _Path );
 
 	str::ReplaceTags( Buffer, Tags, '%' );
 
-	Path.Append( Buffer  );
+	Path.Append( Buffer );
 ERRErr
 ERREnd
 ERREpilog

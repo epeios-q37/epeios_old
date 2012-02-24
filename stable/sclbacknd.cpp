@@ -67,15 +67,18 @@ public:
 
 #include "fblbur.h"
 
+#include "fnm.h"
+
 using namespace sclbacknd;
 
 static bso::bool__ IsInitialized_ = false;
 
-csdleo::user_functions__ *csdles::CSDLESRetrieveSteering( csdleo::shared_data__ *Data )
+csdleo::user_functions__ *csdles::CSDLESRetrieveSteering( csdleo::data__ *Data )
 {
 	csdleo::user_functions__ *Steering = NULL;
 ERRProlog
 	fblbur::mode__ Mode = fblbur::m_Undefined;
+	FNM_BUFFER___ Buffer;
 ERRBegin
 	if ( !IsInitialized_ )	{
 		cio::COutDriver.Init( *Data->COut, fdr::ts_Default );
@@ -85,7 +88,9 @@ ERRBegin
 		cio::Initialize( cio::tUser );
 
 		// Do not work when placed in 'global_cdtor'.
-		sclmisc::Initialize( TargetName, (const char *)Data->UP );
+		if ( Data->UP != NULL )
+			fnm::GetLocation( (const char *)Data->UP, Buffer );
+		sclmisc::Initialize( TargetName, Buffer );
 		IsInitialized_ = true;
 	}
 

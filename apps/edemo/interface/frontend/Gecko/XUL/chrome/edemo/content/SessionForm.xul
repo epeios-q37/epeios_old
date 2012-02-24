@@ -33,7 +33,6 @@
 	onload="register();"
 	pack="center"
 	>
-
 	<script type="text/javascript" src="egeckocom.js"/>
 	<broadcasterset>
 		<!-- Gestion 'hidden'/'disabled' -->

@@ -1727,10 +1727,10 @@ namespace rgstry {
 	typedef values_	tags_;
 	E_AUTO( tags );
 
-	class entry__
+	class entry___
 	{
 	private:
-		void GetParentPath_(
+		void _GetParentPath(
 			bso::bool__ NoTailingSlash,
 			str::string_ &Path ) const
 		{
@@ -1746,32 +1746,52 @@ namespace rgstry {
 				}
 			}
 		}
+		const bso::bool__ _IsPostInitialized( void ) const
+		{
+			return ( ( _Path.Amount() != 0 )
+				     || ( _RawPath == NULL )
+					 || ( *_RawPath == 0 ) );
+		}
+		void _PostInitialize( void ) const;
+		const str::string_ &_GetPath(
+			const tags_ &Tags,
+			str::string_ &Path ) const;
 	private:
-		const entry__ *_Parent;
-		const char *_Path;
+		const entry___ *_Parent;
+		const char *_RawPath;
+		mutable str::string _Path;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_Parent = NULL;
-			_Path = NULL;
+			_RawPath = NULL;
+			_Path.reset( P );
 		}
-		entry__(
+		entry___(
 			const char *Path = NULL,	// Non dupliqué !
-			const entry__ &Parent = *(const entry__ *)NULL )
+			const entry___ &Parent = *(const entry___ *)NULL )
 		{
 			reset( false );
 			Init( Path, Parent );
 		}
 		void Init(
 			const char *Path = NULL,	// Non dupliqué !
-			const entry__ &Parent = *(const entry__ *)NULL )
+			const entry___ &Parent = *(const entry___ *)NULL )
 		{
 			_Parent = &Parent;
-			_Path = Path;
+			_RawPath = Path;
+
+			_Path.Init();
 		}
 		const str::string_ &GetPath(
 			const tags_ &Tags,
-			str::string_ &Path ) const;
+			str::string_ &Path ) const
+		{
+			if ( !_IsPostInitialized() )
+				_PostInitialize();
+
+			return _GetPath( Tags, Path );
+		}
 		const str::string_ &GetPath( str::string_ &Path ) const
 		{
 			return GetPath( tags(), Path );

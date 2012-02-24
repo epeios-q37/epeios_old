@@ -79,32 +79,32 @@ extern class ttr_tutor &FRDRGYTutor;
 
 namespace frdrgy {
 
-	extern rgstry::entry__ Parameters;
+	extern rgstry::entry___ Parameters;
 
-	extern rgstry::entry__ LocaleFileName;
+	extern rgstry::entry___ LocaleFileName;
 
-	extern rgstry::entry__ DefaultProject;
+	extern rgstry::entry___ DefaultProject;
 
-	extern rgstry::entry__ Backend;
-	extern rgstry::entry__ BackendAccessMode;
-	extern rgstry::entry__ BackendType;
-	extern rgstry::entry__ BackendPingDelay;
+	extern rgstry::entry___ Backend;
+	extern rgstry::entry___ BackendAccessMode;
+	extern rgstry::entry___ BackendType;
+	extern rgstry::entry___ BackendPingDelay;
 
-	extern rgstry::entry__ Authentication;
-	extern rgstry::entry__ AuthenticationCypherKey;
-	extern rgstry::entry__ AuthenticationMode;
-	extern rgstry::entry__ AuthenticationLogin;
-	extern rgstry::entry__ AuthenticationPassword;
+	extern rgstry::entry___ Authentication;
+	extern rgstry::entry___ AuthenticationCypherKey;
+	extern rgstry::entry___ AuthenticationMode;
+	extern rgstry::entry___ AuthenticationLogin;
+	extern rgstry::entry___ AuthenticationPassword;
 
-	extern rgstry::entry__ PredefinedBackends;
-	extern rgstry::entry__ DefaultPredefinedBackend;
-	extern rgstry::entry__ PredefinedBackendId;
-	extern rgstry::entry__ PredefinedBackend;
-	extern rgstry::entry__ PredefinedBackendAlias;
-	extern rgstry::entry__ PredefinedBackendType;
+	extern rgstry::entry___ PredefinedBackends;
+	extern rgstry::entry___  DefaultPredefinedBackend;
+	extern rgstry::entry___ PredefinedBackendId;
+	extern rgstry::entry___ PredefinedBackend;
+	extern rgstry::entry___ PredefinedBackendAlias;
+	extern rgstry::entry___ PredefinedBackendType;
 
-	extern rgstry::entry__ Internals;
-	extern rgstry::entry__ ProjectId;
+	extern rgstry::entry___ Internals;
+	extern rgstry::entry___ ProjectId;
 
 	struct paths {
 		struct profiles {

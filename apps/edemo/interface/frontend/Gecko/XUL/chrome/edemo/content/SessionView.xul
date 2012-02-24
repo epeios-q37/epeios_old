@@ -46,6 +46,11 @@
 			tooltiptext="&directory.ttt;"
 			/>
 		<broadcaster
+			id="dspAutoCompleteTextBox"
+			label="&autoCompleteTextBox.lbl;"
+			tooltiptext="&autoCompleteTextBox.ttt;"
+			/>
+		<broadcaster
 			id="dspDirectorySympbolicName"
 			tooltiptext="&directorySymbolicName.ttt;"
 			placeholder="&directorySymbolicName.phd;"
@@ -66,6 +71,7 @@
 			<tabs>
 				<tab observes="dspGrid"/>
 				<tab observes="dspDirectory"/>
+				<tab observes="dspAutoCompleteTextBox"/>
 			</tabs>
 			<tabpanels flex="1">
 				<tabpanel flex="1">
@@ -80,6 +86,13 @@
 							</hbox>
 							<textbox id="txbDirectory" disabled="true"/>
 						</vbox>
+					</groupbox>
+				</tabpanel>
+				<tabpanel>
+					<groupbox>
+						<textbox id="test"  type="autocomplete" autocompletesearch="nsxpcm_ac" enablehistory="true" forcecomplete="true" alwaysopenpopup="true">
+						<menupopup id="pop"/>
+						</textbox>
 					</groupbox>
 				</tabpanel>
 			</tabpanels>

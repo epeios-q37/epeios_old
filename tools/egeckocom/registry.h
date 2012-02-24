@@ -28,8 +28,8 @@ namespace registry {
 
 	using namespace sclrgstry;
 
-	extern rgstry::entry__ Components;
-	extern rgstry::entry__ TaggedComponent;
+	extern rgstry::entry___ Components;
+	extern rgstry::entry___ TaggedComponent;
 }
 
 #endif

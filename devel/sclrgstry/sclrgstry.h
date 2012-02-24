@@ -77,10 +77,10 @@ namespace sclrgstry {
 
 	const rgstry::multi_level_registry_ &GetRegistry( void );
 
-	extern rgstry::entry__ Parameters;
+	extern rgstry::entry___ Parameters;
 
-	extern rgstry::entry__ LocaleFileName;
-	extern rgstry::entry__ Language;
+	extern rgstry::entry___ LocaleFileName;
+	extern rgstry::entry___ Language;
 
 	using rgstry::value;
 	using rgstry::value_;
@@ -93,44 +93,44 @@ namespace sclrgstry {
 	bso::bool__ IsRegistryReady( void );
 
 	bso::bool__ GetValue(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		str::string_ &Value );
 
 	bso::bool__ GetValues(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		str::strings_ &Values );
 
 	const str::string_ &GetOptionalRegistryValue(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		str::string_ &Value,
 		bso::bool__ *Missing = NULL );
 
 	const char *GetOptionalRegistryValue(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		STR_BUFFER___ &Buffer,
 		bso::bool__ *Missing = NULL );
 
 	const str::string_ &GetMandatoryRegistryValue(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		str::string_ &Value );
 
 	const char *GetMandatoryRegistryValue(
-		const rgstry::entry__ &Entry,
+		const rgstry::entry___ &Entry,
 		const rgstry::tags_ &Tags,
 		STR_BUFFER___ &Buffer );
 
 # define SCLRGSTRY__RUN( type, name, limit )\
 	type GetMandatoryRegistry##name(\
-		const rgstry::entry__ &Entry,\
+		const rgstry::entry___ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type Limit = limit );\
 	type GetRegistry##name(\
-		const rgstry::entry__ &Entry,\
+		const rgstry::entry___ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Limit = limit );
@@ -144,12 +144,12 @@ namespace sclrgstry {
 
 # define SCLRGSTRY__RSN( type, name, min, max )\
 	type GetMandatoryRegistry##name(\
-		const rgstry::entry__ &Entry,\
+		const rgstry::entry___ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type Min = min,\
 		type Max = max );\
 	type GetRegistry##name(\
-		const rgstry::entry__ &Entry,\
+		const rgstry::entry___ &Entry,\
 		const rgstry::tags_ &Tags,\
 		type DefaultValue,\
 		type Min = min,\

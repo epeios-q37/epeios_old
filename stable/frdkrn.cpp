@@ -249,10 +249,10 @@ ERRProlog
 	flx::E_STRING_OFLOW_DRIVER___ OFlowDriver;
 	csdlec::library_data__ LibraryData;
 	csdleo::mode__ Mode = csdleo::m_Undefined;
-	str::string Pingdelay, Buffer;
+	str::string PingDelay, Buffer;
 ERRBegin
 	OFlowDriver.Init( ErrorSet.Misc, fdr::ts_Default );
-	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver );
+	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver, (void *)RemoteHostServiceOrLocalLibraryPath );
 
 	Buffer.Init();
 

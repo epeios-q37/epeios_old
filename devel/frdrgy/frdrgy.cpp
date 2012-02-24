@@ -57,33 +57,33 @@ public:
 
 using namespace frdrgy;
 
-rgstry::entry__ frdrgy::Parameters( "Parameters" );
+rgstry::entry___ frdrgy::Parameters( "Parameters" );
 
-rgstry::entry__ frdrgy::LocaleFileName( "LocaleFileName", Parameters );
+rgstry::entry___ frdrgy::LocaleFileName( "LocaleFileName", Parameters );
 
-rgstry::entry__ frdrgy::DefaultProject( "DefaultProject", Parameters );
+rgstry::entry___ frdrgy::DefaultProject( "DefaultProject", Parameters );
 
-rgstry::entry__ frdrgy::Backend( "Backend", Parameters );
-rgstry::entry__ frdrgy::BackendAccessMode( "@AccessMode", Backend );
-rgstry::entry__ frdrgy::BackendType( "@Type", Backend );
-rgstry::entry__ frdrgy::BackendPingDelay( "PingDelay", Backend );
+rgstry::entry___ frdrgy::Backend( "Backend", Parameters );
+rgstry::entry___ frdrgy::BackendAccessMode( "@AccessMode", Backend );
+rgstry::entry___ frdrgy::BackendType( "@Type", Backend );
+rgstry::entry___ frdrgy::BackendPingDelay( "PingDelay", Backend );
 
-rgstry::entry__ frdrgy::Authentication( "Authentication", Parameters );
-rgstry::entry__ frdrgy::AuthenticationCypherKey( "@CypherKey", Authentication );
-rgstry::entry__ frdrgy::AuthenticationMode( "@Mode", Authentication );
-rgstry::entry__ frdrgy::AuthenticationLogin( "Login", Authentication );
-rgstry::entry__ frdrgy::AuthenticationPassword( "Password", Authentication );
+rgstry::entry___ frdrgy::Authentication( "Authentication", Parameters );
+rgstry::entry___ frdrgy::AuthenticationCypherKey( "@CypherKey", Authentication );
+rgstry::entry___ frdrgy::AuthenticationMode( "@Mode", Authentication );
+rgstry::entry___ frdrgy::AuthenticationLogin( "Login", Authentication );
+rgstry::entry___ frdrgy::AuthenticationPassword( "Password", Authentication );
 
-rgstry::entry__ frdrgy::PredefinedBackends( "PredefinedBackends", Parameters );
-rgstry::entry__ frdrgy::DefaultPredefinedBackend( "@Default", PredefinedBackends );
-static rgstry::entry__ FreePredefinedBackend_( "PredefinedBackend", PredefinedBackends ); 
-rgstry::entry__ frdrgy::PredefinedBackendId( "@id", FreePredefinedBackend_ );
-rgstry::entry__ frdrgy::PredefinedBackend( FRDRGY_TAGGING_ATTRIBUTE( "id" ), FreePredefinedBackend_);
-rgstry::entry__ frdrgy::PredefinedBackendAlias( "@Alias", PredefinedBackend );
-rgstry::entry__ frdrgy::PredefinedBackendType( "@Type", PredefinedBackend );
+rgstry::entry___ frdrgy::PredefinedBackends( "PredefinedBackends", Parameters );
+rgstry::entry___ frdrgy::DefaultPredefinedBackend( "@Default", PredefinedBackends );
+static rgstry::entry___ FreePredefinedBackend_( "PredefinedBackend", PredefinedBackends ); 
+rgstry::entry___ frdrgy::PredefinedBackendId( "@id", FreePredefinedBackend_ );
+rgstry::entry___ frdrgy::PredefinedBackend( FRDRGY_TAGGING_ATTRIBUTE( "id" ), FreePredefinedBackend_);
+rgstry::entry___ frdrgy::PredefinedBackendAlias( "@Alias", PredefinedBackend );
+rgstry::entry___ frdrgy::PredefinedBackendType( "@Type", PredefinedBackend );
 
-rgstry::entry__ frdrgy::Internals( "Internals" );
-rgstry::entry__ frdrgy::ProjectId( "ProjectId", Internals );
+rgstry::entry___ frdrgy::Internals( "Internals" );
+rgstry::entry___ frdrgy::ProjectId( "ProjectId", Internals );
 
 
 

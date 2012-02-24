@@ -139,7 +139,12 @@ extern class ttr_tutor &NSXPCMTutor;
 #  define NSXPCM__ENABLE_FORMHISTORY
 # endif
 
-# define NSXPCM__BOOL	bool
+#if 0
+#  define NSXPCM__BOOL	bool
+# else
+#  define NSXPCM__BOOL	PRBool
+# endif
+
 
 # ifdef NSXPCM_FBL
 #  define NSXPCM__FBL

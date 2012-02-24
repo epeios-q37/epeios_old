@@ -6,6 +6,9 @@
 <!ENTITY directory.lbl "Répertoire">
 <!ENTITY directory.ttt "Afficher les répertoires prédfinis.">
 
+<!ENTITY autoCompleteTextBox.lbl "&quot;textbox auto complete&quot;">
+<!ENTITY autoCompleteTextBox.ttt "&quot;Afficher un exemple de 'textbox auto complete&quot;">
+
 <!ENTITY getDirectory.lbl "Exécuter">
 <!ENTITY getDirectory.ttt "Obtenir le répertoire.">
 <!ENTITY getDirectory.ack "E">

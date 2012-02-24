@@ -1,5 +1,26 @@
 $Id$
 
+24/02/2012 :
+	- CSDLES :
+		- 'CSDLESRetrieveSteering(...)' reçoit dorénavant un 'data__' et non plus un 'shared_data__'.
+	- FRDKRN :
+		- Dnas le cas d'un backend enclavé dans une bibiothèque, cette dernière reçoit sa localisation (pour pouvoir y lire le fichier de configuration).
+	- SCLBACKND :
+		- Adaptation.
+		- La localisation est récupèrée du 'frontend' et sert pour au chargement du fichier de configuration.
+
+23/02/2012 :
+	- Général :
+		- Adaptation.
+	
+	- RGSTRY :
+		- 'entry__' -> 'entry___'.
+		- Optimisation des performances de 'entry___'.
+
+22/02/2012 :
+	- TOL :
+		- Suppression 'operator *' inutile de la macro E_AUTO(_).
+
 17/02/2012 :
 	- FBLBER, FBLBRR :
 		- Adaptation.

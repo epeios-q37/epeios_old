@@ -23,6 +23,6 @@
 
 using namespace registry;
 
-rgstry::entry__ registry::Components( "Components" );
-rgstry::entry__ registry::TaggedComponent( "Component[@id=\"%\"]", Components );
+rgstry::entry___ registry::Components( "Components" );
+rgstry::entry___ registry::TaggedComponent( "Component[@id=\"%\"]", Components );
 

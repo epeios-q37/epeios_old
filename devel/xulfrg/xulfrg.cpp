@@ -57,11 +57,11 @@ public:
 
 using namespace xulfrg;
 
-rgstry::entry__ xulfrg::AnnexTarget( "AnnexTarget", frdrgy::Parameters );
-rgstry::entry__ xulfrg::AnnexTargetType( "@Type", AnnexTarget );
+rgstry::entry___ xulfrg::AnnexTarget( "AnnexTarget", frdrgy::Parameters );
+rgstry::entry___ xulfrg::AnnexTargetType( "@Type", AnnexTarget );
 
-static rgstry::entry__ BackendSelection_( "BackendSelection", frdrgy::Parameters );
-rgstry::entry__ xulfrg::BackendSelectionMode( "Mode", BackendSelection_ );
+static rgstry::entry___ BackendSelection_( "BackendSelection", frdrgy::Parameters );
+rgstry::entry___ xulfrg::BackendSelectionMode( "Mode", BackendSelection_ );
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
