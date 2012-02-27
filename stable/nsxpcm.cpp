@@ -385,6 +385,20 @@ void nsxpcm::Transform(
 	Transform( EString, ECString );
 }
 
+void nsxpcm::Transform(
+	const str::string_ &String,
+	nsAString &AString )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Transform( String.Convert( Buffer ), AString );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void nsxpcm::Split( 
 	const string_ &Joined,
 	bso::char__ Separator,
@@ -1873,13 +1887,12 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetCellText(PRInt32 aRow, nsITreeColumn* aCol
  ERRProlog
 	str::string Text;
 	PRInt32 Index = 0;
-	STR_BUFFER___ Buffer;
  ERRBegin
 	 aCol->GetIndex( &Index );
 
 	Text.Init();
 	 _F().GetCellText( aRow, Index, Text );
-	 aCellText.AppendASCII( Text.Convert( Buffer ) );
+	 Transform( Text, aCellText );
 ERRErr
 ERREnd
 ERREpilog

@@ -338,6 +338,17 @@ namespace nsxpcm {
 		Transform( str::string( String ), ECString );
 	}
 
+	inline void Transform(
+		const char *String,
+		nsAString &AString )
+	{
+		AString.AssignLiteral( String );
+	}
+
+	void Transform(
+		const str::string_ &String,
+		nsAString &AString );
+
 	void Split( 
 		const string_ &Joined,
 		bso::char__ Separator,
@@ -3085,6 +3096,145 @@ NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::tree_view__, NSXPCM_TREE_VIEW_IID)
 
 /* Fin partie concernant 'tree_view____' */
 
+/* Début partie concernant 'textbox' 'autocomplete' */
+
+namespace nsxpcm {
+	class autocomplete_textbox_functions__
+	{
+	protected:
+		virtual void NSXPCMGetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label ) = 0;
+		virtual void NSXPCMGetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			ERRu();
+		}
+		virtual bso::ulong__ NSXPCMGetMatchingCount( void ) = 0;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		E_CVDTOR( autocomplete_textbox_functions__ );
+		void Init( void )
+		{
+			// Standardisation.
+		}
+		void GetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label )
+		{
+			NSXPCMGetLabel( Index, Label );
+		}
+		void GetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			NSXPCMGetComment( Index, Comment );
+		}
+		bso::ulong__ GetMatchingCount( void )
+		{
+			return NSXPCMGetMatchingCount();
+		}
+	};
+}
+
+#include "nsIAutoCompleteResult.h"
+
+# define NSXPCM_AUTOCOMPLETE_RESULT_IID_STR "5126d993-3577-4214-811a-a1f286d464f7"
+
+# define NSXPCM_AUTOCOMPLETE_RESULT_IID \
+  {0x5126d993, 0x3577, 0x4214, \
+    { 0x81, 0x1a, 0xa1, 0xf2, 0x86, 0xd4, 0x64, 0xf7 }}
+
+namespace nsxpcm {
+	class autocomplete_result__
+	: public nsIAutoCompleteResult
+	{
+	private:
+		autocomplete_textbox_functions__ *_Functions;
+		autocomplete_textbox_functions__ &_F( void )
+		{
+			if ( _Functions == NULL )
+				ERRc();
+
+			return *_Functions;
+		}
+	public:
+		NS_DECLARE_STATIC_IID_ACCESSOR( NSXPCM_AUTOCOMPLETE_RESULT_IID )
+		NS_DECL_ISUPPORTS
+		NS_DECL_NSIAUTOCOMPLETERESULT
+		void reset( bso::bool__ = true )
+		{
+			_Functions = NULL;
+		}
+		E_CVDTOR( autocomplete_result__ );
+	public:
+		void Init( autocomplete_textbox_functions__ &Functions )
+		{
+			_Functions = &Functions;
+		}
+	};
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_result__ )
+}
+
+NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::autocomplete_result__, NSXPCM_AUTOCOMPLETE_RESULT_IID)
+
+# define NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID "@zeusw.org/autocomplete_result;1"
+# define NSXPCM_AUTOCOMPLETE_RESULT_CLASSNAME "NSXPCMAutocompleteResult"
+# define NSXPCM_AUTOCOMPLETE_RESULT_CID  NSXPCM_AUTOCOMPLETE_RESULT_IID
+
+# include "nsIAutoCompleteSearch.h"
+
+# define NSXPCM_AUTOCOMPLETE_SEARCH_IID_STR "6de89116-05d7-4968-a763-1b6d0680a6a6"
+
+# define NSXPCM_AUTOCOMPLETE_SEARCH_IID \
+  {0x6de89116, 0x05d7, 0x4968, \
+    { 0xa7, 0x63, 0x1b, 0x6d, 0x06, 0x80, 0xa6, 0xa6 }}
+
+namespace nsxpcm {
+	class autocomplete_search__
+	: public nsIAutoCompleteSearch
+	{
+	private:
+		autocomplete_textbox_functions__ *_Functions;
+		autocomplete_textbox_functions__ &_F( void )
+		{
+			if ( _Functions == NULL )
+				ERRc();
+
+			return *_Functions;
+		}
+		nsCOMPtr<nsIAutoCompleteResult> _Result;
+	public:
+		NS_DECLARE_STATIC_IID_ACCESSOR( NSXPCM_AUTOCOMPLETE_SEARCH_IID )
+		NS_DECL_ISUPPORTS
+		NS_DECL_NSIAUTOCOMPLETESEARCH
+		void reset( bso::bool__ = true )
+		{
+			_Functions = NULL;
+		}
+		E_CVDTOR(autocomplete_search__ );
+	public:
+		void Init( autocomplete_textbox_functions__ &Functions )
+		{
+			_Functions = &Functions;
+		}
+	};
+
+	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_search__ )
+}
+
+NS_DEFINE_STATIC_IID_ACCESSOR( nsxpcm::autocomplete_search__, NSXPCM_AUTOCOMPLETE_SEARCH_IID )
+
+# define NSXPCM_AUTOCOMPLETE_SEARCH_CONTRACTID "@mozilla.org/autocomplete/search;1?name=nsxpcm"
+# define NSXPCM_AUTOCOMPLETE_SEARCH_CLASSNAME "NSXPCMAutocompleteSearch"
+# define NSXPCM_AUTOCOMPLETE_SEARCH_CID  NSXPCM_AUTOCOMPLETE_SEARCH_IID
+
+/* Fin partie concernant 'textbox' 'autocomplete' */
 
 /* Debut partie concernant 'iclh__' */
 

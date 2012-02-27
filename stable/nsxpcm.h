@@ -338,6 +338,17 @@ namespace nsxpcm {
 		Transform( str::string( String ), ECString );
 	}
 
+	inline void Transform(
+		const char *String,
+		nsAString &AString )
+	{
+		AString.AssignLiteral( String );
+	}
+
+	void Transform(
+		const str::string_ &String,
+		nsAString &AString );
+
 	void Split( 
 		const string_ &Joined,
 		bso::char__ Separator,

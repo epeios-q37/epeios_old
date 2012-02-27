@@ -385,6 +385,20 @@ void nsxpcm::Transform(
 	Transform( EString, ECString );
 }
 
+void nsxpcm::Transform(
+	const str::string_ &String,
+	nsAString &AString )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Transform( String.Convert( Buffer ), AString );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 void nsxpcm::Split( 
 	const string_ &Joined,
 	bso::char__ Separator,
@@ -1873,13 +1887,12 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetCellText(PRInt32 aRow, nsITreeColumn* aCol
  ERRProlog
 	str::string Text;
 	PRInt32 Index = 0;
-	STR_BUFFER___ Buffer;
  ERRBegin
 	 aCol->GetIndex( &Index );
 
 	Text.Init();
 	 _F().GetCellText( aRow, Index, Text );
-	 aCellText.AppendASCII( Text.Convert( Buffer ) );
+	 Transform( Text, aCellText );
 ERRErr
 ERREnd
 ERREpilog
@@ -1956,6 +1969,112 @@ NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnCell(const PRUnichar* aAction,
 }
 
 /* Fin 'tree_view' */
+
+/* Début 'textbox' 'autocomplete' */
+
+NS_IMPL_ISUPPORTS2 (nsxpcm::autocomplete_result__, nsxpcm::autocomplete_result__, nsIAutoCompleteResult );
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchString(nsAString & aSearchString)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchResult(PRUint16 *aSearchResult)
+{
+	*aSearchResult = nsIAutoCompleteResult::RESULT_SUCCESS;
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetDefaultIndex(PRInt32 *aDefaultIndex)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetErrorDescription(nsAString & aErrorDescription)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetMatchCount(PRUint32 *aMatchCount)
+{
+	*aMatchCount = _F().GetMatchingCount();
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+ERRProlog
+	str::string Label;
+ERRBegin
+	Label.Init();
+
+	_F().GetLabel( index, Label );
+
+	Transform( Label, _retval );
+ERRErr
+ERREnd
+ERREpilog
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+ERRProlog
+	str::string Comment;
+ERRBegin
+	Comment.Init();
+
+	_F().GetComment( index, Comment );
+
+	Transform( Comment, _retval );
+ERRErr
+ERREnd
+ERREpilog
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMPL_ISUPPORTS2(nsxpcm::autocomplete_search__, nsxpcm::autocomplete_search__, nsIAutoCompleteSearch );
+
+NS_IMETHODIMP nsxpcm::autocomplete_search__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
+{
+	nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _Result );
+
+	_Res
+
+	listener->OnSearchResult( this, _Result );
+
+    return NS_OK;
+}
+
+/* void stopSearch (); */
+NS_IMETHODIMP nsxpcm::autocomplete_search__::StopSearch()
+{
+    return NS_OK;
+}
+
+/* Fin 'textbox' 'autocomplete' */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
 

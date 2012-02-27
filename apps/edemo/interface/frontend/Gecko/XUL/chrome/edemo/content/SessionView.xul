@@ -67,13 +67,13 @@
 		<key keycode="VK_RETURN" xex:oncommand="ehGetDirectory"/>
 	</keyset>
 	<vbox flex="1">
-		<tabbox flex="1">
-			<tabs>
+		<tabbox flex="1" selectedIndex="2">
+			<tabs selectedIndex="2">
 				<tab observes="dspGrid"/>
 				<tab observes="dspDirectory"/>
 				<tab observes="dspAutoCompleteTextBox"/>
 			</tabs>
-			<tabpanels flex="1">
+			<tabpanels flex="1" selectedIndex="2">
 				<tabpanel flex="1">
 					<iframe src="Grid.xul" flex="1"/>
 				</tabpanel>
@@ -90,9 +90,7 @@
 				</tabpanel>
 				<tabpanel>
 					<groupbox>
-						<textbox id="test"  type="autocomplete" autocompletesearch="nsxpcm_ac" enablehistory="true" forcecomplete="true" alwaysopenpopup="true">
-						<menupopup id="pop"/>
-						</textbox>
+						<textbox id="test"  type="autocomplete" autocompletesearch="nsxpcm_ac" showcommentcolumn="true"/>
 					</groupbox>
 				</tabpanel>
 			</tabpanels>

@@ -400,7 +400,7 @@ NS_IMETHODIMP nsxpcm::acr__::GetErrorDescription(nsAString & aErrorDescription)
 
 NS_IMETHODIMP nsxpcm::acr__::GetMatchCount(PRUint32 *aMatchCount)
 {
-	*aMatchCount = 10;
+	*aMatchCount = 100;
 
     return NS_OK;
 }
@@ -410,24 +410,34 @@ NS_IMETHODIMP nsxpcm::acr__::GetValueAt(PRInt32 index, nsAString & _retval NS_OU
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+#include "dte.h"
+
 NS_IMETHODIMP nsxpcm::acr__::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+	tol::buffer__ Buffer;
+
+	nsxpcm::Transform( tol::Time( Buffer ) , _retval );
+
+    return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::acr__::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+	tol::buffer__ Buffer;
+
+	nsxpcm::Transform( tol::Date( Buffer ) , _retval );
+
+    return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::acr__::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+    return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::acr__::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+    return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::acr__::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
