@@ -47,7 +47,7 @@ mods += ui_ssn_vew
 
 # epeios/core
 mods += cdgb64 cio dlbrry dtfptb err
-mods += fil flw flx fnm lcl mmi
+mods += fil flw flx fnm lcl lst mmi
 mods += mtk nsxpcm rgstry sck str tht
 mods += tol ttr uym xml xpp
 

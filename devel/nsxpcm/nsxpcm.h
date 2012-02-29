@@ -242,6 +242,7 @@ namespace nsxpcm {
 		eKeyPress,
 		eLoad,
 		eClose,
+		eTextEntered,	// pour les 'textbox' 'autocomplete'.
 		e_amount,
 		e_Undefined
 	};
@@ -266,6 +267,7 @@ namespace nsxpcm {
 		EF( KeyPress ),
 		EF( Load ),
 		EF( Close ),
+		EF( TextEntered ),
 		ef_None = 0,
 		ef_All = ( ( 1 << e_amount ) - 1 ),
 		ef_AllButAnnoying = ef_All & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.

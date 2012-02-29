@@ -222,6 +222,19 @@ namespace xulfui {
 
 	typedef geckoo::user_functions__ _user_functions__;
 
+	typedef void (* pseudo_event_handler__)( nsIDOMElement *Element, void *PU );
+
+	void Add(
+		const char *Id,
+		pseudo_event_handler__ Handler,
+		void *UP );
+
+	bso::bool__ Launch(
+		const char *Id,
+		nsIDOMElement *Element );
+
+	void Remove( const char *Id );
+
 	 class user_functions__
 	 : public _user_functions__
 	{
@@ -231,6 +244,12 @@ namespace xulfui {
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id );
+		virtual bso::bool__ GECKOOHandlePseudoEvent(
+			nsIDOMElement *Element,
+			const char *Parameter )
+		{
+			return Launch( Parameter, Element );
+		}
 		virtual bso::bool__ XULFUIRegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;

@@ -80,7 +80,10 @@ ERRProlog
 	fblbur::mode__ Mode = fblbur::m_Undefined;
 	FNM_BUFFER___ Buffer;
 ERRBegin
-	if ( !IsInitialized_ )	{
+	if ( Data == NULL )
+		ERRc();
+
+	if ( !IsInitialized_ && !Data->DryRun )	{
 		cio::COutDriver.Init( *Data->COut, fdr::ts_Default );
 		cio::CErrDriver.Init( *Data->CErr, fdr::ts_Default );
 		cio::CInDriver.Init( flx::VoidIFlowDriver, fdr::ts_Default );

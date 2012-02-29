@@ -37,6 +37,11 @@ void ui_ssn_vew::get_directory_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 	Trunk().GetDirectoryName();
 }
 
+void ui_ssn_vew::autocomplete_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
+{
+	Trunk().UI().Alert( "Yes !!!" );
+}
+
 
 /* Registrations */
 
@@ -61,6 +66,7 @@ static void Register_(
 	nsIDOMWindow *Window )
 {
 	R( ehGetDirectory );
+	R( ehAutocomplete );
 }
 
 #undef R
@@ -74,6 +80,7 @@ static void Register_(
 {
 	R( txbDirectorySymbolicName );
 	R( txbDirectory );
+	R( txbAutocomplete );
 }
 
 void ui_ssn_vew::session_view__::Init(
@@ -95,6 +102,8 @@ void ui_ssn_vew::RegisterSessionViewUI(
 	Register_( Trunk, Trunk.UI().SessionView.Broadcasters, Window );
 	Register_( Trunk, Trunk.UI().SessionView.EventHandlers, Window );
 	Register_( Trunk, Trunk.UI().SessionView.Widgets, Window );
+
+	Trunk.UI().SessionView.EventHandlers.ehAutocomplete.Add( Trunk.UI().SessionView.Widgets.txbAutocomplete.GetWidget(), nsxpcm::efTextEntered );
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().SessionView.Document() );
 }

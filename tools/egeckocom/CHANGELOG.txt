@@ -1,5 +1,13 @@
 $Id$
 
+29/02/2012 :
+	- Ajout de la fonction 'HandlePseudoEvent(...)' qui permet de traiter des pseudo-évènements (comme le 'ontextentered' d'un 'textbox' 'autocomplete').
+	- Le composant passe en version 5.
+
+28/02/2012 :
+	- Ajout de la fonction 'Test()', qui permet de placer un point d'arrêt dans un gestionnaire d'événement JavaScript.
+	- Le composant passe en version 4.
+
 21/02/2012 :
 	- Le fichier de configuration et de locales est désormais chargé par défaut à partir du répertoire contenant 'egeckocom' (conformément au standard Epeios), avec le prérequis que ce dernier se trouve dans le répertoire 'components' situé à la racine de l'installation de l'application XUL.
 

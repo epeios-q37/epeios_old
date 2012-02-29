@@ -30,6 +30,7 @@ namespace ui_ssn_vew {
 	typedef xulfsv::session_view__ _session_view__;
 
 	UI_BASE_EH( get_directory_eh__ );
+	UI_BASE_EH( autocomplete_eh__ );
 
 	struct session_view__
 	: public _session_view__
@@ -45,13 +46,15 @@ namespace ui_ssn_vew {
 		: public _session_view__::event_handlers__
 		{
 			get_directory_eh__ ehGetDirectory;
+			autocomplete_eh__ ehAutocomplete;
 		} EventHandlers;
 		struct widgets__
 		: public _session_view__::widgets__
 		{
 			ui_base::textbox__
 				txbDirectorySymbolicName,
-				txbDirectory;
+				txbDirectory,
+				txbAutocomplete;
 		} Widgets;
 		session_view__( void )
 		: _session_view__( Broadcasters, EventHandlers, Widgets )

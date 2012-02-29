@@ -46,6 +46,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
   /* void Terminate (out string ErrorMessage); */
   NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) = 0;
 
+  /* void HandlePseudoEvent (in string ComponentId, in nsIDOMElement Element, in string Parameter, out string ErrorMessage); */
+  NS_SCRIPTABLE NS_IMETHOD HandlePseudoEvent(const char * ComponentId, nsIDOMElement *Element, const char * Parameter, char * *ErrorMessage NS_OUTPARAM) = 0;
+
+  /* void Test (out string ErrorMessage); */
+  NS_SCRIPTABLE NS_IMETHOD Test(char * *ErrorMessage NS_OUTPARAM) = 0;
+
 };
 
   NS_DEFINE_STATIC_IID_ACCESSOR(EIGeckoCOM, EIGECKOCOM_IID)
@@ -56,7 +62,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM); 
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD HandlePseudoEvent(const char * ComponentId, nsIDOMElement *Element, const char * Parameter, char * *ErrorMessage NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD Test(char * *ErrorMessage NS_OUTPARAM); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_EIGECKOCOM(_to) \
@@ -64,7 +72,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM) { return _to Retrieve(ComponentId, ErrorMessage); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM) { return _to Register(Window, ErrorMessage); } \
   NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM) { return _to Stop(CommandLine, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return _to Terminate(ErrorMessage); } 
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return _to Terminate(ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD HandlePseudoEvent(const char * ComponentId, nsIDOMElement *Element, const char * Parameter, char * *ErrorMessage NS_OUTPARAM) { return _to HandlePseudoEvent(ComponentId, Element, Parameter, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Test(char * *ErrorMessage NS_OUTPARAM) { return _to Test(ErrorMessage); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_EIGECKOCOM(_to) \
@@ -72,7 +82,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE EIGeckoCOM : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Retrieve(const char * ComponentId, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Retrieve(ComponentId, ErrorMessage); } \
   NS_SCRIPTABLE NS_IMETHOD Register(nsIDOMWindow *Window, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Register(Window, ErrorMessage); } \
   NS_SCRIPTABLE NS_IMETHOD Stop(nsICommandLine *CommandLine, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Stop(CommandLine, ErrorMessage); } \
-  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Terminate(ErrorMessage); } 
+  NS_SCRIPTABLE NS_IMETHOD Terminate(char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Terminate(ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD HandlePseudoEvent(const char * ComponentId, nsIDOMElement *Element, const char * Parameter, char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->HandlePseudoEvent(ComponentId, Element, Parameter, ErrorMessage); } \
+  NS_SCRIPTABLE NS_IMETHOD Test(char * *ErrorMessage NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Test(ErrorMessage); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -132,6 +144,18 @@ NS_IMETHODIMP _MYCLASS_::Stop(nsICommandLine *CommandLine, char * *ErrorMessage 
 
 /* void Terminate (out string ErrorMessage); */
 NS_IMETHODIMP _MYCLASS_::Terminate(char * *ErrorMessage NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void HandlePseudoEvent (in string ComponentId, in nsIDOMElement Element, in string Parameter, out string ErrorMessage); */
+NS_IMETHODIMP _MYCLASS_::HandlePseudoEvent(const char * ComponentId, nsIDOMElement *Element, const char * Parameter, char * *ErrorMessage NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void Test (out string ErrorMessage); */
+NS_IMETHODIMP _MYCLASS_::Test(char * *ErrorMessage NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

@@ -1,5 +1,15 @@
 $Id$
 
+29/02/2012 :
+	- CSDLEO :
+		- Ajout paramètre 'DryRun', qui permet à 'getbkdapi' de consulter le 'backend' sans que celui-ci soit vraiment lancé (évite la tentative de lexture du fichier de configuration).
+	- FBLFAQ :
+		- Adaptation.
+	- GECKOO :
+		- Ajout 'HandlePseudoEvent(...)'.
+	- SCLBACKND :
+		Mise en oeuvre modification 'CSDLEO'.
+
 24/02/2012 :
 	- CSDLES :
 		- 'CSDLESRetrieveSteering(...)' reçoit dorénavant un 'data__' et non plus un 'shared_data__'.

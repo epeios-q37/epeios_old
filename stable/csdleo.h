@@ -70,7 +70,7 @@ extern class ttr_tutor &CSDLEOTutor;
 # define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		CSDLEORetrieveSteering
 # define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		CSDLEOReleaseSteering
 
-# define CSDLEO_SHARED_DATA_VERSION	"alpha 4"
+# define CSDLEO_SHARED_DATA_VERSION	"1"
 
 namespace csdleo {
 	using namespace csdsuf;
@@ -108,31 +108,36 @@ namespace csdleo {
 	class data__ {
 	public:
 		mode__ Mode;
+		bso::bool__ DryRun;	// Si à 'true', le 'Server' n'est pas vraiment 'lancé' ; seul ces caractéristiques sont consultées (par 'getbkdapi', par exemple).
 		void *UP;				// A la discrétion de l'utilisateur.
 		fdr::oflow_driver_base___ *COut, *CErr;
 		void reset( bso::bool__ = true )
 		{
 			COut = CErr = NULL;
 			UP = NULL;
+			DryRun = false;
 		}
 		E_CDTOR( data__ );
 		data__(
 			mode__ Mode,
 			fdr::oflow_driver_base___ &COut,
 			fdr::oflow_driver_base___ &CErr,
+			bso::bool__ DryRun,
 			void *UP = NULL )
 		{
-			Init( Mode, COut, CErr, UP );
+			Init( Mode, COut, CErr, DryRun, UP );
 		}
 		void Init(
 			mode__ Mode,
 			fdr::oflow_driver_base___ &COut,
 			fdr::oflow_driver_base___ &CErr,
+			bso::bool__ DryRun,
 			void *UP = NULL )
 		{
 			this->Mode = Mode;
 			this->COut = &COut;
 			this->CErr = &CErr;
+			this->DryRun = DryRun;
 			this->UP = UP;
 		}
 	};
@@ -151,7 +156,7 @@ namespace csdleo {
 		void Init( data__ &Data )
 		{
 			data_control__::Init();
-			data__::Init( Data.Mode, *Data.COut, *Data.CErr, Data.UP );
+			data__::Init( Data.Mode, *Data.COut, *Data.CErr, Data.DryRun, Data.UP );
 		}
 	};
 #pragma pack( pop )

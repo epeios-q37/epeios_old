@@ -1425,6 +1425,10 @@ void nsxpcm::event_handler__::Add(
 	if ( Events & efClose )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
+
+	if ( Events & efTextEntered )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "textentered" ), _EventData._EventListener, false ) != NS_OK )
+			ERRc();
 }
 
 static event__ Convert_(
@@ -1463,6 +1467,8 @@ static event__ Convert_(
 		Event = eLoad;
 	else if ( !strcmp( RawEvent, "close" ) )
 		Event = eClose;
+	else if ( !strcmp( RawEvent, "textentered" ) )
+		Event = eTextEntered;
 
 	return Event;
 }
@@ -1573,6 +1579,9 @@ ERREpilog
 	return Event;
 }
 
+#include "nsIAutoCompleteInput.h"
+#include "nsIAutoCompletePopup.h"
+
 static nsISupports *Patch_( nsIDOMNode *Node )
 {
 	nsISupports *Supports = Node;
@@ -1580,6 +1589,8 @@ ERRProlog
 	nsEmbedString RawName;
 	str::string Name;
 	nsIDOMDocument *Document = NULL;
+	nsIAutoCompleteController *Controller = NULL;
+	nsIAutoCompletePopup *Popup = NULL;
 ERRBegin
 	T( Node->GetNodeName( RawName ) );
 
@@ -1588,6 +1599,12 @@ ERRBegin
 
 	if ( Name == "window" )
 		ERRl();	// J'ignore comment, à partir de cet élément, récupèrer un élément sur lequel un gestionnaire d'évènement soit actif.
+	else if ( Name == "textbox" ) {
+		// Supports = nsxpcm::QueryInterface<nsIAutoCompleteInput>( Node );
+		// Supports = Popup;
+		Supports = Supports;
+	}
+
 /*	else if ( ( Name == "a" ) || ( Name == "A" ) )
 		Supports = nsxpcm::QueryInterface<nsIDOMHTMLAnchorElement>( Node );
 */
@@ -2060,8 +2077,6 @@ NS_IMPL_ISUPPORTS2(nsxpcm::autocomplete_search__, nsxpcm::autocomplete_search__,
 NS_IMETHODIMP nsxpcm::autocomplete_search__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
 {
 	nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _Result );
-
-	_Res
 
 	listener->OnSearchResult( this, _Result );
 

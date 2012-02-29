@@ -57,7 +57,113 @@ public:
 
 #include "xulftk.h"
 
+#include "lstbch.h"
+#include "lstctn.h"
+
 using namespace xulfui;
+
+struct _bundle__
+{
+public:
+	pseudo_event_handler__ Handler;
+	void *UP;
+	void reset( bso::bool__ = true )
+	{
+		Handler = NULL;
+		UP = NULL;
+	}
+	E_CDTOR( _bundle__ );
+	void Init( void )
+	{
+		reset();
+	}
+	void Init(
+		pseudo_event_handler__ Handler,
+		void *UP )
+	{
+		reset();
+
+		this->Handler = Handler;
+		this->UP = UP;
+	}
+};
+
+E_ROW( _brow__ );	// Bundle row.
+
+typedef lstbch::E_LBUNCHt_( _bundle__, _brow__ ) _bundles_;
+E_AUTO( _bundles );
+
+static _bundles Bundles_;
+
+typedef lstctn::E_LXMCONTAINERt_( str::string_, _brow__ ) _ids_;
+E_AUTO( _ids );
+
+static _ids Ids_;
+
+static _brow__ Search_( const char *TargetId )
+{
+	ctn::E_CMITEMt( str::string_, _brow__ ) Id;
+	_brow__ Row = Ids_.First();
+
+	Id.Init( Ids_ );
+
+	while ( ( Row != NONE ) && ( Id( Row ) != TargetId ) )
+		Row = Ids_.Next( Row );
+
+	return Row;
+}
+
+void xulfui::Add(
+	const char *Id,
+	pseudo_event_handler__ Handler,
+	void *UP )
+{
+	_bundle__ Bundle;
+	_brow__ Row = Search_( Id );
+
+	if ( Row != NONE )
+		ERRc();
+
+	Row = Ids_.New();
+
+	Bundle.Init( Handler, UP );
+
+	Ids_.Store( str::string( Id ), Row );
+	Bundles_.Store( Bundle, Row );
+}
+
+bso::bool__ xulfui::Launch(
+	const char *Id,
+	nsIDOMElement *Element )
+{
+	_brow__ Row = Search_( Id );
+	_bundle__ Bundle;
+
+	if ( Row == NONE )
+		ERRc();
+
+	Bundle.Init();
+
+	Bundles_.Recall( Row, Bundle );
+
+	if ( Bundle.Handler == NULL )
+		ERRc();
+
+	Bundle.Handler( Element, Bundle.UP );
+
+	return true;
+}
+
+void xulfui::Remove( const char *Id )
+{
+	_brow__ Row = Search_( Id );
+
+	if ( Row == NONE )
+		ERRc();
+
+	Ids_.Delete( Row );
+	Bundles_.Delete( Row );
+}
 
 bso::bool__ xulfui::user_functions__::GECKOORegister(
 	nsIDOMWindow *Window,
@@ -77,6 +183,8 @@ ERREpilog
 }
 
 
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -88,6 +196,9 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+
+		Bundles_.Init();
+		Ids_.Init();
 	}
 	~xulfuipersonnalization( void )
 	{

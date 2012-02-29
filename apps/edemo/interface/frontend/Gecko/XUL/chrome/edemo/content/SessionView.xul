@@ -62,6 +62,11 @@
 			tooltiptext="&getDirectory.ttt;"
 			accesskey="&getDirectory.ack;"
 			/>
+		<broadcaster
+			id="glbAutocomplete"
+			ontextentered="test();"
+			xex:ontextentered="ehAutocomplete"
+		/>
 	</broadcasterset>
 	<keyset>
 		<key keycode="VK_RETURN" xex:oncommand="ehGetDirectory"/>
@@ -90,7 +95,8 @@
 				</tabpanel>
 				<tabpanel>
 					<groupbox>
-						<textbox id="test"  type="autocomplete" autocompletesearch="nsxpcm_ac" showcommentcolumn="true"/>
+						<caption label="coucou"/>
+						<textbox id="txbAutocomplete" observes="glbAutocomplete"  type="autocomplete" autocompletesearch="nsxpcm_ac" showcommentcolumn="true" enablehistory="true" />
 					</groupbox>
 				</tabpanel>
 			</tabpanels>

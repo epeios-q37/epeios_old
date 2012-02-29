@@ -446,7 +446,7 @@ static inline bso::bool__ IsLast(
 	if ( ( Current = Parameters.Next( Current ) ) == NONE )
 		return true;
 
-	if ( *Parameters( Current ) != fblcst::cEnd )
+	if ( Parameters( Current ) != fblcst::cEnd )
 		return false;
 
 	return Parameters.Next( Current ) == NONE;
@@ -460,7 +460,7 @@ void Generate(
 	fblcst::cast Cast;
 	bso::ubyte__ ID = 1;
 	
-	if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd )
+	if ( ( Cast = (fblcst::cast)Parameters( P ) ) == fblcst::cEnd )
 		Writer.PushTag( "Out" );
 	else {
 		Writer.PushTag( "In" );
@@ -471,7 +471,7 @@ void Generate(
 	P = Parameters.Next( P );
 		
 	while( P != NONE ) {
-		if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd ) {
+		if ( ( Cast = (fblcst::cast)Parameters( P ) ) == fblcst::cEnd ) {
 			
 			if ( Parameters.Next( P ) != NONE ) {
 				ID = 1;
@@ -531,7 +531,7 @@ void Generate(
 	Writer.PushTag( "Command" );
 	
 	Writer.PutValue( Command.Identification.Value, "Name" );
-	Writer.PutValue( Convert( *Command.Identification.ID() ), "ID" );
+	Writer.PutValue( Convert( Command.Identification.ID() ), "ID" );
 	
 	Generate( Command.Parameters, Writer, Position );
 	
@@ -713,7 +713,7 @@ ERRBegin
 		break;
 	}
 
-	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, flx::VoidOFlowDriver );
+	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, flx::VoidOFlowDriver, true );
 
 	if ( !Core.Init( Location, LibraryData, *(csdsnc::log_functions__ *)NULL, Type, 0 ) ) {
 		CErr << "Unable to access the backend !" << txf::nl;
@@ -931,7 +931,7 @@ ERRBegin
 			ERRi();
 		}
 
-		COut << "Backend : " << BackendInformations << txf::nl;
+		COut << "Backend : " << BackendInformations << txf::nl << txf::commit;
 
 		Backup = true;
 

@@ -29,7 +29,7 @@ try {
 }
 
 try {
-	 egeckocom = Components.classes["@zeusw.org/egeckocom;3"].createInstance().QueryInterface(Components.interfaces.EIGeckoCOM);
+	 egeckocom = Components.classes["@zeusw.org/egeckocom;4"].createInstance().QueryInterface(Components.interfaces.EIGeckoCOM);
 } catch (err) {
 	alert(err);
 	window.close();
@@ -113,6 +113,23 @@ function terminate()
 	
 	try {
 		egeckocom.Terminate( message );
+		
+		if ( message.value ) {
+			alert( message.value );
+			window.close();
+		}
+			
+	} catch ( err ) {
+		alert( err );
+	}
+}
+
+function test()
+ {
+	var message = new String();
+	
+	try {
+		egeckocom.Test( message );
 		
 		if ( message.value ) {
 			alert( message.value );

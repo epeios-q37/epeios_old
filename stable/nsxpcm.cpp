@@ -1425,6 +1425,10 @@ void nsxpcm::event_handler__::Add(
 	if ( Events & efClose )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
+
+	if ( Events & efTextEntered )
+		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "textentered" ), _EventData._EventListener, false ) != NS_OK )
+			ERRc();
 }
 
 static event__ Convert_(
@@ -1463,6 +1467,8 @@ static event__ Convert_(
 		Event = eLoad;
 	else if ( !strcmp( RawEvent, "close" ) )
 		Event = eClose;
+	else if ( !strcmp( RawEvent, "textentered" ) )
+		Event = eTextEntered;
 
 	return Event;
 }
@@ -1573,6 +1579,9 @@ ERREpilog
 	return Event;
 }
 
+#include "nsIAutoCompleteInput.h"
+#include "nsIAutoCompletePopup.h"
+
 static nsISupports *Patch_( nsIDOMNode *Node )
 {
 	nsISupports *Supports = Node;
@@ -1580,6 +1589,8 @@ ERRProlog
 	nsEmbedString RawName;
 	str::string Name;
 	nsIDOMDocument *Document = NULL;
+	nsIAutoCompleteController *Controller = NULL;
+	nsIAutoCompletePopup *Popup = NULL;
 ERRBegin
 	T( Node->GetNodeName( RawName ) );
 
@@ -1588,6 +1599,12 @@ ERRBegin
 
 	if ( Name == "window" )
 		ERRl();	// J'ignore comment, à partir de cet élément, récupèrer un élément sur lequel un gestionnaire d'évènement soit actif.
+	else if ( Name == "textbox" ) {
+		// Supports = nsxpcm::QueryInterface<nsIAutoCompleteInput>( Node );
+		// Supports = Popup;
+		Supports = Supports;
+	}
+
 /*	else if ( ( Name == "a" ) || ( Name == "A" ) )
 		Supports = nsxpcm::QueryInterface<nsIDOMHTMLAnchorElement>( Node );
 */
@@ -1969,6 +1986,110 @@ NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnCell(const PRUnichar* aAction,
 }
 
 /* Fin 'tree_view' */
+
+/* Début 'textbox' 'autocomplete' */
+
+NS_IMPL_ISUPPORTS2 (nsxpcm::autocomplete_result__, nsxpcm::autocomplete_result__, nsIAutoCompleteResult );
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchString(nsAString & aSearchString)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchResult(PRUint16 *aSearchResult)
+{
+	*aSearchResult = nsIAutoCompleteResult::RESULT_SUCCESS;
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetDefaultIndex(PRInt32 *aDefaultIndex)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetErrorDescription(nsAString & aErrorDescription)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetMatchCount(PRUint32 *aMatchCount)
+{
+	*aMatchCount = _F().GetMatchingCount();
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+ERRProlog
+	str::string Label;
+ERRBegin
+	Label.Init();
+
+	_F().GetLabel( index, Label );
+
+	Transform( Label, _retval );
+ERRErr
+ERREnd
+ERREpilog
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+ERRProlog
+	str::string Comment;
+ERRBegin
+	Comment.Init();
+
+	_F().GetComment( index, Comment );
+
+	Transform( Comment, _retval );
+ERRErr
+ERREnd
+ERREpilog
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+{
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsxpcm::autocomplete_result__::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMPL_ISUPPORTS2(nsxpcm::autocomplete_search__, nsxpcm::autocomplete_search__, nsIAutoCompleteSearch );
+
+NS_IMETHODIMP nsxpcm::autocomplete_search__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
+{
+	nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _Result );
+
+	listener->OnSearchResult( this, _Result );
+
+    return NS_OK;
+}
+
+/* void stopSearch (); */
+NS_IMETHODIMP nsxpcm::autocomplete_search__::StopSearch()
+{
+    return NS_OK;
+}
+
+/* Fin 'textbox' 'autocomplete' */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
 

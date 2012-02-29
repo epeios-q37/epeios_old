@@ -78,6 +78,9 @@ namespace geckoo {
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
+		virtual bso::bool__ GECKOOHandlePseudoEvent(
+			nsIDOMElement *Element,
+			const char *Parameter ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -100,6 +103,12 @@ namespace geckoo {
 			const str::string_ &Id )
 		{
 			return GECKOORegister( Window, Id );
+		}
+		bso::bool__ HandlePseudoEvent(
+			nsIDOMElement *Element,
+			const char *Parameter )
+		{
+			return GECKOOHandlePseudoEvent( Element, Parameter );
 		}
 	};
 
