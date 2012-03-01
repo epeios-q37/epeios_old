@@ -105,7 +105,7 @@ namespace xulftk {
 		}
 	};
 
-	class _user_functions__
+	class _user_callback__
 	{
 	private:
 		trunk___ *_Trunk;
@@ -170,7 +170,7 @@ namespace xulftk {
 			_Trunk = NULL;
 			_LauncherIdentification = NULL;
 		}
-		E_CVDTOR( _user_functions__ );
+		E_CVDTOR( _user_callback__ );
 		void Init(
 			const char *LauncherIdentification,	// Contenu NON dupliqué !
 			trunk___ &Trunk )
@@ -210,20 +210,20 @@ namespace xulftk {
 		}
 	};
 
-	template <typename trunk> class user_functions__
-	: public _user_functions__
+	template <typename trunk> class user_callback__
+	: public _user_callback__
 	{
 	protected:
 		trunk &_T( void )
 		{
-			return *(trunk *)&_user_functions__::_T();	// On peut caster, parce que 'Init(...)' garantit que l'objet est du bon type.
+			return *(trunk *)&_user_callback__::_T();	// On peut caster, parce que 'Init(...)' garantit que l'objet est du bon type.
 		}
 	public:
 		void Init(
 			const char *LauncherIdentification,
 			trunk &Trunk )
 		{
-			_user_functions__::Init( LauncherIdentification, Trunk );
+			_user_callback__::Init( LauncherIdentification, Trunk );
 		}
 	};
 
@@ -232,17 +232,17 @@ namespace xulftk {
 	private:
 		xulfui::ui___ *_UI;
 		xulfkl::kernel___ *_Kernel;
-		_user_functions__ *_UserFunctions;
-		geckoo::user_functions__  *_Steering;
+		_user_callback__ *_UserCallback;
+		geckoo::user_callback__  *_Steering;
 		const char *_TargetName;
 		const char *_DefaultXSLRootPath;
 		error_reporting_functions__ _DefaultErrorReportingFunctions;
-		_user_functions__ &_UF( void )
+		_user_callback__ &_UF( void )
 		{
-			if ( _UserFunctions == NULL )
+			if ( _UserCallback == NULL )
 				ERRc();
 
-			return *_UserFunctions;
+			return *_UserCallback;
 		}
 	protected:
 		void Handle_( frdkrn::status__ Status )
@@ -283,7 +283,7 @@ namespace xulftk {
 		{
 			_UI = NULL;
 			_Kernel =  NULL;
-			_UserFunctions = NULL;
+			_UserCallback = NULL;
 			_Steering = NULL;
 			_DefaultXSLRootPath = NULL;
 			_DefaultErrorReportingFunctions.reset( P );
@@ -302,15 +302,15 @@ namespace xulftk {
 			const char *DefaultXSLRootPath,	// ATTENTION : pointeur copié, contenu NON dupliqué.
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
-			_user_functions__ &UserFunctions,
-			geckoo::user_functions__ &Steering,
+			_user_callback__ &UserCallback,
+			geckoo::user_callback__ &Steering,
 			const lcl::locale_ &Locale,
 			const char *Language )
 		{
 			_UI = &UI;
 			_Kernel = &Kernel;
 			_TargetName = TargetName;
-			_UserFunctions = &UserFunctions;
+			_UserCallback = &UserCallback;
 			_Steering = &Steering;
 			_DefaultXSLRootPath = DefaultXSLRootPath;
 			_DefaultErrorReportingFunctions.Init( UI, Locale, Language );
@@ -474,37 +474,37 @@ namespace xulftk {
 		const str::string_ &BuildXSLDefaultLocalizedFileName(
 			const char *XSLFileNameAffix,
 			str::string_ &LocalizedFileName );
-		friend class _user_functions__;
+		friend class _user_callback__;
 	};
 
-	inline void _user_functions__::_DefineSession(
+	inline void _user_callback__::_DefineSession(
 		const str::string_ &ProjectFileName,
 		const xpp::criterions___ &Criterions )
 	{
 		_T()._DefineSession( ProjectFileName, Criterions );
 	}
 
-	inline void _user_functions__::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
+	inline void _user_callback__::_ApplySession( const frdkrn::compatibility_informations__ &CompatibilityInformations )
 	{
 		_T()._ApplySession( CompatibilityInformations );
 	}
 
-	inline void _user_functions__::_CancelSession( void )
+	inline void _user_callback__::_CancelSession( void )
 	{
 		_T()._CancelSession();
 	}
 
-	inline bso::bool__ _user_functions__::_DefendSession( void )
+	inline bso::bool__ _user_callback__::_DefendSession( void )
 	{
 		return _T()._DefendSession();
 	}
 
-	inline void _user_functions__::_DropSession( void )
+	inline void _user_callback__::_DropSession( void )
 	{
 		_T()._DropSession();
 	}
 
-	inline void _user_functions__::_Exit( void )
+	inline void _user_callback__::_Exit( void )
 	{
 		_T()._Exit();
 	}

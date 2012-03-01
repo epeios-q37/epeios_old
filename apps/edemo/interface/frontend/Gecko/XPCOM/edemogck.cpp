@@ -30,34 +30,34 @@
 
 const char *sclgecko::TargetName = NAME;
 
-geckoo::user_functions__ *sclgecko::CreateSteering(
+geckoo::user_callback__ *sclgecko::CreateSteering(
 	const char *LauncherIdentification,
 	const lcl::locale_ &Locale,
 	const char *Language,
 	void *UP )
 {
-	binding::binding_functions__ *Functions = NULL;
+	binding::binding_callback__ *Callback = NULL;
 ERRProlog
 ERRBegin
-	if ( ( Functions = new binding::binding_functions__ ) == NULL )
+	if ( ( Callback = new binding::binding_callback__ ) == NULL )
 		ERRa();
 
-	Functions->Init( LauncherIdentification, sclrgstry::GetRegistry(), Locale, Language );
+	Callback->Init( LauncherIdentification, sclrgstry::GetRegistry(), Locale, Language );
 ERRErr
-	if ( Functions != NULL )
-		delete Functions;
+	if ( Callback != NULL )
+		delete Callback;
 
-	Functions = NULL;
+	Callback = NULL;
 
 	ERRRst();	// Error catched to avoid that it goes further.
 				// Error reported by the fact that the returned value is 'NULL'.
 ERREnd
 ERREpilog
-	return Functions;
+	return Callback;
 }
 
 
-void sclgecko::DeleteSteering( geckoo::user_functions__ *Steering )
+void sclgecko::DeleteSteering( geckoo::user_callback__ *Steering )
 {
 	if ( Steering != NULL )
 		delete Steering;

@@ -62,48 +62,24 @@ public:
 
 using namespace xulfui;
 
-struct _bundle__
-{
-public:
-	pseudo_event_handler__ Handler;
-	void *UP;
-	void reset( bso::bool__ = true )
-	{
-		Handler = NULL;
-		UP = NULL;
-	}
-	E_CDTOR( _bundle__ );
-	void Init( void )
-	{
-		reset();
-	}
-	void Init(
-		pseudo_event_handler__ Handler,
-		void *UP )
-	{
-		reset();
+typedef pseudo_event_callback__	*_handler__;
 
-		this->Handler = Handler;
-		this->UP = UP;
-	}
-};
+E_ROW( _hrow__ );	// Handler row.
 
-E_ROW( _brow__ );	// Bundle row.
+typedef lstbch::E_LBUNCHt_( _handler__ , _hrow__ ) _handlers_;
+E_AUTO( _handlers );
 
-typedef lstbch::E_LBUNCHt_( _bundle__, _brow__ ) _bundles_;
-E_AUTO( _bundles );
+static _handlers Handlers_;
 
-static _bundles Bundles_;
-
-typedef lstctn::E_LXMCONTAINERt_( str::string_, _brow__ ) _ids_;
+typedef lstctn::E_LXMCONTAINERt_( str::string_, _hrow__ ) _ids_;
 E_AUTO( _ids );
 
 static _ids Ids_;
 
-static _brow__ Search_( const char *TargetId )
+static _hrow__ Search_( const char *TargetId )
 {
-	ctn::E_CMITEMt( str::string_, _brow__ ) Id;
-	_brow__ Row = Ids_.First();
+	ctn::E_CMITEMt( str::string_, _hrow__ ) Id;
+	_hrow__ Row = Ids_.First();
 
 	Id.Init( Ids_ );
 
@@ -115,57 +91,51 @@ static _brow__ Search_( const char *TargetId )
 
 void xulfui::Add(
 	const char *Id,
-	pseudo_event_handler__ Handler,
-	void *UP )
+	pseudo_event_callback__ &Callback )
 {
-	_bundle__ Bundle;
-	_brow__ Row = Search_( Id );
+	_hrow__ Row = Search_( Id );
 
 	if ( Row != NONE )
 		ERRc();
 
 	Row = Ids_.New();
 
-	Bundle.Init( Handler, UP );
-
 	Ids_.Store( str::string( Id ), Row );
-	Bundles_.Store( Bundle, Row );
+	Handlers_.Store( &Callback, Row );
 }
 
 bso::bool__ xulfui::Launch(
 	const char *Id,
 	nsIDOMElement *Element )
 {
-	_brow__ Row = Search_( Id );
-	_bundle__ Bundle;
+	_hrow__ Row = Search_( Id );
+	_handler__ Handler = NULL;
 
 	if ( Row == NONE )
 		ERRc();
 
-	Bundle.Init();
+	Handlers_.Recall( Row, Handler );
 
-	Bundles_.Recall( Row, Bundle );
-
-	if ( Bundle.Handler == NULL )
+	if ( Handler == NULL )
 		ERRc();
 
-	Bundle.Handler( Element, Bundle.UP );
+	Handler->Handle( Element );
 
 	return true;
 }
 
 void xulfui::Remove( const char *Id )
 {
-	_brow__ Row = Search_( Id );
+	_hrow__ Row = Search_( Id );
 
 	if ( Row == NONE )
 		ERRc();
 
 	Ids_.Delete( Row );
-	Bundles_.Delete( Row );
+	Handlers_.Delete( Row );
 }
 
-bso::bool__ xulfui::user_functions__::GECKOORegister(
+bso::bool__ xulfui::user_callback__::GECKOORegister(
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
 {
@@ -197,7 +167,7 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 
-		Bundles_.Init();
+		Handlers_.Init();
 		Ids_.Init();
 	}
 	~xulfuipersonnalization( void )

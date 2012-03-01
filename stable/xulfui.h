@@ -220,14 +220,31 @@ namespace xulfui {
 		}
 	};
 
-	typedef geckoo::user_functions__ _user_functions__;
+	typedef geckoo::user_callback__ _user_callback__;
 
-	typedef void (* pseudo_event_handler__)( nsIDOMElement *Element, void *PU );
+	class pseudo_event_callback__
+	{
+	protected:
+		virtual void XULFUIHandle( nsIDOMElement *Element ) = 0;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		E_CVDTOR( pseudo_event_callback__);
+		void Init( void )
+		{
+			reset();
+		}
+		void Handle( nsIDOMElement *Element )
+		{
+			XULFUIHandle( Element );
+		}
+	};
 
 	void Add(
 		const char *Id,
-		pseudo_event_handler__ Handler,
-		void *UP );
+		pseudo_event_callback__ &Callback );
 
 	bso::bool__ Launch(
 		const char *Id,
@@ -235,8 +252,8 @@ namespace xulfui {
 
 	void Remove( const char *Id );
 
-	 class user_functions__
-	 : public _user_functions__
+	 class user_callback__
+	 : public _user_callback__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
@@ -256,13 +273,13 @@ namespace xulfui {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_user_functions__::reset( P );
+			_user_callback__::reset( P );
 			_Trunk = NULL;
 		}
-		E_CVDTOR( user_functions__ )
+		E_CVDTOR( user_callback__ )
 		void Init( xulftk::trunk___ &Trunk )
 		{
-			_user_functions__::Init();
+			_user_callback__::Init();
 			_Trunk = &Trunk;
 		}
 	};

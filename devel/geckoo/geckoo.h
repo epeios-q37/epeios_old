@@ -73,7 +73,7 @@ extern class ttr_tutor &GECKOOTutor;
 namespace geckoo {
 	typedef epeios::row__ id__;
 
-	class user_functions__ {
+	class user_callback__ {
 	protected:
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
@@ -86,14 +86,7 @@ namespace geckoo {
 		{
 			// Standardisation.
 		}
-		user_functions__( void )
-		{
-			reset( false );
-		}
-		~user_functions__( void )
-		{
-			reset();
-		}
+		E_CDTOR( user_callback__ )
 		void Init( void )
 		{
 			// Standadisation.
@@ -160,9 +153,9 @@ namespace geckoo {
 	};
 #pragma pack( pop )
 
-	typedef user_functions__ *(create_steering)( shared_data__ * );
-	typedef user_functions__ *(retrieve_steering)( void );
-	typedef void (delete_steering)( user_functions__ * );
+	typedef user_callback__ *(create_steering)( shared_data__ * );
+	typedef user_callback__ *(retrieve_steering)( void );
+	typedef void (delete_steering)( user_callback__ * );
 
 }
 

@@ -27,10 +27,10 @@
 # define UI_GRID_PAGE_ID	"pgeGrid"
 
 namespace ui_grid {
-	typedef nsxpcm::tree_view_functions__ _functions__;
+	typedef nsxpcm::tree_view_callback__ _callback__;
 
-	class tree_view_functions__
-	: public _functions__
+	class tree_view_callback__
+	: public _callback__
 	{
 	protected:
 		virtual bso::ulong__ NSXPCMGetRowCount( void )
@@ -59,12 +59,12 @@ namespace ui_grid {
 	: public _tree__
 	{
 	private:
-		tree_view_functions__ _Functions;
+		tree_view_callback__ _Callback;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_tree__::reset( P );
-			_Functions.reset( P );
+			_Callback.reset( P );
 		}
 		E_CVDTOR( tree__ );
 		void Init(
@@ -72,8 +72,8 @@ namespace ui_grid {
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
-			_Functions.Init();
-			_tree__::Init( _Functions, Trunk, Window, Id );
+			_Callback.Init();
+			_tree__::Init( _Callback, Trunk, Window, Id );
 		}
 	};
 

@@ -29,14 +29,14 @@
 #include "xulfui.h"
 
 namespace binding {
-	typedef xulfui::user_functions__ _user_functions__;
+	typedef xulfui::user_callback__ _user_callback__;
 
-	 class binding_functions__
-	 : public _user_functions__
+	 class binding_callback__
+	 : public _user_callback__
 	{
 	private:
 		trunk::trunk___ _Trunk;
-		trunk::user_functions__ _UserFunctions;
+		trunk::user_callback__ _UserCallback;
 	protected:
 		bso::bool__ XULFUIRegister(
 			nsIDOMWindow *Window,
@@ -44,28 +44,21 @@ namespace binding {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_user_functions__::reset( P );
-			_UserFunctions.reset( P );
+			_user_callback__::reset( P );
+			_UserCallback.reset( P );
 			_Trunk.reset( P );
 		}
-		binding_functions__( void )
-		{
-			reset( false );
-		}
-		~binding_functions__( void )
-		{
-			reset();
-		}
+		E_CDTOR( binding_callback__ )
 		xulftk::status__ Init(
 			const char *LauncherIdentification,
 			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const lcl::locale_ &Locale,
 			const char *Language )
 		{
-			_user_functions__::Init( _Trunk );
-			_UserFunctions.Init( LauncherIdentification,  _Trunk );
+			_user_callback__::Init( _Trunk );
+			_UserCallback.Init( LauncherIdentification,  _Trunk );
 
-			return _Trunk.Init( _UserFunctions, ConfigurationRegistry, Locale, Language, *this );
+			return _Trunk.Init( _UserCallback, ConfigurationRegistry, Locale, Language, *this );
 		}
 	};
 }

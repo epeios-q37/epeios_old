@@ -182,31 +182,31 @@ namespace xulwdg {
 		}
 		E_CVDTOR( tree__ );
 		void Init(
-			nsxpcm::tree_view_functions__ &Functions,
+			nsxpcm::tree_view_callback__ &Callback,
 			trunk &Trunk,
 			nsISupports *Supports,
 			nsIDOMWindow *Window )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Functions, Supports, Window );
+			_tree__::Init( Callback, Supports, Window );
 		}
 		void Init(
-			nsxpcm::tree_view_functions__ &Functions,
+			nsxpcm::tree_view_callback__ &Callback,
 			trunk &Trunk,
 			nsIDOMWindow *Window,
 			const str::string_ &Id )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Functions, Window, Id );
+			_tree__::Init( Callback, Window, Id );
 		}
 		void Init(
-			nsxpcm::tree_view_functions__ &Functions,
+			nsxpcm::tree_view_callback__ &Callback,
 			trunk &Trunk,
 			nsIDOMWindow *Window,
 			const char *Id )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Functions, Window, Id );
+			_tree__::Init( Callback, Window, Id );
 		}
 	};
 

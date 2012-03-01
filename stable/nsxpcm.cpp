@@ -94,6 +94,77 @@ bch::E_BUNCH( nsIDOMWindow *) MasterWindows_;
 mtx::mutex_handler__ MasterWindowMutex_;
 bso::ulong__ MasterWindowCounter_ = 0;
 
+typedef autocomplete_textbox_callback__ *_handler__;
+
+E_ROW( _hrow__ );	// Handler row.
+
+typedef lstbch::E_LBUNCHt_( _handler__ , _hrow__ ) _handlers_;
+E_AUTO( _handlers );
+
+static _handlers Handlers_;
+
+typedef lstctn::E_LXMCONTAINERt_( str::string_, _hrow__ ) _ids_;
+E_AUTO( _ids );
+
+static _ids Ids_;
+
+static _hrow__ Search_( const str::string_ &TargetId )
+{
+	ctn::E_CMITEMt( str::string_, _hrow__ ) Id;
+	_hrow__ Row = Ids_.First();
+
+	Id.Init( Ids_ );
+
+	while ( ( Row != NONE ) && ( Id( Row ) != TargetId ) )
+		Row = Ids_.Next( Row );
+
+	return Row;
+}
+
+void nsxpcm::Add(
+	const str::string_ &Id,
+	autocomplete_textbox_callback__ &Callback )
+{
+	_hrow__ Row = Search_( Id );
+
+	if ( Row != NONE )
+		ERRc();
+
+	Row = Ids_.New();
+
+	Ids_.Store( str::string( Id ), Row );
+	Handlers_.Store( &Callback, Row );
+}
+
+autocomplete_textbox_callback__ *nsxpcm::Get( const str::string_ &Id )
+{
+	_hrow__ Row = Search_( Id );
+	_handler__ Handler = NULL;
+
+	if ( Row == NONE )
+		ERRc();
+
+	Handlers_.Recall( Row, Handler );
+
+	if ( Handler == NULL )
+		ERRc();
+
+	return Handler;
+}
+
+void nsxpcm::Remove( const str::string_ &Id )
+{
+	_hrow__ Row = Search_( Id );
+
+	if ( Row == NONE )
+		ERRc();
+
+	Ids_.Delete( Row );
+	Handlers_.Delete( Row );
+}
+
+
+
 void nsxpcm::AddMasterWindow( nsIDOMWindow *Window )
 {
 ERRProlog
@@ -1425,10 +1496,6 @@ void nsxpcm::event_handler__::Add(
 	if ( Events & efClose )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
 			ERRc();
-
-	if ( Events & efTextEntered )
-		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "textentered" ), _EventData._EventListener, false ) != NS_OK )
-			ERRc();
 }
 
 static event__ Convert_(
@@ -1467,8 +1534,6 @@ static event__ Convert_(
 		Event = eLoad;
 	else if ( !strcmp( RawEvent, "close" ) )
 		Event = eClose;
-	else if ( !strcmp( RawEvent, "textentered" ) )
-		Event = eTextEntered;
 
 	return Event;
 }
@@ -1683,43 +1748,43 @@ NS_DEFINE_STATIC_IID_ACCESSOR(tree_view__, NSXPCM_ITREE_VIEW_IID)
 NS_IMPL_ISUPPORTS0( tree_view__ )
 */
 
-void nsxpcm::tree__::_SetTreeView( class tree_view_functions__ &Functions )
+void nsxpcm::tree__::_SetTreeView( class tree_view_callback__ &Callback )
 {
 	CreateInstance( NSXPCM_TREE_VIEW_CONTRACTID, _TreeView );
 
-	_TreeView->Init( Functions );
+	_TreeView->Init( Callback );
 
 	T( GetWidget()->SetView( _TreeView ) );
 }
 
 void tree__::Init(
-	class tree_view_functions__ &Functions,
+	class tree_view_callback__ &Callback,
 	nsISupports *Supports,
 	nsIDOMWindow *Window )
 {
 	_widget__<nsIDOMXULTreeElement>::Init( Supports, Window );
 
-	_SetTreeView( Functions );
+	_SetTreeView( Callback );
 }
 
 void tree__::Init(
-	class tree_view_functions__ &Functions,
+	class tree_view_callback__ &Callback,
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
 {
 	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
 
-	_SetTreeView( Functions );
+	_SetTreeView( Callback );
 }
 
 void tree__::Init(
-	class tree_view_functions__ &Functions,
+	class tree_view_callback__ &Callback,
 	nsIDOMWindow *Window,
 	const char *Id )
 {
 	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
 
-	_SetTreeView( Functions );
+	_SetTreeView( Callback );
 }
 
 
@@ -1729,7 +1794,7 @@ NS_IMPL_ISUPPORTS2(nsxpcm::tree_view__, nsxpcm::tree_view__, nsITreeView );
 
 NS_IMETHODIMP nsxpcm::tree_view__::GetRowCount(PRInt32* aRowCount)
 {
-	*aRowCount = this->_F().GetRowCount();
+	*aRowCount = this->_C().GetRowCount();
 
 	return NS_OK;
 }
@@ -1908,7 +1973,7 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetCellText(PRInt32 aRow, nsITreeColumn* aCol
 	 aCol->GetIndex( &Index );
 
 	Text.Init();
-	 _F().GetCellText( aRow, Index, Text );
+	 _C().GetCellText( aRow, Index, Text );
 	 Transform( Text, aCellText );
 ERRErr
 ERREnd
@@ -1989,85 +2054,89 @@ NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnCell(const PRUnichar* aAction,
 
 /* Début 'textbox' 'autocomplete' */
 
-NS_IMPL_ISUPPORTS2 (nsxpcm::autocomplete_result__, nsxpcm::autocomplete_result__, nsIAutoCompleteResult );
+NS_IMPL_ISUPPORTS2 (nsxpcm::autocomplete_result___, nsxpcm::autocomplete_result___, nsIAutoCompleteResult );
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchString(nsAString & aSearchString)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetSearchString(nsAString & aSearchString)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetSearchResult(PRUint16 *aSearchResult)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetSearchResult(PRUint16 *aSearchResult)
 {
 	*aSearchResult = nsIAutoCompleteResult::RESULT_SUCCESS;
 
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetDefaultIndex(PRInt32 *aDefaultIndex)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetDefaultIndex(PRInt32 *aDefaultIndex)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetErrorDescription(nsAString & aErrorDescription)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetErrorDescription(nsAString & aErrorDescription)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetMatchCount(PRUint32 *aMatchCount)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetMatchCount(PRUint32 *aMatchCount)
 {
-	*aMatchCount = _F().GetMatchingCount();
+	*aMatchCount = _C().GetMatchingCount();
 
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
 ERRProlog
 	str::string Label;
 ERRBegin
 	Label.Init();
 
-	_F().GetLabel( index, Label );
+	_C().GetLabel( index, Label );
 
-	Transform( Label, _retval );
+	nsxpcm::Transform( Label , _retval );
+
+    return NS_OK;
 ERRErr
 ERREnd
 ERREpilog
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
 ERRProlog
 	str::string Comment;
 ERRBegin
 	Comment.Init();
 
-	_F().GetComment( index, Comment );
+	_C().GetComment( index, Comment );
 
-	Transform( Comment, _retval );
+	nsxpcm::Transform( Comment , _retval );
+
+    return NS_OK;
 ERRErr
 ERREnd
 ERREpilog
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
     return NS_OK;
 }
 
-NS_IMETHODIMP nsxpcm::autocomplete_result__::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
+NS_IMETHODIMP nsxpcm::autocomplete_result___::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -2077,6 +2146,8 @@ NS_IMPL_ISUPPORTS2(nsxpcm::autocomplete_search__, nsxpcm::autocomplete_search__,
 NS_IMETHODIMP nsxpcm::autocomplete_search__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
 {
 	nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _Result );
+
+	_Result->Init( searchParam );
 
 	listener->OnSearchResult( this, _Result );
 
@@ -2716,6 +2787,9 @@ public:
 #endif
 		MasterWindowMutex_ = mtx::Create( mtx::mOwned );
 		MasterWindows_.Init();
+
+		Handlers_.Init();
+		Ids_.Init();
 	}
 	~nsxpcmpersonnalization( void )
 	{

@@ -23,7 +23,7 @@
 
 using namespace trunk;
 
-void trunk::user_functions__::XULFTKFormatedInformations(
+void trunk::user_callback__::XULFTKFormatedInformations(
 	const char *LauncherIdentification,
 	str::string_ &Informations )
 

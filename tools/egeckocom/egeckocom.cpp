@@ -44,7 +44,7 @@
 #define EGECKOCOM_CID  EIGECKOCOM_IID
 
 static mtx::mutex_handler__ _Mutex = MTX_INVALID_HANDLER;	// To protect access to following object.
-static geckoo::user_functions__ *_CurrentSteering = NULL;
+static geckoo::user_callback__ *_CurrentSteering = NULL;
 static bso::bool__ IsInitialized_ = false;
 
 static str::string COutString_;
@@ -328,7 +328,7 @@ NS_IMETHODIMP egeckocom___::HandlePseudoEvent(
 	char **JSErrorMessage )
 {
 RP
-	geckoo::user_functions__ *Steering = NULL;
+	geckoo::user_callback__ *Steering = NULL;
 	str::string LibraryName;
 	STR_BUFFER___ Buffer;
 	str::string Translation;
@@ -376,200 +376,6 @@ egeckocom___::~egeckocom___( void )
 
 /* Gecko required part. */
 
-/*************************/
-/* Debut 'auto-complete' */
-/*************************/
-
-/**************************************************/
-/* Debut partie concernant 'auto complete observer' */
-
-#include "nsIAutoCompleteResult.h"
-
-# define ACR_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a68"
-
-# define ACR_LISTENER_IID \
-  {0xd333cd20, 0xc453, 0x11dd, \
-    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x68 }}
-
-namespace nsxpcm {
-	class acr__
-	: public nsIAutoCompleteResult
-	{
-	private:
-		event_handler__ *_EventHandler;
-	public:
-		NS_DECLARE_STATIC_IID_ACCESSOR(ACR_LISTENER_IID)
-		NS_DECL_ISUPPORTS
-		NS_DECL_NSIAUTOCOMPLETERESULT
-		  void reset( bso::bool__ = true )
-		  {
-			  _EventHandler = NULL;
-		  }
-		E_CVDTOR( acr__ );
-	public:
-		void Init( event_handler__ &EventHandler )
-		{
-#ifdef NSXPCM_DBG
-			if ( _EventHandler != NULL )
-				ERRu();
-#endif
-			reset();
-
-			_EventHandler = &EventHandler;
-		}
-	};
-
-	NS_GENERIC_FACTORY_CONSTRUCTOR(acr__)
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetSearchString(nsAString & aSearchString)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetSearchResult(PRUint16 *aSearchResult)
-{
-	*aSearchResult = nsIAutoCompleteResult::RESULT_SUCCESS;
-
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetDefaultIndex(PRInt32 *aDefaultIndex)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetErrorDescription(nsAString & aErrorDescription)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetMatchCount(PRUint32 *aMatchCount)
-{
-	*aMatchCount = 100;
-
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-#include "dte.h"
-
-NS_IMETHODIMP nsxpcm::acr__::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
-{
-	tol::buffer__ Buffer;
-
-	nsxpcm::Transform( tol::Time( Buffer ) , _retval );
-
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetCommentAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
-{
-	tol::buffer__ Buffer;
-
-	nsxpcm::Transform( tol::Date( Buffer ) , _retval );
-
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetStyleAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
-{
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::GetImageAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
-{
-    return NS_OK;
-}
-
-NS_IMETHODIMP nsxpcm::acr__::RemoveValueAt(PRInt32 rowIndex, NSXPCM__BOOL removeFromDb)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-
-NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::acr__, ACR_LISTENER_IID)
-
-# define ACR_CONTRACTID "@zeusw.org/acr;1"
-# define ACR_CLASSNAME "NSXPCM_ACR"
-# define ACR_CID  ACR_LISTENER_IID
-
-NS_IMPL_ISUPPORTS2(nsxpcm::acr__, nsxpcm::acr__, nsIAutoCompleteResult );
-
-/* Fin partie concernant 'auto complete observer' */
-/************************************************/
-
-
-
-/**************************************************/
-/* Debut partie concernant 'auto complete search' */
-
-#include "nsIAutoCompleteSearch.h"
-
-# define ACS_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a67"
-
-# define ACS_LISTENER_IID \
-  {0xd333cd20, 0xc453, 0x11dd, \
-    { 0xad, 0x8b, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x67 }}
-
-namespace nsxpcm {
-	class acs__
-	: public nsIAutoCompleteSearch
-	{
-	private:
-		nsCOMPtr<nsIAutoCompleteResult> _Result;
-	public:
-		NS_DECLARE_STATIC_IID_ACCESSOR(ACS_LISTENER_IID)
-		NS_DECL_ISUPPORTS
-		NS_DECL_NSIAUTOCOMPLETESEARCH
-		  void reset( bso::bool__ = true )
-		  {
-		  }
-		E_CVDTOR( acs__ );
-	public:
-		void Init( event_handler__ &EventHandler )
-		{
-		}
-	};
-
-	NS_GENERIC_FACTORY_CONSTRUCTOR(acs__)
-}
-
-NS_IMETHODIMP nsxpcm::acs__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
-{
-	nsxpcm::CreateInstance( ACR_CONTRACTID, _Result );
-
-	listener->OnSearchResult( this, _Result );
-
-    return NS_OK;
-}
-
-/* void stopSearch (); */
-NS_IMETHODIMP nsxpcm::acs__::StopSearch()
-{
-    return NS_OK;
-}
-
-NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::acs__, ACS_LISTENER_IID)
-
-# define ACS_CONTRACTID "@mozilla.org/autocomplete/search;1?name=nsxpcm_ac"
-# define ACS_CLASSNAME "NSXPCMSearchResult"
-# define ACS_CID  ACS_LISTENER_IID
-
-NS_IMPL_ISUPPORTS2(nsxpcm::acs__, nsxpcm::acs__, nsIAutoCompleteSearch );
-
-/* Fin partie concernant 'auto complete search' */
-/************************************************/
-
-
-/*************************/
-/* Debut 'auto-complete' */
-/*************************/
-
 using namespace nsxpcm;
 
 NS_IMPL_ISUPPORTS1(egeckocom___, EIGeckoCOM)
@@ -601,8 +407,8 @@ NS_IMPL_NSGETMODULE("EGeckoCOMModule", components)
 NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_TREE_VIEW_CID);
-NS_DEFINE_NAMED_CID(ACS_CID);
-NS_DEFINE_NAMED_CID(ACR_CID);
+NS_DEFINE_NAMED_CID(NSXPCM_AUTOCOMPLETE_SEARCH_CID);
+NS_DEFINE_NAMED_CID(NSXPCM_AUTOCOMPLETE_RESULT_CID);
 NS_DEFINE_NAMED_CID(CLH_CID);
 
 // Build a table of ClassIDs (CIDs) which are implemented by this module. CIDs
@@ -613,8 +419,8 @@ static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
     { &kEGECKOCOM_CID, false, NULL, egeckocom___Constructor },
 	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listener__Constructor },
 	{ &kNSXPCM_TREE_VIEW_CID, false, NULL, nsxpcm::tree_view__Constructor },
-	{ &kACS_CID, false, NULL, nsxpcm::acs__Constructor },
-	{ &kACR_CID, false, NULL, nsxpcm::acr__Constructor },
+	{ &kNSXPCM_AUTOCOMPLETE_SEARCH_CID, false, NULL, nsxpcm::autocomplete_search__Constructor },
+	{ &kNSXPCM_AUTOCOMPLETE_RESULT_CID, false, NULL, nsxpcm::autocomplete_result___Constructor },
 	{ &kCLH_CID, false, NULL, nsxpcm::clh__Constructor },
     { NULL }
 };
@@ -627,8 +433,8 @@ static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
     { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
     { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
     { NSXPCM_TREE_VIEW_CONTRACTID, &kNSXPCM_TREE_VIEW_CID },
-    { ACS_CONTRACTID, &kACS_CID },
-    { ACR_CONTRACTID, &kACR_CID },
+    { NSXPCM_AUTOCOMPLETE_SEARCH_CONTRACTID, &kNSXPCM_AUTOCOMPLETE_SEARCH_CID },
+    { NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, &kNSXPCM_AUTOCOMPLETE_RESULT_CID },
     { CLH_CONTRACTID, &kCLH_CID },
     { NULL }
 };

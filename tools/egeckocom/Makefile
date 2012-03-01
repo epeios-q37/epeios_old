@@ -40,7 +40,7 @@ mods = locale registry
 
 # epeios/core
 mods += cdgb64 cio dlbrry err fil
-mods += flw flx fnm lcl mmi
+mods += flw flx fnm lcl lst mmi
 mods += mtk nsxpcm rgstry str tht
 mods += tol ttr uym xml xpp
 

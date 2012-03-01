@@ -242,7 +242,6 @@ namespace nsxpcm {
 		eKeyPress,
 		eLoad,
 		eClose,
-		eTextEntered,	// pour les 'textbox' 'autocomplete'.
 		e_amount,
 		e_Undefined
 	};
@@ -267,7 +266,6 @@ namespace nsxpcm {
 		EF( KeyPress ),
 		EF( Load ),
 		EF( Close ),
-		EF( TextEntered ),
 		ef_None = 0,
 		ef_All = ( ( 1 << e_amount ) - 1 ),
 		ef_AllButAnnoying = ef_All & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
@@ -350,6 +348,13 @@ namespace nsxpcm {
 	void Transform(
 		const str::string_ &String,
 		nsAString &AString );
+
+	inline void Transform(
+		const nsAString &AString,
+		str::string_ &String )
+	{
+		String.Append( NS_LossyConvertUTF16toASCII( AString ).get() );
+	}
 
 	void Split( 
 		const string_ &Joined,
@@ -2018,7 +2023,7 @@ namespace nsxpcm {
 	{
 	private:
 		nsCOMPtr<class tree_view__> _TreeView;
-		void _SetTreeView( class tree_view_functions__ &Functions );
+		void _SetTreeView( class tree_view_callback__ &Callback );
 		nsITreeView *_GetView( void )
 		{
 			nsITreeView *View = NULL;
@@ -2047,15 +2052,15 @@ namespace nsxpcm {
 		}
 	public:
 		void Init(
-			class tree_view_functions__ &Functions,
+			class tree_view_callback__ &Callback,
 			nsISupports *Supports,
 			nsIDOMWindow *Window );
 		void Init(
-			class tree_view_functions__ &Functions,
+			class tree_view_callback__ &Callback,
 			nsIDOMWindow *Window,
 			const char *Id );
 		void Init(
-			class tree_view_functions__ &Functions,
+			class tree_view_callback__ &Callback,
 			nsIDOMWindow *Window,
 			const str::string_ &Id );
 		bso::slong__ GetCurrentIndex( void )
@@ -3023,7 +3028,7 @@ NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::event_listener__, NSXPCM_EVENT_LISTENER_II
 
 namespace nsxpcm {
 
-	class tree_view_functions__
+	class tree_view_callback__
 	{
 	protected:
 		virtual bso::ulong__ NSXPCMGetRowCount( void ) = 0;
@@ -3047,7 +3052,7 @@ namespace nsxpcm {
 		{
 			// Standardisation.
 		}
-		E_CVDTOR( tree_view_functions__ );
+		E_CVDTOR( tree_view_callback__ );
 		void Init( void )
 		{
 			// Standardisation.
@@ -3059,16 +3064,16 @@ namespace nsxpcm {
 	: public nsITreeView
 	{
 	private:
-		tree_view_functions__ *_Functions;
+		tree_view_callback__ *_Callback;
 		nsCOMPtr<nsITreeSelection> mSelection;
 		nsCOMPtr<nsITreeBoxObject> mTree;
 		PRInt32 mTotalRows;
-		tree_view_functions__ &_F( void )
+		tree_view_callback__ &_C( void )
 		{
-			if ( _Functions == NULL )
+			if ( _Callback == NULL )
 				ERRc();
 
-			return *_Functions;
+			return *_Callback;
 		}
 	public: 
 		NS_DECLARE_STATIC_IID_ACCESSOR(NSXPCOM_ITREE_VIEW_IID)
@@ -3076,12 +3081,12 @@ namespace nsxpcm {
 		NS_DECL_NSITREEVIEW
 		void reset( bso::bool__ = true )
 		{
-			_Functions = NULL;
+			_Callback = NULL;
 		}
 		E_CVDTOR( tree_view__ );
-		void Init( tree_view_functions__ &Functions )
+		void Init( tree_view_callback__ &Callback )
 		{
-			_Functions = &Functions;
+			_Callback = &Callback;
 		}
 	};
 
@@ -3101,7 +3106,7 @@ NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::tree_view__, NSXPCM_TREE_VIEW_IID)
 /* Début partie concernant 'textbox' 'autocomplete' */
 
 namespace nsxpcm {
-	class autocomplete_textbox_functions__
+	class autocomplete_textbox_callback__
 	{
 	protected:
 		virtual void NSXPCMGetLabel(
@@ -3119,7 +3124,7 @@ namespace nsxpcm {
 		{
 			// Standardisation.
 		}
-		E_CVDTOR( autocomplete_textbox_functions__ );
+		E_CVDTOR( autocomplete_textbox_callback__ );
 		void Init( void )
 		{
 			// Standardisation.
@@ -3141,7 +3146,17 @@ namespace nsxpcm {
 			return NSXPCMGetMatchingCount();
 		}
 	};
+
+	void Add(
+		const str::string_ &Id,
+		autocomplete_textbox_callback__ &Callback );
+
+	autocomplete_textbox_callback__ *Get( const str::string_ &Id );
+
+	void Remove( const str::string_ &Id );
 }
+
+
 
 #include "nsIAutoCompleteResult.h"
 
@@ -3152,38 +3167,47 @@ namespace nsxpcm {
     { 0x81, 0x1a, 0xa1, 0xf2, 0x86, 0xd4, 0x64, 0xf7 }}
 
 namespace nsxpcm {
-	class autocomplete_result__
+	class autocomplete_result___
 	: public nsIAutoCompleteResult
 	{
 	private:
-		autocomplete_textbox_functions__ *_Functions;
-		autocomplete_textbox_functions__ &_F( void )
+		str::string _Param;
+		autocomplete_textbox_callback__ *_Callback;
+		autocomplete_textbox_callback__ &_C( void )
 		{
-			if ( _Functions == NULL )
+			if ( _Callback == NULL )
 				ERRc();
 
-			return *_Functions;
+			return *_Callback;
 		}
 	public:
 		NS_DECLARE_STATIC_IID_ACCESSOR( NSXPCM_AUTOCOMPLETE_RESULT_IID )
 		NS_DECL_ISUPPORTS
 		NS_DECL_NSIAUTOCOMPLETERESULT
-		void reset( bso::bool__ = true )
+		void reset( bso::bool__ P = true )
 		{
-			_Functions = NULL;
+			_Callback = NULL;
+
+			_Param.reset(P );
 		}
-		E_CVDTOR( autocomplete_result__ );
+		E_CVDTOR( autocomplete_result___ );
 	public:
-		void Init( autocomplete_textbox_functions__ &Functions )
+		void Init( const nsAString &Param )	// 'Param' est la velur donnée à l'attribut 'autocompletesearchparam' du 'testbox'.
 		{
-			_Functions = &Functions;
+			reset();
+
+			_Param.Init();
+
+			Transform( Param, _Param );
+
+			_Callback = Get( _Param );
 		}
 	};
 
-	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_result__ )
+	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_result___ )
 }
 
-NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::autocomplete_result__, NSXPCM_AUTOCOMPLETE_RESULT_IID)
+NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::autocomplete_result___, NSXPCM_AUTOCOMPLETE_RESULT_IID)
 
 # define NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID "@zeusw.org/autocomplete_result;1"
 # define NSXPCM_AUTOCOMPLETE_RESULT_CLASSNAME "NSXPCMAutocompleteResult"
@@ -3202,28 +3226,22 @@ namespace nsxpcm {
 	: public nsIAutoCompleteSearch
 	{
 	private:
-		autocomplete_textbox_functions__ *_Functions;
-		autocomplete_textbox_functions__ &_F( void )
-		{
-			if ( _Functions == NULL )
-				ERRc();
-
-			return *_Functions;
-		}
-		nsCOMPtr<nsIAutoCompleteResult> _Result;
+		nsCOMPtr<autocomplete_result___> _Result;
 	public:
 		NS_DECLARE_STATIC_IID_ACCESSOR( NSXPCM_AUTOCOMPLETE_SEARCH_IID )
 		NS_DECL_ISUPPORTS
 		NS_DECL_NSIAUTOCOMPLETESEARCH
 		void reset( bso::bool__ = true )
 		{
-			_Functions = NULL;
+			// Standardisation.
 		}
-		E_CVDTOR(autocomplete_search__ );
+		E_CVDTOR( autocomplete_search__ );
 	public:
-		void Init( autocomplete_textbox_functions__ &Functions )
+		void Init( void )
 		{
-			_Functions = &Functions;
+			reset();
+
+			// Standardisation. A priori, jamais appelé.
 		}
 	};
 

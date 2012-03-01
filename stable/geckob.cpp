@@ -60,7 +60,7 @@ public:
 using namespace geckob;
 
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
-static geckoo::user_functions__ *LoneSteering_ = NULL;
+static geckoo::user_callback__ *LoneSteering_ = NULL;
 
 #ifdef CPE__T_MS
 # define FUNCTION_SPEC __declspec(dllexport)
@@ -101,7 +101,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #endif
 #endif
 
-geckoo::user_functions__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
+geckoo::user_callback__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
 {
 	if ( Data == NULL )
 		ERRu();
@@ -115,9 +115,9 @@ geckoo::user_functions__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
 	return geckob::GECKOBCreateSteering( Data );
 }
 
-geckoo::user_functions__ *GECKOORetrieveSteering( void )
+geckoo::user_callback__ *GECKOORetrieveSteering( void )
 {
-	geckoo::user_functions__ *Steering = NULL;
+	geckoo::user_callback__ *Steering = NULL;
 
 	if ( !mtx::IsLocked( Mutex_ ) )
 		ERRc();
@@ -134,12 +134,12 @@ geckoo::user_functions__ *GECKOORetrieveSteering( void )
 
 }
 
-void GECKOODeleteSteering( geckoo::user_functions__ *Steering )
+void GECKOODeleteSteering( geckoo::user_callback__ *Steering )
 {
 	geckob::GECKOBDeleteSteering( Steering );
 }
 
-void geckob::SetSteering( geckoo::user_functions__ &Steering )
+void geckob::SetSteering( geckoo::user_callback__ &Steering )
 {
 	mtx::Lock( Mutex_ );
 

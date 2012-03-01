@@ -29,7 +29,7 @@ try {
 }
 
 try {
-	 egeckocom = Components.classes["@zeusw.org/egeckocom;4"].createInstance().QueryInterface(Components.interfaces.EIGeckoCOM);
+	 egeckocom = Components.classes["@zeusw.org/egeckocom;5"].createInstance().QueryInterface(Components.interfaces.EIGeckoCOM);
 } catch (err) {
 	alert(err);
 	window.close();

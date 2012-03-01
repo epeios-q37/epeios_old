@@ -78,15 +78,15 @@ namespace trunk {
 		}
 		E_CVDTOR( trunk___ );
 		status__ Init(
-			xulftk::user_functions__<trunk___>  &UserFunctions,
+			xulftk::user_callback__<trunk___>  &UserCallback,
 			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const lcl::locale_ &Locale,
 			const char *Language,
-			geckoo::user_functions__ &Steering )
+			geckoo::user_callback__ &Steering )
 		{
 			reset();
 
-			_trunk__::Init( DMOINF_LC_AFFIX, "chrome://" DMOINF_LC_AFFIX "/content/xsl/", _UI, _Kernel, UserFunctions, Steering, Locale, Language ),
+			_trunk__::Init( DMOINF_LC_AFFIX, "chrome://" DMOINF_LC_AFFIX "/content/xsl/", _UI, _Kernel, UserCallback, Steering, Locale, Language ),
 			_UI.Init( *this );
 
 			return _Kernel.Init( ConfigurationRegistry, NAME, Locale, Language, DefaultErrorReportingFunctions() );
@@ -141,10 +141,10 @@ namespace trunk {
 		void GetDirectoryName( void );
 	};
 
-	typedef xulftk::user_functions__<trunk___> _user_functions__;
+	typedef xulftk::user_callback__<trunk___> _user_callback__;
 
-	class user_functions__
-	: public _user_functions__
+	class user_callback__
+	: public _user_callback__
 	{
 	protected:
 

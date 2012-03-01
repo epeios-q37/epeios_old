@@ -20,7 +20,7 @@
 			<Translation language="en">Retrieve failure (%1)</Translation>
 		</Translations>
 		<Translations message="UnableToHandlePseudoEvent">
-			<Translation language="fr">Impossible de traiter le pseudo-évènement/Translation>
+			<Translation language="fr">Impossible de traiter le pseudo-évènement</Translation>
 			<Translation language="en">Unable to handle pseudo-event</Translation>
 		</Translations>
 

@@ -25,7 +25,7 @@
 
 using namespace binding;
 
-bso::bool__ binding::binding_functions__::XULFUIRegister(
+bso::bool__ binding::binding_callback__::XULFUIRegister(
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
 {
