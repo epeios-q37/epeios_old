@@ -132,8 +132,10 @@ void nsxpcm::Add(
 
 	Row = Ids_.New();
 
-	Ids_.Store( str::string( Id ), Row );
-	Handlers_.Store( &Callback, Row );
+	Ids_.Store( Id, Row );
+
+	if ( Handlers_.Add( &Callback ) != Row )
+		ERRc();
 }
 
 autocomplete_textbox_callback__ *nsxpcm::Get( const str::string_ &Id )

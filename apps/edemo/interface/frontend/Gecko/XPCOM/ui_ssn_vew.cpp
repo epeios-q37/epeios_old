@@ -66,6 +66,28 @@ static void Register_(
 
 #define R( name ) Widgets.name.Init( Trunk, Trunk.UI().SessionView.Window(), #name );
 
+class _callback__
+: public autocomplete_textbox_callback__
+{
+protected:
+	virtual void XULFUIGetLabel(
+		bso::ulong__ Index,
+		str::string_ &Label )
+	{
+		Label.Append( "This is the LABEL" );
+	}
+	virtual void XULFUIGetComment(
+		bso::ulong__ Index,
+		str::string_ &Comment )
+	{
+		Comment.Append( "This is the COMMANT" );
+	}
+	virtual bso::ulong__ XULFUIGetMatchingCount( void )
+	{
+		return 100;
+	}
+} Callback_;
+
 static void Register_(
 	trunk___ &Trunk,
 	session_view__::widgets__ &Widgets,
@@ -73,7 +95,9 @@ static void Register_(
 {
 	R( txbDirectorySymbolicName );
 	R( txbDirectory );
-	R( txbAutocomplete );
+
+	Callback_.Init();
+	Widgets.txbAutocomplete.Init( str::string( "Autocomplete" ), Callback_, Trunk, Window, "txbAutocomplete" );
 }
 
 void ui_ssn_vew::session_view__::Init(

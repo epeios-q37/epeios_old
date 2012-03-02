@@ -101,7 +101,9 @@ void xulfui::Add(
 	Row = Ids_.New();
 
 	Ids_.Store( str::string( Id ), Row );
-	Handlers_.Store( &Callback, Row );
+
+	if ( Handlers_.Add( &Callback ) != Row )
+		ERRc();
 }
 
 bso::bool__ xulfui::Launch(

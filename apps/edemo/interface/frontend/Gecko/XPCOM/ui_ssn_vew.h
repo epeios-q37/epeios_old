@@ -23,6 +23,7 @@
 # define UI_SSN_VEW__INC
 
 # include "xulfsv.h"
+# include "xulfui.h"
 # include "ui_base.h"
 # include "ui_grid.h"
 
@@ -30,6 +31,140 @@ namespace ui_ssn_vew {
 	typedef xulfsv::session_view__ _session_view__;
 
 	UI_BASE_EH( get_directory_eh__ );
+
+	typedef ui_base::textbox__ _textbox__;
+	typedef xulfui::pseudo_event_callback__ _pseudo_event_callback__;
+
+	class autocomplete_textbox_ontextentered_callback__
+	: public _pseudo_event_callback__
+	{
+	private:
+		class autocomplete_textbox__ *_Textbox;
+	protected:
+		virtual void XULFUIHandle( nsIDOMElement *Element );
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_pseudo_event_callback__::reset( P );
+			_Textbox = NULL;
+		}
+		E_CVDTOR( autocomplete_textbox_ontextentered_callback__ );
+		void Init( class autocomplete_textbox__ &Textbox )
+		{
+			_pseudo_event_callback__::Init();
+			_Textbox = &Textbox;
+		}
+	};
+
+	typedef nsxpcm::autocomplete_textbox_callback__ _autocomplete_textbox_callback__;
+
+	class autocomplete_textbox_callback__
+	: public _autocomplete_textbox_callback__
+	{
+	protected:
+		virtual void NSXPCMGetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label )
+		{
+			XULFUIGetLabel( Index, Label );
+		}
+		virtual void NSXPCMGetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			XULFUIGetComment( Index, Comment );
+		}
+		virtual bso::ulong__ NSXPCMGetMatchingCount( void )
+		{
+			return XULFUIGetMatchingCount();
+		}
+		virtual void XULFUIGetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label ) = 0;
+		virtual void XULFUIGetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			ERRu();
+		}
+		virtual bso::ulong__ XULFUIGetMatchingCount( void ) = 0;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		E_CVDTOR( autocomplete_textbox_callback__ )
+		void Init( void )
+		{
+			reset();
+		}
+		void GetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label )
+		{
+			XULFUIGetLabel( Index, Label );
+		}
+		void GetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			XULFUIGetComment( Index, Comment );
+		}
+		bso::ulong__ GetMatchingCount( void )
+		{
+			return XULFUIGetMatchingCount();
+		}
+	};
+
+	class autocomplete_textbox__
+	: public _textbox__
+	{
+	private:
+		autocomplete_textbox_callback__ *_Callback;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_textbox__::reset( P );
+			_Callback = NULL;
+		}
+		E_CDTOR( autocomplete_textbox__ );
+		void Init(
+			const str::string_ &SearchParam,
+			autocomplete_textbox_callback__ &Callback,
+			trunk::trunk___ &Trunk,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			reset();
+			_Callback = &Callback;
+			nsxpcm::Add( SearchParam, Callback );
+			_textbox__::Init( Trunk, Supports, Window );
+		}
+		void Init(
+			const str::string_ &SearchParam,
+			autocomplete_textbox_callback__ &Callback,
+			trunk::trunk___ &Trunk,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			reset();
+			_Callback = &Callback;
+			nsxpcm::Add( SearchParam, Callback );
+			_textbox__::Init( Trunk, Window, Id );
+		}
+		void Init(
+			const str::string_ &SearchParam,
+			autocomplete_textbox_callback__ &Callback,
+			trunk::trunk___ &Trunk,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			reset();
+			_Callback = &Callback;
+			nsxpcm::Add( SearchParam, Callback );
+			_textbox__::Init( Trunk, Window, Id );
+		}
+	};
 
 	struct session_view__
 	: public _session_view__
@@ -51,8 +186,8 @@ namespace ui_ssn_vew {
 		{
 			ui_base::textbox__
 				txbDirectorySymbolicName,
-				txbDirectory,
-				txbAutocomplete;
+				txbDirectory;
+			autocomplete_textbox__ txbAutocomplete;
 		} Widgets;
 		session_view__( void )
 		: _session_view__( Broadcasters, EventHandlers, Widgets )
