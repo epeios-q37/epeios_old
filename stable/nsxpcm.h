@@ -108,6 +108,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsIDOMMutationEvent.h"
 # include "nsIDOMKeyEvent.h" 
 # include "nsIDOMEventTarget.h"
+# include "nsIAutoCompleteResult.h"
 
 #include "nsIXULWindow.h"
 
@@ -3149,16 +3150,12 @@ namespace nsxpcm {
 
 	void Add(
 		const str::string_ &Id,
-		autocomplete_textbox_callback__ &Callback );
+		nsIAutoCompleteResult *Target );
 
-	autocomplete_textbox_callback__ *Get( const str::string_ &Id );
+	nsIAutoCompleteResult *Get( const str::string_ &Id );
 
 	void Remove( const str::string_ &Id );
 }
-
-
-
-#include "nsIAutoCompleteResult.h"
 
 # define NSXPCM_AUTOCOMPLETE_RESULT_IID_STR "5126d993-3577-4214-811a-a1f286d464f7"
 
@@ -3171,7 +3168,6 @@ namespace nsxpcm {
 	: public nsIAutoCompleteResult
 	{
 	private:
-		str::string _Param;
 		autocomplete_textbox_callback__ *_Callback;
 		autocomplete_textbox_callback__ &_C( void )
 		{
@@ -3187,72 +3183,25 @@ namespace nsxpcm {
 		void reset( bso::bool__ P = true )
 		{
 			_Callback = NULL;
-
-			_Param.reset(P );
 		}
 		E_CVDTOR( autocomplete_result___ );
 	public:
-		void Init( const nsAString &Param )	// 'Param' est la velur donnée à l'attribut 'autocompletesearchparam' du 'testbox'.
+		void Init( autocomplete_textbox_callback__ &Callback )	
 		{
 			reset();
 
-			_Param.Init();
-
-			Transform( Param, _Param );
-
-			_Callback = Get( _Param );
+			_Callback = &Callback;
 		}
 	};
 
 	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_result___ )
 }
 
-NS_DEFINE_STATIC_IID_ACCESSOR(nsxpcm::autocomplete_result___, NSXPCM_AUTOCOMPLETE_RESULT_IID)
+NS_DEFINE_STATIC_IID_ACCESSOR( nsxpcm::autocomplete_result___, NSXPCM_AUTOCOMPLETE_RESULT_IID )
 
 # define NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID "@zeusw.org/autocomplete_result;1"
-# define NSXPCM_AUTOCOMPLETE_RESULT_CLASSNAME "NSXPCMAutocompleteResult"
+# define NXSPCM_AUTOCOMPLETE_RESULT_CLASSNAME "EAutoCompleteResult"
 # define NSXPCM_AUTOCOMPLETE_RESULT_CID  NSXPCM_AUTOCOMPLETE_RESULT_IID
-
-# include "nsIAutoCompleteSearch.h"
-
-# define NSXPCM_AUTOCOMPLETE_SEARCH_IID_STR "6de89116-05d7-4968-a763-1b6d0680a6a6"
-
-# define NSXPCM_AUTOCOMPLETE_SEARCH_IID \
-  {0x6de89116, 0x05d7, 0x4968, \
-    { 0xa7, 0x63, 0x1b, 0x6d, 0x06, 0x80, 0xa6, 0xa6 }}
-
-namespace nsxpcm {
-	class autocomplete_search__
-	: public nsIAutoCompleteSearch
-	{
-	private:
-		nsCOMPtr<autocomplete_result___> _Result;
-	public:
-		NS_DECLARE_STATIC_IID_ACCESSOR( NSXPCM_AUTOCOMPLETE_SEARCH_IID )
-		NS_DECL_ISUPPORTS
-		NS_DECL_NSIAUTOCOMPLETESEARCH
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		E_CVDTOR( autocomplete_search__ );
-	public:
-		void Init( void )
-		{
-			reset();
-
-			// Standardisation. A priori, jamais appelé.
-		}
-	};
-
-	NS_GENERIC_FACTORY_CONSTRUCTOR( autocomplete_search__ )
-}
-
-NS_DEFINE_STATIC_IID_ACCESSOR( nsxpcm::autocomplete_search__, NSXPCM_AUTOCOMPLETE_SEARCH_IID )
-
-# define NSXPCM_AUTOCOMPLETE_SEARCH_CONTRACTID "@mozilla.org/autocomplete/search;1?name=nsxpcm"
-# define NSXPCM_AUTOCOMPLETE_SEARCH_CLASSNAME "NSXPCMAutocompleteSearch"
-# define NSXPCM_AUTOCOMPLETE_SEARCH_CID  NSXPCM_AUTOCOMPLETE_SEARCH_IID
 
 /* Fin partie concernant 'textbox' 'autocomplete' */
 

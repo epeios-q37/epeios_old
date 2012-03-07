@@ -22,6 +22,7 @@
 #ifndef UI_SSN_VEW__INC
 # define UI_SSN_VEW__INC
 
+# include "nsxpcm.h"
 # include "xulfsv.h"
 # include "xulfui.h"
 # include "ui_base.h"
@@ -120,12 +121,19 @@ namespace ui_ssn_vew {
 	: public _textbox__
 	{
 	private:
-		autocomplete_textbox_callback__ *_Callback;
+		nsCOMPtr<nsxpcm::autocomplete_result___> _AutoCompleteResult;
+		void _SubInit(
+			const str::string_ &SearchParam,
+			autocomplete_textbox_callback__ &Callback )
+		{
+			nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _AutoCompleteResult );
+			_AutoCompleteResult->Init( Callback );
+			nsxpcm::Add( SearchParam, _AutoCompleteResult );
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_textbox__::reset( P );
-			_Callback = NULL;
 		}
 		E_CDTOR( autocomplete_textbox__ );
 		void Init(
@@ -136,8 +144,7 @@ namespace ui_ssn_vew {
 			nsIDOMWindow *Window )
 		{
 			reset();
-			_Callback = &Callback;
-			nsxpcm::Add( SearchParam, Callback );
+			_SubInit( SearchParam, Callback );
 			_textbox__::Init( Trunk, Supports, Window );
 		}
 		void Init(
@@ -148,8 +155,7 @@ namespace ui_ssn_vew {
 			const str::string_ &Id )
 		{
 			reset();
-			_Callback = &Callback;
-			nsxpcm::Add( SearchParam, Callback );
+			_SubInit( SearchParam, Callback );
 			_textbox__::Init( Trunk, Window, Id );
 		}
 		void Init(
@@ -160,8 +166,7 @@ namespace ui_ssn_vew {
 			const char *Id )
 		{
 			reset();
-			_Callback = &Callback;
-			nsxpcm::Add( SearchParam, Callback );
+			_SubInit( SearchParam, Callback );
 			_textbox__::Init( Trunk, Window, Id );
 		}
 	};

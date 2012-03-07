@@ -96,11 +96,11 @@ bso::bool__ geckof::gecko_wrapper___::_DeleteSteering( void )
 
 extern "C" typedef geckoo::retrieve_steering retrieve_steering;
 
-geckoo::user_callback__ *geckof::RetrieveSteering(
+geckoo::steering_callback__ *geckof::RetrieveSteering(
 	const char *LibraryName,
 	err::handling__ ERRHandling )
 {
-	geckoo::user_callback__ *Steering = NULL;
+	geckoo::steering_callback__ *Steering = NULL;
 ERRProlog
 	dlbrry::dynamic_library___ Library;
 	retrieve_steering *RetrieveSteering = NULL;

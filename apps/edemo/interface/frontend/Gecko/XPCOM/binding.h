@@ -29,10 +29,10 @@
 #include "xulfui.h"
 
 namespace binding {
-	typedef xulfui::user_callback__ _user_callback__;
+	typedef xulfui::steering_callback__ _steering_callback__;
 
 	 class binding_callback__
-	 : public _user_callback__
+	 : public _steering_callback__
 	{
 	private:
 		trunk::trunk___ _Trunk;
@@ -44,7 +44,7 @@ namespace binding {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_user_callback__::reset( P );
+			_steering_callback__::reset( P );
 			_UserCallback.reset( P );
 			_Trunk.reset( P );
 		}
@@ -55,7 +55,7 @@ namespace binding {
 			const lcl::locale_ &Locale,
 			const char *Language )
 		{
-			_user_callback__::Init( _Trunk );
+			_steering_callback__::Init( _Trunk );
 			_UserCallback.Init( LauncherIdentification,  _Trunk );
 
 			return _Trunk.Init( _UserCallback, ConfigurationRegistry, Locale, Language, *this );

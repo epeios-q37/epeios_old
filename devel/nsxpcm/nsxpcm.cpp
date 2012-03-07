@@ -94,7 +94,7 @@ bch::E_BUNCH( nsIDOMWindow *) MasterWindows_;
 mtx::mutex_handler__ MasterWindowMutex_;
 bso::ulong__ MasterWindowCounter_ = 0;
 
-typedef autocomplete_textbox_callback__ *_handler__;
+typedef nsIAutoCompleteResult *_handler__;
 
 E_ROW( _hrow__ );	// Handler row.
 
@@ -123,7 +123,7 @@ static _hrow__ Search_( const str::string_ &TargetId )
 
 void nsxpcm::Add(
 	const str::string_ &Id,
-	autocomplete_textbox_callback__ &Callback )
+	nsIAutoCompleteResult *Target )
 {
 	_hrow__ Row = Search_( Id );
 
@@ -134,11 +134,11 @@ void nsxpcm::Add(
 
 	Ids_.Store( Id, Row );
 
-	if ( Handlers_.Add( &Callback ) != Row )
+	if ( Handlers_.Add( Target ) != Row )
 		ERRc();
 }
 
-autocomplete_textbox_callback__ *nsxpcm::Get( const str::string_ &Id )
+nsIAutoCompleteResult *nsxpcm::Get( const str::string_ &Id )
 {
 	_hrow__ Row = Search_( Id );
 	_handler__ Handler = NULL;
@@ -2056,7 +2056,7 @@ NS_IMETHODIMP nsxpcm::tree_view__::PerformActionOnCell(const PRUnichar* aAction,
 
 /* Début 'textbox' 'autocomplete' */
 
-NS_IMPL_ISUPPORTS2 (nsxpcm::autocomplete_result___, nsxpcm::autocomplete_result___, nsIAutoCompleteResult );
+NS_IMPL_ISUPPORTS2 ( nsxpcm::autocomplete_result___, nsxpcm::autocomplete_result___, nsIAutoCompleteResult );
 
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetSearchString(nsAString & aSearchString)
 {
@@ -2143,26 +2143,7 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::RemoveValueAt(PRInt32 rowIndex, NS
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMPL_ISUPPORTS2(nsxpcm::autocomplete_search__, nsxpcm::autocomplete_search__, nsIAutoCompleteSearch );
-
-NS_IMETHODIMP nsxpcm::autocomplete_search__::StartSearch(const nsAString & searchString, const nsAString & searchParam, nsIAutoCompleteResult *previousResult, nsIAutoCompleteObserver *listener)
-{
-	nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _Result );
-
-	_Result->Init( searchParam );
-
-	listener->OnSearchResult( this, _Result );
-
-    return NS_OK;
-}
-
-/* void stopSearch (); */
-NS_IMETHODIMP nsxpcm::autocomplete_search__::StopSearch()
-{
-    return NS_OK;
-}
-
-/* Fin 'textbox' 'autocomplete' */
+/* Fin 'textbox' 'atutocomplete'. */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
 

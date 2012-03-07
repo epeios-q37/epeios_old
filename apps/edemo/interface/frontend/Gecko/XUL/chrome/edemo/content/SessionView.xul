@@ -96,7 +96,7 @@
 				<tabpanel>
 					<groupbox>
 						<caption label="coucou"/>
-						<textbox id="txbAutocomplete" observes="glbAutocomplete"  type="autocomplete" autocompletesearch="nsxpcm" autocompletesearchparam="Autocomplete" showcommentcolumn="true" enablehistory="true" />
+						<textbox id="txbAutocomplete" observes="glbAutocomplete"  type="autocomplete" autocompletesearch="epeios" autocompletesearchparam="Autocomplete" showcommentcolumn="true" enablehistory="true" />
 					</groupbox>
 				</tabpanel>
 			</tabpanels>

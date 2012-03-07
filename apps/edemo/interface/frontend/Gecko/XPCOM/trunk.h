@@ -82,7 +82,7 @@ namespace trunk {
 			const rgstry::multi_level_registry_ &ConfigurationRegistry,
 			const lcl::locale_ &Locale,
 			const char *Language,
-			geckoo::user_callback__ &Steering )
+			geckoo::steering_callback__ &Steering )
 		{
 			reset();
 

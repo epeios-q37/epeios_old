@@ -137,7 +137,7 @@ void xulfui::Remove( const char *Id )
 	Handlers_.Delete( Row );
 }
 
-bso::bool__ xulfui::user_callback__::GECKOORegister(
+bso::bool__ xulfui::steering_callback__::GECKOORegister(
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
 {
@@ -153,6 +153,27 @@ ERREnd
 ERREpilog
 	return Success;
 }
+
+nsIAutoCompleteResult *xulfui::steering_callback__::GECKOOGetAutoCompleteResult( const nsAString &RawSearchParam )
+{
+	nsIAutoCompleteResult *Target = NULL;
+ERRProlog
+	str::string SearchParam;
+ERRBegin
+	SearchParam.Init();
+
+	nsxpcm::Transform( RawSearchParam, SearchParam );
+
+	Target = nsxpcm::Get( SearchParam);
+
+	if ( Target == NULL )
+		ERRc();
+ERRErr
+ERREnd
+ERREpilog
+	return Target;	
+}
+
 
 
 

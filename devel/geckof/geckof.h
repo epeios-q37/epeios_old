@@ -72,7 +72,7 @@ namespace geckof {
 	{
 	private:
 		dlbrry::dynamic_library___ _Library;
-		geckoo::user_callback__ *_Steering;
+		geckoo::steering_callback__ *_Steering;
 		bso::bool__ _CreateSteering( geckoo::shared_data__ *Data );
 		bso::bool__ _DeleteSteering( void );
 	public:
@@ -118,7 +118,7 @@ namespace geckof {
 		{
 			return _Steering != NULL;
 		}
-		geckoo::user_callback__ &GetSteering( void ) const
+		geckoo::steering_callback__ &GetSteering( void ) const
 		{
 			if ( !IsInitialized() )
 				ERRu();
@@ -127,9 +127,11 @@ namespace geckof {
 		}
 	};
 
-	geckoo::user_callback__ *RetrieveSteering(
+	geckoo::steering_callback__ *RetrieveSteering(
 		const char *LibraryName,
 		err::handling__ ERRHandling = err::h_Default );
+
+	geckoo::steering_callback__ &GetCurentSteering( void );	// A implémenter.
 }
 
 /*$END$*/

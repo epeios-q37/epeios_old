@@ -30,7 +30,7 @@
 
 const char *sclgecko::TargetName = NAME;
 
-geckoo::user_callback__ *sclgecko::CreateSteering(
+geckoo::steering_callback__ *sclgecko::CreateSteering(
 	const char *LauncherIdentification,
 	const lcl::locale_ &Locale,
 	const char *Language,
@@ -57,7 +57,7 @@ ERREpilog
 }
 
 
-void sclgecko::DeleteSteering( geckoo::user_callback__ *Steering )
+void sclgecko::DeleteSteering( geckoo::steering_callback__ *Steering )
 {
 	if ( Steering != NULL )
 		delete Steering;

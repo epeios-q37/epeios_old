@@ -64,9 +64,9 @@ using namespace sclgecko;
 
 static bso::bool__ IsInitialized_ = false;
 
-geckoo::user_callback__ *geckob::GECKOBCreateSteering( geckoo::shared_data__ *Data )
+geckoo::steering_callback__ *geckob::GECKOBCreateSteering( geckoo::shared_data__ *Data )
 {
-	geckoo::user_callback__ *Steering = NULL;
+	geckoo::steering_callback__ *Steering = NULL;
 ERRProlog
 ERRBegin
 	if ( !IsInitialized_ )	{
@@ -94,7 +94,7 @@ ERREpilog
 	return Steering;
 }
 
-void geckob::GECKOBDeleteSteering( geckoo::user_callback__ *Steering )
+void geckob::GECKOBDeleteSteering( geckoo::steering_callback__ *Steering )
 {
 	DeleteSteering( Steering );
 }

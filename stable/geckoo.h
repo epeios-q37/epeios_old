@@ -73,7 +73,7 @@ extern class ttr_tutor &GECKOOTutor;
 namespace geckoo {
 	typedef epeios::row__ id__;
 
-	class user_callback__ {
+	class steering_callback__ {
 	protected:
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
@@ -81,12 +81,13 @@ namespace geckoo {
 		virtual bso::bool__ GECKOOHandlePseudoEvent(
 			nsIDOMElement *Element,
 			const char *Parameter ) = 0;
+		virtual nsIAutoCompleteResult *GECKOOGetAutoCompleteResult( const nsAString &SearchParam ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
 			// Standardisation.
 		}
-		E_CDTOR( user_callback__ )
+		E_CDTOR( steering_callback__ )
 		void Init( void )
 		{
 			// Standadisation.
@@ -102,6 +103,10 @@ namespace geckoo {
 			const char *Parameter )
 		{
 			return GECKOOHandlePseudoEvent( Element, Parameter );
+		}
+		nsIAutoCompleteResult *GetAutoCompleteResult( const nsAString &SearchParam )
+		{
+			return GECKOOGetAutoCompleteResult( SearchParam );
 		}
 	};
 
@@ -153,9 +158,9 @@ namespace geckoo {
 	};
 #pragma pack( pop )
 
-	typedef user_callback__ *(create_steering)( shared_data__ * );
-	typedef user_callback__ *(retrieve_steering)( void );
-	typedef void (delete_steering)( user_callback__ * );
+	typedef steering_callback__ *(create_steering)( shared_data__ * );
+	typedef steering_callback__ *(retrieve_steering)( void );
+	typedef void (delete_steering)( steering_callback__ * );
 
 }
 

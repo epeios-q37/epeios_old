@@ -220,7 +220,7 @@ namespace xulfui {
 		}
 	};
 
-	typedef geckoo::user_callback__ _user_callback__;
+	typedef geckoo::steering_callback__ _steering_callback__;
 
 	class pseudo_event_callback__
 	{
@@ -252,8 +252,8 @@ namespace xulfui {
 
 	void Remove( const char *Id );
 
-	 class user_callback__
-	 : public _user_callback__
+	 class steering_callback__
+	 : public _steering_callback__
 	{
 	private:
 		xulftk::trunk___ *_Trunk;
@@ -267,19 +267,20 @@ namespace xulfui {
 		{
 			return Launch( Parameter, Element );
 		}
+		virtual nsIAutoCompleteResult *GECKOOGetAutoCompleteResult( const nsAString &SearchParam );
 		virtual bso::bool__ XULFUIRegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_user_callback__::reset( P );
+			_steering_callback__::reset( P );
 			_Trunk = NULL;
 		}
-		E_CVDTOR( user_callback__ )
+		E_CVDTOR( steering_callback__ )
 		void Init( xulftk::trunk___ &Trunk )
 		{
-			_user_callback__::Init();
+			_steering_callback__::Init();
 			_Trunk = &Trunk;
 		}
 	};

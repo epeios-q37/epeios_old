@@ -233,7 +233,7 @@ namespace xulftk {
 		xulfui::ui___ *_UI;
 		xulfkl::kernel___ *_Kernel;
 		_user_callback__ *_UserCallback;
-		geckoo::user_callback__  *_Steering;
+		geckoo::steering_callback__  *_Steering;
 		const char *_TargetName;
 		const char *_DefaultXSLRootPath;
 		error_reporting_functions__ _DefaultErrorReportingFunctions;
@@ -303,7 +303,7 @@ namespace xulftk {
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
 			_user_callback__ &UserCallback,
-			geckoo::user_callback__ &Steering,
+			geckoo::steering_callback__ &Steering,
 			const lcl::locale_ &Locale,
 			const char *Language )
 		{

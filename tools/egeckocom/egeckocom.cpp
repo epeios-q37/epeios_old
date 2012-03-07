@@ -29,6 +29,8 @@
 #include "registry.h"
 #include "sclmisc.h"
 
+#include "atcplsrch.h"
+
 #include "flx.h"
 #include "fnm.h"
 #include "mtx.h"
@@ -44,8 +46,17 @@
 #define EGECKOCOM_CID  EIGECKOCOM_IID
 
 static mtx::mutex_handler__ _Mutex = MTX_INVALID_HANDLER;	// To protect access to following object.
-static geckoo::user_callback__ *_CurrentSteering = NULL;
+static geckoo::steering_callback__ *_CurrentSteering = NULL;
 static bso::bool__ IsInitialized_ = false;
+
+geckoo::steering_callback__ &geckof::GetCurentSteering( void )
+{
+	if ( _CurrentSteering == NULL )
+		ERRc();
+
+	return *_CurrentSteering;
+}
+
 
 static str::string COutString_;
 static flx::E_STRING_OFLOW_DRIVER___ COutDriver_;
@@ -328,7 +339,7 @@ NS_IMETHODIMP egeckocom___::HandlePseudoEvent(
 	char **JSErrorMessage )
 {
 RP
-	geckoo::user_callback__ *Steering = NULL;
+	geckoo::steering_callback__ *Steering = NULL;
 	str::string LibraryName;
 	STR_BUFFER___ Buffer;
 	str::string Translation;
@@ -407,7 +418,7 @@ NS_IMPL_NSGETMODULE("EGeckoCOMModule", components)
 NS_DEFINE_NAMED_CID(EGECKOCOM_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_EVENT_LISTENER_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_TREE_VIEW_CID);
-NS_DEFINE_NAMED_CID(NSXPCM_AUTOCOMPLETE_SEARCH_CID);
+NS_DEFINE_NAMED_CID(ATCPLSRCH_AUTOCOMPLETE_SEARCH_CID);
 NS_DEFINE_NAMED_CID(NSXPCM_AUTOCOMPLETE_RESULT_CID);
 NS_DEFINE_NAMED_CID(CLH_CID);
 
@@ -419,7 +430,7 @@ static const mozilla::Module::CIDEntry kEGeckoCOMCIDs[] = {
     { &kEGECKOCOM_CID, false, NULL, egeckocom___Constructor },
 	{ &kNSXPCM_EVENT_LISTENER_CID, false, NULL, nsxpcm::event_listener__Constructor },
 	{ &kNSXPCM_TREE_VIEW_CID, false, NULL, nsxpcm::tree_view__Constructor },
-	{ &kNSXPCM_AUTOCOMPLETE_SEARCH_CID, false, NULL, nsxpcm::autocomplete_search__Constructor },
+	{ &kATCPLSRCH_AUTOCOMPLETE_SEARCH_CID, false, NULL, atcplsrch::autocomplete_search__Constructor },
 	{ &kNSXPCM_AUTOCOMPLETE_RESULT_CID, false, NULL, nsxpcm::autocomplete_result___Constructor },
 	{ &kCLH_CID, false, NULL, nsxpcm::clh__Constructor },
     { NULL }
@@ -433,7 +444,7 @@ static const mozilla::Module::ContractIDEntry kEGeckoCOMContracts[] = {
     { EGECKOCOM_CONTRACTID, &kEGECKOCOM_CID },
     { NSXPCM_EVENT_LISTENER_CONTRACTID, &kNSXPCM_EVENT_LISTENER_CID },
     { NSXPCM_TREE_VIEW_CONTRACTID, &kNSXPCM_TREE_VIEW_CID },
-    { NSXPCM_AUTOCOMPLETE_SEARCH_CONTRACTID, &kNSXPCM_AUTOCOMPLETE_SEARCH_CID },
+    { ATCPLSRCH_AUTOCOMPLETE_SEARCH_CONTRACTID, &kATCPLSRCH_AUTOCOMPLETE_SEARCH_CID },
     { NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, &kNSXPCM_AUTOCOMPLETE_RESULT_CID },
     { CLH_CONTRACTID, &kCLH_CID },
     { NULL }

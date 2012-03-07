@@ -71,14 +71,14 @@ namespace sclgecko {
 	extern const char *TargetName;
 
 	// A définir par l'utilisateur.
-	geckoo::user_callback__ *CreateSteering(
+	geckoo::steering_callback__ *CreateSteering(
 		const char *LauncherIdentification,
 		const lcl::locale_ &Locale,
 		const char *Language,
 		void *UP );	// To overload !
 
 	// A définir par l'utilisateur.
-	void DeleteSteering( geckoo::user_callback__ *Steering );
+	void DeleteSteering( geckoo::steering_callback__ *Steering );
 
 }
 
