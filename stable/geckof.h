@@ -130,8 +130,6 @@ namespace geckof {
 	geckoo::steering_callback__ *RetrieveSteering(
 		const char *LibraryName,
 		err::handling__ ERRHandling = err::h_Default );
-
-	geckoo::steering_callback__ &GetCurentSteering( void );	// A implémenter.
 }
 
 /*$END$*/

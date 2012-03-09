@@ -49,15 +49,6 @@ static mtx::mutex_handler__ _Mutex = MTX_INVALID_HANDLER;	// To protect access t
 static geckoo::steering_callback__ *_CurrentSteering = NULL;
 static bso::bool__ IsInitialized_ = false;
 
-geckoo::steering_callback__ &geckof::GetCurentSteering( void )
-{
-	if ( _CurrentSteering == NULL )
-		ERRc();
-
-	return *_CurrentSteering;
-}
-
-
 static str::string COutString_;
 static flx::E_STRING_OFLOW_DRIVER___ COutDriver_;
 
@@ -333,34 +324,13 @@ RE
 }
 
 NS_IMETHODIMP egeckocom___::HandlePseudoEvent(
-	const char *ComponentId,
 	nsIDOMElement *Element,
 	const char *Parameter,
 	char **JSErrorMessage )
 {
 RP
-	geckoo::steering_callback__ *Steering = NULL;
-	str::string LibraryName;
-	STR_BUFFER___ Buffer;
-	str::string Translation;
 RB
-	LibraryName.Init();
-	GetComponent_( ComponentId, LibraryName );
-
-	if ( ( Steering = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_RETRIEVE_FAILURE, Translation ) );
-		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
-	}
-
-	if ( !Steering->HandlePseudoEvent( Element, Parameter ) ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_HANDLE_PSEUDO_EVENT, Translation ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
-	}
+	((geckoo::pseudo_event_callback__ *)str::string( Parameter ).ToPointer() )->Handle( Element );
 RR
 RN
 RE

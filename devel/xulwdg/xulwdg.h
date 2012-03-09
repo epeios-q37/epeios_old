@@ -210,6 +210,48 @@ namespace xulwdg {
 		}
 	};
 
+	typedef nsxpcm::autocomplete_textbox__ _autocomplete_textbox__;
+
+	template <typename trunk> class autocomplete_textbox__
+	: public _autocomplete_textbox__,
+	  public _trunk_depot__<trunk>
+	{
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_autocomplete_textbox__::reset( P );
+			_trunk_depot__<trunk>::reset( P );
+		}
+		E_CVDTOR( autocomplete_textbox__ );
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			trunk &Trunk,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			_trunk_depot__<trunk>::Init( Trunk );
+			_autocomplete_textbox__::Init( Callback, Supports, Window );
+		}
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			trunk &Trunk,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			_trunk_depot__<trunk>::Init( Trunk );
+			_autocomplete_textbox__::Init( Callback, Window, Id );
+		}
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			trunk &Trunk,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			_trunk_depot__<trunk>::Init( Trunk );
+			_autocomplete_textbox__::Init( Callback, Window, Id );
+		}
+	};
+
 	typedef nsxpcm::event_handler__ _event_handler__;
 
 	template <typename trunk> class event_handler__
@@ -250,13 +292,15 @@ namespace xulwdg {
 		}
 	};
 
-#	define XULWDG__EH( name )\
-	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target )>, name##_eh__ );
 }
 
-#define XULWDG_WIDGET( name, target )	typedef xulwdg::name##__<target> name##__;\
+# define XULWDG__EH( name )\
+	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target )>, name##_eh__ );
 
-#define XULWDG_ALL_WIDGETS( target )\
+# define XULWDG_WIDGET( name, target )	typedef xulwdg::name##__<target> name##__;\
+
+/* Manque 'autocomplete_textbox__', car surchargé dans autre bibliothèque.*/
+# define XULWDG_ALMOST_ALL_WIDGETS( target )\
 	XULWDG_WIDGET( box, target )\
 	XULWDG_WIDGET( broadcaster, target )\
 	XULWDG_WIDGET( button, target )\
@@ -274,6 +318,8 @@ namespace xulwdg {
 	XULWDG_WIDGET( tree, target )\
 	XULWDG_WIDGET( widget, target )\
 	XULWDG_WIDGET( window, target )
+
+
 
 /*$END$*/
 				  /********************************************/

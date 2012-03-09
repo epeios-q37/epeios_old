@@ -222,36 +222,6 @@ namespace xulfui {
 
 	typedef geckoo::steering_callback__ _steering_callback__;
 
-	class pseudo_event_callback__
-	{
-	protected:
-		virtual void XULFUIHandle( nsIDOMElement *Element ) = 0;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		E_CVDTOR( pseudo_event_callback__);
-		void Init( void )
-		{
-			reset();
-		}
-		void Handle( nsIDOMElement *Element )
-		{
-			XULFUIHandle( Element );
-		}
-	};
-
-	void Add(
-		const char *Id,
-		pseudo_event_callback__ &Callback );
-
-	bso::bool__ Launch(
-		const char *Id,
-		nsIDOMElement *Element );
-
-	void Remove( const char *Id );
-
 	 class steering_callback__
 	 : public _steering_callback__
 	{
@@ -261,13 +231,6 @@ namespace xulfui {
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id );
-		virtual bso::bool__ GECKOOHandlePseudoEvent(
-			nsIDOMElement *Element,
-			const char *Parameter )
-		{
-			return Launch( Parameter, Element );
-		}
-		virtual nsIAutoCompleteResult *GECKOOGetAutoCompleteResult( const nsAString &SearchParam );
 		virtual bso::bool__ XULFUIRegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
@@ -284,6 +247,64 @@ namespace xulfui {
 			_Trunk = &Trunk;
 		}
 	};
+
+	typedef xulwdg::autocomplete_textbox__<xulftk::trunk___> _autocomplete_textbox__;
+
+	class autocomplete_textbox__
+	: public _autocomplete_textbox__
+	{
+	private:
+		xulfbs::_ontextentered_callback__ _OnTextEntered;
+		xulfbs::_ontextreverted_callback__ _OnTextReverted;
+		void _SubInit( xulfbs::autocomplete_textbox_callback__ &Callback )
+		{
+			_OnTextEntered.Init( Callback );
+			geckoo::AddPseudoEventHandler( this->GetWidget(), "ontextentered", _OnTextEntered );
+
+			_OnTextReverted.Init( Callback );
+			geckoo::AddPseudoEventHandler( this->GetWidget(), "ontextreverted", _OnTextReverted );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_autocomplete_textbox__::reset( P );
+			_OnTextEntered.reset( P );
+		}
+		E_CDTOR( autocomplete_textbox__ );
+		void Init(
+			xulfbs::autocomplete_textbox_callback__ &Callback,
+			xulftk::trunk___ &Trunk,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			reset();
+			_autocomplete_textbox__::Init( Callback, Trunk, Supports, Window );
+			_SubInit( Callback );
+		}
+		void Init(
+			xulfbs::autocomplete_textbox_callback__ &Callback,
+			xulftk::trunk___ &Trunk,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			reset();
+			_autocomplete_textbox__::Init( Callback, Trunk, Window, Id );
+			_SubInit( Callback );
+		}
+		void Init(
+			xulfbs::autocomplete_textbox_callback__ &Callback,
+			xulftk::trunk___ &Trunk,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			reset();
+			_autocomplete_textbox__::Init( Callback, Trunk, Window, Id );
+			_SubInit( Callback );
+		}
+	};
+
+
+
 
 }
 

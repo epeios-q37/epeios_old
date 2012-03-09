@@ -322,6 +322,14 @@ namespace str {
 		{
 			return ToLF( ErrP, 0 );
 		}
+		void *ToPointer( epeios::row__ *ErrP = NULL )
+		{
+# ifdef STR__64_BITS_TYPES_ALLOWED
+			return (void *)ToULL( ErrP, str::b16 );
+# else
+			return (void *)ToUL( ErrP, str::b16 );
+# endif
+		}
 		void ToNumber(
 			bso::lfloat__ &Number,
 			epeios::row__ *Error = NULL ) const

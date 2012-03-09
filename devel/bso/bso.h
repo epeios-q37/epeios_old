@@ -409,6 +409,25 @@ namespace bso {
 	//t A portable sign.
 	typedef sign__ p_sign__;
 
+	typedef void *pointer__;
+
+	//d Maximum size of an ASCII converted pointer.
+	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	25
+
+	struct pointer_buffer__ {
+		char Datum[BSO_ASCII_CONVERTED_POINTER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
+	};
+
+	inline const char *Convert(
+		pointer__ Value,
+		pointer_buffer__ &Buffer )
+	{
+		sprintf( Buffer.Datum, "%lp", Value );
+
+		return Buffer.Datum;
+	}
+
+
 	//d Maximum size of an ASCII converted signed/unsigned 64 bits integer.
 	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	22
 

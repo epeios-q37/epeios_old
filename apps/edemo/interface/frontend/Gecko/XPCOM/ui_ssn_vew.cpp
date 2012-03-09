@@ -67,24 +67,32 @@ static void Register_(
 #define R( name ) Widgets.name.Init( Trunk, Trunk.UI().SessionView.Window(), #name );
 
 class _callback__
-: public autocomplete_textbox_callback__
+: public xulfbs::autocomplete_textbox_callback__
 {
 protected:
-	virtual void XULFUIGetLabel(
+	virtual void XULFBSGetValue(
 		bso::ulong__ Index,
-		str::string_ &Label )
+		str::string_ &Value )
 	{
-		Label.Append( "This is the LABEL" );
+		Value.Append( "This is the VALUE" );
 	}
-	virtual void XULFUIGetComment(
+	virtual void XULFBSGetComment(
 		bso::ulong__ Index,
 		str::string_ &Comment )
 	{
-		Comment.Append( "This is the COMMANT" );
+		Comment.Append( "This is the COMMENT" );
 	}
-	virtual bso::ulong__ XULFUIGetMatchingCount( void )
+	virtual bso::ulong__ XULFBSGetMatchingCount( void )
 	{
 		return 100;
+	}
+	virtual void XULFBSOnTextEntered( nsIDOMElement *Element )
+	{
+		Element = Element;
+	}
+	virtual void XULFBSOnTextReverted( nsIDOMElement *Element )
+	{
+		Element = Element;
 	}
 } Callback_;
 
@@ -97,7 +105,7 @@ static void Register_(
 	R( txbDirectory );
 
 	Callback_.Init();
-	Widgets.txbAutocomplete.Init( str::string( "Autocomplete" ), Callback_, Trunk, Window, "txbAutocomplete" );
+	Widgets.txbAutocomplete.Init( Callback_, Trunk, Window, "txbAutocomplete" );
 }
 
 void ui_ssn_vew::session_view__::Init(

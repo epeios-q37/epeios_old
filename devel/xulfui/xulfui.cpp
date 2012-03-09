@@ -62,81 +62,6 @@ public:
 
 using namespace xulfui;
 
-typedef pseudo_event_callback__	*_handler__;
-
-E_ROW( _hrow__ );	// Handler row.
-
-typedef lstbch::E_LBUNCHt_( _handler__ , _hrow__ ) _handlers_;
-E_AUTO( _handlers );
-
-static _handlers Handlers_;
-
-typedef lstctn::E_LXMCONTAINERt_( str::string_, _hrow__ ) _ids_;
-E_AUTO( _ids );
-
-static _ids Ids_;
-
-static _hrow__ Search_( const char *TargetId )
-{
-	ctn::E_CMITEMt( str::string_, _hrow__ ) Id;
-	_hrow__ Row = Ids_.First();
-
-	Id.Init( Ids_ );
-
-	while ( ( Row != NONE ) && ( Id( Row ) != TargetId ) )
-		Row = Ids_.Next( Row );
-
-	return Row;
-}
-
-void xulfui::Add(
-	const char *Id,
-	pseudo_event_callback__ &Callback )
-{
-	_hrow__ Row = Search_( Id );
-
-	if ( Row != NONE )
-		ERRc();
-
-	Row = Ids_.New();
-
-	Ids_.Store( str::string( Id ), Row );
-
-	if ( Handlers_.Add( &Callback ) != Row )
-		ERRc();
-}
-
-bso::bool__ xulfui::Launch(
-	const char *Id,
-	nsIDOMElement *Element )
-{
-	_hrow__ Row = Search_( Id );
-	_handler__ Handler = NULL;
-
-	if ( Row == NONE )
-		ERRc();
-
-	Handlers_.Recall( Row, Handler );
-
-	if ( Handler == NULL )
-		ERRc();
-
-	Handler->Handle( Element );
-
-	return true;
-}
-
-void xulfui::Remove( const char *Id )
-{
-	_hrow__ Row = Search_( Id );
-
-	if ( Row == NONE )
-		ERRc();
-
-	Ids_.Delete( Row );
-	Handlers_.Delete( Row );
-}
-
 bso::bool__ xulfui::steering_callback__::GECKOORegister(
 	nsIDOMWindow *Window,
 	const str::string_ &Id )
@@ -154,30 +79,6 @@ ERREpilog
 	return Success;
 }
 
-nsIAutoCompleteResult *xulfui::steering_callback__::GECKOOGetAutoCompleteResult( const nsAString &RawSearchParam )
-{
-	nsIAutoCompleteResult *Target = NULL;
-ERRProlog
-	str::string SearchParam;
-ERRBegin
-	SearchParam.Init();
-
-	nsxpcm::Transform( RawSearchParam, SearchParam );
-
-	Target = nsxpcm::Get( SearchParam);
-
-	if ( Target == NULL )
-		ERRc();
-ERRErr
-ERREnd
-ERREpilog
-	return Target;	
-}
-
-
-
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
@@ -189,9 +90,6 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-
-		Handlers_.Init();
-		Ids_.Init();
 	}
 	~xulfuipersonnalization( void )
 	{

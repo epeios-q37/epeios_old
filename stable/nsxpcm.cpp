@@ -94,79 +94,6 @@ bch::E_BUNCH( nsIDOMWindow *) MasterWindows_;
 mtx::mutex_handler__ MasterWindowMutex_;
 bso::ulong__ MasterWindowCounter_ = 0;
 
-typedef nsIAutoCompleteResult *_handler__;
-
-E_ROW( _hrow__ );	// Handler row.
-
-typedef lstbch::E_LBUNCHt_( _handler__ , _hrow__ ) _handlers_;
-E_AUTO( _handlers );
-
-static _handlers Handlers_;
-
-typedef lstctn::E_LXMCONTAINERt_( str::string_, _hrow__ ) _ids_;
-E_AUTO( _ids );
-
-static _ids Ids_;
-
-static _hrow__ Search_( const str::string_ &TargetId )
-{
-	ctn::E_CMITEMt( str::string_, _hrow__ ) Id;
-	_hrow__ Row = Ids_.First();
-
-	Id.Init( Ids_ );
-
-	while ( ( Row != NONE ) && ( Id( Row ) != TargetId ) )
-		Row = Ids_.Next( Row );
-
-	return Row;
-}
-
-void nsxpcm::Add(
-	const str::string_ &Id,
-	nsIAutoCompleteResult *Target )
-{
-	_hrow__ Row = Search_( Id );
-
-	if ( Row != NONE )
-		ERRc();
-
-	Row = Ids_.New();
-
-	Ids_.Store( Id, Row );
-
-	if ( Handlers_.Add( Target ) != Row )
-		ERRc();
-}
-
-nsIAutoCompleteResult *nsxpcm::Get( const str::string_ &Id )
-{
-	_hrow__ Row = Search_( Id );
-	_handler__ Handler = NULL;
-
-	if ( Row == NONE )
-		ERRc();
-
-	Handlers_.Recall( Row, Handler );
-
-	if ( Handler == NULL )
-		ERRc();
-
-	return Handler;
-}
-
-void nsxpcm::Remove( const str::string_ &Id )
-{
-	_hrow__ Row = Search_( Id );
-
-	if ( Row == NONE )
-		ERRc();
-
-	Ids_.Delete( Row );
-	Handlers_.Delete( Row );
-}
-
-
-
 void nsxpcm::AddMasterWindow( nsIDOMWindow *Window )
 {
 ERRProlog
@@ -2089,7 +2016,18 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::GetMatchCount(PRUint32 *aMatchCoun
 
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+
+	_C().GetValue( index, Value );
+
+	nsxpcm::Transform( Value , _retval );
+ERRErr
+ERREnd
+ERREpilog
+    return NS_OK;
 }
 
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetLabelAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
@@ -2102,8 +2040,6 @@ ERRBegin
 	_C().GetLabel( index, Label );
 
 	nsxpcm::Transform( Label , _retval );
-
-    return NS_OK;
 ERRErr
 ERREnd
 ERREpilog
@@ -2120,8 +2056,6 @@ ERRBegin
 	_C().GetComment( index, Comment );
 
 	nsxpcm::Transform( Comment , _retval );
-
-    return NS_OK;
 ERRErr
 ERREnd
 ERREpilog
@@ -2770,9 +2704,6 @@ public:
 #endif
 		MasterWindowMutex_ = mtx::Create( mtx::mOwned );
 		MasterWindows_.Init();
-
-		Handlers_.Init();
-		Ids_.Init();
 	}
 	~nsxpcmpersonnalization( void )
 	{

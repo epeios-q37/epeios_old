@@ -60,10 +60,12 @@ extern class ttr_tutor &XULFBSTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "xulwdg.h"
+# include "xulwdg.h"
+
+# include "geckoo.h"
 
 // Predeclarations
 namespace xulftk {
@@ -122,7 +124,7 @@ namespace xulfbs {
 		}
 	};
 
-	XULWDG_ALL_WIDGETS( xulftk::trunk___ )
+	XULWDG_ALMOST_ALL_WIDGETS( xulftk::trunk___ )
 
 # define XULFBS_EH( name )\
 	class name\
@@ -131,6 +133,119 @@ namespace xulfbs {
 	protected:\
 		virtual void NSXPCMOnEvent( nsxpcm::event__ Event );\
 	};
+
+	typedef nsxpcm::autocomplete_textbox_callback__ _autocomplete_textbox_callback__;
+	typedef geckoo::pseudo_event_callback__ _pseudo_event_callback__;
+
+	class autocomplete_textbox_callback__
+	: public _autocomplete_textbox_callback__
+	{
+	private:
+		void NSXPCMGetValue(
+			bso::ulong__ Index,
+			str::string_ &Value )
+		{
+			XULFBSGetValue( Index, Value );
+		}
+		void NSXPCMGetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label )
+		{
+			XULFBSGetLabel( Index, Label );
+		}
+		void NSXPCMGetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			XULFBSGetComment( Index, Comment );
+		}
+		bso::ulong__ NSXPCMGetMatchingCount( void )
+		{
+			return XULFBSGetMatchingCount();
+		}
+	protected:
+		virtual void XULFBSGetValue(
+			bso::ulong__ Index,
+			str::string_ &Value ) = 0;
+		virtual void XULFBSGetLabel(
+			bso::ulong__ Index,
+			str::string_ &Label )
+		{
+			GetValue( Index, Label );
+		}
+		virtual void XULFBSGetComment(
+			bso::ulong__ Index,
+			str::string_ &Comment )
+		{
+			ERRu();
+		}
+		virtual bso::ulong__ XULFBSGetMatchingCount( void ) = 0;
+		virtual void XULFBSOnTextEntered( nsIDOMElement *Element ) = 0;
+		virtual void XULFBSOnTextReverted( nsIDOMElement *Element ) = 0;
+	public:
+		void OnTextEntered( nsIDOMElement *Element )
+		{
+			XULFBSOnTextEntered( Element );
+		}
+		void OnTextReverted( nsIDOMElement *Element )
+		{
+			XULFBSOnTextReverted( Element );
+		}
+	};
+
+	typedef geckoo::pseudo_event_callback__ _pseudo_event_callback__;
+
+	class _autocomplete_event_callback__
+	: public _pseudo_event_callback__
+	{
+	private:
+		autocomplete_textbox_callback__ *_Callback;
+	protected:
+		autocomplete_textbox_callback__ &_C( void )
+		{
+			if ( _Callback == NULL )
+				ERRc();
+
+			return *_Callback;
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_pseudo_event_callback__::reset( P );
+
+			_Callback = NULL;
+		}
+		E_CVDTOR( _autocomplete_event_callback__ )
+		void Init( autocomplete_textbox_callback__ &Callback )
+		{
+			reset();
+
+			_pseudo_event_callback__::Init();
+			
+			_Callback = &Callback;
+		}
+	};
+
+	class _ontextentered_callback__
+	: public _autocomplete_event_callback__
+	{
+	protected:
+		virtual void GECKOOHandle( nsIDOMElement *Element )
+		{
+			_C().OnTextEntered( Element );
+		}
+	};
+
+	class _ontextreverted_callback__
+	: public _autocomplete_event_callback__
+	{
+	protected:
+		virtual void GECKOOHandle( nsIDOMElement *Element )
+		{
+			_C().OnTextReverted( Element );
+		}
+	};
+
 }
 
 /*$END$*/

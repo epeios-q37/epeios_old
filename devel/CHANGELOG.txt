@@ -1,5 +1,9 @@
 $Id$
 
+08/03/2012 :
+	- STR :
+		- Correction bogue non prise en compte du fait que le pointeur contenant la position d'une éventuelle erreur lors d'une conversion peut être à 'NULL'.
+
 29/02/2012 :
 	- CSDLEO :
 		- Ajout paramètre 'DryRun', qui permet à 'getbkdapi' de consulter le 'backend' sans que celui-ci soit vraiment lancé (évite la tentative de lexture du fichier de configuration).

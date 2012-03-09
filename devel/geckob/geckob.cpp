@@ -106,7 +106,7 @@ geckoo::steering_callback__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
 	if ( Data == NULL )
 		ERRu();
 
-	if ( strcmp( Data->Version, GECKOO_SHARED_DATA_VERSION ) )
+	if ( strcmp( Data->Version, GECKOO_OVERLAPPING_VERSION ) )
 		ERRu();
 
 	if ( Data->Control != Data->ControlComputing() )

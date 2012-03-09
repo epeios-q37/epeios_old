@@ -3110,9 +3110,15 @@ namespace nsxpcm {
 	class autocomplete_textbox_callback__
 	{
 	protected:
+		virtual void NSXPCMGetValue(
+			bso::ulong__ Index,
+			str::string_ &Value ) = 0;
 		virtual void NSXPCMGetLabel(
 			bso::ulong__ Index,
-			str::string_ &Label ) = 0;
+			str::string_ &Label )
+		{
+			GetValue( Index, Label );
+		}
 		virtual void NSXPCMGetComment(
 			bso::ulong__ Index,
 			str::string_ &Comment )
@@ -3136,6 +3142,12 @@ namespace nsxpcm {
 		{
 			NSXPCMGetLabel( Index, Label );
 		}
+		void GetValue(
+			bso::ulong__ Index,
+			str::string_ &Value )
+		{
+			NSXPCMGetValue( Index, Value );
+		}
 		void GetComment(
 			bso::ulong__ Index,
 			str::string_ &Comment )
@@ -3147,14 +3159,6 @@ namespace nsxpcm {
 			return NSXPCMGetMatchingCount();
 		}
 	};
-
-	void Add(
-		const str::string_ &Id,
-		nsIAutoCompleteResult *Target );
-
-	nsIAutoCompleteResult *Get( const str::string_ &Id );
-
-	void Remove( const str::string_ &Id );
 }
 
 # define NSXPCM_AUTOCOMPLETE_RESULT_IID_STR "5126d993-3577-4214-811a-a1f286d464f7"
@@ -3202,6 +3206,62 @@ NS_DEFINE_STATIC_IID_ACCESSOR( nsxpcm::autocomplete_result___, NSXPCM_AUTOCOMPLE
 # define NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID "@zeusw.org/autocomplete_result;1"
 # define NXSPCM_AUTOCOMPLETE_RESULT_CLASSNAME "EAutoCompleteResult"
 # define NSXPCM_AUTOCOMPLETE_RESULT_CID  NSXPCM_AUTOCOMPLETE_RESULT_IID
+
+namespace nsxpcm {
+	class autocomplete_textbox__
+	: public textbox__
+	{
+	private:
+		nsCOMPtr<nsxpcm::autocomplete_result___> _AutoCompleteResult;
+		void _SubInit( nsxpcm::autocomplete_textbox_callback__ &Callback )
+		{
+		ERRProlog
+			str::string SearchParam;
+			bso::pointer_buffer__ Buffer;
+		ERRBegin
+			nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _AutoCompleteResult );
+			_AutoCompleteResult->Init( Callback );
+			SearchParam.Init( bso::Convert( nsxpcm::QueryInterface<nsIAutoCompleteResult>( _AutoCompleteResult ), Buffer ) );
+			nsxpcm::SetAttribute( this->GetWidget(), "autocompletesearchparam", SearchParam );
+		ERRErr
+		ERREnd
+		ERREpilog
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			textbox__::reset( P );
+		}
+		E_CDTOR( autocomplete_textbox__ );
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			reset();
+			textbox__::Init( Supports, Window );
+			_SubInit( Callback );
+		}
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			reset();
+			textbox__::Init( Window, Id );
+			_SubInit( Callback );
+		}
+		void Init(
+			nsxpcm::autocomplete_textbox_callback__ &Callback,
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			reset();
+			textbox__::Init( Window, Id );
+			_SubInit( Callback );
+		}
+	};
+}
 
 /* Fin partie concernant 'textbox' 'autocomplete' */
 

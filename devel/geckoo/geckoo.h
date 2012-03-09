@@ -66,6 +66,8 @@ extern class ttr_tutor &GECKOOTutor;
 
 # include "nsxpcm.h"
 
+# define GECKOO_OVERLAPPING_VERSION	"4"
+
 # define GECKOO_CREATE_STEERING_FUNCTION_NAME			GECKOOCreateSteering
 # define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME			GECKOORetrieveSteering
 # define GECKOO_DELETE_STEERING_FUNCTION_NAME			GECKOODeleteSteering
@@ -73,15 +75,37 @@ extern class ttr_tutor &GECKOOTutor;
 namespace geckoo {
 	typedef epeios::row__ id__;
 
+	class pseudo_event_callback__
+	{
+	protected:
+		virtual void GECKOOHandle( nsIDOMElement *Element ) = 0;
+	public:
+		void reset( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		E_CVDTOR( pseudo_event_callback__);
+		void Init( void )
+		{
+			reset();
+		}
+		void Handle( nsIDOMElement *Element )
+		{
+			GECKOOHandle( Element );
+		}
+	};
+
+	void AddPseudoEventHandler(
+		nsIDOMNode *Node,
+		const char *PseudoEventName,
+		pseudo_event_callback__ &Handler );
+
+
 	class steering_callback__ {
 	protected:
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
-		virtual bso::bool__ GECKOOHandlePseudoEvent(
-			nsIDOMElement *Element,
-			const char *Parameter ) = 0;
-		virtual nsIAutoCompleteResult *GECKOOGetAutoCompleteResult( const nsAString &SearchParam ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -98,19 +122,7 @@ namespace geckoo {
 		{
 			return GECKOORegister( Window, Id );
 		}
-		bso::bool__ HandlePseudoEvent(
-			nsIDOMElement *Element,
-			const char *Parameter )
-		{
-			return GECKOOHandlePseudoEvent( Element, Parameter );
-		}
-		nsIAutoCompleteResult *GetAutoCompleteResult( const nsAString &SearchParam )
-		{
-			return GECKOOGetAutoCompleteResult( SearchParam );
-		}
 	};
-
-# define GECKOO_SHARED_DATA_VERSION	"3"
 
 #pragma pack( push, 1)
 	class shared_data__

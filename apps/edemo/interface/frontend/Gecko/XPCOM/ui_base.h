@@ -49,7 +49,7 @@ namespace ui_base {
 		virtual void NSXPCMOnErr( const char *Message );
 	};
 
-	XULWDG_ALL_WIDGETS( trunk::trunk___ )
+	XULWDG_ALMOST_ALL_WIDGETS( trunk::trunk___ )
 
 # define UI_BASE_EH( name )\
 	class name\

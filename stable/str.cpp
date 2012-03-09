@@ -422,7 +422,10 @@ _gsint__ str::_GenericSignedConversion(
 			return -(_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
 	else if ( String.Get( Begin ) == '+' )
 		if ( String.Next( Begin ) == NONE ) {
-			*ErrP = *Begin + 1;
+			if ( ErrP != NULL )
+				*ErrP = *Begin + 1;
+			else
+				ERRc();
 			return 0;
 		} else 
 			return (_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );

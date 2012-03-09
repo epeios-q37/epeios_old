@@ -140,3 +140,20 @@ function test()
 		alert( err );
 	}
 }
+
+function handlePseudoEvent( element, param )
+ {
+	var message = new String();
+	
+	try {
+		egeckocom.HandlePseudoEvent( element, param, message );
+		
+		if ( message.value ) {
+			alert( message.value );
+			window.close();
+		}
+			
+	} catch ( err ) {
+		alert( err );
+	}
+}

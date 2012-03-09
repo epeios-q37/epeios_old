@@ -57,8 +57,31 @@ public:
 
 using namespace geckoo;
 
-const char *geckoo::shared_data__::Version = GECKOO_SHARED_DATA_VERSION;
+const char *geckoo::shared_data__::Version = GECKOO_OVERLAPPING_VERSION;
 bso::ulong__ geckoo::shared_data__::Control = shared_data__::ControlComputing();
+
+void geckoo::AddPseudoEventHandler(
+	nsIDOMNode *Node,
+	const char *PseudoEventName,
+	pseudo_event_callback__ &Handler )
+{
+ERRProlog
+	str::string Value;
+	bso::pointer_buffer__ Buffer;
+ERRBegin
+	Value.Init( "handlePseudoEvent( this, '" );
+
+	Value.Append( bso::Convert( &Handler, Buffer ) );
+
+	Value.Append( "');" );
+
+	nsxpcm::SetAttribute( Node, PseudoEventName, Value );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
