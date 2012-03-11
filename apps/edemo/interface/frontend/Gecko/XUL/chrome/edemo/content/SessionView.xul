@@ -64,8 +64,6 @@
 			/>
 		<broadcaster
 			id="glbAutocomplete"
-			ontextentered="test();"
-			xex:ontextentered="ehAutocomplete"
 		/>
 	</broadcasterset>
 	<keyset>
@@ -95,8 +93,17 @@
 				</tabpanel>
 				<tabpanel>
 					<groupbox>
-						<caption label="coucou"/>
-						<textbox id="txbAutocomplete" observes="glbAutocomplete"  type="autocomplete" autocompletesearch="epeios" showcommentcolumn="true" enablehistory="true" />
+						<textbox id="txbAutocomplete" type="autocomplete" autocompletesearch="epeios" completedefaultindex="true" autofill="true" completedefaultmatch="true"/>
+					</groupbox>
+					<groupbox>
+						<vbox>
+							<checkbox id="ckbComment" label="Comment" xex:oncommand="ehUpdate"/>
+							<checkbox id="ckbHistory" label="History" xex:oncommand="ehUpdate"/>
+							<checkbox id="ckbCompleteDefaultIndex" label="CompleteDefaultIndex" xex:oncommand="ehUpdate" checked="true"/>
+							<checkbox id="ckbForceComplete" label="ForceComplete" xex:oncommand="ehUpdate"/>
+							<checkbox id="ckbHighlightNonMatches" label="HighlightNonMatches" xex:oncommand="ehUpdate"/>
+							<checkbox id="ckbIgnoreBlurWhileSearching" label="IgnoreBlurWhileSearching" xex:oncommand="ehUpdate"/>
+						</vbox>
 					</groupbox>
 				</tabpanel>
 			</tabpanels>

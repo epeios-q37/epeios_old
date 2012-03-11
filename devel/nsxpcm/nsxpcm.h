@@ -666,6 +666,32 @@ namespace nsxpcm {
 		T( Element->RemoveAttribute( EName ) );
 	}
 
+	inline void RemoveAttribute(
+		nsIDOMNode *Node,
+		const char *Name )
+	{
+		RemoveAttribute( QueryInterface<nsIDOMElement>( Node ), Name );
+	}
+
+	inline void SetAttributeState( 
+		nsIDOMElement *Element,
+		const char *Name,
+		bso::bool__ Value )
+	{
+		if ( Value )
+			SetAttribute( Element, Name, "true" );
+		else
+			RemoveAttribute( Element, Name );
+	}
+
+	inline void SetAttributeState(
+		nsIDOMNode *Node,
+		const char *Name,
+		const bso::bool__ Value )
+	{
+		SetAttributeState( QueryInterface<nsIDOMElement>( Node ), Name, Value );
+	}
+
 	inline const str::string_ &GetAttribute(
 		nsIDOMElement *Element,
 		const char *Name,
@@ -703,12 +729,7 @@ namespace nsxpcm {
 		const char *Name,
 		str::string_ &Value )
 	{
- 		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node );
-
-		if ( Element != NULL )
-			return GetAttribute( Element, Name, Value );
-		else
-			return Value;
+ 		return GetAttribute( QueryInterface<nsIDOMElement>( Node ), Name, Value );
 	}
 
 	inline const str::string_ &GetAttributeNS(
@@ -717,12 +738,33 @@ namespace nsxpcm {
 		const char *Name,
 		str::string_ &Value )
 	{
- 		nsIDOMElement *Element = QueryInterface<nsIDOMElement>( Node );
+ 		return GetAttributeNS( QueryInterface<nsIDOMElement>( Node ), URI, Name, Value );
+	}
 
-		if ( Element != NULL )
-			return GetAttributeNS( Element, URI, Name, Value );
-		else
-			return Value;
+	inline bso::bool__ GetAttributeState(
+		nsIDOMElement *Element,
+		const char *Name )
+	{
+		bso::bool__ State = false;
+	ERRProlog
+		str::string Value;
+	ERRBegin
+		Value.Init();
+		GetAttribute( Element, Name, Value );
+
+		if ( Value == "true" )
+			State = true;
+	ERRErr
+	ERREnd
+	ERREpilog
+		return State;
+	}
+
+	inline bso::bool__ GetAttributeState(
+		nsIDOMNode *Node,
+		const char *Name )
+	{
+ 		return GetAttributeState( QueryInterface<nsIDOMElement>( Node ), Name );
 	}
 
 	template <typename t> inline void Focus( t *Element )
@@ -1608,22 +1650,10 @@ namespace nsxpcm {
 			return QueryInterface<widget>( GetSupports() );
 		}
 		const str::string_ &GetAttribute(
-			const str::string_ &Name,
-			str::string_ &Value )
-		{
-			return nsxpcm::GetAttribute( GetWidget(), Name, Value );
-		}
-		const str::string_ &GetAttribute(
 			const char *Name,
 			str::string_ &Value )
 		{
 			return nsxpcm::GetAttribute( GetWidget(), Name, Value );
-		}
-		void SetAttribute(
-			const str::string_ &Name,
-			str::string_ &Value )
-		{
-			nsxpcm::SetAttribute( GetWidget(), Name, Value );
 		}
 		void SetAttribute(
 			const char *Name,
@@ -1637,9 +1667,15 @@ namespace nsxpcm {
 		{
 			nsxpcm::SetAttribute( GetWidget(), Name, Value );
 		}
-		void RemoveAttribute( const str::string_ &Name )
+		void SetAttributeState(
+			const char *Name,
+			bso::bool__ State )
 		{
-			nsxpcm::RemoveAttribute( GetWidget(), Name );
+			nsxpcm::SetAttributeState( GetWidget(), Name, State );
+		}
+		bso::bool__ GetAttributeState( const char *Name )
+		{
+			return nsxpcm::GetAttributeState( GetWidget(), Name );
 		}
 		void RemoveAttribute( const char *Name )
 		{
@@ -1651,10 +1687,7 @@ namespace nsxpcm {
 		}
 		void Enable( bso::bool__ Value = true )
 		{
-			if ( Value )
-				RemoveAttribute( "disabled" );
-			else
-				SetAttribute( "disabled", "true" );
+			SetAttributeState( "disabled", !Value );
 		}
 		void Disable( bso::bool__ Value = true )
 		{
@@ -1662,19 +1695,7 @@ namespace nsxpcm {
 		}
 		bso::bool__ IsEnabled( void )
 		{
-			bso::bool__ Enabled = false;
-		ERRProlog
-			str::string Value;
-		ERRBegin
-			Value.Init();
-
-			GetAttribute( "disabled", Value );
-
-			Enabled = Value != "true";
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Enabled;
+			return !GetAttributeState( "disabled" );
 		}
 		bso::bool__ IsDisabled( void )
 		{
@@ -1682,10 +1703,7 @@ namespace nsxpcm {
 		}
 		void Show( bso::bool__ Value = true )
 		{
-			if ( Value )
-				RemoveAttribute( "hidden" );
-			else
-				SetAttribute( "hidden", "true" );
+			SetAttributeState( "hidden", !Value );
 		}
 		void Hide( bso::bool__ Value = true )
 		{
@@ -1719,6 +1737,24 @@ namespace nsxpcm {
 				nsxpcm::ReplaceChild( GetWidget(), GetFirstChild( GetWidget() ), NewChild );
 		}
 	};
+
+# define NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( affix, name )\
+	void Enable##affix( bso::bool__ Value = true )\
+	{\
+		SetAttributeState( name, Value );\
+	}\
+	void Disable##affix( bso::bool__ Value = true )\
+	{\
+		SetAttributeState( name, !Value );\
+	}\
+	bso::bool__ Is##affix##Enabled( void )\
+	{\
+		return GetAttributeState( name );\
+	}\
+	bso::bool__ Is##affix##Disabled( void )\
+	{\
+		return !GetAttributeState( name );\
+	}\
 
 # define NSXPCM__FOCUS_HANDLING\
 		void Focus( void )\
@@ -1847,6 +1883,14 @@ namespace nsxpcm {
 		{
 			return nsxpcm::IsChecked( GetWidget() );
 		}
+		void Check( bso::bool__ Value = true )
+		{
+			nsxpcm::SetChecked( GetWidget(), Value );
+		}
+		void Uncheck( bso::bool__ Value = true )
+		{
+			Check( !Value );
+		}
 	};
 
 	class radio__
@@ -1856,6 +1900,14 @@ namespace nsxpcm {
 		bso::bool__ IsChecked( void )
 		{
 			return nsxpcm::IsChecked( GetWidget() );
+		}
+		void Check( bso::bool__ Value = true )
+		{
+			nsxpcm::SetChecked( GetWidget(), Value );
+		}
+		void Uncheck( bso::bool__ Value = true )
+		{
+			Check( !Value );
 		}
 	};
 
@@ -3111,21 +3163,24 @@ namespace nsxpcm {
 	{
 	protected:
 		virtual void NSXPCMGetValue(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Value ) = 0;
 		virtual void NSXPCMGetLabel(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Label )
 		{
-			GetValue( Index, Label );
+			GetValue( Pattern, Index, Label );
 		}
 		virtual void NSXPCMGetComment(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Comment )
 		{
 			ERRu();
 		}
-		virtual bso::ulong__ NSXPCMGetMatchingCount( void ) = 0;
+		virtual bso::ulong__ NSXPCMGetMatchingCount( const str::string_ &Pattern ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -3137,26 +3192,29 @@ namespace nsxpcm {
 			// Standardisation.
 		}
 		void GetLabel(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Label )
 		{
-			NSXPCMGetLabel( Index, Label );
+			NSXPCMGetLabel( Pattern, Index, Label );
 		}
 		void GetValue(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Value )
 		{
-			NSXPCMGetValue( Index, Value );
+			NSXPCMGetValue( Pattern, Index, Value );
 		}
 		void GetComment(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Comment )
 		{
-			NSXPCMGetComment( Index, Comment );
+			NSXPCMGetComment( Pattern, Index, Comment );
 		}
-		bso::ulong__ GetMatchingCount( void )
+		bso::ulong__ GetMatchingCount( const str::string_ &Pattern )
 		{
-			return NSXPCMGetMatchingCount();
+			return NSXPCMGetMatchingCount( Pattern );
 		}
 	};
 }
@@ -3173,6 +3231,7 @@ namespace nsxpcm {
 	{
 	private:
 		autocomplete_textbox_callback__ *_Callback;
+		str::string _SearchString;
 		autocomplete_textbox_callback__ &_C( void )
 		{
 			if ( _Callback == NULL )
@@ -3187,6 +3246,7 @@ namespace nsxpcm {
 		void reset( bso::bool__ P = true )
 		{
 			_Callback = NULL;
+			_SearchString.reset( P );
 		}
 		E_CVDTOR( autocomplete_result___ );
 	public:
@@ -3195,6 +3255,16 @@ namespace nsxpcm {
 			reset();
 
 			_Callback = &Callback;
+			_SearchString.Init();
+		}
+		void SetSearchString( const nsAString &RawSearchString )
+		{
+			_SearchString.Init();
+			Transform( RawSearchString, _SearchString );
+		}
+		const str::string_ &GetSearchString( void ) const
+		{
+			return _SearchString;
 		}
 	};
 
@@ -3221,7 +3291,7 @@ namespace nsxpcm {
 		ERRBegin
 			nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _AutoCompleteResult );
 			_AutoCompleteResult->Init( Callback );
-			SearchParam.Init( bso::Convert( nsxpcm::QueryInterface<nsIAutoCompleteResult>( _AutoCompleteResult ), Buffer ) );
+			SearchParam.Init( bso::Convert( _AutoCompleteResult, Buffer ) );
 			nsxpcm::SetAttribute( this->GetWidget(), "autocompletesearchparam", SearchParam );
 		ERRErr
 		ERREnd

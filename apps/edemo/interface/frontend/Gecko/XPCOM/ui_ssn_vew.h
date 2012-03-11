@@ -32,6 +32,7 @@ namespace ui_ssn_vew {
 	typedef xulfsv::session_view__ _session_view__;
 
 	UI_BASE_EH( get_directory_eh__ );
+	UI_BASE_EH( update_eh__ );
 
 	struct session_view__
 	: public _session_view__
@@ -47,6 +48,7 @@ namespace ui_ssn_vew {
 		: public _session_view__::event_handlers__
 		{
 			get_directory_eh__ ehGetDirectory;
+			update_eh__ ehUpdate;
 		} EventHandlers;
 		struct widgets__
 		: public _session_view__::widgets__
@@ -55,6 +57,13 @@ namespace ui_ssn_vew {
 				txbDirectorySymbolicName,
 				txbDirectory;
 			xulfui::autocomplete_textbox__ txbAutocomplete;
+			ui_base::checkbox__ 
+				ckbHistory,
+				ckbComment,
+				ckbCompleteDefaultIndex,
+				ckbForceComplete,
+				ckbHighlightNonMatches,
+				ckbIgnoreBlurWhileSearching;
 		} Widgets;
 		session_view__( void )
 		: _session_view__( Broadcasters, EventHandlers, Widgets )
@@ -62,11 +71,7 @@ namespace ui_ssn_vew {
 		void Init(
 			nsIDOMWindow *Window,
 			trunk::trunk___ &Trunk );
-		void Update( void )
-		{
-			_session_view__::Update();
-			Grid.Update();
-		}
+		void Update( void );
 	};
 
 	void RegisterSessionViewUI(

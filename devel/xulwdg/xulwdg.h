@@ -153,6 +153,7 @@ namespace xulwdg {
 	XULWDG__WN( widget, box );
 	XULWDG__W( broadcaster );
 	XULWDG__W( button );
+	XULWDG__W( checkbox );
 	XULWDG__W( deck );
 	XULWDG__W( description );
 	XULWDG__W( listbox );
@@ -304,6 +305,7 @@ namespace xulwdg {
 	XULWDG_WIDGET( box, target )\
 	XULWDG_WIDGET( broadcaster, target )\
 	XULWDG_WIDGET( button, target )\
+	XULWDG_WIDGET( checkbox, target )\
 	XULWDG_WIDGET( deck, target )\
 	XULWDG_WIDGET( description, target )\
 	XULWDG_WIDGET( listbox, target )\

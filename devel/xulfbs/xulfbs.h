@@ -142,44 +142,50 @@ namespace xulfbs {
 	{
 	private:
 		void NSXPCMGetValue(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Value )
 		{
-			XULFBSGetValue( Index, Value );
+			XULFBSGetValue( Pattern, Index, Value );
 		}
 		void NSXPCMGetLabel(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Label )
 		{
-			XULFBSGetLabel( Index, Label );
+			XULFBSGetLabel( Pattern, Index, Label );
 		}
 		void NSXPCMGetComment(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Comment )
 		{
-			XULFBSGetComment( Index, Comment );
+			XULFBSGetComment( Pattern, Index, Comment );
 		}
-		bso::ulong__ NSXPCMGetMatchingCount( void )
+		bso::ulong__ NSXPCMGetMatchingCount( const str::string_ &Pattern )
 		{
-			return XULFBSGetMatchingCount();
+			return XULFBSGetMatchingCount( Pattern );
 		}
 	protected:
 		virtual void XULFBSGetValue(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Value ) = 0;
 		virtual void XULFBSGetLabel(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Label )
 		{
-			GetValue( Index, Label );
+			GetValue( Pattern, Index, Label );
 		}
 		virtual void XULFBSGetComment(
+			const str::string_ &Pattern,
 			bso::ulong__ Index,
 			str::string_ &Comment )
 		{
 			ERRu();
 		}
-		virtual bso::ulong__ XULFBSGetMatchingCount( void ) = 0;
+		virtual bso::ulong__ XULFBSGetMatchingCount( const str::string_ &Pattern ) = 0;
 		virtual void XULFBSOnTextEntered( nsIDOMElement *Element ) = 0;
 		virtual void XULFBSOnTextReverted( nsIDOMElement *Element ) = 0;
 	public:

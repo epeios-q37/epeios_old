@@ -301,6 +301,12 @@ namespace xulfui {
 			_autocomplete_textbox__::Init( Callback, Trunk, Window, Id );
 			_SubInit( Callback );
 		}
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( CompleteDefaultIndex, "completedefaultindex" );
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( History, "enablehistory" );
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( ForceComplete, "forcecomplete" );
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( HighlightNonMatches, "highlightnonmatches" );
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( IgnoreBlurWhileSearching, "ignoreblurwhilesearching" );
+		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( Comment, "showcommentcolumn" );
 	};
 
 

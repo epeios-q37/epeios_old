@@ -2009,7 +2009,7 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::GetErrorDescription(nsAString & aE
 
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetMatchCount(PRUint32 *aMatchCount)
 {
-	*aMatchCount = _C().GetMatchingCount();
+	*aMatchCount = _C().GetMatchingCount( GetSearchString() );
 
     return NS_OK;
 }
@@ -2021,7 +2021,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	_C().GetValue( index, Value );
+	_C().GetValue( GetSearchString(), index, Value );
 
 	nsxpcm::Transform( Value , _retval );
 ERRErr
@@ -2037,7 +2037,7 @@ ERRProlog
 ERRBegin
 	Label.Init();
 
-	_C().GetLabel( index, Label );
+	_C().GetLabel( GetSearchString(), index, Label );
 
 	nsxpcm::Transform( Label , _retval );
 ERRErr
@@ -2053,7 +2053,7 @@ ERRProlog
 ERRBegin
 	Comment.Init();
 
-	_C().GetComment( index, Comment );
+	_C().GetComment( GetSearchString(), index, Comment );
 
 	nsxpcm::Transform( Comment , _retval );
 ERRErr
