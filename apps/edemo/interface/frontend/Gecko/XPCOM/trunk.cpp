@@ -26,7 +26,6 @@ using namespace trunk;
 void trunk::user_callback__::XULFTKFormatedInformations(
 	const char *LauncherIdentification,
 	str::string_ &Informations )
-
 {
 ERRProlog
 	tol::buffer__ Buffer;

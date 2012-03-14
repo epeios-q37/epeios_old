@@ -2657,7 +2657,9 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	AddSemiColonCommand_( List );
 }
 
-nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
+static nsIDOMWindowInternal *GetWindow_(
+	nsIDOMDocument *Document,
+	const char *TagName )
 {
 	nsEmbedString EId;
 	nsIDOMNodeList *List = NULL;
@@ -2665,7 +2667,7 @@ nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
 	nsIDOMNode *Node = NULL;
 	nsIDOMWindow *Window = NULL;
 
-	nsxpcm::Transform( "window", EId );
+	nsxpcm::Transform( TagName, EId );
 
 	if ( Document->GetElementsByTagName( EId, &List ) != NS_OK )
 		ERRu();
@@ -2673,16 +2675,25 @@ nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
 	T( List->GetLength( &Length ) );
 
 	if ( Length != 1 )
-		ERRx();
+		return NULL;
 
 	T( List->Item( Length, &Node ) );
 
-#if 0
-	return QueryInterface<nsIDOMWindow>( Node );
-#else
 	return GetWindowInternal( Node );
-#endif
 
+}
+
+
+nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
+{
+	nsIDOMWindowInternal *Window = NULL;
+
+	if ( ( Window = GetWindow_( Document, "window" ) ) == NULL )
+		if ( ( Window = GetWindow_( Document, "page" ) ) == NULL )
+			if ( ( Window = GetWindow_( Document, "dialog" ) ) == NULL )
+				ERRx();
+
+	return Window;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

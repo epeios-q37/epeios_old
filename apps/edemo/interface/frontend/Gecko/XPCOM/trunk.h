@@ -147,7 +147,6 @@ namespace trunk {
 	: public _user_callback__
 	{
 	protected:
-
 		virtual void XULFTKFormatedInformations(
 			const char *LauncherIdentification,
 			str::string_ &Informations );
@@ -204,10 +203,6 @@ namespace trunk {
 			return true;
 		}
 	};
-
-	const str::string_ &GetFormattedVersionText(
-		trunk___ &Trunk,
-		str::string_ &Version );
 }
 
 #endif

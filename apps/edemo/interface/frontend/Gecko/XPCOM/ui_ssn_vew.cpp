@@ -294,6 +294,7 @@ void ui_ssn_vew::update_eh__::NSXPCMOnEvent( nsxpcm::event__ Event )
 /* 'broadcaster's */
 
 #define R( name ) Trunk, Broadcasters.name.Init( Trunk, Trunk.UI().SessionView.Window(), #name );
+
 static void Register_(
 	trunk___ &Trunk,
 	session_view__::broadcasters__ &Broadcasters,

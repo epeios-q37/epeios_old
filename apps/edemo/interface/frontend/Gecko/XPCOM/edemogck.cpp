@@ -62,4 +62,3 @@ void sclgecko::DeleteSteering( geckoo::steering_callback__ *Steering )
 	if ( Steering != NULL )
 		delete Steering;
 }
-

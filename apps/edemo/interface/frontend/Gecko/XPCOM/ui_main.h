@@ -28,8 +28,7 @@
 namespace ui_main {
 
 	typedef xulfmn::main__ _main__;
-
-
+	
 	struct main__
 	: public _main__
 	{
