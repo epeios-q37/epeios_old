@@ -63,9 +63,11 @@ extern class ttr_tutor &GECKOFTutor;
 # include "err.h"
 # include "flw.h"
 
-#include "dlbrry.h"
+# include "dlbrry.h"
 
-#include "geckoo.h"
+# include "geckoo.h"
+
+# define GECKOF_AUTOCOMPLETE_COMPONENT_NAME	"epeios_autocomplete_component;1"
 
 namespace geckof {
 	class gecko_wrapper___

@@ -68,7 +68,7 @@ extern class ttr_tutor &XULFUITutor;
 # include "xulfsv.h"
 # include "xulfmn.h"
 
-# include "geckoo.h"
+# include "geckof.h"
 
 namespace xulfui {
 
@@ -258,6 +258,11 @@ namespace xulfui {
 		xulfbs::_ontextreverted_callback__ _OnTextReverted;
 		void _SubInit( xulfbs::autocomplete_textbox_callback__ &Callback )
 		{
+			if ( HasAttribute( "autocompletesearch" ) )
+				ERRu();
+
+			SetAttribute( "autocompletesearch", GECKOF_AUTOCOMPLETE_COMPONENT_NAME );
+			
 			_OnTextEntered.Init( Callback );
 			geckoo::AddPseudoEventHandler( this->GetWidget(), "ontextentered", _OnTextEntered );
 

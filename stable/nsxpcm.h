@@ -1649,6 +1649,10 @@ namespace nsxpcm {
 		{
 			return QueryInterface<widget>( GetSupports() );
 		}
+		bso::bool__ HasAttribute( const char *Name )
+		{
+			return nsxpcm::HasAttribute( GetWidget(), Name );
+		}
 		const str::string_ &GetAttribute(
 			const char *Name,
 			str::string_ &Value )
@@ -3289,6 +3293,11 @@ namespace nsxpcm {
 			str::string SearchParam;
 			bso::pointer_buffer__ Buffer;
 		ERRBegin
+			if ( HasAttribute( "type" )  )
+				ERRu();
+
+			SetAttribute( "type", "autocomplete" );
+
 			nsxpcm::CreateInstance( NSXPCM_AUTOCOMPLETE_RESULT_CONTRACTID, _AutoCompleteResult );
 			_AutoCompleteResult->Init( Callback );
 			SearchParam.Init( bso::Convert( _AutoCompleteResult, Buffer ) );

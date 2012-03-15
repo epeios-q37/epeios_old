@@ -1,5 +1,12 @@
 $Id$
 
+15/03/2012 :
+	- NSXPCM :
+		- Ajout méthode 'HasAttribute(...)' au 'widget' générique.
+		- Rajout automatique de l'attribut 'type="autocomplete"' pour un 'autocomplete_textbox__'.
+	- XULFUI :
+		- Ajout automatique de l'attribut "autocompletesearch".
+
 08/03/2012 :
 	- STR :
 		- Correction bogue non prise en compte du fait que le pointeur contenant la position d'une éventuelle erreur lors d'une conversion peut être à 'NULL'.
