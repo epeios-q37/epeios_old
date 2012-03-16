@@ -437,7 +437,7 @@ namespace bch {
 		{
 			Allocate( *Row + Count );
 
-			mmr::Set( Object, Row, Count );
+			mmr::Store( Object, Row, Count );
 		}
 		void SetAndAdjust( void )
 		{

@@ -1,5 +1,9 @@
 $Id$
 
+16/03/2012 :
+	- BCH :
+		- Correction 'FillWithAndAdjust(...)'.
+
 15/03/2012 :
 	- NSXPCM :
 		- Ajout méthode 'HasAttribute(...)' au 'widget' générique.
