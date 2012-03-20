@@ -204,6 +204,62 @@ rrow__ ndbidx::index_::_SearchStrictGreater(
 	return Candidate;
 }
 
+rrow__ ndbidx::index_::_SearchStrictLesser(
+	rrow__ Row,
+	skip_level__ SkipLevel ) const
+{
+	_CompleteInitialization();	
+
+	rrow__ Buffer = _Index().GetTreeLesser( Row );
+	rrow__ Candidate = NONE;
+
+	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
+		Buffer = _Index().GetTreeLesser( Buffer );
+
+	if ( Buffer != NONE ) {
+		Candidate = Buffer;
+
+		Buffer = _Index().GetTreeGreater( Buffer );
+
+		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
+			Candidate = Buffer;
+
+			Buffer = _Index().GetTreeGreater( Buffer );
+		}
+
+		if ( Buffer != NONE ) {
+			Buffer = _SearchStrictLesser( Buffer, SkipLevel );
+
+			if ( Buffer != NONE )
+				Candidate = Buffer;
+		}
+	} else {
+		Buffer = _Index().GetTreeParent( Row );
+
+		if ( Buffer != NONE ) {
+
+			if ( _Index().IsTreeLesser( Row ) ) {
+				while ( ( Buffer != NONE ) && _Index().IsTreeLesser( Buffer ) )
+					Buffer = _Index().GetTreeParent( Buffer );
+			} else
+				Buffer = Row;
+
+			if ( Buffer != NONE ) {
+				Buffer = _Index().GetTreeParent( Buffer );
+
+				if ( Buffer != NONE ) {
+					if ( Compare( Row, Buffer, SkipLevel ) != 0 )
+						Candidate = Buffer;
+					else
+						Candidate = _SearchStrictLesser( Buffer, SkipLevel );
+				}
+			}
+		}
+	}
+
+	return Candidate;
+}
+
 
 bso::ubyte__ ndbidx::index_::Index(
 	rrow__ Row,

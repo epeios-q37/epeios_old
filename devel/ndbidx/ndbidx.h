@@ -244,6 +244,9 @@ namespace ndbidx {
 			if ( CompareWithContent && ( _ModificationTimeStamp == Content().ModificationTimeStamp() ) )
 				_ModificationTimeStamp = tol::Clock( true );
 		}
+		rrow__ _SearchStrictLesser(
+			rrow__ Row,
+			skip_level__ SkipLevel ) const;
 		rrow__ _SearchStrictGreater(
 			rrow__ Row,
 			skip_level__ SkipLevel ) const;
@@ -435,6 +438,21 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 			return _Index().Next( Row );
+		}
+		rrow__ StrictLesser(
+			rrow__ Row,
+			skip_level__ SkipLevel ) const
+		{
+			_CompleteInitialization();
+
+			rrow__ Candidate = Previous( Row );
+
+			if ( Candidate == NONE )
+				return NONE;
+			else if ( Compare( Row, Candidate, SkipLevel ) != 0 )
+				return Candidate;
+			else
+				return _SearchStrictLesser( Row, SkipLevel );
 		}
 		rrow__ StrictGreater(
 			rrow__ Row,

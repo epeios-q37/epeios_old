@@ -93,7 +93,7 @@
 				</tabpanel>
 				<tabpanel>
 					<groupbox>
-						<textbox id="txbAutocomplete" type="autocomplete" autocompletesearch="epeios" completedefaultindex="true" autofill="true" completedefaultmatch="true"/>
+						<textbox id="txbAutocomplete" completedefaultindex="true" autofill="true" completedefaultmatch="true"/>
 					</groupbox>
 					<groupbox>
 						<vbox>
