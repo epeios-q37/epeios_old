@@ -1604,6 +1604,31 @@ namespace rgstry {
 
 	E_AUTO( multi_level_registry )
 
+	inline str::_guint__ _GetUnsigned(
+		const str::string_ &RawValue,
+		str::_guint__ Default,
+		bso::bool__ *Error,
+		str::_guint__ Min,
+		str::_guint__ Max )
+	{
+		str::_guint__ Value = Default;
+		epeios::row__ LocalError = NONE;
+
+		Value = str::_GenericUnsignedConversion( RawValue, 0, &LocalError, str::bAuto, Max );
+
+		if ( ( LocalError != NONE ) || ( Value < Min ) ) {
+
+			Value = Default;
+
+			if ( Error != NULL )
+				*Error = true;
+			else
+				ERRu();
+		}
+
+		return Value;
+	}
+
 	template <typename registry, typename path> inline str::_guint__ _GetUnsigned(
 		const registry &Registry,
 		const path &Path,
@@ -1615,14 +1640,15 @@ namespace rgstry {
 		str::_guint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
-		epeios::row__ GenericError = NONE;
+		epeios::row__ PathError = NONE;
+		bso::bool__ ConversionError = false;
 	ERRBegin
 		RawValue.Init();
 
-		if ( Registry.GetValue( Path, RawValue, &GenericError ) )
-			Value = str::_GenericUnsignedConversion( RawValue, 0, &GenericError, str::bAuto, Max );
+		if ( Registry.GetValue( Path, RawValue, &PathError ) )
+			Value = _GetUnsigned( RawValue, Default, &ConversionError, Min, Max );
 
-		if ( ( GenericError != NONE ) || ( Value < Min ) ) {
+		if ( ( PathError != NONE ) || ConversionError ) {
 
 			Value = Default;
 
@@ -1631,13 +1657,11 @@ namespace rgstry {
 			else
 				ERRu();
 		}
-
 	ERRErr
 	ERREnd
 	ERREpilog
 		return Value;
 	}
-
 
 	template <typename registry, typename path> inline str::_gsint__ _GetSigned(
 		const registry &Registry,
