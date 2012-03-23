@@ -279,31 +279,10 @@ namespace xulfui {
 		void Init(
 			xulfbs::autocomplete_textbox_callback__ &Callback,
 			xulftk::trunk___ &Trunk,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			const nsxpcm::supports__ &Supports )
 		{
 			reset();
-			_autocomplete_textbox__::Init( Callback, Trunk, Supports, Window );
-			_SubInit( Callback );
-		}
-		void Init(
-			xulfbs::autocomplete_textbox_callback__ &Callback,
-			xulftk::trunk___ &Trunk,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			reset();
-			_autocomplete_textbox__::Init( Callback, Trunk, Window, Id );
-			_SubInit( Callback );
-		}
-		void Init(
-			xulfbs::autocomplete_textbox_callback__ &Callback,
-			xulftk::trunk___ &Trunk,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			reset();
-			_autocomplete_textbox__::Init( Callback, Trunk, Window, Id );
+			_autocomplete_textbox__::Init( Callback, Trunk, Supports );
 			_SubInit( Callback );
 		}
 		NSXPCM_HANDLE_BOOLEAN_ATTRIBUTE( CompleteDefaultIndex, "completedefaultindex" );

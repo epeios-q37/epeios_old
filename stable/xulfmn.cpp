@@ -134,7 +134,7 @@ static void Register_(
 	broadcaster__ &Broadcaster,
 	const char *Id )
 {
-	Broadcaster.Init( Trunk, Trunk.UI().Main().Window(), Id );
+	Broadcaster.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), Id ) );
 }
 
 static void Register_(
@@ -168,14 +168,14 @@ static void Register_(
 	A( ehDebug );
 }
 
-#define R( name ) Widgets.name.Init( Trunk, Trunk.UI().Main().Window(), #name );
+#define R( name ) Widgets.name.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), #name ) );
 
 static void Register_(
 	trunk___ &Trunk,
 	main__::widgets__ &Widgets,
 	nsIDOMWindow *Window )
 {
-	Widgets.wdwMain.Init( Trunk, Window, Window );	// Le type n'est pas correct di on passe par l'id.
+	Widgets.wdwMain.Init( Trunk, nsxpcm::supports__( Window, Window ) );	// Le type n'est pas correct si on passe par l'id.
 	R( dckMain );
 	R( vewHome );
 	R( vewSessionForm );

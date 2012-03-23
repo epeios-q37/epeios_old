@@ -367,7 +367,7 @@ static void Register_(
 	broadcaster__ &Broadcaster,
 	const char *Id )
 {
-	Broadcaster.Init( Trunk, Trunk.UI().SessionForm().Window(), Id );
+	Broadcaster.Init( Trunk, nsxpcm::supports__( Trunk.UI().SessionForm().Window(), Id ) );
 }
 
 #define R( name ) Register_( Trunk, Broadcasters.name, #name );
@@ -408,7 +408,7 @@ static void Register_(
 
 #undef R
 
-#define R( name ) Widgets.name.Init( Trunk, Trunk.UI().SessionForm().Window(), #name );
+#define R( name ) Widgets.name.Init( Trunk, nsxpcm::supports__( Trunk.UI().SessionForm().Window(), #name ) );
 
 static void Register_(
 	trunk___ &Trunk,

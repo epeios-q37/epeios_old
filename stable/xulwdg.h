@@ -121,27 +121,10 @@ namespace xulwdg {
 		E_CVDTOR( _widget__ );
 		void Init(
 			trunk &Trunk,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			const nsxpcm::supports__ &Supports )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			widget::Init( Supports, Window );
-		}
-		void Init(
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			widget::Init( Window, Id );
-		}
-		void Init(
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			widget::Init( Window, Id );
+			widget::Init( Supports );
 		}
 	};
 
@@ -227,29 +210,10 @@ namespace xulwdg {
 		void Init(
 			nsxpcm::autocomplete_textbox_callback__ &Callback,
 			trunk &Trunk,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			const nsxpcm::supports__ &Supports )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			_autocomplete_textbox__::Init( Callback, Supports, Window );
-		}
-		void Init(
-			nsxpcm::autocomplete_textbox_callback__ &Callback,
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			_autocomplete_textbox__::Init( Callback, Window, Id );
-		}
-		void Init(
-			nsxpcm::autocomplete_textbox_callback__ &Callback,
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			_autocomplete_textbox__::Init( Callback, Window, Id );
+			_autocomplete_textbox__::Init( Callback, Supports );
 		}
 	};
 

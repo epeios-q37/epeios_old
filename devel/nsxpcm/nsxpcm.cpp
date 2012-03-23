@@ -508,8 +508,7 @@ ERRBegin
 		Current = Browser.GetNext();
 	}
 
-	if ( Selected != NULL )
-		SetSelectedItem( Node, Selected );
+	SetSelectedItem( Node, Selected );
 	
 ERRErr
 ERREnd
@@ -1688,34 +1687,12 @@ void nsxpcm::tree__::_SetTreeView( class tree_view_callback__ &Callback )
 
 void tree__::Init(
 	class tree_view_callback__ &Callback,
-	nsISupports *Supports,
-	nsIDOMWindow *Window )
+	const supports__ &Supports )
 {
-	_widget__<nsIDOMXULTreeElement>::Init( Supports, Window );
+	_widget__<nsIDOMXULTreeElement>::Init( Supports );
 
 	_SetTreeView( Callback );
 }
-
-void tree__::Init(
-	class tree_view_callback__ &Callback,
-	nsIDOMWindow *Window,
-	const str::string_ &Id )
-{
-	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
-
-	_SetTreeView( Callback );
-}
-
-void tree__::Init(
-	class tree_view_callback__ &Callback,
-	nsIDOMWindow *Window,
-	const char *Id )
-{
-	_widget__<nsIDOMXULTreeElement>::Init( Window, Id );
-
-	_SetTreeView( Callback );
-}
-
 
 /* Début 'tree_view__' */
 

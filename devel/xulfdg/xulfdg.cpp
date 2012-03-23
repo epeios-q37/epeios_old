@@ -111,10 +111,10 @@ static void Register_(
 	broadcaster__ &Broadcaster,
 	const char *Id )
 {
-	Broadcaster.Init( Trunk, Trunk.UI().DebugDialog().Window(), Id );
+	Broadcaster.Init( Trunk, nsxpcm::supports__( Trunk.UI().DebugDialog().Window(), Id ) );
 }
 
-#define I( name ) Broadcasters.name.Init( Trunk, Trunk.UI().DebugDialog().Window(), "bdc" #name );	
+#define I( name ) Broadcasters.name.Init( Trunk, nsxpcm::supports__( Trunk.UI().DebugDialog().Window(), "bdc" #name ) );	
 
 static void Register_(
 	trunk___ &Trunk,

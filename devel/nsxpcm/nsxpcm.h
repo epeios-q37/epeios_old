@@ -892,7 +892,10 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		nsIDOMNode *Item )
 	{
-		SetSelectedItem( QueryInterface<nsIDOMXULSelectControlElement>( Node ), QueryInterface<nsIDOMXULSelectControlItemElement>( Item ) );
+		if ( Item != NULL )
+			SetSelectedItem( QueryInterface<nsIDOMXULSelectControlElement>( Node ), QueryInterface<nsIDOMXULSelectControlItemElement>( Item ) );
+		else
+			SetSelectedItem( QueryInterface<nsIDOMXULSelectControlElement>( Node ), NULL );
 	}
 
 	inline const str::string_ &GetId(
@@ -1509,6 +1512,33 @@ namespace nsxpcm {
 		event_handler__ &EventHandler,
 		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );
 
+	struct supports__ 
+	{
+		nsIDOMWindow *Window;
+		nsISupports *Supports;
+		supports__(
+			nsISupports *Supports,
+			nsIDOMWindow *Window )
+		{
+			this->Window  = Window;
+			this->Supports = Supports;
+		}
+		supports__(
+			nsIDOMWindow *Window,
+			const str::string_ &Id )
+		{
+			this->Window  = Window;
+			Supports = nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id );
+		}
+		supports__(
+			nsIDOMWindow *Window,
+			const char *Id )
+		{
+			this->Window  = Window;
+			Supports = nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id );
+		}
+	};
+
 	class widget_core__
 	{
 	private:
@@ -1528,9 +1558,7 @@ namespace nsxpcm {
 		{
 			reset( );
 		}
-		void Init(
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+		void Init( const supports__ &Supports )
 		{
 # ifdef NSXPCM_DBG
 			if ( _Supports != NULL )
@@ -1538,20 +1566,8 @@ namespace nsxpcm {
 # endif
 			reset();
 
-			_Window = GetWindowInternal( Window );
-			_Supports = Supports;
-		}
-		void Init(
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			Init( nsxpcm::GetElementById( nsxpcm::GetDocument( Window ), Id ), Window );
-		}
-		void Init(
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			Init( Window, str::string( Id ) );
+			_Window = GetWindowInternal( Supports.Window );
+			_Supports = Supports.Supports;
 		}
 		E_RODISCLOSE__( nsISupportsPointer, Supports );
 		nsIDOMWindowInternal *GetWindow( void ) const
@@ -2110,16 +2126,7 @@ namespace nsxpcm {
 	public:
 		void Init(
 			class tree_view_callback__ &Callback,
-			nsISupports *Supports,
-			nsIDOMWindow *Window );
-		void Init(
-			class tree_view_callback__ &Callback,
-			nsIDOMWindow *Window,
-			const char *Id );
-		void Init(
-			class tree_view_callback__ &Callback,
-			nsIDOMWindow *Window,
-			const str::string_ &Id );
+			const supports__ &Supports );
 		bso::slong__ GetCurrentIndex( void )
 		{
 			PRInt32 Count = 0;
@@ -3314,29 +3321,10 @@ namespace nsxpcm {
 		E_CDTOR( autocomplete_textbox__ );
 		void Init(
 			nsxpcm::autocomplete_textbox_callback__ &Callback,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			const supports__ &Supports )
 		{
 			reset();
-			textbox__::Init( Supports, Window );
-			_SubInit( Callback );
-		}
-		void Init(
-			nsxpcm::autocomplete_textbox_callback__ &Callback,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			reset();
-			textbox__::Init( Window, Id );
-			_SubInit( Callback );
-		}
-		void Init(
-			nsxpcm::autocomplete_textbox_callback__ &Callback,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			reset();
-			textbox__::Init( Window, Id );
+			textbox__::Init( Supports );
 			_SubInit( Callback );
 		}
 	};
