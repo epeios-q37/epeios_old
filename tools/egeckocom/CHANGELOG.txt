@@ -1,5 +1,9 @@
 $Id$
 
+*********
+* 0.1.3 *
+*********
+
 29/02/2012 :
 	- Ajout de la fonction 'HandlePseudoEvent(...)' qui permet de traiter des pseudo-évènements (comme le 'ontextentered' d'un 'textbox' 'autocomplete').
 	- Le composant passe en version 5.

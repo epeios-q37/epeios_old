@@ -39,7 +39,7 @@
 #define COMPONENT_VERSION	"5"
 
 #define NAME "egeckocom"
-#define VERSION	"0.1.0"
+#define VERSION	"0.1.3"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
