@@ -2389,11 +2389,15 @@ bso::bool__ nsxpcm::GetDirectory(
 	err::handling__ ErrHandling )
 {
 	nsEmbedString RawDirectory;
+	bso::size__ Length = Directory.Amount();
 
 	if ( !GetDirectory( Name, RawDirectory, ErrHandling ) )
 		return false;
 	
 	Transform( RawDirectory, Directory );
+
+	if ( Directory.Amount() != Length )
+		Directory.Append( FNM_DIRECTORY_SEPARATOR_CHARACTER );
 
 	return true;
 }

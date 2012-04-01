@@ -39,7 +39,7 @@
 #define COMPONENT_VERSION	"5"
 
 #define NAME "egeckocom"
-#define VERSION	"0.1.3"
+#define VERSION	"0.1.4"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -162,7 +162,7 @@ NS_IMETHODIMP egeckocom___::Create(
 	char **JSErrorMessage )
 {
 RP
-	str::string LibraryName;
+	str::string RawLibraryName, CorrectedLibraryName;
 	str::strings Tags;
 	FNM_BUFFER___ LocationBuffer;
 	str::string Translation;
@@ -178,8 +178,8 @@ RB
 		IsInitialized_ = true;
 	}
 
-	LibraryName.Init();
-	GetComponent_( ComponentId, LibraryName );
+	RawLibraryName.Init();
+	GetComponent_( ComponentId, RawLibraryName );
 
 	mtx::Lock( _Mutex );
 
@@ -193,7 +193,14 @@ RB
 
 	strcpy( _LanguageBuffer, Language );
 
-	_Data.Init( NAME " " VERSION, _LanguageBuffer, fnm::GetLocation( LibraryName.Convert( Buffer ), LocationBuffer ) );
+	CorrectedLibraryName.Init();
+
+	if ( fnm::Type( RawLibraryName.Convert( Buffer ) ) != fnm::tAbsolute )
+		nsxpcm::GetInstallationDirectory( CorrectedLibraryName );
+
+	CorrectedLibraryName.Append( RawLibraryName );
+
+	_Data.Init( NAME " " VERSION, _LanguageBuffer, fnm::GetLocation( CorrectedLibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		if ( CErrString_.Amount() == 0 ) {
@@ -201,7 +208,7 @@ RB
 			ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT, Translation ) );
 			Tags.Init();
 			Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-			Tags.Append( LibraryName );
+			Tags.Append( RawLibraryName );
 			lcl::ReplaceTags( ErrorMessage, Tags );
 			ErrorMessage.Append( " !" );
 		}
