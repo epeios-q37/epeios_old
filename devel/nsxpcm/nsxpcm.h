@@ -864,8 +864,9 @@ namespace nsxpcm {
 		nsxpcm::SetAttribute( Node, "selectedIndex", bso::Convert( Index, Buffer ) );
 	}
 
-
-	void SetSelectedItem( nsIDOMNode *Node );	// Cherche parmis les enfants de 'Node' le premier élément ayant l'attribut 'xex:selected' à 'true' et le sélectionne.
+	void SetSelectedItem(	// Cherche parmis les enfants de 'Node' le premier élément ayant l'attribut 'xex:selected' à 'true' et le sélectionne.
+		nsIDOMNode *Node,
+		bso::bool__ SelectFirstOneIfNone = true );	// Lorsque à 'true', si aucun 'item' n'est marqué comme sélectionné, sélectionne le premier.
 
 	inline nsIDOMXULSelectControlItemElement *GetSelectedItem( nsIDOMXULSelectControlElement *Element )
 	{

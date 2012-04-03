@@ -582,7 +582,7 @@ namespace dbsdct {
 			ERRl();
 		}
 		// Reconstruit la liste des portions inoccupés dans 'Storage'.
-		void RebuildAvailables( void )
+		void _RebuildAvailables( void )
 		{
 			ERRl();
 		}

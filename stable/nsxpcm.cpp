@@ -488,7 +488,9 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::SetSelectedItem( nsIDOMNode *Node )
+void nsxpcm::SetSelectedItem(
+	nsIDOMNode *Node,
+	bso::bool__ SelectFirstOneIfNone )
 {
 ERRProlog
 	str::string Value;
@@ -509,6 +511,9 @@ ERRBegin
 	}
 
 	SetSelectedItem( Node, Selected );
+
+	if ( ( Selected == NULL ) && ( SelectFirstOneIfNone ) )
+		nsxpcm::SetSelectedIndex( Node, 0 );
 	
 ERRErr
 ERREnd
