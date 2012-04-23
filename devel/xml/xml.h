@@ -183,24 +183,24 @@ namespace xml {
 		{
 			reset();
 		}
-		unsigned char Get( void )
+		flw::datum__ Get( void )
 		{
 			if ( Dump.Data.Amount() == 0 )
 				Dump.Set( _Flow->Coord() );
 
-			unsigned char C = _Flow->Get();
+			flw::datum__ C = _Flow->Get();
 
-			Dump.Data.Append( C );
+			Dump.Data.Append( (flw::datum__)C );
 
 			return C;
 		}
-		unsigned char View( void )
+		flw::datum__ View( void )
 		{
 			return _Flow->View();
 		}
-		bso::bool__ EOX( void )
+		bso::bool__ EndOfFlow( void )
 		{
-			return _Flow->EOX();
+			return _Flow->EndOfFlow();
 		}
 		void Unget( unsigned char C )
 		{
@@ -255,6 +255,7 @@ namespace xml {
 		tValue,
 		tEndTag,
 		tComment,
+		tCData,
 		t_amount,
 		t_Processed,	// Tout le flux XML a été traité.
 		t_Error,	// Erreur dans l'analyse du flux XML; voir 'Status'.
@@ -280,8 +281,9 @@ namespace xml {
 		TF( Value ),
 		TF( EndTag ),
 		TF( Comment ),
+		TF( CData ),
 		tfAll = ( ( 1 << t_amount ) - 1 ),
-		tfAllButUseless = tfAll & ~( tfComment |tfSpecialAttribute ),
+		tfAllButUseless = tfAll & ~( tfComment | tfSpecialAttribute | tfCData ),
 		tfObvious = tfStartTag | tfAttribute | tfValue | tfEndTag,
 		tfAllAttributes = tfAttribute | tfSpecialAttribute,
 	};

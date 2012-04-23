@@ -144,10 +144,10 @@ ERREpilog
 
 static status__ SkipSpaces_( _flow___ &Flow )
 {
-	while ( !Flow.EOX() && isspace( Flow.View() ) )
+	while ( !Flow.EndOfFlow() && isspace( Flow.View() ) )
 		Flow.Get();
 
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
 	return sOK;
@@ -158,51 +158,73 @@ static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le 
 	if ( Flow.Get() != '?' )
 		ERRc();
 
-	while ( !Flow.EOX() && ( Flow.Get() != '>' ) );
+	while ( !Flow.EndOfFlow() && ( Flow.Get() != '>' ) );
 
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
 	return sOK;
+}
+
+static status__ Test_(
+	_flow___ &Flow,
+	const char C )
+{
+	if ( Flow.EndOfFlow() )
+		return sUnexpectedEOF;
+
+	if ( Flow.Get() != C )
+		return sUnexpectedCharacter;
+
+	return sOK;
+}
+
+static status__ Test_(
+	_flow___ &Flow,
+	const char *S )
+{
+	status__ Status = sOK;
+
+	while ( ( Status == sOK ) && ( *S != 0 ) ) {
+		Status = Test_( Flow, *S );
+		S++;
+	}
+
+	return Status;
 }
 
 static status__ GetComment_(
 	_flow___ &Flow,
 	str::string_ &Content )
 {
+	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
 
-	if ( Flow.Get() != '!' )
+	if ( Flow.Get() != '-' )
 		ERRc();
 
-	if ( Flow.EOX() )
-		return sUnexpectedEOF;
+	if ( ( Status = Test_( Flow, '-' ) ) != sOK )
+		return Status;
 
-	if ( Flow.Get() != '-' )
-		return sUnexpectedCharacter;
-
-	if ( Flow.EOX() )
-		return sUnexpectedEOF;
-
-	if ( Flow.Get() != '-' )
-		return sUnexpectedCharacter;
-
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
 	while ( Continue ) {
-		while ( !Flow.EOX() && ( Flow.View() != '-' ) )
+		while ( !Flow.EndOfFlow() && ( Flow.View() != '-' ) )
 			Content.Append( Flow.Get() );
+		
+		if ( Flow.EndOfFlow() )
+			return sUnexpectedEOF;
 
 		Flow.Get();	// Pour passer le '-' de début de fin de commentaire.
 
-		if ( Flow.EOX() )
+		if ( Flow.EndOfFlow() )
 			return sUnexpectedEOF;
 
 		if ( Flow.View() == '-' ) {
 			Flow.Get();
 
-			if ( Flow.EOX() )
+			if ( Flow.EndOfFlow() )
 				return sUnexpectedEOF;
 
 			if ( Flow.View() == '>' ) {
@@ -217,13 +239,85 @@ static status__ GetComment_(
 	return sOK;
 }
 
+static status__ GetCData_(
+	_flow___ &Flow,
+	str::string_ &Content )
+{
+	status__ Status = s_Undefined;
+	bso::bool__ Continue = true;
+
+	if ( Flow.Get() != '[' )
+		ERRc();
+
+	if ( ( Status = Test_( Flow, "CDATA[" ) ) != sOK )
+		return Status;
+
+	if ( Flow.EndOfFlow() )
+		return sUnexpectedEOF;
+
+	if ( Flow.EndOfFlow() )
+		return sUnexpectedEOF;
+
+	while ( Continue ) {
+		while ( !Flow.EndOfFlow() && ( Flow.View() != ']' ) )
+			Content.Append( Flow.Get() );
+
+		if ( Flow.EndOfFlow() )
+			return sUnexpectedEOF;
+
+		Flow.Get();	// Pour passer le ']' de début de fin de 'CDATA'.
+
+		if ( Flow.EndOfFlow() )
+			return sUnexpectedEOF;
+
+		if ( Flow.View() == ']' ) {
+			Flow.Get();
+
+			if ( Flow.EndOfFlow() )
+				return sUnexpectedEOF;
+
+			if ( Flow.View() == '>' ) {
+				Flow.Get();
+
+				Continue = false;
+			} else
+				Content.Append( "]]" );
+		}
+	}
+
+	return sOK;
+}
+
+static status__ GetCommentOrCData_(
+	_flow___ &Flow,
+	str::string_ &Content,
+	bso::bool__ &IsCData )
+{
+	bso::bool__ Continue = true;
+
+	if ( Flow.Get() != '!' )
+		ERRc();
+
+	if ( Flow.EndOfFlow() )
+		return sUnexpectedEOF;
+
+	if ( Flow.View() == '-' ) {
+		IsCData = false;
+		return GetComment_( Flow, Content );
+	} else if ( Flow.View() == '[' ) {
+		IsCData = true;
+		return GetCData_( Flow, Content );
+	}	else
+		return sUnexpectedCharacter;
+}
+
 static mdr::size__ GetId_(
 	_flow___ &Flow,
 	str::string_ &Id )
 {
 	bso::ulong__ Size = 0;
 
-	while ( !Flow.EOX() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' || Flow.View() == '-' ) ) {
+	while ( !Flow.EndOfFlow() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' || Flow.View() == '-' ) ) {
 		Id.Append( Flow.Get() );
 		Size++;
 	}
@@ -264,7 +358,7 @@ static unsigned char HandleEntity_( _flow___ &Flow )
 {
 	entity_handling_state__ State = ehsStart;
 
-	while ( !Flow.EOX() ) {
+	while ( !Flow.EndOfFlow() ) {
 
 		switch ( State ) {
 		case ehsStart:
@@ -395,7 +489,7 @@ static status__ GetValue_(
 	unsigned char C;
 	OnlySpaces = true;
 
-	while ( !Flow.EOX() && ( Flow.View() != Delimiter ) ) {
+	while ( !Flow.EndOfFlow() && ( Flow.View() != Delimiter ) ) {
 
 		if ( !isspace( C = Flow.Get() ) )
 			OnlySpaces = false;
@@ -412,7 +506,7 @@ static status__ GetValue_(
 		Value.Append( C );
 	}
 
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
 	return sOK;
@@ -465,7 +559,7 @@ static status__ GetAttribute_(
 
 	Flow.Get();	// To skip the '"' or '''.
 /*
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
 	if ( !isspace( Flow.View() ) && ( Flow.View() != '/' ) && ( Flow.View() != '>' ) )
@@ -542,7 +636,7 @@ ERRBegin
 			break;
 		}
 
-		if ( TEOX && _Flow.EOX() )
+		if ( TEOX && _Flow.EndOfFlow() )
 			if ( _Token != tEndTag )
 				RETURN( sUnexpectedEOF );
 
@@ -553,7 +647,7 @@ ERRBegin
 
 			switch ( _Token ) {
 			case t_Undefined:
-				if ( _Flow.EOX() )
+				if ( _Flow.EndOfFlow() )
 					Continue = false;	// Fichier vide.
 				else if ( _Flow.View() != '<' )
 					RETURN( sUnexpectedCharacter )
@@ -600,14 +694,20 @@ ERRBegin
 		case cOpeningTag:
 			switch ( _Token ) {
 			case tComment:
+			case tCData:
 			case t_Undefined:
 				if ( _Flow.View() == '!' ) {
+					bso::bool__ IsCData = false;
+
 					_Value.Init();
 
-					HANDLE( GetComment_( _Flow, _Value ) );
+					HANDLE( GetCommentOrCData_( _Flow, _Value, IsCData ) );
 					_Context = cTagExpected;
 
-					_Token = tComment;
+					if ( IsCData )
+						_Token = tCData;
+					else
+						_Token = tComment;
 
 					if ( ( 1 << _Token ) & TokenToReport )
 						Continue = false;
@@ -834,6 +934,7 @@ ERRBegin
 			case t_Undefined:
 			case tValue:
 			case tComment:
+			case tCData:
 				HANDLE( SkipSpaces_( _Flow ) );
 
 				_TagName.Init();
@@ -862,6 +963,10 @@ ERRBegin
 				}
 
 				_Token = tEndTag;
+
+				if ( ( _Token == tCData )
+					 && !( ( 1 << tCData ) & TokenToReport ) )
+					_Token = tValue;	// si on ne demande pas le 'CDATA' en tant que tel, on le reporte en tant que 'tValue'.
 
 				if ( ( 1 << _Token ) & TokenToReport )
 					Continue = false;
@@ -973,6 +1078,7 @@ ERRBegin
 			Stop = !Callback.XMLSpecialAttribute( TagName, AttributeName, Value, Dump );
 			break;
 		case tValue:
+		case tCData:
 			Stop = !Callback.XMLValue( TagName, Value, Dump );
 			break;
 		case tEndTag:

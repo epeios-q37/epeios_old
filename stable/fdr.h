@@ -191,7 +191,7 @@ namespace fdr {
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
 		datum__ *_Cache;
-		size__ _Size;
+		size__ _Size;	// Si == '0', signale fin de 'flow' atteint.
 		size__ _Available;
 		size__ _Position;
 		void _Lock( void )
@@ -211,14 +211,19 @@ namespace fdr {
 		void _FillCache( void )
 		{
 #ifdef FDR_DBG
-			if ( ( _Cache == NULL ) || ( _Size == 0 ) )
+			if ( _Cache == NULL )
 				ERRu();
 
 			if ( _Available != 0 )
 				ERRc();
 #endif
-			_Position = 1;
-			_Available = FDRRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
+			if ( _Size != 0 ) {
+				_Position = 1;
+				_Available = FDRRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
+
+				if ( _Available == 0 )
+					_Size = 0;	// Pour signaler que la fin de 'flow' est atteinte.
+			}
 		}
 	protected:
 		// Retourne le nombre d'octets effectivement lus. Ne retourne '0' que si plus aucune donnée n'est disponibe.
@@ -319,6 +324,10 @@ namespace fdr {
 		bso::bool__ IFlowIsLocked( void )	// Simplifie l'utilisation de 'ioflow_driver_...'
 		{
 			return IsLocked();
+		}
+		size__ Available( void ) const	// Retourne la quantité de donnéées disponible dans le cache.
+		{
+			return _Available;
 		}
 	};
 

@@ -156,39 +156,30 @@ static inline void Load_(
 
 template <typename item> static void Load_(
 	flw::iflow__ &Flow,
-	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue )
+	stk::E_BSTACK_( item ) &Bunch )
 {
 	item Item;
 
-	Load_( Flow, Item );
-
-	while ( Item != TestValue ) {
-		Bunch.Append( Item );
+	while ( !Flow.EndOfFlow() ) {
 		Load_( Flow, Item );
+		Bunch.Append( Item );
 	}
 }
 
 template <typename item> static bso::bool__ Load_(
 	const char *FileName,
 	stk::E_BSTACK_( item ) &Bunch,
-	item TestValue,
 	time_t ReferenceTimeStamp )
 {
 	bso::bool__ Success = false;
 ERRProlog
 	flf::file_iflow___ Flow;
-	static flw::datum__ Buffer[sizeof( item )];
 ERRBegin
 	if ( Flow.Init( FileName, err::hUserDefined ) == fil::sSuccess ) {
 		if ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp )
 			ERRReturn;
 
-		memcpy( Buffer, &TestValue, sizeof( item ) );
-
-		Flow.EOFD( (void *)Buffer, sizeof( item ) );
-
-		Load_( Flow, Bunch, TestValue );
+		Load_( Flow, Bunch );
 
 		Flow.reset();
 
@@ -245,7 +236,7 @@ static bso::bool__ LoadAvailables_(
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	Success = Load_( BuildFileName_( BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, Buffer ), Availables, available__(), ReferenceTimeStamp );
+	Success = Load_( BuildFileName_( BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, Buffer ), Availables, ReferenceTimeStamp );
 ERRErr
 ERREnd
 ERREpilog

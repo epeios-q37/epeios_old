@@ -66,13 +66,6 @@ extern class ttr_tutor &XTFTutor;
 #include "bso.h"
 #include "str.h"
 
-//d To mark the end of flow, as char.
-#define XTF_EOXC	0x1a
- //ATTENTION: toute modification doit entrainer la modif. de la variable 'XTF_EOXS'.
-
-//d The char marking the end of flow, but as text.
-#define XTF_EOXT	"\x1a"
-
 //d The default cell separator.
 #define XTF_DEFAULT_CELL_SEPARATOR	'\t'
 
@@ -120,7 +113,6 @@ namespace xtf {
 		coord__ _Coord;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
-		bso::bool__ _EOX;	// Mise à 'true' lorsque 'EOX' atteint.
 		void NewCharAdjust_( void )
 		{
 			_Coord.Column++;
@@ -138,7 +130,6 @@ namespace xtf {
 			_Coord.Line = _Coord.Column = 1;
 			_Flow = NULL;
 			EOL_ = 0;
-			_EOX = false;
 		}
 		E_CVDTOR( extended_text_iflow__ );
 		extended_text_iflow__(
@@ -157,19 +148,17 @@ namespace xtf {
 			_Coord.Init( Coord );
 			_Flow = NULL;
 			EOL_ = 0;
-			_EOX = false;
 
 			_Flow = &IFlow;
 		}
 		//f Extract and return next character in flow.
-		unsigned char Get( void )
+		flw::datum__ Get( void )
 		{
-			unsigned char C = _Flow->Get();
-			_EOX = C == XTF_EOXC;
+			flw::datum__ C = _Flow->Get();
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
-					EOL_ = C;
+					EOL_ = (flw::datum__)C;
 					NewLineAdjust_();
 				} else {
 					NewCharAdjust_();
@@ -178,7 +167,7 @@ namespace xtf {
 				if ( C == '\n' ) {
 					EOL_ = 0;
 				} else if ( C == '\r' ) {
-					EOL_ = C;
+					EOL_ = (flw::datum__)C;
 					NewLineAdjust_();
 				} else {
 					EOL_ = 0;
@@ -188,7 +177,7 @@ namespace xtf {
 				if ( C == '\r' ) {
 					EOL_ = 0;
 				} else if ( C == '\n' ) {
-					EOL_ = C;
+					EOL_ = (flw::datum__)C;
 					NewLineAdjust_();
 				} else {
 					EOL_ = 0;
@@ -200,7 +189,7 @@ namespace xtf {
 			return C;
 		}
 		//f 'C' would be the next character returned by 'get()'.
-		void Unget( unsigned char C )
+		void Unget( flw::datum__ C )
 		{
 			if ( EOL_ )
 				EOL_ = 0;
@@ -216,7 +205,6 @@ namespace xtf {
 			}
 
 			_Flow->Unget( C );
-			_EOX = C == XTF_EOXC;
 		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
 		const coord__ &Coord( void ) const
@@ -227,11 +215,11 @@ namespace xtf {
 		false otherwise (cell delimited by a new line, for example). */
 		bso::bool__ GetCell(
 			str::string_ &Cell,
-			bso::char__ Separator = XTF_DEFAULT_CELL_SEPARATOR );
+			flw::datum__ Separator = XTF_DEFAULT_CELL_SEPARATOR );
 		//f Put rest of the current line in 'Line'. Return true if line ended by a new line, false otherwise.
 		bso::bool__ GetLine( str::string_ &Line )
 		{
-			return !GetCell( Line, XTF_EOXC );
+			return !GetCell( Line, 0 );
 		}
 		//f Skip the current line.
 		void SkipLine( void )
@@ -239,10 +227,9 @@ namespace xtf {
 			GetLine( *(str::string_ *)NULL );
 		}
 		//f Return the next character in the flow, but let it in the flow.
-		unsigned char View( bso::bool__ HandleNL = false )
+		flw::datum__ View( bso::bool__ HandleNL = false )
 		{
-			unsigned char C = _Flow->View();
-			_EOX = C == XTF_EOXC;
+			flw::datum__ C = _Flow->View();
 
 			if ( HandleNL && EOL_ ) {
 
@@ -251,19 +238,15 @@ namespace xtf {
 						 EOL_ = 0;
 						 _Flow->Get();
 						 C = _Flow->View();
-						_EOX = C == XTF_EOXC;
 				}
 			}
 
 			return C;
 		}
 		//f True if at end of text.
-		bso::bool__ EOX( bso::bool__ HandleNL = false)
+		bso::bool__ EndOfFlow( void )
 		{
-			if ( _EOX )
-				return true;
-
-			return View( HandleNL ) == XTF_EOXC;	// 'View' met '_EOX' à jour.
+			return _Flow->EndOfFlow();
 		}
 		//f Return the amount of data red.
 		flw::size__ AmountRed( void ) const

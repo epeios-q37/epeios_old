@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#define EOF	FLW_EOF_BUFFER
+
 #include "cpe.h"
 #include <fstream>
 #include <stdlib.h>

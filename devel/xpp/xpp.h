@@ -642,6 +642,7 @@ namespace xpp {
 			_iflow_driver___::reset( P );
 			_Parsers.reset( P );
 			_CurrentParser = NULL;
+			_Status = s_Undefined;
 		}
 		_preprocessing_iflow_driver___( void )
 		{
@@ -659,7 +660,7 @@ namespace xpp {
 			_DeleteParsers();
 			_Repository.Init();
 			_Variables.Init();
-# if 0	// A priori équivalent à ce qu'il y a dans le '#else', mais VC++ 10 détruit 'Criterions.Namespace' quand 'Criterions.IsNamespaceDefined()' est vrai. Fonctionner avec 'g++4.
+# if 0	// A priori équivalent à ce qu'il y a dans le '#else', mais VC++ 10 détruit 'Criterions.Namespace' quand 'Criterions.IsNamespaceDefined()' est vrai. Fonctionne avec 'g++4'.
 			_Directives.Init( Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( XPP__PREPROCESSOR_DEFAULT_NAMESPACE ) );
 # else
 			if ( Criterions.IsNamespaceDefined() )
@@ -674,6 +675,8 @@ namespace xpp {
 			_Parsers.Init();
 			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
 				ERRc();
+			_Status = sOK;
+
 		}
 		const context___ &GetContext( context___ &Context ) const
 		{
@@ -712,7 +715,6 @@ namespace xpp {
 		{
 			_FlowDriver.Init( XFlow, fdr::tsDisabled, Criterions );
 			_iflow__::Init( _FlowDriver, FLW_SIZE_MAX );
-			_iflow__::EOFD( XTF_EOXT );
 		}
 		const context___ &GetContext( context___ &Context ) const
 		{

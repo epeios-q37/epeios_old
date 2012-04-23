@@ -508,7 +508,6 @@ ERRBegin
 
 	if ( Settings.Amount() != 0 ) {
 		Flow.Init( Settings );
-		Flow.EOFD( XTF_EOXT );
 
 		XFlow.Init( Flow );
 

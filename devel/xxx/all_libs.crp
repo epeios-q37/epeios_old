@@ -675,6 +675,13 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &xmlval		&epeios		&2001-\
 	&XML VALue
 
-#Private librarise.
+#Private libraries.
 &prvlsc		&pdvl		&\
 	&PRiVate Last Square Curve
+	
+	
+#JAVA-related libraries.
+&jvabse	&epeios	&2012\
+	&JaVA BaSE.
+&jvastf	&epeios	&2012\
+	&JaVA STream Flow.

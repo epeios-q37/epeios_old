@@ -1,5 +1,28 @@
 $Id$
 
+19/04/2012 :	
+	- FDR :
+		- Suite à un 'EndOfFlow()', une nouvel appel à 'EndOfFlow()' retourne 'true' sans accéder le le dispositif sous-jacent.
+
+18/04/2012 :
+	- Général :
+		- Adaptation.
+
+17/04/2012 :
+	- Général :
+		- Adaptation.
+
+15/04/2012 :
+	- Général :
+		- Adaptation.
+	- FLW :
+		- Suppression de toue ce qui est relatif à 'EOD'.
+		- Ajout 'EndOfFlow()'.
+
+14/04/2012 :
+	- FDR, FLW :
+		- Ajout 'Available(....)' pour les '...iflow...'.
+
 03/04/2012 :
 	- NSXPCM :
 		- Ajout paramètre 'SelectFirstOneIfNone' à 'SeSelected(...)'.

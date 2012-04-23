@@ -66,7 +66,7 @@ static inline bso::bool__ HandleEscape_(
 {
 	bso::bool__ Retry = false;
 
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		ERRf();
 		
 	switch( C = Flow.Get() ) {
@@ -83,14 +83,14 @@ static inline bso::bool__ HandleEscape_(
 		C = '\t';
 		break;
 	case '\n':
-		if ( !( EOX = Flow.EOX() ) ) {
+		if ( !( EOX = Flow.EndOfFlow() ) ) {
 			if ( Flow.View() == '\r' )
 				Flow.Get();
 			Retry = true;
 		}
 		break;
 	case '\r':
-		if ( !( EOX = Flow.EOX() ) ) {
+		if ( !( EOX = Flow.EndOfFlow() ) ) {
 			if ( Flow.View() == '\n' )
 				Flow.Get();
 			Retry = true;
@@ -117,7 +117,7 @@ static inline bso::bool__ IsNotEndOfCell_(
 {
 	bso::bool__ Loop = false;
 
-	if ( !( EOX = Flow.EOX() ) )
+	if ( !( EOX = Flow.EndOfFlow() ) )
 		do {		
 			if ( ( C = Flow.Get() ) == Escape )
 				Loop = HandleEscape_( Flow, Separator, Escape, EOX, C );
@@ -138,14 +138,14 @@ static inline txmtbl::delimiter GetDelimiter_(
 		return txmtbl::dEOF;
 	else if ( C == '\n' )
 	{
-		if ( !Flow.EOX() && ( Flow.View() == '\r' ) )
+		if ( !Flow.EndOfFlow() && ( Flow.View() == '\r' ) )
 			Flow.Get();
 
 		return txmtbl::dEOL;
 	}
 	else if ( C == '\r' )
 	{
-		if ( !Flow.EOX() && ( Flow.View() == '\n' ) )
+		if ( !Flow.EndOfFlow() && ( Flow.View() == '\n' ) )
 			Flow.Get();
 
 		return txmtbl::dEOL;
@@ -207,7 +207,7 @@ ERRBegin
 	Line.Location( Flow.Coord().Line );
 
 	do {
-		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EOX();
+		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EndOfFlow();
 
 		if ( Loop || Cell.Amount() || Line.Amount() )
 			Line.Add( Cell );
@@ -217,7 +217,7 @@ ERRErr
 ERREnd
 ERREpilog
 
-	return !Flow.EOX();
+	return !Flow.EndOfFlow();
 }
 
 void line_::Erase_( stack_ &Stack )
@@ -466,7 +466,7 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 	separator__ Separator,
 	escape__ Escape )
 {
-	if ( Flow.EOX() )
+	if ( Flow.EndOfFlow() )
 		return false;
 	else
 	{
@@ -477,7 +477,7 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 
 			Line.RemoveEmptyCells();
 
-		} while( !Line.Amount() && !Flow.EOX() );
+		} while( !Line.Amount() && !Flow.EndOfFlow() );
 
 		return Line.Amount() != 0;
 	}
@@ -493,7 +493,7 @@ void txmtbl::GetTable(
 ERRProlog
 	line Line;
 ERRBegin
-	while( !Flow.EOX() )
+	while( !Flow.EndOfFlow() )
 	{
 		Line.Init();
 

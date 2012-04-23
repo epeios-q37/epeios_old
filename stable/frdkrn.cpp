@@ -252,7 +252,7 @@ ERRProlog
 	str::string PingDelay, Buffer;
 ERRBegin
 	OFlowDriver.Init( ErrorSet.Misc, fdr::ts_Default );
-	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver, (void *)RemoteHostServiceOrLocalLibraryPath );
+	LibraryData.Init( csdleo::mEmbedded, flx::VoidOFlowDriver, OFlowDriver, false, (void *)RemoteHostServiceOrLocalLibraryPath );
 
 	Buffer.Init();
 

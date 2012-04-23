@@ -953,8 +953,6 @@ ERRProlog
 ERRBegin
 	Callback.Init( Root );
 
-	XFlow.UndelyingFlow().EOFD( XTF_EOXT );
-
 	PFlow.Init( XFlow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
 	PXFlow.Init( PFlow );
 

@@ -344,7 +344,7 @@ namespace cdgb64 {
 			fdr::datum__ *Buffer )
 		{
 			bso::size__ Amount = 0;
-			fdr::datum__ Datum;
+			flw::datum__ Datum;
 			bso::bool__ CacheIsEmpty = false;
 
 #ifdef CDGB64_DBG
@@ -361,7 +361,7 @@ namespace cdgb64 {
 			}
 
 			while ( ( !CacheIsEmpty || Amount < 4 ) && Maximum-- && ( ( Datum = _Flow->Get( CacheIsEmpty ) ) != '=' ) )
-				Buffer[Amount++] = Datum;
+				Buffer[Amount++] = (flw::datum__)Datum;
 
 			if ( Amount != 0 ) {
 				if ( Amount >= 4 )

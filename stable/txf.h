@@ -91,6 +91,10 @@ namespace txf {
 #endif
 			return *_Flow;
 		}
+		bso::bool__ EndOfFlow( void )
+		{
+			return _F().EndOfFlow();
+		}
 		datum__ Lire_( void )
 		{
 			return _F().Get();

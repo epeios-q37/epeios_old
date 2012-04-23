@@ -4,6 +4,8 @@ $Id$
 * 0.1.4 *
 *********
 
+- 12/04/2012 : publication.
+
 - (Windows) Lorsque le chemin de la bibliothèque est relatif, c'est dorénavant par rapport à la racine de l'application.
 
 *********

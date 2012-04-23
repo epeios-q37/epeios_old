@@ -964,8 +964,6 @@ ERRBegin
 		ERRReturn;
 	}
 
-	_FFlow.EOFD( XTF_EOXT );
-
 	_XFlow.Init( _FFlow );
 
 	Location = fnm::GetLocation( LocalizedFileNameBuffer, LocationBuffer );
@@ -1139,6 +1137,13 @@ status__ xpp::_extended_parser___::Handle(
 			_Parser.PurgeDumpData();
 			Continue = true;
 			break;
+		case xml::tCData:
+			_Parser.PurgeDumpData();
+			Data.Append( "<![CDATA[" );
+			Data.Append( _Parser.Value() );
+			Data.Append( "]]>" );
+			Status = sOK;
+			break;
 		case xml::t_Processed:
 //			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
 			Status = s_Pending;
@@ -1200,14 +1205,20 @@ mdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 				delete _CurrentParser;
 				_CurrentParser = _Parsers.Pop();
 				_Status = _Parser().Handle( Parser, _Data );
-			} else
-				_Status = (xpp::status__)xml::sUnexpectedEOF;
+			} else {
+				Maximum = 0;	// Pour sortir de la boucle.
+				_Status = (xpp::status__)xml::sOK;
+			}
 
 		} 
 		
 		if ( _Status != sOK ) {
+#if 0
 			*Buffer = XTF_EOXC;	// Pour provoquer une erreur.
 			CumulativeRed++;
+#else
+			_Position = _Data.Amount();
+#endif
 			break;
 		}
 
@@ -1442,6 +1453,7 @@ ERRBegin
 			Writer.PopTag();
 			break;
 		case xml::tComment:
+		case xml::tCData:
 			Writer.PutValue( "" );	// Pour mettre un éventuel '>' en attente.
 			Writer.GetFlow() << Parser.DumpData();
 			break;

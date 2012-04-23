@@ -40,7 +40,7 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
-#define TEST_CASE	7
+#define TEST_CASE	2
 
 #if TEST_CASE == 1
 #define LOCATION	"H:\\cvs\\epeios\\tools\\expp\\"	
@@ -98,7 +98,7 @@ ERRProlog
 	xml::parser___ Parser;
 	bso::bool__ Continue = true;
 	int TokenFlags = 0;
-	xpp::criterions___ Criterions( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) );
+	xpp::criterions___ Criterions( str::string( LOCATION ), str::string( "" ), str::string( NAMESPACE ) );
 	str::string Test;
 	xpp::context___ Context;
 ERRBegin

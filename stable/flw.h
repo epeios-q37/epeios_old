@@ -102,20 +102,6 @@ namespace flw {
 		size__ _Red;
 		// Max amount of data alllowed between 2 reset.
 		size__ _AmountMax;
-		// Data for the end of flow (EOFD).
-		struct {
-			// The data.
-			const datum__ *Data;
-			// Size of the data.
-			size__ Size;
-			int
-				//At true if we are currently handling end of file data.
-				HandlingEOFD:		1,
-				// At true if we have to handle the amount of data (in other words, EOFD are handled after 'AmountMax_' data red).
-				HandleAmount:	1,
-				// At true if we have to generate an error if not all awaited data are red. Only significant if 'HandleAmount' at true.
-				HandleToFew:	1;
-		} EOFD_;
 		fdr::iflow_driver_base___ &_D( void )
 		{
 			if ( _Driver == NULL )
@@ -123,56 +109,6 @@ namespace flw {
 
 			return *_Driver;
 		}
-		/* Put up to 'Wanted' and a minimum of 'Minimum' bytes into 'Buffer'
-		directly from device. */
-		size__ _EOFAwareRead(
-			size__ Minimum,
-			datum__ *Buffer,
-			size__ Wanted,
-			bso::bool__ Adjust,
-			bso::bool__ &CacheIsEmpty )
-		{
-			size__ Amount = 0;
-
-			if ( EOFD_.HandlingEOFD ) {
-				Amount = HandleEOFD( Buffer, Wanted );
-			} else if ( EOFD_.HandleAmount ) {
-
-				size__ ToRead = Wanted;
-
-				if ( (size__)ToRead > ( _AmountMax - _Red ) )
-					ToRead = (size__)( _AmountMax - _Red );
-
-				// 'ToRead' ne peut être < 1, car on ne serait pas ici sinon.
-
-				Amount = _RawRead( ( ToRead > Minimum ? Minimum : ToRead ), Buffer, ToRead, Adjust, CacheIsEmpty );
-
-				/* Si 'Wanted' est < 'Minimum', 'Amount' sera nécessairement inférieur à 'Minimum', 
-				bien qu'il puisse encore avoir des données disponibles. Cela est voulu, car alors on 
-				est dans le cas où retourne les données 'EOFD', car le nombre d'octets lus correspond
-				à celui demandé ('_AmountMax' atteint). */
-
-				if ( Amount < Minimum )
-					Amount += HandleEOFD( Buffer, Wanted - Amount );
-				else  if ( _Red == _AmountMax )
-					EOFD_.HandlingEOFD = true;
-
-			} else {
-				Amount = _RawRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
-
-				if ( (Amount < Minimum ) || ( Amount == 0 ) ) {
-					Amount += HandleEOFD( Buffer, Wanted - Amount );
-				}
-			}
-
-			if ( ( Amount < Minimum  ) && ( Amount != 0 ) )
-				ERRf();
-
-			return Amount;
-		}
-		// Fill the cache with a minimum of 'Minimum' bytes. The cache must be empty.
-		/* Read from cache up to 'Amount' bytes and place them to 'Buffer'.
-		Return amount of data red. */
 		size__ _ReadUpTo(
 			size__ Amount,
 			datum__ *Buffer,
@@ -180,7 +116,7 @@ namespace flw {
 			bso::bool__ Adjust,
 			bso::bool__ &CacheIsEmpty )
 		{
-			return _EOFAwareRead( Minimum, Buffer, Amount, Adjust, CacheIsEmpty );
+			return _RawRead( Minimum, Buffer, Amount, Adjust, CacheIsEmpty );
 		}
 		// Place 'Amount' bytes in 'Buffer'.
 		void _Read(
@@ -221,32 +157,6 @@ namespace flw {
 			_D().Dismiss();
 			_Red = 0;
 		}
-		/*f Handle EOFD. To call when no more data available in the medium.
-		Return amount of data written. If 0 is returned, then there is no
-		more end of flow data available, and an error should be launched. */
-		size__ HandleEOFD(
-			datum__ *Buffer,
-			size__ Size )
-		{
-			EOFD_.HandlingEOFD = true;
-
-			if ( EOFD_.HandleToFew && EOFD_.HandleAmount && ( _Red < _AmountMax ) )
-				ERRf();
-
-			if ( Size > EOFD_.Size )
-				Size = EOFD_.Size;
-				
-			if ( Size != 0 ) {
-				memcpy( Buffer, EOFD_.Data, (size_t)Size );
-				EOFD_.Size -= Size;
-				EOFD_.Data += Size;
-			}
-
-			if ( EOFD_.Size == 0 )
-				_Dismiss();
-			
-			return Size;
-		}
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -256,9 +166,6 @@ namespace flw {
 			}
 
 			_Red = 0;
-			EOFD_.Data = NULL;
-			EOFD_.Size = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
 		iflow__( void )
 		{
@@ -279,12 +186,15 @@ namespace flw {
 			_AmountMax = AmountMax;
 
 			_Red = 0;
-			EOFD_.Data = NULL;
-			EOFD_.Size = 0;
-			EOFD_.HandlingEOFD = EOFD_.HandleAmount = EOFD_.HandleToFew = false;
 		}
-		/*f Place up to 'Amount' bytes in 'Buffer' with a minimum of 'Minimum'.
-		Return amount of bytes red. */
+		size__ Available( void ) const
+		{
+			if ( _Driver == NULL )
+				ERRc();
+
+			return _Driver->Available();
+		}
+		// Si valeur retournée == '0', alors toutes les données ont été lues.
 		size__ ReadUpTo(
 			size__ Amount,
 			void *Buffer,
@@ -303,22 +213,20 @@ namespace flw {
 
 			_Read( Amount, (datum__ *)Buffer, true, Dummy );
 		}
+		bso::bool__ EndOfFlow( void )
+		{
+			bso::bool__ Dummy = false;
+			datum__ C;
+
+			return  _ReadUpTo( 1, &C, 1, false, Dummy ) == 0;
+		}
 		datum__ View( void )
 		{
 			datum__ C;
 			bso::bool__ Dummy = false;
 
-			_Read( 1, &C, false, Dummy );
-
-			return C;
-		}
-		//f Get next byte.
-		datum__ Get( void )
-		{
-			datum__ C;
-			bso::bool__ Dummy = false;
-
-			_Read( 1, &C, true, Dummy );
+			if ( _ReadUpTo( 1, &C, 1, false, Dummy ) == 0 )
+				ERRf();
 
 			return C;
 		}
@@ -326,55 +234,29 @@ namespace flw {
 		{
 			datum__ C;
 
-			_Read( 1, &C, true, CacheIsEmpty );
+			if ( _ReadUpTo( 1, &C, 1, true, CacheIsEmpty ) == 0 )
+				ERRf();
 
 			return C;
 		}
+		datum__ Get( void )
+		{
+			bso::bool__ Dummy = false;
+
+			return Get( Dummy );
+		}
 		void Unget( datum__ Datum )
 		{
-			return _D().Unget( Datum );
+			if ( EndOfFlow() )
+				ERRc();
+
+			_D().Unget( (flw::datum__)Datum );
 		}
 		//f Skip 'Amount' bytes.
 		void Skip( size__ Amount = 1 )
 		{
 			while ( Amount-- )
 				Get();
-		}
-		void EOFD(
-			const void *Data,
-			size__ Length )
-		{
-			if ( Length > FLW_SIZE_MAX )
-				ERRl();
-
-			EOFD_.Data = (const datum__ *)Data;
-			EOFD_.Size = (size__)Length;
-			EOFD_.HandleAmount = false;
-		}
-		/* 'Data' is a NUL terminated string to use as end of flow data.
-		'Data' is NOT duplicated and should not be modified. */
-		void EOFD( const char *Data )
-		{
-			size_t Length = strlen( Data );
-
-			if ( Length > FDR_SIZE_MAX )
-				ERRl();
-
-			EOFD( (void *)Data, (size__)Length );
-		}
-		/* 'Data' is a NUL terminated string to use as end of flow data.
-		'Data' is NOT suplicated and should not be modified. This data will
-		be put in the flow after having read 'Amount' bytes.*/
-		void EOFD(
-			const char *Data,
-			size__ Amount )
-		{
-			EOFD( Data );
-
-			EOFD_.HandleAmount = true;
-			EOFD_.HandleToFew = true;
-			_AmountMax = Amount;
-			_Red = 0;
 		}
 		//f Return the amount of data red since last 'Reset()'.
 		size__ AmountRed( void ) const

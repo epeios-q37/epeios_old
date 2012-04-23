@@ -99,6 +99,9 @@ ERRBegin
 #ifdef FLW_DBG
 	if ( Wanted < Minimum )
 		ERRc();
+
+	if ( Minimum < 1 )
+		ERRc();
 #endif
 
 	Amount = _LoopingRawRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );

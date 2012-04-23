@@ -59,12 +59,12 @@ using namespace xtf;
 
 bso::bool__  xtf::extended_text_iflow__::GetCell(
 	str::string_ &Line,
-	bso::char__ Separator )
+	flw::datum__ Separator )
 {
 	bso::bool__ Cont = true;
-	char C;
+	flw::datum__ C;
 
-	if ( !EOX() ) {
+	if ( !EndOfFlow() ) {
 		C = Get();
 
 		if ( C == Separator )
@@ -72,7 +72,7 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 		else if ( ( C == '\r' ) || ( C == '\n' ) )
 			if ( EOL_ != 0 )
 				Cont = false;
-			else if ( !EOX() )
+			else if ( !EndOfFlow() )
 				C = Get();
 			else
 				Cont = false;
@@ -84,9 +84,9 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 			else if ( _Coord.Column == 0 )
 				Cont = false;
 			else if ( &Line != NULL )
-				Line.Append( C );
+				Line.Append( (flw::datum__)C );
 
-			if ( Cont && EOX() )
+			if ( Cont && EndOfFlow() )
 				Cont = false;
 
 			if ( Cont == true )	
