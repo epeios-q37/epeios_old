@@ -1,0 +1,9 @@
+<Configurations xmlns="http://zeusw.org/epeios/xcfg" xmlns:xpp="http://zeusw.org/epeios/expp">
+	<Configuration xmlns="http://zeusw.org/intl/expp" target="expp">
+	    <Language>en</Language>
+		<!-- Optional -->
+		<!--
+			<LocaleFileName>expp.xlcl</LocaleFileName>
+		-->
+	</Configuration>
+</Configurations>
