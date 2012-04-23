@@ -38,7 +38,7 @@ struct work___ {
 JNIEXPORT void JNICALL Java_org_zeusw_epeios_FlowInputStream_constructor(
 	JNIEnv *Env,
 	jobject Object,
-	jint core )
+	jlong core )
 {
 ERRJProlog
 ERRJBegin
@@ -54,7 +54,7 @@ JNIEXPORT void JNICALL Java_org_zeusw_epeios_FlowInputStream_destructor(
 {
 ERRJProlog
 ERRJBegin
-	SetJField<jint>( Env, Object, "core", 0 );
+	SetJField<jlong>( Env, Object, "core", 0 );
 ERRJErr
 ERRJEnd
 ERRJEpilog
@@ -72,7 +72,7 @@ ERRProlog
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	data__ &Data = ((work___ *)GetJField<jint>( Env, Object, "core" ))->Data;
+	data__ &Data = ((work___ *)GetJField<jlong>( Env, Object, "core" ))->Data;
 
 	Data.Param.Env = Env;
 	Data.Param.Object = Object;
@@ -216,9 +216,9 @@ ERRJBegin
 	Core->Data.XPPFlow = &Core->XPP;
 //	Core->Data.Flow = &Core->Flow;
 
-	SetJField<jint>( Env, Object, "core", (jint)Core );
+	SetJField<jlong>( Env, Object, "core", (jlong)Core );
 
-	Env->CallNonvirtualVoidMethod( Object, GetJClass( Env, Object ), GetJMethodID( Env, Object, "constructor", "(I)V" ), (jint)&Core->Data );
+	Env->CallNonvirtualVoidMethod( Object, GetJClass( Env, Object ), GetJMethodID( Env, Object, "constructor", "(J)V" ), (jlong)&Core->Data );
 ERRJErr
 ERRJEnd
 ERRJEpilog
@@ -231,7 +231,7 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor(
 {
 ERRJProlog
 ERRJBegin
-	delete (work___ *)GetJField<jint>( Env, Object, "core" );
+	delete (work___ *)GetJField<jlong>( Env, Object, "core" );
 ERRJErr
 ERRJEnd
 ERRJEpilog

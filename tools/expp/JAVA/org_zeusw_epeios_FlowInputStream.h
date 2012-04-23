@@ -12,10 +12,10 @@ extern "C" {
 /*
  * Class:     org_zeusw_epeios_FlowInputStream
  * Method:    constructor
- * Signature: (I)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_org_zeusw_epeios_FlowInputStream_constructor
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_zeusw_epeios_FlowInputStream

@@ -131,6 +131,15 @@ namespace jvabse {
 		return Env->GetFieldID( Class, Name, "I" );
 	}
 
+	inline jfieldID GetJFieldID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		jlong &)
+	{
+		return Env->GetFieldID( Class, Name, "J" );
+	}
+
 	template <typename jtype> inline jfieldID GetJFieldID(
 		JNIEnv *Env,
 		jclass Class,
@@ -166,6 +175,15 @@ namespace jvabse {
 		return Env->GetIntField( Object, FieldID );
 	}
 
+	static inline jlong GetJField(
+		JNIEnv *Env,
+		jobject Object,
+		jfieldID FieldID,
+		jlong &)
+	{
+		return Env->GetLongField( Object, FieldID );
+	}
+
 	static inline jobject GetJField(
 		JNIEnv *Env,
 		jobject Object,
@@ -184,6 +202,15 @@ namespace jvabse {
 		jtype Value;	// Ne sert qu'à didcrimier entre les différents types des différents 'template's.
 
 		return GetJField( Env, Object, GetJFieldID( Env, GetJClass( Env, Object ), Name, ObjectSignature, Value ), Value );
+	}
+
+	static inline void SetJField(
+		JNIEnv *Env,
+		jobject Object,
+		jfieldID FieldID,
+		jlong Value )
+	{
+		Env->SetLongField( Object, FieldID, Value );
 	}
 
 	static inline void SetJField(

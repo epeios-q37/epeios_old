@@ -3,9 +3,9 @@ package org.zeusw.epeios;
 import java.io.*;
 
 public class FlowInputStream extends InputStream {
-	private int core;
+	private long core;
 
-	protected native void constructor( int iflow );
+	protected native void constructor( long iflow );
 	private native void destructor();
 
 	public void close()

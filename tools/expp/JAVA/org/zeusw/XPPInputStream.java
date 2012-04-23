@@ -4,7 +4,7 @@ import java.io.*;
 import org.zeusw.epeios.*;
 
 public class XPPInputStream extends FlowInputStream {
-	private int core;
+	private long core;
 	private InputStream in;
 	
 	native private void contructor();
