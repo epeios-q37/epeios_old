@@ -85,7 +85,7 @@ endif
 ##################################
 
 ifeq ("$(env)","gnu")
-	lo = -o $(name)
+	lo += -o $(name)
 
 	# Generates debugging data.
 	#co += -g

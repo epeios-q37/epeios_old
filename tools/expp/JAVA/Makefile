@@ -61,9 +61,9 @@ src +=
 ifeq ("$(os)","Cygwin")
 	env = gnu
 	
-	co += -g "-D__int64=long long" 
+	co += -g -m32 "-D__int64=long long" 
 	
-	lo += -o $(name).dll -s -shared
+	lo += -m32 -o $(name).dll -s -shared
 	
 	libs =
 

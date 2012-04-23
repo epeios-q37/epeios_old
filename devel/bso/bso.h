@@ -422,7 +422,7 @@ namespace bso {
 		pointer__ Value,
 		pointer_buffer__ &Buffer )
 	{
-		sprintf( Buffer.Datum, "%lp", Value );
+		sprintf( Buffer.Datum, "%p", Value );
 
 		return Buffer.Datum;
 	}
