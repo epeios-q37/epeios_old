@@ -67,7 +67,7 @@ extern class ttr_tutor &PLLIOTutor;
 #include <sys/stat.h>
 
 namespace pllio {
-	typedef int	amount__;
+	typedef size_t	amount__;
 
 	typedef int	descriptor__;
 
