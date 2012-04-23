@@ -1,0 +1,29 @@
+<?xml version = "1.0"?>
+<Contacts>
+	<xpp:expand href="Villes.xml"/>
+	<Contact>
+		<Nom>DUPONT</Nom>
+		<Prenom>Marcel</Prenom>
+		<xpp:expand select="Strasbourg"/>
+	</Contact>
+	<Contact>
+		<Nom>SCHMIDT</Nom>
+		<Prenom>Antigone</Prenom>
+		<xpp:expand select="Paris"/>
+	</Contact>
+	<Contact>
+		<Nom>HADDOCK</Nom>
+		<Prenom>Archibald</Prenom>
+		<xpp:expand select="Moulinsart"/>
+	</Contact>
+	<Contact>
+		<Nom>DUPOND</Nom>
+		<Prenom>Frederique</Prenom>
+		<xpp:expand select="Strasbourg"/>
+	</Contact>
+	<Contact>
+		<Nom>TOURNESOL</Nom>
+		<Prenom>Tryphon</Prenom>
+		<xpp:expand select="Moulinsart"/>
+	</Contact>
+</Contacts>
