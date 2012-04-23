@@ -47,7 +47,7 @@ endif
 
 ifeq ("$(os)","Cygwin")
 	env = gnu
-	co +=
+	co += -m32
 	lo +=
 	libs =
 
@@ -61,7 +61,7 @@ endif
 
 ifeq ("$(os)","GNU/Linux")
 	env = gnu
-	co +=
+	co += -m32
 	lo +=
 	libs = 
 
@@ -75,7 +75,8 @@ endif
 
 ifeq ("$(os)","Darwin")
 	env = gnu
-	lo +=
+	co += -m32
+	lo += -m32
 	libs =
 endif
 
