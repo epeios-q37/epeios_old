@@ -31,7 +31,7 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+# copt += -DCPE_MT
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 copt += -DCPE_LIBRARY
@@ -120,7 +120,7 @@ endif
 ifeq ("$(os)","Darwin")
 	env = gnu
 
-	co += m64
+	co += -m64
 
 	lo = -m64 -dynamiclib -o lib$(name).jnilib
 	libs += -framework JavaVM
