@@ -120,7 +120,7 @@ endif
 ifeq ("$(os)","Darwin")
 	env = gnu
 
-	co += -m64
+	co += m64
 
 	lo = -m64 -dynamiclib -o lib$(name).jnilib
 	libs += -framework JavaVM
