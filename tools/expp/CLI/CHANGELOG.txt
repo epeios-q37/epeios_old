@@ -1,0 +1,111 @@
+$Id$
+
+18/12/2011 :
+	- Adaptation to changes in underlying libraries.
+	- Even if the original flow is not empty and contains a valid XML tree, if the result of the preprocessing is empty, an error id reported.
+
+25/09/2011 :
+	- Adaptation to changes in underlying libraries.
+
+---------------
+Version 0.4.0 :
+---------------
+
+- 14/08/2011 : Publication.
+
+- 21/07/2011 :
+	- Internationalization and standardisation.
+
+- 19/05/2011 :
+	- Adaptating to changes in 'CLNARG'.
+
+---------------
+Version 0.3.1 :
+---------------
+
+- 18/03/2011 : Publication (for 'Logiplus' only).
+
+- 15/03/2011 :
+	- Adaptation to changes in underlying libraries.
+	- Adding '--encrypt' command.
+
+- 04/03/2011 :
+	- Adaptation to changes in underlying libraries.
+
+- 08/07/2010 :
+	- Adaptatong to changes in 'XPP'.
+
+---------------
+Version 0.3.0 :
+---------------
+
+- (from underlying libraries) :
+	- Addition of the 'xpp:attribute' directive (experimental).
+	- 'xmlns:...' attributes are now allowed.
+	- When an error occurs, position is more accurate.
+	- Somewhat faster.
+
+- 10/05/2010 :
+	- Adding XML header.
+
+- 21/04/2010 :
+	- Adaptation to changes in underlying libraries ('XML', notably).
+	- Use of the new 'XPP' library.
+
+- 01/04/2010 :
+	- Adaptation to changes in 'CLNARG'.
+
+---------------
+Version 0.2.4 :
+---------------
+
+- 04/10/2009 :
+	- Adaptation to changes in the underlying libraries.
+
+- 09/11/2008 :
+	- Adaptation to changes in 'XTF' library.
+
+---------------
+Version 0.2.3 :
+---------------
+
+- 07/09/2007 :
+	- Fixing file localization bug in XML error detection algorithm which occurs when included files are in subdirectories.
+
+---------------
+Version 0.2.1 :
+---------------
+
+- 17/05/2007 :
+	- Missing 'nesting overflow' message bug fixed.
+	- Bug concerning file inclusion with relative path fixed.
+
+- 11/05/2007 :
+	- Using 'XML' library extended parser default namespace definition.
+
+---------------
+Version 0.2.0 :
+---------------
+
+- 22/04/2007 :
+	- Some minor bug fixing.
+	- Introducing local macro définition (inside an 'expand').
+	- When an error occurs, you have now an error description.
+	
+---------------
+Version 0.1.1 :
+---------------
+
+- 15/04/2007 :
+	- Improved 'help' page.
+
+- 11/04/2007 :
+	- Improved error detection in 'ifeq' tag.
+	- Bug, which prevents to have a macro and a variable with the same name, fixed.
+
+---------------
+Version 0.1.0 :
+---------------
+
+Initial version.
+	

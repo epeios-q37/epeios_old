@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<Configuration xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<xpp:set name="OS" value="Windows"/>
+	<xpp:expand href="common.xcf"/>
+</Configuration>

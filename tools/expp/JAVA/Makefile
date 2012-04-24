@@ -47,7 +47,7 @@ os := $(shell uname -o 2>/dev/null || uname -s)
 src = $(jdk)/include
 
 ifndef EPEIOS_SRC
-	src += epeios
+	src += ../epeios
 else
 	src += $(EPEIOS_SRC)
 endif

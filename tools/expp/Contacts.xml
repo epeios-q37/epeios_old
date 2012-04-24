@@ -1,6 +1,6 @@
 <?xml version = "1.0"?>
 <Contacts>
-	<xpp:expand href="Villes.xml"/>
+	<xpp:expand href="villes.xml"/>
 	<Contact>
 		<Nom>DUPONT</Nom>
 		<Prenom>Marcel</Prenom>
