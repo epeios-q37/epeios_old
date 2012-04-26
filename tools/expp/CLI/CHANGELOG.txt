@@ -2,7 +2,7 @@ $Id$
 
 18/12/2011 :
 	- Adaptation to changes in underlying libraries.
-	- Even if the original flow is not empty and contains a valid XML tree, if the result of the preprocessing is empty, an error id reported.
+	- Even if the original flow is not empty and contains a valid XML tree, if the result of the preprocessing is empty, an error is reported.
 
 25/09/2011 :
 	- Adaptation to changes in underlying libraries.
