@@ -1,5 +1,5 @@
 <?xml version = "1.0"?>
-<xpp:bloc>
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:define name="Strasbourg">
 		<xpp:bloc>
 			<Ville>Strasbourg</Ville>

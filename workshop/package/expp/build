@@ -17,10 +17,10 @@ $GET epeios $DIR/epeios stable/*.cpp
 $GET epeios $DIR documentation/licenses/gnu_gpl.txt
 $GET epeios $DIR documentation/packages/$DIR/README.txt
 $GET epeios $DIR documentation/packages/$DIR/Directives.pdf
+$GET epeios $DIR tools/$DIR/CHANGELOG.txt
+$GET epeios $DIR documentation/packages/$DIR/Manual.pdf
 
-$GET epeios $CLI tools/$CLI/CHANGELOG.txt
 $GET epeios $CLI tools/$CLI/Makefile
-$GET epeios $CLI documentation/packages/$DIR/Manual.pdf
 $GET epeios $CLI tools/$CLI/*.cpp
 $GET epeios $CLI tools/$CLI/*.h
 expp h:/cvs/epeios/tools/$CLI/expp.xcfg >$CLI/expp.xcfg
@@ -30,6 +30,7 @@ cp /cygdrive/h/bin/expp.exe $CLI
 $GET epeios $JAVA tools/$JAVA/Makefile
 $GET epeios $JAVA tools/$JAVA/*.cpp
 $GET epeios $JAVA tools/$JAVA/*.h
+cp /cygdrive/h/bin/jexpp.dll $CLI
 
 mkdir -p $JAVA/org/zeusw/epeios
 $GET epeios $JAVA tools/$JAVA/*.java
@@ -44,7 +45,7 @@ $GET epeios $DIR tools/$DIR/common.xcf
 $GET epeios $DIR tools/$DIR/villes.xml
 $GET epeios $DIR tools/$DIR/Contacts.xml
 
-mv $CLI/CHANGELOG.txt $CLI/CHANGELOG
+mv $DIR/CHANGELOG.txt $DIR/CHANGELOG
 mv $DIR/gnu_gpl.txt $DIR/LICENSE
 mv $DIR/README.txt $DIR/README
 

@@ -1,5 +1,16 @@
 $Id$
 
+// For both CLI version and JAVA version.
+
+---------------
+Version 0.4.2 :
+---------------
+
+- 26/04/2012 : Publication.
+
+25/04/201 :
+	- Creation of the JAVA version.
+
 18/12/2011 :
 	- Adaptation to changes in underlying libraries.
 	- Even if the original flow is not empty and contains a valid XML tree, if the result of the preprocessing is empty, an error is reported.

@@ -1,5 +1,5 @@
 <?xml version = "1.0"?>
-<Contacts>
+<Contacts xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:expand href="villes.xml"/>
 	<Contact>
 		<Nom>DUPONT</Nom>
