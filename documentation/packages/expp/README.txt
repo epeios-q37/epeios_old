@@ -6,20 +6,9 @@ $Id$
 
 'expp' is published under GNU General Public Licesnse (see LICENSE file).
 
-The windows binary is provided with this package ('expp.exe').
+'expp' is available as command-line binary, and as native JAVA component.
 
-For GNU/Linux, cygwin (and theoritically Mac OS), unpack the archive, then launch 'make'.
+See enclosed PDF files and go to 'http://zeusw.org/intl/expp/' for more details.
 
-In the package are also '.xcfg' and '.xlcl' files which have to be in the same directory as the binary one. 
-
-'expp' without arguments waits for data on the standard input.
-
-Launch 'expp --help' to obtain a help page.
-
-See enclosed PDF files or go to 'http://zeusw.org/intl/expp/' for more details.
-
-The 'linux.xcf', 'windows.xcf' et 'common.xcf' are example files.
-
-Launch 'expp linux.xcf' or 'expp windows.xcf' to use them. 'common.xcf' is used by 'windows.xcf' and 'linux.xcf'.
-
+'Linux.xcf', 'Windows.xcf', 'common.xcf', 'Contacts.xml' and 'Villes.xml' are example files.
 
