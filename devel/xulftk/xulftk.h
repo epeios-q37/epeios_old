@@ -83,9 +83,10 @@ namespace xulftk {
 		xulfui::ui___ *_UI;
 		lcl::rack__ _Rack;
 	protected:
-		virtual void FBLFRDReportError(
+		virtual void FRDKRNReportBackendError(
 			fblovl::reply__ Reply,
-			const char *Message );
+			const char *RawMessage );
+		void FRDKRNReportFrontendError( const char *Message );
 	public:
 		void reset( bso::bool__ P = true )
 		{

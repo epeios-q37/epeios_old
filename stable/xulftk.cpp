@@ -63,7 +63,7 @@ using namespace xulftk;
 
 #define PREFIX	XULFTK_NAME "_" 
 
-void xulftk::error_reporting_functions__::FBLFRDReportError(
+void xulftk::error_reporting_functions__::FRDKRNReportBackendError(
 	fblovl::reply__ Reply,
 	const char *RawMessage )
 {
@@ -94,6 +94,16 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+}
+
+void xulftk::error_reporting_functions__::FRDKRNReportFrontendError( const char *Message )
+{
+	if ( _UI == NULL )
+		ERRc();
+
+	_UI->LogAndPrompt( Message );
+
+	ERRAbort();
 }
 
 enum annex_type__

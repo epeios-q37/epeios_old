@@ -73,7 +73,6 @@ extern class ttr_tutor &FRDKRNTutor;
 
 namespace frdkrn {
 	using namespace frdbkd;
-	using fblfrd::error_reporting_functions__;
 
 	enum backend_extended_type__ {
 		bxtNone,	// Non utilisation de 'backend'.
@@ -185,6 +184,53 @@ namespace frdkrn {
 		const char *Affix,
 		str::string_ &FileName );
 
+	typedef fblfrd::error_reporting_functions__ _backend_error_reporting_functions__;
+
+	class error_reporting_functions__
+	: public _backend_error_reporting_functions__
+	{
+	protected:
+		void FBLFRDReportError(
+			fblovl::reply__ Reply,
+			const char *Message )
+		{
+			ReportBackendError( Reply, Message );
+		}
+		virtual void FRDKRNReportBackendError(
+			fblovl::reply__ Reply,
+			const char *Message ) = 0;
+		virtual void FRDKRNReportFrontendError( const char *Message ) = 0;
+	public:
+		void reset ( bso::bool__ = true )
+		{
+			// Standardisation.
+		}
+		error_reporting_functions__( void )
+		{
+			reset( false );
+		}
+		~error_reporting_functions__( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			// Standardisation.
+		}
+		void ReportBackendError(
+			fblovl::reply__ Reply,
+			const char *Message )
+		{
+			FRDKRNReportBackendError( Reply, Message );
+		}
+		void ReportFrontendError( const char *Message )
+		{
+			FRDKRNReportFrontendError( Message );
+		}
+	};
+
+
+
 	class kernel___
 	{
 	private:
@@ -243,6 +289,23 @@ namespace frdkrn {
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
 		virtual void FRDKRNDisconnection( void ) = 0;	// Appelé avant déconnexion du 'backend'.
+		void _ReportError( const char *Message )const
+		{
+			if( _ErrorReportingFunctions == NULL )
+				ERRc();
+
+			return _ErrorReportingFunctions->ReportFrontendError( Message );
+		}
+		void _ReportError( const str::string_ &Message ) const
+		{
+		ERRProlog
+			STR_BUFFER___ Buffer;
+		ERRBegin
+			_ReportError( Message.Convert( Buffer ) );
+		ERRErr
+		ERREnd
+		ERREpilog
+		}
 	public:
 		void reset( bso::bool__ P = true )
 		{

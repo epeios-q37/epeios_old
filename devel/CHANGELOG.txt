@@ -1,5 +1,9 @@
 $Id$
 
+27/04/2012 :
+	- FRDKRN :
+		- Ajout d'une fonction permettant de remonter un message d'erreur au gestionnaire d'interface.
+
 19/04/2012 :	
 	- FDR :
 		- Suite à un 'EndOfFlow()', une nouvel appel à 'EndOfFlow()' retourne 'true' sans accéder le le dispositif sous-jacent.
