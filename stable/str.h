@@ -93,30 +93,30 @@ namespace str {
 
 	_guint__ _GenericUnsignedConversion(
 		const class string_ &String,
-		epeios::row__ Begin,
-		epeios::row__ *ErrP,
+		mdr::row__ Begin,
+		mdr::row__ *ErrP,
 		base__ Base,
 		_guint__ Limit );
 
 	_gsint__ _GenericSignedConversion(
 		const class string_ &String,
-		epeios::row__ Begin,
-		epeios::row__ *ErrP,
+		mdr::row__ Begin,
+		mdr::row__ *ErrP,
 		base__ Base,
 		_gsint__ PositiveLimit,
 		_gsint__ NegativeLimit );
 
 	class _string_size_handler {
 	public:
-		static epeios::size__ SizeOf( const char *S )
+		static mdr::size__ SizeOf( const char *S )
 		{
 			if ( NULL == S )
 				S = "";
 #ifdef STR_DBG
-			if ( strlen( S ) > EPEIOS_SIZE_MAX )
+			if ( strlen( S ) > MDR_SIZE_MAX )
 				ERRu();
 #endif
-			return (epeios::size__)strlen( S );
+			return (mdr::size__)strlen( S );
 		}
 	};
 
@@ -160,10 +160,10 @@ namespace str {
 			if ( NULL == Seed )
 				Seed = "";
 #ifdef STR_DBG
-			if ( strlen( Seed ) > EPEIOS_SIZE_MAX )
+			if ( strlen( Seed ) > MDR_SIZE_MAX )
 				ERRu();
 #endif
-			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, (epeios::size__)strlen( Seed ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, (mdr::size__)strlen( Seed ) );
 		}
 		//f Initialization with 'Seed'.
 		void Init( const str::string_ &Seed )
@@ -179,21 +179,21 @@ namespace str {
 			if ( NULL == Chaine )
 				Chaine = "";
 #ifdef STR_DBG
-			if ( strlen( Chaine ) > EPEIOS_SIZE_MAX )
+			if ( strlen( Chaine ) > MDR_SIZE_MAX )
 				ERRu();
 #endif
 			Init();
-			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, (epeios::size__)strlen( Chaine ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, (mdr::size__)strlen( Chaine ) );
 
 			return *this;
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'.
 		const char *Convert(
-			epeios::row__ Position,
-			epeios::size__ Amount,
+			mdr::row__ Position,
+			mdr::size__ Amount,
 			STR_BUFFER___ &Buffer ) const;
 		const char *Convert(
-			epeios::row__ Position,
+			mdr::row__ Position,
 			STR_BUFFER___ &Buffer ) const
 		{
 			return Convert( Position, TYM_MAX_SIZE, Buffer );
@@ -214,7 +214,7 @@ namespace str {
 			StripLeadingCharacter( Model );
 			StripTailingCharacter( Model );
 		}
-		string_ &Truncate( epeios::row__ Row )
+		string_ &Truncate( mdr::row__ Row )
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::Truncate( Row );
 
@@ -236,25 +236,25 @@ namespace str {
 			bso::ulong__ Position,
 			const string_ &Value );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
-		epeios::row__ Search(
+		mdr::row__ Search(
 			const string_ &S,
-			epeios::row__ Start = 0 ) const;
+			mdr::row__ Start = 0 ) const;
 		//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'NONE' if no occurence.
-		epeios::row__ Search(
+		mdr::row__ Search(
 			char C,
-			epeios::row__ Start = 0 ) const;
+			mdr::row__ Start = 0 ) const;
 		// NOTA : Les méthodes 'ToNumber'(...)' facilitent la mise en oeuvre de 'template's.
 #define STR_UN( name, type, limit )\
 	type To##name(\
-			epeios::row__ Begin,\
-			epeios::row__ *ErrP,\
+			mdr::row__ Begin,\
+			mdr::row__ *ErrP,\
 			base__ Base,\
 			type Limit = limit ) const\
 		{\
 			return (type)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );\
 		}\
 		type To##name(\
-			epeios::row__ *ErrP = NULL,\
+			mdr::row__ *ErrP = NULL,\
 			base__ Base = bAuto,\
 			type Limit = limit ) const\
 		{\
@@ -262,21 +262,21 @@ namespace str {
 		}\
 		void ToNumber(\
 			type &Number,\
-			epeios::row__ *Error = NULL ) const\
+			mdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error );\
 		}\
 		void ToNumber(\
 			type Limit,\
 			type &Number,\
-			epeios::row__ *Error = NULL ) const\
+			mdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error, bAuto, Limit );\
 		}
 #define STR_SN( name, type, positive_limit, negative_limit )\
 	type To##name(\
-			epeios::row__ Begin,\
-			epeios::row__ *ErrP,\
+			mdr::row__ Begin,\
+			mdr::row__ *ErrP,\
 			base__ Base,\
 			type PositiveLimit = positive_limit,\
 			type NegativeLimit = negative_limit ) const\
@@ -284,7 +284,7 @@ namespace str {
 			return (type)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );\
 		}\
 		type To##name(\
-			epeios::row__ *ErrP = NULL,\
+			mdr::row__ *ErrP = NULL,\
 			base__ Base = bAuto,\
 			type PositiveLimit = positive_limit,\
 			type NegativeLimit = negative_limit ) const\
@@ -293,7 +293,7 @@ namespace str {
 		}\
 		void ToNumber(\
 			type &Number,\
-			epeios::row__ *Error = NULL ) const\
+			mdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error );\
 		}\
@@ -301,7 +301,7 @@ namespace str {
 			type PositiveLimit,\
 			type NegativeLimit,\
 			type &Number,\
-			epeios::row__ *Error = NULL ) const\
+			mdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
@@ -316,13 +316,13 @@ namespace str {
 		STR_UN( UB, bso::ubyte__, BSO_UBYTE_MAX )
 		STR_SN( SB, bso::sbyte__, BSO_SBYTE_MAX, BSO_SBYTE_MIN )
 		bso::lfloat__ ToLF(
-			epeios::row__ *ErrP,
-			epeios::row__ Begin ) const;
-		bso::lfloat__ ToLF( epeios::row__ *ErrP = NULL ) const
+			mdr::row__ *ErrP,
+			mdr::row__ Begin ) const;
+		bso::lfloat__ ToLF( mdr::row__ *ErrP = NULL ) const
 		{
 			return ToLF( ErrP, 0 );
 		}
-		void *ToPointer( epeios::row__ *ErrP = NULL )
+		void *ToPointer( mdr::row__ *ErrP = NULL )
 		{
 # ifdef STR__64_BITS_TYPES_ALLOWED
 			return (void *)ToULL( ErrP, str::b16 );
@@ -332,7 +332,7 @@ namespace str {
 		}
 		void ToNumber(
 			bso::lfloat__ &Number,
-			epeios::row__ *Error = NULL ) const
+			mdr::row__ *Error = NULL ) const
 		{
 			Number = ToLF( Error );
 		}
@@ -357,9 +357,9 @@ namespace str {
 	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
-		epeios::row__ BeginS1,
-		epeios::row__ BeginS2,
-		epeios::size__ Amount )
+		mdr::row__ BeginS1,
+		mdr::row__ BeginS2,
+		mdr::size__ Amount )
 	{
 		return bch::Compare( S1, S2, BeginS1 ,BeginS2 , Amount );
 	}
@@ -368,11 +368,11 @@ namespace str {
 	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
-		epeios::row__ BeginS1 = 0,
-		epeios::row__ BeginS2 = 0 )
+		mdr::row__ BeginS1 = 0,
+		mdr::row__ BeginS2 = 0 )
 	{
 		bso::sign__ Resultat;
-		epeios::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
+		mdr::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;
@@ -444,13 +444,13 @@ namespace str {
 		}
 		string(
 			const char *S,
-			epeios::size__ Length )
+			mdr::size__ Length )
 		: string_( static_ )
 		{
 			reset( false );
 
 #ifdef STR_DBG
-			if ( Length > EPEIOS_SIZE_MAX )
+			if ( Length > MDR_SIZE_MAX )
 				ERRu();
 #endif
 

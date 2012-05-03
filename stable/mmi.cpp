@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#define capacite				epeios::size__
+#define capacite				mdr::size__
 #define multimemoire_indexee	indexed_multimemory_
 
 namespace mmi {
@@ -71,11 +71,11 @@ namespace mmi {
 	}
 
 	void multimemoire_indexee::RemoveWithoutReallocating(
-		epeios::row__ Position,
-		epeios::size__ ActualCapacity,
-		epeios::size__ Amount )
+		mdr::row__ Position,
+		mdr::size__ ActualCapacity,
+		mdr::size__ Amount )
 	{
-		epeios::size__ Counter = Amount;
+		mdr::size__ Counter = Amount;
 
 		while( Counter-- )
 			Multimemoire.Free( Descripteurs.Get( *Position + Counter ).Descripteur );

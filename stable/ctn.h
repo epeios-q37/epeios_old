@@ -77,7 +77,7 @@ extern class ttr_tutor &CTNTutor;
 
 namespace ctn {
 
-	using epeios::size__;
+	using mdr::size__;
 	using aem::amount_extent_manager_;
 
 
@@ -87,7 +87,7 @@ namespace ctn {
 	{
 	private:
 		void _Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
@@ -179,15 +179,15 @@ namespace ctn {
 		}
 		//f Allocation room for 'Size' object of statical part 'ST'.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			const st &ST,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			epeios::size__ AncCap;
-			epeios::size__ Amount = Size;
+			mdr::size__ AncCap;
+			mdr::size__ Amount = Size;
 
 			AncCap = amount_extent_manager_<r>::Amount();
 
@@ -218,7 +218,7 @@ namespace ctn {
 			Statics.Store( ST, Row );
 		}
 		void DecreaseTo(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
@@ -249,7 +249,7 @@ namespace ctn {
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			epeios::size__ Extent = this->Extent();
+			mdr::size__ Extent = this->Extent();
 
 			if ( amount_extent_manager_<r>::Force( Size ) ) {
 				Dynamics.Allocate( Size, Extent );
@@ -260,14 +260,14 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			epeios::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
-			epeios::size__ NewAmount = CurrentAmount - Amount;
+			mdr::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
+			mdr::size__ NewAmount = CurrentAmount - Amount;
 
 			Dynamics.RemoveWithoutReallocating( *Position, CurrentAmount, Amount );
 			Statics.Store( Statics, NewAmount - *Position, Position, *Position + Amount );
@@ -276,7 +276,7 @@ namespace ctn {
 		}
 		//f Remove 'Amount' objects from the end of the container.
 		void Truncate(
-			epeios::size__ Amount = 1,
+			mdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 	#ifdef CTN_DBG
@@ -298,7 +298,7 @@ namespace ctn {
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			r Row = 0,
 			aem::mode__ Mode = aem::m_Default )
 		{
@@ -318,11 +318,11 @@ namespace ctn {
 #endif
 			Crop( Last - First + 1, First, Mode );
 		}
-		static epeios::size__ GetStaticsItemSize( void )
+		static mdr::size__ GetStaticsItemSize( void )
 		{
 			return sizeof( st );
 		}
-		void SubInit( epeios::size__ Size )
+		void SubInit( mdr::size__ Size )
 		{
 			amount_extent_manager_<r>::Init( Size );
 			amount_extent_manager_<r>::SetStepValue( 0 );
@@ -842,12 +842,12 @@ namespace ctn {
 	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_MITEM( Type )		volatile_mono_item< Type, epeios::row__ >
-	#define E_CMITEM( Type )	const_mono_item< Type, epeios::row__ >
+	#define E_MITEM( Type )		volatile_mono_item< Type, mdr::row__ >
+	#define E_CMITEM( Type )	const_mono_item< Type, mdr::row__ >
 #else
 	//s To reach an item from 'MCONTAINER_( Type )' , but only for reading.
-	#define E_MITEM( Type )		E_MITEMt( Type, epeios::row__ )
-	#define E_CMITEM( Type )	E_CMITEMt( Type, epeios::row__ )
+	#define E_MITEM( Type )		E_MITEMt( Type, mdr::row__ )
+	#define E_CMITEM( Type )	E_CMITEMt( Type, mdr::row__ )
 #endif
 
 	/*c Container for object of type 'Type', which need only one memory.
@@ -953,7 +953,7 @@ namespace ctn {
 		}
 		//f Allocate room for 'Size' objects.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_MITEMt( t, r ) E;
@@ -986,9 +986,9 @@ namespace ctn {
 			return *this;
 		}
 		//f Create a new object and return its position.
-		r New( epeios::size__ Size = 1 )
+		r New( mdr::size__ Size = 1 )
 		{
-			epeios::row_t__ P = this->Amount();
+			mdr::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -997,7 +997,7 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			epeios::size__ Amount = 1,
+			mdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
@@ -1019,11 +1019,11 @@ namespace ctn {
 	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_MCONTAINER_( Type )	mono_container_< Type, epeios::row__ >
-	#define E_MCONTAINER( Type )	mono_container< Type, epeios::row__ >
+	#define E_MCONTAINER_( Type )	mono_container_< Type, mdr::row__ >
+	#define E_MCONTAINER( Type )	mono_container< Type, mdr::row__ >
 #else
-	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, epeios::row__ )
-	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, epeios::row__ )
+	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, mdr::row__ )
+	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, mdr::row__ )
 #endif
 
 	//c Same as mono_container_, but for use with object which have a 'Init()' function without parameters.
@@ -1096,11 +1096,11 @@ namespace ctn {
 	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, epeios::row__ >
-	#define E_XMCONTAINER( Type )	mono_extended_container< Type, epeios::row__ >
+	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, mdr::row__ >
+	#define E_XMCONTAINER( Type )	mono_extended_container< Type, mdr::row__ >
 #else
-	#define E_XMCONTAINER_( Type )	E_XMCONTAINERt_( Type, epeios::row__ )
-	#define E_XMCONTAINER( Type )	E_XMCONTAINERt( Type, epeios::row__ )
+	#define E_XMCONTAINER_( Type )	E_XMCONTAINERt_( Type, mdr::row__ )
+	#define E_XMCONTAINER( Type )	E_XMCONTAINERt( Type, mdr::row__ )
 #endif
 
 
@@ -1259,11 +1259,11 @@ namespace ctn {
 	#define E_CITEMt( Type,r  )		const_multi_item< Type, r  >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_ITEM( Type )			volatile_multi_item< Type, epeios::row__ >
-	#define E_CITEM( Type )			const_multi_item< Type, epeios::row__  >
+	#define E_ITEM( Type )			volatile_multi_item< Type, mdr::row__ >
+	#define E_CITEM( Type )			const_multi_item< Type, mdr::row__  >
 #else
-	#define E_ITEM( Type )			E_ITEMt( Type, epeios::row__ )
-	#define E_CITEM( Type )			E_CITEMt( Type, epeios::row__ )
+	#define E_ITEM( Type )			E_ITEMt( Type, mdr::row__ )
+	#define E_CITEM( Type )			E_CITEMt( Type, mdr::row__ )
 #endif
 
 	/*c Container for objects 't', with static part 'st', which need more then one memory.
@@ -1369,7 +1369,7 @@ namespace ctn {
 		}
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
-			epeios::size__ Capacity,
+			mdr::size__ Capacity,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_ITEMt( t, r ) E;
@@ -1402,9 +1402,9 @@ namespace ctn {
 			return *this;
 		}
 		//f Create a new object and return its position.
-		r New( epeios::size__ Size = 1 )
+		r New( mdr::size__ Size = 1 )
 		{
-			epeios::row_t__ P = this->Amount();
+			mdr::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -1413,7 +1413,7 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			epeios::size__ Amount = 1,
+			mdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
@@ -1435,11 +1435,11 @@ namespace ctn {
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_CONTAINER_( Type )	multi_container_< Type, epeios::row__ >
-	#define E_CONTAINER( Type )		multi_container< Type, epeios::row__ >
+	#define E_CONTAINER_( Type )	multi_container_< Type, mdr::row__ >
+	#define E_CONTAINER( Type )		multi_container< Type, mdr::row__ >
 #else
-	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, epeios::row__ )
-	#define E_CONTAINER( Type )		E_CONTAINERt( Type, epeios::row__ )
+	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, mdr::row__ )
+	#define E_CONTAINER( Type )		E_CONTAINERt( Type, mdr::row__ )
 #endif
 
 	//c Same as multi_container_, but for use with object which have a 'Init()' function without parameters.
@@ -1512,11 +1512,11 @@ namespace ctn {
 	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, epeios::row__ >
-	 #define E_XCONTAINER( Type )	multi_extended_container< Type, epeios::row__ >
+	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, mdr::row__ >
+	 #define E_XCONTAINER( Type )	multi_extended_container< Type, mdr::row__ >
 #else	
-	 #define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, epeios::row__ )
-	 #define E_XCONTAINER( Type )	E_XCONTAINERt( Type, epeios::row__ )
+	 #define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, mdr::row__ )
+	 #define E_XCONTAINER( Type )	E_XCONTAINERt( Type, mdr::row__ )
 #endif
 
 }

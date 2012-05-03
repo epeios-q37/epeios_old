@@ -166,7 +166,7 @@ namespace rgstry {
 
 	E_AUTO( path )
 
-	epeios::row__ BuildPath(
+	mdr::row__ BuildPath(
 		const str::string_ &PathString,
 		path_ &Path );
 
@@ -268,7 +268,7 @@ namespace rgstry {
 
 	typedef ctn::E_CITEMt( node_, row__ )	buffer;
 
-	typedef epeios::row__ cursor__;
+	typedef mdr::row__ cursor__;
 
 	class registry_ {
 	private:
@@ -408,7 +408,7 @@ namespace rgstry {
 		}
 		row__ _Search(
 			const path_ &Path,
-			epeios::row__ PathRow,
+			mdr::row__ PathRow,
 			row__ Row,
 			rows_ &ResultRows ) const;
 		row__ _Search(
@@ -417,7 +417,7 @@ namespace rgstry {
 		row__ _Search(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		row__ _CreateWithoutFlush(
 			nature__ Nature,
 			const name_ &Name,
@@ -514,7 +514,7 @@ namespace rgstry {
 				Writer.PutValue( Value );
 
 		}
-		epeios::size__ _Dump(
+		mdr::size__ _Dump(
 			row__ Root,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer,
@@ -593,7 +593,7 @@ namespace rgstry {
 		row__ Search(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return _Search( PathString, Row, PathErrorRow );
 		}
@@ -603,7 +603,7 @@ namespace rgstry {
 		row__ Create(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL );
+			mdr::row__ *PathErrorRow = NULL );
 		nature__ GetNature( row__ Row ) const
 		{
 			return _GetNature( Row );
@@ -630,7 +630,7 @@ namespace rgstry {
 			row__ Row,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+			mdr::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			row__ Row,
@@ -665,7 +665,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			row__ Row,
 			values_ &Values,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		row__ SetValue(
 			const path_ &Path,
 			const value_ &Value,
@@ -681,7 +681,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			const value_ &Value,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL );
+			mdr::row__ *PathErrorRow = NULL );
 		row__ GetParentRow( row__ Row ) const
 		{
 			buffer Buffer;
@@ -748,7 +748,7 @@ namespace rgstry {
 		bso::bool__ Delete(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL );
+			mdr::row__ *PathErrorRow = NULL );
 		row__ CreateRegistry( const name_ &Name )
 		{
 			return _CreateKey( Name );
@@ -762,12 +762,12 @@ namespace rgstry {
 		bso::bool__ Exists(
 			const str::string_ &PathString,
 			row__ Row,
-			epeios::row__ *PathErrorRow = NULL ) const;
-		epeios::size__ Dump(
+			mdr::row__ *PathErrorRow = NULL ) const;
+		mdr::size__ Dump(
 			row__ Root,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const;	// Retourne le nombre d'enfants.
-		epeios::size__ Dump(
+		mdr::size__ Dump(
 			row__ Root,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
@@ -783,7 +783,7 @@ namespace rgstry {
 	public:
 		struct s {
 			xml::coord__ Coord;
-			epeios::row__ PathErrorRow;
+			mdr::row__ PathErrorRow;
 			xpp::status__ XPPStatus;
 			str::string_::s FileName;
 		} &S_;
@@ -827,7 +827,7 @@ namespace rgstry {
 			FileName.Init();
 		}
 		E_RODISCLOSE_( xml::coord__, Coord );
-		E_RODISCLOSE_( epeios::row__, PathErrorRow );
+		E_RODISCLOSE_( mdr::row__, PathErrorRow );
 		E_RODISCLOSE_( xpp::status__, XPPStatus );
 	};
 
@@ -878,7 +878,7 @@ namespace rgstry {
 	: public _context___
 	{
 		status__ Status;
-		epeios::row__ PathErrorRow;
+		mdr::row__ PathErrorRow;
 		void reset( bso::bool__ P = true )
 		{
 			_context___::reset( P );
@@ -1044,7 +1044,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+			mdr::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			value_ &Value ) const
@@ -1059,11 +1059,11 @@ namespace rgstry {
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
 			values_ &Values,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		void SetValue(
 			const str::string_ &PathString,
 			const value_ &Value,
-			epeios::row__ *PathErrorRow = NULL )
+			mdr::row__ *PathErrorRow = NULL )
 		{
 			Local.Registry->SetValue( PathString, Value, Local.Root, PathErrorRow );
 		}
@@ -1073,7 +1073,7 @@ namespace rgstry {
 		}
 		bso::bool__ Exists(
 			const str::string_ &Path,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		void Search(
 			const path_ &Path,
 			row__ &GlobalRow,
@@ -1086,7 +1086,7 @@ namespace rgstry {
 			const str::string_ &Path,
 			row__ &GlobalRow,
 			row__ &LocalRow,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
  	};
 
 	class overloaded_unique_registry___	// La base de registre de base et locale sont la même.
@@ -1349,7 +1349,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL  ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+			mdr::row__ *PathErrorRow = NULL  ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		{
 			return _GetRegistry( Level ).GetValue( PathString, _GetRoot( Level ), Missing, Buffer, PathErrorRow );
 		}
@@ -1357,7 +1357,7 @@ namespace rgstry {
 			const str::string_ &PathString,
 			bso::bool__ *Missing,
 			buffer &Buffer,
-			epeios::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+			mdr::row__ *PathErrorRow = NULL  ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 		bso::bool__ GetValue(
 			level__ Level,
 			const path_ &Path,
@@ -1369,7 +1369,7 @@ namespace rgstry {
 			level__ Level,
 			const str::string_ &PathString,
 			value_ &Value,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			buffer Buffer;
 			bso::bool__ Missing = false;
@@ -1381,11 +1381,11 @@ namespace rgstry {
 		bso::bool__ GetValue(
 			const str::string_ &PathString,
 			value_ &Value,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ GetValue(
 			const char *PathString,
 			value_ &Value,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return GetValue( str::string( PathString ), Value, PathErrorRow );
 		}
@@ -1400,18 +1400,18 @@ namespace rgstry {
 			level__ Level,
 			const str::string_ &PathString,
 			values_ &Values,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return _GetRegistry( Level ).GetValues( PathString, _GetRoot( Level ), Values, PathErrorRow );
 		}
 		bso::bool__ GetValues(
 			const str::string_ &PathString,
 			values_ &Values,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ GetValues(
 			const char *PathString,
 			values_ &Values,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return GetValues( str::string( PathString ), Values, PathErrorRow );
 		}
@@ -1419,7 +1419,7 @@ namespace rgstry {
 			level__ Level,
 			const str::string_ &PathString,
 			const value_ &Value,
-			epeios::row__ *PathErrorRow = NULL )
+			mdr::row__ *PathErrorRow = NULL )
 		{
 			_GetRegistry( Level ).SetValue( PathString, Value, _GetRoot( Level ), PathErrorRow );
 
@@ -1428,7 +1428,7 @@ namespace rgstry {
 		bso::bool__ SetValue(
 			const str::string_ &PathString,
 			const value_ &Value,
-			epeios::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		bso::bool__ Delete(
 			const path_ &Path,
 			level__ Level )
@@ -1442,7 +1442,7 @@ namespace rgstry {
 		bso::bool__ Delete( 
 			const str::string_ &PathString,
 			level__ Level,
-			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+			mdr::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		{
 			if ( _GetRegistry( Level ).Delete( PathString, _GetRoot( Level ), PathErrorRow ) ) {
 				_Touch( Level );
@@ -1453,16 +1453,16 @@ namespace rgstry {
 		bso::bool__ Delete( 
 			const char *PathString,
 			level__ Level,
-			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+			mdr::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		{
 			return Delete( str::string( PathString ), Level, PathErrorRow );
 		}
 		bso::bool__ Delete(
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		bso::bool__ Delete(
 			const char *PathString,
-			epeios::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+			mdr::row__ *PathErrorRow = NULL )	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
 		{
 			return Delete( str::string( PathString ), PathErrorRow );
 		}
@@ -1484,13 +1484,13 @@ namespace rgstry {
 		row__ Search(
 			level__ Level,
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return _GetRegistry( Level ).Search( PathString, _GetRoot( Level ), PathErrorRow );
 		}
 		row__ Search(
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL ) const;
+			mdr::row__ *PathErrorRow = NULL ) const;
 		bso::bool__ Exists(
 			level__ Level,
 			const path_ &Path ) const
@@ -1500,13 +1500,13 @@ namespace rgstry {
 		bso::bool__ Exists(
 			level__ Level,
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return Search( Level, PathString, PathErrorRow ) != NONE;
 		}
 		bso::bool__ Exists(
 			const str::string_ &PathString,
-			epeios::row__ *PathErrorRow = NULL ) const
+			mdr::row__ *PathErrorRow = NULL ) const
 		{
 			return Search( PathString, PathErrorRow ) != NONE;
 		}
@@ -1580,14 +1580,14 @@ namespace rgstry {
 
 			return Status;
 		}
-		epeios::size__ Dump(
+		mdr::size__ Dump(
 			level__ Level,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const
 		{
 			return _GetRegistry( Level ).Dump( _GetRoot( Level ), RootToo, Writer );
 		}
-		epeios::size__ Dump(
+		mdr::size__ Dump(
 			level__ Level,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
@@ -1612,7 +1612,7 @@ namespace rgstry {
 		str::_guint__ Max )
 	{
 		str::_guint__ Value = Default;
-		epeios::row__ LocalError = NONE;
+		mdr::row__ LocalError = NONE;
 
 		Value = str::_GenericUnsignedConversion( RawValue, 0, &LocalError, str::bAuto, Max );
 
@@ -1640,7 +1640,7 @@ namespace rgstry {
 		str::_guint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
-		epeios::row__ PathError = NONE;
+		mdr::row__ PathError = NONE;
 		bso::bool__ ConversionError = false;
 	ERRBegin
 		RawValue.Init();
@@ -1674,7 +1674,7 @@ namespace rgstry {
 		str::_gsint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
-		epeios::row__ GenericError = NONE;
+		mdr::row__ GenericError = NONE;
 	ERRBegin
 		RawValue.Init();
 

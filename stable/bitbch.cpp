@@ -93,7 +93,7 @@ void bitbch::And(
 static inline void And_(
 	const receptacle__ *O1,
 	const receptacle__ *O2,
-	epeios::size__ Amount,
+	mdr::size__ Amount,
 	receptacle__ *R )
 {
 	while ( Amount-- )
@@ -111,9 +111,9 @@ void bitbch::And(
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];
-	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
-	epeios::size__ Current = 0;
-	epeios::size__ Amount = BUFFER_SIZE;
+	mdr::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	mdr::size__ Current = 0;
+	mdr::size__ Amount = BUFFER_SIZE;
 
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
@@ -147,8 +147,8 @@ void bitbch::Or(
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
 
-	epeios::row_t__ Row = 0;
-	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
+	mdr::row_t__ Row = 0;
+	mdr::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
 	while ( Row < Limit ) {
 		R.Table.Store( O1.Table( Row ) | O2.Table( Row ), Row );
@@ -161,7 +161,7 @@ void bitbch::Or(
 static inline void Or_(
 	const receptacle__ *O1,
 	const receptacle__ *O2,
-	epeios::size__ Amount,
+	mdr::size__ Amount,
 	receptacle__ *R )
 {
 	while ( Amount-- )
@@ -179,9 +179,9 @@ void bitbch::Or(
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];
-	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
-	epeios::size__ Current = 0;
-	epeios::size__ Amount = BUFFER_SIZE;
+	mdr::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	mdr::size__ Current = 0;
+	mdr::size__ Amount = BUFFER_SIZE;
 
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
@@ -216,8 +216,8 @@ void bitbch::XOr(
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
 
-	epeios::row_t__ Row = 0;
-	epeios::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
+	mdr::row_t__ Row = 0;
+	mdr::size__ Limit = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
 	while ( Row < Limit ) {
 		R.Table.Store( O1.Table( Row ) ^ O2.Table( Row ), Row );
@@ -230,7 +230,7 @@ void bitbch::XOr(
 static inline void XOr_(
 	const receptacle__ *O1,
 	const receptacle__ *O2,
-	epeios::size__ Amount,
+	mdr::size__ Amount,
 	receptacle__ *R )
 {
 	while ( Amount-- )
@@ -248,9 +248,9 @@ void bitbch::XOr(
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];
-	epeios::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
-	epeios::size__ Current = 0;
-	epeios::size__ Amount = BUFFER_SIZE;
+	mdr::size__ Size = ( O1.Amount() == 0 ? 0 : ( O1.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	mdr::size__ Current = 0;
+	mdr::size__ Amount = BUFFER_SIZE;
 
 	if ( R.Amount() < O1.Amount() )
 		R.Allocate( O1.Amount() );
@@ -279,8 +279,8 @@ void bitbch::Not(
 	if ( R.Amount() < O.Amount() )
 		R.Allocate( O.Amount() );
 
-	epeios::row_t__ Row = 0;
-	epeios::size__ Limit = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
+	mdr::row_t__ Row = 0;
+	mdr::size__ Limit = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH_NB_BITS_RECEPTACLE + 1 );
 
 	if ( R.Amount() < O.Amount() )
 		R.Allocate( O.Amount() );
@@ -295,7 +295,7 @@ void bitbch::Not(
 
 static inline void Not_(
 	const receptacle__ *O,
-	epeios::size__ Amount,
+	mdr::size__ Amount,
 	receptacle__ *R )
 {
 	while ( Amount-- )
@@ -307,9 +307,9 @@ void bitbch::Not(
 	E_BIT_BUNCH_ &R )
 {
 	receptacle__ Buffer[2 * BUFFER_SIZE];
-	epeios::size__ Size = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
-	epeios::size__ Current = 0;
-	epeios::size__ Amount = BUFFER_SIZE;
+	mdr::size__ Size = ( O.Amount() == 0 ? 0 : ( O.Amount() - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 );
+	mdr::size__ Current = 0;
+	mdr::size__ Amount = BUFFER_SIZE;
 
 	if ( R.Amount() < O.Amount() )
 		R.Allocate( O.Amount() );
@@ -334,7 +334,7 @@ txf::text_oflow__ &operator <<(
 	txf::text_oflow__ &OStream,
 	const E_BIT_BUNCH_ &Bunch )
 {
-	epeios::row__ Row = Bunch.First();
+	mdr::row__ Row = Bunch.First();
 
 	while ( Row != NONE ) {
 		OStream << (unsigned long)Bunch( Row );

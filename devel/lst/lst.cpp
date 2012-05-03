@@ -57,14 +57,14 @@ public:
 #include "flf.h"
 
 static inline void Save_(
-	epeios::row__ Row,
+	mdr::row__ Row,
 	flw::oflow__ &Flow )
 {
 	dtfptb::FixedPutULong( *Row, Flow );
 }
 
 static void Save_(
-	const stk::E_BSTACK_( epeios::row__ ) &Bunch,
+	const stk::E_BSTACK_( mdr::row__ ) &Bunch,
 	flw::oflow__ &Flow )
 {
 	stk::row__ Row = Bunch.First();
@@ -100,17 +100,17 @@ ERREpilog
 
 static inline void Load_(
 	flw::iflow__ &Flow,
-	epeios::row__ &Row )
+	mdr::row__ &Row )
 {
 	Row = dtfptb::FixedGetULong( Flow );
 }
 	
 static void Load_(
 	flw::iflow__ &Flow,
-	epeios::size__ Amount,
-	stk::E_BSTACK_( epeios::row__ ) &Stack )
+	mdr::size__ Amount,
+	stk::E_BSTACK_( mdr::row__ ) &Stack )
 {
-	epeios::row__ Row;
+	mdr::row__ Row;
 
 	while ( Amount-- ) {
 		Load_( Flow, Row );
@@ -131,7 +131,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( epeios::row__ ), Store.Released );
+	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( mdr::row__ ), Store.Released );
 
 	State = uym::sExists;
 ERRErr
@@ -141,9 +141,9 @@ ERREpilog
 }
 
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Successeur_(
-	epeios::row_t__ Element,
-	epeios::size__ Amount,
+mdr::row_t__ lst::Successeur_(
+	mdr::row_t__ Element,
+	mdr::size__ Amount,
 	const store_ &Libres )
 {
 	while( ( ++Element < Amount ) && Libres.IsAvailable( Element ) ) {};
@@ -155,8 +155,8 @@ epeios::row_t__ lst::Successeur_(
 }
 
 // Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-epeios::row_t__ lst::Predecesseur_(
-	epeios::row_t__ Element,
+mdr::row_t__ lst::Predecesseur_(
+	mdr::row_t__ Element,
 	const store_ &Libres )
 {
 	bso::bool__ Trouve = false;
@@ -170,8 +170,8 @@ epeios::row_t__ lst::Predecesseur_(
 }
 
 void lst::MarkAsReleased_(
-	epeios::row_t__ First,
-	epeios::row_t__ Last,
+	mdr::row_t__ First,
+	mdr::row_t__ Last,
 	store_ &Store )
 {
 	while ( First < Last )

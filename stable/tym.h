@@ -64,7 +64,6 @@ extern class ttr_tutor &TYMTutor;
 #include "flw.h"
 #include "uym.h"
 #include "mmm.h"
-#include "epeios.h"
 #include "mdr.h"
 
 /*
@@ -83,32 +82,32 @@ namespace tym {
 	private:
 		// place dans 'Tampon' 'Nomnbre' objets à la position 'Position'
 		void _Recall(
-			epeios::row_t__ Position,
-			epeios::size__ Nombre,
+			mdr::row_t__ Position,
+			mdr::size__ Nombre,
 			t *Tampon ) const
 		{
-			b::Recall( Position * sizeof( t ), Nombre * sizeof( t ), (epeios::datum__ *)Tampon );
+			b::Recall( Position * sizeof( t ), Nombre * sizeof( t ), (mdr::datum__ *)Tampon );
 		}
 		// écrit 'Taille' objets de 'Tampon' à la position 'Position'
 		void _Store(
 			const t *Tampon,
-			epeios::size__ Nombre,
-			epeios::row_t__ Position )
+			mdr::size__ Nombre,
+			mdr::row_t__ Position )
 		{
-			b::Store( (epeios::datum__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
+			b::Store( (mdr::datum__ *)Tampon, Nombre * sizeof( t ), Position * sizeof( t ) );
 		}
 		/* écrit 'Nombre' objets de 'Source' à partir de 'Position'
 		à la position 'Decalage' */
 		void _Store(
 			const _memory_ &Source,
-			epeios::size__ Quantite,
-			epeios::row_t__ Position,
-			epeios::row_t__ Decalage )
+			mdr::size__ Quantite,
+			mdr::row_t__ Position,
+			mdr::row_t__ Decalage )
 		{
 			b::Store( Source, ( Quantite * sizeof( t ) ),( Position * sizeof( t ) ),  ( Decalage * sizeof( t ) ) );
 		}
 		// allocation de 'Capacite' objets
-		void Allocate_( epeios::size__ Size )
+		void Allocate_( mdr::size__ Size )
 		{
 			b::Allocate( ( Size * sizeof( t ) ) );
 		}
@@ -127,7 +126,7 @@ namespace tym {
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Recall(
 			r Position,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			t *Buffer ) const
 		{
 			_Recall( *Position, Amount, Buffer );
@@ -135,7 +134,7 @@ namespace tym {
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'. Return 'Buffer'.
 		t *Get(
 			r Position,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			t *Buffer ) const
 		{
 			_Recall( *Position, Amount, Buffer );
@@ -152,7 +151,7 @@ namespace tym {
 		//f Return the object at 'Position'.
 		const t Get( r Position ) const
 		{
-			epeios::datum__ V[sizeof( t )];
+			mdr::datum__ V[sizeof( t )];
 
 			_Recall( *Position, 1, (t *)V );
 
@@ -161,7 +160,7 @@ namespace tym {
 		//f Store 'Amount' object in 'Buffer' at 'Position'.
 		void Store(
 			const t *Buffer,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			r Position )
 		{
 			_Store( Buffer, Amount, *Position );
@@ -176,7 +175,7 @@ namespace tym {
 		/*f Store 'Amount' objects at 'Position' in 'Source' at 'Offset'. */
 		void Store(
 			const _memory_<t,b,r> &Source,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			r Position = 0,
 			r Offset = 0 )
 		{
@@ -187,7 +186,7 @@ namespace tym {
 			r Position1,
 			r Position2 )
 		{
-			epeios::datum__ O[sizeof( t )];
+			mdr::datum__ O[sizeof( t )];
 
 			Recall( Position1, *(t *)O );
 			Store( Get( Position2 ), Position1 );
@@ -197,7 +196,7 @@ namespace tym {
 		void Store(
 			const t &Object,
 			r Position,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			b::Store( (mdr::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
 		}
@@ -207,7 +206,7 @@ namespace tym {
 			r Begin,
 			r End ) const
 		{
-			epeios::row_t__ Position;
+			mdr::row_t__ Position;
 
 			if ( ( Position = b::Search( (mdr::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
 				Position /= sizeof( t );
@@ -215,7 +214,7 @@ namespace tym {
 			return Position;
 		}
 		//f Allocate 'Size' objects.
-		void Allocate( epeios::size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			Allocate_( Size );
 		}
@@ -260,7 +259,7 @@ namespace tym {
 		}
 		void WriteToFlow(
 			r Position,
-			epeios::size__ Quantity,
+			mdr::size__ Quantity,
 			flw::oflow__ &OFlow ) const
 		{
 			_memory_<t, uym::untyped_memory_, r >::WriteToFlow( *Position * sizeof( t ), Quantity * sizeof( t ) , OFlow );
@@ -268,7 +267,7 @@ namespace tym {
 		void ReadFromFlow(
 			flw::iflow__  &IFlow,
 			r Position,
-			epeios::size__ Quantite )
+			mdr::size__ Quantite )
 		{
 			_memory_<t, uym::untyped_memory_, r >::ReadFromFlow( IFlow, *Position * sizeof( t ), Quantite * sizeof( t ) );
 		}
@@ -291,8 +290,8 @@ namespace tym {
 	#define E_MEMORYt( t, r )	memory< t, r >
 	#define E_MEMORYt_( t, r )	memory_< t, r >
 
-	#define E_MEMORY_( t )	E_MEMORYt_( t, epeios::row__ )
-	#define E_MEMORY( t )	E_MEMORYt( t, epeios::row__ )
+	#define E_MEMORY_( t )	E_MEMORYt_( t, mdr::row__ )
+	#define E_MEMORY( t )	E_MEMORYt( t, mdr::row__ )
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
 	template <class t, typename r> inline bso::sign__ Compare(
@@ -300,7 +299,7 @@ namespace tym {
 		const E_MEMORYt_( t, r ) &S2,
 		r BeginS1,
 		r BeginS2,
-		epeios::size__ Quantity )
+		mdr::size__ Quantity )
 	{
 		return uym::Compare( S1, S2, *BeginS1 * sizeof( t ), *BeginS2 * sizeof( t ), Quantity * sizeof( t ) );
 	}
@@ -346,7 +345,7 @@ namespace tym {
 
 	//d A static set of 'amount' object of type 'Type'.
 	#define E_MEMORYt__( type, amount, r ) memory__< type, amount, sizeof( type ), r > 
-	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ), epeios::row__ > 
+	#define E_MEMORY__( type, amount ) memory__< type, amount, sizeof( type ), mdr::row__ > 
 
 #if 0
 	//c The static part for the '_memory_' object. CodeWarrior needs this. Internal use.
@@ -390,7 +389,7 @@ namespace tym {
 
 	//d A static set of 'amount' object of type 'Type'.
 	#define E_MEMORYt___( type, r ) memory___< type, r > 
-	#define E_MEMORY___( type ) memory___< type, epeios::row__ > 
+	#define E_MEMORY___( type ) memory___< type, mdr::row__ > 
 }
 
 /*$END$*/

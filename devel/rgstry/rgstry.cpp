@@ -134,11 +134,11 @@ ERREpilog
 row__ rgstry::registry_::_Search(
 	const name_ &Name,
 	const rows_ &NodeRows,
-	epeios::row__ &Cursor ) const
+	mdr::row__ &Cursor ) const
 {
 	buffer Buffer;
 
-	epeios::row__ &Row = Cursor;
+	mdr::row__ &Row = Cursor;
 	
 	if ( Row == NONE )
 		Row = NodeRows.First();
@@ -244,11 +244,11 @@ enum state__ {
 	s_Undefined
 };
 
-epeios::row__ rgstry::BuildPath(
+mdr::row__ rgstry::BuildPath(
 	const str::string_ &PathString,
 	path_ &Path )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRProlog
 	bso::bool__ Continue = true;
 	state__ State = ::s_Undefined;
@@ -389,9 +389,9 @@ ERREpilog
 static inline bso::bool__ BuildPath_(
 	const str::string_ &PathString,
 	path_ &Path,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
-	epeios::row__ PathErrorRowBuffer = BuildPath( PathString, Path );
+	mdr::row__ PathErrorRowBuffer = BuildPath( PathString, Path );
 
 	if ( PathErrorRowBuffer != NONE )
 		if ( PathErrorRow == NULL )
@@ -407,7 +407,7 @@ static inline bso::bool__ BuildPath_(
 
 row__ rgstry::registry_::_Search(
 	const path_ &Path,
-	epeios::row__ PathRow,
+	mdr::row__ PathRow,
 	row__ Row,
 	rows_ &ResultRows ) const
 {
@@ -467,7 +467,7 @@ row__ rgstry::registry_::_Search(
 	const path_ &Path,
 	row__ Row ) const
 {
-	epeios::row__ PathRow = NONE, Cursor = NONE;
+	mdr::row__ PathRow = NONE, Cursor = NONE;
 
 	if ( Path.Amount() != 0 )
 		return _Search( Path, Path.First(), Row, *(rows_ *)NULL );
@@ -478,7 +478,7 @@ row__ rgstry::registry_::_Search(
 row__ rgstry::registry_::_Search(
 	const str::string_ &PathString,
 	row__ Row,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 ERRProlog
 	path Path;
@@ -502,7 +502,7 @@ row__ rgstry::registry_::Create(
 {
 	bso::bool__ Exists = true;
 	ctn::E_CITEM( path_item_ ) Item;
-	epeios::row__ PathRow = Path.First();
+	mdr::row__ PathRow = Path.First();
 	row__ CandidateRow = NONE;
 
 	Item.Init( Path );
@@ -532,7 +532,7 @@ row__ rgstry::registry_::Create(
 row__ rgstry::registry_::Create(
 	const str::string_ &PathString,
 	row__ Row,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
 ERRProlog
 	path Path;
@@ -555,7 +555,7 @@ row__ rgstry::registry_::SetValue(
 	const str::string_ &PathString,
 	const value_ &Value,
 	row__ Row,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
 ERRProlog
 	path Path;
@@ -681,7 +681,7 @@ void rgstry::registry_::_Delete( row__ Row )
 bso::bool__ rgstry::registry_::Exists(
 	const str::string_ &PathString,
 	row__ ParentRow,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	bso::bool__ Result = false;
 ERRProlog
@@ -725,16 +725,16 @@ ERREnd
 ERREpilog
 }
 
-epeios::size__ rgstry::registry_::_Dump(
+mdr::size__ rgstry::registry_::_Dump(
 	row__ Root,
 	bso::bool__ RootToo,
 	xml::writer_ &Writer,
 	buffer &Buffer ) const
 {
-	epeios::size__ ChildAmount = 0;
+	mdr::size__ ChildAmount = 0;
 ERRProlog
 	rows Children;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	Children.Init();
 	Children = Buffer( Root ).Children;
@@ -762,12 +762,12 @@ ERREpilog
 }
 
 
-epeios::size__ rgstry::registry_::Dump(
+mdr::size__ rgstry::registry_::Dump(
 	row__ Root,
 	bso::bool__ RootToo,
 	xml::writer_ &Writer ) const
 {
-	epeios::size__ ChildAmount = 0;
+	mdr::size__ ChildAmount = 0;
 ERRProlog
 	buffer Buffer;
 ERRBegin
@@ -780,14 +780,14 @@ ERREpilog
 	return ChildAmount;
 }
 
-epeios::size__ rgstry::registry_::Dump(
+mdr::size__ rgstry::registry_::Dump(
 	row__ Root,
 	bso::bool__ RootToo,
 	xml::outfit__ Outfit,
 	xml::encoding__ Encoding,
 	txf::text_oflow__ &Flow ) const
 {
-	epeios::size__ ChildAmount = 0;
+	mdr::size__ ChildAmount = 0;
 ERRProlog
 	xml::writer Writer;
 	buffer Buffer;
@@ -806,7 +806,7 @@ ERREpilog
 
 void rgstry::registry_::_Delete( const rows_ &Rows )
 {
-	epeios::row__ Row = Rows.First();
+	mdr::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
 		_Delete( Rows( Row ) );
@@ -844,7 +844,7 @@ const value_ &rgstry::registry_::GetValue(
 	row__ Row,
 	bso::bool__ *Missing,
 	buffer &Buffer,
-	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+	mdr::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -903,7 +903,7 @@ bso::bool__ rgstry::registry_::GetValues(
 	const str::string_ &PathString,
 	row__ ParentRow,
 	values_ &Values,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -922,7 +922,7 @@ ERREpilog
 bso::bool__ rgstry::registry_::Delete(
 	const str::string_ &PathString,
 	row__ Row,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -980,7 +980,7 @@ const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
 	buffer &Buffer,
-	epeios::row__ *PathErrorRow )const // Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+	mdr::row__ *PathErrorRow )const // Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -1019,7 +1019,7 @@ ERREpilog
 bso::bool__ rgstry::overloaded_registry___::GetValues(
 	const str::string_ &PathString,
 	values_ &Values,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -1042,7 +1042,7 @@ ERREpilog
 
 bso::bool__ rgstry::overloaded_registry___::Exists(
 	const str::string_ &PathString,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	bso::bool__ Exists = false;
 ERRProlog
@@ -1065,7 +1065,7 @@ void rgstry::overloaded_registry___::Search(
 	const str::string_ &RawPath,
 	row__ &GlobalRow,
 	row__ &LocalRow,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 ERRProlog
 	path Path;
@@ -1083,7 +1083,7 @@ const value_ &rgstry::multi_level_registry_::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
 	buffer &Buffer,
-	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+	mdr::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	static value Empty;
 	const value_ *Result = &Empty;
@@ -1120,7 +1120,7 @@ ERREpilog
 bso::bool__ rgstry::multi_level_registry_::GetValue(
 	const str::string_ &PathString,
 	value_ &Value,
-	epeios::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+	mdr::row__ *PathErrorRow ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
 {
 	bso::bool__ Found = false;
 ERRProlog
@@ -1149,7 +1149,7 @@ ERREpilog
 bso::bool__ rgstry::multi_level_registry_::GetValues(
 	const str::string_ &PathString,
 	values_ &Values,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	bso::bool__ Found = false;
 ERRProlog
@@ -1177,12 +1177,12 @@ ERREpilog
 bso::bool__ rgstry::multi_level_registry_::SetValue(
 	const str::string_ &PathString,
 	const value_ &Value,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
 	bso::bool__ Set = false;
 ERRProlog
 	value CurrentValue;
-	epeios::row__ LocalPathErrorRow = NONE;
+	mdr::row__ LocalPathErrorRow = NONE;
 ERRBegin
 	CurrentValue.Init();
 
@@ -1206,7 +1206,7 @@ ERREpilog
 
 bso::bool__ rgstry::multi_level_registry_::Delete(
 	const str::string_ &PathString,
-	epeios::row__ *PathErrorRow )
+	mdr::row__ *PathErrorRow )
 {
 	bso::bool__ Deleted = false;
 ERRProlog
@@ -1261,7 +1261,7 @@ ERREpilog
 
 row__ rgstry::multi_level_registry_::Search(
 	const str::string_ &PathString,
-	epeios::row__ *PathErrorRow ) const
+	mdr::row__ *PathErrorRow ) const
 {
 	row__ Row = NONE;
 ERRProlog
@@ -1294,7 +1294,7 @@ status__ rgstry::FillRegistry(
 	rgstry::row__ &RegistryRoot,
 	context___ &Context )
 {
-	epeios::row__ PathErrorRow = NONE;
+	mdr::row__ PathErrorRow = NONE;
 
 	if ( rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) == NONE )
 		return Context.Status = sParseError;
@@ -1355,7 +1355,7 @@ static bso::ubyte__ GetTagAmount_( const str::string_ &String )
 {
 	bso::ubyte__ Amount = 0;
 
-	epeios::row__ Row = String.First();
+	mdr::row__ Row = String.First();
 
 	while ( ( Row != NONE ) && ( ( Row = String.Search( RGSTRY__TAG_MARKER, Row ) ) != NONE ) )
 	{

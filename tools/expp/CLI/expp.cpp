@@ -195,7 +195,7 @@ static void AnalyzeOptions(
 	parameters &Parameters )
 {
 ERRProlog
-	epeios::row__ P;
+	mdr::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
 	const bso::char__ *Unknown = NULL;
@@ -243,7 +243,7 @@ static void AnalyzeFreeArguments(
 {
 ERRProlog
 	clnarg::arguments Free;
-	epeios::row__ P;
+	mdr::row__ P;
 ERRBegin
 	Free.Init();
 

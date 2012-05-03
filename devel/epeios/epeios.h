@@ -64,24 +64,25 @@ extern class ttr_tutor &EPEIOSTutor;
 //D EPEIOS current features.
 /* End addendum to automatic documentation generation part. */
 
+// # error "Obsolete !"
 
 #include "err.h"
 #include "flw.h"
 #include "tol.h"
 #include "mdr.h"
 
-namespace epeios {
+namespace epeios_deprecated {
 	typedef mdr::row_t__	row_t__;
 	E_TMIMIC__( row_t__, row__ );
 
 	typedef mdr::p_row_t__	p_row_t__;
 	E_TMIMIC__( p_row_t__, p_row__ );
 
-	#define EPEIOS_ROW_MAX		MDR_ROW_T_MAX
+	#define EPEIOS_DEPRECATED_ROW_MAX		MDR_ROW_T_MAX
 
 	using mdr::size__;
 
-	#define EPEIOS_SIZE_MAX		MDR_SIZE_MAX
+	#define EPEIOS_DEPRECATED_SIZE_MAX		MDR_SIZE_MAX
 
 #ifndef NONE
 #	define NONE ((mdr::row_t__)-1)

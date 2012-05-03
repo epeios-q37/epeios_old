@@ -184,7 +184,7 @@ namespace ids {
 			return S_.FirstUnused;
 		}
 		//f Return the amount of released IDs.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return Released.Amount();
 		}

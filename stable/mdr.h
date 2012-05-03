@@ -69,15 +69,18 @@ extern class ttr_tutor &MDRTutor;
 
 #define MDR_INTERNAL_MEMORY_DRIVER *(mdr::E_MEMORY_DRIVER__ *)NULL
 
+# define NONE ((mdr::row_t__)-1)
+
 namespace mdr {
 
 	//t The position in a memory.
 	typedef bso::size__	row_t__;
-	typedef bso::p_size__	p_row_t__;
+	E_TMIMIC__( row_t__, row__ );
 
+	typedef bso::p_size__	p_row_t__;
+	E_TMIMIC__( p_row_t__, p_row__ );
 
 	#define MDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
-
 
 	//t The size of a memory.
 	using bso::size__;

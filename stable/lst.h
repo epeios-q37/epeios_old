@@ -66,7 +66,7 @@ extern class ttr_tutor &LSTTutor;
 
 namespace lst {
 
-	typedef ids::E_IDS_STORE_( epeios::row__ ) store_;
+	typedef ids::E_IDS_STORE_( mdr::row__ ) store_;
 
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
 	uym::state__ WriteToFile_(
@@ -93,23 +93,23 @@ namespace lst {
 		return uym::sExists;
 	}
 
-	epeios::row_t__ Successeur_(
-		epeios::row_t__ Element,
-		epeios::size__ Amount,
+	mdr::row_t__ Successeur_(
+		mdr::row_t__ Element,
+		mdr::size__ Amount,
 		const store_ &Libres );
 
-	epeios::row_t__ Predecesseur_(
-		epeios::row_t__ Element,
+	mdr::row_t__ Predecesseur_(
+		mdr::row_t__ Element,
 		const store_ &Libres );
 
 	void Insert_(
-		epeios::row_t__ First,
-		epeios::row_t__ Last,
+		mdr::row_t__ First,
+		mdr::row_t__ Last,
 		store_ &Store );
 
 	void MarkAsReleased_(
-		epeios::row_t__ First,
-		epeios::row_t__ Last,
+		mdr::row_t__ First,
+		mdr::row_t__ Last,
 		store_ &Store );
 
 
@@ -121,19 +121,19 @@ namespace lst {
 		permet de synchroniser la taille de la liste avec d'autres ensembles;
 		'Size' est la capacité allouée. */
 		virtual void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 	private:
 		// Return the extent, based on 'Locations'.
-		epeios::row_t__ Extent_( void ) const
+		mdr::row_t__ Extent_( void ) const
 		{
 			return *Locations.GetFirstAvailable();
 		}
-		epeios::row_t__ Nouveau_( aem::mode__ Mode )
+		mdr::row_t__ Nouveau_( aem::mode__ Mode )
 		{
 			bso::bool__ Released = false;
 
-			epeios::row_t__ New = *Locations.New( Released );
+			mdr::row_t__ New = *Locations.New( Released );
 
 			if ( !Released )
 				LSTAllocate( Extent_(), Mode );
@@ -141,12 +141,12 @@ namespace lst {
 			return New;
 		}
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-		epeios::row_t__ Successeur_( epeios::row_t__ Element ) const
+		mdr::row_t__ Successeur_( mdr::row_t__ Element ) const
 		{
 			return lst::Successeur_( Element, Extent_(), Locations );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-		epeios::row_t__ Predecesseur_( epeios::row_t__ Element ) const
+		mdr::row_t__ Predecesseur_( mdr::row_t__ Element ) const
 		{
 			return lst::Predecesseur_( Element, Locations );
 		}
@@ -237,7 +237,7 @@ namespace lst {
 			else
 				return NONE;
 		}
-		r First( epeios::size__ Offset ) const
+		r First( mdr::size__ Offset ) const
 		{
 			r Row = First();
 
@@ -251,7 +251,7 @@ namespace lst {
 		{
 			if ( Extent_() )
 			{
-				epeios::row_t__ P = Extent_() - 1;
+				mdr::row_t__ P = Extent_() - 1;
 
 				if ( !Locations.IsAvailable( P ) )
 					return P;
@@ -261,7 +261,7 @@ namespace lst {
 			else
 				return NONE;
 		}
-		r Last( epeios::size__ Offset ) const
+		r Last( mdr::size__ Offset ) const
 		{
 			r Row = Last();
 
@@ -278,7 +278,7 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next(
 			r Entry,
-			epeios::size__ Offset = 1 ) const
+			mdr::size__ Offset = 1 ) const
 		{
 			if ( ( *Entry += Offset ) < Extent_() )
 				if ( !Locations.IsAvailable( *Entry ) )
@@ -291,7 +291,7 @@ namespace lst {
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
 		r Previous(
 			r Entry,
-			epeios::size__ Offset = 1 ) const
+			mdr::size__ Offset = 1 ) const
 		{
 			if ( ( *Entry -= Offset ) > 0 )
 				if ( !Locations.IsAvailable( *Entry ) )
@@ -302,12 +302,12 @@ namespace lst {
 				return NONE;
 		}
 		//f Amount of entries, NOT the extent of the list.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return Extent_() - Locations.Amount();
 		}
 		//f Extent of list.
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			return Extent_();
 		}
@@ -321,7 +321,7 @@ namespace lst {
 		}
 		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Locations.Amount() != 0 )
@@ -340,11 +340,11 @@ namespace lst {
 	#define E_LISTtx_( r, r_t )	list_<r, r_t>
 
 	//d Handle a list of objects.
-	#define E_LISTt( r )	E_LISTtx( r, epeios::row_t__ )
-	#define E_LISTt_( r )	E_LISTtx_( r, epeios::row_t__ )
+	#define E_LISTt( r )	E_LISTtx( r, mdr::row_t__ )
+	#define E_LISTt_( r )	E_LISTtx_( r, mdr::row_t__ )
 
-	#define E_LIST	E_LISTt( epeios::row__ )
-	#define E_LIST_	E_LISTt_( epeios::row__ )
+	#define E_LIST	E_LISTt( mdr::row__ )
+	#define E_LIST_	E_LISTt_( mdr::row__ )
 
 #ifndef FLM__COMPILATION
 
@@ -495,7 +495,7 @@ namespace lst {
 	template <typename list> uym::state__ Plug(
 		list &List,
 		list_file_manager___ &FileManager,
-		epeios::row__ FirstUnused,
+		mdr::row__ FirstUnused,
 		time_t ReferenceTimeStamp )
 	{
 		uym::state__ State = Test_( FileManager.FileName(), ReferenceTimeStamp );
@@ -518,7 +518,7 @@ namespace lst {
 		// Table de l'occupation de la liste.
 		bitbch::bit_bunch__<t, r> Occupation_;
 		// Nombre d'éléments dans la liste.
-		epeios::size__ Nombre_;
+		mdr::size__ Nombre_;
 	public:
 		list__( void )
 		{
@@ -548,7 +548,7 @@ namespace lst {
 		//f Return the position of a new entry.
 		r CreateEntry( err::handling__ ErrorHandling = err::h_Default  )
 		{
-			epeios::row_t__ Position = NONE;
+			mdr::row_t__ Position = NONE;
 
 			if ( Nombre_ == t ) 
 			{

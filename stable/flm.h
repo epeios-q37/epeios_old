@@ -68,7 +68,6 @@ extern class ttr_tutor &FLMTutor;
 #include "mdr.h"
 #include "iop.h"
 #include "fil.h"
-#include "epeios.h"
 
 #if defined( CPE__T_MS )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
@@ -103,7 +102,7 @@ extern class ttr_tutor &FLMTutor;
 
 
 namespace flm {
-	extern epeios::size__ MaxFileAmount;
+	extern fdr::size__ MaxFileAmount;
 
 	typedef iop::amount__ position__;
 	// type définissant une position dans la mémoire

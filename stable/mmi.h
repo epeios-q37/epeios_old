@@ -135,7 +135,7 @@ namespace mmi {
 			return _Index;
 		}
 		// Déportée.
-		epeios::size__ Size( void ) const;
+		mdr::size__ Size( void ) const;
 		friend class indexed_multimemory_driver__;
 	};
 
@@ -149,7 +149,7 @@ namespace mmi {
 	protected:
 		// Déportée.
 		virtual void MDRStore(
-			const epeios::datum__ *Buffer,
+			const mdr::datum__ *Buffer,
 			mdr::size__ Amount,
 			mdr::row_t__ Position );
 		// Déportée.
@@ -213,8 +213,8 @@ namespace mmi {
 	{
 	private:
 		void Initialize_(
-			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite )
+			mdr::size__ CapaciteCourante,
+			mdr::size__ NouvelleCapacite )
 		{
 #if 1
 			descripteur__ Buffer[MMI_BUFFER_SIZE];
@@ -238,8 +238,8 @@ namespace mmi {
 		}
 	// fonctions
 		void AllouerPlus_(
-			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite,
+			mdr::size__ CapaciteCourante,
+			mdr::size__ NouvelleCapacite,
 			aem::mode__ Mode )
 		{
 			Descripteurs.Allocate( NouvelleCapacite, Mode );
@@ -249,32 +249,32 @@ namespace mmi {
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void AllouerMoins_(
-			epeios::size__ CapaciteCourante,
-			epeios::size__ NouvelleCapacite,
+			mdr::size__ CapaciteCourante,
+			mdr::size__ NouvelleCapacite,
 			aem::mode__ Mode );
 		// alloue plus de la place pour pouvoir contenir 'NouvelleCapacite' objets,
 		// sachant que 'Capacite courante' est la capacite actuelle
 		void Lire_(
 			index__ Index,
-			epeios::row_t__ Position,
-			epeios::size__ Taille,
-			epeios::datum__ *Tampon ) const
+			mdr::row_t__ Position,
+			mdr::size__ Taille,
+			mdr::datum__ *Tampon ) const
 		{
 			Multimemoire.Read( Descripteurs(*Index).Descripteur, Position, Taille, Tampon, Descripteurs(*Index).Addendum );
 		}
 		// place dans 'Tampon' 'Taille' octets, à partir de 'Position', de l'objet 'Index'
 		void Ecrire_(
-			const epeios::datum__ *Tampon,
-			epeios::size__ Taille,
+			const mdr::datum__ *Tampon,
+			mdr::size__ Taille,
 			index__ Index,
-			epeios::row_t__ Position )
+			mdr::row_t__ Position )
 		{
 			Multimemoire.Write( Tampon, Taille, Descripteurs(*Index).Descripteur, Position, Descripteurs(*Index).Addendum );
 		}
 		// écrit à 'Position' de l'objet 'Index' 'Taille' octets de 'Tampon'
 		void Allouer_(
 			index__ Index,
-			epeios::size__ Nombre )
+			mdr::size__ Nombre )
 		{
 			descripteur__ D = Descripteurs.Get( *Index );
 
@@ -330,7 +330,7 @@ namespace mmi {
 		}
 		void Copy(
 			const indexed_multimemory_ &O,
-			epeios::size__ Size )
+			mdr::size__ Size )
 		{
 			Descripteurs.Allocate( Size, aem::mFit );
 			Descripteurs.Store( O.Descripteurs, Size );
@@ -354,10 +354,10 @@ namespace mmi {
 		}
 		//f Allocate 'Capacity' memories in the indexed multimemory. 'ActualCapacity' is the actual capacity.
 		void Allocate(
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			aem::mode__ Mode = aem::m_Default )
 		{
-			epeios::size__ CurrentAmount = Descripteurs.Amount();
+			mdr::size__ CurrentAmount = Descripteurs.Amount();
 
 			if ( CurrentAmount > Amount )
 				AllouerMoins_( CurrentAmount, Amount, Mode );
@@ -384,25 +384,25 @@ namespace mmi {
 		//f Put 'Amount' bytes in 'Buffer' from the 'Index' memory at 'Position' .
 		void Read(
 			index__ Index,
-			epeios::row_t__ Position,
-			epeios::size__ Amount,
-			epeios::datum__ *Buffer ) const
+			mdr::row_t__ Position,
+			mdr::size__ Amount,
+			mdr::datum__ *Buffer ) const
 		{
 			Lire_( Index, Position, Amount, Buffer );
 		}
 		//f Put 'Amount' bytes at 'Position' to the 'Index' memory from 'Buffer'.
 		void Write(
-			const epeios::datum__ *Buffer,
-			epeios::size__ Amount,
+			const mdr::datum__ *Buffer,
+			mdr::size__ Amount,
 			index__ Index,
-			epeios::row_t__ Position )
+			mdr::row_t__ Position )
 		{
 			Ecrire_( Buffer, Amount, Index, Position );
 		}
 		//f Allocate 'Size' bytes in the 'Index' memory.
 		void Reallocate(
 			index__ Index,
-			epeios::size__ Size )
+			mdr::size__ Size )
 		{
 			Allouer_( Index, Size );
 		}
@@ -412,7 +412,7 @@ namespace mmi {
 			Liberer_( Index );
 		}
 		//f Return the size of the 'Index' memory.
-		epeios::size__ Size( index__ Index ) const
+		mdr::size__ Size( index__ Index ) const
 		{
 			mmm::descriptor__ D = Descripteurs( *Index ).Descripteur;
 
@@ -425,9 +425,9 @@ namespace mmi {
 		'ActualCapacity' is the actual capacity.
 		No reallocationg to gain place is made. */
 		void RemoveWithoutReallocating(
-			epeios::row__ Position,
-			epeios::size__ ActualCapacity,
-			epeios::size__ Amount );
+			mdr::row__ Position,
+			mdr::size__ ActualCapacity,
+			mdr::size__ Amount );
 		void Shift( index__ Index )	// Shift all elements from 'Index' from one position to the end. Last element is lost.
 		{
 			descripteur__ Descripteur = {NONE, 0};
@@ -437,14 +437,14 @@ namespace mmi {
 #if 0
 		void write(
 			flw::oflow__ &OFlow,
-			epeios::size__ Size) const
+			mdr::size__ Size) const
 		{
 			Descripteurs.write( 0, Size, OFlow );
 			Multimemoire.write( OFlow );
 		}
 		void read(
 			flw::iflow__ &IFlow,
-			epeios::size__ Size )
+			mdr::size__ Size )
 		{
 			Descripteurs.read( IFlow, 0, Size );
 			Multimemoire.read( IFlow );
@@ -621,7 +621,7 @@ namespace mmi {
 		Multimemoire_->Read( _Index, Position, Amount, Buffer );
 	}
 
-	inline epeios::size__ _base_indexed_multimemory_driver__::Size( void ) const
+	inline mdr::size__ _base_indexed_multimemory_driver__::Size( void ) const
 	{
 		if ( _Index == NONE )
 			return 0;
@@ -630,7 +630,7 @@ namespace mmi {
 	}
 
 	inline void indexed_multimemory_driver__::MDRStore(
-		const epeios::datum__ *Buffer,
+		const mdr::datum__ *Buffer,
 		mdr::size__ Amount,
 		mdr::row_t__ Position )
 	{

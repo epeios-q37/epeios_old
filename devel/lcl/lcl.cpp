@@ -64,7 +64,7 @@ void lcl::locale_::_GetCorrespondingLabels(
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Label;
 	str::string Wording;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	str::string Path;
 ERRBegin
 	Label.Init( Labels );
@@ -190,7 +190,7 @@ void lcl::locale_::GetLanguages(
 	strings_ &Wordings ) const
 {
 	if ( S_.Root != NONE ) {
-		epeios::row__ PathErrorRow = NONE;
+		mdr::row__ PathErrorRow = NONE;
 
 		Registry.GetValues( str::string( "Languages/Language/@label" ), S_.Root, Labels, &PathErrorRow );
 

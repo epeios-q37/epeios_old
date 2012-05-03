@@ -76,7 +76,7 @@ des #define ci-dessous. */
 namespace bitbch {
 	
 	using aem::amount_extent_manager_;
-	using epeios::row_t__;
+	using mdr::row_t__;
 
 	// Type du receptacle de bits.
 	typedef bso::ubyte__		receptacle__;
@@ -104,7 +104,7 @@ namespace bitbch {
 		{
 			memset( Table_, BITBCH__RECEPTACLE_VALUE_MAX, t * sizeof( receptacle__ ) );
 		}
-		epeios::size__ Taille( void ) const
+		mdr::size__ Taille( void ) const
 		{
 			return t;
 		}
@@ -232,7 +232,7 @@ namespace bitbch {
 				return Previous( t - 1, Value );
 		}
 		//f Return the size.
-		epeios::size__ Size( void ) const
+		mdr::size__ Size( void ) const
 		{
 			return t;
 		}
@@ -270,7 +270,7 @@ namespace bitbch {
 	: public amount_extent_manager_<r>
 	{
 	private:
-		epeios::size__ Convert_( epeios::size__ Amount )
+		mdr::size__ Convert_( mdr::size__ Amount )
 		{
 			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 : 0;
 		}
@@ -289,7 +289,7 @@ namespace bitbch {
 		}
 		// place un bit de valeur 'Valeur' à la position 'Position'
 		void Allouer_(
-			epeios::size__ Nombre,
+			mdr::size__ Nombre,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
@@ -355,7 +355,7 @@ namespace bitbch {
 		}
 		//f Allocate enough room to contain 'Size' bits.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Allouer_( Size, Mode );
@@ -369,7 +369,7 @@ namespace bitbch {
 			return amount_extent_manager_<r>::Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
-		r New( epeios::size__ Size = 1 )
+		r New( mdr::size__ Size = 1 )
 		{
 			row_t__ P = amount_extent_manager_<r>::Amount();
 
@@ -394,8 +394,8 @@ namespace bitbch {
 	#define E_BIT_BUNCHt_( row )	bit_bunch_< row >
 	#define E_BIT_BUNCHt( row )		bit_bunch< row >
 
-	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( epeios::row__ )
-	#define E_BIT_BUNCH		E_BIT_BUNCHt( epeios::row__ )
+	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( mdr::row__ )
+	#define E_BIT_BUNCH		E_BIT_BUNCHt( mdr::row__ )
 
 	void And(
 		const E_BIT_BUNCH_ &O1,
@@ -504,7 +504,7 @@ namespace bitbch {
 			return Get( Position );
 		}
 		//f Allocate enough room to contain 'Size' pairs of bits.
-		void Allocate( epeios::size__ Size )
+		void Allocate( mdr::size__ Size )
 		{
 			T1.Allocate( Size );
 			T2.Allocate( Size );

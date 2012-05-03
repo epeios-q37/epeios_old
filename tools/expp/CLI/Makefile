@@ -47,8 +47,8 @@ endif
 
 ifeq ("$(os)","Cygwin")
 	env = gnu
-	co += -m32
-	lo += -m32
+	#co += -m32
+	#lo += -m32
 	libs =
 
 	# To use as Windows service.
@@ -61,8 +61,8 @@ endif
 
 ifeq ("$(os)","GNU/Linux")
 	env = gnu
-	co += -m32
-	lo += -m32
+	#co += -m32
+	#lo += -m32
 	libs = 
 
 	# For sound (i.e. MIDI)-related functions.
@@ -75,8 +75,8 @@ endif
 
 ifeq ("$(os)","Darwin")
 	env = gnu
-	co += -m32
-	lo += -m32
+	#co += -m32
+	#lo += -m32
 	libs =
 endif
 

@@ -66,7 +66,7 @@ public:
 
 using namespace flm;
 
-epeios::size__ flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
+mdr::size__ flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 
 #ifdef FLM__MT
 static mtx::mutex_handler__ Mutex_;
@@ -338,7 +338,7 @@ static void _Search(
 
 static void _Release( const bch::E_BUNCH_( row__ ) &Rows )
 {
-	epeios::row__ Row = Rows.First();
+	mdr::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
 		List_( Rows( Row ) ).File->ReleaseFile( false );

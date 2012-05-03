@@ -893,11 +893,11 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 
 }
 
-static epeios::row__ ExtractAttributeName_(
+static mdr::row__ ExtractAttributeName_(
 	const str::string_ &Source,
 	str::string_ &Value )
 {
-	epeios::row__ Row = Source.First();
+	mdr::row__ Row = Source.First();
 
 	while ( ( Row != NONE )
 		    && ( isalnum( Source( Row ) ) || ( Source( Row ) == ':' ) || ( Source( Row ) == '_' ) ) ) {
@@ -916,7 +916,7 @@ status__ xpp::_extended_parser___::_HandleAttributeDirective(
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string AttributeName, MacroName;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	AttributeName.Init();
 

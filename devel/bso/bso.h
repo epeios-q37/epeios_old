@@ -341,14 +341,14 @@ namespace bso {
 #endif
 
 	//d Maximal value of a 'size'.
-	#define BSO_SIZE_MAX	BSO_ULONG_MAX
+	#define BSO_SIZE_MAX	( SIZE_MAX )
 	//d Minimal value of a 'size__'.
-	#define BSO_SIZE_MIN	0
+	#define BSO_SIZE_MIN	( 0 )
 
 	//t Size of a memory .
-	typedef bso::ulong__ size__;
+	typedef size_t size__;
 
-	//c The portable version of a buffer size.
+# if BSO_SIZE_MAX == ULONG_MAX
 	class p_size__
 	: public p_32_bits__<size__>
 	{
@@ -357,6 +357,16 @@ namespace bso {
 		: p_32_bits__<size__>( Op )
 		{}
 	};
+# elif BSO_SIZE_MAX == ULLONG_MAX
+	class p_size__
+	: public p_64_bits__<size__>
+	{
+	public:
+		p_size__( size__ Op = 0 )
+		: p_64_bits__<size__>( Op )
+		{}
+	};
+#endif
 
 	//t Short-sized float.
 	typedef float sfloat__;

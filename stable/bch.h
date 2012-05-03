@@ -64,7 +64,6 @@ extern class ttr_tutor &BCHTutor;
 #include "flw.h"
 #include "tym.h"
 #include "aem.h"
-#include "epeios.h"
 #include "dtfptb.h"
 #include "flm.h"
 
@@ -85,8 +84,8 @@ namespace bch {
 		/* Pousse (décalge vers la fin de l'ensemble) les objets à la position
 		'Position' de 'Quantite' positions */
 		void Pousser_(
-			epeios::row_t__ Position,
-			epeios::size__ Quantite )
+			mdr::row_t__ Position,
+			mdr::size__ Quantite )
 		{
 			Allouer_( mng::Amount() + Quantite, aem::m_Default );
 			mmr::Store( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
@@ -94,9 +93,9 @@ namespace bch {
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
 			const mmr &Source,
-			epeios::size__ Quantite,
-			epeios::row_t__ PosSource,
-			epeios::row_t__ PosDest )
+			mdr::size__ Quantite,
+			mdr::row_t__ PosSource,
+			mdr::row_t__ PosDest )
 		{
 			Pousser_( PosDest, Quantite );
 			mmr::Store( Source, Quantite, PosDest, PosSource );
@@ -104,22 +103,22 @@ namespace bch {
 		// Insere 'Quantite' objets de 'Objets' à 'Position'.
 		void Inserer_(
 			const type *Objets,
-			epeios::size__ Quantite,
-			epeios::row_t__ Position )
+			mdr::size__ Quantite,
+			mdr::row_t__ Position )
 		{
 			Pousser_( Position, Quantite );
 			mmr::Store( Objets, Quantite, Position );
 		}
 		// Allocation de la place nécessaire à 'Taille' objets.
 		void Allouer_(
-			epeios::size__ Taille,
+			mdr::size__ Taille,
 			aem::mode__ Mode )
 		{
 			if ( mng::AmountToAllocate( Taille, Mode ) )
 				mmr::Allocate( Taille );
 		}
 		// allocate if the set not big enough.
-		void AllocateIfNecessary_( epeios::size__ Quantity )
+		void AllocateIfNecessary_( mdr::size__ Quantity )
 		{
 			if ( Quantity > mng::Amount() )
 				Allouer_( Quantity, aem::m_Default );
@@ -153,7 +152,7 @@ namespace bch {
 		//f Initialization with 'Seed' containing 'Size' objects.
 		void Init(
 			const type *Seed,
-			epeios::size__ Size )
+			mdr::size__ Size )
 		{
 			this->Init();
 			
@@ -161,18 +160,18 @@ namespace bch {
 		}
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Allouer_( Size, Mode );
 		}
 		//f Allocate 'Size' objects and fill newly created object with 'Object'. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			const type &Object,
 			aem::mode__ Mode = aem::m_Default )
 		{
-			epeios::size__ PreviousSize = mng::Amount();
+			mdr::size__ PreviousSize = mng::Amount();
 
 			Allouer_( Size, Mode );
 
@@ -188,7 +187,7 @@ namespace bch {
 		Adjust the size of the bunch. */
 		void StoreAndAdjust_(
 			const mmr &Bunch,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
@@ -198,7 +197,7 @@ namespace bch {
 		}
 /*		void StoreAndAdjust__(
 			const _bunch &Bunch,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
@@ -216,7 +215,7 @@ namespace bch {
 		//f Store at 'Offset' 'Amount' objects from 'Buffer'.
 		void StoreAndAdjust(
 			const type *Buffer,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Offset = 0 )
 		{
 			Allocate( Amount + *Offset );
@@ -248,7 +247,7 @@ namespace bch {
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
 			const type *Buffer,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			row Position = this->Amount();
 
@@ -273,14 +272,14 @@ namespace bch {
 		//f Append 'Amount' 'Object's. Return the position where appended.
 		void Append(
 			const type &Object,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			StoreAndAdjust( Object, this->Amount(), Amount );
 		}
 		//f Append 'Amount' objects at 'Position' from 'Bunch'. Return the position where the object are put.
 		row Append(
 			const mmr &Bunch,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Offset = 0 )
 		{
 			row Position = this->Amount();
@@ -321,7 +320,7 @@ namespace bch {
 			return Get( this->Last() );
 		}
 		//f Remove 'Amount' objects from the end of the bunch.
-		void Truncate( epeios::size__ Amount = 1 )
+		void Truncate( mdr::size__ Amount = 1 )
 		{
 #ifdef BCH_DBG
 			if ( Amount > this->Amount() )
@@ -340,7 +339,7 @@ namespace bch {
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Row = 0 )
 		{
 			Truncate( this->Amount() - ( *Row + Amount ) );
@@ -361,7 +360,7 @@ namespace bch {
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
 			const mmr &Source,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row RowSource,
 			row RowDest )
 		{
@@ -384,7 +383,7 @@ namespace bch {
 		//f Insert at 'Row' 'Amount' objects from 'Source'.
 		void Insert(
 			const type *Source,
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			row Row )
 		{
 			Inserer_( Source, Amount, *Row );
@@ -399,16 +398,16 @@ namespace bch {
 		//f Remove 'Amount' objects at row 'Row'. The size of the set is reduced.
 		void Remove(
 			row Row,
-			epeios::size__ Amount = 1)
+			mdr::size__ Amount = 1)
 		{
 			mmr::Store( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
 
 			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
 		//f Return the row of the first of 'Amount' new object.
-		row New( epeios::size__ Amount = 1 )
+		row New( mdr::size__ Amount = 1 )
 		{
-			epeios::row_t__ P = this->Amount();
+			mdr::row_t__ P = this->Amount();
 
 			Allouer_( P + Amount, aem::m_Default );
 
@@ -433,7 +432,7 @@ namespace bch {
 		void FillWithAndAdjust(
 			const type &Object,
 			row Row,
-			epeios::size__ Count )
+			mdr::size__ Count )
 		{
 			Allocate( *Row + Count );
 
@@ -511,7 +510,7 @@ namespace bch {
 		}
 		void OldReadFromFlow(
 			flw::iflow__ &IFlow,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			if ( Amount == 0 )
 				Amount = dtfptb::OldGetSize( IFlow );
@@ -522,7 +521,7 @@ namespace bch {
 		}
 		void NewReadFromFlow(
 			flw::iflow__ &IFlow,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			if ( Amount == 0 )
 				Amount = dtfptb::NewGetSize( IFlow );
@@ -542,7 +541,7 @@ namespace bch {
 	class dummy_size_handler
 	{
 	public:
-		static epeios::size__ SizeOf( void * )
+		static mdr::size__ SizeOf( void * )
 		{
 			ERRu();
 			return 0;	// To avoid a warning.
@@ -571,11 +570,11 @@ namespace bch {
 	#define E_BUNCHt_( Type, r )	E_BUNCHxt_( Type, r, bch::dummy_size_handler )
 	#define E_BUNCHt( Type, r )		E_BUNCHxt( Type, r, bch::dummy_size_handler )
 
-	#define E_BUNCHx( Type, s )		E_BUNCHxt( Type, epeios::row__, s )
-	#define E_BUNCHx_( Type, s )	E_BUNCHxt_( Type, epeios::row__, s )
+	#define E_BUNCHx( Type, s )		E_BUNCHxt( Type, mdr::row__, s )
+	#define E_BUNCHx_( Type, s )	E_BUNCHxt_( Type, mdr::row__, s )
 
-	#define E_BUNCH( Type )		E_BUNCHt( Type, epeios::row__ )
-	#define E_BUNCH_( Type )	E_BUNCHt_( Type, epeios::row__ )
+	#define E_BUNCH( Type )		E_BUNCHt( Type, mdr::row__ )
+	#define E_BUNCH_( Type )	E_BUNCHt_( Type, mdr::row__ )
 
 #ifndef FLM__COMPILATION
 	typedef tym::memory_file_manager___ bunch_file_manager___;
@@ -594,23 +593,23 @@ namespace bch {
 	}
 #endif
 
-	typedef E_BUNCH_( epeios::row__ ) relations_;
+	typedef E_BUNCH_( mdr::row__ ) relations_;
 	E_AUTO( relations )
 
 	void _GetRelations(
 		const uym::untyped_memory_ &Sorted,
 		const uym::untyped_memory_ &Unsorted,
-		epeios::size__ Size,
-		epeios::row_t__ Limit,
-		epeios::datum__ *Buffer,
-		E_BUNCH_( epeios::row__ ) &Relations );
+		mdr::size__ Size,
+		mdr::row_t__ Limit,
+		mdr::datum__ *Buffer,
+		E_BUNCH_( mdr::row__ ) &Relations );
 
 	template <typename t> inline void GetRelations(
 		const bch::E_BUNCH_( t ) &Sorted,
 		const bch::E_BUNCH_( t ) &Unsorted,
-		bch::E_BUNCH_( epeios::row__ ) &Relations )
+		bch::E_BUNCH_( mdr::row__ ) &Relations )
 	{
-		epeios::datum__ Buffer[sizeof( t )];
+		mdr::datum__ Buffer[sizeof( t )];
 #ifdef BCH_DBG
 		if ( Sorted.Amount() != Unsorted.Amount() )
 			ERRu();
@@ -641,8 +640,8 @@ namespace bch {
 
 	#define E_P_BUNCHt( Type, r )		p_bunch< Type, r >
 
-	#define E_P_BUNCH( Type )		E_P_BUNCHt( Type, epeios::row__ )
-	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, epeios::row__ )
+	#define E_P_BUNCH( Type )		E_P_BUNCHt( Type, mdr::row__ )
+	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, mdr::row__ )
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
 	template <class t, typename r, typename m, typename s> inline bso::sign__ Compare(
@@ -666,7 +665,7 @@ namespace bch {
 		const E_BUNCHxt_( t, r, s ) &S2,
 		r BeginS1,
 		r BeginS2,
-		epeios::size__ Amount )
+		mdr::size__ Amount )
 	{
 		return tym::Compare( S1, S2, BeginS1, BeginS2, Amount );
 	}
@@ -716,7 +715,7 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_BUNCHt__( c, i, r )	bunch__<c, i, r>
 
-	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , epeios::row__ )
+	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , mdr::row__ )
 
 	//c A set of static objects of type 'type'. Use 'BUNCH___( type )' rather then directly this class.
 	template <typename type, typename row, typename aem, typename sh> class _bunch___
@@ -748,7 +747,7 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_BUNCHt___( c, r )	bunch___<c, r>
 
-	#define E_BUNCH___( c )		E_BUNCHt___( c, epeios::row__ )
+	#define E_BUNCH___( c )		E_BUNCHt___( c, mdr::row__ )
 
 
 
@@ -760,7 +759,7 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_P_BUNCHt__( c, i, r )	p_bunch__<c, i, r>
 
-	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , epeios::row__ )
+	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , mdr::row__ )
 
 
 

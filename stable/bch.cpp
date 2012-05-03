@@ -55,17 +55,19 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "mdr.h"
+
 using namespace bch;
 
 void bch::_GetRelations(
 	const uym::untyped_memory_ &Sorted,
 	const uym::untyped_memory_ &Unsorted,
-	epeios::size__ Size,
-	epeios::row_t__ Limit,
-	epeios::datum__ *Buffer,
-	E_BUNCH_( epeios::row__ ) &Relations )
+	mdr::size__ Size,
+	mdr::row_t__ Limit,
+	mdr::datum__ *Buffer,
+	E_BUNCH_( mdr::row__ ) &Relations )
 {
-	epeios::row_t__ Row = 0;
+	mdr::row_t__ Row = 0;
 
 	while ( Row < Limit ) {
 		Sorted.Recall( Row, Size, Buffer );

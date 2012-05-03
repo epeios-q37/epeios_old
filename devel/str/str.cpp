@@ -104,14 +104,14 @@ template <class ostream> static void Put_(
 	const string_ &String,
 	ostream &OStream )		// Can be optimized by using a buffer.
 {
-	epeios::size__ Amount = String.Amount();
+	mdr::size__ Amount = String.Amount();
 
 	if ( Amount != 0 )
 	{
 #ifdef STR_DBG
 		flw::datum__ C;
 #endif
-		epeios::row_t__ P = 0;
+		mdr::row_t__ P = 0;
 
 
 		while ( P < Amount ) {
@@ -167,7 +167,7 @@ string_ &str::ToUpper(
 	string_ &String,
 	bso::bool__ DontHandleAccent )
 {
-	epeios::row_t__ P = String.Amount();
+	mdr::row_t__ P = String.Amount();
 
 	if ( DontHandleAccent )
 		while ( P-- )
@@ -184,7 +184,7 @@ string_ &str::ToLower(
 	string_ &String,
 	bso::bool__ DontHandleAccent )
 {
-	epeios::row_t__ P = String.Amount();
+	mdr::row_t__ P = String.Amount();
 
 	if ( DontHandleAccent )
 		while ( P-- )
@@ -198,8 +198,8 @@ string_ &str::ToLower(
 
 // Convertit la chaine 'char *' et rajoute un 0. Le pointeur retourné doit être libèré par un 'free'.
 const char *string_::Convert(
-	epeios::row__ Position,
-	epeios::size__ Quantity,
+	mdr::row__ Position,
+	mdr::size__ Quantity,
 	STR_BUFFER___ &Buffer ) const
 {
 ERRProlog
@@ -228,7 +228,7 @@ ERREpilog
 // Could be easily optimized, would be when I have some time.
 void string_::FilterOut( char Model )
 {
-	epeios::row_t__ Source, Dest = 0;
+	mdr::row_t__ Source, Dest = 0;
 	char Char;
 
 	for( Source = 0; Source < Amount(); Source++ ) {
@@ -242,8 +242,8 @@ void string_::FilterOut( char Model )
 // Could be easily optimized, would be when I have some time.
 void string_::StripLeadingCharacter( char Model )
 {
-	epeios::row__ Row = First();
-	epeios::size__ Amount = 0;
+	mdr::row__ Row = First();
+	mdr::size__ Amount = 0;
 
 	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
 		Amount++;
@@ -256,8 +256,8 @@ void string_::StripLeadingCharacter( char Model )
 // Could be easily optimized, would be when I have some time.
 void string_::StripTailingCharacter( char Model )
 {
-	epeios::row__ Row = Last();
-	epeios::size__ Amount = 0;
+	mdr::row__ Row = Last();
+	mdr::size__ Amount = 0;
 
 	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
 		Amount++;
@@ -272,7 +272,7 @@ void string_::Replace(
 	char Old,
 	char New )
 {
-	epeios::row_t__ Source;
+	mdr::row_t__ Source;
 	char Char;
 
 	for( Source = 0; Source < Amount(); Source++ ) {
@@ -288,7 +288,7 @@ bso::bool__ string_::Replace(
 	bso::ulong__ Position,
 	const str::string_ &Value )
 {
-	epeios::row__ Row = First();
+	mdr::row__ Row = First();
 
 #ifdef STR_DBG
 	if ( Position == 0 )
@@ -309,13 +309,13 @@ bso::bool__ string_::Replace(
 		return false;
 }
 
-epeios::row__ string_::Search(
+mdr::row__ string_::Search(
 	const string_ &S,
-	epeios::row__ Start ) const
+	mdr::row__ Start ) const
 {
 	if ( S.Amount() <= Amount() ) {
-		epeios::size__ Amount = S.Amount();
-		epeios::row_t__ Limit = this->Amount() - Amount;
+		mdr::size__ Amount = S.Amount();
+		mdr::row_t__ Limit = this->Amount() - Amount;
 
 		while( ( *Start <= Limit )
 			&& ( Compare( S, *this, 0, Start, Amount ) != 0 ) )
@@ -331,11 +331,11 @@ epeios::row__ string_::Search(
 	}
 }
 
-epeios::row__ string_::Search(
+mdr::row__ string_::Search(
 	char C,
-	epeios::row__ Start ) const
+	mdr::row__ Start ) const
 {
-	epeios::row_t__ Limit = Amount();
+	mdr::row_t__ Limit = Amount();
 
 	while( ( *Start < Limit )
 		&& ( Get( Start ) != C ) )
@@ -349,13 +349,13 @@ epeios::row__ string_::Search(
 
 _guint__ str::_GenericUnsignedConversion(
 	const str::string_ &String,
-	epeios::row__ Begin,
-	epeios::row__ *ErrP,
+	mdr::row__ Begin,
+	mdr::row__ *ErrP,
 	base__ BaseFlag,
 	_guint__ Limit )
 {
 	_guint__ Result = 0;
-	epeios::row__ &P = Begin;
+	mdr::row__ &P = Begin;
 	bso::ubyte__ C;
 	bso::ubyte__ Base;
 	_guint__ OtherLimit = 0;
@@ -405,8 +405,8 @@ _guint__ str::_GenericUnsignedConversion(
 
 _gsint__ str::_GenericSignedConversion(
 	const class string_ &String,
-	epeios::row__ Begin,
-	epeios::row__ *ErrP,
+	mdr::row__ Begin,
+	mdr::row__ *ErrP,
 	base__ Base,
 	_gsint__ PositiveLimit,
 	_gsint__ NegativeLimit )
@@ -435,12 +435,12 @@ _gsint__ str::_GenericSignedConversion(
 
 
 bso::lfloat__ string_::ToLF(
-	epeios::row__ *ErrP,
-	epeios::row__ Begin ) const
+	mdr::row__ *ErrP,
+	mdr::row__ Begin ) const
 {
 	bso::bool__ Negate = false;
 	bso::lfloat__ Result = 0;
-	epeios::row__ &P = Begin;
+	mdr::row__ &P = Begin;
 	unsigned char C;
 
 	if ( *P < Amount() ) {
@@ -490,7 +490,7 @@ static void Replace0Tag_(
 ERRProlog
 	str::string MergedValues;
 	ctn::E_CMITEM( str::string_ ) Value;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	str::string Tag;
 ERRBegin
 	Value.Init( Values );
@@ -547,7 +547,7 @@ void str::ReplaceTags(
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Value;
 	bso::ubyte__ Indice = 1;
-	epeios::row__ Row = NONE, SearchRow = NONE;
+	mdr::row__ Row = NONE, SearchRow = NONE;
 	str::string Tag;
 	bso::integer_buffer__ Buffer;
 ERRBegin

@@ -113,21 +113,21 @@ namespace aem {
 
 			return ( Size ? ( ( ( ( Size - 1 ) / Step ) + 1 ) * Step ) : 0 );
 		}
-		epeios::size__ Adjust_( epeios::size__ Size )
+		mdr::size__ Adjust_( mdr::size__ Size )
 		{
 			S_.Amount = Size;
 			S_.Misc = _GuessExtent( Size ) | ( S_.Misc & 0xff );
 
 			return S_.Misc & 0xffffff00;
 		}
-		epeios::size__ Extent_( void ) const
+		mdr::size__ Extent_( void ) const
 		{
 			if ( S_.Misc <= 0xff )
 				return S_.Amount;
 			else
 				return S_.Misc & 0xffffff00;
 		}
-		bso::bool__ Decrease_( epeios::size__ &Size )
+		bso::bool__ Decrease_( mdr::size__ &Size )
 		{
 			if ( Extent_() >= ( StepSize_() + Size ) ) {
 				Size = Adjust_( Size );
@@ -137,7 +137,7 @@ namespace aem {
 				return false;
 			}
 		}
-		bso::bool__ Increase_( epeios::size__ &Size )
+		bso::bool__ Increase_( mdr::size__ &Size )
 		{
 			Size = Adjust_( Size );
 
@@ -148,7 +148,7 @@ namespace aem {
 		the real size to allocate. If 'Mode' = 'mFit', 'Extent' is forced to be equal
 		to 'Size'. */
 		bso::bool__ AmountToAllocate(
-			epeios::size__ &Size,
+			mdr::size__ &Size,
 			mode__ Mode )
 		{
 			if ( Size == S_.Amount )
@@ -194,7 +194,7 @@ namespace aem {
 		}
 		/*f Force the amount and extent to exactly 'Size'.
 		Return true if the amount or the extent wasn't equal to 'Size'. */
-		bso::bool__ Force( epeios::size__ Size )
+		bso::bool__ Force( mdr::size__ Size )
 		{
 			bso::bool__ NotEqual = ( Extent() != Size ) || ( S_.Amount != Size );
 
@@ -239,12 +239,12 @@ namespace aem {
 			Force( Amount );
 		}
 		//f Return the extent.
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			return Extent_();
 		}
 		//f Return the amount.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return S_.Amount;
 		}
@@ -285,7 +285,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row Last( epeios::size__ Offset ) const
+		row Last( mdr::size__ Offset ) const
 		{
 			row Row = Last();
 
@@ -302,7 +302,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row First( epeios::size__ Offset ) const
+		row First( mdr::size__ Offset ) const
 		{
 			row Row = First();
 
@@ -314,7 +314,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			epeios::size__ Offset ) const
+			mdr::size__ Offset ) const
 		{
 			if ( ( *Current += Offset ) < S_.Amount )
 				return Current;
@@ -329,7 +329,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			epeios::size__ Offset ) const
+			mdr::size__ Offset ) const
 		{
 			if ( *Current >= Offset )
 				return *Current - Offset;
@@ -390,7 +390,7 @@ namespace aem {
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
 		bso::bool__ AmountToAllocate(
-			epeios::size__ &Size,
+			mdr::size__ &Size,
 			mode__ Mode)
 		{
 			Amount_ = Size;
@@ -419,12 +419,12 @@ namespace aem {
 			Amount_ = 0;
 		}
 		//f Return the extent.
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			return extent;
 		}
 		//f Return the amount.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return Amount_;
 		}
@@ -436,7 +436,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row Last( epeios::size__ Offset ) const
+		row Last( mdr::size__ Offset ) const
 		{
 			row Row = Last();
 
@@ -453,7 +453,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row First( epeios::size__ Offset ) const
+		row First( mdr::size__ Offset ) const
 		{
 			row Row = First();
 
@@ -465,7 +465,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			epeios::size__ Offset ) const
+			mdr::size__ Offset ) const
 		{
 			if ( ( *Current += Offset ) < Amount_ )
 				return Current;
@@ -480,7 +480,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			epeios::size__ Offset ) const
+			mdr::size__ Offset ) const
 		{
 			if ( *Current >= Offset )
 				return *Current - Offset;

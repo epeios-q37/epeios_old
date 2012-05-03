@@ -86,9 +86,9 @@ namespace que {
 	{
 	public:
 		// Previous node.
-		epeios::row_t__ Previous;
+		mdr::row_t__ Previous;
 		// Next node.
-		epeios::row_t__ Next;
+		mdr::row_t__ Next;
 		link__( void )
 		{
 			Previous = Next = NONE;
@@ -105,8 +105,8 @@ namespace que {
 		}
 		// To help swapping. Replace all reference to 'Node1' by 'Node2'.
 		void Replace(
-			epeios::row_t__ Node1,
-			epeios::row_t__ Node2 )
+			mdr::row_t__ Node1,
+			mdr::row_t__ Node2 )
 		{
 			if ( Previous == Node1 )
 				Previous = Node2;
@@ -117,7 +117,7 @@ namespace que {
 
 	using namespace aem;
 
-	typedef bch::E_BUNCHt_( que::link__, epeios::row__ ) _lbunch_;
+	typedef bch::E_BUNCHt_( que::link__, mdr::row__ ) _lbunch_;
 
 	//c A set lof links.
 	class links_
@@ -141,8 +141,8 @@ namespace que {
 		}
 		//f Previous of 'Item' is set to 'Value'. Next remains unchanged.
 		void SetPrevious(
-			epeios::row_t__ Item,
-			epeios::row_t__ Value )
+			mdr::row_t__ Item,
+			mdr::row_t__ Value )
 		{
 			que::link__ L = Get( Item );
 
@@ -152,8 +152,8 @@ namespace que {
 		}
 		//f Next of 'Item' is set to 'Value'. Previous remains unchanged.
 		void SetNext(
-			epeios::row_t__ Item,
-			epeios::row_t__ Value )
+			mdr::row_t__ Item,
+			mdr::row_t__ Value )
 		{
 			que::link__ L = Get( Item );
 
@@ -167,14 +167,14 @@ namespace que {
 			_lbunch_::Init();
 		}
 		void Initialize(
-			epeios::row_t__ Begin,
-			epeios::row_t__ End );
+			mdr::row_t__ Begin,
+			mdr::row_t__ End );
 	};
 	
 	E_AUTO( links )
 
 /*
-	E_TYPEDEF( epeios::row_t__, _stack_item_row__ );
+	E_TYPEDEF( mdr::row_t__, _stack_item_row__ );
 
 	// simulates :
 	// 	template<typename r> typedef stk::stack_<r, _stack_item_row__> _stack_;
@@ -202,7 +202,7 @@ namespace que {
 	private:
 		void HandleNeighboursForSwap_(
 			que::link__ Link,
-			epeios::row_t__ Node )
+			mdr::row_t__ Node )
 		{
 			link__ L;
 
@@ -219,7 +219,7 @@ namespace que {
 			}
 		}
 	#ifdef QUE_DBG
-		void TestIfItem_( epeios::row_t__ Item )
+		void TestIfItem_( mdr::row_t__ Item )
 		{
 			link__ L = Links( Item );
 
@@ -262,10 +262,10 @@ namespace que {
 		}
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
-			epeios::size__ Before = Links.Amount();
+			mdr::size__ Before = Links.Amount();
 			Links.Allocate( Size, Mode );
 
 			if ( Before < Size )
@@ -349,12 +349,12 @@ namespace que {
 			Links.Store( LNode, *Node );
 		}
 		//f Return the extent of the queue.
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			return Links.Extent();
 		}
 		//f Return the amount of node in the queue.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return Links.Amount();
 		}
@@ -423,13 +423,13 @@ namespace que {
 	#define E_QUEUEt_( r )		queue_< r >
 	#define E_QUEUEt(r )		queue< r >
 
-	#define E_QUEUE_	E_QUEUEt_( epeios::row__ )
-	#define E_QUEUE		E_QUEUEt( epeios::row__ )
+	#define E_QUEUE_	E_QUEUEt_( mdr::row__ )
+	#define E_QUEUE		E_QUEUEt( mdr::row__ )
 
 	void Dump_(
 		const E_QUEUE_ &Queue,
-		E_QSTACK_( epeios::row__ ) &Stack,
-		epeios::row__ Begin,
+		E_QSTACK_( mdr::row__ ) &Stack,
+		mdr::row__ Begin,
 		direction Direction );
 
 	template <typename r> inline void queue_<r>::Dump(
@@ -437,7 +437,7 @@ namespace que {
 		r Begin,
 		que::direction Direction ) const
 	{
-		Dump_( *(E_QUEUE_ *)this, *(E_QSTACK_( epeios::row__)*)&Stack, Begin, Direction );
+		Dump_( *(E_QUEUE_ *)this, *(E_QSTACK_( mdr::row__)*)&Stack, Begin, Direction );
 	}
 
 
@@ -447,7 +447,7 @@ namespace que {
 	private:
 		r Head_;
 		r Tail_;
-		epeios::size__ Amount_;
+		mdr::size__ Amount_;
 	#ifdef QUE_DBG
 		void Test_( void ) const
 		{
@@ -543,7 +543,7 @@ namespace que {
 			Amount_--;
 		}
 		//f Return amount of node in the queue.
-		epeios::size__ Amount( const que::E_QUEUEt_(r) & ) const
+		mdr::size__ Amount( const que::E_QUEUEt_(r) & ) const
 		{
 			return Amount_;
 		}
@@ -675,7 +675,7 @@ namespace que {
 		}
 		//f Allocate enough room to contains 'Size' nodes.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Queue.Allocate( Size, Mode );
@@ -705,12 +705,12 @@ namespace que {
 			S_.QueueManager.Delete( Node, Queue );
 		}
 		//f Return amount of node in the queue.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return S_.QueueManager.Amount( Queue );
 		}
 		//f Return extent of node in the queue.
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			return Queue.Extent();
 		}
@@ -780,8 +780,8 @@ namespace que {
 	#define E_MQUEUEt_( r )		managed_queue_< r >
 	#define E_MQUEUEt( r )		managed_queue<r>
 	
-	#define E_MQUEUE_	E_MQUEUEt_( epeios::row__ )
-	#define E_MQUEUE	E_MQUEUEt( epeios::row__ )
+	#define E_MQUEUE_	E_MQUEUEt_( mdr::row__ )
+	#define E_MQUEUE	E_MQUEUEt( mdr::row__ )
 }
 
 /*$END$*/

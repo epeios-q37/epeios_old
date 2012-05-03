@@ -77,7 +77,7 @@ namespace lstbch {
 	{
 	protected:
 		virtual void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			bunch_<type, row>::Allocate( Size, Mode );
@@ -317,11 +317,11 @@ namespace lstbch {
 	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
 	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>
 
-	#define E_LBUNCHt_( type, row )	E_LBUNCHtx_( type, row, epeios::row_t__)
-	#define E_LBUNCHt( type, row )	E_LBUNCHtx( type, row, epeios::row_t__)
+	#define E_LBUNCHt_( type, row )	E_LBUNCHtx_( type, row, mdr::row_t__)
+	#define E_LBUNCHt( type, row )	E_LBUNCHtx( type, row, mdr::row_t__)
 
-	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, epeios::row__ )
-	#define  E_LBUNCH( type )		E_LBUNCHt( type, epeios::row__ )
+	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, mdr::row__ )
+	#define  E_LBUNCH( type )		E_LBUNCHt( type, mdr::row__ )
 }
 
 /*$END$*/

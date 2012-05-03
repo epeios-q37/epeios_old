@@ -88,6 +88,7 @@ extern class ttr_tutor &FDRTutor;
 #	define FDR__DEFAULT_CACHE_SIZE	1024
 #endif
 
+# define FDR_SIZE_MAX	BSO_SIZE_MAX
 
 
 namespace fdr {

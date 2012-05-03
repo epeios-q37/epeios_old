@@ -1107,7 +1107,7 @@ void xml::TransformUsingEntities(
 	bso::bool__ DelimiterOnly )
 {
 ERRProlog
-	epeios::row__ Position = Target.First();
+	mdr::row__ Position = Target.First();
 	bso::char__ C;
 	str::string Buffer;
 ERRBegin
