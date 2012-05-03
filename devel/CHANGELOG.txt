@@ -2,6 +2,9 @@ $Id$
 
 03/05/2012 :
 	- Mise en obsolescence de la bibliothèque 'EPEIOS'.
+	 
+	- GENERAL :
+		- Adaptation.
 
 27/04/2012 :
 	- FRDKRN :

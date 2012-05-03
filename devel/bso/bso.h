@@ -60,7 +60,8 @@ extern class ttr_tutor &BSOTutor;
 
 /*$BEGIN$*/
 
-#include <limits.h>
+# include <limits.h>
+# include <stdint.h>
 
 #include "err.h"
 #include "cpe.h"
