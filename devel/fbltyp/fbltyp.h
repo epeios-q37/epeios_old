@@ -300,7 +300,7 @@ namespace fbltyp {
 
 	typedef bso::bool__ boolean_t__;
 	typedef boolean_t__	boolean__;
-	typedef bitbch::bit_bunch_<epeios::row__>	booleans_t_;
+	typedef bitbch::bit_bunch_<mdr::row__>	booleans_t_;
 	E_TMIMIC( booleans_t, booleans );
 
 	typedef bso::slong__ slong__;
@@ -359,8 +359,8 @@ namespace fbltyp {
 	FBLTYP_XITEM( id32__, xitem32 )
 	FBLTYP_XITEMS( xitem32, xitems32 )
 	/* Both below declaration are not part of the protocol. */
-	typedef fbltyp::detail_<id8__, epeios::row__>	command_detail_	;
-	typedef fbltyp::detail<id8__, epeios::row__>	command_detail;
+	typedef fbltyp::detail_<id8__, mdr::row__>	command_detail_	;
+	typedef fbltyp::detail<id8__, mdr::row__>	command_detail;
 	/**/
 	typedef ctn::E_XCONTAINER_( command_detail_ ) commands_details_;
 	typedef ctn::E_XCONTAINER( command_detail_ ) commands_details;

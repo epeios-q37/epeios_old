@@ -123,7 +123,7 @@ namespace idxbtq {
 		}
 		//f Allocate enough room to contain 'Size' items.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_IBTREEt_( r )::Allocate( Size, Mode );
@@ -189,7 +189,7 @@ namespace idxbtq {
 		{
 			return E_IQUEUEt_( r )::Previous( Current );
 		}
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return E_IBTREEt_( r )::Amount();
 		}
@@ -418,11 +418,11 @@ namespace idxbtq {
 #define E_INDEXt_( r )	tree_queue_index_<r>
 #define E_INDEXt( r )	tree_queue_index<r>
 
-#define E_INDEX_	E_INDEXt_( epeios::row__ )
-#define E_INDEX		E_INDEXt( epeios::row__ )
+#define E_INDEX_	E_INDEXt_( mdr::row__ )
+#define E_INDEX		E_INDEXt( mdr::row__ )
 
 #define E_ISEEKERt__( r )	index_seeker__<r>
-#define E_ISEEKER__			index_seeker__<epeios::row__>
+#define E_ISEEKER__			index_seeker__<mdr::row__>
 
 /*$END$*/
 				  /********************************************/

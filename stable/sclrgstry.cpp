@@ -320,7 +320,7 @@ template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 
@@ -349,7 +349,7 @@ template <typename t> static bso::bool__ GetRegistrySignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 

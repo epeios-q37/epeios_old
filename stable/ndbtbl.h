@@ -113,7 +113,7 @@ namespace ndbtbl {
 	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
 	E_AUTO( data );
 
-	typedef bch::E_BUNCH_( epeios::row__ ) rows_;
+	typedef bch::E_BUNCH_( mdr::row__ ) rows_;
 	E_AUTO( rows );
 
 
@@ -255,7 +255,7 @@ namespace ndbtbl {
 			S_.Mode = Mode;
 		}
 		void InitStatic(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			mode__ Mode,
 			content_post_initialization_function__ &PostInitializationFunction )
 		{

@@ -231,7 +231,7 @@ amount__ line_::RemoveEmptyCells( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Cell;
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 	stack Stack;
 ERRBegin
 	Cell.Init( *this );
@@ -256,10 +256,10 @@ ERREpilog
 	return Amount;
 }
 
-epeios::row__ line_::FirstNonEmptyCell( void ) const
+mdr::row__ line_::FirstNonEmptyCell( void ) const
 {
 	ctn::E_CMITEM( cell_ ) Cell;
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	Cell.Init( *this );
 
@@ -269,10 +269,10 @@ epeios::row__ line_::FirstNonEmptyCell( void ) const
 	return Current;
 }
 
-epeios::row__ line_::LastNonEmptyCell( void ) const
+mdr::row__ line_::LastNonEmptyCell( void ) const
 {
 	ctn::E_CMITEM( cell_ ) Cell;
-	epeios::row__ Current = Last();
+	mdr::row__ Current = Last();
 
 	Cell.Init( *this );
 
@@ -286,7 +286,7 @@ amount__ line_::RemoveHeadingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
-	epeios::row__ Current = FirstNonEmptyCell();
+	mdr::row__ Current = FirstNonEmptyCell();
 	stack Stack;
 ERRBegin
 	Stack.Init();
@@ -318,7 +318,7 @@ amount__ line_::RemoveTailingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
-	epeios::row__ Current = LastNonEmptyCell();
+	mdr::row__ Current = LastNonEmptyCell();
 	stack Stack;
 ERRBegin
 
@@ -353,7 +353,7 @@ amount__ line_::RemoveCentralEmptyCells( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Cell;
-	epeios::row__
+	mdr::row__
 		Current = FirstNonEmptyCell(),
 		Last = LastNonEmptyCell();
 	stack Stack;
@@ -387,7 +387,7 @@ ERREpilog
 	return Amount;
 }
 
-amount__ line_::RemoveCellsAt( epeios::row__ Position )
+amount__ line_::RemoveCellsAt( mdr::row__ Position )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -420,7 +420,7 @@ static inline bool IsCommentary_(
 
 amount__ line_::RemoveComment( bso::char__ Marker )
 {
-	epeios::row__ Position = First();
+	mdr::row__ Position = First();
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( *this );
@@ -438,7 +438,7 @@ txf::text_oflow__ &operator <<(
 	txf::text_oflow__ &Flow,
 	const line_ &Line )
 {
-	epeios::row__ Current;
+	mdr::row__ Current;
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( Line );
@@ -516,7 +516,7 @@ void table_::Erase_( stack_ &Stack )
 
 void table_::RemoveEmptyCells( void )
 {
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -530,7 +530,7 @@ void table_::RemoveEmptyCells( void )
 
 void table_::RemoveHeadingEmptyCells( void )
 {
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -544,7 +544,7 @@ void table_::RemoveHeadingEmptyCells( void )
 
 void table_::RemoveTailingEmptyCells( void )
 {
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -558,7 +558,7 @@ void table_::RemoveTailingEmptyCells( void )
 
 void table_::RemoveCentralEmptyCells( void )
 {
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -572,7 +572,7 @@ void table_::RemoveCentralEmptyCells( void )
 
 void table_::RemoveComments( bso::char__ Marker )
 {
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -589,7 +589,7 @@ amount__ table_::RemoveEmptyLines( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CITEM( line_ ) Line;
-	epeios::row__ Current = First();
+	mdr::row__ Current = First();
 	stack Stack;
 ERRBegin
 	Line.Init( *this );
@@ -620,7 +620,7 @@ txf::text_oflow__ &operator <<(
 	const table_ &Table )
 {
 	ctn::E_CITEM( line_ ) Line;
-	epeios::row__ Current;
+	mdr::row__ Current;
 
 	Line.Init( Table );
 

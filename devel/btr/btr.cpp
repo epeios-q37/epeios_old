@@ -57,7 +57,7 @@ public:
 
 #include "txf.h"
 
-using namespace epeios;
+using namespace mdr;
 
 #if 1
 void btr::_nodes_manager_::Release(
@@ -103,8 +103,8 @@ void btr::_nodes_manager_::Prepare(
 }
 
 
-epeios::row_t__ btr::_nodes_manager_::SearchMostLeftNode(
-	epeios::row_t__ Node,
+row_t__ btr::_nodes_manager_::SearchMostLeftNode(
+	row_t__ Node,
 	level__ &Level ) const
 {
 	Level = 0;
@@ -118,8 +118,8 @@ epeios::row_t__ btr::_nodes_manager_::SearchMostLeftNode(
 }
 
 // Retourne le premier noeud sans fille à partir de 'Position' en descendant par les fille.
-epeios::row_t__ btr::_nodes_manager_::SearchMostRightNode(
-	epeios::row_t__ Node,
+row_t__ btr::_nodes_manager_::SearchMostRightNode(
+	row_t__ Node,
 	level__ &Level ) const
 {
 	while( HasRight( Node ) ) {
@@ -131,7 +131,7 @@ epeios::row_t__ btr::_nodes_manager_::SearchMostRightNode(
 }
 
 // Retourne le père du premier noeud qui est fils en remontant.
-epeios::row_t__ btr::_nodes_manager_::ParentOfFirstLeftNode( epeios::row_t__ Node ) const
+row_t__ btr::_nodes_manager_::ParentOfFirstLeftNode( row_t__ Node ) const
 {
 	while( !IsLeft( Node )
 		   && HasParent( Node ) )
@@ -144,7 +144,7 @@ epeios::row_t__ btr::_nodes_manager_::ParentOfFirstLeftNode( epeios::row_t__ Nod
 }
 
 // Retourne le père du premier noeud qui est fille en remontant.
-epeios::row_t__ btr::_nodes_manager_::ParentOfFirstRightNode( epeios::row_t__ Node ) const
+row_t__ btr::_nodes_manager_::ParentOfFirstRightNode( row_t__ Node ) const
 {
 	while( !IsRight( Node )
 			&& HasParent( Node ) )
@@ -413,19 +413,19 @@ template <typename r_t, typename nodes> static void Prepare_(
 }
 
 void btr::Release(
-	_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
-	epeios::row_t__ Start,
-	epeios::row_t__ End )
-{
-	Release_< epeios::row_t__,_nodes_manager_<epeios::row_t__, _nodes_> >( Nodes, Start, End );
-}
-
-void btr::Prepare(
-	_nodes_manager_<epeios::row_t__, _nodes_> &Nodes,
+	_nodes_manager_<row_t__, _nodes_> &Nodes,
 	row_t__ Start,
 	row_t__ End )
 {
-	Prepare_< epeios::row_t__,_nodes_manager_<epeios::row_t__, _nodes_> >( Nodes, Start, End );
+	Release_< row_t__,_nodes_manager_<row_t__, _nodes_> >( Nodes, Start, End );
+}
+
+void btr::Prepare(
+	_nodes_manager_<row_t__, _nodes_> &Nodes,
+	row_t__ Start,
+	row_t__ End )
+{
+	Prepare_< row_t__,_nodes_manager_<row_t__, _nodes_> >( Nodes, Start, End );
 }
 
 

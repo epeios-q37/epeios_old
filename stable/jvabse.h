@@ -122,6 +122,15 @@ namespace jvabse {
 		return Env->GetMethodID( GetJClass( Env, Object ), Name, Signature );
 	}
 
+	inline jmethodID GetJStaticMethodID(
+		JNIEnv *Env,
+		jobject Object,
+		const char *Name,
+		const char *Signature )
+	{
+		return Env->GetStaticMethodID( GetJClass( Env, Object ), Name, Signature );
+	}
+
 	inline jfieldID GetJFieldID(
 		JNIEnv *Env,
 		jclass Class,
@@ -131,6 +140,15 @@ namespace jvabse {
 		return Env->GetFieldID( Class, Name, "I" );
 	}
 
+	inline jfieldID GetJStaticFieldID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		jint &)
+	{
+		return Env->GetStaticFieldID( Class, Name, "I" );
+	}
+
 	inline jfieldID GetJFieldID(
 		JNIEnv *Env,
 		jclass Class,
@@ -138,6 +156,15 @@ namespace jvabse {
 		jlong &)
 	{
 		return Env->GetFieldID( Class, Name, "J" );
+	}
+
+	inline jfieldID GetJStaticFieldID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		jlong &)
+	{
+		return Env->GetStaticFieldID( Class, Name, "J" );
 	}
 
 	template <typename jtype> inline jfieldID GetJFieldID(
@@ -153,6 +180,19 @@ namespace jvabse {
 		return GetJFieldID( Env, Class, Name, Value );
 	}
 
+	template <typename jtype> inline jfieldID GetJStaticFieldID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		const char *Signature,
+		jtype &Value )
+	{
+		if ( Signature != NULL )
+			ERRc();
+
+		return GetJStaticFieldID( Env, Class, Name, Value );
+	}
+
 	inline jfieldID GetJFieldID(
 		JNIEnv *Env,
 		jclass Class,
@@ -166,7 +206,29 @@ namespace jvabse {
 		return Env->GetFieldID( Class, Name, Signature );
 	}
 
-	static inline jint GetJField(
+	inline jfieldID GetJStaticFieldID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		const char *Signature,
+		jobject &)
+	{
+		if ( ( Signature == NULL ) || ( *Signature != 'L' ) || ( Signature[strlen( Signature ) - 1] != ';' ) )
+			ERRc();
+
+		return Env->GetStaticFieldID( Class, Name, Signature );
+	}
+
+	inline jint GetJField(
+		JNIEnv *Env,
+		jclass Class,
+		jfieldID FieldID,
+		jint &)
+	{
+		return Env->GetStaticIntField( Class, FieldID );
+	}
+
+	inline jint GetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -175,7 +237,16 @@ namespace jvabse {
 		return Env->GetIntField( Object, FieldID );
 	}
 
-	static inline jlong GetJField(
+	inline jlong GetJField(
+		JNIEnv *Env,
+		jclass Class,
+		jfieldID FieldID,
+		jlong &)
+	{
+		return Env->GetStaticLongField( Class, FieldID );
+	}
+
+	inline jlong GetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -184,7 +255,16 @@ namespace jvabse {
 		return Env->GetLongField( Object, FieldID );
 	}
 
-	static inline jobject GetJField(
+	inline jobject GetJField(
+		JNIEnv *Env,
+		jclass Class,
+		jfieldID FieldID,
+		jobject &)
+	{
+		return Env->GetStaticObjectField( Class, FieldID );
+	}
+
+	inline jobject GetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -193,7 +273,18 @@ namespace jvabse {
 		return Env->GetObjectField( Object, FieldID );
 	}
 
-	template <typename jtype> static jtype GetJField(
+	template <typename jtype> jtype GetJField(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		const char *ObjectSignature = NULL )	// Obligatoire pour 'jtype' == 'jobjet'. Doit être == 'NULL' pour les austre types.
+	{
+		jtype Value;	// Ne sert qu'à didcrimier entre les différents types des différents 'template's.
+
+		return GetJField( Env, Class, GetJStaticFieldID( Env, Class, Name, ObjectSignature, Value ), Value );
+	}
+
+	template <typename jtype> jtype GetJField(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
@@ -204,7 +295,7 @@ namespace jvabse {
 		return GetJField( Env, Object, GetJFieldID( Env, GetJClass( Env, Object ), Name, ObjectSignature, Value ), Value );
 	}
 
-	static inline void SetJField(
+	inline void SetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -213,7 +304,7 @@ namespace jvabse {
 		Env->SetLongField( Object, FieldID, Value );
 	}
 
-	static inline void SetJField(
+	inline void SetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -222,7 +313,7 @@ namespace jvabse {
 		Env->SetIntField( Object, FieldID, Value );
 	}
 
-	static inline void SetJField(
+	inline void SetJField(
 		JNIEnv *Env,
 		jobject Object,
 		jfieldID FieldID,
@@ -231,7 +322,7 @@ namespace jvabse {
 		Env->SetObjectField( Object, FieldID, Value );
 	}
 
-	template <typename jtype> static void SetJField(
+	template <typename jtype> void SetJField(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,

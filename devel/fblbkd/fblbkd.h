@@ -112,7 +112,7 @@ namespace fblbkd {
 	typedef lcl::strings_	messages_;
 	E_AUTO( messages )
 
-	typedef epeios::row__ index__;
+	typedef mdr::row__ index__;
 	typedef fbltyp::id16_t__	command__;
 
 	typedef fbltyp::id16_t__	type_t__;
@@ -287,7 +287,7 @@ namespace fblbkd {
 		//f Delete the object of index 'Index'.
 		void Delete( index__ Index )
 		{
-			epeios::row__ Row = Indexes.Search( Index );
+			mdr::row__ Row = Indexes.Search( Index );
 
 			if ( Row == NONE )
 				ERRu();
@@ -350,7 +350,7 @@ namespace fblbkd {
 		//f Return the command which has 'Description' as description, or 'FBLBKD_INVALID_COMMAND' if non-existant.
 		command__ Command( const fblbrd::description_ &Description ) const
 		{
-			epeios::row__ P = Descriptions.Position( Description );
+			mdr::row__ P = Descriptions.Position( Description );
 
 			if ( P == NONE )
 				P = FBLBKD_INVALID_COMMAND;
@@ -359,19 +359,19 @@ namespace fblbkd {
 
 			return (command__)*P;
 		}
-		epeios::row__ Add(
+		mdr::row__ Add(
 			const char *Name,
 			const cast *Casts,
 			const void *UP )
 		{
-			epeios::row__ P = Descriptions.Add( Name, Casts );
+			mdr::row__ P = Descriptions.Add( Name, Casts );
 			
 			if ( UPs.Append( UP ) != P )
 				ERRc();
 				
 			return P;
 		}			
-		epeios::row__ Add(
+		mdr::row__ Add(
 			const char *Name,
 			const void *UP,
 			... )
@@ -456,7 +456,7 @@ namespace fblbkd {
 		}
 	protected:
 		virtual void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef FBLBKD_DBG
@@ -532,7 +532,7 @@ namespace fblbkd {
 			return *this;
 		}
 	protected:
-		virtual void LSTAllocate( epeios::size__ Size )
+		virtual void LSTAllocate( mdr::size__ Size )
 		{
 			Element_.Commit();
 			Objets.Allocate( Size, aem::mFit );
@@ -675,7 +675,7 @@ namespace fblbkd {
 	{
 	protected:
 		void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			_memory::Allocate( Size );
@@ -718,7 +718,7 @@ namespace fblbkd {
 		{
 			return _memory::Get( IdObjet ).Index;
 		}
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return _list::Amount();
 		}
@@ -888,14 +888,14 @@ namespace fblbkd {
 		/*f Add a request description with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
-		epeios::row__ Add(
+		mdr::row__ Add(
 			const char *Name,
 			function__ FP,
 			const cast *Casts )
 		{
 			return Master_.Add( Name, Casts, (void *)FP );
 		}
-		epeios::row__ Add(
+		mdr::row__ Add(
 			const char *Name,
 			function__ FP,
 			cast Cast,	// Added to avoid confusion with function above.

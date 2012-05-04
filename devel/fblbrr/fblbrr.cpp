@@ -211,7 +211,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 
 	Row = Casts.First();
 
@@ -245,7 +245,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 
 void fblbrr::remote_request_functions___::_DeleteAll( void )
 {
-	epeios::row__ Row = _Parameters.First();
+	mdr::row__ Row = _Parameters.First();
 
 	if ( Row == NONE )
 		return;
@@ -332,7 +332,7 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 		ERRu();
 #endif
 
-	epeios::row__ Row = Casts.First();
+	mdr::row__ Row = Casts.First();
 
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {

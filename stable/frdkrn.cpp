@@ -416,7 +416,7 @@ inline static const str::string_ &Report_(
 
 static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 {
-	epeios::row__ Row = Id.First();
+	mdr::row__ Row = Id.First();
 
 	if ( Id.Amount() == 0 )
 		return false;
@@ -727,7 +727,7 @@ static void GetPredefinedBackends_(
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
-	epeios::row__ Row = Ids.First();
+	mdr::row__ Row = Ids.First();
 
 	Id.Init( Ids );
 

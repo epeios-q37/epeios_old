@@ -147,7 +147,7 @@ ERRBegin
 		} else
 			MasterWindow_ = NULL;
 	} else {
-		epeios::row__ Row = MasterWindows_.Search( Window );
+		mdr::row__ Row = MasterWindows_.Search( Window );
 
 		if ( Row == NONE )
 			ERRu();
@@ -270,7 +270,7 @@ void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 
 void nsxpcm::Transform(
 	const char *CString,
-	epeios::size__ Size,
+	mdr::size__ Size,
 	char **JString )
 {
     if ( !JString )
@@ -405,7 +405,7 @@ void nsxpcm::Split(
 	strings_ &Splitted )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	string Item;
 ERRBegin
 	if ( Joined.Amount() != 0 ) {	
@@ -453,7 +453,7 @@ void nsxpcm::Join(
 	bso::char__ Separator,
 	string_ &Joined )
 {
-	epeios::row__ Row = Splitted.First();
+	mdr::row__ Row = Splitted.First();
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Splitted );
@@ -578,7 +578,7 @@ ERRProlog
 	nsIDOMElement *Element = NULL;
 	nsEmbedString String;
 	str::string S;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	Event->GetTarget( &EventTarget );
 	Element = nsxpcm::QueryInterface<nsIDOMElement>( EventTarget, err::hSkip  );
@@ -678,7 +678,7 @@ static void AddFilters_(
 	nsIFilePicker *FilePicker )
 {
 	ctn::E_CITEM( file_picker_filter_ ) Filter;
-	epeios::row__ Row = Filters.First();
+	mdr::row__ Row = Filters.First();
 
 	Filter.Init( Filters );
 
@@ -921,7 +921,7 @@ bso::bool__ nsxpcm::DirectorySelectDialogBox(
 
 void nsxpcm::Delete( widget_cores_ &Widgets )
 {
-	epeios::row__ Row = Widgets.First();
+	mdr::row__ Row = Widgets.First();
 
 	while ( Row != NONE ) {
 		delete Widgets( Row );
@@ -941,8 +941,8 @@ void nsxpcm::Convert(
 	const strings_ &Items,
 	fblfrd::ids32_ &Ids )
 {
-	epeios::row__ Row = Items.First();
-	epeios::row__ Error = NONE;
+	mdr::row__ Row = Items.First();
+	mdr::row__ Error = NONE;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
@@ -961,8 +961,8 @@ void nsxpcm::Convert(
 	const strings_ &Items,
 	fblfrd::ids16_ &Ids )
 {
-	epeios::row__ Row = Items.First();
-	epeios::row__ Error = NONE;
+	mdr::row__ Row = Items.First();
+	mdr::row__ Error = NONE;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
@@ -981,8 +981,8 @@ void nsxpcm::Convert(
 	const strings_ &Items,
 	fblfrd::ids8_ &Ids )
 {
-	epeios::row__ Row = Items.First();
-	epeios::row__ Error = NONE;
+	mdr::row__ Row = Items.First();
+	mdr::row__ Error = NONE;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
@@ -1067,7 +1067,7 @@ template<typename id__, typename id_t__> static inline void ConvertAndJoin_(
 	string_ &Joined )
 {
 	const bch::E_BUNCH_( id_t__ ) &Ids = *(const bch::E_BUNCH_( id_t__ ) *)&RawIds;
-	epeios::row__ Row = Ids.First();
+	mdr::row__ Row = Ids.First();
 	bso::integer_buffer__ Buffer;
 
 	if ( Row != NONE ) {
@@ -1186,7 +1186,7 @@ void nsxpcm::ConvertAndJoin(
 	bso::char__ Separator,
 	string_ &Joined )
 {
-	epeios::row__ Row = Booleans.First();
+	mdr::row__ Row = Booleans.First();
 
 	if ( Row != NONE ) {
 		Joined.Append( Booleans( Row ) ? "1" : "0" );
@@ -1222,7 +1222,7 @@ void GetData_(
 	bso::ulong__ Amount,
 	const strings_ &Splitted,
 	strings_ &Data,
-	epeios::row__ &Row )
+	mdr::row__ &Row )
 {
 	ctn::E_CMITEM( str::string_ ) Item;
 
@@ -1248,8 +1248,8 @@ void nsxpcm::Split(
 ERRProlog
 	nsxpcm::strings Amounts;
 	nsxpcm::strings Splitted;
-	epeios::row__ Error = NONE;
-	epeios::row__ ARow = NONE, SRow = NONE;
+	mdr::row__ Error = NONE;
+	mdr::row__ ARow = NONE, SRow = NONE;
 	strings Data;
 ERRBegin
 	Splitted.Init();
@@ -2096,7 +2096,7 @@ ERRProlog
 	STR_BUFFER___ NameBuffer;
 	ctn::E_CITEM( xslt_parameter_ ) Parameter;
 	nsresult Result = NS_OK;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	nsxpcm::CreateInstance( "@mozilla.org/document-transformer;1?type=xslt", Processor );
 
@@ -2415,7 +2415,7 @@ ERRProlog
 	nsEmbedString Transformed;
 	str::string Joined;
 	strings Splitted;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	GetWorkingDirectory( Directory );
 

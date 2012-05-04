@@ -63,7 +63,6 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "cpe.h"
 # include "err.h"
 # include "flw.h"
-# include "epeios.h"
 # include "str.h"
 # include "ctn.h"
 # include "lstbch.h"
@@ -289,7 +288,7 @@ namespace nsxpcm {
 
 	void Transform(
 		const char *CString,
-		epeios::size__ Size,
+		mdr::size__ Size,
 		char **JString );
 
 	void Transform(
@@ -840,7 +839,7 @@ namespace nsxpcm {
 		bso::slong__ Index = -1;
 	ERRProlog
 		str::string Value;
-		epeios::row__ Error = NONE;
+		mdr::row__ Error = NONE;
 	ERRBegin
 		Value.Init();
 		nsxpcm::GetAttribute( Node, "selectedIndex", Value );
@@ -2035,7 +2034,7 @@ namespace nsxpcm {
 			bso::slong__ Index = -1;
 		ERRProlog
 			str::string Value;
-			epeios::row__ Error = NONE;
+			mdr::row__ Error = NONE;
 		ERRBegin
 			Value.Init();
 			nsxpcm::GetAttribute( GetWidget(), "selectedIndex", Value );

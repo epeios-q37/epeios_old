@@ -120,7 +120,7 @@ namespace frdrgy {
 	: public _registry_
 	{
 	private:
-		epeios::size__ _DumpRegistry(
+		mdr::size__ _DumpRegistry(
 			rgstry::level__ Level,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
@@ -129,7 +129,7 @@ namespace frdrgy {
 		{
 			return _registry_::Dump( Level, RootToo, Outfit, Encoding, TFlow );
 		}
-		epeios::size__ _DumpRegistry(
+		mdr::size__ _DumpRegistry(
 			rgstry::level__ Level,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const

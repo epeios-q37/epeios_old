@@ -79,7 +79,7 @@ namespace ndbsct {
 	{
 	protected:
 		virtual void LSTAllocate(
-			epeios::size__ Amount,
+			mdr::size__ Amount,
 			aem::mode__ Mode )
 		{
 			Storage.Allocate( Amount * S_.Size );
@@ -95,7 +95,7 @@ namespace ndbsct {
 		{
 			storage_::s Storage;
 			// Taille de l'élément.
-			epeios::size__ Size;
+			mdr::size__ Size;
 			time_t ModificationTimeStamp;
 		} &S_;
 		static_content_( s &S )
@@ -131,7 +131,7 @@ namespace ndbsct {
 
 			return *this;
 		}
-		void Init( epeios::size__ Size )
+		void Init( mdr::size__ Size )
 		{
 			_list_::Init();
 			Storage.Init();
@@ -191,7 +191,7 @@ namespace ndbsct {
 			ERRl();
 		}
 		E_RODISCLOSE_( time_t, ModificationTimeStamp );
-		E_RODISCLOSE_( epeios::size__, Size );
+		E_RODISCLOSE_( mdr::size__, Size );
 	};
 
 	E_AUTO( static_content )

@@ -73,7 +73,7 @@ extern class ttr_tutor &GECKOOTutor;
 # define GECKOO_DELETE_STEERING_FUNCTION_NAME			GECKOODeleteSteering
 
 namespace geckoo {
-	typedef epeios::row__ id__;
+	typedef mdr::row__ id__;
 
 	class pseudo_event_callback__
 	{

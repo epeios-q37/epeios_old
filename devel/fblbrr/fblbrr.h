@@ -107,7 +107,7 @@ namespace fblbrr {
 	private:
 		parameters _Parameters;
 		void *_Get(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			parameter___ Parameter = _Parameters( Row );
@@ -123,13 +123,13 @@ namespace fblbrr {
 		void _DeleteAll( void );
 	protected:
 		virtual const void *FBLBRQGet(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return _Get( Row, Cast );
 		}
 		virtual void *FBLBRQPut(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return _Get( Row, Cast );

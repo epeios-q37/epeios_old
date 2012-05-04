@@ -65,7 +65,7 @@ using namespace ndbdct;
 #define LIST_FILE_NAME_EXTENSION		".edl"
 
 static inline void Save_(
-	epeios::row__ Row,
+	mdr::row__ Row,
 	flw::oflow__ &Flow )
 {
 	dtfptb::FixedPutULong( *Row, Flow );
@@ -140,7 +140,7 @@ void ndbdct::dynamic_content_atomized_file_manager___::_SaveAvailables( void ) c
 
 static inline void Load_(
 	flw::iflow__ &Flow,
-	epeios::row__ &Row )
+	mdr::row__ &Row )
 {
 	Row = dtfptb::FixedGetULong( Flow );
 }

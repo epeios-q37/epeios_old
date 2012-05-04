@@ -94,7 +94,7 @@ namespace csdsns {
 			log__ Log,
 			id__ Id,
 			void *UP,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{}
 	public:
 		void reset( bso::bool__  = true )
@@ -117,7 +117,7 @@ namespace csdsns {
 			log__ Log,
 			id__ Id,
 			_user_pointer__ UP,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			CSDSNSLog( Log, Id, UP, Amount );
 		}
@@ -199,7 +199,7 @@ ERREpilog
 		{
 			mtx::Lock( S_.Mutex );
 
-			epeios::row__ Row = UPs.New();
+			mdr::row__ Row = UPs.New();
 
 			if ( *Row >= BSO_USHORT_MAX )
 				ERRl();

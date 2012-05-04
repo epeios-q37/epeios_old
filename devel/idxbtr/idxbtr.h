@@ -149,7 +149,7 @@ namespace idxbtr {
 			return BaseTree.GetRoot( Row );
 		}
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			BaseTree.Allocate( Size, Mode );
@@ -381,10 +381,10 @@ namespace idxbtr {
 		{
 			BaseTree.PrintStructure( Root, OStream );
 		}
-		friend epeios::row_t__ Equilibrer_(
-			tree_index_<epeios::row__> &Tree,
+		friend mdr::row_t__ Equilibrer_(
+			tree_index_<mdr::row__> &Tree,
 			que::E_QUEUE_ &File,
-			epeios::row_t__ Premier,
+			mdr::row_t__ Premier,
 			mdr::E_MEMORY_DRIVER__ &Pilote );
 	};
 
@@ -403,23 +403,23 @@ namespace idxbtr {
 	#define E_IBTREEt( r )	tree_index< r >
 	#define E_IBTREEt_( r )	tree_index_< r >
 
-	#define E_IBTREE	E_IBTREEt( epeios::row__ )
-	#define E_IBTREE_	E_IBTREEt_( epeios::row__ )
+	#define E_IBTREE	E_IBTREEt( mdr::row__ )
+	#define E_IBTREE_	E_IBTREEt_( mdr::row__ )
 
-	epeios::row_t__ Balance_(
+	mdr::row_t__ Balance_(
 		E_IBTREE_ &Tree,
-		epeios::row_t__ Root );
+		mdr::row_t__ Root );
 
-	epeios::row_t__ Equilibrer_(
+	mdr::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
-		epeios::row_t__ Premier,
+		mdr::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER__ &Pilote );
 
-	epeios::row_t__ Compare_(
+	mdr::row_t__ Compare_(
 		const E_IBTREE_ &Tree,
 		const que::E_QUEUE_ &File,
-		epeios::row_t__ First );	// Compare 'Tree' avec 'Queue'.
+		mdr::row_t__ First );	// Compare 'Tree' avec 'Queue'.
 
 	template <typename r> inline r tree_index_<r>::Equilibrer_(
 		que::E_QUEUEt_( r ) &Index,
@@ -527,7 +527,7 @@ namespace idxbtr {
 
 	//d A seeker.
 	#define E_TSEEKERt__( r )	tree_seeker__<r>
-	#define E_TSEEKER__			tree_seeker__<epeios::row__>
+	#define E_TSEEKER__			tree_seeker__<mdr::row__>
 
 
 }

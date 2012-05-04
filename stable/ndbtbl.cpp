@@ -61,7 +61,7 @@ using namespace ndbtbl;
 
 void ndbtbl::table_::_InsertInIndexes( rrow__ Row )
 {
-	epeios::row__ IRow = _Indexes.First();
+	mdr::row__ IRow = _Indexes.First();
 
 	while ( IRow != NONE ) {
 		_Indexes( IRow )->Index( Row, false );
@@ -72,7 +72,7 @@ void ndbtbl::table_::_InsertInIndexes( rrow__ Row )
 
 void ndbtbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
-	epeios::row__ IRow = _Indexes.First();
+	mdr::row__ IRow = _Indexes.First();
 
 	while ( IRow != NONE ) {
 /*		if ( !Indexes( IRow )->InitializationCompleted() )
@@ -88,7 +88,7 @@ void ndbtbl::table_::_ReindexAll( observer_functions__ &Observer )
 {
 	_Test( mReadWrite );
 
-	epeios::row__ Row = _Indexes.First();
+	mdr::row__ Row = _Indexes.First();
 
 	if ( &Observer != NULL ) {
 		Observer.Set( _Indexes.Amount() );
@@ -110,7 +110,7 @@ void ndbtbl::table_::Retrieve(
 {
 ERRProlog
 	datum Datum;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	_Test( mReadOnly );
 
@@ -137,7 +137,7 @@ void ndbtbl::table_::Insert(
 	_Test( mReadWrite );
 
 	ctn::E_CMITEM( datum_ ) Datum;
-	epeios::row__ Row = Data.First();
+	mdr::row__ Row = Data.First();
 
 	Datum.Init( Data );
 
@@ -158,7 +158,7 @@ void ndbtbl::table_::Update(
 	_Test( mReadWrite );
 
 	ctn::E_CMITEM( datum_ ) Datum;
-	epeios::row__ Row = Data.First();
+	mdr::row__ Row = Data.First();
 
 	Datum.Init( Data );
 
@@ -173,7 +173,7 @@ void ndbtbl::table_::Delete( const rrows_ &RecordRows )
 {
 	_Test( mReadWrite );
 
-	epeios::row__ Row = RecordRows.First();
+	mdr::row__ Row = RecordRows.First();
 
 	while ( Row != NONE ) {
 		Delete( RecordRows( Row ) );
@@ -185,7 +185,7 @@ void ndbtbl::table_::Delete( const rrows_ &RecordRows )
 
 void ndbtbl::table_::_ResetAllIndexes( void )
 {
-	epeios::row__ Row = _Indexes.First();
+	mdr::row__ Row = _Indexes.First();
 
 	while ( Row != NONE ) {
 		_Indexes( Row )->Reset();
@@ -200,7 +200,7 @@ void ndbtbl::table_::TestRecordsExistence(
 {
 	_Test( mReadOnly );
 
-	epeios::row__ Row = RecordRows.First();
+	mdr::row__ Row = RecordRows.First();
 
 	while ( Row != NONE ) {
 		if ( !RecordExists( RecordRows( Row ) ) )
@@ -215,7 +215,7 @@ bso::bool__ ndbtbl::table_::AreAllIndexesSynchronized( void ) const
 {
 	_Test( mReadOnly );
 
-	epeios::row__ Row = _Indexes.First();
+	mdr::row__ Row = _Indexes.First();
 
 	while ( Row != NONE ) {
 		if ( !_Indexes( Row )->IsSynchronized() )

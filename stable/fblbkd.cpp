@@ -126,7 +126,7 @@ ERREpilog
 
 void fblbkd::untyped_module::_Clean( void )
 {
-	epeios::row__ Row = Indexes.First();
+	mdr::row__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
 		FBLBKDDelete( Indexes( Row ) );
@@ -215,7 +215,7 @@ ERREpilog
 		}
 		else
 		{
-			epeios::row__ P = Descriptions.First();
+			mdr::row__ P = Descriptions.First();
 			command__ C = FBLBKD_INVALID_COMMAND;
 
 			LogFunctions.Log( "", "MASTER", str::string( "MASTER_COMMAND(GetCommandCommand)" ), false );
@@ -251,7 +251,7 @@ static void GetTypesIDAndPrefixAndName_(
 {
 ERRProlog
 	xitem16 XItem;
-	epeios::row__ P;
+	mdr::row__ P;
 	type__ Type;
 ERRBegin
 	xitems16_ &XItems = Requete.XItems16Out();
@@ -290,7 +290,7 @@ static void WriteCommandsIDAndName_(
 ERRProlog
 	item16 Item;
 	ctn::E_CITEM( description_ ) Description;
-	epeios::row__ P;
+	mdr::row__ P;
 	command__ Command;
 ERRBegin
 	items16_ &Items = Requete.Items16Out();
@@ -516,7 +516,7 @@ static void GetRawMessages_(
 	bso::bool__ &,
 	void * )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	strings_ &Messages = Requete.StringsOut();
 	Messages = Backend.GetMasterRawMessages();
 
@@ -558,7 +558,7 @@ static void FillCommands_(
 {
 ERRProlog
 	id16__ Command;
-	epeios::row__ Position = CommandsDetails.First();
+	mdr::row__ Position = CommandsDetails.First();
 	ctn::E_CITEM( command_detail_ ) CommandDetail;
 	description Description;
 ERRBegin
@@ -792,7 +792,7 @@ void fblbkd::master_module::Init( fblbkd::backend_ &Backend )
 
 type__ fblbkd::backend::Type( const str::string_ &Name ) const
 {
-	epeios::row__ C = Modules.First();
+	mdr::row__ C = Modules.First();
 
 	while ( ( C != NONE ) && ( str::string( Modules(C)->Name() ) != Name )  )
 		C = Modules.Next( C );
@@ -917,12 +917,12 @@ ERREpilog
 	return !MasterData.Deconnexion;
 }
 #if 0	
-	epeios::row__ untyped_module::Add(
+	mdr::row__ untyped_module::Add(
 		const char *Name,
 		const void *UP,
 		... )
 	{
-		epeios::row__ P;
+		mdr::row__ P;
 	ERRProlog
 		va_list L;
 		description Description;

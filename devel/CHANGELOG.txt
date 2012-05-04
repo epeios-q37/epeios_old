@@ -1,5 +1,9 @@
 $Id$
 
+04/05/2012 :
+	- GENERAL :
+		- Adaptation.
+
 03/05/2012 :
 	- Mise en obsolescence de la bibliothèque 'EPEIOS'.
 	 

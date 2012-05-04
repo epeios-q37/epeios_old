@@ -85,7 +85,7 @@ namespace txmtbl {
 	};
 
 	//t An amount of cell or of line.
-	typedef epeios::size__	amount__;
+	typedef mdr::size__	amount__;
 
 	//d The default cell separator character.
 	#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
@@ -175,8 +175,8 @@ namespace txmtbl {
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
-	typedef stk::E_BSTACK_( epeios::row__ ) stack_;
-	typedef stk::E_BSTACK( epeios::row__ ) stack;
+	typedef stk::E_BSTACK_( mdr::row__ ) stack_;
+	typedef stk::E_BSTACK( mdr::row__ ) stack;
 
 	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
 
@@ -224,24 +224,24 @@ namespace txmtbl {
 		//f Write 'Cell' and 'Location' at 'Position'.
 		void Write(
 			const cell_ &Cell,
-			epeios::row__ Position )
+			mdr::row__ Position )
 		{
 			cells_::Store( Cell, Position );
 			cells_::Flush();
 		}
 		//f Add 'Cell' and 'Location'. Return position where added.
-		epeios::row__ Add( const cell_ &Cell )
+		mdr::row__ Add( const cell_ &Cell )
 		{
-			epeios::row__ P = cells_::New();
+			mdr::row__ P = cells_::New();
 
 			Write( Cell, P );
 
 			return P;
 		}
 		//f Return the position of the first non-empty cell.
-		epeios::row__ FirstNonEmptyCell( void ) const;
+		mdr::row__ FirstNonEmptyCell( void ) const;
 		//f Return the position of the last non-empty cell.
-		epeios::row__ LastNonEmptyCell( void ) const;
+		mdr::row__ LastNonEmptyCell( void ) const;
 		//f Remove all empty cells. Retunr amount of cells removed.
 		amount__ RemoveEmptyCells( void );
 		//f Remove all heading empty cells. Return amount of cells removed.
@@ -251,11 +251,11 @@ namespace txmtbl {
 		//f Remove all empty cells between the first and last non-empty cells. Return amount of cells removed.
 		amount__ RemoveCentralEmptyCells( void );
 		//f Remove all cells from 'Position'. Return amount of cells removed.
-		amount__ RemoveCellsAt( epeios::row__ Position );
+		amount__ RemoveCellsAt( mdr::row__ Position );
 		//f Remove all cells. Return amount of cells removed.
 		amount__ RemoveAllCells( void )
 		{
-			epeios::row__ P = cells_::First();
+			mdr::row__ P = cells_::First();
 
 			if ( P != NONE )
 				return RemoveCellsAt( P );
@@ -349,9 +349,9 @@ namespace txmtbl {
 			lines_::Init();
 		}
 		//f Add 'Line'. Return position where added.
-		epeios::row__ AddLine(	const line_ &Line )
+		mdr::row__ AddLine(	const line_ &Line )
 		{
-			epeios::row__ P = lines_::New();
+			mdr::row__ P = lines_::New();
 
 			lines_::Store( Line, P );
 			lines_::Flush();
@@ -359,7 +359,7 @@ namespace txmtbl {
 			return P;
 		}
 		//f Remove the line at 'Position'.
-		void RemoveLine( epeios::row__ Position )
+		void RemoveLine( mdr::row__ Position )
 		{
 			lines_::Remove( Position );
 		}
@@ -385,7 +385,7 @@ namespace txmtbl {
 		/*f Return the unique cell in line 'Row' in 'Cell'. Undefined result if there is no
 		or more than one cell. */
 		bso::bool__ GetUniqueCell(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cell_ &Cell ) const
 		{
 			ctn::E_CITEM( line_ ) Line;
@@ -394,7 +394,7 @@ namespace txmtbl {
 
 			return Line( Row ).GetUniqueCell( Cell );
 		}
-		location__ Location( epeios::row__ Row )
+		location__ Location( mdr::row__ Row )
 		{
 			ctn::E_CITEM( line_ ) Line;
 

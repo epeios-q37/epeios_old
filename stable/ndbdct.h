@@ -259,7 +259,7 @@ namespace ndbdct {
 		{
 			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
-			Data.Append( *(const tym::memory_<bso::char__, epeios::row__>*)&Memory, Size, *Row + dtfptb::OldGetSizeLength( Size ) );
+			Data.Append( *(const tym::memory_<bso::char__, mdr::row__>*)&Memory, Size, *Row + dtfptb::OldGetSizeLength( Size ) );
 		}
 	};
 

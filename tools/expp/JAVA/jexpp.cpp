@@ -215,6 +215,22 @@ JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read___3BII(
 	return Read( Env, Object, b, off, len );
 }
 
+static void Print_(
+	JNIEnv *Env,
+	const char *Text )
+{
+	jclass System = Env->FindClass( "java/lang/System" );
+
+	jobject Out = GetJField<jobject>( Env, System, "out", "Ljava/io/PrintStream;" );
+
+	jcharArray Array = Env->NewCharArray( 1000 );
+	
+
+	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
+
+	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "flush", "()V" ), Text );
+}
+
 
 JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor(
   JNIEnv *Env,
@@ -222,24 +238,66 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor(
 {
 ERRJProlog
 	work___ *Core = NULL;
+	xpp::criterions___ C;
+	str::string D, K;
 ERRJBegin
+	Print_( Env, __LOC__ );
+
 	Core = new work___;
+
+	Print_( Env, __LOC__ );
 
 	if ( Core == NULL )
 		ERRa();
 
+	Print_( Env, __LOC__ );
+
 	Core->Data.Param.Env = Env;
+	Print_( Env, __LOC__ );
+
 	Core->Data.Param.Object = Object;
 
+	Print_( Env, __LOC__ );
+
 	Core->Flow.Init( Core->Data.Param );
+	Print_( Env, __LOC__ );
+
 	Core->XFlow.Init( Core->Flow );
-	Core->XPP.Init( Core->XFlow, xpp::criterions___( str::string( ".." ) ) );
+	Print_( Env, __LOC__ );
+
+#if 0
+	D.Init( ".." );
+#else
+	D.Init();
+	Print_( Env, __LOC__ );
+	D.Append( '.' );
+	Print_( Env, __LOC__ );
+	D.Append( '.' );
+
+#endif
+
+	Print_( Env, __LOC__ );
+	K.Init();
+	Print_( Env, __LOC__ );
+
+	C.Init( D, K, K );
+
+	Print_( Env, __LOC__ );
+	Core->XPP.Init( Core->XFlow, C );
+	Print_( Env, __LOC__ );
+
 	Core->Data.XPPFlow = &Core->XPP;
 //	Core->Data.Flow = &Core->Flow;
 
+	Print_( Env, __LOC__ );
+
 	SetJField<jlong>( Env, Object, "core", (jlong)Core );
 
+	Print_( Env, __LOC__ );
+
 	Env->CallNonvirtualVoidMethod( Object, GetJClass( Env, Object ), GetJMethodID( Env, Object, "constructor", "(J)V" ), (jlong)&Core->Data );
+	Print_( Env, __LOC__ );
+
 ERRJErr
 ERRJEnd
 ERRJEpilog

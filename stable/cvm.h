@@ -107,7 +107,7 @@ namespace cvm {
 		void Allocate( mdr::size__ Size )
 		{
 			if ( Size > _Size ) {
-				mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
+				mdr::datum__ *Tampon = (mdr::datum__ *)( ( Tampon_ == NULL ? malloc( Size ) : realloc( Tampon_, Size ) ) );
 
 				if ( ( Tampon == NULL ) && ( Size != 0 ) )
 					ERRa();

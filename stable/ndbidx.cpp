@@ -510,12 +510,12 @@ static inline void Reindex_(
 	observer_functions__ &Observer,
 	ndbctt::cache_  &Cache,
 	tol::chrono__ &Chrono,
-	bso::ulong__ &HandledRecordAmount,
+	bso::size__ &HandledRecordAmount,
 	bso::ulong__ &BalancingCount,
 	tol::E_DPOINTER___( extremities__ ) &Extremities,
 	bso::bool__ Randomly )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	bso::ubyte__ Round = 0;
 
 	while ( Rows.Amount() ) {

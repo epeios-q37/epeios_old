@@ -99,10 +99,10 @@ namespace fblbrq {
 	{
 	protected:
 		virtual const void *FBLBRQGet(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast ) = 0;
 		virtual void *FBLBRQPut(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast ) = 0;
 		virtual void FBLBRQPop(
 			flw::iflow__ &Flow,
@@ -128,13 +128,13 @@ namespace fblbrq {
 			// Standardisation.
 		}
 		const void *Get(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return FBLBRQGet( Row, Cast );
 		}
 		void *Put(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return FBLBRQPut( Row, Cast );
@@ -160,7 +160,7 @@ namespace fblbrq {
 		functions__ *_Functions;
 		casts Casts_;
 		// Position in the Description_;
-		epeios::row__ Position_;
+		mdr::row__ Position_;
 		// At true if all the answer be sent.
 		bso::bool__ Closed_;
 		// Cast buffer.
@@ -179,13 +179,13 @@ namespace fblbrq {
 			return *_Functions;
 		}
 		const void *_Get(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return _F().Get( Row, Cast );
 		}
 		const void *_Put(
-			epeios::row__ Row,
+			mdr::row__ Row,
 			cast__ Cast )
 		{
 			return _F().Put( Row, Cast );

@@ -142,7 +142,7 @@ static bso::bool__ IsValid_(
 	const str::string_ &Value,
 	bso::bool__ AlpahaNumericOnly )	// A 'true' si la valeur doit être alpha-numérique, comme un libellé d'attribut, par example.
 {
-	epeios::row__ Row = Value.First();
+	mdr::row__ Row = Value.First();
 
 	if ( Value.Amount() == 0 )
 		return false;

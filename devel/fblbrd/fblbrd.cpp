@@ -87,9 +87,9 @@ void fblbrd::description_::Init(
 }
 
 
-epeios::row__ fblbrd::descriptions_::Position( const description_ &Description ) const
+mdr::row__ fblbrd::descriptions_::Position( const description_ &Description ) const
 {
-	epeios::row__ Position = E_CONTAINER_( description_ )::First();
+	mdr::row__ Position = E_CONTAINER_( description_ )::First();
 ERRProlog
 	E_CITEM( description_ ) D;
 ERRBegin

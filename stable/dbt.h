@@ -95,7 +95,7 @@ namespace dbt {
 	{
 	protected:
 		void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			Nodes.Allocate( Size, Mode );
@@ -105,7 +105,7 @@ namespace dbt {
 		}
 		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
 		virtual void DBTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 	public:
 		struct s
@@ -114,12 +114,12 @@ namespace dbt {
 		{
 			typename lstbch::E_LBUNCHt_( int__, internal_row__ )::s Internals;
 			typename lstbch::E_LBUNCHt_( ext__, external_row__ )::s Externals;
-			typename bch::E_BUNCHt_( epeios::row_t__, irow__ )::s Nodes; 
+			typename bch::E_BUNCHt_( mdr::row_t__, irow__ )::s Nodes; 
 			typename bitbch::bit_bunch_< irow__ >::s Types;
 		};
 		lstbch::E_LBUNCHt_( int__, internal_row__ ) Internals;
 		lstbch::E_LBUNCHt_( ext__, external_row__ ) Externals;
-		bch::E_BUNCHt_( epeios::row_t__, irow__ ) Nodes;
+		bch::E_BUNCHt_( mdr::row_t__, irow__ ) Nodes;
 		bitbch::bit_bunch_< irow__ > Types;
 		differentiated_binary_tree_( s &S )
 		: E_LISTt_( irow__ )( S ),
@@ -268,8 +268,8 @@ namespace dbt {
 	#define E_DBTREEt_( internal, external, row )	differentiated_binary_tree_<internal, external, row>
 	#define E_DBTREEt( internal, external, row )	differentiated_binary_tree<internal, external, row>
 
-	#define E_DBTREE_( internal, external )	E_DBTREEt_( internal, external, epeios::row__ )
-	#define E_DBTREE( internal, external )	E_DBTREEt( internal, external, epeios::row__ )
+	#define E_DBTREE_( internal, external )	E_DBTREEt_( internal, external, mdr::row__ )
+	#define E_DBTREE( internal, external )	E_DBTREEt( internal, external, mdr::row__ )
 
 	//c differentiated bianry tree filler.
 	template <typename int__, typename ext__, typename irow__> class differentiated_binary_tree_filler_
@@ -336,8 +336,8 @@ namespace dbt {
 	#define E_DBTREE_FILLERt_( internal, external, row )	differentiated_binary_tree_filler_<internal, external, row>
 	#define E_DBTREE_FILLERt( internal, external, row )		differentiated_binary_tree_filler<internal, external, row>
 
-	#define E_DBTREE_FILLER_( internal, external )	E_DBTREE_FILLERt_( internal, external, epeios::row__ )
-	#define E_DBTREE_FILLER( internal, external )	E_DBTREE_FILLERt( internal, external, epeios::row__ )
+	#define E_DBTREE_FILLER_( internal, external )	E_DBTREE_FILLERt_( internal, external, mdr::row__ )
+	#define E_DBTREE_FILLER( internal, external )	E_DBTREE_FILLERt( internal, external, mdr::row__ )
 
 
 }

@@ -102,7 +102,7 @@ namespace frdkrn {
 		virtual void CSDSNCLog(
 			csdsnc::log__ Log,
 			const void *Flow,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{}
 	};
 

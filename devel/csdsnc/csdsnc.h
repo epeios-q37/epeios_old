@@ -144,12 +144,12 @@ namespace csdsnc {
 		virtual void CSDSNCLog(
 			log__ Log,
 			const void *Flow,
-			epeios::size__ Amount ) = 0;
+			mdr::size__ Amount ) = 0;
 	public:
 		void Log(
 			log__ Log,
 			const void *Flow,
-			epeios::size__ Amount )
+			mdr::size__ Amount )
 		{
 			CSDSNCLog( Log ,Flow, Amount );
 		}

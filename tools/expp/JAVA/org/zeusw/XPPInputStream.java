@@ -32,13 +32,24 @@ public class XPPInputStream extends FlowInputStream {
 	native private void destructor();
 	
 	static {
+		System.out.println( "Avant" );
+		System.out.flush();
 		System.loadLibrary("jexpp");
+		System.out.println( "Apres" );
+		System.out.flush();
 	}
 	
     public XPPInputStream( InputStream in  )
 	{
+		
+		System.out.println( "constructeur Avant" );
+		System.out.flush();
 		this.in = in;
+		System.out.println( "constructeur Pendant" );
+		System.out.flush();
 		contructor();
+		System.out.println( "constructeur Apres" );
+		System.out.flush();
 	}
 
 	public void close()

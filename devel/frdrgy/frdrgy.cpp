@@ -183,7 +183,7 @@ bso::bool__ frdrgy::GetProfileIntegerValue(
 	bso::bool__ Success = false;
 ERRProlog
 	str::string Value;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 ERRBegin
 	Value.Init();
 

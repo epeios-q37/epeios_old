@@ -171,13 +171,13 @@ namespace fblbrd {
 			E_XCONTAINER_( description_ )::Init();
 		}
 		//f Adding 'Description'. Return the position where added.
-		epeios::row__ Add( const description_ &Description )
+		mdr::row__ Add( const description_ &Description )
 		{
 			return E_XCONTAINER_( description_ )::Append( Description );
 		}
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */
-		epeios::row__ Add(
+		mdr::row__ Add(
 			const char *Name,
 			const cast *Casts )
 		{
@@ -188,7 +188,7 @@ namespace fblbrd {
 			return Add( Description );
 		}
 		/*f Return the position of the description 'Description'. */
-		epeios::row__ Position( const description_ &Description ) const;
+		mdr::row__ Position( const description_ &Description ) const;
 	};
 
 	E_AUTO( descriptions )

@@ -62,17 +62,17 @@ namespace idxbtr {
 	struct desc__
 	{
 		// Racine de l'arbre. N'a pas de fils droit. L'arbre de fils gauche est complet.
-		epeios::row__ Racine;
+		mdr::row__ Racine;
 		// Niveau de l'arbre.
-		epeios::size__ Niveau;
+		mdr::size__ Niveau;
 	};
 
-	epeios::row_t__ Balance_(
+	mdr::row_t__ Balance_(
 		E_IBTREE_ &Tree,
-		epeios::row_t__ Root )
+		mdr::row_t__ Root )
 	{
 	ERRProlog
-		epeios::row__ Current, Head, Temp;
+		mdr::row__ Current, Head, Temp;
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
@@ -103,16 +103,16 @@ namespace idxbtr {
 
 	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
 	la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
-	epeios::row_t__ Equilibrer_(
+	mdr::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
-		epeios::row_t__ Premier,
+		mdr::row_t__ Premier,
 		mdr::E_MEMORY_DRIVER__ &Pilote )
 	{
-		epeios::row_t__ Racine, &Courant = Premier;
+		mdr::row_t__ Racine, &Courant = Premier;
 	ERRProlog
 		stk::E_BSTACK( desc__ ) Pile;
-		epeios::size__ Niveau = 0;
+		mdr::size__ Niveau = 0;
 		desc__ Sommet;
 		bso::bool__ Boucler = true;
 	ERRBegin
@@ -182,12 +182,12 @@ namespace idxbtr {
 	}
 }
 
-epeios::row_t__ idxbtr::Compare_(
+mdr::row_t__ idxbtr::Compare_(
 	const E_IBTREE_ &Tree,
 	const que::E_QUEUE_ &Queue,
-	epeios::row_t__ First )
+	mdr::row_t__ First )
 {
-	epeios::row_t__ &Row = First;
+	mdr::row_t__ &Row = First;
 
 	while ( Row != NONE ) {
 		if ( Queue.Next( Row ) != Tree.Next( Row ) )

@@ -74,7 +74,7 @@ namespace {
 		const s &S,
 		flw::oflow__ &OFlow )
 	{
-		epeios::row__ P = S.First();
+		mdr::row__ P = S.First();
 
 		PutSize_( S.Amount(), OFlow );
 
@@ -268,7 +268,7 @@ namespace {
 		flw::oflow__ &OFlow )
 	{
 		i Item;
-		epeios::row__ P = C.First();
+		mdr::row__ P = C.First();
 
 		Item.Init( C );
 

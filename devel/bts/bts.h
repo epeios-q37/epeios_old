@@ -1,12 +1,12 @@
 /*
-	Header for the 'bts' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'bts' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	BTS_VERSION	"$Revision$"
 
-#define BTS_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define BTS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &BTSTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -83,7 +83,7 @@ namespace bts {
 		t_amount
 	};
 
-	typedef epeios::row_t__	_row__;
+	typedef mdr::row_t__	_row__;
 
 	//c Base binary tree seeker. Internal use.
 	class _binary_tree_seeker__
@@ -244,7 +244,7 @@ namespace bts {
 	};
 
 	#define E_BTREE_SEEKERt__( r )	binary_tree_seeker__< r >
-	#define E_BTREE_SEEKER__		E_BTREE_SEEKERt__( epeios::row__ )
+	#define E_BTREE_SEEKER__		E_BTREE_SEEKERt__( mdr::row__ )
 }
 
 /*$END$*/

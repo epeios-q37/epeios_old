@@ -124,7 +124,7 @@ namespace ndbctt {
 		}
 		bso::bool__ _UseCache( void ) const
 		{
-			epeios::size__ Size = 0;
+			mdr::size__ Size = 0;
 
 			switch ( _Test() ) {
 			case tStatic:
@@ -198,7 +198,7 @@ namespace ndbctt {
 		rrow__ Store( const datum_ &Datum )
 		{
 			rrow__ Row = NONE;
-			epeios::size__ Size = 0;
+			mdr::size__ Size = 0;
 
 			switch ( _Test() ) {
 			case tStatic:
@@ -368,7 +368,7 @@ namespace ndbctt {
 
 			return NONE;
 		}
-		epeios::size__ Extent( void ) const
+		mdr::size__ Extent( void ) const
 		{
 			switch ( _Test() ) {
 			case tStatic:
@@ -384,7 +384,7 @@ namespace ndbctt {
 
 			return 0;	// Pour éviter un 'warning'.
 		}
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			switch ( _Test() ) {
 			case tStatic:
@@ -489,7 +489,7 @@ namespace ndbctt {
 			_Content.Init( _Dynamic, PostInitializationFunction );
 		}
 		void InitStatic(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			post_initialization_function__&PostInitializationFunction  )
 		{
 			reset();
@@ -596,7 +596,7 @@ namespace ndbctt {
 			BContent.Init();
 		}
 		void InitStatic(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			post_initialization_function__ &PostInitializationFunction )
 		{
 			_Bufferized = false;

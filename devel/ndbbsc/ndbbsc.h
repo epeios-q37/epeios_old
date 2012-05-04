@@ -61,7 +61,6 @@ extern class ttr_tutor &NDBBSCTutor;
 /*$BEGIN$*/
 
 #include "err.h"
-#include "epeios.h"
 #include "bso.h"
 #include "str.h"
 #include "lstctn.h"
@@ -155,7 +154,7 @@ namespace ndbbsc {
 			return *this;
 		}
 		void Init(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			bso::ulong__ AmountMax = NDBBSC_CACHE_DEFAULT_AMOUNT_MAX )
 		{
 			reset();
@@ -170,9 +169,9 @@ namespace ndbbsc {
 
 			S_.AmountMax = AmountMax;
 		}
-		void Resize( epeios::size__ Size )
+		void Resize( mdr::size__ Size )
 		{
-			epeios::size__ CurrentSize = List.Amount();
+			mdr::size__ CurrentSize = List.Amount();
 
 			if ( CurrentSize > Size )
 				ERRu();
@@ -231,7 +230,7 @@ namespace ndbbsc {
 				List.Store( NONE, Row );
 			}
 		}
-		const epeios::size__ Size( void ) const
+		const mdr::size__ Size( void ) const
 		{
 			return List.Amount();
 		}
