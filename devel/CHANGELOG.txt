@@ -1,5 +1,9 @@
 $Id$
 
+07/05/2012 :
+	- CPE :
+		- Ajout CPE__T_JAVA
+
 04/05/2012 :
 	- GENERAL :
 		- Adaptation.

@@ -60,9 +60,18 @@ extern class ttr_tutor &CVMTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "mdr.h"
+# include "err.h"
+# include "flw.h"
+# include "mdr.h"
+# include "cpe.h"
+
+# ifdef CPE__T_JAVA
+#  ifdef CPE__T_CYGWIN
+#   ifdef CPE__USE_WORKAROUNDS
+#    define CVM__USE_JAVA_CYGWIN_WORKAROUNDS
+#   endif
+#  endif
+# endif
 
 namespace cvm {
 	//c Basic conventional memory.
@@ -107,7 +116,11 @@ namespace cvm {
 		void Allocate( mdr::size__ Size )
 		{
 			if ( Size > _Size ) {
-				mdr::datum__ *Tampon = (mdr::datum__ *)( ( Tampon_ == NULL ? malloc( Size ) : realloc( Tampon_, Size ) ) );
+# ifdef CVM__USE_JAVA_CYGWIN_WORKAROUNDS
+				mdr::datum__ *Tampon = new mdr::datum__[Size];
+# else
+				mdr::datum__ *Tampon = (mdr::datum__ *)malloc( Size );
+# endif
 
 				if ( ( Tampon == NULL ) && ( Size != 0 ) )
 					ERRa();
@@ -121,7 +134,11 @@ namespace cvm {
 		{
 			if ( P ) {
 				if ( Tampon_ )
+# ifdef CVM__USE_JAVA_CYGWIN_WORKAROUNDS
+					delete []Tampon_;
+# else
 					free( Tampon_ );
+# endif
 			}
 
 			Tampon_ = NULL;

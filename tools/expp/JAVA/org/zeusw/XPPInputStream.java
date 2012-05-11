@@ -22,37 +22,30 @@
 package org.zeusw;
 
 import java.io.*;
-import org.zeusw.epeios.*;
 
-public class XPPInputStream extends FlowInputStream {
+public class XPPInputStream extends InputStream {
 	private long core;
 	private InputStream in;
 	
 	native private void contructor();
 	native private void destructor();
 	
+	native public int available();
+	native public int read();
+	native public int read(byte[] b);
+	native public int read(byte[] b, int off, int len);
+
 	static {
-		System.out.println( "Avant" );
-		System.out.flush();
 		System.loadLibrary("jexpp");
-		System.out.println( "Apres" );
-		System.out.flush();
 	}
 	
     public XPPInputStream( InputStream in  )
 	{
-		
-		System.out.println( "constructeur Avant" );
-		System.out.flush();
 		this.in = in;
-		System.out.println( "constructeur Pendant" );
-		System.out.flush();
 		contructor();
-		System.out.println( "constructeur Apres" );
-		System.out.flush();
 	}
 
-	public void close()
+	public void close() throws IOException
 	{
 		destructor();
 		super.close();

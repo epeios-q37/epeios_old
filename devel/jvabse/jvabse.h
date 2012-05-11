@@ -62,6 +62,15 @@ extern class ttr_tutor &JVABSETutor;
 
 # include "err.h"
 # include "flw.h"
+# include "cpe.h"
+
+# ifndef CPE__T_JAVA
+#  error "Use of JNI, but without defining the target as a Java component (define 'CPE_JAVA')."
+# endif
+
+# ifndef CPE__T_LIBRARY
+#  error "A Java native component must be a library."
+# endif
 
 # include <jni.h>
 

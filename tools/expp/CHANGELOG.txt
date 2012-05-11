@@ -2,6 +2,9 @@ $Id$
 
 // For both CLI version and JAVA version.
 
+- 05/05/2012 :
+	- Simplification (removing the useless 'org.zeusw.epeios.FlowInputStream' class).
+
 ---------------
 Version 0.4.2 :
 ---------------

@@ -25,66 +25,89 @@
 
 #include "jvastf.h"
 
-#include "org_zeusw_epeios_FlowInputStream.h"
+using namespace jvabse;
+
+#include "XMLPreprocessorDemo.h"
 #include "org_zeusw_XPPInputStream.h"
 
-using namespace jvabse;
+// #define WORKAROUND	1
+
+static void Print_(
+	JNIEnv *Env,
+	const char *Text )
+{
+	jclass System = Env->FindClass( "java/lang/System" );
+
+	jobject Out = GetJField<jobject>( Env, System, "out", "Ljava/io/PrintStream;" );
+
+	jcharArray Array = Env->NewCharArray( 1000 );
+	
+
+	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
+
+	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "flush", "()V" ), Text );
+}
+
+
+static void *malloc_( int Size )
+{
+#ifdef WORKAROUND
+	return new char[Size];
+#else
+	return calloc( Size, 1 );
+#endif
+
+}
+
+static void free_( void *P )
+{
+#ifdef WORKAROUND
+	delete[] P;
+#else
+	free( P );
+#endif
+
+}
+
+JNIEXPORT void JNICALL Java_XMLPreprocessorDemo_mallocCygwinBug
+  (JNIEnv *Env, jclass)
+{
+ERRJProlog
+	void *Test = NULL;
+ERRJBegin
+	Test = malloc_( 10 );
+
+	if( Test == NULL )
+		ERRa();
+ERRJErr
+ERRJEnd
+	if ( Test != NULL )
+		free_( Test );
+ERRJEpilog
+}
 
 #define BUFFER_SIZE	JVASTF_BUFFER_SIZE
 
-struct data__ {
+struct data___ {
 	xpp::preprocessing_iflow___ *XPPFlow;
 	jvabse::jni_param__ Param;
-	data__( void )
-	{
-		XPPFlow = NULL;
-	}
-};
-
-
-struct work___ {
-	data__ Data;
 	jvastf::input_stream_iflow___ Flow;
 	xtf::extended_text_iflow__ XFlow;
 	xpp::preprocessing_iflow___ XPP;
-	~work___( void )
+	~data___( void )
 	{
+		XPPFlow = NULL;
 		XPP.reset();
 		XFlow.reset();
 		Flow.reset();
 	}
 };
 
-
-JNIEXPORT void JNICALL Java_org_zeusw_epeios_FlowInputStream_constructor(
-	JNIEnv *Env,
-	jobject Object,
-	jlong core )
-{
-ERRJProlog
-ERRJBegin
-	SetJField( Env, Object, "core", core );
-ERRJErr
-ERRJEnd
-ERRJEpilog
-}
-
-JNIEXPORT void JNICALL Java_org_zeusw_epeios_FlowInputStream_destructor(
-	JNIEnv *Env,
-	jobject Object )
-{
-ERRJProlog
-ERRJBegin
-	SetJField<jlong>( Env, Object, "core", 0 );
-ERRJErr
-ERRJEnd
-ERRJEpilog
-}
-
 static flw::iflow__ *GetFlow_(
 	JNIEnv *Env,
 	jobject Object )
 {
+	Print_( Env, __LOC__ );
 	flw::iflow__ *Flow = NULL;
 ERRProlog
 	xpp::context___ Context;
@@ -93,38 +116,51 @@ ERRProlog
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	data__ &Data = ((work___ *)GetJField<jlong>( Env, Object, "core" ))->Data;
+	Print_( Env, __LOC__ );
+	data___ &Data = *(data___ *)GetJField<jlong>( Env, Object, "core" );
+	Print_( Env, __LOC__ );
 
 	Data.Param.Env = Env;
 	Data.Param.Object = Object;
+	Print_( Env, __LOC__ );
 
-	if ( !Data.XPPFlow->EndOfFlow() )
+	if ( !Data.XPPFlow->EndOfFlow() ) {
+		Print_( Env, __LOC__ );
 		Flow = Data.XPPFlow;
-	else 
+	Print_( Env, __LOC__ );
+	} else 
+	Print_( Env, __LOC__ );
 		switch ( Data.XPPFlow->GetContext( Context ).Status )
 		{
 		case xml::sOK:
+			Print_( Env, __LOC__ );
 			break;
 		default:
+			Print_( Env, __LOC__ );
 			Locale.Init();
 			Rack.Init( Locale, "" );
+	Print_( Env, __LOC__ );
 
 			Translation.Init();
 			xpp::GetTranslation( Context, Rack, Translation );
+	Print_( Env, __LOC__ );
 
 			Env->ThrowNew( Env->FindClass( "java/lang/Exception" ), Translation.Convert( Buffer ) );
+	Print_( Env, __LOC__ );
 			break;
 		}
 ERRErr
 ERREnd
 ERREpilog
+	Print_( Env, __LOC__ );
 	return Flow;
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_available(
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_available(
 	JNIEnv *Env,
 	jobject Object )
 {
+	Print_( Env, __LOC__ );
 	jint Amount = 0;
 ERRJProlog
 	flw::iflow__ *Flow = NULL;
@@ -136,13 +172,15 @@ ERRJBegin
 ERRJErr
 ERRJEnd
 ERRJEpilog
+	Print_( Env, __LOC__ );
 	return Amount;
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read__(
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read__(
 	JNIEnv *Env,
 	jobject Object )
 {
+	Print_( Env, __LOC__ );
 	jint C = -1;
 ERRJProlog
 	flw::iflow__ *Flow = NULL;
@@ -154,6 +192,7 @@ ERRJBegin
 ERRJErr
 ERRJEnd
 ERRJEpilog
+	Print_( Env, __LOC__ );
 	return C;
 }
 
@@ -164,6 +203,7 @@ int Read(
 	jint off,
 	jint len )
 {
+	Print_( Env, __LOC__ );
 	jsize Amount = len - off;
 ERRJProlog
 	flw::iflow__ *Flow = NULL;
@@ -186,6 +226,7 @@ ERRJBegin
 ERRJErr
 ERRJEnd
 ERRJEpilog
+	Print_( Env, __LOC__ );
 	return Amount;
 }
 
@@ -197,7 +238,7 @@ int Read(
 	return Read( Env, Object, b, 0, Env->GetArrayLength( b ) );
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read___3B(
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3B(
 	JNIEnv *Env,
 	jobject Object,
 	jbyteArray b )
@@ -205,7 +246,7 @@ JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read___3B(
 	return Read( Env, Object, b );
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read___3BII(
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII(
 	JNIEnv *Env,
 	jobject Object,
 	jbyteArray b,
@@ -215,21 +256,6 @@ JNIEXPORT jint JNICALL Java_org_zeusw_epeios_FlowInputStream_read___3BII(
 	return Read( Env, Object, b, off, len );
 }
 
-static void Print_(
-	JNIEnv *Env,
-	const char *Text )
-{
-	jclass System = Env->FindClass( "java/lang/System" );
-
-	jobject Out = GetJField<jobject>( Env, System, "out", "Ljava/io/PrintStream;" );
-
-	jcharArray Array = Env->NewCharArray( 1000 );
-	
-
-	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
-
-	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "flush", "()V" ), Text );
-}
 
 
 JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor(
@@ -237,32 +263,32 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor(
   jobject Object )
 {
 ERRJProlog
-	work___ *Core = NULL;
+	data___ *Data = NULL;
 	xpp::criterions___ C;
 	str::string D, K;
 ERRJBegin
 	Print_( Env, __LOC__ );
 
-	Core = new work___;
+	Data = new data___;
 
 	Print_( Env, __LOC__ );
 
-	if ( Core == NULL )
+	if ( Data == NULL )
 		ERRa();
 
 	Print_( Env, __LOC__ );
 
-	Core->Data.Param.Env = Env;
+	Data->Param.Env = Env;
 	Print_( Env, __LOC__ );
 
-	Core->Data.Param.Object = Object;
+	Data->Param.Object = Object;
 
 	Print_( Env, __LOC__ );
 
-	Core->Flow.Init( Core->Data.Param );
+	Data->Flow.Init( Data->Param );
 	Print_( Env, __LOC__ );
 
-	Core->XFlow.Init( Core->Flow );
+	Data->XFlow.Init( Data->Flow );
 	Print_( Env, __LOC__ );
 
 #if 0
@@ -283,24 +309,21 @@ ERRJBegin
 	C.Init( D, K, K );
 
 	Print_( Env, __LOC__ );
-	Core->XPP.Init( Core->XFlow, C );
+	Data->XPP.Init( Data->XFlow, C );
 	Print_( Env, __LOC__ );
 
-	Core->Data.XPPFlow = &Core->XPP;
+	Data->XPPFlow = &Data->XPP;
 //	Core->Data.Flow = &Core->Flow;
 
 	Print_( Env, __LOC__ );
 
-	SetJField<jlong>( Env, Object, "core", (jlong)Core );
+	SetJField<jlong>( Env, Object, "core", (jlong)Data );
 
 	Print_( Env, __LOC__ );
-
-	Env->CallNonvirtualVoidMethod( Object, GetJClass( Env, Object ), GetJMethodID( Env, Object, "constructor", "(J)V" ), (jlong)&Core->Data );
-	Print_( Env, __LOC__ );
-
 ERRJErr
 ERRJEnd
 ERRJEpilog
+	Print_( Env, __LOC__ );
 }
 
 
@@ -308,12 +331,14 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor(
 	JNIEnv *Env,
 	jobject Object )
 {
+	Print_( Env, __LOC__ );
 ERRJProlog
 ERRJBegin
-	delete (work___ *)GetJField<jlong>( Env, Object, "core" );
+	delete (data___ *)GetJField<jlong>( Env, Object, "core" );
 ERRJErr
 ERRJEnd
 ERRJEpilog
+	Print_( Env, __LOC__ );
 }
 
 

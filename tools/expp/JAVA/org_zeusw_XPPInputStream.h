@@ -25,6 +25,38 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor
 JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor
   (JNIEnv *, jobject);
 
+/*
+ * Class:     org_zeusw_XPPInputStream
+ * Method:    available
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_available
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     org_zeusw_XPPInputStream
+ * Method:    read
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read__
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     org_zeusw_XPPInputStream
+ * Method:    read
+ * Signature: ([B)I
+ */
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3B
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     org_zeusw_XPPInputStream
+ * Method:    read
+ * Signature: ([BII)I
+ */
+JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII
+  (JNIEnv *, jobject, jbyteArray, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

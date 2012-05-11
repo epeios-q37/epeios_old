@@ -27,39 +27,44 @@ import org.xml.sax.*;
 
 class XMLPreprocessorDemo {
 
-	public static void main (
-		String[] args )	throws Exception
-		{
-			int A = 0;
-				System.out.println( A++ );
-				System.out.flush();
-			   DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				System.out.println( A++ );
-				System.out.flush();
-			   DocumentBuilder builder = factory.newDocumentBuilder();
-				System.out.println( A++ );
-				System.out.flush();
-			   File file = new File("../Contacts.xml");
-				System.out.println( A++ );
-				System.out.flush();
-				FileInputStream fstream = new FileInputStream(file);
-				System.out.println( A++ );
-				System.out.flush();
-				XPPInputStream xppstream = new XPPInputStream(fstream);
-				System.out.println( A++ );
-				System.out.flush();
-			   
-			   Document doc = builder.parse(xppstream);
-			   NodeList list = doc.getElementsByTagName("*");
-			   			   for (int i=0; i<list.getLength(); i++) {
-				   Element element = (Element)list.item(i);
-				   System.out.print(element.getNodeName());
-				   if ( ( element.getFirstChild() != null ) && ( element.getFirstChild().getNodeValue().trim().length() != 0 ) ) {
-					   System.out.print( " : " );
-					System.out.println(element.getFirstChild().getNodeValue());
-					} else
-					System.out.println();
-			   }
+	private static native void mallocCygwinBug();
+
+	public static void main ( String[] args )	throws Exception
+	{
+		System.loadLibrary("jexpp");
+		mallocCygwinBug();
+
+		int A = 0;
+		System.out.println( A++ );
+		System.out.flush();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		System.out.println( A++ );
+		System.out.flush();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		System.out.println( A++ );
+		System.out.flush();
+		File file = new File("../Contacts.xml");
+		System.out.println( A++ );
+		System.out.flush();
+		FileInputStream fstream = new FileInputStream(file);
+		System.out.println( A++ );
+		System.out.flush();
+		XPPInputStream xppstream = new XPPInputStream(fstream);
+		System.out.println( A++ );
+		System.out.flush();
+		
+		Document doc = builder.parse(xppstream);
+		NodeList list = doc.getElementsByTagName("*");
+		for (int i=0; i<list.getLength(); i++) {
+			Element element = (Element)list.item(i);
+			System.out.print(element.getNodeName());
+			if ( ( element.getFirstChild() != null ) && ( element.getFirstChild().getNodeValue().trim().length() != 0 ) ) {
+				System.out.print( " : " );
+				System.out.println(element.getFirstChild().getNodeValue());
+			} else
+				System.out.println();
+			System.out.flush();
+		}
 	}
 }
 

@@ -74,13 +74,11 @@ extern class ttr_tutor &JVASTFTutor;
 namespace jvastf {
 	using namespace jvabse;
 
-	typedef fdr::iflow_driver___<> _iflow_driver___;
-
-	class input_stream__iflow_driver___
-	: public _iflow_driver___
+	class _flow_driver_common__
 	{
 	private:
 		jvabse::jni_param__ *_JNIParam;
+	protected:
 		jbyteArray _JByteArray;
 		JNIEnv *_JEnv( void )
 		{
@@ -102,6 +100,32 @@ namespace jvastf {
 
 			return _JNIParam->Object;
 		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			if ( P && false )
+				if( _JByteArray != NULL ) 
+					_JEnv()->DeleteLocalRef( _JByteArray );
+
+			_JNIParam = NULL;
+			_JByteArray = NULL;
+		}
+		E_CVDTOR( _flow_driver_common__ )
+		void Init( jni_param__ &JNIParam )
+		{
+			reset();
+
+			_JNIParam = &JNIParam;
+		}
+	};
+
+	typedef fdr::iflow_driver___<> _iflow_driver___;
+
+	class input_stream__iflow_driver___
+	: public _flow_driver_common__,
+	  public _iflow_driver___
+	{
+	private:
 		fdr::size__ _JRead(
 			fdr::size__ Maximum,
 			fdr::datum__ *Buffer )
@@ -132,14 +156,8 @@ namespace jvastf {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			if ( P && false )
-				if( _JByteArray != NULL ) 
-					_JEnv()->DeleteLocalRef( _JByteArray );
-
+			_flow_driver_common__::reset( P );
 			_iflow_driver___::reset( P );
-			_JNIParam = NULL;
-			_JByteArray = NULL;
-
 		}
 		E_CVDTOR( input_stream__iflow_driver___ )
 		void Init( jni_param__ &JNIParam )
@@ -148,12 +166,14 @@ namespace jvastf {
 
 			_iflow_driver___::Init( fdr::ts_Default );
 
-			_JNIParam = &JNIParam;
+			_flow_driver_common__::Init( JNIParam );
 		}
 	};
 
+	typedef flw::standalone_iflow__<> _iflow__;
+
 	class input_stream_iflow___
-	: public flw::iflow__
+	: public _iflow__
 	{
 	private:
 		input_stream__iflow_driver___ _Driver;
@@ -161,7 +181,7 @@ namespace jvastf {
 		void reset( bso::bool__ P = true )
 		{
 			_Driver.reset( P );
-			iflow__::reset( P );
+			_iflow__::reset( P );
 		}
 		E_CVDTOR( input_stream_iflow___ )
 		void Init(
@@ -169,9 +189,88 @@ namespace jvastf {
 			bso::size__ AmountMax = FLW_SIZE_MAX )
 		{
 			_Driver.Init( JNIParam );
-			iflow__::Init( _Driver, AmountMax );
+			_iflow__::Init( _Driver, AmountMax );
 		}
 	};
+
+
+	typedef fdr::oflow_driver___<> _oflow_driver___;
+
+	class output_stream__oflow_driver___
+	: public _flow_driver_common__,
+	  public _oflow_driver___
+	{
+	private:
+		fdr::size__ _JWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Amount )
+		{
+			jobject OutputStream = GetJField<jobject>( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
+
+			if ( Amount > JVASTF_BUFFER_SIZE )
+				Amount = JVASTF_BUFFER_SIZE;
+
+			_JByteArray = _JEnv()->NewByteArray( JVASTF_BUFFER_SIZE );
+
+			_JEnv()->SetByteArrayRegion( _JByteArray, 0, Amount, (jbyte *)Buffer );
+
+			_JEnv()->CallVoidMethod( OutputStream, GetJMethodID( _JEnv(),  OutputStream, "write", "([BII)V" ), _JByteArray, (jint)0, (jint)Amount );
+
+			return Amount;
+		}
+	protected:
+		virtual fdr::size__ FDRWrite(
+			const fdr::datum__ *Buffer,
+			fdr::size__ Maximum )
+		{
+			return _JWrite( Buffer, Maximum );
+		}
+		virtual void FDRCommit( void )
+		{
+			jobject OutputStream = GetJField<jobject>( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
+
+			_JEnv()->CallVoidMethod( OutputStream, GetJMethodID( _JEnv(),  OutputStream, "void", "()V" ) );
+		}
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_flow_driver_common__::reset( P );
+			_oflow_driver___::reset( P );
+		}
+		E_CVDTOR( output_stream__oflow_driver___ )
+		void Init( jni_param__ &JNIParam )
+		{
+			reset();
+
+			_oflow_driver___::Init( fdr::ts_Default );
+
+			_flow_driver_common__::Init( JNIParam );
+		}
+	};
+
+	typedef flw::standalone_oflow__<> _oflow__;
+
+	class output_stream_oflow___
+	: public _oflow__
+	{
+	private:
+		output_stream__oflow_driver___ _Driver;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Driver.reset( P );
+			_oflow__::reset( P );
+		}
+		E_CVDTOR( output_stream_oflow___ )
+		void Init(
+			jni_param__ &JNIParam,
+			bso::size__ AmountMax = FLW_SIZE_MAX )
+		{
+			_Driver.Init( JNIParam );
+			_oflow__::Init( _Driver, AmountMax );
+		}
+	};
+
 }
 
 /*$END$*/
