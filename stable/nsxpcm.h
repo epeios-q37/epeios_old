@@ -571,6 +571,25 @@ namespace nsxpcm {
 	NSXPCM_DEFINE( nsIDOMHTMLAnchorElement, html_anchor, HTMLAnchor );
 #endif 
 
+	inline const str::string_ &GetName(
+		nsIDOMNode *Node,
+		str::string_ &Name )
+	{
+		nsEmbedString RawName;
+
+#ifdef NSXPCM_DBG
+		if ( Node == NULL )
+			ERRc();
+#endif
+
+		T( Node->GetNodeName( RawName ) );
+
+		Transform( RawName, Name );
+
+		return Name;
+	}
+
+
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
 		const char *Name )
@@ -1087,14 +1106,7 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		str::string_ &Name )
 	{
-		nsEmbedString EName;
-
-		T( Node->GetNodeName( EName ) );
-
-		Transform( EName, Name );
-
-		return Name;
-
+		return GetName( Node, Name );
 	}
 
 	// Permet de parcourir une arborescence de noeuds.

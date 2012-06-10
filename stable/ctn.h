@@ -985,6 +985,17 @@ namespace ctn {
 
 			return *this;
 		}
+		r Append( const t &Object )
+		{
+			r P = New();
+
+			operator()( P ) = Object;
+
+			Flush();
+
+			return P;
+		}
+
 		//f Create a new object and return its position.
 		r New( mdr::size__ Size = 1 )
 		{
@@ -1078,6 +1089,7 @@ namespace ctn {
 		//f Append object 'Object'. Return position where put.
 		r Append( const t &Object )
 		{
+# if 0
 			r P = Create_();
 
 			mono_container_<t, r>::operator()() = Object;	// Positionned by 'Create_'.
@@ -1085,6 +1097,9 @@ namespace ctn {
 			mono_container_<t, r>::Flush();
 
 			return P;
+# else
+			return mono_container_<t, r>::Append( Object );
+# endif
 		}
 	};
 
@@ -1410,6 +1425,16 @@ namespace ctn {
 
 			return P;
 		}
+		r Append( const t &Object )
+		{
+			r P = New();
+
+			operator()( P ) = Object;
+
+			Flush();
+
+			return P;
+		}
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
@@ -1494,6 +1519,7 @@ namespace ctn {
 		//f Append object 'Object'. Return position where put.
 		r Append( const t &Object )
 		{
+# if 0
 			r P = Create_();
 
 			multi_container_< t, r >::operator()() = Object;	// Positionned by 'Create_'.
@@ -1501,6 +1527,9 @@ namespace ctn {
 			multi_container_< t, r >::Flush();
 
 			return P;
+# else
+			return multi_container_< t, r >::Append( Object );
+# endif
 		}
 	};
 

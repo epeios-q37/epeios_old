@@ -101,7 +101,7 @@ void xulftk::error_reporting_functions__::FRDKRNReportFrontendError( const char 
 	if ( _UI == NULL )
 		ERRc();
 
-	_UI->LogAndPrompt( Message );
+	_UI->Alert( Message );
 
 	ERRAbort();
 }

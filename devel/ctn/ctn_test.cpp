@@ -41,8 +41,8 @@
 
 using namespace ctn;
 
-using cio::cout;
-using cio::cerr;
+#define cout cio::COut
+#define cerr cio::CErr
 
 void Generic( int argc, const char *argv[] )
 {
@@ -69,28 +69,29 @@ E_AUTO( data_cluster )
 
 void Print( const data_ &Data )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	ctn::E_CMITEM( datum_ ) Datum;
 
 	Datum.Init( Data );
 
 	Row = Data.First();
 
-	cout << "****" << txf::tab << txf::sync;
+	cout << "****" << txf::tab << txf::commit;
 
 	while( Row != NONE ) {
-		cout << '>' << txf::sync;
-		cout << Datum( Row ) << '<' << txf::tab << txf::sync;
+		cout << '>' << txf::commit;
+		cout << Datum( Row ) << '<' << txf::tab << txf::commit;
 		Row = Data.Next( Row );
 	}
 
-	cout << txf::nl << txf::sync;
+	cout << txf::nl << txf::commit;
 }
 
 void Fill( data_cluster_ &DataCluster )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
+
+	mdr::row__ Row = NONE;
 	data Data;
 ERRBegin
 
@@ -117,48 +118,48 @@ ERREpilog
 
 void PrintV( data_cluster_ &DataCluster )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 
 	DataCluster.Flush();
 
 	Row = DataCluster.First();
 
-	cout << ">>> V" << txf::nl << txf::sync;
+	cout << ">>> V" << txf::nl << txf::commit;
 
 	while( Row != NONE ) {
 		Print( DataCluster( Row ) );
 		Row = DataCluster.Next( Row );
 	}
 
-	cout << "V >>>" << txf::nl << txf::sync;
+	cout << "V >>>" << txf::nl << txf::commit;
 
 	DataCluster.Flush();
 }
 
 void PrintC( const data_cluster_ &DataCluster )
 {
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 	ctn::E_CITEM( data_ ) Data;
 
 	Data.Init( DataCluster );
 
 	Row = DataCluster.First();
 
-	cout << ">>> C" << txf::nl << txf::sync;
+	cout << ">>> C" << txf::nl << txf::commit;
 
 	while( Row != NONE ) {
 		Print( Data( Row ) );
 		Row = DataCluster.Next( Row );
 	}
 
-	cout << "C >>>" << txf::nl << txf::sync;
+	cout << "C >>>" << txf::nl << txf::commit;
 }
 
 void BugTracking( void )
 {
 ERRProlog
 	data_cluster DataCluster;
-	epeios::row__ Row = NONE;
+	mdr::row__ Row = NONE;
 ERRBegin
 	DataCluster.Init();
 	Fill( DataCluster );
@@ -215,8 +216,8 @@ ERRBegin
 //	MM.DisplayStructure( cout );
 #endif
 
-	cout << C( 0 ) << txf::tab << txf::sync;
-	cout << C( 1 ) << txf::nl << txf::sync;
+	cout << C( 0 ) << txf::tab << txf::commit;
+	cout << C( 1 ) << txf::nl << txf::commit;
 
 //	MM.DisplayStructure( cout );
 	
@@ -250,7 +251,7 @@ ERRBegin
 			I1.Set( 0 );
 //			S2 = Liste[0];
 
-		for ( epeios::row_t__ i = 1; i < Liste.Amount(); i++ )
+		for ( mdr::row_t__ i = 1; i < Liste.Amount(); i++ )
 		{
 			S = I1();
 			I1.Set( i );
@@ -298,7 +299,7 @@ ERRProlog
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS;
 	str::string Str;
-	epeios::row__ P;
+	mdr::row__ P;
 ERRBegin
 	M.Init();
 	CS.plug( M );
@@ -373,10 +374,10 @@ ERRProlog
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS, ECD;
 	str::string Str;
-	epeios::row__ P;
+	mdr::row__ P;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true );
+	F.Init( ID );
 	F.Automatic();
 //	M.plug( F );
 	M.Init();
@@ -505,7 +506,7 @@ ERRBegin
 //	CS.Dynamics.Multimemoire.Preallocate( 100000 );
 
 	CC.Allocate( 1 );
-	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+	CC.Dynamics.Multimemoire.DisplayStructure( cout );
 //
 	CS.Allocate( 1 );
 //	CS.Dynamics.Multimemoire.DisplayStructure( cio::cout );
@@ -520,28 +521,28 @@ ERRBegin
 	cout << CS( 0 ) << " ";
 	CS.Flush();
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+	CS.Dynamics.Multimemoire.DisplayStructure( cout );
 
 	cout << '\t';
 
 	CC( 0 ).Init();
-	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+	CC.Dynamics.Multimemoire.DisplayStructure( cout );
 	CC() = CS;
 
 	CC.Flush();
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cio::cout );
-	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+	CS.Dynamics.Multimemoire.DisplayStructure( cout );
+	CC.Dynamics.Multimemoire.DisplayStructure( cout );
 
 	cout << txf::nl;
 
 	CS = CC( 0 );
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cio::cout );
+	CS.Dynamics.Multimemoire.DisplayStructure( cout );
 
 	S = CS( 0 );
 
-	cout << S << ' ' << txf::sync;
+	cout << S << ' ' << txf::commit;
 
 	cout << '\t';
 
@@ -571,7 +572,7 @@ ERRProlog
 	char M, m, C;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true, "a.tmp" );
+	F.Init( ID, "a.tmp" );
 //	F.Manuel();
 	Mm.plug( F );
 	Mm.Init();
@@ -651,7 +652,7 @@ ERRBegin
 			{
 				S = ECC(C - '0');
 
-				cout << S << ' ' << txf::sync;
+				cout << S << ' ' << txf::commit;
 			}
 
 			cout << '\t';
@@ -692,7 +693,7 @@ ERRProlog
 	char M, m, C;
 ERRBegin
 	ID = flm::GetId();
-	FileManager.Init( CM, "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", fil::mReadWrite, true, ID );
+	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", fil::mReadWrite, true, ID );
 
 	Cm.Init();
 	CC.Init();
@@ -706,9 +707,9 @@ ERRBegin
 
 	CM.Init();
 
-	if ( !ctn::Connect( CM, FileManager ) ) {
+	if ( !ctn::Plug( CM, FileManager ) ) {
 
-		cout << "***** CREATION *****" << txf::nl << txf::sync;
+		cout << "***** CREATION *****" << txf::nl << txf::commit;
 
 
 		CM.Allocate( LM - 'A' + 1 );
@@ -753,7 +754,7 @@ ERRBegin
 			ECM() = Cm;
 		}
 	} else {
-		cout << "***** RECUPERATION *****" << txf::nl << txf::sync;
+		cout << "***** RECUPERATION *****" << txf::nl << txf::commit;
 	}
 
 	CM.Dynamics.Multimemoire.DisplayStructure( cout );
@@ -775,7 +776,7 @@ ERRBegin
 				S.Init();
 				S = ECC(C - '0');
 
-				cout << S << ' ' << txf::sync;
+				cout << S << ' ' << txf::commit;
 			}
 
 			cout << '\t';
@@ -822,7 +823,7 @@ ERRBegin
 
 //		E(C - '0').Adjust();
 
-		cout << E(C - '0') << " " << txf::sync;
+		cout << E(C - '0') << " " << txf::commit;
 	}
 ERRErr
 ERREnd
@@ -865,7 +866,7 @@ ERRBegin
 
 	for ( char C = '0'; C <= LC; C++ )
 	{
-		cout << E(C - '0') << ' ' << txf::sync;
+		cout << E(C - '0') << ' ' << txf::commit;
 	}
 ERRErr
 ERREnd
@@ -887,7 +888,7 @@ ERRBegin
 	{
 		SSP2( E(m - 'a'), M, m );
 
-		cout << txf::tab << txf::sync;
+		cout << txf::tab << txf::commit;
 	}
 ERRErr
 ERREnd
@@ -908,7 +909,7 @@ ERRProlog
 	char M;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true, "b.tmp");
+	F.Init( ID, "b.tmp");
 	F.Manual();
 	Mm.plug( F );
 	Mm.Init();
@@ -963,7 +964,7 @@ ERRProlog
 	E_MITEM( str::string_ ) E;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true, "coucou.tmp" );
+	F.Init( ID, "coucou.tmp" );
 //	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -994,7 +995,7 @@ ERRProlog
 	E_ITEM( str::string_ ) E;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true, "coucou.tmp" );
+	F.Init( ID, "coucou.tmp" );
 	M.plug( F );
 	M.Init();
 	C.plug( M );
@@ -1027,7 +1028,7 @@ ERRProlog
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
 	ID = flm::GetId();
-	F.Init( ID, true, "temp.tmp" );
+	F.Init( ID, "temp.tmp" );
 	M.plug( F );
 	M.Init();
 
@@ -1052,7 +1053,7 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	cout << CS( 0 ) << txf::tab << txf::sync;
+	cout << CS( 0 ) << txf::tab << txf::commit;
 
 	CS(0).Init();
 	CS() = "hello";
@@ -1062,7 +1063,7 @@ ERRBegin
 	CC() = CS;
 	CC.Flush();
 
-	cout << CS( 0 ) << txf::tab << txf::sync;
+	cout << CS( 0 ) << txf::tab << txf::commit;
 
 	CS = CC( 0 );
 	CC.Flush();
@@ -1118,7 +1119,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << CTNTutor.Name << " [/i]\n\n";
 		ERRi();

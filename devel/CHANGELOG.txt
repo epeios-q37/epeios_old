@@ -1,5 +1,9 @@
 $Id$
 
+07/06/2012 :
+	- CTN : 
+		- Déplacement de 'Append(...)' de la version 'extended' à la version normale. A terme, la version 'extended' devrait disparaître.
+
 07/05/2012 :
 	- CPE :
 		- Ajout CPE__T_JAVA

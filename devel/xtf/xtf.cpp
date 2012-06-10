@@ -94,7 +94,12 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 		}
 	}
 
-	return ( C == Separator );
+	if ( EndOfFlow() )
+		return false;
+	else if ( Separator == 0 )
+		return true;
+	else
+		return ( C == Separator );
 }
 
 

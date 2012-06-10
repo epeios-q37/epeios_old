@@ -117,9 +117,10 @@ namespace cvm {
 		{
 			if ( Size > _Size ) {
 # ifdef CVM__USE_JAVA_CYGWIN_WORKAROUNDS
+#error "Only for testing ! Loss of the content of the previously allocated buffer !".
 				mdr::datum__ *Tampon = new mdr::datum__[Size];
 # else
-				mdr::datum__ *Tampon = (mdr::datum__ *)malloc( Size );
+				mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
 # endif
 
 				if ( ( Tampon == NULL ) && ( Size != 0 ) )

@@ -216,7 +216,7 @@ namespace mmi {
 			mdr::size__ CapaciteCourante,
 			mdr::size__ NouvelleCapacite )
 		{
-#if 0
+#if 1
 			descripteur__ Buffer[MMI_BUFFER_SIZE];
 
 			mdr::size__ Amount = NouvelleCapacite - CapaciteCourante;
@@ -232,7 +232,7 @@ namespace mmi {
 #else
 			descripteur__ D;
 			D.Descripteur = MMM_UNDEFINED_DESCRIPTOR;
-			D.Addendum = 0;
+			D.Capacite = 0;
 			Descripteurs.Store( D, CapaciteCourante, NouvelleCapacite - CapaciteCourante );
 #endif
 		}

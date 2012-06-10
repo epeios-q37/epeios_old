@@ -211,15 +211,15 @@ namespace xtf {
 		{
 			return _Coord;
 		}
-		/*f Put the rest of the current cell in 'Cell'. Return true if the celle is delimited by 'Separator',
+		/*f Put the rest of the current cell in 'Cell'. Return true if the cell is delimited by 'Separator',
 		false otherwise (cell delimited by a new line, for example). */
 		bso::bool__ GetCell(
 			str::string_ &Cell,
 			flw::datum__ Separator = XTF_DEFAULT_CELL_SEPARATOR );
-		//f Put rest of the current line in 'Line'. Return true if line ended by a new line, false otherwise.
+		//f Put rest of the current line in 'Line'. Return true if line ended by a new line, false when EOF.
 		bso::bool__ GetLine( str::string_ &Line )
 		{
-			return !GetCell( Line, 0 );
+			return GetCell( Line, 0 );
 		}
 		//f Skip the current line.
 		void SkipLine( void )

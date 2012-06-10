@@ -57,13 +57,13 @@ void Test(
 	static unsigned long Compteur = 1;
 	addendum__ Addendum = 0;
 
-	cio::cout << tab << tab << tab << '(' << Compteur++ << ") " << ( D / 4 )<< ": " << ( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << sync;
+	cio::COut << tab << tab << tab << '(' << Compteur++ << ") " << (bso::ulong__)( D / 4 )<< ": " << (bso::ulong__)( ( ( C - 1 ) / 4 ) + 1 ) << " --> " << commit;
 	D = M.Reallocate( D, C, Addendum );
-	cio::cout << ( D / 4 )<< nl;
+	cio::COut << (bso::ulong__)( D / 4 )<< nl;
 
-	M.DisplayStructure( cio::cout );
+	M.DisplayStructure( cio::COut );
 
-	cio::cout << nl;
+	cio::COut << nl;
 }
 
 
@@ -80,7 +80,7 @@ ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 ERRBegin
 	ID = flm::GetId();
-	M.Init( ID, true, "coucou.tmp" );
+	M.Init( ID, "coucou.tmp" );
 	M.Manual();
 	P.plug( M );
 	P.Init();
@@ -147,7 +147,7 @@ ERRBegin
 		j = i + 300;
 		M1.Store( &j, 1, i );
 		M1.Recall( i, 1, &j );
-		cio::cout << j << '\t';
+		cio::COut << j << '\t';
 	}
 
 	i = 0;
@@ -159,18 +159,18 @@ ERRBegin
 	while( i < 50  )
 	{
 		M1.Recall( i, 1, &j );
-		cio::cout << j << '\t';
+		cio::COut << j << '\t';
 
 		M2.Recall( i, 1, &j );
-		cio::cout << j << '\t';
+		cio::COut << j << '\t';
 
 		M3.Recall( i, 1, &j );
-		cio::cout << j << '\t';
+		cio::COut << j << '\t';
 
 		i++;
 	}
 
-	P.DisplayStructure( cio::cout );
+	P.DisplayStructure( cio::COut );
 
 
 ERRErr
@@ -202,17 +202,17 @@ ERRBegin
 	for( int i = 0; i < sizeof( Descripteurs ) / sizeof( Descripteurs[0] ); i++ )
 	{
 		Descripteurs[i] = Multimemoire.Allocate( rand() % TAILLE_MAX + 4, Addendum );
-		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		cio::COut << (bso::ulong__)Descripteurs[i] << ": " << (bso::ulong__)Multimemoire.Size( Descripteurs[i] )<< tab << commit;
 	}
 
-	cio::cout << nl;
+	cio::COut << nl;
 
 	while ( rand() % 100000 )
 	{
 		int i = rand() % 100;
 
 		Descripteurs[i] = Multimemoire.Reallocate( Descripteurs[i], Multimemoire.Size( Descripteurs[i] ) + rand() % TAILLE_MAX + 4, Addendum );
-		cio::cout << Descripteurs[i] << ": " << Multimemoire.Size( Descripteurs[i] )<< tab << sync;
+		cio::COut << (bso::ulong__)Descripteurs[i] << ": " << (bso::ulong__)Multimemoire.Size( Descripteurs[i] )<< tab << commit;
 	}
 
 
@@ -229,7 +229,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	cio::cout << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::COut << "Test of library " << MMMTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -241,20 +241,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cio::cout );
+			TTR.Advertise( cio::COut );
 			break;
 		}
 	default:
-		cio::cout << txf::sync;
-		cio::cerr << "\nBad arguments.\n";
-		cio::cout << "Usage: " << MMMTutor.Name << " [/i]\n\n";
+		cio::COut << commit;
+		cio::CErr << "\nBad arguments.\n";
+		cio::COut << "Usage: " << MMMTutor.Name << " [/i]\n\n";
 		ERRi();
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cio::cout << "\nEnd of program " << MMMTutor.Name << ".\n";
+	cio::COut << "\nEnd of program " << MMMTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

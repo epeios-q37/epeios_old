@@ -38,11 +38,11 @@
 #include "fnm.h"
 #include "lcl.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+#define cin cio::CIn
+#define cout cio::COut
+#define cerr cio::CErr
 
-#define TEST_CASE	3
+#define TEST_CASE	1
 
 #if TEST_CASE == 1
 #	define FILE	"test.xml"
@@ -147,6 +147,7 @@ ERRProlog
 	xml::status__ Status = xml::s_Undefined;
 	FNM_BUFFER___ Buffer;
 	lcl::locale Locale;
+	lcl::rack__ Rack;
 	str::string Translation;
 ERRBegin
 //	Example.Init( "<xcf:bloc>Value<OtherRoot>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</OtherRoot><Root>Before<Leaf Tree=\"Larch\">before<Element/>after</Leaf>After</Root></xcf:bloc>" );
@@ -163,21 +164,22 @@ ERRBegin
 	GuiltyFileName.Init();
 
 	if ( ( Status = xml::Parse( XTFlow, xml::eh_Default, Callback ) ) != xml::sOK ) {
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
 
 		if ( GuiltyFileName.Amount() != 0 )
 			cerr << " in file '" << GuiltyFileName << '\'';
 
 		Locale.Init();
+		Rack.Init( Locale, NULL );
 		Translation.Init();
-		cerr << " : " << xml::GetTranslation( Status, str::string(), Locale, Translation );
+		cerr << " : " << xml::GetTranslation( Status, Rack, Translation );
 
 		cerr << txf::nl;
 	}
 
 	
-	cout << txf::nl << txf::sync;
+	cout << txf::nl << txf::commit;
 
 ERRErr
 ERREnd
@@ -191,8 +193,9 @@ ERRProlog
 	xml::status__ Status = xml::s_Undefined;
 	FNM_BUFFER___ Buffer;
 	lcl::locale Locale;
+	lcl::rack__ Rack;
 	str::string Translation;
-	xml::browser___ Browser;
+	xml::parser___ Browser;
 ERRBegin
 	Flow.Init( FILE );
 
@@ -200,15 +203,16 @@ ERRBegin
 
 	Browser.Init( XTFlow, xml::eh_Default );
 
-	switch( Browser.Browse( 0 ) ) {
-	case xml::tProcessed:
+	switch( Browser.Parse( 0 ) ) {
+	case xml::t_Processed:
 		cout << Browser.DumpData();
 		break;
-	case xml::tError:
+	case xml::t_Error:
 		Locale.Init();
+		Rack.Init( Locale, NULL );
 		Translation.Init();
 		cerr << txf::nl << "Error at line " << XTFlow.Coord().Line << ", Column " << XTFlow.Coord().Column;
-		cerr << " : " << xml::GetTranslation( Browser.Status(), str::string(), Locale, Translation ) << txf::nl;
+		cerr << " : " << xml::GetTranslation( Browser.Status(), Rack, Translation ) << txf::nl;
 		ERRu();
 		break;
 	default:
@@ -216,7 +220,7 @@ ERRBegin
 		break;
 	}
 	
-	cout << txf::nl << txf::sync;
+	cout << txf::nl << txf::commit;
 
 ERRErr
 ERREnd
@@ -247,7 +251,7 @@ ERRFBegin
 			break;
 		}
 	default:
-		cout << txf::sync;
+		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << XMLTutor.Name << " [/i]\n\n";
 		ERRi();
