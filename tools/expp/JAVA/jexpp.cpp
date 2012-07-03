@@ -30,7 +30,7 @@ using namespace jvabse;
 #include "XMLPreprocessorDemo.h"
 #include "org_zeusw_XPPInputStream.h"
 
-// #define WORKAROUND	1
+#define WORKAROUND	1
 
 static void Print_(
 	JNIEnv *Env,
@@ -48,11 +48,15 @@ static void Print_(
 	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "flush", "()V" ), Text );
 }
 
+#ifdef WORKAROUND
+static struct _reent Reent_ = _REENT_INIT( Reent_ );
+#endif
+
 
 static void *malloc_( int Size )
 {
 #ifdef WORKAROUND
-	return new char[Size];
+	return _malloc_r( &Reent_, 1 );
 #else
 	return calloc( Size, 1 );
 #endif
@@ -62,7 +66,7 @@ static void *malloc_( int Size )
 static void free_( void *P )
 {
 #ifdef WORKAROUND
-	delete[] P;
+	_free_r( &Reent_, P );
 #else
 	free( P );
 #endif

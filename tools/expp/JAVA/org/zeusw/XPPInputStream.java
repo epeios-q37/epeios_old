@@ -35,10 +35,6 @@ public class XPPInputStream extends InputStream {
 	native public int read(byte[] b);
 	native public int read(byte[] b, int off, int len);
 
-	static {
-		System.loadLibrary("jexpp");
-	}
-	
     public XPPInputStream( InputStream in  )
 	{
 		this.in = in;

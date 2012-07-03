@@ -1,5 +1,16 @@
 $Id$
 
+26/06/2012 :
+	DTE : 
+		- Ajout pointeur sur la position d'une éventuelle erreur.
+
+20/06/2012 :
+	- FRDKRN :
+		- 'report__' -> 'recap__'.
+		- 'ReporteError...' -> 'Report' '...ErrorReporting...' -> '...Reporting...'.
+	- Général :
+		- Adaptation.
+
 07/06/2012 :
 	- CTN : 
 		- Déplacement de 'Append(...)' de la version 'extended' à la version normale. A terme, la version 'extended' devrait disparaître.

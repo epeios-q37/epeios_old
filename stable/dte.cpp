@@ -104,26 +104,27 @@ raw_date__ dte::date__::_Convert(
 
 #define LIMIT	( BSO_ULONG_MAX / 10 )
 
-static const char *ExtractItem_(
-	const char *Date,
-	bso::ulong__ &Item )
+bso::ulong__ ExtractItem_( const char *&Date )
 {
-	Item = 0;
+	bso::ulong__ Item = 0;
 
-	if ( !*Date )
-		return Date;
+	if ( *Date == 0 )
+		return 0;
 
 	if( !isdigit( *Date ) )
-		return NULL;
+		return 0;
 
 	while( isdigit( *Date ) && ( Item < LIMIT ) )
 		Item = Item * 10 + *Date++ - '0';
 
-	return Date;
+	if ( *Date == 0 )
+		Date = NULL;
+
+	return Item;
 }
 
 static bso::bool__ ExtractItems_(
-	const char *Date,
+	const char *&Date,
 	bso::ulong__ &Item1,
 	bso::ulong__ &Item2,
 	bso::ulong__ &Item3 )
@@ -132,26 +133,29 @@ static bso::bool__ ExtractItems_(
 	Item2 = 0;
 	Item3 = 0;
 
-	Date = ExtractItem_( Date, Item1 );
+	if ( Date == NULL )
+		ERRc();
+
+	if ( *Date == 0 )
+		return false;
+
+	Item1 = ExtractItem_( Date );
 
 	if  ( Date == NULL )
 		return false;
 
-	while( *Date && !isdigit( *Date ) )
+	if ( *Date && !isdigit( *Date ) )
 		Date++;
 
-	Date = ExtractItem_( Date, Item2 );
+	Item2 = ExtractItem_( Date );
 
 	if  ( Date == NULL )
 		return false;
 
-	while( *Date && !isdigit( *Date ) )
+	if ( *Date && !isdigit( *Date ) )
 		Date++;
 
-	Date = ExtractItem_( Date, Item3 );
-
-	if  ( Date == NULL )
-		return false;
+	Item3 = ExtractItem_( Date );
 
 	return true;
 }
@@ -195,12 +199,10 @@ static inline bso::bool__ TestAndSet_(
 		return false;
 
 	return true;
-
-
 }
 
 raw_date__ dte::date__::_Convert(
-	const char *Date,
+	const char *&Date,
 	format__ Format )
 {
 	day__ Day = 0;

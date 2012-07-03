@@ -180,10 +180,10 @@ namespace fblfrd {
 		}
 	};
 
-	class error_reporting_functions__
+	class reporting_functions__
 	{
 	protected:
-		virtual void FBLFRDReportError(
+		virtual void FBLFRDReport(
 			fblovl::reply__ Reply,
 			const char *Message ) = 0;
 	public:
@@ -191,23 +191,16 @@ namespace fblfrd {
 		{
 			// Standardisation.
 		}
-		error_reporting_functions__( void )
-		{
-			reset( false );
-		}
-		~error_reporting_functions__( void )
-		{
-			reset();
-		}
+		E_CDTOR( reporting_functions__ )
 		void Init( void )
 		{
 			// Standardisation.
 		}
-		void ReportError(
+		void Report(
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
-			FBLFRDReportError( Reply, Message );
+			FBLFRDReport( Reply, Message );
 		}
 	};
 
@@ -290,7 +283,7 @@ namespace fblfrd {
 	{
 	private:
 		parameters_handling_functions__ *_ParametersHandlingFunctions;
-		error_reporting_functions__ *_ErrorReportingFunctions;
+		reporting_functions__ *_ReportingFunctions;
 		void _PreProcess( void )
 		{
 			_ParametersHandlingFunctions->PreProcess();
@@ -315,10 +308,10 @@ namespace fblfrd {
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
-			if ( _ErrorReportingFunctions == NULL )
+			if ( _ReportingFunctions == NULL )
 				ERRc();
 
-			_ErrorReportingFunctions->ReportError( Reply, Message );
+			_ReportingFunctions->Report( Reply, Message );
 		}
 		id16__ Commands_[fblcmd::c_amount];
 		char Message_[100];
@@ -390,7 +383,7 @@ namespace fblfrd {
 			}
 				
 			_ParametersHandlingFunctions = NULL;
-			_ErrorReportingFunctions = NULL;
+			_ReportingFunctions = NULL;
 			Channel_ = NULL;
 		}
 		backend_access___( void )
@@ -407,7 +400,7 @@ namespace fblfrd {
 			const compatibility_informations__ &CompatibilityInformations,
 			flw::ioflow__ &Channel,
 			parameters_handling_functions__ &ParametersHandlingFunctions,
-			error_reporting_functions__ &ErrorReportingFunctions,
+			reporting_functions__ &ReportingFunctions,
 			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			bso::bool__ Success = true;
@@ -422,7 +415,7 @@ namespace fblfrd {
 
 			Channel_ = &Channel;
 			_ParametersHandlingFunctions = &ParametersHandlingFunctions;
-			_ErrorReportingFunctions = &ErrorReportingFunctions;
+			_ReportingFunctions = &ReportingFunctions;
 
 			RetrieveBackendCommands_();
 		ERRErr

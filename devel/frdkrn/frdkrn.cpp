@@ -62,13 +62,13 @@ using namespace frdkrn;
 	return #m;\
 	break
 
-const char *frdkrn::GetLabel( report__ Report )
+const char *frdkrn::GetLabel( recap__ Recap )
 {
 #if FRDKRN__R_AMOUNT != 9
 #	error "'report__' modified !"
 #endif
 
-	switch( Report ) {
+	switch( Recap ) {
 		CASE( ProjectParsingError );
 		CASE( SettingsParsingError );
 		CASE( NoOrBadProjectId );
@@ -92,7 +92,7 @@ const char *frdkrn::GetLabel( report__ Report )
 #endif
 
 const str::string_ &frdkrn::GetTranslation(
-	report__ Report,
+	recap__ Recap,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &LocaleRack,
 	str::string_ &Translation )
@@ -100,9 +100,9 @@ const str::string_ &frdkrn::GetTranslation(
 ERRProlog
 	str::string EmbeddedMessage;
 ERRBegin
-	GetTranslation( Report, LocaleRack, Translation );
+	GetTranslation( Recap, LocaleRack, Translation );
 
-	switch ( Report ) {
+	switch ( Recap ) {
 		case rProjectParsingError:
 		case rSettingsParsingError:
 			EmbeddedMessage.Init();
@@ -236,15 +236,15 @@ static inline bso::ulong__ GetBackendPingDelay_( rgstry::multi_level_registry_ &
 	return frdrgy::BackendPingDelay.GetUL( Registry, 0 );
 }
 
-report__ frdkrn::kernel___::_Connect(
+recap__ frdkrn::kernel___::_Connect(
 	const char *RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
+	frdkrn::reporting_functions__ &ReportingFunctions,
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	flx::E_STRING_OFLOW_DRIVER___ OFlowDriver;
 	csdlec::library_data__ LibraryData;
@@ -259,45 +259,45 @@ ERRBegin
 	if ( !_ClientCore.Init( RemoteHostServiceOrLocalLibraryPath, LibraryData, LogFunctions, Type, GetBackendPingDelay_( Registry() ) ) ) {
 		OFlowDriver.reset();	// Pour vider les caches.
 		if ( ErrorSet.Misc.Amount() != 0 )
-			Report = rBackendError;
+			Recap = rBackendError;
 		else
-			Report = rUnableToConnect;
+			Recap = rUnableToConnect;
 		ERRReturn;
 	}
 
-	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ErrorReportingFunctions, ErrorSet.IncompatibilityInformations ) ) {
-		Report = rIncompatibleBackend;
+	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ReportingFunctions, ErrorSet.IncompatibilityInformations ) ) {
+		Recap = rIncompatibleBackend;
 		ERRReturn;
 	}
 
 	FRDKRNConnection( BackendAccess() );
 
-	Report = r_OK;
+	Recap = r_OK;
 ERRErr
 ERREnd
-	if ( Report != r_OK )
+	if ( Recap != r_OK )
 		ErrorSet.Misc.Init( RemoteHostServiceOrLocalLibraryPath );
 ERREpilog
-	return Report;
+	return Recap;
 }
 
-report__ frdkrn::kernel___::_Connect(
+recap__ frdkrn::kernel___::_Connect(
 	const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
-	frdkrn::error_reporting_functions__ &ErrorReportingFunctions,
+	frdkrn::reporting_functions__ &ReportingFunctions,
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Report = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, ErrorReportingFunctions, ErrorSet, LogFunctions );
+	Recap = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, ReportingFunctions, ErrorSet, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
-	return Report;
+	return Recap;
 }
 
 static csducl::type__ GetPredefinedBackendTypeAndLocation_(
@@ -372,13 +372,13 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 }
 
 
-report__ frdkrn::kernel___::_Connect(
+recap__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
-	error_reporting_functions__ &ErrorReportingFunctions,
+	reporting_functions__ &ReportingFunctions,
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	str::string Location;
 	csducl::type__ Type = csducl::t_Undefined;
@@ -388,10 +388,10 @@ ERRBegin
 	switch ( Type = GetBackendTypeAndLocation( _Registry, Location ) ) {
 	case csducl::tLibrary:
 	case csducl::tDaemon:
-		Report = _Connect( Location, CompatibilityInformations, Type, ErrorReportingFunctions, ErrorSet, LogFunctions );
+		Recap = _Connect( Location, CompatibilityInformations, Type, ReportingFunctions, ErrorSet, LogFunctions );
 		break;
 	case csducl::t_Undefined:
-		Report = rNoOrBadBackendDefinition;
+		Recap = rNoOrBadBackendDefinition;
 		break;
 	default:
 		ERRc();
@@ -400,16 +400,16 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Report;
+	return Recap;
 }
 
 inline static const str::string_ &Report_(
-	report__ Report,
+	recap__ Recap,
 	const error_set___ &ErrorSet,
 	const lcl::rack__ &Locale,
 	str::string_ &Message )
 {
-	GetTranslation( Report, ErrorSet, Locale, Message );
+	GetTranslation( Recap, ErrorSet, Locale, Message );
 
 	return Message;
 }
@@ -435,14 +435,14 @@ static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 
 #define PROJECT_ID_RELATIVE_PATH "@id"
 
-report__ frdkrn::kernel___::_FillProjectRegistry(
+recap__ frdkrn::kernel___::_FillProjectRegistry(
 	const str::string_ &FileName,
 	const char *Target,
 	const xpp::criterions___ &Criterions,
 	str::string_ &Id,
 	error_set___ &ErrorSet )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	str::string Path;
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
@@ -451,32 +451,32 @@ ERRBegin
 	str::ReplaceTag( Path, 1, str::string( Target ), '%' );
 
 	if ( _Registry.FillProject( FileName.Convert( FileNameBuffer ), Criterions, Path.Convert( PathBuffer ), ErrorSet.Context ) != rgstry::sOK ) {
-		Report = rProjectParsingError;
+		Recap = rProjectParsingError;
 		ERRReturn;
 	}
 
 	if ( !_Registry.GetProjectValue( str::string( PROJECT_ID_RELATIVE_PATH ), Id ) || !IsProjectIdValid_( Id ) ) {
-		Report = rNoOrBadProjectId;
+		Recap = rNoOrBadProjectId;
 		Path.Append( '/' );
 		Path.Append( PROJECT_ID_RELATIVE_PATH );
 		ErrorSet.Misc.Init( Path );
 		ERRReturn;
 	}
 
-	Report = r_OK;
+	Recap = r_OK;
 ERRErr
 ERREnd
 ERREpilog
-	return Report;
+	return Recap;
 }
 
-report__ frdkrn::kernel___::_DumpProjectRegistry(
+recap__ frdkrn::kernel___::_DumpProjectRegistry(
 	const str::string_ &FileName,
 	const char *TargetName,
 	const str::string_ &Id,
 	error_set___ &ErrorSet )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	flf::file_oflow___ FFlow;
 	txf::text_oflow__ TFlow;
@@ -491,7 +491,7 @@ ERRBegin
 		Backuped = true;
 
 	if ( FFlow.Init( FileNameBuffer, err::hUserDefined ) != fil::sSuccess ) {
-		Report = rUnableToOpenFile;
+		Recap = rUnableToOpenFile;
 		ErrorSet.Misc = FileName;
 		ERRReturn;
 	}
@@ -509,22 +509,22 @@ ERRBegin
 
 	_Registry.DumpProject( false, Writer );
 	
-	Report = r_OK;
+	Recap = r_OK;
 ERRErr
 	if ( Backuped )
 		fil::RecoverBackupFile( FileNameBuffer, LocaleRack(), TVoidOFlow );
 ERREnd
 ERREpilog
-	return Report;
+	return Recap;
 }
 
 
-report__ frdkrn::kernel___::FillSettingsRegistry(
+recap__ frdkrn::kernel___::FillSettingsRegistry(
 	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRProlog
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
@@ -536,16 +536,16 @@ ERRBegin
 		ERRc();
 		break;
 	default:
-		Report = rSettingsParsingError;
+		Recap = rSettingsParsingError;
 		ERRReturn;
 		break;
 	}
 
-	Report = r_OK;
+	Recap = r_OK;
 ERRErr
 ERREnd
 ERREpilog
-	return Report;
+	return Recap;
 }
 
 status__ frdkrn::kernel___::FillSettingsRegistry(
@@ -555,13 +555,13 @@ status__ frdkrn::kernel___::FillSettingsRegistry(
 	status__ Status = s_Undefined;
 ERRProlog
 	error_set___ ErrorSet;
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
+	if ( ( Recap = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
 		Status = sWarning;
 		ERRReturn;
 	} else
@@ -581,7 +581,7 @@ status__ frdkrn::kernel___::LoadProject(
 	status__ Status = s_Undefined;
 ERRProlog
 	error_set___ ErrorSet;
-	report__ Report = r_Undefined;
+	recap__ Report = r_Undefined;
 ERRBegin
 	ErrorSet.Init();
 
@@ -601,18 +601,18 @@ ERREpilog
 status__ frdkrn::kernel___::LaunchProject(
 	const compatibility_informations__ &CompatibilityInformations,
 	str::string_ &Id,
-	error_reporting_functions__ &ErrorReportingFunctions )
+	reporting_functions__ &ReportingFunctions )
 {
 	status__ Status = s_Undefined;
 ERRProlog
 	error_set___ ErrorSet;
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = LaunchProject( CompatibilityInformations, *_ErrorReportingFunctions, ErrorSet ) ) != r_OK ) {
+	if ( ( Recap = LaunchProject( CompatibilityInformations, *_ReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
 		Status = sError;
 		ERRReturn;
 	} else
@@ -623,20 +623,20 @@ ERREpilog
 	return Status;
 }
 
-report__ frdkrn::kernel___::SaveProject(
+recap__ frdkrn::kernel___::SaveProject(
 	const str::string_ &FileName,
 	const char *TargetName,
 	const str::string_ &Id,
 	error_set___ &ErrorSet )
 {
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 
-	if ( ( Report = _DumpProjectRegistry( FileName, TargetName, Id, ErrorSet ) ) == r_OK ) {
+	if ( ( Recap = _DumpProjectRegistry( FileName, TargetName, Id, ErrorSet ) ) == r_OK ) {
 		_ProjectOriginalTimeStamp = time( NULL );
 		_ProjectModificationTimeStamp = 0;
 	}
 
-	return Report;
+	return Recap;
 }
 
 status__ frdkrn::kernel___::SaveProject(
@@ -647,13 +647,13 @@ status__ frdkrn::kernel___::SaveProject(
 	status__ Status = s_Undefined;
 ERRProlog
 	error_set___ ErrorSet;
-	report__ Report = r_Undefined;
+	recap__ Recap = r_Undefined;
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Report = SaveProject( FileName, TargetName, Id, ErrorSet ) ) != r_OK ) {
+	if ( ( Recap = SaveProject( FileName, TargetName, Id, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
 		_Message.Append( " !" );
 		Status = sError;
 		ERRReturn;

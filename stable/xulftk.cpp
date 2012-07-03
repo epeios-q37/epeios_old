@@ -63,7 +63,7 @@ using namespace xulftk;
 
 #define PREFIX	XULFTK_NAME "_" 
 
-void xulftk::error_reporting_functions__::FRDKRNReportBackendError(
+void xulftk::reporting_functions__::FRDKRNReportBackendError(
 	fblovl::reply__ Reply,
 	const char *RawMessage )
 {
@@ -96,7 +96,7 @@ ERREnd
 ERREpilog
 }
 
-void xulftk::error_reporting_functions__::FRDKRNReportFrontendError( const char *Message )
+void xulftk::reporting_functions__::FRDKRNReportFrontendError( const char *Message )
 {
 	if ( _UI == NULL )
 		ERRc();
@@ -552,7 +552,7 @@ ERRBegin
 	frdrgy::Backend.SetValue( Registry(), Value );
 	frdkrn::SetBackendExtendedType( Registry(), Type );
 
-	Handle_( Kernel().LaunchProject( CompatibilityInformations, ProjectId, DefaultErrorReportingFunctions() ) );
+	Handle_( Kernel().LaunchProject( CompatibilityInformations, ProjectId, DefaultReportingFunctions() ) );
 ERRErr
 ERREnd
 ERREpilog

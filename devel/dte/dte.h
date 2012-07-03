@@ -170,7 +170,7 @@ namespace dte {
 		/* Covert Date (in "dd.mm.yyyy" ) format into internal format.
 		Return 'STXDTE_INVALID_DATE' if date not valid, or the converted date */
 		raw_date__ _Convert(
-			const char *Date,
+			const char *&Date,
 			format__ Format );
 		// Return the core date.
 		bso::ulong__ _Core( raw_date__ Date ) const
@@ -218,11 +218,15 @@ namespace dte {
 		}
 		date__(
 			const char *Date,
-			format__ Format )
+			format__ Format,
+			const char **End = NULL )	// N'est éventuellement modifié que si '*End== NULL'.
 		{
 			reset( false );
 
 			RawDate_ = _Convert( Date, Format );
+
+			if ( ( End != NULL ) && ( *End == NULL ) )
+				*End = Date;
 		}
 		date__(
 			day__ Day,
@@ -241,13 +245,19 @@ namespace dte {
 			RawDate_ = _Convert( Date );
 		}
 		//f Initialization with date 'Date'.
-		void Init(
+		bso::bool__ Init(
 			const char *Date,
-			format__ Format )
+			format__ Format,
+			const char **End = NULL )	// N'est éventuellement modifié que si '*End== NULL'.
 		{
 			reset();
 
 			RawDate_ = _Convert( Date, Format );
+
+			if ( ( End != NULL ) && ( *End == NULL ) )
+				*End = Date;
+
+			return IsValid();
 		}
 		//f Initialization with 'Day', 'Month' and 'Year'.
 		void Init( 

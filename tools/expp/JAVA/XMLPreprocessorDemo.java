@@ -31,10 +31,14 @@ class XMLPreprocessorDemo {
 
 	public static void main ( String[] args )	throws Exception
 	{
+		int A = 0;
+		System.out.println( A++ );
+		System.out.flush();
 		System.loadLibrary("jexpp");
+		System.out.println( A++ );
+		System.out.flush();
 		mallocCygwinBug();
 
-		int A = 0;
 		System.out.println( A++ );
 		System.out.flush();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

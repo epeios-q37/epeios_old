@@ -33,6 +33,10 @@ copt += -DXXX_DBG
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 copt += -DCPE_JAVA
+copt += -DCPE_LIBRARY
+copt += -U__CYGWIN__ -U__CYGWIN32__
+copt += -DCPE_CYGWIN -DIOP_USE_STANDARD_IO
+copt += -DCPE_ST
 
 # epeios/core
 mods += cdgb64 ctn err 

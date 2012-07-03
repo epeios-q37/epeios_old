@@ -92,7 +92,7 @@ namespace frdbkd {
 			const char *Language,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::universal_client_core &ClientCore,
-			fblfrd::error_reporting_functions__ &ErrorReportingFunctions,
+			fblfrd::reporting_functions__ &ReportingFunctions,
 			incompatibility_informations_ &IncompatibilityInformations )
 		{
 			fblfub::mode__ Mode = fblfub::m_Undefined;
@@ -111,7 +111,7 @@ namespace frdbkd {
 				break;
 			}
 
-			return _BackendAccess.Init( Language, CompatibilityInformations, _Flow, Mode, ErrorReportingFunctions, IncompatibilityInformations );
+			return _BackendAccess.Init( Language, CompatibilityInformations, _Flow, Mode, ReportingFunctions, IncompatibilityInformations );
 		}
 		fblfrd::backend_access___ &BackendAccess( void )
 		{

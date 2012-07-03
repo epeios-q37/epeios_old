@@ -115,7 +115,7 @@ namespace frdkrn {
 	};
 
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
-	enum report__ {
+	enum recap__ {
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
 		rSettingsParsingError,		// Error during settings data handling. See 'ErrorSet' for more details.
 		rNoOrBadProjectId,
@@ -132,14 +132,14 @@ namespace frdkrn {
 
 #define FRDKRN__R_AMOUNT	9	// Pour détecter les fonctions devant être modifiée si le nombre d'entrée de 'report__' est modifié.
 
-	const char *GetLabel( report__ Report );
+	const char *GetLabel( recap__ Recap );
 
 	inline const str::string_ &GetTranslation(
-		report__ Report,
+		recap__ Recap,
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation )
 	{
-		LocaleRack.GetTranslation( GetLabel( Report ), "FRDKRN_", Translation );
+		LocaleRack.GetTranslation( GetLabel( Recap ), "FRDKRN_", Translation );
 
 		return Translation;
 	}
@@ -174,7 +174,7 @@ namespace frdkrn {
 	}
 
 	const str::string_ &GetTranslation(
-		report__ Report,
+		recap__ Recap,
 		const error_set___ &ErrorSet,
 		const lcl::rack__ &LocaleRack,
 		str::string_ &Translation );
@@ -184,13 +184,13 @@ namespace frdkrn {
 		const char *Affix,
 		str::string_ &FileName );
 
-	typedef fblfrd::error_reporting_functions__ _backend_error_reporting_functions__;
+	typedef fblfrd::reporting_functions__ _backend_error_reporting_functions__;
 
-	class error_reporting_functions__
+	class reporting_functions__
 	: public _backend_error_reporting_functions__
 	{
 	protected:
-		void FBLFRDReportError(
+		void FBLFRDReport(
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
@@ -205,14 +205,7 @@ namespace frdkrn {
 		{
 			// Standardisation.
 		}
-		error_reporting_functions__( void )
-		{
-			reset( false );
-		}
-		~error_reporting_functions__( void )
-		{
-			reset();
-		}
+		E_VDTOR( reporting_functions__ )
 		void Init( void )
 		{
 			// Standardisation.
@@ -245,12 +238,12 @@ namespace frdkrn {
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
-		error_reporting_functions__ *_ErrorReportingFunctions;
-		report__ _Connect(
+		reporting_functions__ *_ReportingFunctions;
+		recap__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			error_reporting_functions__ &ErrorReportingFunctions,
+			reporting_functions__ &ReportingFunctions,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
@@ -264,44 +257,44 @@ namespace frdkrn {
 			_ClientCore.reset();
 		}
 	protected:
-		report__ _FillProjectRegistry(
+		recap__ _FillProjectRegistry(
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
 			str::string_ &Id,
 			error_set___ &ErrorSet );
-		report__ _DumpProjectRegistry(
+		recap__ _DumpProjectRegistry(
 			const str::string_ &FileName,
 			const char *TargetName,
 			const str::string_ &Id,
 			error_set___ &ErrorSet );
-		report__ _Connect(
+		recap__ _Connect(
 			const char *RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
-			error_reporting_functions__ &ErrorReportingFunctions,
+			reporting_functions__ &ReportingFunctions,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
-		report__ _Connect( // Try to connect using registry content.
+		recap__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
-			error_reporting_functions__ &ErrorReportingFunctions,
+			reporting_functions__ &ReportingFunctions,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
 		virtual void FRDKRNDisconnection( void ) = 0;	// Appelé avant déconnexion du 'backend'.
-		void _ReportError( const char *Message )const
+		void _Report( const char *Message )const
 		{
-			if( _ErrorReportingFunctions == NULL )
+			if( _ReportingFunctions == NULL )
 				ERRc();
 
-			return _ErrorReportingFunctions->ReportFrontendError( Message );
+			return _ReportingFunctions->ReportFrontendError( Message );
 		}
-		void _ReportError( const str::string_ &Message ) const
+		void _Report( const str::string_ &Message ) const
 		{
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
-			_ReportError( Message.Convert( Buffer ) );
+			_Report( Message.Convert( Buffer ) );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -319,7 +312,7 @@ namespace frdkrn {
 			_Message.reset( P );
 			_ProjectOriginalTimeStamp = 0;
 			_ProjectModificationTimeStamp = 0;
-			_ErrorReportingFunctions = NULL;
+			_ReportingFunctions = NULL;
 		}
 		kernel___( void )
 		{
@@ -334,13 +327,13 @@ namespace frdkrn {
 			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
-			error_reporting_functions__ &ErrorReportingFunctions )
+			reporting_functions__ &ReportingFunctions )
 		{
 			_Registry.Init( ConfigurationRegistry );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
 			_ProjectOriginalTimeStamp = 0;
-			_ErrorReportingFunctions = &ErrorReportingFunctions;
+			_ReportingFunctions = &ReportingFunctions;
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
 
 			return sOK;
@@ -360,7 +353,7 @@ namespace frdkrn {
 		{
 			return _Registry;
 		}
-		report__ LoadProject(
+		recap__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
 			const xpp::criterions___ &Criterions,
@@ -369,22 +362,22 @@ namespace frdkrn {
 		{
 			return _FillProjectRegistry( FileName, TargetName, Criterions, Id, ErrorSet );
 		}
-		report__ LaunchProject(
+		recap__ LaunchProject(
 			const compatibility_informations__ &CompatibilityInformations,
-			error_reporting_functions__ &ErrorReportingFunctions,
+			reporting_functions__ &ReportingFunctions,
 			error_set___ &ErrorSet )	// Les paramètres de connection sont récupèrés de la 'registry'.
 		{
-			report__ Report = r_OK;
+			recap__ Recap = r_OK;
 			
 			if ( GetBackendExtendedType( Registry() ) != bxtNone )
-				Report = _Connect( CompatibilityInformations, ErrorReportingFunctions, ErrorSet );
+				Recap = _Connect( CompatibilityInformations, ReportingFunctions, ErrorSet );
 
-			if ( Report == r_OK ) {
+			if ( Recap == r_OK ) {
 				_ProjectOriginalTimeStamp = time( NULL );
 				_ProjectModificationTimeStamp = 0;
 			}
 
-			return Report;
+			return Recap;
 		}
 		status__ LoadProject(
 			const str::string_ &FileName,
@@ -394,8 +387,8 @@ namespace frdkrn {
 		status__ LaunchProject(
 			const compatibility_informations__ &CompatibilityInformations,
 			str::string_ &Id,
-			error_reporting_functions__ &ErrorReportingFunctions );
-		report__ SaveProject(
+			reporting_functions__ &ReportingFunctions );
+		recap__ SaveProject(
 			const str::string_ &FileName,
 			const char *TargetName,
 			const str::string_ &Id, 
@@ -404,14 +397,14 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const str::string_ &Id );
-		report__ FillSettingsRegistry(
+		recap__ FillSettingsRegistry(
 			xtf::extended_text_iflow__ &SettingsXFlow,
 			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
 		status__ FillSettingsRegistry(
 			xtf::extended_text_iflow__ &SettingsXFlow,
 			const xpp::criterions___ &Criterions );
-		report__ DumpSettingsRegistry( xml::writer_ &Writer ) const
+		recap__ DumpSettingsRegistry( xml::writer_ &Writer ) const
 		{
 			_Registry.DumpSettings( true, Writer);
 

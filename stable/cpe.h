@@ -128,7 +128,7 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef __GNUC__
 #	define CPE__C_GCC
-#	ifdef __CYGWIN__
+#	if defined( __CYGWIN__ ) || defined( CPE_CYGWIN)
 #		define CPE__P_CYGWIN
 #	elif defined( __BEOS__ )
 #		define CPE__P_BEOS

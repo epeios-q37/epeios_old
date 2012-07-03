@@ -74,10 +74,10 @@ extern class ttr_tutor &XULFTKTutor;
 namespace xulftk {
 	using xulfkl::status__;
 
-	typedef frdkrn::error_reporting_functions__ _error_reporting_functions__;
+	typedef frdkrn::reporting_functions__ _reporting_functions__;
 
-	class error_reporting_functions__
-	: public _error_reporting_functions__
+	class reporting_functions__
+	: public _reporting_functions__
 	{
 	private:
 		xulfui::ui___ *_UI;
@@ -90,9 +90,9 @@ namespace xulftk {
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_error_reporting_functions__::reset( P );
+			_reporting_functions__::reset( P );
 		}
-		E_CVDTOR( error_reporting_functions__ );
+		E_CVDTOR( reporting_functions__ );
 		void Init(
 			xulfui::ui___ &UI,
 			const lcl::locale_ &Locale,
@@ -100,7 +100,7 @@ namespace xulftk {
 		{
 			reset();
 
-			_error_reporting_functions__::Init();
+			_reporting_functions__::Init();
 			_UI = &UI;
 			_Rack.Init( Locale, Language );
 		}
@@ -237,7 +237,7 @@ namespace xulftk {
 		geckoo::steering_callback__  *_Steering;
 		const char *_TargetName;
 		const char *_DefaultXSLRootPath;
-		error_reporting_functions__ _DefaultErrorReportingFunctions;
+		reporting_functions__ _DefaultReportingFunctions;
 		_user_callback__ &_UF( void )
 		{
 			if ( _UserCallback == NULL )
@@ -287,7 +287,7 @@ namespace xulftk {
 			_UserCallback = NULL;
 			_Steering = NULL;
 			_DefaultXSLRootPath = NULL;
-			_DefaultErrorReportingFunctions.reset( P );
+			_DefaultReportingFunctions.reset( P );
 //			_TrunkFunctions.reset();
 		}
 		trunk___( void )
@@ -314,7 +314,7 @@ namespace xulftk {
 			_UserCallback = &UserCallback;
 			_Steering = &Steering;
 			_DefaultXSLRootPath = DefaultXSLRootPath;
-			_DefaultErrorReportingFunctions.Init( UI, Locale, Language );
+			_DefaultReportingFunctions.Init( UI, Locale, Language );
 
 			return frdkrn::sOK;
 		}
@@ -322,9 +322,9 @@ namespace xulftk {
 		{
 			_UI->LogAndPrompt( Message );
 		}
-		_error_reporting_functions__ &DefaultErrorReportingFunctions( void )
+		_reporting_functions__ &DefaultReportingFunctions( void )
 		{
-			return _DefaultErrorReportingFunctions;
+			return _DefaultReportingFunctions;
 		}
 		void ExposeSteering( void )
 		{
