@@ -34,11 +34,6 @@
 
 # include "xulfkl.h"
 
-# define FRDKERNL_FRONTEND_NAME		DMOINF_LC_AFFIX "frd"
-# define FRDKERNL_FRONTEND_VERSION	"0.1.0"
-
-# define FRDKERNL_DEFAULT_LANGUAGE	"en"
-
 namespace frdkernl {
 	typedef xulfkl::kernel___ _kernel___;
 
@@ -90,9 +85,9 @@ namespace frdkernl {
 			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
-			frdkrn::error_reporting_functions__ &ErrorReportingFunctions )
+			frdkrn::reporting_functions__ &ReportingFunctions )
 		{
-			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ErrorReportingFunctions );
+			return _kernel___::Init( ConfigurationRegistry, TargetName, Locale, Language, ReportingFunctions );
 		}
 		const str::string_ &GetTranslation(
 			message__ Message,

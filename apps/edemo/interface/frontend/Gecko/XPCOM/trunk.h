@@ -37,6 +37,7 @@
 
 # define NAME					DMOINF_LC_AFFIX	"gck"
 # define VERSION				"0.1.0"
+# define BUILD					"0"
 # define DESCRIPTION			"XULRunner component for '" DMOINF_MC_AFFIX "' software"
 # define PROJECT_AFFILIATION	DMOINF_PROJECT_AFFILIATION
 # define SOFTWARE_AFFILIATION	DMOINF_SOFTWARE_AFFILIATION
@@ -89,7 +90,7 @@ namespace trunk {
 			_trunk__::Init( DMOINF_LC_AFFIX, "chrome://" DMOINF_LC_AFFIX "/content/xsl/", _UI, _Kernel, UserCallback, Steering, Locale, Language ),
 			_UI.Init( *this );
 
-			return _Kernel.Init( ConfigurationRegistry, NAME, Locale, Language, DefaultErrorReportingFunctions() );
+			return _Kernel.Init( ConfigurationRegistry, NAME, Locale, Language, DefaultReportingFunctions() );
 		}
 		void FinalizeDefineSession( void )
 		{

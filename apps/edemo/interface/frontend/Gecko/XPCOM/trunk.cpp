@@ -31,7 +31,7 @@ ERRProlog
 	tol::buffer__ Buffer;
 	str::string ProtocolVersion, BackendLabel, APIVersion, BackendInformations;
 ERRBegin
-	Informations.Append( NAME " V" VERSION DEBUG_FLAG );
+	Informations.Append( NAME " V" VERSION DEBUG_FLAG " Build " BUILD );
 	Informations.Append( " by " AUTHOR_NAME " (" AUTHOR_CONTACT ")"".\n\t" );
 	Informations.Append( __DATE__ " " __TIME__ );
 	Informations.Append( " (" );

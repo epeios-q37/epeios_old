@@ -1,5 +1,9 @@
 $Id$
 
+04/07/2012 :
+	- XULWDG :
+		- Correction relatives aux fonctions 'Init(...)' de 'tree__'.
+
 26/06/2012 :
 	DTE : 
 		- Ajout pointeur sur la position d'une éventuelle erreur.

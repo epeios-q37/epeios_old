@@ -168,29 +168,10 @@ namespace xulwdg {
 		void Init(
 			nsxpcm::tree_view_callback__ &Callback,
 			trunk &Trunk,
-			nsISupports *Supports,
-			nsIDOMWindow *Window )
+			const nsxpcm::supports__ &Supports )
 		{
 			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Callback, Supports, Window );
-		}
-		void Init(
-			nsxpcm::tree_view_callback__ &Callback,
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const str::string_ &Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Callback, Window, Id );
-		}
-		void Init(
-			nsxpcm::tree_view_callback__ &Callback,
-			trunk &Trunk,
-			nsIDOMWindow *Window,
-			const char *Id )
-		{
-			_trunk_depot__<trunk>::Init( Trunk );
-			_tree__::Init( Callback, Window, Id );
+			_tree__::Init( Callback, Supports );
 		}
 	};
 

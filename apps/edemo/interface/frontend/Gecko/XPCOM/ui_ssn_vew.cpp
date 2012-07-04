@@ -410,7 +410,7 @@ protected:
 	}
 } Callback_;
 
-#define R( name ) Widgets.name.Init( Trunk, Trunk.UI().SessionView.Window(), #name );
+#define R( name ) Widgets.name.Init( Trunk, nsxpcm::supports__( Trunk.UI().SessionView.Window(), #name ) );
 
 static void Register_(
 	trunk___ &Trunk,
@@ -421,7 +421,7 @@ static void Register_(
 	R( txbDirectory );
 
 	Callback_.Init();
-	Widgets.txbAutocomplete.Init( Callback_, Trunk, Window, "txbAutocomplete" );
+	Widgets.txbAutocomplete.Init( Callback_, Trunk, nsxpcm::supports__( Window, "txbAutocomplete" ) );
 
 	R( ckbHistory );
 	R( ckbComment );

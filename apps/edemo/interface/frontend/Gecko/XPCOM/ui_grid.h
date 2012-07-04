@@ -73,7 +73,7 @@ namespace ui_grid {
 			const char *Id )
 		{
 			_Callback.Init();
-			_tree__::Init( _Callback, Trunk, Window, Id );
+			_tree__::Init( _Callback, Trunk, nsxpcm::supports__( Window, Id ) );
 		}
 	};
 
