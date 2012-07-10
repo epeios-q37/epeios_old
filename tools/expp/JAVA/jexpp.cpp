@@ -49,14 +49,13 @@ static void Print_(
 }
 
 #ifdef WORKAROUND
-static struct _reent Reent_ = _REENT_INIT( Reent_ );
 #endif
 
 
 static void *malloc_( int Size )
 {
 #ifdef WORKAROUND
-	return _malloc_r( &Reent_, 1 );
+	return new char;
 #else
 	return calloc( Size, 1 );
 #endif
@@ -66,7 +65,7 @@ static void *malloc_( int Size )
 static void free_( void *P )
 {
 #ifdef WORKAROUND
-	_free_r( &Reent_, P );
+	delete P;
 #else
 	free( P );
 #endif

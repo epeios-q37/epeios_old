@@ -1,0 +1,4 @@
+This dorectory contains a test case to demonstrate the crash which happends when the 'malloc(...)' function is called within a JAVA native componenent compiled with g++ under Cygwin.
+Given that you have installed 'Cygwin' with 'make' and 'g++', and also the JDK and JRE, you have to adapt the first line only of the 'Makefile' file to adapt to the point to the directory where your JDK is installed. Then, you have to go with 'Cygwin' to the root of the archive (where you found this file), and launch the 'make' command.
+When you launch 'java jcmc', the program will either freeze, or the JVM will print a 'fatal error' message.
+If you open the 'jcmc.cpp' file, which is the source code of the JAVA native component, you will see that there is only a 'malloc(1)' call, which shoudn't 

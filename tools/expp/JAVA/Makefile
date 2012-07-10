@@ -34,8 +34,8 @@ copt += -DXXX_DBG
 # copt += -DERR_JMPUSE
 copt += -DCPE_JAVA
 copt += -DCPE_LIBRARY
-copt += -U__CYGWIN__ -U__CYGWIN32__
-copt += -DCPE_CYGWIN -DIOP_USE_STANDARD_IO
+# copt += -U__CYGWIN__ -U__CYGWIN32__
+# copt += -DCPE_CYGWIN -DIOP_USE_STANDARD_IO
 copt += -DCPE_ST
 
 # epeios/core

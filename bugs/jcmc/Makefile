@@ -19,7 +19,7 @@ ifeq ("$(os)","GNU/Linux")
 endif
 
 ifeq ("$(os)","Darwin")
-	target=lib($name).jnilib
+	target=lib$(name).jnilib
 	lo += -dynamiclib
 endif
 
