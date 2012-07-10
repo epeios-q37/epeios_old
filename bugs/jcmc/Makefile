@@ -5,17 +5,17 @@ os := $(shell uname -o 2>/dev/null || uname -s)
 
 co = -g -I$(jdk)/include -I$(jdk)/include/win32
 
-lo = -shared -static
+lo =
 
 ifeq ("$(os)","Cygwin")
 	target=$(name).dll
-	lo += -Wl,--add-stdcall-alias  -Wl,--kill-at
 	co += "-D__int64=long long"
+	lo += -Wl,--add-stdcall-alias -shared
 endif
 
 ifeq ("$(os)","GNU/Linux")
 	target=lib$(name).so
-	lo += -W1,-soname,$(target)
+	lo += -W1,-soname,$(target) -shared
 endif
 
 ifeq ("$(os)","Darwin")
