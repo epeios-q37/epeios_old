@@ -7,7 +7,7 @@ class jcmc {
 		System.out.flush();
 		System.loadLibrary("jcmc");
 		System.out.println( " 'jcmc' library loaded !" );
-		System.out.print( "Trying to call 'malloc' function from a native component..." );
+		System.out.print( "Calling 'malloc' function from a native component..." );
 		System.out.flush();
 		bug();
 		System.out.println( " 'malloc' calling succeed !" );
