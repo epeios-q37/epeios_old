@@ -12,7 +12,7 @@ lo =
 ifeq ("$(os)","Cygwin")
 	target=$(name).dll
 	co += "-D__int64=long long"
-	lo += -Wl,--add-stdcall-alias -shared
+	lo += -shared
 endif
 
 ifeq ("$(os)","GNU/Linux")
@@ -36,3 +36,5 @@ $(name).o: $(name).cpp $(name).h
 $(name).class : $(name).java
 	javac $(name).java
 
+$(name).h : $(name).java
+	javah $(name)

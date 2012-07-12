@@ -2,7 +2,9 @@
 
 #include <stdlib.h>
 
-JNIEXPORT void JNICALL Java_jcmc_bug( JNIEnv *,	jclass )
-{
-	malloc( 10 );
+extern "C" {
+	JNIEXPORT void JNICALL Java_jcmc_bug( JNIEnv *,	jclass )
+	{
+		malloc( 10 );
+	}
 }
