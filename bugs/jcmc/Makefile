@@ -1,4 +1,6 @@
 jdk=$(HOME)/jdk
+# Modify the above line so that the 'jdk' variable contains the root directory where the JDK is installed.
+
 name=jcmc
 
 os := $(shell uname -o 2>/dev/null || uname -s)

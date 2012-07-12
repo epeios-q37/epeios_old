@@ -19,3 +19,4 @@ JNIEXPORT void JNICALL Java_jcmc_bug
 }
 #endif
 #endif
+

@@ -5,11 +5,16 @@ class jcmc {
 	{
 		System.out.print( "Loading library 'jcmc'..." );
 		System.out.flush();
+
 		System.loadLibrary("jcmc");
+
 		System.out.println( " 'jcmc' library loaded !" );
+
 		System.out.print( "Calling 'malloc' function from a native component..." );
 		System.out.flush();
+
 		bug();
+
 		System.out.println( " 'malloc' calling succeed !" );
 	}
 }
