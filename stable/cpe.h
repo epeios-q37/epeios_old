@@ -67,6 +67,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__P_BEOS		// Plateforme BeOS.
 #undef CPE__P_MAC		// Plateforme MAC.
 #undef CPE__P_CYGWIN	// Plateforme CYGWIN.
+#undef CPE__P_MINGW		// Plateforme MINGW.
 #undef CPE__P_LINUX		// Platform Linux
 
 #undef CPE__C_VC		// Compilateur VC++
@@ -82,6 +83,7 @@ extern class ttr_tutor &CPETutor;
 #undef CPE__T_MS		// Cible Microsoft (DOS, Windows, ...).
 #undef CPE__T_LINUX		// Cible Linux
 #undef CPE__T_CYGWIN	// Cible CYGWIN
+#undef CPE__T_MINGW		// Cible MINGW
 #undef CPE__T_MAC		// Cible Mac
 #undef CPE__T_32		// Cible 32 bits.
 #undef CPE__T_MT		// Cible multitâche.
@@ -128,8 +130,10 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef __GNUC__
 #	define CPE__C_GCC
-#	if defined( __CYGWIN__ ) || defined( CPE_CYGWIN)
+#	ifdef __CYGWIN__
 #		define CPE__P_CYGWIN
+#	elif defined( __MINGW32__ )
+#		define CPE__P_MINGW
 #	elif defined( __BEOS__ )
 #		define CPE__P_BEOS
 #	elif defined( __linux__ )
@@ -208,6 +212,14 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef CPE__P_CYGWIN
 #	define CPE__T_CYGWIN
+#	define CPE__T_MS
+#	ifdef CPE_MT
+#		define CPE__T_MT 
+#	endif
+#endif
+
+#ifdef CPE__P_MINGW
+#	define CPE__T_MINGW
 #	define CPE__T_MS
 #	ifdef CPE_MT
 #		define CPE__T_MT 

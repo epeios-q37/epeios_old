@@ -92,6 +92,4 @@ void ui_main::RegisterMainUI(
 	Register_( Trunk, Trunk.UI().Main.Widgets, Window );
 
 	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main.Document() );
-
-	Trunk.UpdateUI();
 }

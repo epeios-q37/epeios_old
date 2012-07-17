@@ -37,14 +37,6 @@ namespace ui {
 
 	typedef xulfui::ui___ _ui___;
 
-	enum panel__ {
-		pHome,
-		pSessionForm,
-		pSessionView,
-		p_amount,
-		p_Undefined
-	};
-
 	class ui___
 	: public _ui___
 	{

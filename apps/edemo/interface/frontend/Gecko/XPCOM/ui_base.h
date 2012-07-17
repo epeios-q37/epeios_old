@@ -38,6 +38,15 @@ namespace trunk {
 
 namespace ui_base {
 
+	enum panel__ {
+		pHome,
+		pSessionForm,
+		pSessionView,
+		p_amount,
+		p_Undefined
+	};
+
+
 	typedef xulfbs::ui_core__<trunk::trunk___> ui_core__;
 
 	typedef xulwdg::event_handler__<trunk::trunk___> _event_handler__;
