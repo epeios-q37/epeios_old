@@ -61,11 +61,13 @@ src +=
 ##################################
 
 ifeq ("$(os)","Cygwin")
-	env = gnu
+	target = $(name).dll
+
+	cc = g++
 	
 	co += -g -m32 "-D__int64=long long"
 	
-	lo += -m32 -Wl,--add-stdcall-alias -o $(name).dll -shared
+	lo += -m32 -Wl,--add-stdcall-alias -o $(target) -shared
 	
 	libs =
 
@@ -77,12 +79,13 @@ endif
 ##########################################
 
 ifeq ("$(os)","GNU/Linux")
-	env = gnu
+	target = $lib(name).so
 	
+	cc = g++
 #	co += -std=c++0x
 	co +=  -static -lc
 	
-	lo += -shared -W1,-soname,lib$(name).so -o lib$(name).so 
+	lo += -shared -W1,-soname,$(target) -o $(target)
 	
 	libs = 
 	# For sound (i.e. MIDI)-related functions.
@@ -99,7 +102,9 @@ endif
 ##################################################
 
 ifeq ("$(os)","Linux")
-	env = gnu
+	target = $lib(name).so
+
+	cc = g++
 	
 	co +=
 	
@@ -118,18 +123,20 @@ endif
 #########################
 
 ifeq ("$(os)","Darwin")
-	env = gnu
+	target = lib$(name).jnilib
+
+	cc = c++
 
 	co += -m32
 
-	lo = -m32 -dynamiclib -o lib$(name).jnilib
+	lo = -m32 -dynamiclib -o $(target)
 	libs += -framework JavaVM
 	
 endif
 
-##################################
-# Common to all GNU environment. #
-##################################
+##############################
+# Common to all environment. #
+##############################
 
 ifeq ("$(env)","gnu")
 #	lo = -o $(name)
@@ -143,9 +150,8 @@ ifeq ("$(env)","gnu")
 	# To use with gprof
 	#co += -pg
 
-	#co += -fshort-wchar
 
-#	libs += -lm
+	#libs += -lm
 	
 endif
 
@@ -153,19 +159,15 @@ endif
 # Don't modify below #
 ######################
 
-ifeq ("$(env)","gnu")
-	co := -c $(co)
-	ox = o
+co := -c $(co)
+ox = o
 
-	ifndef EPEIOS_CC
-		cc += g++
-	else
-		cc += $(EPEIOS_CC)
-	endif
-
-	larg = $(lo) $(objs)
-	ds = :
+ifdef EPEIOS_CC
+	cc += $(EPEIOS_CC)
 endif
+
+larg = $(lo) $(objs)
+ds = :
 
 vpath %.cpp $(subst $(ds),:,$(src))
 
@@ -176,7 +178,7 @@ lo += $(EPEIOS_LOPT)
 
 objs = $(name).$(ox) $(mods:=.$(ox)) 
 
-$(name):  $(objs)
+$(target):  $(objs)
 	$(cc) $(larg) $(libs)
 	
 %.$(ox): %.cpp
