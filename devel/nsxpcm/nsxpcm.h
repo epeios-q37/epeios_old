@@ -1423,11 +1423,8 @@ namespace nsxpcm {
 	class event_handler__ {
 	private:
 		event_handler__ *_Control;
-		void _Test( void )	// Vérifie que l'objet n'a pas été déplacé depuis sa création (voir remarque ci-dessus).
-		{
-			if ( _Control != this )
-				ERRc();
-		}
+		void _Test( bso::bool__ IgnoreInitializationTest );	// Vérifie que l'objet n'a pas été déplacé depuis sa création (voir remarque ci-dessus)
+															// Vérifie également si l'obeta été initialisé (losque 'IgnoreInitializationTest' == 'false' ).
 		event_data__ _EventData;
 		void _OnErr( void )
 		{
@@ -3079,6 +3076,10 @@ namespace nsxpcm {
 			reset();
 
 			_EventHandler = &EventHandler;
+		}
+		bso::bool__ IsInitialized( void ) const
+		{
+			return _EventHandler != NULL;
 		}
 	};
 

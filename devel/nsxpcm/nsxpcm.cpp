@@ -1362,9 +1362,23 @@ ERREnd
 ERREpilog
 }
 
+void nsxpcm::event_handler__::_Test( bso::bool__ IgnoreInitializationTest )
+{
+	if ( _Control != this )
+		ERRc();
+
+	if ( !IgnoreInitializationTest ) {
+		if ( _EventData._EventListener.get() == NULL )
+			ERRc();
+
+		if ( !_EventData._EventListener->IsInitialized() )
+			ERRc();
+	}
+}
+
 void nsxpcm::event_handler__::Init( void )
 {
-	_Test();
+	_Test( true );
 
 	reset();
 
@@ -1378,7 +1392,7 @@ void nsxpcm::event_handler__::Add(
 	nsISupports *Supports,
 	int Events )
 {
-	_Test();
+	_Test( false );
 
 	nsIDOMEventTarget *EventTarget = nsxpcm::QueryInterface<nsIDOMEventTarget>( Supports );
 
@@ -1473,7 +1487,7 @@ static event__ Convert_(
 
 bso::bool__ nsxpcm::event_handler__::Handle( nsIDOMEvent *RawEvent )
 {
-	_Test();
+	_Test( false );
 
 	bso::bool__ Success = false;
 ERRProlog

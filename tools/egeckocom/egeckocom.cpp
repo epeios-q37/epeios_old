@@ -38,8 +38,9 @@
 
 #define COMPONENT_VERSION	"5"
 
-#define NAME "egeckocom"
+#define NAME	"egeckocom"
 #define VERSION	"0.1.4"
+#define BUILD	"20120720"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -200,7 +201,7 @@ RB
 
 	CorrectedLibraryName.Append( RawLibraryName );
 
-	_Data.Init( NAME " " VERSION, _LanguageBuffer, fnm::GetLocation( CorrectedLibraryName.Convert( Buffer ), LocationBuffer ) );
+	_Data.Init( NAME " V" VERSION " Build " BUILD, _LanguageBuffer, fnm::GetLocation( CorrectedLibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		if ( CErrString_.Amount() == 0 ) {
