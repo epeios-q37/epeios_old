@@ -63,11 +63,14 @@ src +=
 ifeq ("$(os)","Cygwin")
 	target = $(name).dll
 
-	cc = g++
+	cc = i686-pc-mingw32-g++
 	
-	co += -g -m32 "-D__int64=long long"
+	co += -g
+
+# Needed when compiled woth the 'genuine' g++ compiler.
+#	co += "-D__int64=long long"
 	
-	lo += -m32 -Wl,--add-stdcall-alias -o $(target) -shared
+	lo += -Wl,--kill-at -o $(target) -shared
 	
 	libs =
 

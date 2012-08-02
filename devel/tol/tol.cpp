@@ -56,7 +56,6 @@ public:
 /*$BEGIN$*/
 
 
-#include <fstream>
 #include "fil.h"
 
 const char *tol::Date( buffer__ &Buffer )

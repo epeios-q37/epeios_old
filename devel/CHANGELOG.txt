@@ -1,5 +1,9 @@
 $Id$
 
+01/08/2012 :
+	- BSO :
+		- Utilisation de '__SIZE_MAX__' lorsque 'SIZE_MAX' indéfini (ce qui est le cas lorsqu'uitlisation du compilateur 'MinGW'.
+
 19/07/2012 :
 	- NSXPCM :
 		- Toute utilisation d'un 'event_handler__' provoque une erreur s'il n'a pas été initialisé. Sans ce test,

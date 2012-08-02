@@ -133,11 +133,20 @@ namespace jvabse {
 
 	inline jmethodID GetJStaticMethodID(
 		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		const char *Signature )
+	{
+		return Env->GetStaticMethodID( Class, Name, Signature );
+	}
+
+	inline jmethodID GetJStaticMethodID(
+		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetStaticMethodID( GetJClass( Env, Object ), Name, Signature );
+		return GetJStaticMethodID( Env, GetJClass( Env, Object ), Name, Signature );
 	}
 
 	inline jfieldID GetJFieldID(

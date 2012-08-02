@@ -51,7 +51,7 @@ static void Print_(
 #ifdef WORKAROUND
 #endif
 
-
+#if 0
 static void *malloc_( int Size )
 {
 #ifdef WORKAROUND
@@ -71,10 +71,11 @@ static void free_( void *P )
 #endif
 
 }
-
+#endif
 JNIEXPORT void JNICALL Java_XMLPreprocessorDemo_mallocCygwinBug
   (JNIEnv *Env, jclass)
 {
+#if 0
 ERRJProlog
 	void *Test = NULL;
 ERRJBegin
@@ -87,6 +88,7 @@ ERRJEnd
 	if ( Test != NULL )
 		free_( Test );
 ERRJEpilog
+#endif
 }
 
 #define BUFFER_SIZE	JVASTF_BUFFER_SIZE
