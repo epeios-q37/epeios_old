@@ -85,7 +85,7 @@ ERRBegin
 	case frdkrn::bxtPredefined:
 	case frdkrn::bxtDaemon:
 	case frdkrn::bxtEmbedded:
-		Trunk().UI().SessionForm().Update( Type );
+		Trunk().UI().SessionForm().SetBackendType( Type );
 		break;
 	default:
 		ERRc();
@@ -298,7 +298,7 @@ ERREnd
 ERREpilog
 }
 
-void xulfsf::session_form__::Update( frdkrn::backend_extended_type__ Type )
+void xulfsf::session_form__::Update( void )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
@@ -309,35 +309,34 @@ ERRBegin
 	HandleAuthenticationSubForm_( Trunk().Registry(), Broadcasters, Widgets );
 
 	FillPredefinedBackendsWidget_( Trunk() );
-
-	if ( Type == frdkrn::bxt_Undefined )
+#if 0
+	if ( _BackendExtendedType == frdkrn::bxt_Undefined )
 		ERRReturn;
-
-	switch ( Type ) {
+#endif
+	switch ( _BackendExtendedType ) {
 	case frdkrn::bxtNone:
 		Broadcasters.bdcNoBackend.Show();
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniNoBackend );
-		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	case frdkrn::bxtPredefined:
 		Broadcasters.bdcPredefinedBackend.Show();
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniPredefinedBackend );
-		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	case frdkrn::bxtDaemon:
 		Broadcasters.bdcDaemonBackend.Show();
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniDaemonBackend );
-		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	case frdkrn::bxtEmbedded:
 		Broadcasters.bdcEmbeddedBackend.Show();
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniEmbeddedBackend );
-		Widgets.dckBackendType.SetSelectedIndex( Type );
 		break;
 	default:
 		ERRc();
 		break;
 	}
+
+	Widgets.dckBackendType.SetSelectedIndex( _BackendExtendedType );
+
 ERRErr
 ERREnd
 ERREpilog

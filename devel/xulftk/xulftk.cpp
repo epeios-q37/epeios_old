@@ -468,7 +468,7 @@ ERRBegin
 		break;
 	}
 
-	UI().SessionForm().Update( Type );
+	UI().SessionForm().SetBackendType( Type );
 ERRErr
 ERREnd
 ERREpilog

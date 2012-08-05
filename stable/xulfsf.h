@@ -79,7 +79,13 @@ namespace xulfsf {
 	struct session_form__
 	: public ui_core__<xulftk::trunk___>
 	{
+	private:
+		frdkrn::backend_extended_type__ _BackendExtendedType;
 	public:
+		void reset( bso::bool__ = true )
+		{
+			_BackendExtendedType = frdkrn::bxt_Undefined;
+		}
 		struct broadcasters__ {
 			broadcaster__
 				bdcNoBackend,
@@ -116,8 +122,14 @@ namespace xulfsf {
 		: Broadcasters( Broadcasters ),
 		  EventHandlers( EventHandlers ),
 		  Widgets( Widgets )
-		{}
-		void Update( frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined );
+		{
+			reset( false );
+		}
+		void SetBackendType( frdkrn::backend_extended_type__ Type )
+		{
+			_BackendExtendedType = Type;
+		}
+		void Update( void );
 	};
 
 	void RegisterSessionFormUI(
