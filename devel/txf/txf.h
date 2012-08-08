@@ -426,9 +426,9 @@ namespace txf {
 	// Place une fin de ligne sur le txft.
 	TXF_DFS( nl )
 	{
-#if defined( CPE__T_MS ) || defined( CPE__T_CYGWIN )
+#if defined( CPE__MS ) || defined( CPE__CYGWIN ) || defined( CPE__MINGW )
 		return Flow << "\r\n";
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_MAC )
+#elif defined( CPE__LINUX ) || defined( CPE__MAC )
 		return Flow << '\n';
 #else
 #	error "Unknow target !"

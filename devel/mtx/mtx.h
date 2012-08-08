@@ -76,19 +76,19 @@ extern class ttr_tutor &MTXTutor;
 #endif
 
 #ifdef MTX__USE_ATOMIC_OPERATIONS
-#	if defined( CPE__T_MS )
-#		if defined (CPE__T_CYGWIN )
+#	if defined( CPE__MS )
+#		if defined (CPE__CYGWIN )
 #			define MTX__USE_PTHREAD_MUTEX
 #		else
 #			define MTX__USE_MS_ATOMIC_OPERATIONS
 #		endif
-#	elif defined (CPE__T_LINUX )
+#	elif defined (CPE__LINUX )
 #		if ( MTX__USE_ATOMIC_LIB )
 #			define MTX__USE_LINUX_ATOMIC_OPERATIONS
 #		else
 #			define MTX__USE_PTHREAD_MUTEX
 #		endif
-#	elif defined (CPE__T_MAC )
+#	elif defined (CPE__MAC )
 #		define MTX__USE_MAC_ATOMIC_OPERATIONS
 #	else
 #		error "No atomic operations available for this compiling enviroment"
@@ -119,7 +119,7 @@ extern class ttr_tutor &MTXTutor;
 #	include <pthread.h>
 #endif
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 #	error "This library only useful in multitasking context, in which you are not."
 #endif
 

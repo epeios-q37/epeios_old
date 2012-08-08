@@ -63,34 +63,26 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-#undef CPE__P_MS		// Plateforme Microsoft.
-#undef CPE__P_BEOS		// Plateforme BeOS.
-#undef CPE__P_MAC		// Plateforme MAC.
-#undef CPE__P_CYGWIN	// Plateforme CYGWIN.
-#undef CPE__P_MINGW		// Plateforme MINGW.
-#undef CPE__P_LINUX		// Platform Linux
+# undef CPE__MS		// Plateforme Microsoft.
+# undef CPE__BEOS	// Plateforme BeOS.
+# undef CPE__MAC	// Plateforme MAC.
+# undef CPE__CYGWIN	// Plateforme CYGWIN.
+# undef CPE__MINGW	// Plateforme MINGW.
+# undef CPE__LINUX	// Platform Linux
 
-#undef CPE__C_VC		// Compilateur VC++
-#undef CPE__C_VC6		// Compilateur VC++ V6
-#undef CPE__C_VC8		// Compilateur VC++ V8 (2005)
-#undef CPE__C_VC9		// Compilateur VC++ V9 (2008)
-#undef CPE__C_GCC		// Compilateur GNU C++.
-#undef CPE__C_GCC3		// Compilateur GNU C++ V3.x
-#undef CPE__C_CW		// Compilateur CodeWarrior
-#undef CPE__C_VER		// Version du compilateur.
+# undef CPE__VC		// Compilateur VC++
+# undef CPE__VC6	// Compilateur VC++ V6
+# undef CPE__VC8	// Compilateur VC++ V8 (2005)
+# undef CPE__VC9	// Compilateur VC++ V9 (2008)
+# undef CPE__GCC	// Compilateur GNU C++.
+# undef CPE__GCC3	// Compilateur GNU C++ V3.x
+# undef CPE__CW		// Compilateur CodeWarrior
 
-
-#undef CPE__T_MS		// Cible Microsoft (DOS, Windows, ...).
-#undef CPE__T_LINUX		// Cible Linux
-#undef CPE__T_CYGWIN	// Cible CYGWIN
-#undef CPE__T_MINGW		// Cible MINGW
-#undef CPE__T_MAC		// Cible Mac
-#undef CPE__T_32		// Cible 32 bits.
-#undef CPE__T_MT		// Cible multitâche.
-#undef CPE__T_CONSOLE	// Cible console.
-#undef CPE__T_GUI		// Cible GUI
-#undef CPE__T_LIBRARY	// Cible bibliothèque (DLL, .so, ...)
-# undef CPE__T_JAVA		// Cible composant java en code natif.
+# undef CPE__32BITS		// Cible 32 bits.
+# undef CPE__MT			// Cible multitâche.
+# undef CPE__CONSOLE	// Cible console.
+# undef CPE__LIBRARY	// Cible bibliothèque (DLL, .so, ...)
+# undef CPE__JAVA		// Cible composant java en code natif.
 
 #undef CPE__64_BITS_TYPES_ALLOWED	// Les types 64 bits sont autorisés.
 
@@ -99,19 +91,19 @@ extern class ttr_tutor &CPETutor;
 #endif
 
 # ifdef CPE_JAVA
-#  define CPE__T_JAVA
-#  define CPE__T_LIBRARY
+#  define CPE__JAVA
+#  define CPE__LIBRARY
 # endif
 
 #ifdef _MSC_VER
-#	define CPE__P_MS
-#	define CPE__C_VC
+#	define CPE__MS
+#	define CPE__VC
 #	ifdef _WIN32
-#		define CPE__T_32
+#		define CPE__32BITS
 #	endif	
 #	ifdef _MT
 #		ifndef CPE_ST
-#			define CPE__T_MT
+#			define CPE__MT
 #		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
@@ -119,51 +111,47 @@ extern class ttr_tutor &CPETutor;
 #endif
 
 #ifdef __APPLE__
-#	define CPE__P_MAC
+#	define CPE__MAC
 #endif
 
-#ifdef CPE__P_MAC
-#	define CPE__T_MAC
-#	define CPE__C_GCC
+#ifdef CPE__MAC
+#	define CPE__MAC
+#	define CPE__GCC
 #endif
 
 
 #ifdef __GNUC__
-#	define CPE__C_GCC
+#	define CPE__GCC
 #	ifdef __CYGWIN__
-#		define CPE__P_CYGWIN
+#		define CPE__CYGWIN
 #	elif defined( __MINGW32__ )
-#		define CPE__P_MINGW
+#		define CPE__MINGW
 #	elif defined( __BEOS__ )
-#		define CPE__P_BEOS
+#		define CPE__BEOS
 #	elif defined( __linux__ )
-#		define CPE__P_LINUX
+#		define CPE__LINUX
 #	endif
 #endif
 
 #ifdef __MWERKS__
-#	define CPE__C_CW
+#	define CPE__CW
 #	ifdef _MT
 #		ifndef CPE_ST
-#			define CPE__T_MT
+#			define CPE__MT
 #		endif
 #	elif defined( CPE_MT )
 #		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
 #	endif
 #	ifdef macintosh
-#		define CPE__P_MAC	// We are under Macintosh.
+#		define CPE__MAC	// We are under Macintosh.
 #	else
-#		define CPE__P_MS	// We are under Microsoft OS
+#		define CPE__MS	// We are under Microsoft OS
 #	endif
 #endif
 
-#ifdef CPE__P_MS
-#	define CPE__T_MS
-#endif
-
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 #	ifdef CPE_MT 
-#		define CPE__T_MT
+#		define CPE__MT
 #	endif
 #endif
 
@@ -172,17 +160,17 @@ extern class ttr_tutor &CPETutor;
 #endif	
 
 #ifdef CPE_LIBRARY
-#	define CPE__T_LIBRARY
-#elif defined( CPE__T_MS )
+#	define CPE__LIBRARY
+#elif defined( CPE__MS )
 #	if defined( _USRDLL ) || defined( _WINDLL )
-#		define CPE__T_LIBRARY
+#		define CPE__LIBRARY
 #	endif
 #endif
 
 #if defined( wxUSE_GUI ) || defined( CPE_GUI )
-#	define CPE__T_GUI
-#elif !defined( CPE__T_LIBRARY )
-#	define CPE__T_CONSOLE
+#	define CPE__GUI
+#elif !defined( CPE__LIBRARY )
+#	define CPE__CONSOLE
 #endif
 
 #ifndef CPE_DISABLE_WARNINNG_SUPPRESSION
@@ -191,45 +179,24 @@ extern class ttr_tutor &CPETutor;
 
 
 
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	ifdef CPE__WARNING_SUPPRESSION_ENABLED
 #		pragma warning( disable: 4786 )	// 'The identifier string exceeded the maximum allowable length and was truncated.'.
 #	endif
 #	if _MSC_VER == 1200
-#		define CPE__C_VC6
+#		define CPE__VC6
 #	elif _MSC_VER == 1400
-#		define CPE__C_VC8
+#		define CPE__VC8
 #	elif _MSC_VER == 1500
-#		define CPE__C_VC9
+#		define CPE__VC9
 #	endif
 #endif
 
 #ifdef CPE__C_GCC
 #	if __GNUC__ == 3
-#		define CPE__C_GCC3
+#		define CPE__GCC3
 #	endif
 #endif
-
-#ifdef CPE__P_CYGWIN
-#	define CPE__T_CYGWIN
-#	define CPE__T_MS
-#	ifdef CPE_MT
-#		define CPE__T_MT 
-#	endif
-#endif
-
-#ifdef CPE__P_MINGW
-#	define CPE__T_MINGW
-#	define CPE__T_MS
-#	ifdef CPE_MT
-#		define CPE__T_MT 
-#	endif
-#endif
-
-#ifdef CPE__P_LINUX
-#	define CPE__T_LINUX
-#endif
-
 
 /*$END$*/
 				  /********************************************/

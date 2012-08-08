@@ -27,7 +27,7 @@ public class XPPInputStream extends InputStream {
 	private long core;
 	private InputStream in;
 	
-	native private void contructor();
+	native private void constructor();
 	native private void destructor();
 	
 	native public int available();
@@ -38,7 +38,7 @@ public class XPPInputStream extends InputStream {
     public XPPInputStream( InputStream in  )
 	{
 		this.in = in;
-		contructor();
+		constructor();
 	}
 
 	public void close() throws IOException

@@ -66,9 +66,9 @@ extern class ttr_tutor &FNMTutor;
 #include "cpe.h"
 #include "tol.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 #	define FNM__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS ) || defined( CPE__MINGW )
 #	define FNM__MS
 #else
 #	error "Unknown target !"
@@ -166,7 +166,7 @@ namespace fnm
 	//: public utl_PU
 	{
 	private:
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		/* Return a 8 characters long file name using the 'Base' string (any length)
 		with 'Occurence' (>=0 <=36) the present occurence of a 'Base' based file name */
 		const char *MakeFileName_(
@@ -186,7 +186,7 @@ namespace fnm
 		in 'Directory' with 'Extension' as extension. Use 'TOLFileExists' to define
 		if this file already exists. If 'NULL' is returned, then no file can be
 		generated, because all occurence are already used. */
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		const char *SearchFileName(
 			const char *Directory,
 			const char *Base,

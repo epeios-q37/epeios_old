@@ -84,7 +84,7 @@ static mtk::thread_id__ ThreadID_;
 int err_::ExitValue = EXIT_SUCCESS;
 int err_::Line = 0;
 const char *err_::File = NULL;
-#ifdef ERR_JMPUSE
+#ifdef ERR__JMPUSE
 jmp_buf *err_::Jump = NULL;
 #endif
 err::type err_::Major = err::ok;

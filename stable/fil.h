@@ -81,9 +81,9 @@ namespace lcl {
 	struct rack__;
 }
 
-#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 #	define FIL__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS ) || defined( CPE__MINGW )
 #	define FIL__MS
 #else
 #	error "Undefined compilation enviroment."

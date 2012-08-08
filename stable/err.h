@@ -64,8 +64,14 @@ extern class ttr_tutor &ERRTutor;
 #include <stdlib.h>
 
 # ifdef ERR_JMPUSE
+#  define ERR__JMPUSE
+# endif
+
+# ifdef ERR__JMPUSE
 #  include <setjmp.h>
 # endif
+
+
 
 # include "cpe.h"
 
@@ -194,7 +200,7 @@ namespace err {
 		static int Line;
 		// file where the error occurs
 		static const char *File;
-# ifdef ERR_JMPUSE
+# ifdef ERR__JMPUSE
 		// where to jump
 		static jmp_buf *Jump;
 # endif
@@ -288,7 +294,7 @@ namespace err {
 //m Throw a memory error.
 # define ERRx()			ERRX( xGeneric )
 
-# ifdef ERR_JMPUSE
+# ifdef ERR__JMPUSE
 //m Throw the handler.
 #  define ERRR()		{longjmp( *err::ERR.Jump, 1 );}
 # else
@@ -309,12 +315,12 @@ namespace err {
 //d Line where the error was thrown.
 # define ERRLine			err::ERR.Line
 
-# ifdef ERR_JMPUSE
+# ifdef ERR__JMPUSE
 #  define ERRGetJ()		err::FGetJ( err::ERR )
 #  define ERRPutJ( J )	err::FSetJ( err::ERR, J )
 # endif
 
-# ifdef ERR_JMPUSE
+# ifdef ERR__JMPUSE
 
 //d Put the declaration after this.
 #  define ERRProlog	bso::bool__ ERRNoError = true; { jmp_buf ERRJmp, *ERROJmp = ERRGetJ();\
@@ -358,7 +364,7 @@ namespace err {
 # define ERRFErr		ERRErr
 # define ERRFEnd		ERREnd
 
-# ifdef ERR_JMPUSE
+# ifdef ERR__JMPUSE
 	inline jmp_buf *FGetJ( struct err_ &ERR_ )
 	{
 		return ERR_.Jump;

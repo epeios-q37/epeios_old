@@ -11,10 +11,10 @@ extern "C" {
 #define org_zeusw_XPPInputStream_MAX_SKIP_BUFFER_SIZE 2048L
 /*
  * Class:     org_zeusw_XPPInputStream
- * Method:    contructor
+ * Method:    constructor
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor
+JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_constructor
   (JNIEnv *, jobject);
 
 /*

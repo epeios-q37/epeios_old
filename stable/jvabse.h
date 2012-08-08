@@ -64,11 +64,11 @@ extern class ttr_tutor &JVABSETutor;
 # include "flw.h"
 # include "cpe.h"
 
-# ifndef CPE__T_JAVA
+# ifndef CPE__JAVA
 #  error "Use of JNI, but without defining the target as a Java component (define 'CPE_JAVA')."
 # endif
 
-# ifndef CPE__T_LIBRARY
+# ifndef CPE__LIBRARY
 #  error "A Java native component must be a library."
 # endif
 
@@ -110,7 +110,7 @@ namespace jvabse {
 		}
 	};
 
-	inline jclass GetJClass(
+	inline jclass GetClass(
 		JNIEnv *Env,
 		jobject Object )
 	{
@@ -122,16 +122,25 @@ namespace jvabse {
 		return Class;
 	}
 
-	inline jmethodID GetJMethodID(
+	inline jmethodID GetMethodID(
+		JNIEnv *Env,
+		jclass Class,
+		const char *Name,
+		const char *Signature )
+	{
+		return Env->GetMethodID( Class, Name, Signature );
+	}
+
+	inline jmethodID GetMethodID(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetMethodID( GetJClass( Env, Object ), Name, Signature );
+		return GetMethodID( Env, GetClass( Env, Object ), Name, Signature );
 	}
 
-	inline jmethodID GetJStaticMethodID(
+	inline jmethodID GetStaticMethodID(
 		JNIEnv *Env,
 		jclass Class,
 		const char *Name,
@@ -140,214 +149,122 @@ namespace jvabse {
 		return Env->GetStaticMethodID( Class, Name, Signature );
 	}
 
-	inline jmethodID GetJStaticMethodID(
+	inline jmethodID GetStaticMethodID(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
 		const char *Signature )
 	{
-		return GetJStaticMethodID( Env, GetJClass( Env, Object ), Name, Signature );
+		return GetStaticMethodID( Env, GetClass( Env, Object ), Name, Signature );
 	}
 
-	inline jfieldID GetJFieldID(
+	inline jfieldID GetFieldID(
 		JNIEnv *Env,
 		jclass Class,
 		const char *Name,
-		jint &)
+		const char *Signature )
 	{
-		return Env->GetFieldID( Class, Name, "I" );
-	}
-
-	inline jfieldID GetJStaticFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		jint &)
-	{
-		return Env->GetStaticFieldID( Class, Name, "I" );
-	}
-
-	inline jfieldID GetJFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		jlong &)
-	{
-		return Env->GetFieldID( Class, Name, "J" );
-	}
-
-	inline jfieldID GetJStaticFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		jlong &)
-	{
-		return Env->GetStaticFieldID( Class, Name, "J" );
-	}
-
-	template <typename jtype> inline jfieldID GetJFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		const char *Signature,
-		jtype &Value )
-	{
-		if ( Signature != NULL )
-			ERRc();
-
-		return GetJFieldID( Env, Class, Name, Value );
-	}
-
-	template <typename jtype> inline jfieldID GetJStaticFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		const char *Signature,
-		jtype &Value )
-	{
-		if ( Signature != NULL )
-			ERRc();
-
-		return GetJStaticFieldID( Env, Class, Name, Value );
-	}
-
-	inline jfieldID GetJFieldID(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		const char *Signature,
-		jobject &)
-	{
-		if ( ( Signature == NULL ) || ( *Signature != 'L' ) || ( Signature[strlen( Signature ) - 1] != ';' ) )
-			ERRc();
-
 		return Env->GetFieldID( Class, Name, Signature );
 	}
 
-	inline jfieldID GetJStaticFieldID(
+	inline jfieldID GetFieldID(
+		JNIEnv *Env,
+		jobject Object,
+		const char *Name,
+		const char *Signature )
+	{
+		return Env->GetFieldID( GetClass( Env, Object ), Name, Signature );
+	}
+
+	inline jfieldID GetStaticFieldID(
 		JNIEnv *Env,
 		jclass Class,
 		const char *Name,
-		const char *Signature,
-		jobject &)
+		const char *Signature )
 	{
-		if ( ( Signature == NULL ) || ( *Signature != 'L' ) || ( Signature[strlen( Signature ) - 1] != ';' ) )
-			ERRc();
-
 		return Env->GetStaticFieldID( Class, Name, Signature );
 	}
 
-	inline jint GetJField(
-		JNIEnv *Env,
-		jclass Class,
-		jfieldID FieldID,
-		jint &)
-	{
-		return Env->GetStaticIntField( Class, FieldID );
-	}
-
-	inline jint GetJField(
+	inline jint GetIntField(
 		JNIEnv *Env,
 		jobject Object,
-		jfieldID FieldID,
-		jint &)
+		const char *Name )
 	{
-		return Env->GetIntField( Object, FieldID );
+		return Env->GetIntField( Object, GetFieldID( Env, Object, Name, "I" ) );
 	}
 
-	inline jlong GetJField(
+	inline jint GetStaticIntField(
 		JNIEnv *Env,
 		jclass Class,
-		jfieldID FieldID,
-		jlong &)
+		const char *Name )
 	{
-		return Env->GetStaticLongField( Class, FieldID );
+		return Env->GetStaticIntField( Class, GetStaticFieldID( Env, Class, Name, "I" ) );
 	}
 
-	inline jlong GetJField(
+	inline jlong GetLongField(
 		JNIEnv *Env,
 		jobject Object,
-		jfieldID FieldID,
-		jlong &)
+		const char *Name )
 	{
-		return Env->GetLongField( Object, FieldID );
+		return Env->GetLongField( Object, GetFieldID( Env, Object, Name, "J" ) );
 	}
 
-	inline jobject GetJField(
+	inline jlong GetStaticLongField(
 		JNIEnv *Env,
 		jclass Class,
-		jfieldID FieldID,
-		jobject &)
+		const char *Name )
 	{
-		return Env->GetStaticObjectField( Class, FieldID );
+		return Env->GetStaticLongField( Class, GetStaticFieldID( Env, Class, Name, "J" ) );
 	}
 
-	inline jobject GetJField(
-		JNIEnv *Env,
-		jobject Object,
-		jfieldID FieldID,
-		jobject &)
-	{
-		return Env->GetObjectField( Object, FieldID );
-	}
-
-	template <typename jtype> jtype GetJField(
-		JNIEnv *Env,
-		jclass Class,
-		const char *Name,
-		const char *ObjectSignature = NULL )	// Obligatoire pour 'jtype' == 'jobjet'. Doit être == 'NULL' pour les austre types.
-	{
-		jtype Value;	// Ne sert qu'à didcrimier entre les différents types des différents 'template's.
-
-		return GetJField( Env, Class, GetJStaticFieldID( Env, Class, Name, ObjectSignature, Value ), Value );
-	}
-
-	template <typename jtype> jtype GetJField(
+	inline jobject GetObjectField(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
-		const char *ObjectSignature = NULL )	// Obligatoire pour 'jtype' == 'jobjet'. Doit être == 'NULL' pour les austre types.
+		const char *Signature )
 	{
-		jtype Value;	// Ne sert qu'à didcrimier entre les différents types des différents 'template's.
-
-		return GetJField( Env, Object, GetJFieldID( Env, GetJClass( Env, Object ), Name, ObjectSignature, Value ), Value );
+		return Env->GetObjectField( Object, GetFieldID( Env, Object, Name, Signature ) );
 	}
 
-	inline void SetJField(
+	inline jobject GetStaticObjectField(
 		JNIEnv *Env,
-		jobject Object,
-		jfieldID FieldID,
-		jlong Value )
+		jclass Class,
+		const char *Name,
+		const char *Signature )
 	{
-		Env->SetLongField( Object, FieldID, Value );
+		return Env->GetStaticObjectField( Class, GetStaticFieldID( Env, Class, Name, Signature ) );
 	}
 
-	inline void SetJField(
+	inline void SetIntField(
 		JNIEnv *Env,
 		jobject Object,
-		jfieldID FieldID,
+		const char *Name,
 		jint Value )
 	{
-		Env->SetIntField( Object, FieldID, Value );
+		Env->SetIntField( Object, GetFieldID( Env, Object, Name, "J" ), Value );
 	}
 
-	inline void SetJField(
-		JNIEnv *Env,
-		jobject Object,
-		jfieldID FieldID,
-		jobject Value )
-	{
-		Env->SetObjectField( Object, FieldID, Value );
-	}
-
-	template <typename jtype> void SetJField(
+	inline void SetLongField(
 		JNIEnv *Env,
 		jobject Object,
 		const char *Name,
-		jtype Value,
-		const char *ObjectSignature = NULL )	// Obligatoire pour 'jtype' == 'jobjet'. Doit être == 'NULL' pour les austre types.
+		jlong Value )
 	{
-		SetJField( Env, Object, GetJFieldID( Env, GetJClass( Env, Object ), Name, ObjectSignature, Value ), Value );
+		Env->SetLongField( Object, GetFieldID( Env, Object, Name, "J" ), Value );
+	}
+
+	inline void SetObjectField(
+		JNIEnv *Env,
+		jobject Object,
+		const char *Name,
+		const char *Signature,
+		jobject Value )
+	{
+		if ( ( Signature == NULL )
+			  || ( Signature[0] == 0 )
+			  ||( Signature[strlen( Signature )-1] != ';' ) )
+			ERRc();
+		Env->SetObjectField( Object, GetFieldID( Env, Object, Name, Signature ), Value );
 	}
 
 }

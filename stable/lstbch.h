@@ -245,12 +245,12 @@ namespace lstbch {
 
 			return State;
 		}
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	undef CreateFile
 #endif
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			bso::bool__ Success = _BunchFileManager.CreateFile( ErrorHandling );
+			bso::bool__ Success = _BunchFileManager.CreateFiles( ErrorHandling );
 
 			if ( !Success )
 				return false;

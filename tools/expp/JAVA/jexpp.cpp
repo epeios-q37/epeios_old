@@ -38,14 +38,14 @@ static void Print_(
 {
 	jclass System = Env->FindClass( "java/lang/System" );
 
-	jobject Out = GetJField<jobject>( Env, System, "out", "Ljava/io/PrintStream;" );
+	jobject Out = GetStaticObjectField( Env, System, "out", "Ljava/io/PrintStream;" );
 
 	jcharArray Array = Env->NewCharArray( 1000 );
 	
 
-	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
+	Env->CallNonvirtualVoidMethod( Out, GetClass( Env, Out ), GetMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
 
-	Env->CallNonvirtualVoidMethod( Out, GetJClass( Env, Out ), GetJMethodID( Env, Out, "flush", "()V" ), Text );
+	Env->CallNonvirtualVoidMethod( Out, GetClass( Env, Out ), GetMethodID( Env, Out, "flush", "()V" ), Text );
 }
 
 #ifdef WORKAROUND
@@ -122,7 +122,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	Print_( Env, __LOC__ );
-	data___ &Data = *(data___ *)GetJField<jlong>( Env, Object, "core" );
+	data___ &Data = *(data___ *)GetLongField( Env, Object, "core" );
 	Print_( Env, __LOC__ );
 
 	Data.Param.Env = Env;
@@ -263,7 +263,7 @@ JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII(
 
 
 
-JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_contructor(
+JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_constructor(
   JNIEnv *Env,
   jobject Object )
 {
@@ -322,7 +322,7 @@ ERRJBegin
 
 	Print_( Env, __LOC__ );
 
-	SetJField<jlong>( Env, Object, "core", (jlong)Data );
+	SetLongField( Env, Object, "core", (jlong)Data );
 
 	Print_( Env, __LOC__ );
 ERRJErr
@@ -339,7 +339,7 @@ JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor(
 	Print_( Env, __LOC__ );
 ERRJProlog
 ERRJBegin
-	delete (data___ *)GetJField<jlong>( Env, Object, "core" );
+	delete (data___ *)GetLongField( Env, Object, "core" );
 ERRJErr
 ERRJEnd
 ERRJEpilog

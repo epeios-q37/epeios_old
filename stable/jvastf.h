@@ -130,10 +130,10 @@ namespace jvastf {
 			fdr::size__ Maximum,
 			fdr::datum__ *Buffer )
 		{
-			jobject InputStream = GetJField<jobject>( _JEnv(), _JObject(), "in", "Ljava/io/InputStream;" );
+			jobject InputStream = GetObjectField( _JEnv(), _JObject(), "in", "Ljava/io/InputStream;" );
 
 			_JByteArray = _JEnv()->NewByteArray( JVASTF_BUFFER_SIZE );
-			fdr::size__ Amount = _JEnv()->CallIntMethod( InputStream, GetJMethodID( _JEnv(),  InputStream, "read", "([BII)I" ), _JByteArray, (jint)0, (jint)( Maximum > JVASTF_BUFFER_SIZE ? JVASTF_BUFFER_SIZE : Maximum ) );
+			fdr::size__ Amount = _JEnv()->CallIntMethod( InputStream, GetMethodID( _JEnv(),  InputStream, "read", "([BII)I" ), _JByteArray, (jint)0, (jint)( Maximum > JVASTF_BUFFER_SIZE ? JVASTF_BUFFER_SIZE : Maximum ) );
 
 			if ( Amount == -1 )
 				Amount = 0;
@@ -205,7 +205,7 @@ namespace jvastf {
 			const fdr::datum__ *Buffer,
 			fdr::size__ Amount )
 		{
-			jobject OutputStream = GetJField<jobject>( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
+			jobject OutputStream = GetObjectField( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
 
 			if ( Amount > JVASTF_BUFFER_SIZE )
 				Amount = JVASTF_BUFFER_SIZE;
@@ -214,7 +214,7 @@ namespace jvastf {
 
 			_JEnv()->SetByteArrayRegion( _JByteArray, 0, Amount, (jbyte *)Buffer );
 
-			_JEnv()->CallVoidMethod( OutputStream, GetJMethodID( _JEnv(),  OutputStream, "write", "([BII)V" ), _JByteArray, (jint)0, (jint)Amount );
+			_JEnv()->CallVoidMethod( OutputStream, GetMethodID( _JEnv(),  OutputStream, "write", "([BII)V" ), _JByteArray, (jint)0, (jint)Amount );
 
 			return Amount;
 		}
@@ -227,9 +227,9 @@ namespace jvastf {
 		}
 		virtual void FDRCommit( void )
 		{
-			jobject OutputStream = GetJField<jobject>( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
+			jobject OutputStream = GetObjectField( _JEnv(), _JObject(), "out", "Ljava/io/OutputStream;" );
 
-			_JEnv()->CallVoidMethod( OutputStream, GetJMethodID( _JEnv(),  OutputStream, "void", "()V" ) );
+			_JEnv()->CallVoidMethod( OutputStream, GetMethodID( _JEnv(),  OutputStream, "void", "()V" ) );
 		}
 	public:
 		void reset( bso::bool__ P = true )

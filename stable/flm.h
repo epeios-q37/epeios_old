@@ -69,11 +69,11 @@ extern class ttr_tutor &FLMTutor;
 #include "iop.h"
 #include "fil.h"
 
-#if defined( CPE__T_MS )
+#if defined( CPE__MS ) || defined ( CPE__MINGW )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
-#elif defined ( CPE__T_LINUX )
+#elif defined ( CPE__LINUX )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
-#elif defined ( CPE__T_MAC )
+#elif defined ( CPE__MAC )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	200	// Mac, par défaut, ne peut ouvrir que 256 descripteurs (socket comprises).
 #else
 #	error "Unimplemented target !"
@@ -88,7 +88,7 @@ extern class ttr_tutor &FLMTutor;
 
 
 #ifndef FLM_NO_MT
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 #		define FLM__MT
 #	endif
 #endif
@@ -99,6 +99,10 @@ extern class ttr_tutor &FLMTutor;
 #		define FLM__AUTOFLUSH
 #	endif
 #endif
+
+# ifdef CPE__MT
+#  include "mtx.h"
+# endif
 
 
 namespace flm {

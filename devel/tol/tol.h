@@ -69,9 +69,9 @@ extern class ttr_tutor &TOLTutor;
 
 #include "cpe.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 #	define TOL__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS ) ||defined ( CPE__MINGW )
 #	define TOL__MS
 #else
 #	error "Undefined compilation enviroment."
@@ -86,7 +86,7 @@ extern class ttr_tutor &TOLTutor;
 #	error
 #endif
 
-#if defined( CPE__C_VC ) || defined( CPE__C_GCC )
+#if defined( CPE__VC ) || defined( CPE__GCC )
 #	include <sys/timeb.h>
 #else
 #	error "Unknown compiler"
@@ -102,7 +102,7 @@ namespace tol
 }
 
 
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	ifdef CPE__WARNING_SUPPRESSION_ENABLED
 #		pragma warning( disable : 4284 )
 #	endif
@@ -541,7 +541,7 @@ namespace tol {
 	const char *DateAndTime( buffer__ &Buffer );
 
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	inline const char *Date( void )
 	{
 		static buffer__ Buffer;

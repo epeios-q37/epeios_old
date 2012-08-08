@@ -342,10 +342,10 @@ namespace bso {
 #endif
 
 	//d Maximal value of a 'size'.
-# ifdef SIZE_MAX
-	#define BSO_SIZE_MAX	( SIZE_MAX )
+# if defined( CPE__MINGW )
+	#define BSO_SIZE_MAX	( __SIZE_MAX__ )	// Pas de 'SIZE_MAX' sous 'MinGW' !
 # else	// No 'SIZE_MAX' when using 'MinGW' compiler.
-	#define BSO_SIZE_MAX	( __SIZE_MAX__ )
+	#define BSO_SIZE_MAX	( SIZE_MAX )
 # endif
 	//d Minimal value of a 'size__'.
 	#define BSO_SIZE_MIN	( 0 )

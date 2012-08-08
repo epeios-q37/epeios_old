@@ -65,9 +65,9 @@ extern class ttr_tutor &MTKTutor;
 #include "errno.h"
 #include "tht.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__BEOS ) || defined( CPE__MAC )
 #	define MTK__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS ) || defined( CPE__MINGW )
 #	define MTK__MS
 #else
 #	error "Unknown target !"
@@ -82,7 +82,7 @@ extern class ttr_tutor &MTKTutor;
 #	include <process.h>
 #	include <windows.h>
 #elif defined( MTK__POSIX )
-#	ifdef CPE__T_BEOS
+#	ifdef CPE__BEOS
 #		include <be/kernel/OS.h>
 #	else
 #		include <pthread.h>
@@ -94,7 +94,7 @@ extern class ttr_tutor &MTKTutor;
 #	error
 #endif
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 #	error "Multitasking required, but compilation options don't allow this."
 #endif
 

@@ -55,10 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#define EOF	FLW_EOF_BUFFER
-
 #include "cpe.h"
-#include <fstream>
+
 #include <stdlib.h>
 
 #include "str.h"
@@ -308,6 +306,7 @@ ERRBegin
 
 		if ( Mode == bmDuplicate )
 		{
+#if 0
 			std::ofstream Out( NomFichierSecurite );
 			std::ifstream In( NomFichier );
 			int C;
@@ -317,13 +316,41 @@ ERRBegin
 
 			Out.close();
 			In.close();
+#endif
+		
+			FILE *In, *Out;
 
-			if ( C != EOF )
+			/* Ouverture de l'ancien fichier en lecture */
+			In = fopen(NomFichier, "rb");
+
+			if ( In == NULL )
 			{
 				Status = bsUnableToDuplicate;
-				remove( NomFichierSecurite );
 				ERRReturn;
 			}
+
+			Out = fopen(NomFichierSecurite, "w");
+			if ( Out == NULL )
+			{
+				fclose ( In );
+				Status = bsUnableToDuplicate;
+				ERRReturn;
+			}
+
+			while (! feof( In ) )
+			{
+				if ( fputc( fgetc( In ), Out ) == EOF )
+				{
+					Status = bsUnableToDuplicate;
+					fclose( In );
+					fclose( Out );
+					remove( NomFichierSecurite );
+					ERRReturn;
+				}
+			}
+
+			fclose(Out);
+			fclose(In);
 		}
 		else if ( Mode == bmRename )
 		{
@@ -335,7 +362,6 @@ ERRBegin
 	}
 
 	Status = bsOK;
-
 ERRErr
 ERREnd
 	if ( Status != bsOK )

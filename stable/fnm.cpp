@@ -210,7 +210,7 @@ ERREpilog
 	return P;
 }
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 const char *fnm::file_name_manager::MakeFileName_(
 	const char *Nom,
 	int Occurence )
