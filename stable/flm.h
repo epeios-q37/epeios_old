@@ -606,7 +606,7 @@ namespace flm {
 				return 0;
 #	endif
 		}
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	undef CreateFile
 #endif
 		bso::bool__ CreateFile( err::handling__ ErrHandle = err::h_Default )

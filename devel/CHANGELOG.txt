@@ -1,5 +1,34 @@
 $Id$
 
+20/08/2012 :
+	- JVASTF :
+		- Réalisation modifications oubliées nécessitées par précédentes modifications.
+
+19/08/2012 :
+	- JVASTF :
+		- L'objet passé en paramètre est directement un '(In|Out)putStream', et non plus un object contenant un membre '(in|out)' de type '(In|Out)putStream'
+		- 'JNIParam' est stocké par valeur, et non plus par adresse (il ne contient de toute manière que des adresses).
+
+18/08/2012 :
+	- CIO :
+		- Ajout 'Target(...)'.
+	- ERR :
+		- 'CPE__CONSOLE' et 'CPE__GUI' ne sont plus pris en compte.
+		- Prise en compte de 'cio::Target()'.
+
+06/08/2012 :
+	- SCL... :
+		- Les 'registry' de configuration et de locale peuvent maintenant être chargés à partir d'un 'iflow'.
+		- Le fichier de locale ne peut dorénvant plus être spécifié dans le fichier de configuration.
+
+12/08/2012 :
+	- CPE :
+		- Ajout détermination du processeur.
+
+10/08/2012 :
+	- Général :
+		- Adaptation.
+
 08/08/2012 :
 	- CPE :
 		- Simplification.

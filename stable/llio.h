@@ -62,24 +62,24 @@ extern class ttr_tutor &LLIOTutor;
 
 #include "cpe.h"
 
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	include "wllio.h"
-#elif defined( CPE__P_LINUX )
+#elif defined( CPE__LINUX )
 #	include "pllio.h"
-#elif defined( CPE__P_CYGWIN )
+#elif defined( CPE__CYGWIN )
 #	include "pllio.h"
-#elif defined( CPE__P_MAC )
+#elif defined( CPE__MAC )
 //#	include "mllio.h"
 #	include "pllio.h"	// Mac suit la norme POSIX.
 #else
-#	error "Not implemented yet."
+#	error "Undefiend platform !"
 #endif
 
 namespace llio {
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 	using namespace wllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
+#elif defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 	using namespace pllio;
 #	define LLIO_UNDEFINED_DESCRIPTOR	PLLIO_UNDEFINED_DESCRIPTOR
 #else

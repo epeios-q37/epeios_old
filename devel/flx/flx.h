@@ -67,7 +67,7 @@ extern class ttr_tutor &FLXTutor;
 # include "bch.h"
 # include "cpe.h"
 
-# ifdef CPE__T_MT
+# ifdef CPE__MT
 #  define FLX__MT
 # endif
 

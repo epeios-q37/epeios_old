@@ -62,7 +62,7 @@ using namespace geckob;
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
 static geckoo::steering_callback__ *LoneSteering_ = NULL;
 
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 # define FUNCTION_SPEC __declspec(dllexport)
 #else
 #define FUNCTION_SPEC
@@ -75,7 +75,7 @@ DEF( GECKOO_RETRIEVE_STEERING_FUNCTION_NAME, geckoo::retrieve_steering );
 DEF( GECKOO_DELETE_STEERING_FUNCTION_NAME, geckoo::delete_steering );
 
 #if 0
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 
 #include <windows.h>
 

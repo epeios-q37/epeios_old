@@ -76,7 +76,7 @@ const char *csdbnc::Host(
 	return Buffer;
 }
 
-#ifdef CPE__T_BEOS
+#ifdef CPE__BEOS
 #	ifdef INADDR_NONE
 #		error "Be OS include file have changed !"
 #	else

@@ -104,7 +104,7 @@ static void Close_( iop::descriptor__ D )
 }
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
-#	ifdef CPE__P_MS
+#	ifdef CPE__MS
 
 static inline iop::descriptor__ Open_(
 	const char *Nom,
@@ -143,12 +143,12 @@ static void Close_( iop::descriptor__ D )
 		ERRd();
 }
 
-#	elif defined( CPE__P_LINUX ) ||  defined( CPE__P_CYGWIN ) ||  defined( CPE__P_MAC )
+#	elif defined( CPE__LINUX ) ||  defined( CPE__CYGWIN ) ||  defined( CPE__MAC )
 static inline iop::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )
 {
-#ifdef CPE__P_CYGWIN
+#ifdef CPE__CYGWIN
 	int Flags = O_BINARY;
 #else
 	int Flags = 0;

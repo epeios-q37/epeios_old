@@ -67,8 +67,15 @@ extern class ttr_tutor &SCLMISCTutor;
 namespace sclmisc {
 
 	void Initialize(
-		const char *TargetName,
-		const char *FilesSuggestedPath );
+		flw::iflow__ &LocaleFlow,
+		flw::iflow__ &RegistryFlow,
+		const char *Target,
+		const char *LocaleDirectory,
+		const char *RegistryDirectory );
+
+	void Initialize(
+		const char *Target,
+		const char *SuggestedDirectory );
 
 	void Terminate( void );
 

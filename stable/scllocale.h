@@ -69,16 +69,12 @@ namespace scllocale {
 
 	const lcl::rack__ &GetRack( void );
 
-	// Tente de charger un fichier de 'locale" sans s'appuyer sur le 'registry'.
-	void LoadTemporaryLocale(
-		const char *Affix,
-		const char *RegistryRootPath,
-		const char *FileSuggestedPath );
+	void Load(
+		flw::iflow__ &Flow,
+		const char *Directory,
+		const char *RootPath );
 
-	void LoadLocale(
-		const char *Affix,
-		const char *RegistryRootPath,
-		const char *FileSuggestedPath );
+	void SetLanguage( const str::string_ &Language );
 
 	const str::string_ &GetTranslation(
 		const char *Message,

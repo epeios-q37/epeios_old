@@ -86,7 +86,7 @@ namespace lcl {
 #elif defined( CPE__MS ) || defined( CPE__MINGW )
 #	define FIL__MS
 #else
-#	error "Undefined compilation enviroment."
+#	error "Undefined platform !."
 #endif
 
 
@@ -281,7 +281,7 @@ namespace fil {
 		remove( FileName );
 	}
 
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	undef CreateFile
 #endif
 

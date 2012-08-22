@@ -57,6 +57,49 @@ public:
 
 using namespace jvabse;
 
+const str::string_ &jvabse::Convert(
+	jstring JString,
+	JNIEnv *Env,
+	str::string_ &String )
+{
+ERRProlog
+	const char *Buffer = NULL;
+ERRBegin
+	if ( ( Buffer = Env->GetStringUTFChars( JString, NULL ) ) == NULL )
+		ERRs();
+
+	String.Append( Buffer );
+ERRErr
+ERREnd
+	if ( Buffer != NULL )
+		Env->ReleaseStringUTFChars( JString, Buffer );
+ERREpilog
+	return String;
+}
+
+const char *jvabse::Convert(
+	jstring JString,
+	JNIEnv *Env,
+	STR_BUFFER___ &Buffer )
+{
+ERRProlog
+	str::string String;
+ERRBegin
+	String.Init();
+
+	Convert( JString, Env, String );
+
+	String.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+
+
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

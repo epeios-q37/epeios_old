@@ -223,7 +223,7 @@ nsIDOMWindowInternal* nsxpcm::GetRoot( nsIDOMWindow *Window )
 static nsIDOMWindow *JSConsoleWindow_ = NULL;
 
 static nsCOMPtr<nsIFormHistory2> FormHistory_;
-#ifdef CPE__T_MT
+#ifdef CPE__MT
 mtx::mutex_handler__ FormHistoryMutex_;
 #endif
 
@@ -2470,11 +2470,11 @@ void nsxpcm::AddFormHistoryEntry(
 	nsxpcm::Transform( RawName, Name );
 	nsxpcm::Transform( RawEntry, Entry );
 
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Lock( FormHistoryMutex_ );
 #	endif
 	FormHistory_->AddEntry( Name, Entry );
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Unlock( FormHistoryMutex_ );
 #	endif
 #else
@@ -2492,11 +2492,11 @@ void nsxpcm::RemoveFormHistoryEntry(
 	nsxpcm::Transform( RawName, Name );
 	nsxpcm::Transform( RawEntry, Entry );
 
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Lock( FormHistoryMutex_ );
 #	endif
 	FormHistory_->RemoveEntry( Name, Entry );
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Unlock( FormHistoryMutex_ );
 #	endif
 #else
@@ -2511,11 +2511,11 @@ void nsxpcm::RemoveEntriesForName( const str::string_ &RawName )
 
 	nsxpcm::Transform( RawName, Name );
 
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Lock( FormHistoryMutex_ );
 #	endif
 	FormHistory_->RemoveEntriesForName( Name );
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 	mtx::Unlock( FormHistoryMutex_ );
 #	endif
 #else
@@ -2709,7 +2709,7 @@ public:
 		to be realized at the launching of the application  */
 #ifdef ENABLE_FORMHISTORY
 		nsxpcm::GetService( "@mozilla.org/satchel/form-history;1", FormHistory_ );
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 		FormHistoryMutex_ = mtx::Create( mtx::mOwned );
 #	endif
 #endif
@@ -2719,7 +2719,7 @@ public:
 	~nsxpcmpersonnalization( void )
 	{
 #ifdef ENABLE_FORMHISTORY
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 		mtx::Delete( FormHistoryMutex_ );
 #	endif
 #endif

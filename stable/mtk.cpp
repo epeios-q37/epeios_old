@@ -76,7 +76,7 @@ namespace {
 	};
 };
 
-#	ifdef CPE__T_BEOS
+#	ifdef CPE__BEOS
 
 #	include <be/kernel/scheduler.h>
 
@@ -357,7 +357,7 @@ void mtk::LaunchAndKeep(
 }
 
 
-#ifdef CPE__C_VC6
+#ifdef CPE__VC6
 typedef unsigned long	intptr_t;
 #endif
 

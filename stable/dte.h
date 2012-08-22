@@ -295,7 +295,7 @@ namespace dte {
 		const char *ASCII(
 			format__ Format,
 			date_buffer__ &Buffer ) const;
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		const char *ASCII( format__ Format ) const
 		{
 			static date_buffer__ Buffer;

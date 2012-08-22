@@ -62,14 +62,7 @@ namespace err {
 	err_ ERR;
 }
 
-#ifdef CPE__T_CONSOLE
-#	include "cio.h"
-#endif
-
-#ifdef CPE__GUI
-#	include "wx/defs.h"
-#	include "wx/msgdlg.h"
-#endif
+#include "cio.h"
 
 #ifdef ERR__THREAD_SAFE
 #	include "mtx.h"
@@ -246,9 +239,8 @@ void err::Final( void )
 
 		ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
 
-#ifdef CPE__T_CONSOLE
 ERRProlog
-# ifdef CPE__T_MT
+# ifdef CPE__MT
 	cio::cout___ COut;
 	cio::cerr___ CErr;
 # else
@@ -257,21 +249,24 @@ ERRProlog
 # endif
 ERRBegin
 	if ( cio::IsInitialized() ) {
-# ifdef CPE__T_MT
+# ifdef CPE__MT
 		COut.Init();
 		CErr.Init();
 # endif
-		COut << txf::commit;
-		CErr << txf::nl << txf::tab << "{ " << Message << " } " << txf::nl << txf::commit /*<< '\a'*/;
+		if ( cio::Target() == cio::tConsole ) {
+			COut << txf::commit;
+			CErr << txf::nl << txf::tab;
+		}
+		CErr << "{ " << Message << " }";
+
+		if ( cio::Target() == cio::tConsole )
+			CErr << txf::nl;
+
+		CErr << txf::commit;
 	}
 ERRErr
 ERREnd
 ERREpilog
-#endif
-
-#ifdef CPE__GUI
-		wxMessageBox( Message, "Epeios error manager message", wxICON_ERROR );
-#endif
 	} else
 		ERRRst();
 }

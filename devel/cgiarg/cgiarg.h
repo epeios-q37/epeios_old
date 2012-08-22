@@ -260,7 +260,7 @@ namespace cgiarg {
 
 			return Name;
 		}
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		//f Return the name at position 'Position'. Only valid until another call of this method.
 		const name_ &GetName( row__ Position ) const;
 #endif
@@ -273,7 +273,7 @@ namespace cgiarg {
 
 			return Value;
 		}
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		//f Return the value at position 'Position'. Only valid until another call of this method.
 		const name_ &GetValue( row__ Position ) const;
 #endif
@@ -296,7 +296,7 @@ namespace cgiarg {
 
 			return Suffix;
 		}
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		//f Return the suffix at position 'Position'. Only valid until another call of this method.
 		const suffix_ &GetSuffix( row__ Position ) const;
 #endif

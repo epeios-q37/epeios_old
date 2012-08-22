@@ -233,7 +233,7 @@ namespace cgidat {
 
 			return Content;
 		}
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 		//f Return the content at row 'Row'. The returned value is only valid until next call of this fuction.
 		const content_ &GetContent( content_row__ Row ) const;
 #endif

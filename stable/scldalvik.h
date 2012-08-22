@@ -1,7 +1,7 @@
 /*
-	Header for the 'sclmisc' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	Header for the 'scldalvik' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 20122004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef SCLMISC__INC
-#define SCLMISC__INC
+#ifndef SCLDALVIK__INC
+#define SCLDALVIK__INC
 
-#define SCLMISC_NAME		"SCLMISC"
+#define SCLDALVIK_NAME		"SCLDALVIK"
 
-#define	SCLMISC_VERSION	"$Revision$"
+#define	SCLDALVIK_VERSION	"$Revision$"
 
-#define SCLMISC_OWNER		"Claude SIMON"
+#define SCLDALVIK_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &SCLMISCTutor;
+extern class ttr_tutor &SCLDALVIKTutor;
 
-#if defined( XXX_DBG ) && !defined( SCLMISC_NODBG )
-#define SCLMISC_DBG
+#if defined( XXX_DBG ) && !defined( SCLDALVIK_NODBG )
+#define SCLDALVIK_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,37 +55,24 @@ extern class ttr_tutor &SCLMISCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D SoCLe MISCellaneous 
+//D SoCLe DALVIK 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "fil.h"
+# include "err.h"
+# include "flw.h"
 
-namespace sclmisc {
+# include "jni.h"
+# include "dalvik.h"
 
-	void Initialize(
-		flw::iflow__ &LocaleFlow,
-		flw::iflow__ &RegistryFlow,
-		const char *Target,
-		const char *LocaleDirectory,
-		const char *RegistryDirectory );
+namespace scldalvik {
 
-	void Initialize(
-		const char *Target,
-		const char *SuggestedDirectory );
+	// A définir par l'utilisateur.
+	dalvik::steering_callback__ *CreateSteering( jstring PackageName );
 
-	void Terminate( void );
-
-	using fil::GetBackupFileName;
-
-	void CreateBackupFile(
-		const char *FileName,
-		fil::backup_mode__ Mode = fil::bm_Default );
-
-	void RecoverBackupFile( const char *FileName );
+	// A définir par l'utilisateur.
+	void DeleteSteering( dalvik::steering_callback__ *Steering );
 }
 
 /*$END$*/

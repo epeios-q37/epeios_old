@@ -2464,14 +2464,14 @@ namespace nsxpcm {
 		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, LocaleRack, FileName );
 	}
 
-# ifdef CPE__T_MS
+# ifdef CPE__MS
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dll"
-# elif defined( CPE__T_LINUX )
+# elif defined( CPE__LINUX )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "so"
-# elif defined( CPE__T_MAC )
+# elif defined( CPE__MAC )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dylib"
 # else
-#  error
+#  error "Unknown platform !"
 # endif
 
 	/* Retourne 'true' si un fichier a été sélectionné ('FileName' contient alors le fichier),

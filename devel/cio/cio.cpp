@@ -57,30 +57,28 @@ public:
 
 #include "flx.h"
 
-static bso::bool__ Initialized_ = false;
+using namespace cio;
+
+static target__ Target_ = t_Undefined;
 
 static flx::void_oflow_driver___ _VOutDriver;
 static flx::void_oflow_driver___ _VErrDriver;
 static flx::void_iflow_driver___ _VInDriver;
 
-
 static iof::io_oflow_driver___ _COutDriver;
 static iof::io_oflow_driver___ _CErrDriver;
 static iof::io_iflow_driver___ _CInDriver;
 
-
-#if defined( CPE__P_MS )
+#if defined( CPE__MS )
 #	include <io.h>
 #	include <fcntl.h>
 #endif
 
-using namespace cio;
-
 #ifdef IOP__USE_LOWLEVEL_IO
-# if defined( CPE__P_MS ) || defined( CPE__P_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__P_MAC )
+# if defined( CPE__MS ) || defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 iop::descriptor__ cio::CInDescriptor = 0, cio::COutDescriptor = 1, cio::CErrDescriptor = 2;
 # else
-#		error "Unknow compilation enviroment !"
+#		error "Unknow platform !"
 # endif
 #elif defined( IOP__USE_STANDARD_IO )
 iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
@@ -100,7 +98,7 @@ void cio::Initialize( target__ Target )
 {
 	switch ( Target ) {
 	case tConsole:
-#if defined( CPE__P_MS )
+#if defined( CPE__MS )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
 
@@ -144,12 +142,12 @@ void cio::Initialize( target__ Target )
 	cio::CErr.Init();
 	cio::CIn.Init();
 
-	::Initialized_ = true;
+	::Target_ = Target;
 }
 
-bso::bool__ cio::IsInitialized( void )
+target__ cio::Target( void )
 {
-	return ::Initialized_;
+	return ::Target_;
 }
 
 /* Although in theory this class is inaccessible to the different modules,

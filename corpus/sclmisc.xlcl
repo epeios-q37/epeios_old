@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!-- $Id$ -->
+<xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
+	<Translations message="SCLMISC_UnableToOpenRegistryFile">
+		<Translation language="fr">Impossible d'ouvrir le fichier de configuration.</Translation>
+		<Translation language="en">Unable to open configuration file.</Translation>
+	</Translations>
+	<!--
+	<Translations message="SCLMISC_">
+		<Translation language="fr"></Translation>
+		<Translation language="en"></Translation>
+	</Translations>
+	-->
+</xpp:bloc>

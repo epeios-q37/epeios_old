@@ -57,9 +57,9 @@ public:
 
 using namespace dlbrry;
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 #	define TARGET_POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS )
 #	define TARGET_MS
 #else
 #	error "Unknown target !"

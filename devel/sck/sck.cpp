@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#ifdef CPE__T_LINUX
+#ifdef CPE__LINUX
 #	define SCK__IGNORE_SIGPIPE
 #endif
 
@@ -66,7 +66,7 @@ public:
 
 using namespace sck;
 
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 bool sck::Ready_ = false;
 #else
 bool sck::Ready_ = true;

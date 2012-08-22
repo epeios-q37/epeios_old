@@ -67,7 +67,7 @@ extern class ttr_tutor &CIOTutor;
 # include "flx.h"
 
 # ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Utilise dans le cadre d'un service Windows.
-# ifndef CPE__T_LIBRARY
+# ifndef CPE__LIBRARY
 #  define CIO__AUTOMATIC_INITIALIZATION 	// Si modifié, modifier 'WINTOL' en conséquence !
 #  endif
 # endif
@@ -213,7 +213,12 @@ namespace cio {
 	/* Peform the initialization needed by this library if not
 	automatically done (defining of 'CIO_NO_AUTOMATIC_INITIALIZATION' ). */
 
-	bso::bool__ IsInitialized( void );
+	target__ Target( void );
+
+	inline bso::bool__ IsInitialized( void )
+	{
+		return Target() != t_Undefined;
+	}
 }
 
 /*$END$*/

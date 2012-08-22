@@ -57,7 +57,7 @@ public:
 
 using namespace cgidat;
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 const content_ &data_::GetContent( content_row__ Row ) const
 {
 	static content Content;

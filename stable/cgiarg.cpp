@@ -160,7 +160,7 @@ void arguments_::Parse(
 	}
 }
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 const name_ &arguments_::GetName( row__ Position ) const
 {
 	static name Name;

@@ -84,6 +84,11 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__LIBRARY	// Cible bibliothèque (DLL, .so, ...)
 # undef CPE__JAVA		// Cible composant java en code natif.
 
+# undef CPE__INTEL		// Processeur Intel et compatible.
+# undef CPE__ARM		// Processeur ARM.
+
+# undef CPE__64BITS		// Processeur 64 bits.
+
 #undef CPE__64_BITS_TYPES_ALLOWED	// Les types 64 bits sont autorisés.
 
 #ifndef CPE_64_BITS_FORBIDDEN
@@ -177,26 +182,44 @@ extern class ttr_tutor &CPETutor;
 #	define CPE__WARNING_SUPPRESSION_ENABLED
 #endif
 
+# ifdef CPE__VC
+#  ifdef CPE__WARNING_SUPPRESSION_ENABLED
+#   pragma warning( disable: 4786 )	// 'The identifier string exceeded the maximum allowable length and was truncated.'.
+#  endif
+#  if _MSC_VER == 1200
+#   define CPE__VC6
+#  elif _MSC_VER == 1400
+#   define CPE__VC8
+#  elif _MSC_VER == 1500
+#   define CPE__VC9
+#  endif
+#  ifdef _M_IX86
+#   define CPE__INTEL
+#  endif
+# endif
 
+# ifdef CPE__GCC
+#  if __GNUC__ == 3
+#   define CPE__GCC3
+#  endif
+#  ifdef __I386__
+#   define CPE__INTEL
+#  endif
+#  ifdef __ARM_EABI__
+#   define CPE__ARM
+#  endif
+# endif
 
-#ifdef CPE__VC
-#	ifdef CPE__WARNING_SUPPRESSION_ENABLED
-#		pragma warning( disable: 4786 )	// 'The identifier string exceeded the maximum allowable length and was truncated.'.
-#	endif
-#	if _MSC_VER == 1200
-#		define CPE__VC6
-#	elif _MSC_VER == 1400
-#		define CPE__VC8
-#	elif _MSC_VER == 1500
-#		define CPE__VC9
-#	endif
+# ifdef CPE__JAVA
+#  ifdef CPE__CYGWIN
+#   error "JNI doesn't work with 'Cygwin' genuine compiler. Use 'MinGW' compiler instead."
+# endif
 #endif
 
-#ifdef CPE__C_GCC
-#	if __GNUC__ == 3
-#		define CPE__GCC3
-#	endif
-#endif
+# if !defined( CPE__INTEL ) && !defined( CPE__ARM )
+#  error "Unable to establish the processor !"
+# endif
+
 
 /*$END$*/
 				  /********************************************/

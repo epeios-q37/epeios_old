@@ -66,7 +66,7 @@ extern class ttr_tutor &CSDBNSTutor;
 
 # include "csdsuf.h"
 
-# ifdef CPE__T_MS
+# ifdef CPE__MS
 #  ifndef CSD_NO_SERVICE_HANDLING
 #   define CSD__HANDLE_SERVICE	// Handles the Windows service system.
 #  endif
@@ -204,7 +204,7 @@ namespace csdbns {
 			sck::duration__ TimeOut = SCK_INFINITE );
 	};
 
-#ifdef CPE__T_MT
+#ifdef CPE__MT
 
 	struct _flow_data__ {
 		sck::socket_ioflow___ Flow;

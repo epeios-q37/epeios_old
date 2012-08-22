@@ -63,6 +63,8 @@ extern class ttr_tutor &JVABSETutor;
 # include "err.h"
 # include "flw.h"
 # include "cpe.h"
+# include "tol.h"
+# include "str.h"
 
 # ifndef CPE__JAVA
 #  error "Use of JNI, but without defining the target as a Java component (define 'CPE_JAVA')."
@@ -99,15 +101,25 @@ namespace jvabse {
 			ERRRst();
 	}
 
+	const str::string_ &Convert(
+		jstring JString,
+		JNIEnv *Env,
+		str::string_ &String );
+
+	const char *Convert(
+		jstring JString,
+		JNIEnv *Env,
+		STR_BUFFER___ &Buffer );
 
 	struct jni_param__ {
 		JNIEnv *Env;
 		jobject Object;
-		jni_param__( void )
+		void reset( bso::bool__ = true )
 		{
 			Env = NULL;
 			Object = NULL;
 		}
+		E_CDTOR( jni_param__ )
 	};
 
 	inline jclass GetClass(

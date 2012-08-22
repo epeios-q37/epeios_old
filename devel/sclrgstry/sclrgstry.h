@@ -79,16 +79,15 @@ namespace sclrgstry {
 
 	extern rgstry::entry___ Parameters;
 
-	extern rgstry::entry___ LocaleFileName;
 	extern rgstry::entry___ Language;
 
 	using rgstry::value;
 	using rgstry::value_;
 
-	void LoadRegistry(
-		const char *Affix,
-		const char *RegistryRootPath,
-		const char *FileSuggestedPath );
+	bso::bool__ Load(
+		flw::iflow__ &Flow,
+		const char *Directory,
+		const char *RootPath );
 
 	bso::bool__ IsRegistryReady( void );
 

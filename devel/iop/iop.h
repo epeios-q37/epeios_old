@@ -72,16 +72,16 @@ extern class ttr_tutor &IOPTutor;
 
 #ifdef IOP_USE_STANDARD_IO
 #	define IOP__USE_STANDARD_IO
-#elif defined( CPE__P_MS )
+#elif defined( CPE__MS )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__P_LINUX )
+#elif defined( CPE__LINUX )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__P_MAC )
+#elif defined( CPE__MAC )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__P_CYGWIN )
+#elif defined( CPE__CYGWIN )
 #	define IOP__USE_LOWLEVEL_IO
 #else
-#	define	IOP__USE_STANDARD_IO
+#	error "Undefined platform ! Define one or use 'IOP_USE_STANDARD_IO'"
 #endif
 
 #ifdef IOP__USE_STANDARD_IO

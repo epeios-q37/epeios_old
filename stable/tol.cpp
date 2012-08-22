@@ -100,7 +100,7 @@ const char *tol::DateAndTime( buffer__ &Buffer )
    return Buffer;
 }
 
-#ifdef CPE__C_VC
+#ifdef CPE__VC
 #	undef CreateFile
 #endif
 

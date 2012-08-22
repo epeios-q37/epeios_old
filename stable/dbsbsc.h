@@ -161,7 +161,7 @@ namespace dbsbsc {
 			return *this;
 		}
 		void Init(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			bso::ulong__ AmountMax = DBSCTT_CACHE_DEFAULT_AMOUNT_MAX )
 		{
 			reset();
@@ -175,10 +175,10 @@ namespace dbsbsc {
 			Container.Allocate( AmountMax );
 
 			Links.Allocate( AmountMax );
-			Links.Set( NONE );
+			Links.Set();
 
 			List.Allocate( Size );
-			List.Set( NONE );
+			List.Set();
 
 			S_.AmountMax = AmountMax;
 		}

@@ -78,7 +78,7 @@ namespace wintol {
 
 	inline void PatchSignalHandlingForWindowsService( void )
 	{
-#	ifndef CPE__P_CYGWIN
+#	ifndef CPE__CYGWIN
 		signal( SIGBREAK, SIG_DFL );
 #	endif
 	}

@@ -251,6 +251,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 
 &sclbacknd	&epeios	&2011	&SoCLe BACKEND
 &sclgecko	&epeios	&2001	&SoCLe GECKO component
+&scldalvik	&epeios	&2012	&SoCLe DALVIK
 &scllocale	&epeios	&2011	&SoCLe LOCALE
 &sclrgstry	&epeios	&2011	&SoCLe ReGiSTRY
 &sclmisc	&epeios	&2011	&SoCLe MISCellaneous
@@ -685,3 +686,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&JaVA BaSE.
 &jvastf	&epeios	&2012\
 	&JaVA STream Flow.
+	
+#Dalvik (Android)-related libraries.
+
+&dalvik	&epeios	&2012\
+	&DALVIK
+	
+&dvkbse	&epeios	&2012\
+	&DalViK BaSE.
+	
+&dvkfev	&epeios	&2012\
+	&DalViK Frontend EVent

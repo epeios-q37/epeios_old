@@ -634,12 +634,12 @@ namespace tol {
 
 	inline bso::char__ GetLocaleDecimalSeparator( void )
 	{
-#ifdef __ARMEL__
-#pragma warning "à modifier"
-		return '.';
-#else
 		lconv *LConv = localeconv();
 
+# ifdef CPE__ARM	// Pas de membre 'decimal_point' défini dans ce cas...
+		ERRl();
+		return 0;	// Pour éviter un 'warning'.
+# else
 		if ( LConv->decimal_point == NULL )
 			ERRs();
 
@@ -651,7 +651,6 @@ namespace tol {
 
 		return *LConv->decimal_point;
 #endif
-
 	}
 
 	template <typename i> inline void Swap(

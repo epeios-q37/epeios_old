@@ -55,7 +55,6 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "sclrgstry.h"
 #include "lcl.h"
 #include "fnm.h"
 #include "dir.h"
@@ -71,58 +70,9 @@ static str::string Translation_;
 
 static lcl::rack__ LocaleRack_( Locale_, Language_() );
 
-const lcl::rack__ *sclrgstry::LocaleRack = &LocaleRack_;
-
 const lcl::rack__ &scllocale::GetRack( void )
 {
 	return LocaleRack_;
-}
-
-static inline const str::string_ &GetLanguage_( str::string_ &Language )
-{
-
-	bso::bool__ Missing = false;
-
-	if ( sclrgstry::IsRegistryReady() )
-		Missing = sclrgstry::Language.GetValue( sclrgstry::GetRegistry(), Language  );
-	else
-		Missing = true;
-
-	if ( Missing )
-		Language = DEFAULT_LANGUAGE;
-
-	return Language;
-}
-
-static bso::bool__ GuessLocaleFileName_(
-	const char *Affix,
-	const char *SuggestedPath,
-	str::string_ &LocaleFileName )
-{
-	bso::bool__ Success = false;
-ERRProlog
-	STR_BUFFER___ STRBuffer;
-	STR_BUFFER___ PathBuffer;
-	FNM_BUFFER___ FNMBuffer;
-ERRBegin
-	LocaleFileName.Init( Affix );
-	LocaleFileName.Append( LCL_DEFAULT_FILENAME_SUFFIX );
-
-	if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) ) {
-		LocaleFileName.Init( fnm::BuildFileName( SuggestedPath, Affix, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
-
-		if ( !fil::FileExists( LocaleFileName.Convert( STRBuffer ) ) ) {
-				LocaleFileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), Affix, LCL_DEFAULT_FILENAME_SUFFIX, FNMBuffer ) );
-
-				Success = fil::FileExists( LocaleFileName.Convert( STRBuffer ) );
-		} else
-			Success = true;
-	} else
-		Success = true;
-ERRErr
-ERREnd
-ERREpilog
-	return Success;
 }
 
 static const str::string_ &GetTranslation_( const char *Message )	// NOTA : seulement à usage limité à cette bibiothèque. Ne pas confondre avec 'scllocale::GetTranslation(...)'.
@@ -150,76 +100,41 @@ ERREnd
 ERREpilog
 }
 
-static void LoadLocale_(
-	const str::string_ &SuggestedLocaleFileName,
-	const char *Affix,
-	const char *RegistryRootPath,
-	const char *FileSuggestedPath,
-	bso::bool__ IgnoreUnableToOpenFileError )
+void scllocale::Load(
+	flw::iflow__ &Flow,
+	const char *Directory,
+	const char *RootPath )
 {
 ERRProlog
 	STR_BUFFER___ STRBuffer;
 	rgstry::context___ Context;
 	str::string Language;
-	str::string LocaleFileName;
+	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	LocaleFileName.Init( SuggestedLocaleFileName );
+	XFlow.Init( Flow );
+
 	Context.Init();
 
-	if ( ( LocaleFileName.Amount() != 0 ) || ( GuessLocaleFileName_( Affix, FileSuggestedPath, LocaleFileName ) ) )
-		switch ( Locale_.Init( LocaleFileName.Convert( STRBuffer ), RegistryRootPath, Context ) ) {
-		case rgstry::sOK:
-			break;
-		case rgstry::sUnableToOpenFile:
-			if ( IgnoreUnableToOpenFileError )
-				break;
-		default:
-			if ( !cio::IsInitialized() )
-				cio::Initialize( cio::t_Default );
+	switch ( Locale_.Init( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context ) ) {
+	case rgstry::sOK:
+		break;
+	default:
+		if ( !cio::IsInitialized() )
+			cio::Initialize( cio::t_Default );
 
-			ReportLocaleFileParsingError_( Context );
-			ERRExit( EXIT_FAILURE );
-		}
+		ReportLocaleFileParsingError_( Context );
+		ERRExit( EXIT_FAILURE );
+	}
 
-	Language.Init();
+	SetLanguage( str::string( DEFAULT_LANGUAGE ) );
+ERRErr
+ERREnd
+ERREpilog
+}
 
-	GetLanguage_( Language );
-
-	if ( Language.Amount() == 0 )
-		Language.Init( DEFAULT_LANGUAGE );
-
+void scllocale::SetLanguage( const str::string_ &Language )
+{
 	LocaleRack_.Init( Locale_, Language.Convert( Language_ ) );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
-// Try to find a locale file name, to avoid cryptic message until we have load the correct one.
-void scllocale::LoadTemporaryLocale(
-	const char *Affix,
-	const char *RegistryRootPath,
-	const char *FileSuggestedPath )
-{
-	LoadLocale_( str::string(), Affix, RegistryRootPath, FileSuggestedPath, true );
-}
-
-void scllocale::LoadLocale(
-	const char *Affix,
-	const char *RegistryRootPath,
-	const char *FileSuggestedPath )
-{
-ERRProlog
-	str::string LocaleFileName;
-ERRBegin
-	LocaleFileName.Init();
-
-	sclrgstry::LocaleFileName.GetValue( sclrgstry::GetRegistry(), LocaleFileName );
-
-	LoadLocale_( LocaleFileName, Affix, RegistryRootPath, FileSuggestedPath ,false );
-ERRErr
-ERREnd
-ERREpilog
 }
 
 const str::string_ &scllocale::GetTranslation(

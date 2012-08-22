@@ -126,7 +126,7 @@ ERRBegin
 	Print_( Env, __LOC__ );
 
 	Data.Param.Env = Env;
-	Data.Param.Object = Object;
+	Data.Param.Object = GetObjectField( Env, Object, "in", "Ljava/io/InputStream;" );
 	Print_( Env, __LOC__ );
 
 	if ( !Data.XPPFlow->EndOfFlow() ) {
@@ -286,7 +286,7 @@ ERRJBegin
 	Data->Param.Env = Env;
 	Print_( Env, __LOC__ );
 
-	Data->Param.Object = Object;
+	Data->Param.Object = GetObjectField( Env, Object, "in", "Ljava/io/InputStream;" );
 
 	Print_( Env, __LOC__ );
 

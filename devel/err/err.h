@@ -75,7 +75,7 @@ extern class ttr_tutor &ERRTutor;
 
 # include "cpe.h"
 
-# ifdef CPE__T_MT
+# ifdef CPE__MT
 #  define ERR__THREAD_SAFE
 # endif
 

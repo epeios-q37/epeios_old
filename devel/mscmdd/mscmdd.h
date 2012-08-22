@@ -68,9 +68,9 @@ extern class ttr_tutor &MSCMDDTutor;
 #include "mtx.h"
 #include "lcl.h"
 
-#	ifdef CPE__T_MS
+#	ifdef CPE__MS
 #		define MSCMDD__WINDOWS
-#	elif defined( CPE__T_LINUX )
+#	elif defined( CPE__LINUX )
 #		define MSCMDD__ALSA
 #	endif
 
@@ -95,7 +95,7 @@ extern class ttr_tutor &MSCMDDTutor;
 
 
 namespace mscmdd {
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 	typedef UINT_PTR	handler__;
 	typedef char name__[MAXPNAMELEN];
 #endif

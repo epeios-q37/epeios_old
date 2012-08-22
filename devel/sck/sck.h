@@ -66,9 +66,9 @@ extern class ttr_tutor &SCKTutor;
 #include "flw.h"
 #include "tol.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__P_CYGWIN ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 #	define SCK__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS )
 #	define SCK__MS
 #else
 #	error "Uknown target !"
@@ -176,7 +176,7 @@ namespace sck {
 	//f Create a socket. Only used in some particular multitasking program.
 	inline socket__ CreateSocket( err::handling__ ErrorHandling = err::h_Default )
 	{
-	#ifdef CPE__T_BEOS
+	#ifdef CPE__BEOS
 		socket__ Desc = socket( AF_INET, SOCK_STREAM, 0 );
 	#else
 		socket__ Desc = socket( PF_INET, SOCK_STREAM, 0 );
@@ -223,7 +223,7 @@ namespace sck {
 	}
 
 
-#ifndef CPE__T_BEOS
+#ifndef CPE__BEOS
 	/*f The socket 'Socket' becomes blocking or not, depend on the value of 'Value'.
 	Not currently available under Be OS. */
 	inline void Blocking(

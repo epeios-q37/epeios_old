@@ -64,9 +64,9 @@ extern class ttr_tutor &CSDBNCTutor;
 #include "flw.h"
 #include "sck.h"
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_BEOS ) || defined( CPE__T_CYGWIN )|| defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN )|| defined( CPE__MAC )
 #	define CSDBNC__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS )
 #	define CSDBNC__MS
 #else
 #	error "Unknown target !"
@@ -93,7 +93,7 @@ namespace csdbnc {
 		const char *HostService,
 		buffer__ Buffer );
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	inline const char *Host( const char *HostService )
 	{
 		static buffer__ Buffer;

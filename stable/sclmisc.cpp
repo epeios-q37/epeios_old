@@ -57,33 +57,204 @@ public:
 
 #include "str.h"
 #include "cio.h"
+#include "fnm.h"
+#include "dir.h"
+#include "lcl.h"
 
 #include "scllocale.h"
 #include "sclrgstry.h"
 
 using namespace sclmisc;
 
+#define DEFAULT_LANGUAGE	"en"
+
+#define REGISTRY_DEFAULT_FILENAME_SUFFIX ".xcfg"
+
+const lcl::rack__ *sclrgstry::LocaleRack = &scllocale::GetRack();
+
+static inline const str::string_ &GetLanguage_( str::string_ &Language )
+{
+	bso::bool__ Missing = false;
+
+	if ( !sclrgstry::IsRegistryReady() )
+		ERRc();
+
+	if ( !sclrgstry::Language.GetValue( sclrgstry::GetRegistry(), Language  ) )
+		Language = DEFAULT_LANGUAGE;
+
+	return Language;
+}
+
+
+static void Initialize_(
+	flw::iflow__ &LocaleFlow,
+	flw::iflow__ &RegistryFlow,
+	const char *LocaleRootPath,
+	const char *RegistryRootPath,
+	const char *LocaleDirectory,
+	const char *RegistryDirectory )
+{
+ERRProlog
+	str::string Language;
+ERRBegin
+	scllocale::Load( LocaleFlow, LocaleDirectory, LocaleRootPath );
+
+	sclrgstry::Load( RegistryFlow, RegistryDirectory, RegistryRootPath );
+
+	Language.Init();
+	GetLanguage_( Language );
+
+	scllocale::SetLanguage( Language );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void BuildRootPath_(
+	const char *Subject,
+	const char *Target,
+	str::string_ &Path )
+{
+	Path.Append( Subject );
+	Path.Append( "s/" );
+	Path.Append( Subject );
+	Path.Append( "[target=\"" );
+	Path.Append( Target );
+	Path.Append( "\"]" );
+}
+
 void sclmisc::Initialize(
-	const char *TargetName,
-	const char *FilesSuggestedPath )
+	flw::iflow__ &LocaleFlow,
+	flw::iflow__ &RegistryFlow,
+	const char *Target,
+	const char *LocaleDirectory,
+	const char *RegistryDirectory )
 {
 ERRProlog
 	str::string LocaleRootPath, RegistryRootPath;
-	STR_BUFFER___ Buffer;
+	STR_BUFFER___ LocaleBuffer, RegistryBuffer;
 ERRBegin
-	LocaleRootPath.Init( "Locales/Locale[target=\"" );
-	LocaleRootPath.Append( TargetName );
-	LocaleRootPath.Append( "\"]" );
+	LocaleRootPath.Init();
+	BuildRootPath_( "Locale", Target, LocaleRootPath );
 
-	RegistryRootPath.Init( "Configurations/Configuration[target=\"" );
-	RegistryRootPath.Append( TargetName );
-	RegistryRootPath.Append( "\"]" );
+	RegistryRootPath.Init();
+	BuildRootPath_( "Configuration", Target, RegistryRootPath );
 
-	scllocale::LoadTemporaryLocale( TargetName, LocaleRootPath.Convert( Buffer ), FilesSuggestedPath );
+	Initialize_( LocaleFlow, RegistryFlow, LocaleRootPath.Convert( LocaleBuffer ), RegistryRootPath.Convert( RegistryBuffer ), LocaleDirectory, RegistryDirectory );
+ERRErr
+ERREnd
+ERREpilog
+}
 
-	sclrgstry::LoadRegistry( TargetName, RegistryRootPath.Convert( Buffer ), FilesSuggestedPath );
+static bso::bool__ GuessFileName_(
+	const char *Affix,
+	const char *Suffix,
+	const char *SuggestedDirectory,
+	str::string_ &FileName )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	STR_BUFFER___ STRBuffer;
+	STR_BUFFER___ PathBuffer;
+	FNM_BUFFER___ FNMBuffer;
+ERRBegin
+	FileName.Init( Affix );
+	FileName.Append( Suffix );
 
-	scllocale::LoadLocale( TargetName, LocaleRootPath.Convert( Buffer ), FilesSuggestedPath );
+	if ( !fil::FileExists( FileName.Convert( STRBuffer ) ) ) {
+		FileName.Init( fnm::BuildFileName( SuggestedDirectory, Affix, Suffix, FNMBuffer ) );
+
+		if ( !fil::FileExists( FileName.Convert( STRBuffer ) ) ) {
+				FileName.Init( fnm::BuildFileName( dir::GetSelfPath( PathBuffer ), Affix, Suffix, FNMBuffer ) );
+
+				Success = fil::FileExists( FileName.Convert( STRBuffer ) );
+		} else
+			Success = true;
+	} else
+		Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+bso::bool__ InitializeFlow_(
+	const char *Target,
+	const char *Suffix,
+	const char *SuggestedDirectory,
+	flf::file_iflow___ &Flow,
+	str::string_ &Directory )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	str::string FileName;
+	STR_BUFFER___ FileNameBuffer, LocationBuffer;
+ERRBegin
+	FileName.Init();
+	Success = GuessFileName_( Target, Suffix, SuggestedDirectory, FileName );
+
+	if ( Success )
+		if ( Flow.Init( FileName.Convert( FileNameBuffer ), err::hUserDefined ) != fil::sSuccess )
+			Success = false;
+
+	Directory.Append( fnm::GetLocation( FileName.Convert( FileNameBuffer ), LocationBuffer ) );
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+static flw::iflow__ &InitializeLocaleFlow_(
+	const char *Target,
+	const char *SuggestedDirectory,
+	flf::file_iflow___ &Flow,
+	str::string_ &Directory )
+{
+	if ( !InitializeFlow_( Target, LCL_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
+		cio::CErr << "Unable to open locale file !" << txf::nl;
+		ERRExit( EXIT_FAILURE );
+	}
+
+	return Flow;
+}
+
+static flw::iflow__ &InitializeRegistryFlow_(
+	const char *Target,
+	const char *SuggestedDirectory,
+	flf::file_iflow___ &Flow,
+	str::string_ &Directory )
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	if ( !InitializeFlow_( Target, REGISTRY_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
+		Translation.Init();
+		cio::CErr << scllocale::GetTranslation( SCLMISC_NAME "UnableToOpenRegistryFile", Translation );
+		ERRExit( EXIT_FAILURE );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+	return Flow;
+}
+
+void sclmisc::Initialize(
+	const char *Target,
+	const char *SuggestedDirectory )
+{
+ERRProlog
+	flf::file_iflow___ LocaleFlow, RegistryFlow;
+	str::string LocaleDirectory, RegistryDirectory;
+	STR_BUFFER___ LocaleBuffer, RegistryBuffer;
+ERRBegin
+	LocaleDirectory.Init();
+	InitializeLocaleFlow_( Target, SuggestedDirectory, LocaleFlow, LocaleDirectory );
+
+	RegistryDirectory.Init();
+	InitializeRegistryFlow_( Target, SuggestedDirectory, RegistryFlow, RegistryDirectory );
+
+	Initialize( LocaleFlow, RegistryFlow, Target, LocaleDirectory.Convert( LocaleBuffer ), RegistryDirectory.Convert( RegistryBuffer ) ); 
 ERRErr
 ERREnd
 ERREpilog

@@ -57,7 +57,7 @@ public:
 
 using namespace csdles;
 
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 # define FUNCTION_SPEC __declspec(dllexport)
 #else
 #define FUNCTION_SPEC
@@ -69,7 +69,7 @@ DEF( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME, csdleo::retrieve_steering );
 DEF( CSDLEO_RELEASE_STEERING_FUNCTION_NAME, csdleo::release_steering );
 
 #if 0
-#ifdef CPE__T_MS
+#ifdef CPE__MS
 
 #include <windows.h>
 

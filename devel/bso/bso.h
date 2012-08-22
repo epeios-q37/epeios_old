@@ -462,7 +462,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#	ifndef CPE__T_MT
+#	ifndef CPE__MT
 	inline const char *Convert( ullong__ Value )
 	{
 		static integer_buffer__ Buffer;
@@ -484,7 +484,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ulong__ Value )
 	{
@@ -502,7 +502,7 @@ namespace bso {
 		return Convert( (_guint__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ushort__ Value )
 	{
@@ -518,7 +518,7 @@ namespace bso {
 		return Convert( (_guint__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::ubyte__ Value )
 	{
@@ -539,7 +539,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#	ifndef CPE__T_MT
+#	ifndef CPE__MT
 	inline const char *Convert( sllong__ Value )
 	{
 		static integer_buffer__ Buffer;
@@ -562,7 +562,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::slong__ Value )
 	{
@@ -580,7 +580,7 @@ namespace bso {
 		return Convert( (_gsint__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::sshort__ Value )
 	{
@@ -596,7 +596,7 @@ namespace bso {
 		return Convert( (_gsint__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( bso::sbyte__ Value )
 	{
@@ -620,7 +620,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( lfloat__ Value )
 	{
@@ -638,7 +638,7 @@ namespace bso {
 		return Convert( (lfloat__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( float__ Value )
 	{
@@ -654,7 +654,7 @@ namespace bso {
 		return Convert( (lfloat__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
 	inline const char *Convert( sfloat__ Value )
 	{
@@ -669,7 +669,7 @@ namespace bso {
 		return Convert( (ullong__)Value, Buffer );
 	}
 
-#ifndef CPE__T_MT
+#ifndef CPE__MT
 	inline const char *Convert( size__ Value )
 	{
 		return Convert( (ullong__)Value );

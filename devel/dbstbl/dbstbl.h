@@ -69,7 +69,7 @@ extern class ttr_tutor &DBSTBLTutor;
 #ifdef DBSTBL_THREAD_SAFE
 #	define DBSTBL__THREAD_SAFE
 #elif !defined( DBSTBL_NO_THREAD_SAFE )
-#	ifdef CPE__T_MT
+#	ifdef CPE__MT
 #		define DBSTBL__THREAD_SAFE
 #	endif
 #endif

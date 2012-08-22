@@ -70,7 +70,6 @@ static STR_BUFFER___ Translation_;
 
 rgstry::entry___ sclrgstry::Parameters( "Parameters" );
 
-rgstry::entry___ sclrgstry::LocaleFileName( "LocaleFileName", Parameters );
 rgstry::entry___ sclrgstry::Language( "Language", Parameters );
 
 bso::bool__ sclrgstry::IsRegistryReady( void )
@@ -84,16 +83,23 @@ const rgstry::multi_level_registry_ &sclrgstry::GetRegistry( void )
 }
 
 static rgstry::status__ FillRegistry_(
-	const char *FileName,
+	flw::iflow__ &Flow,
+	const char *Directory,
 	const char *RootPath,
 	rgstry::context___ &Context )
 {
 	rgstry::status__ Status = rgstry::s_Undefined;
+ERRProlog
+	xtf::extended_text_iflow__ XFlow;
 	rgstry::row__ Root = Registry_.GetRoot( RootLevel_) ;
+ERRBegin
+	XFlow.Init( Flow );
 
-	if ( ( Status = rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry_.GetRegistry( RootLevel_), Root, Context ) ) == rgstry::sOK )
+	if ( ( Status = rgstry::FillRegistry( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath, Registry_.GetRegistry( RootLevel_), Root, Context ) ) == rgstry::sOK )
 		Registry_.SetRoot( RootLevel_, Root );
-
+ERRErr
+ERREnd
+ERREpilog
 	return Status;
 }
 
@@ -187,11 +193,10 @@ ERREnd
 ERREpilog
 }
 
-static bso::bool__ LoadRegistry_(
-	const char *Affix,
-	const char *RegistryRootPath,
-	const char *FilePath,
-	bso::bool__ ReportUnableToFindFile )
+bso::bool__ sclrgstry::Load(
+	flw::iflow__ &Flow,
+	const char *Directory,
+	const char *RootPath )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -200,13 +205,10 @@ ERRProlog
 ERRBegin
 	Context.Init();
 
-	switch ( FillRegistry_( fnm::BuildFileName( FilePath, Affix, REGISTRY_FILE_EXTENSION, FNMBuffer ), RegistryRootPath, Context ) ) {
+	switch ( FillRegistry_( Flow, Directory, RootPath, Context ) ) {
 	case rgstry::sOK:
 		Success = true;
 		break;
-	case rgstry::sUnableToOpenFile:
-		if ( !ReportUnableToFindFile )
-			break;
 	default:
 		ReportConfigurationFileParsingError_( Context );
 		ERRExit( EXIT_FAILURE );
@@ -217,28 +219,6 @@ ERRErr
 ERREnd
 ERREpilog
 	return Success;
-}
-
-void sclrgstry::LoadRegistry(
-	const char *Affix,
-	const char *RegistryRootPath,
-	const char *FileSuggestedPath )
-{
-ERRProlog
-	DIR_BUFFER___ DIRBuffer;
-ERRBegin
-
-	if ( LoadRegistry_( Affix, RegistryRootPath, "", false ) )
-		ERRReturn;
-
-	if ( LoadRegistry_( Affix, RegistryRootPath, FileSuggestedPath, false ) )
-		ERRReturn;
-
-	if ( !LoadRegistry_( Affix, RegistryRootPath, dir::GetSelfPath( DIRBuffer ), true ) )
-		ERRc();	// Si échec fonction ci-dessus, aurait dû sortir du programme avec signalement du message d'erreur à cause du 'true'.
-ERRErr
-ERREnd
-ERREpilog
 }
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
@@ -320,7 +300,7 @@ template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 
@@ -349,7 +329,7 @@ template <typename t> static bso::bool__ GetRegistrySignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 

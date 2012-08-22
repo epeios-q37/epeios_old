@@ -68,9 +68,9 @@ extern class ttr_tutor &DIRTutor;
 
 #include <limits.h>
 
-#if defined( CPE__T_LINUX ) || defined( CPE__T_CYGWIN ) || defined( CPE__T_BEOS ) || defined( CPE__T_MAC )
+#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__BEOS ) || defined( CPE__MAC )
 #	define DIR__POSIX
-#elif defined( CPE__T_MS )
+#elif defined( CPE__MS )
 #	define DIR__MS
 #else
 #	error "Unknown target !"
@@ -82,7 +82,7 @@ extern class ttr_tutor &DIRTutor;
 #	include <windows.h>
 # define DIR_PATH_MAX_SIZE	MAX_PATH
 #elif defined( DIR__POSIX )
-# ifdef CPE__T_MAC
+# ifdef CPE__MAC
 #  include <mach-o/dyld.h>
 #  include <sys/param.h>
 # endif
@@ -118,7 +118,7 @@ namespace dir {
 		DWORD Size = GetModuleFileNameA( NULL, Path, sizeof( Path ) );
 #endif
 #ifdef DIR__POSIX
-# ifdef CPE__T_MAC
+# ifdef CPE__MAC
 		char Path[MAXPATHLEN];
 		uint32_t Size = sizeof( Path );
 		switch ( _NSGetExecutablePath( Path, &Size ) ) {
@@ -309,9 +309,6 @@ namespace dir {
 		handle___ &Handle )
 	{
 #ifdef DIR__MS
-#	ifdef CPE__MT
-		return NULL;
-#	endif
 		static WIN32_FIND_DATAA File;
 		HANDLE &hSearch = Handle;
 		char SearchString[MAX_PATH+1] = "";
@@ -336,9 +333,6 @@ namespace dir {
 		else
 			return File.cFileName;
 #elif defined( DIR__POSIX )
-#	ifdef CPE__MT
-		return NULL;
-#	endif
 	struct dirent * ent;
     DIR *&rep = Handle;
     
@@ -369,9 +363,6 @@ namespace dir {
 			ERRu();
 #endif
 #ifdef DIR__MS
-#	ifdef CPE__MT
-		return NULL;
-#	endif
 		static WIN32_FIND_DATAA File;
 		HANDLE &hSearch = Handle;
 
@@ -408,9 +399,6 @@ namespace dir {
 			ERRu();
 #endif
 #ifdef DIR__MS
-#	ifdef CPE__MT
-		return NULL;
-#	endif
 		if ( !FindClose( Handle ) )
 			ERRs();
 
