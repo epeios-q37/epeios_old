@@ -65,7 +65,6 @@ extern class ttr_tutor &MSCMDDTutor;
 #include "cpe.h"
 #include "str.h"
 #include "ctn.h"
-#include "mtx.h"
 #include "lcl.h"
 
 #	ifdef CPE__MS
@@ -74,12 +73,13 @@ extern class ttr_tutor &MSCMDDTutor;
 #		define MSCMDD__ALSA
 #	endif
 
-#	ifdef MSCMDD__WINDOWS
-#		include <Windows.h>
-#		include <MMSystem.h>
-#	elif defined( MSCMDD__ALSA )
-#		include <alsa/asoundlib.h>
-#	endif
+#ifdef MSCMDD__WINDOWS
+#  include <Windows.h>
+#  include <MMSystem.h>
+#  include "mtx.h"
+# elif defined( MSCMDD__ALSA )
+#  include <alsa/asoundlib.h>
+# endif
 
 #ifdef MSCMDD_INPUT_CACHE_SIZE
 #	define MSCMDD__INPUT_CACHE_SIZE	MSCMDD_INPUT_CACHE_SIZE

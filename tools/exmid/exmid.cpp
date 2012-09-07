@@ -48,9 +48,9 @@
 
 /*$RAW$*/
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 /* Beginning of the part which handles command line arguments. */
 
@@ -89,45 +89,45 @@ void PrintUsage( const clnarg::description_ &Description )
 {
 	clnarg::buffer__ Buffer;
 
-	cout << DESCRIPTION << txf::nl;
-	cout << NAME << " --version|--license|--help" << txf::nl;
+	COut << DESCRIPTION << txf::nl;
+	COut << NAME << " --version|--license|--help" << txf::nl;
 	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
 	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
 
-	cout << NAME << " " << Description.GetCommandLabels( cMIDToX, Buffer, "," ) << " <MIDI-source-file> [XMID-target-file]" << txf::nl;
-	cout << txf::tab << "converts file in MIDI format to XMID format." << txf::nl;
+	COut << NAME << " " << Description.GetCommandLabels( cMIDToX, Buffer, "," ) << " <MIDI-source-file> [XMID-target-file]" << txf::nl;
+	COut << txf::tab << "converts file in MIDI format to XMID format." << txf::nl;
 
-	cout << NAME << " " << Description.GetCommandLabels( cXToMID, Buffer, "," ) << " <XMID-source-file> <MIDI-target-file>" << txf::nl;
-	cout << txf::tab << "converts file in XMID format to MIDI file." << txf::nl;
+	COut << NAME << " " << Description.GetCommandLabels( cXToMID, Buffer, "," ) << " <XMID-source-file> <MIDI-target-file>" << txf::nl;
+	COut << txf::tab << "converts file in XMID format to MIDI file." << txf::nl;
 
-	cout << NAME << " " << Description.GetCommandLabels( cAutomatic, Buffer, "," ) << " <source-file>" << txf::nl;
-	cout << txf::tab << "make conversion depending from 'source-file' extension." << txf::nl;
+	COut << NAME << " " << Description.GetCommandLabels( cAutomatic, Buffer, "," ) << " <source-file>" << txf::nl;
+	COut << txf::tab << "make conversion depending from 'source-file' extension." << txf::nl;
 
-	cout << txf::nl;
+	COut << txf::nl;
 
-	cout << "- MIDI-source-file : file in MIDI format to convert to XMID format." << txf::nl;
-	cout << "- XMID-source-file : file in XMID format to convert to MIDI format." << txf::nl;
-	cout << "- XMID-target-file : target XMID file (standard output if not given)." << txf::nl;
-	cout << "- MIDI-target-file : target MIDI file." << txf::nl;
-	cout << "- source-file : " << txf::nl
+	COut << "- MIDI-source-file : file in MIDI format to convert to XMID format." << txf::nl;
+	COut << "- XMID-source-file : file in XMID format to convert to MIDI format." << txf::nl;
+	COut << "- XMID-target-file : target XMID file (standard output if not given)." << txf::nl;
+	COut << "- MIDI-target-file : target MIDI file." << txf::nl;
+	COut << "- source-file : " << txf::nl
 		 << txf::tab << "- with 'mid' or 'MID' extension : file in MIDI format to convert in" << txf::nl << txf::tab << "  XMID format (with 'xmid' or 'XMID' extension)." << txf::nl
 		 << txf::tab << "- with 'xmid' or 'XMID' extension : file in XMID format to convert in" << txf::nl << txf::tab << "  MIDI format (with 'mid' or 'MID' extension)." << txf::nl;
 
 
 	// Free argument description.
 //	clnarg::PrintCommandUsage( Description, c, "", false, true );
-//	cout << "options:" << txf::nl;
+//	COut << "options:" << txf::nl;
 //	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
 }
 
 void PrintHeader( void )
 {
-	cout << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	cout << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
-	cout << COPYRIGHT << txf::nl;
-	cout << INFO << txf::nl;
-	cout << "CVS file details : " << CVS_DETAILS << txf::nl;
+	COut << NAME " V" VERSION " "__DATE__ " " __TIME__;
+	COut << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
+	COut << COPYRIGHT << txf::nl;
+	COut << INFO << txf::nl;
+	COut << "CVS file details : " << CVS_DETAILS << txf::nl;
 }
 
 
@@ -136,7 +136,7 @@ static void AnalyzeOptions(
 	parameters &Parameters )
 {
 ERRProlog
-	epeios::row__ P;
+	mdr::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
 	const char *Unknow = NULL;
@@ -145,8 +145,8 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		cerr << '\'' << Unknow << "': unknow option." << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << '\'' << Unknow << "': unknow option." << txf::nl;
+		COut << HELP << txf::nl;
 		ERRi();
 	}
 
@@ -175,7 +175,7 @@ static void AnalyzeFreeArguments(
 {
 ERRProlog
 	clnarg::arguments Free;
-	epeios::row__ P;
+	mdr::row__ P;
 ERRBegin
 	Free.Init();
 
@@ -193,8 +193,8 @@ ERRBegin
 			Free( P ).Convert( Parameters.MIDIFileName );
 			break;
 		default:
-			cerr << "Bad amount of arguments." << txf::nl;
-			cout << HELP << txf::nl;
+			CErr << "Bad amount of arguments." << txf::nl;
+			COut << HELP << txf::nl;
 			ERRExit( EXIT_FAILURE );
 			break;
 			}
@@ -207,8 +207,8 @@ ERRBegin
 			Free( P ).Convert( Parameters.MIDIFileName );
 			break;
 		default:
-			cerr << "Bad amount of arguments." << txf::nl;
-			cout << HELP << txf::nl;
+			CErr << "Bad amount of arguments." << txf::nl;
+			COut << HELP << txf::nl;
 			ERRExit( EXIT_FAILURE );
 			break;
 		}
@@ -219,8 +219,8 @@ ERRBegin
 			Free( P ).Convert( Parameters.AutomaticFileName );
 			break;
 		default:
-			cerr << "Bad amount of arguments." << txf::nl;
-			cout << HELP << txf::nl;
+			CErr << "Bad amount of arguments." << txf::nl;
+			COut << HELP << txf::nl;
 			ERRExit( EXIT_FAILURE );
 			break;
 		}
@@ -259,7 +259,7 @@ ERRBegin
 	switch ( Parameters.Command = (command__)Analyzer.GetCommand() ) {
 	case cVersion:
 		PrintHeader();
-		TTR.Advertise( cio::cout );
+		TTR.Advertise( cio::COut );
 		ERRi();
 		break;
 	case cHelp:
@@ -267,7 +267,7 @@ ERRBegin
 		ERRi();
 		break;
 	case cLicense:
-		epsmsc::PrintLicense( cio::cout );
+		epsmsc::PrintLicense( cio::COut );
 		ERRi();
 		break;
 	case cMIDToX:
@@ -277,8 +277,8 @@ ERRBegin
 		break;
 //	case c:
 	case CLNARG_NONE:
-		cerr << "Missing command !" << txf::nl;
-		cout << HELP << txf::nl;
+		CErr << "Missing command !" << txf::nl;
+		COut << HELP << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	default:
 		ERRc();
@@ -307,7 +307,7 @@ ERRBegin
 
 	Writer.Init( OFlow, xml::oIndent, xml::e_Default );
 
-	mscmdx::MIDIToXMID( IFlow, mscmdm::oFile, Writer );
+	mscmdx::MIDIToXMID( IFlow, mscmdm::xTicks, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -323,14 +323,14 @@ ERRProlog
 	bso::bool__ BackupCreated = false;
 ERRBegin
 	if ( TargetFile == NULL )
-		MIDToX( IFlow, cout );
+		MIDToX( IFlow, COut );
 	else {
 		fil::CreateBackupFile( TargetFile, fil::bmRename );
 
 		BackupCreated = true;
 
 		if ( OFlow.Init( TargetFile, fil::mRemove, err::hUserDefined ) != fil::sSuccess ) {
-			cerr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
+			CErr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
 			ERRExit( EXIT_FAILURE );
 		}
 
@@ -353,7 +353,7 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 ERRBegin
 	if ( IFlow.Init( SourceFile, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
+		CErr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -372,8 +372,8 @@ void XToMID(
 ERRProlog
 	xml::status__ Status = xml::s_Undefined;
 ERRBegin
-	if ( ( Status = mscmdx::XMIDToMIDI( IFlow, OFlow ) ) != xml::sOK ) {
-		cerr << "Error " << xml::Label( Status ) << " : line " << IFlow.Coord().Line << ", character " << IFlow.Coord().Column << txf::nl;
+	if ( ( Status = mscmdx::XMIDToMIDI( IFlow, mscmdm::xTicks, OFlow ) ) != xml::sOK ) {
+		CErr << "Error " << xml::Label( Status ) << " : line " << IFlow.Coord().Line << ", character " << IFlow.Coord().Column << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -397,7 +397,7 @@ ERRBegin
 	BackupCreated = true;
 
 	if ( OFlow.Init( TargetFile, fil::mRemove, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
+		CErr << "Unable to open target file '" << TargetFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -418,7 +418,7 @@ ERRProlog
 	xtf::extended_text_iflow__ TFlow;
 ERRBegin
 	if ( IFlow.Init( SourceFile, err::hUserDefined ) != fil::sSuccess ) {
-		cerr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
+		CErr << "Unable to open source file '" << SourceFile << "' !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -483,7 +483,7 @@ ERRBegin
 	const char *Extension = fnm::GetExtension( SourceFile );
 
 	if ( Extension == NULL ) {
-		cerr << "Unable to determine extensions !" << txf::nl;
+		CErr << "Unable to determine extensions !" << txf::nl;
 		ERRExit( EXIT_FAILURE )
 	}
 
@@ -500,7 +500,7 @@ ERRBegin
 		IsMID = false;
 		IsUpperCase = false;
 	} else {
-		cerr << "Given file has no 'mid', 'MID', xmid or 'XMID' extension !" << txf::nl;
+		CErr << "Given file has no 'mid', 'MID', xmid or 'XMID' extension !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -557,8 +557,8 @@ ERRFBegin
 	Main( argc, argv );
 ERRFErr
 ERRFEnd
-	cio::cerr.reset();
-	cio::cout.reset();
+	cio::CErr.reset();
+	cio::COut.reset();
 ERRFEpilog
 	return ERRExitValue;
 }

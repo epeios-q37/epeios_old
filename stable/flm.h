@@ -69,7 +69,7 @@ extern class ttr_tutor &FLMTutor;
 #include "iop.h"
 #include "fil.h"
 
-#if defined( CPE__MS ) || defined ( CPE__MINGW )
+#if defined( CPE__MS ) || defined ( CPE__MINGW ) || defined ( CPE__CYGWIN )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
 #elif defined ( CPE__LINUX )
 #	define FLM_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).

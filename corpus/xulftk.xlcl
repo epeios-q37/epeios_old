@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Translations message="XULFTK_ErrorType">
-		<Translation language="fr">Type d'erreur</Translation>
-		<Translation language="en">Error type</Translation>
-	</Translations>
-	<Translations message="XULFTK_ErrorMessage">
-		<Translation language="fr">Message d'erreur</Translation>
-		<Translation language="en">Error message</Translation>
+	<Translations message="XULFTK_BackendMessage">
+		<Translation language="fr">Message du 'backend'</Translation>
+		<Translation language="en">Backend message</Translation>
 	</Translations>
 	<Translations message="XULFTK_ProjectClosingAsking">
 		<Translation language="fr">Êtes-vous sûr de vouloir fermer ce projet ?</Translation>

@@ -502,7 +502,7 @@ void mscmdm::PrintMIDIEvent(
 {
 	OFlow << GetMIDIEventLabel( Event.Event )<< ( Event.Tied ? "*" : "" ) << " (" << (bso::ulong__)Event.ChannelID << ") :";
 
-	epeios::row__ Row = Data.First();
+	mdr::row__ Row = Data.First();
 
 	while ( Row != NONE ) {
 		OFlow << ' ' << (bso::ulong__)Data( Row );
@@ -519,7 +519,7 @@ void mscmdm::PrintSystemEvent(
 	OFlow << GetSystemEventLabel( Event.Event );
 
 	if ( Event.Event == sysExclusive )
-		OFlow << " : " << Data.Amount() <<  " byte long";
+		OFlow << " : " << (bso::ulong__)Data.Amount() <<  " byte long";
 
 	OFlow << '.';
 }
@@ -553,7 +553,7 @@ void mscmdm::PrintMetaEvent(
 	case mtaTimeSignature:
 	case mtaKeySignature:
 	{
-		epeios::row__ Row = Data.First();
+		mdr::row__ Row = Data.First();
 
 		while ( Row != NONE ) {
 			OFlow << ' ' << (bso::ulong__)Data( Row );
@@ -563,7 +563,7 @@ void mscmdm::PrintMetaEvent(
 		break;
 	}
 	case mta_Unknown:
-		OFlow << Data.Amount() << " byte(s) long";
+		OFlow << (bso::ulong__)Data.Amount() << " byte(s) long";
 		break;
 	default:
 		ERRu();
@@ -686,7 +686,7 @@ void Write_(
 	const str::string_ &String,
 	flw::oflow__ &OFlow )
 {
-	epeios::row__ Row = String.First();
+	mdr::row__ Row = String.First();
 
 	while ( Row != NONE ) {
 		OFlow.Put( String( Row ) );

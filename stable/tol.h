@@ -636,7 +636,7 @@ namespace tol {
 	{
 		lconv *LConv = localeconv();
 
-# ifdef CPE__ARM	// Pas de membre 'decimal_point' défini dans ce cas...
+# ifdef CPE__ANDROID	// Pas de membre 'decimal_point' défini dans ce cas...
 		ERRl();
 		return 0;	// Pour éviter un 'warning'.
 # else

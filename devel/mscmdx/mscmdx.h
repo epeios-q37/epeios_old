@@ -60,24 +60,25 @@ extern class ttr_tutor &MSCMDXTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
 
-#include "mscmdm.h"
-#include "mscmdf.h"
-#include "xml.h"
+# include "mscmdm.h"
+# include "mscmdf.h"
+# include "xml.h"
 
 namespace mscmdx {
-	using mscmdm::origin__;
+	using mscmdm::extraneous__;
 
 	bso::bool__ MIDIToXMID(
 		flw::iflow__ &IFlow,
-		origin__ Origin,
+		extraneous__ Extraneous,
 		xml::writer_ &Writer,
 		err::handling__ ErrHandling = err::h_Default );
 
 	xml::status__ XMIDToMIDI(
 		xtf::extended_text_iflow__ &IFlow,
+		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 
 	enum status__ {

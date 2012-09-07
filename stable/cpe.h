@@ -63,12 +63,13 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-# undef CPE__MS		// Plateforme Microsoft.
-# undef CPE__BEOS	// Plateforme BeOS.
-# undef CPE__MAC	// Plateforme MAC.
-# undef CPE__CYGWIN	// Plateforme CYGWIN.
-# undef CPE__MINGW	// Plateforme MINGW.
-# undef CPE__LINUX	// Platform Linux
+# undef CPE__MS			// Plateforme Microsoft.
+# undef CPE__BEOS		// Plateforme BeOS.
+# undef CPE__MAC		// Plateforme MAC.
+# undef CPE__CYGWIN		// Plateforme CYGWIN.
+# undef CPE__MINGW		// Plateforme MINGW.
+# undef CPE__LINUX		// Platforme Linux
+# undef CPE__ANDROID	// Plateforme Android.
 
 # undef CPE__VC		// Compilateur VC++
 # undef CPE__VC6	// Compilateur VC++ V6
@@ -136,6 +137,9 @@ extern class ttr_tutor &CPETutor;
 #	elif defined( __linux__ )
 #		define CPE__LINUX
 #	endif
+#	ifdef __ANDROID__
+#		define CPE__ANDROID
+#	endif
 #endif
 
 #ifdef __MWERKS__
@@ -202,7 +206,7 @@ extern class ttr_tutor &CPETutor;
 #  if __GNUC__ == 3
 #   define CPE__GCC3
 #  endif
-#  ifdef __I386__
+#  ifdef __i386__
 #   define CPE__INTEL
 #  endif
 #  ifdef __ARM_EABI__

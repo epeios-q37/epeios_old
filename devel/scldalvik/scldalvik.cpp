@@ -175,11 +175,11 @@ ERREnd
 ERREpilog
 }
 
-static dalvik::steering_callback__ &GetSteering_(
+static dalvik::steering_callback___ &GetSteering_(
 	JNIEnv *Env,
 	jobject Activity )
 {
-	dalvik::steering_callback__ &Steering = *(dalvik::steering_callback__ *)jvabse::GetLongField( Env, Activity, "steering" );
+	dalvik::steering_callback___ &Steering = *(dalvik::steering_callback___ *)jvabse::GetLongField( Env, Activity, "steering" );
 
 	if( &Steering == NULL )
 		ERRc();
@@ -191,17 +191,18 @@ static void Main_(
 	JNIEnv *Env,
 	jobject Activity,
 	jobject Bundle,
-	jstring PackageName )
+	jstring JPackageName )
 {
 	ERRFProlog
-
+		str::string PackageName;
 	ERRFBegin
-		dalvik::steering_callback__ *Steering = CreateSteering( PackageName );
+		PackageName.Init();
+		jvabse::Convert( JPackageName, Env, PackageName );
+
+		dalvik::steering_callback___ *Steering = CreateSteering( PackageName );
 
 		if ( Steering == NULL )
 			ERRc();
-
-		Steering->SetPackageName( PackageName );
 
 		jvabse::SetLongField( Env, Activity, "steering", (jlong)Steering );
 
@@ -220,7 +221,7 @@ extern "C" {
 		if ( Activity == NULL )
 			return;
 
-		dvkfev::listener_callback__ &Callback = *(dvkfev::listener_callback__ *)jvabse::GetLongField( Env, Listener, "callback" );
+		dvkfev::listener_callback___ &Callback = *(dvkfev::listener_callback___ *)jvabse::GetLongField( Env, Listener, "callback" );
 
 		if ( &Callback == NULL )
 			ERRc();

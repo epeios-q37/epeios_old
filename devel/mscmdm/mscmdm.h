@@ -66,7 +66,19 @@ extern class ttr_tutor &MSCMDMTutor;
 #include "str.h"
 #include "ctn.h"
 
-# include "mscmdd.h"
+# include "cpe.h"
+
+# ifdef CPE__MS
+#  ifdef CPE__MT
+#   define MSCMDM__DEVICES_AVAILABLE
+#  endif
+# else
+#  define MSCMDM__DEVICES_AVAILABLE
+# endif
+
+# ifdef MSCMDM__DEVICES_AVAILABLE
+#  include "mscmdd.h"
+# endif
 
 namespace mscmdm {
 
@@ -343,6 +355,7 @@ namespace mscmdm {
 		extraneous__ Extraneous,
 		int Flags = fmDefaultFlag );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline bso::bool__ Parse(
 		callback__ &Callback,
 		mscmdd::midi_iflow___ &IFlow,
@@ -350,6 +363,7 @@ namespace mscmdm {
 	{
 		return Parse( Callback, IFlow, xNone, Flags );
 	}
+#endif
 		
 
 	//f Put in 'EventHeader' the header of the event red in 'IFlow'. Return the size of the header. If '04, the error.
@@ -359,6 +373,7 @@ namespace mscmdm {
 		event_header__ &EventHeader,
 		err::handling__ ErrHandling = err::h_Default );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline bso::bool__ GetEventHeader(
 		mscmdd::midi_iflow___ &IFlow,
 		event_header__ &EventHeader,
@@ -366,6 +381,7 @@ namespace mscmdm {
 	{
 		return GetEventHeader( IFlow, xNone, EventHeader, ErrHandling );
 	}
+#endif
 
 	size__ GetEventData(
 		const event_header__ &EventHeader,
@@ -373,6 +389,7 @@ namespace mscmdm {
 		extraneous__ Extraneous,
 		data_ &Data );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline size__ GetEventData(
 		const event_header__ &EventHeader,
 		mscmdd::midi_iflow___ &IFlow,
@@ -380,6 +397,7 @@ namespace mscmdm {
 	{
 		return GetEventData( EventHeader, IFlow, xNone, Data );
 	}
+# endif
 
 	class event_
 	{
@@ -459,6 +477,7 @@ namespace mscmdm {
 		PutEventHeader( Header.DeltaTimeTicks, Header.Id, RawData, ( Header.EventType == etMIDI ? Header.MIDIEvent.Tied : false ), Extraneous, OFlow );
 	}
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline void PutEventHeader(
 		const event_header__ &Header,
 		const data_ &RawData,
@@ -466,6 +485,7 @@ namespace mscmdm {
 	{
 		PutEventHeader( Header, RawData, xNone, OFlow );
 	}
+# endif
 
 
 	void PutEvent(
@@ -473,24 +493,28 @@ namespace mscmdm {
 		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline void PutEvent(
 		const event_ &Event,
 		mscmdd::midi_oflow___ &OFlow )
 	{
 		PutEvent( Event, xNone, OFlow );
 	}
+# endif
 
 	void PutEvents(
 		const events_ &Events,
 		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 	
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline void PutEvents(
 		const events_ &Events,
 		mscmdd::midi_oflow___ &OFlow )
 	{
 		PutEvents( Events, xNone, OFlow );
 	}
+# endif
 
 	typedef events_	track_;
 	typedef events	track;
@@ -500,12 +524,14 @@ namespace mscmdm {
 		extraneous__ Extraneous,
 		flw::oflow__ &OFlow );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline void PutTrack(
 		const track_ &Track,
 		mscmdd::midi_oflow___ &OFlow )
 	{
 		PutTrack( Track, xNone, OFlow );
 	}
+# endif
 
 	E_ROW( trow__ );	// Track row.
 
@@ -517,12 +543,14 @@ namespace mscmdm {
 		extraneous__ Extraneous,
 		flw::oflow__ &Flow );
 
+# ifdef MSCMDM__DEVICES_AVAILABLE
 	inline void PutTracks(
 		const tracks_ &Tracks,
 		mscmdd::midi_oflow___ &OFlow )
 	{
 		PutTracks( Tracks, xNone, OFlow );
 	}
+# endif
 
 	inline bso::bool__ IsMetaDataText( meta_event__ Event )
 	{

@@ -74,19 +74,17 @@ ERRBegin
 	if ( _UI == NULL )
 		ERRc();
 
-	Message.Init( _Rack.GetTranslation( "ErrorType", PREFIX, Buffer ) );
+	Message.Init( _Rack.GetTranslation( "BackendMessage", PREFIX, Buffer ) );
 
 	Message.Append( " : " );
 
 	Message.Append( fblovl::GetTranslation( Reply, _Rack, Buffer ) );
 
-	Message.Append( '\n' );
-
-	Message.Append( _Rack.GetTranslation( "ErrorMessage", PREFIX, Buffer ) );
-
-	Message.Append( " : " );
+	Message.Append( " (" );
 
 	Message.Append( RawMessage );
+
+	Message.Append( ")." );
 
 	_UI->LogAndPrompt( Message );
 

@@ -69,10 +69,10 @@ extern class ttr_tutor &SCLDALVIKTutor;
 namespace scldalvik {
 
 	// A définir par l'utilisateur.
-	dalvik::steering_callback__ *CreateSteering( jstring PackageName );
+	dalvik::steering_callback___ *CreateSteering( const str::string_ &PackageName );
 
 	// A définir par l'utilisateur.
-	void DeleteSteering( dalvik::steering_callback__ *Steering );
+	void DeleteSteering( dalvik::steering_callback___ *Steering );
 }
 
 /*$END$*/

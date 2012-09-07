@@ -1,5 +1,23 @@
 $Id$
 
+06/09/2012 :	
+	- MSCxxx :
+		- Adaptation.
+
+05/09/2012 :
+	- XULFTK :
+		- Changement du message d'erreur lorsque celle-ci est issu du 'backend'.
+
+28/08/2012 :
+	- BSO :
+		- Mise en place solution de repli pour 'BSO_SIZE_MAX' lorsque, ni 'SIZE_MAX', ni '__SIZE_MAX__' ne sont disponibles ('g++' V4.4.3 sous 'Ubuntu').
+
+26/08/2012 :
+	- CPE :
+		- '#ifdef __I386__' -> '#ifdef __i386__'
+	- TOL :
+		- Gestion de l'absence de menmbre 'decimal_point' dans la structure 'lconv' pour Android (précédemment basé sur 'CPE__ARM').
+
 20/08/2012 :
 	- JVASTF :
 		- Réalisation modifications oubliées nécessitées par précédentes modifications.

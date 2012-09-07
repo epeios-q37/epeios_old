@@ -88,7 +88,7 @@ static void GetHex_(
 	const mscmdm::data_ &Data,
 	str::string_ &Result )
 {
-	epeios::row__ Row = Data.First();
+	mdr::row__ Row = Data.First();
 
 	if ( Row != NONE ) {
 		Result.Append( GetHex_( Data( Row ) ) );
@@ -107,7 +107,7 @@ static void GetHex_(
 
 static bso::bool__ ParseTrackChunk_(
 	flw::iflow__ &IFlow,
-	mscmdm::origin__ Origin,
+	mscmdm::extraneous__ Extraneous,
 	xml::writer_ &Writer,
 	err::handling__ ErrHandling )
 {
@@ -129,11 +129,11 @@ ERRBegin
 	Writer.PutAttribute( SIZE_ATTRIBUTE, bso::Convert( TrackChunkSize, Buffer ) );
 
 	do {
-		mscmdm::GetEventHeader( IFlow, Origin, EventHeader );
+		mscmdm::GetEventHeader( IFlow, Extraneous, EventHeader );
 		Writer.PushTag( EVENT_TAG );
 
-		if ( Origin == mscmdm::oFile )
-			Writer.PutAttribute( DELTA_TIME_TICKS_ATTRIBUTE, bso::Convert( EventHeader.DeltaTimeTicks ) );
+		if ( Extraneous == mscmdm::xTicks )
+			Writer.PutAttribute( DELTA_TIME_TICKS_ATTRIBUTE, bso::Convert( EventHeader.DeltaTimeTicks, Buffer ) );
 
 		Writer.PutAttribute( TYPE_ATTRIBUTE, mscmdm::GetEventTypeLabel( EventHeader.EventType ) );
 
@@ -152,7 +152,7 @@ ERRBegin
 		}
 
 		Data.Init();
-		mscmdm::GetEventData( EventHeader, IFlow, Origin, Data );
+		mscmdm::GetEventData( EventHeader, IFlow, Extraneous, Data );
 
 		if ( EventHeader.EventType == mscmdm::etMeta ) {
 			HexBuffer.Append( GetHex_ (EventHeader.MetaEvent.Id ) );
@@ -191,7 +191,7 @@ ERREpilog
 
 bso::bool__ mscmdx::MIDIToXMID(
 	flw::iflow__ &IFlow,
-	origin__ Origin,
+	extraneous__ Extraneous,
 	xml::writer_ &Writer,
 	err::handling__ ErrHandling )
 {
@@ -211,7 +211,7 @@ bso::bool__ mscmdx::MIDIToXMID(
 	Writer.PutAttribute( TIME_STAMP_ATTRIBUTE, tol::DateAndTime( DTBuffer ) );
 
 	while ( HeaderChunk.TrackChunkAmount-- )
-		if ( !ParseTrackChunk_( IFlow, Origin, Writer, ErrHandling ) )
+		if ( !ParseTrackChunk_( IFlow, Extraneous, Writer, ErrHandling ) )
 			return false;
 
 	Writer.PopTag();
@@ -232,13 +232,14 @@ private:
 	mscmdm::data _RawData, _MetaData;
 	mscmdm::events _Events;
 	mscmdm::tracks _Tracks;
+	mscmdm::extraneous__ _Extraneous;
 	bso::bool__ _GetData(
 		const str::string_ &Value,
 		mscmdm::data_ &Data )
 	{
-		epeios::row__ Error = NONE;
+		mdr::row__ Error = NONE;
 
-		epeios::row__ Row = Value.First();
+		mdr::row__ Row = Value.First();
 
 		while ( Row != NONE ) {
 			Error = NONE;
@@ -286,7 +287,7 @@ protected:
 			const str::string_ &Value,
 			const dump_ &Dump )
 		{
-			epeios::row__ Error = NONE;
+			mdr::row__ Error = NONE;
 
 			if ( TagName == MIDI_FILE_TAG ) {
 				if ( Name == SMF_TYPE_ATTRIBUTE )
@@ -368,7 +369,7 @@ protected:
 					ERRu();
 
 				mscmdf::PutHeaderChunk( _SMFType, (mscmdf::track_chunk_amount__)_Tracks.Amount(), _HeaderChunkDeltaTimeTicks, *_OFlow );
-				mscmdm::PutTracks( _Tracks, *_OFlow );
+				mscmdm::PutTracks( _Tracks, _Extraneous, *_OFlow );
 
 				_Tracks.Init();
 			}
@@ -385,6 +386,7 @@ public:
 		_MetaData.reset( P );
 		_Events.reset( P );
 		_Tracks.reset( P );
+		_Extraneous = mscmdm::x_Undefined;
 	}
 	callback( void )
 	{
@@ -394,7 +396,9 @@ public:
 	{
 		reset();
 	}
-	void Init( flw::oflow__ &OFlow )
+	void Init(
+		flw::oflow__ &OFlow,
+		mscmdm::extraneous__ Extraneous )
 	{
 		reset();
 
@@ -402,6 +406,7 @@ public:
 		_MetaData.Init();
 		_Events.Init();
 		_Tracks.Init();
+		_Extraneous = Extraneous;
 
 		_OFlow = &OFlow;
 	}
@@ -409,13 +414,14 @@ public:
 
 xml::status__ mscmdx::XMIDToMIDI(
 	xtf::extended_text_iflow__ &IFlow,
+	mscmdm::extraneous__ Extraneous,
 	flw::oflow__ &OFlow )
 {
 	xml::status__ Status = xml::s_Undefined;
 ERRProlog
 	callback Callback;
 ERRBegin
-	Callback.Init( OFlow );
+	Callback.Init( OFlow, Extraneous );
 
 	Status = xml::Parse( IFlow, xml::eh_Default, Callback );
 ERRErr
@@ -428,9 +434,9 @@ static inline bso::bool__ GetData_(
 	const str::string_ &Value,
 	mscmdm::data_ &Data )
 {
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 
-	epeios::row__ Row = Value.First();
+	mdr::row__ Row = Value.First();
 
 	while ( Row != NONE ) {
 		Error = NONE;
@@ -482,7 +488,7 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				epeios::row__ Error = NONE;
+				mdr::row__ Error = NONE;
 
 				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
 					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
@@ -553,10 +559,10 @@ ERRBegin
 
 
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			Status = sUnexpectedContext;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			Status = sXML;
 			break;
 		default:
@@ -602,7 +608,7 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				epeios::row__ Error = NONE;
+				mdr::row__ Error = NONE;
 
 				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
 					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
@@ -680,10 +686,10 @@ ERRBegin
 
 
 			break;
-		case xml::tProcessed:
+		case xml::t_Processed:
 			Status = sUnexpectedContext;
 			break;
-		case xml::tError:
+		case xml::t_Error:
 			Status = sXML;
 			break;
 		default:
