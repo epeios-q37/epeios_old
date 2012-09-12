@@ -83,7 +83,9 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__MT			// Cible multitâche.
 # undef CPE__CONSOLE	// Cible console.
 # undef CPE__LIBRARY	// Cible bibliothèque (DLL, .so, ...)
+
 # undef CPE__JAVA		// Cible composant java en code natif.
+# undef CPE__GECKO		// Cible composant Gecko.
 
 # undef CPE__INTEL		// Processeur Intel et compatible.
 # undef CPE__ARM		// Processeur ARM.
@@ -95,6 +97,14 @@ extern class ttr_tutor &CPETutor;
 #ifndef CPE_64_BITS_FORBIDDEN
 #	define CPE__64_BITS_TYPES_ALLOWED
 #endif
+
+# ifdef CPE_GECKO
+#  define CPE__GECKO
+# endif
+
+#ifdef CPE__GECKO
+#  define CPE__LIBRARY
+# endif
 
 # ifdef CPE_JAVA
 #  define CPE__JAVA
@@ -221,7 +231,7 @@ extern class ttr_tutor &CPETutor;
 #endif
 
 # if !defined( CPE__INTEL ) && !defined( CPE__ARM )
-#  error "Unable to establish the processor !"
+#  error "Unable to guess the processor !"
 # endif
 
 

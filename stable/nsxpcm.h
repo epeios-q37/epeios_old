@@ -71,6 +71,14 @@ extern class ttr_tutor &NSXPCMTutor;
 
 # include "xpcom-config.h"
 
+# ifndef CPE__GECKO
+#  error "The NSXPCM library can only be used in a 'Gecko' copmonent :'
+# endif
+
+# ifndef CPE__LIBRARY
+#  error "A 'Gecko' component must be a dynamic library !"
+# endif
+
 # if NSXPCM_GECKO_V1
 #  define NSXPCM__GECKO_V1
 # elif NSXPCM_GECKO_V2

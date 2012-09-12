@@ -12,16 +12,32 @@
 				<xsl:value-of select="$Language"/>
 			</xsl:attribute>
 			<xsl:apply-templates select="String"/>
+			<xsl:apply-templates select="String-Array"/>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="String">
-			<xsl:apply-templates select="Translation[@language=$Language]"/>
+			<xsl:apply-templates select="Translation[@language=$Language]" mode="String"/>
 	</xsl:template>
-	<xsl:template match="Translation">
+	<xsl:template match="Translation" mode="String">
 		<xsl:element name="string">
 			<xsl:attribute name="name">
 				<xsl:value-of select="../@name"/>
 			</xsl:attribute>
+			<xsl:value-of select="."/>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template match="String-Array">
+		<xsl:element name="string-array">
+			<xsl:attribute name="name">
+				<xsl:value-of select="@name"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="Item"/>
+		</xsl:element>	</xsl:template>
+	<xsl:template match="Item">
+		<xsl:apply-templates select="Translation[@language=$Language]" mode="String-Array"/>
+	</xsl:template>
+	<xsl:template match="Translation" mode="String-Array">
+		<xsl:element name="item">
 			<xsl:value-of select="."/>
 		</xsl:element>
 	</xsl:template>

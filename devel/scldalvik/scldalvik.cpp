@@ -67,6 +67,13 @@ public:
 
 using namespace scldalvik;
 
+// Pour faciliter le débogage en mettant à disposition 'loc'.
+#if 0
+DVKBSE_EXPOSE_LOG_FUNCTIONS( "SCLDalvik" )
+#define LOC	 DVKBSE_LOC	
+#endif
+
+
 STR_BUFFER___ TargetName_;
 
 typedef fdr::oflow_driver___<> _oflow___;
@@ -212,22 +219,37 @@ static void Main_(
 	ERRFEpilog
 }
 
+template <typename callback, typename method> static void HandleEvent_( 
+	JNIEnv *Env,
+	jobject Listener,
+	jobject View,
+	method Method,
+	... )
+{
+	jobject Activity = jvabse::GetObjectField( Env, Listener, "activity", "Landroid/app/Activity;" );
+
+	if ( Activity == NULL )
+		ERRc();
+
+	callback &Callback = *(dvkfev::listener_callback___ *)jvabse::GetLongField( Env, Listener, "callback" );
+
+	if ( &Callback == NULL )
+		ERRc();
+
+    va_list args;                                                       \
+    va_start(args, Method );                                           \
+
+	(Callback.*Method)( Env, Activity, View, args );
+}
+
 extern "C" {
-	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnClickListener_onClick
-	  (JNIEnv *Env, jobject Listener, jobject View)
-	  {
-		jobject Activity = jvabse::GetObjectField( Env, Listener, "activity", "Landroid/app/Activity;" );
-
-		if ( Activity == NULL )
-			return;
-
-		dvkfev::listener_callback___ &Callback = *(dvkfev::listener_callback___ *)jvabse::GetLongField( Env, Listener, "callback" );
-
-		if ( &Callback == NULL )
-			ERRc();
-
-		Callback.OnClick( Env, Activity, View );
-	  }
+	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnClickListener_onClick(
+		JNIEnv *Env,
+		jobject Listener,
+		jobject View)
+	{
+		HandleEvent_<dvkfev::listener_callback___>( Env, Listener, View, &dvkfev::listener_callback___::OnClick );
+	}
 }
 
 

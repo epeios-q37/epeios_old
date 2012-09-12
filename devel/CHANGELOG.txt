@@ -1,5 +1,13 @@
 $Id$
 
+09/09/2012 :
+	- CPE :
+		- Ajout 'CPE__GECKO'.
+	- NSXPCM :
+		- Test 'CPE__GECKO' et 'CPE__LIBRARY4.
+	- XULFSF :
+		- La sélection du type de 'backend' ne mettait plus l'interface à jour.
+
 06/09/2012 :	
 	- MSCxxx :
 		- Adaptation.

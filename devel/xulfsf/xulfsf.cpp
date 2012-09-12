@@ -91,6 +91,8 @@ ERRBegin
 		ERRc();
 		break;
 	}
+
+	Trunk().UpdateUI();
 ERRErr
 ERREnd
 ERREpilog
