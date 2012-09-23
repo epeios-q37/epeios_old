@@ -183,7 +183,7 @@ ERREpilog
 				mutex__ Mutex;
 			} Log;
 			struct ping__ {
-				time_t Delay;	// Délai maximum d'inactivité.
+				bso::ulong__ Delay;	// Délai maximum d'inactivité.
 				mutex__ Mutex;	// Pour signaler et attendre la terminaison du 'thread' dédié au 'ping'.
 			} Ping;
 			flows_::s Flows;
@@ -242,7 +242,7 @@ ERREpilog
 		bso::bool__ Init( 
 			const char *HostService,
 			log_functions__ &LogFunctions,
-			time_t PingDelay )
+			bso::ulong__ PingDelay )
 		{
 			reset();
 

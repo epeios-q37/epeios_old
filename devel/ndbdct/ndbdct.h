@@ -396,7 +396,7 @@ namespace ndbdct {
 		}
 		void _Touch( void )
 		{
-			S_.ModificationTimeStamp = tol::Clock( false );
+			S_.ModificationEpochTimeStamp = tol::EpochTime( false );
 		}
 	public:
 		storage_ Storage;
@@ -409,7 +409,7 @@ namespace ndbdct {
 			entries_::s Entries;
 			// Position du premier octet non alloué.
 			drow__ Unallocated;
-			time_t ModificationTimeStamp;
+			time_t ModificationEpochTimeStamp;
 		} &S_;
 		dynamic_content_( s &S )
 		: S_( S ),
@@ -424,7 +424,7 @@ namespace ndbdct {
 			Entries.reset( P );
 
 			S_.Unallocated = 0;
-			S_.ModificationTimeStamp = 0;
+			S_.ModificationEpochTimeStamp = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -456,7 +456,7 @@ namespace ndbdct {
 			Entries.Init();
 
 			S_.Unallocated = 0;
-			S_.ModificationTimeStamp = 0;
+			S_.ModificationEpochTimeStamp = 0;
 		}
 		rrow__ Store( const datum_ &Data )
 		{
@@ -532,7 +532,7 @@ namespace ndbdct {
 			ERRl();
 		}
 		E_NAVt( Entries., rrow__ )
-		E_RODISCLOSE_( time_t, ModificationTimeStamp );
+		E_RODISCLOSE_( time_t, ModificationEpochTimeStamp );
 	};
 
 	E_AUTO( dynamic_content )
@@ -628,7 +628,7 @@ namespace ndbdct {
 			if ( _EntriesFileManager.Settle() != State )
 				State = uym::sInconsistent;
 
-			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationTimeStamp() != 0 ) )
+			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationEpochTimeStamp() != 0 ) )
 				_SaveAvailables();
 
 			return State;

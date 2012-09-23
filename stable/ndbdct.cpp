@@ -125,7 +125,7 @@ ERRBegin
 			Save_( Bunch, FileNameBuffer );
 
 	while ( ReferenceTimeStamp >= fil::GetFileLastModificationTime( FileNameBuffer ) ) {
-		tol::Clock( true );
+		tol::EpochTime( true );
 		fil::TouchFile( FileNameBuffer );
 	}
 ERRErr

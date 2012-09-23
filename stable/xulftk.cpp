@@ -443,7 +443,7 @@ ERRBegin
 		Location.Init();
 		frdrgy::Backend.GetValue( Kernel().Registry(), Location );
 	} else
-		ProjectId.Init( bso::Convert( tol::Clock( true ), Buffer ) );
+		ProjectId.Init( bso::Convert( tol::EpochTime( true ), Buffer ) );
 
 	frdrgy::ProjectId.SetValue( Kernel().Registry(), ProjectId );
 

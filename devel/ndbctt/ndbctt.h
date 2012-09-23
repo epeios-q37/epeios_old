@@ -288,14 +288,14 @@ namespace ndbctt {
 
 			return Exists;
 		}
-		time_t ModificationTimeStamp( void ) const
+		time_t ModificationEpochTimeStamp( void ) const
 		{
 			switch ( _Test( false ) ) {
 			case tStatic:
-				return _Static->ModificationTimeStamp();
+				return _Static->ModificationEpochTimeStamp();
 				break;
 			case tDynamic:
-				return _Dynamic->ModificationTimeStamp();
+				return _Dynamic->ModificationEpochTimeStamp();
 				break;
 			default:
 				ERRc();

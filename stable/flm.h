@@ -309,7 +309,7 @@ namespace flm {
 		} Temoin_;
 		row__ _Row;	// Pour le suivi des 'file handler' ouverts.
 		// différents témoins
-		time_t _LastAccessTime;	// Last access time.
+		time_t _EpochTimeStamp;	// Last access time.
 		id__ _ID;
 	// Fonctions
 		bso::bool__ Open_(
@@ -328,7 +328,8 @@ namespace flm {
 			
 			if ( Success ) {
 				_ReportFileUsing( _Row, ToFlush );
-				_LastAccessTime = tol::Clock( false );
+
+				_EpochTimeStamp = tol::EpochTime( false );
 			}
 
 			return Success;
@@ -468,7 +469,7 @@ namespace flm {
 			TailleFichier_ = 0;
 			_Row = NONE;
 			_ID = FLM_UNDEFINED_ID;
-			_LastAccessTime = 0;
+			_EpochTimeStamp = 0;
 		}
 		void Init(
 			id__ ID,
@@ -613,7 +614,7 @@ namespace flm {
 		{
 			return Open_( false, ErrHandle );
 		}
-		E_RODISCLOSE__( time_t, LastAccessTime );
+		E_RODISCLOSE__( time_t, EpochTimeStamp );
 		_file___ &File( void )
 		{
 			return File_;
@@ -692,8 +693,8 @@ namespace flm {
 
 	#define E_FILE_MEMORY_DRIVER___	file_memory_driver___
 
-	void ReleaseInactiveFiles(
-		time_t Delay,
+	void ReleaseInactiveFiles_(
+		bso::ulong__ Delay,	// in s.
 		bso::ulong__ MaxAmount = BSO_ULONG_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
 }
 

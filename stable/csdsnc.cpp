@@ -83,7 +83,7 @@ static void Ping_(
 	_flow___ &Flow,
 	time_t Delay )
 {
-	if ( ( tol::Clock( false ) - Flow.TimeStamp() ) >= Delay )
+	if ( ( tol::EpochTime( false ) - Flow.EpochTimeStamp() ) >= Delay )
 		if ( !Flow.OFlowIsLocked() ) {
 			csdsnb::PutId( CSDSNB_PING, Flow );
 			Flow.Commit();
@@ -115,17 +115,17 @@ void csdsnc::core_::Ping( void )
 static void KeepAlive_( void *UP )
 {
 	csdsnc::core_ &Core = *(csdsnc::core_ *)UP;
-	tol::chrono__ Chrono;
+	tol::timer__ Timer;
 
-	Chrono.Init( Core.S_.Ping.Delay );
-	Chrono.Launch();
+	Timer.Init( Core.S_.Ping.Delay );
+	Timer.Launch();
 
 	while ( !mtx::IsLocked( Core.S_.Ping.Mutex ) ) {	// Tant que pas de demande de terminaison.
 		tht::Suspend( CSDSNC_PING_RESOLUTION );
 
-		if ( Chrono.IsElapsed() ) {
+		if ( Timer.IsElapsed() ) {
 			Core.Ping();
-			Chrono.Launch();
+			Timer.Launch();
 		}
 	}
 

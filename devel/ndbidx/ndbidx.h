@@ -126,8 +126,8 @@ namespace ndbidx {
 	class observer_functions__
 	{
 	private:
-		// Durée entre deuw appels en ms.
-		time_t _Delay;
+		// Durée entre deux appels en ms.
+		bso::ulong__ _Delay;
 		bso::ulong__ _HandledIndexAmount, _TotalIndexAmount;
 	protected:
 		virtual void NDBTBLNotify(
@@ -146,7 +146,7 @@ namespace ndbidx {
 		{
 			reset( false );
 		}
-		void Init( time_t Delay = 1000 )	// Délai par défaut : 1 s.
+		void Init( bso::ulong__ Delay = 1000 )	// Délai par défaut : 1 s.
 		{
 			reset();
 
@@ -189,7 +189,7 @@ namespace ndbidx {
 		bso::bool__ _Bufferized;
 		sort_function__ *_SortPointer;
 		const ndbctt::content_ *_ContentPointer;
-		time_t _ModificationTimeStamp;
+		time_t _ModificationEpochTimeStamp;
 		mutable post_initialization_function__ *_PostInitializationFunction;
 		_index_ &_Index( void )
 		{
@@ -239,10 +239,10 @@ namespace ndbidx {
 		}
 		void _Touch( bso::bool__ CompareWithContent )
 		{
-			_ModificationTimeStamp = tol::Clock( false );
+			_ModificationEpochTimeStamp = tol::EpochTime( false );
 
-			if ( CompareWithContent && ( _ModificationTimeStamp == Content().ModificationTimeStamp() ) )
-				_ModificationTimeStamp = tol::Clock( true );
+			if ( CompareWithContent && ( _ModificationEpochTimeStamp == Content().ModificationEpochTimeStamp() ) )
+				_ModificationEpochTimeStamp = tol::EpochTime( true );
 		}
 		rrow__ _SearchStrictLesser(
 			rrow__ Row,
@@ -272,7 +272,7 @@ namespace ndbidx {
 			_SortPointer = NULL;
 			_ContentPointer = NULL;
 
-			_ModificationTimeStamp = 0;
+			_ModificationEpochTimeStamp = 0;
 			_PostInitializationFunction = NULL;
 		}
 		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
@@ -293,7 +293,7 @@ namespace ndbidx {
 /*			S_.Sort = I.S_.Sort;
 			S_.Content = I.S_.Content;
 
-*/			_ModificationTimeStamp = I._ModificationTimeStamp;
+*/			_ModificationEpochTimeStamp = I._ModificationEpochTimeStamp;
 
 			return *this;
 		}
@@ -309,7 +309,7 @@ namespace ndbidx {
 			_ContentPointer = &Content;
 			_SortPointer = &Sort;
 
-			_ModificationTimeStamp = 0;
+			_ModificationEpochTimeStamp = 0;
 			_PostInitializationFunction = &PostInitializationFunction;
 		}
 		// Vide l'index.
@@ -322,7 +322,7 @@ namespace ndbidx {
 
 			_Bufferized = false;
 
-			_ModificationTimeStamp = 0;
+			_ModificationEpochTimeStamp = 0;
 		}
 		void Allocate(
 			mdr::size__ Size,
@@ -483,7 +483,7 @@ namespace ndbidx {
 		}
 		bso::bool__ IsSynchronized( void ) const
 		{
-			return _ModificationTimeStamp > _Content().ModificationTimeStamp();
+			return _ModificationEpochTimeStamp > _Content().ModificationEpochTimeStamp();
 		}
 		sort_function__ &SortFunction( void ) const
 		{
@@ -524,7 +524,7 @@ namespace ndbidx {
 		}
 		rrow__ Test( void ) const;
 		void Reindex( observer_functions__ &Observer );
-		E_RODISCLOSE__( time_t, ModificationTimeStamp );
+		E_RODISCLOSE__( time_t, ModificationEpochTimeStamp );
 	};
 
 	E_AUTO( index )

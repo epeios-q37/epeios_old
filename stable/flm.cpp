@@ -186,7 +186,7 @@ void flm::_Unregister(
 	Unlock_();
 }
 
-#define DELAY	1000	// en ms.
+#define DELAY	1	// en s.
 
 #ifdef FLM__AUTOFLUSH
 struct _flusher_data__
@@ -196,7 +196,7 @@ struct _flusher_data__
 	 _flusher_data__( void )
 	{
 		Row = NONE;
-		LastFileWriteTime = tol::Clock( false );
+		LastFileWriteTime = tol::EpochTime( false );
 	}
 } FlusherData_;
 
@@ -224,9 +224,9 @@ static inline void Flusher_( void * )
 
 		Lock_();
 
-		while ( ( tol::Clock( false ) - FlusherData_.LastFileWriteTime ) < DELAY ) {
+		while ( ( tol::EpochTime( false ) - FlusherData_.LastFileWriteTime ) < DELAY ) {
 			Unlock_();
-			tht::Defer( DELAY );
+			tht::Defer( DELAY * 1000 );
 			Lock_();
 		}
 
@@ -267,7 +267,7 @@ inline static void TouchFlusher_( bso::bool__ ToFlush )	// Indique au 'flusher' 
 {
 #ifdef FLM__AUTOFLUSH
 	if ( ToFlush )
-		FlusherData_.LastFileWriteTime = tol::Clock( false );
+		FlusherData_.LastFileWriteTime = tol::EpochTime( false );
 #endif
 }
 
@@ -369,15 +369,15 @@ ERREpilog
 }
 
 
-void flm::ReleaseInactiveFiles(
-	time_t Delay,
+void flm::ReleaseInactiveFiles_(
+	bso::ulong__ Delay,
 	bso::ulong__ MaxAmount )
 {
 	Lock_();
 
-	time_t Now = tol::Clock( false );
+	time_t Now = tol::EpochTime( false );
 
-	while ( MaxAmount-- && ( Queue_.Tail() != NONE ) && ( ( Now - List_( Queue_.Tail() ).File->GetLastAccessTime() ) <= Delay ) ) {
+	while ( MaxAmount-- && ( Queue_.Tail() != NONE ) && ( ( Now - List_( Queue_.Tail() ).File->EpochTimeStamp() ) <= Delay ) ) {
 		List_( Queue_.Tail() ).File->ReleaseFile( false );
 		Queue_.Delete( Queue_.Tail() );
 	}

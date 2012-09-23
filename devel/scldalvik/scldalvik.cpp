@@ -67,12 +67,11 @@ public:
 
 using namespace scldalvik;
 
-// Pour faciliter le débogage en mettant à disposition 'loc'.
+// Pour faciliter le débogage.
 #if 0
 DVKBSE_EXPOSE_LOG_FUNCTIONS( "SCLDalvik" )
 #define LOC	 DVKBSE_LOC	
 #endif
-
 
 STR_BUFFER___ TargetName_;
 
@@ -130,8 +129,7 @@ static void InitializeCIO_( void )
 static void DoDalvikRelatedStuff_(
 		JNIEnv *Env,
 		jobject Activity,
-		jobject Bundle,
-		jstring PackageName ) 
+		jobject Bundle ) 
 {
 	Env->CallNonvirtualVoidMethod(
 		Activity, Env->FindClass( "android/app/Activity" ),
@@ -141,7 +139,7 @@ static void DoDalvikRelatedStuff_(
 	Env->CallVoidMethod(
 		Activity,
 		jvabse::GetMethodID( Env, Activity, "setContentView", "(I)V" ),
-		jvabse::GetStaticIntField(  Env, dvkbse::GetRlayoutClass( PackageName, Env ), "main" ) );
+		jvabse::GetStaticIntField(  Env, dvkbse::GetRlayoutClass( dalvik::PackageName, Env ), "main" ) );
 }
 
 static void InitializeFlow_(
@@ -162,8 +160,7 @@ static void InitializeFlow_(
 static void Initialize_(
 	const char *Target,
 	JNIEnv *Env,
-	jobject Activity,
-	jstring PackageName )
+	jobject Activity )
 {
 ERRProlog
 	jvastf::input_stream_iflow___ Configuration, Locale;
@@ -171,7 +168,7 @@ ERRProlog
 ERRBegin
 	InitializeCIO_();
 
-	Raw = dvkbse::GetRrawClass( PackageName, Env );
+	Raw = dvkbse::GetRrawClass( dalvik::PackageName, Env );
 
 	InitializeFlow_( "locale", Env, Activity, Raw, Locale );
 	InitializeFlow_( "configuration", Env, Activity, Raw, Configuration );
@@ -197,26 +194,16 @@ static dalvik::steering_callback___ &GetSteering_(
 static void Main_( 
 	JNIEnv *Env,
 	jobject Activity,
-	jobject Bundle,
-	jstring JPackageName )
+	jobject Bundle )
 {
-	ERRFProlog
-		str::string PackageName;
-	ERRFBegin
-		PackageName.Init();
-		jvabse::Convert( JPackageName, Env, PackageName );
+	dalvik::steering_callback___ *Steering = CreateSteering();
 
-		dalvik::steering_callback___ *Steering = CreateSteering( PackageName );
+	if ( Steering == NULL )
+		ERRc();
 
-		if ( Steering == NULL )
-			ERRc();
+	jvabse::SetLongField( Env, Activity, "steering", (jlong)Steering );
 
-		jvabse::SetLongField( Env, Activity, "steering", (jlong)Steering );
-
-		GetSteering_( Env, Activity ).OnCreate( Env, Activity, Bundle );
-	ERRFErr
-	ERRFEnd
-	ERRFEpilog
+	GetSteering_( Env, Activity ).OnCreate( Env, Activity, Bundle );
 }
 
 template <typename callback, typename method> static void HandleEvent_( 
@@ -231,7 +218,7 @@ template <typename callback, typename method> static void HandleEvent_(
 	if ( Activity == NULL )
 		ERRc();
 
-	callback &Callback = *(dvkfev::listener_callback___ *)jvabse::GetLongField( Env, Listener, "callback" );
+	callback &Callback = *(callback *)jvabse::GetLongField( Env, Listener, "callback" );
 
 	if ( &Callback == NULL )
 		ERRc();
@@ -243,31 +230,46 @@ template <typename callback, typename method> static void HandleEvent_(
 }
 
 extern "C" {
+	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosActivity_launch(
+		JNIEnv *Env,
+		jobject Activity,
+		jstring TargetName,
+		jobject Bundle ) 
+	{
+		jvabse::Convert( TargetName, Env, ::TargetName_ );
+
+		DoDalvikRelatedStuff_( Env, Activity, Bundle );
+
+		Initialize_( ::TargetName_, Env, Activity );
+
+		Main_( Env, Activity, Bundle );
+	}
+
 	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnClickListener_onClick(
 		JNIEnv *Env,
 		jobject Listener,
 		jobject View)
 	{
-		HandleEvent_<dvkfev::listener_callback___>( Env, Listener, View, &dvkfev::listener_callback___::OnClick );
+		HandleEvent_<dvkfev::on_click_listener_callback___>( Env, Listener, View, &dvkfev::on_click_listener_callback___::VAOnClick );
 	}
-}
 
-
-extern "C" {
-	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosActivity_launch(
+	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnItemSelectedListener_onItemSelected(
 		JNIEnv *Env,
-		jobject Activity,
-		jstring TargetName,
-		jstring PackageName,
-		jobject Bundle ) 
+		jobject Listener,
+		jobject Parent,
+		jobject View,
+		jint Position,
+		jlong Id )
 	{
-		jvabse::Convert( TargetName, Env, ::TargetName_ );
+		HandleEvent_<dvkfev::on_item_selected_listener_callback___>( Env, Listener, Parent, &dvkfev::on_item_selected_listener_callback___::VAOnItemSelected, Id );
+	}
 
-		DoDalvikRelatedStuff_( Env, Activity, Bundle, PackageName );
-
-		Initialize_( ::TargetName_, Env, Activity, PackageName );
-
-		Main_( Env, Activity, Bundle, PackageName );
+	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnItemSelectedListener_onNothingSelected(
+		JNIEnv *Env,
+		jobject Listener,
+		jobject Parent )
+	{
+		HandleEvent_<dvkfev::on_item_selected_listener_callback___>( Env, Listener, Parent, &dvkfev::on_item_selected_listener_callback___::VAOnNothingSelected );
 	}
 }
 

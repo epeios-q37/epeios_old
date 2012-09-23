@@ -509,7 +509,7 @@ static inline void Reindex_(
 	index_ &Index,
 	observer_functions__ &Observer,
 	ndbctt::cache_  &Cache,
-	tol::chrono__ &Chrono,
+	tol::timer__ &Timer,
 	bso::size__ &HandledRecordAmount,
 	bso::ulong__ &BalancingCount,
 	tol::E_DPOINTER___( extremities__ ) &Extremities,
@@ -537,10 +537,10 @@ static inline void Reindex_(
 
 		HandledRecordAmount++;
 
-		if ( ( &Observer != NULL ) && Chrono.IsElapsed() ) {
+		if ( ( &Observer != NULL ) && Timer.IsElapsed() ) {
 			Observer.Notify( HandledRecordAmount, Index.Content().Amount(), BalancingCount );
 
-			Chrono.Launch();
+			Timer.Launch();
 		}
 	}
 }
@@ -550,7 +550,7 @@ void ndbidx::index_::Reindex( observer_functions__ &Observer )
 ERRProlog
 	const ndbctt::content__ &Content = _Content();
 	mdr::size__ HandledRecordAmount = 0;
-	tol::chrono__ Chrono;
+	tol::timer__ Timer;
 	ndbidx::index IndexInMemory;
 	ndbidx::index_ *UsedIndex = NULL;
 	ndbbsc::cache  Cache;
@@ -590,15 +590,15 @@ ERRBegin
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) ) {
 		Observer.Notify( 0, Content.Amount(), BalancingCount );
-		Chrono.Init( Observer._Delay );
-		Chrono.Launch();
+		Timer.Init( Observer._Delay );
+		Timer.Launch();
 	}
 
 	while ( Row != NONE ) {
 		Rows.Append( Row );
 
 		if ( PanelRecordCounter-- == 0 ) {
-			Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
+			Reindex_( Rows, *UsedIndex, Observer, Cache, Timer, HandledRecordAmount, BalancingCount, Extremities, Randomly );
 
 			if ( Randomly == false )
 				if ( ( Extremities == NULL ) || ( Extremities->Used < ( ( 2 * PanelRecordSize ) / 3 ) ) )
@@ -615,7 +615,7 @@ ERRBegin
 		Row = Content.Next( Row );
 	}
 
-	Reindex_( Rows, *UsedIndex, Observer, Cache, Chrono, HandledRecordAmount, BalancingCount, Extremities, Randomly );
+	Reindex_( Rows, *UsedIndex, Observer, Cache, Timer, HandledRecordAmount, BalancingCount, Extremities, Randomly );
 
 	if ( ( &Observer != NULL ) && ( Content.Amount() != 0 ) )
 		Observer.Notify( HandledRecordAmount, Content.Amount(), BalancingCount );

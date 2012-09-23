@@ -61,21 +61,22 @@ extern class ttr_tutor &TOLTutor;
 /*$BEGIN$*/
 //D TOoL
 
-#include <string.h>
-#include <stddef.h>
-#include <time.h>
-#include <signal.h>
-#include <locale.h>
+# include <string.h>
+# include <stddef.h>
+# include <time.h>
+# include <signal.h>
+# include <locale.h>
 
-#include "cpe.h"
+# include "cpe.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
-#	define TOL__POSIX
-#elif defined( CPE__MS ) ||defined ( CPE__MINGW )
-#	define TOL__MS
-#else
-#	error "Undefined compilation enviroment."
-#endif
+# if defined( CPE__LINUX ) || defined( CPE__MAC )
+#  define TOL__POSIX
+# elif defined( CPE__MS ) || defined ( CPE__MINGW ) || defined( CPE__CYGWIN )
+#  define TOL__MS
+#  include "Windows.h"
+# else
+#  error "Undefined compilation enviroment."
+# endif
 
 
 #ifdef TOL__MS
@@ -564,30 +565,130 @@ namespace tol {
 	}
 #endif
 
-	/*f Return a time in ms. Only usefull by susbstracting 2 value.
-	Is different from 'clock()' because 'clock()' only return how long
-	the application is using the processor.*/
-	inline time_t _Clock( void )
+# define TOL_TICK_DIFF_OVERFLOW	BSO_ULONG_MAX
+
+// Horloge de précision. N'est utile que pour comparer 2 
+# ifdef TOL__MS
+	E_TRMIMIC__( LARGE_INTEGER, tick__ );
+	extern LARGE_INTEGER	_TickFrequence;
+
+	inline tick__ Ticks( void )
+	{
+		LARGE_INTEGER Counter;
+
+		if ( QueryPerformanceCounter( &Counter ) == 0 )
+			ERRs();
+
+		return Counter;
+	}
+
+	inline bso::ulong__ _Diff(
+		tick__ Op1,
+		tick__ Op2,
+		bso::ulong__ Coeff)
+	{
+		if ( Op1->QuadPart < Op2->QuadPart )
+			ERRc();
+
+		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
+
+		if ( Diff > BSO_ULONG_MAX )
+			return TOL_TICK_DIFF_OVERFLOW;
+
+		return (bso::ulong__)Diff;
+	}
+
+	inline time_t _Time( void )
 	{
 		timeb T;
 
 		::ftime( &T );
-		// Attention: pas standard, mais présent sur toutes les plateformes utilisées.
-		/* Cependant, la valeur de retour diffère selon les plateformes, mais ne signale
-		jamais une erreur. */
 
-		return T.time * 1000UL + T.millitm;
+		return T.time;
+	}
+# elif defined( TOL__POSIX )
+	E_TRMIMIC__( timespec, tick__ );
+
+	inline tick__ Ticks( void )
+	{
+		timespec TP;
+
+		if ( clock_gettime( CLOCK_MONOTONIC, &TP ) != 0 )
+			ERRs();
+
+		return TP;
 	}
 
-	inline time_t Clock( bso::bool__ Discrimination )	// Mettre 'Discrimination' à 'true' pour être sûr que deux
+	inline bso::ulong__ _Diff(
+		tick__ Op1,
+		tick__ Op2,
+		bso::ulong__ Coeff)
+	{
+		tick__ Intermediate;
+		bso::ulong__ Result = 0;
+		bso::bool__ CarryFlag = Op1->tv_nsec < Op2->tv_nsec;
+		bso::ulong__ Frac = 0;
+
+		if ( Op1->tv_sec >= Op2->tv_sec )
+			if( Op1->tv_sec == Op2->tv_sec )
+				if ( Op1->tv_nsec > Op2->tv_nsec )
+			ERRc();
+
+		Intermediate->tv_nsec = ( CarryFlag ? 1000000 : 0 ) + Op1->tv_nsec - Op2->tv_nsec;
+
+		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
+
+		if ( Op1->tv_sec > ( BSO_ULONG_MAX / Coeff ) )
+			return TOL_TICK_DIFF_OVERFLOW;
+
+		Result = Op1->tv_sec * Coeff;
+
+		Frac = Intermediate->tv_nsec / ( 1000000 / Coeff );
+
+		if ( ( Result + Frac  ) > BSO_ULONG_MAX )
+			return TOL_TICK_DIFF_OVERFLOW;
+
+		return Result + Frac;
+	}
+
+	inline time_t _Time( void )
+	{
+		return time( NULL );
+	}
+# else
+#  error "Unhandled platform !"
+# endif
+
+	inline bso::ulong__ SecDiff( 
+		tick__ Op1,
+		tick__ Op2 )
+	{
+		return _Diff( Op1, Op2, 1 );
+	}
+
+	inline bso::ulong__ MilliSecDiff( 
+		tick__ Op1,
+		tick__ Op2 )
+	{
+		return _Diff( Op1, Op2, 1000 );
+	}
+
+	inline bso::ulong__ NanoSecDiff( 
+		tick__ Op1,
+		tick__ Op2 )
+	{
+		return _Diff( Op1, Op2, 1000000 );
+	}
+
+	inline time_t EpochTime( bso::bool__ Discrimination )	// Mettre 'Discrimination' à 'true' pour être sûr que deux
 													// appels successifs à cette focntion renvoit deux valeurs différentes.
 	{
-		time_t Time = tol::_Clock();
+		time_t Time = tol::_Time();
 
 		if ( Discrimination ) {
-			while ( Time == tol::_Clock() );
+			while ( Time == tol::_Time() );
 
-			Time = tol::_Clock();
+			Time = tol::_Time();
 		}
 
 		return Time;
@@ -611,24 +712,36 @@ namespace tol {
 		srand( Seed );
 	}
 
-	class chrono__
+	class timer__
 	{
 	private:
-		time_t _Delay;
-		time_t _Limit;
+		bso::ulong__ _Delay;
+		tick__ _Start;
 	public:
-		void Init( time_t Delay )
+		void reset( bso::bool__ = true )
 		{
-			_Limit = 0;
+			_Delay = 0;
+		}
+		timer__( void )
+		{
+			reset( false );
+		}
+		~timer__( void )
+		{
+			reset( );
+		}
+		void Init( bso::ulong__ Delay )
+		{
+			_Start = Ticks();
 			_Delay = Delay;
 		}
 		void Launch( void )
 		{
-			_Limit = Clock( false ) + _Delay;
+			_Start = Ticks();
 		}
 		bso::bool__ IsElapsed( void ) const
 		{
-			return Clock( false ) > _Limit;
+			return MilliSecDiff( Ticks(), _Start ) >= _Delay;
 		}
 	};
 

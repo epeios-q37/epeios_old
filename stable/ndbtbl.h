@@ -326,10 +326,14 @@ namespace ndbtbl {
 		{
 			_Test( mReadWrite );
 
-			Content().Erase( RecordRow );
+			/* Si l'on est dans le cas d'un primo-accés à l'index, celui-ci s'appuie sur le premier élément de 'Content()' pour trouver sa racine.
+			Si 'Content()' n'en cotient plus qu'un seul, pour éviter de l'effacer avant initialisation de l'index,
+			on efface l'élément de l'index avant de l'effacer de 'Content()'. */
 
 			if ( !_IsBulk() )
 				_DeleteFromIndexes( RecordRow );
+
+			Content().Erase( RecordRow );
 		}
 		void Delete( const rrows_ &RecordRows );
 		mode__ SwitchMode( mode__ Mode )

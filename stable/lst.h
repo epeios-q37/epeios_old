@@ -435,7 +435,7 @@ namespace lst {
 				return State;
 			
 			while ( fil::GetFileLastModificationTime( _FileName ) <= ReferenceTimeStamp ) {
-				tol::Clock( true );	// Permet d'attendre une unité de temps.
+				tol::EpochTime( true );	// Permet d'attendre une unité de temps.
 				fil::TouchFile( _FileName );
 			}
 

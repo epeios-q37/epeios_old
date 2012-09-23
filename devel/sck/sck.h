@@ -292,10 +292,10 @@ namespace sck {
 		socket__ _Socket;
 		duration__ _TimeOut;	// En secondes.
 		bso::bool__ _Error;
-		time_t _TimeStamp;	// Horodatage de la dernière activité (lecture ou écriture);
+		time_t _EpochTimeStamp;	// Horodatage de la dernière activité (lecture ou écriture);
 		void _Touch( void )
 		{
-			_TimeStamp = tol::Clock( false );
+			_EpochTimeStamp = tol::EpochTime( false );
 		}
 	protected:
 		virtual fdr::size__ FDRRead(
@@ -345,7 +345,7 @@ namespace sck {
 			_Socket = SCK_INVALID_SOCKET;
 			_TimeOut = SCK_INFINITE;
 			_Error = false;
-			_TimeStamp = 0;
+			_EpochTimeStamp = 0;
 		}
 		socket_ioflow_driver___( void )
 		{
@@ -370,7 +370,7 @@ namespace sck {
 			_Touch();	// On suppose qu'il n'y a pas une trop longue attente entre la création de la socket et l'appel à cette méthode ...
 		}
 		E_RODISCLOSE__( socket__, Socket )
-		E_RODISCLOSE__( time_t, TimeStamp )
+		E_RODISCLOSE__( time_t, EpochTimeStamp )
 	};
 
 	//c Socket as input/output flow driver.
@@ -409,9 +409,9 @@ namespace sck {
 		{
 			return _Driver.Socket();
 		}
-		time_t TimeStamp( void )
+		time_t EpochTimeStamp( void )
 		{
-			return _Driver.TimeStamp();
+			return _Driver.EpochTimeStamp();
 		}
 	};
 

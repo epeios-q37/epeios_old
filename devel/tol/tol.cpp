@@ -58,6 +58,10 @@ public:
 
 #include "fil.h"
 
+#ifdef TOL__MS		
+LARGE_INTEGER	tol::_TickFrequence;
+#endif
+
 const char *tol::Date( buffer__ &Buffer )
 {
    struct tm *time_now;
@@ -111,9 +115,9 @@ static inline void signal_( int s )
 
 static inline void ExitOnSignal_( void )
 {
-#if defined( TOL__POSIX )
+#if defined( CPE__CYGWIN ) || defined( CPE__LINUX ) || defined ( CPE__MAC )
 	signal( SIGHUP, signal_ );
-#elif defined( TOL__MS )
+#elif defined( CPE__MS )
 	signal( SIGBREAK, signal_ );
 #else
 #	error "Undefined target !"
@@ -135,6 +139,10 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 		ExitOnSignal_();
+#ifdef TOL__MS		
+		if ( QueryPerformanceCounter( &tol::_TickFrequence ) == 0 )
+			ERRs();
+#endif
 	}
 	~tolpersonnalization( void )
 	{

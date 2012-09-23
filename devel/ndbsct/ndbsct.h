@@ -86,7 +86,7 @@ namespace ndbsct {
 		}
 		void _Touch( void )
 		{
-			S_.ModificationTimeStamp = tol::Clock( false ) / 1000;	// Pour pouvoir comparer avec un 'timestamp' de fichier.
+			S_.ModificationEpochTimeStamp = tol::EpochTime( false );
 		}
 	public:
 		storage_ Storage;
@@ -96,7 +96,7 @@ namespace ndbsct {
 			storage_::s Storage;
 			// Taille de l'élément.
 			mdr::size__ Size;
-			time_t ModificationTimeStamp;
+			time_t ModificationEpochTimeStamp;
 		} &S_;
 		static_content_( s &S )
 		: S_( S ),
@@ -109,7 +109,7 @@ namespace ndbsct {
 			Storage.reset( P );
 
 			S_.Size = 0;
-			S_.ModificationTimeStamp = 0;
+			S_.ModificationEpochTimeStamp = 0;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -137,7 +137,7 @@ namespace ndbsct {
 			Storage.Init();
 
 			S_.Size = Size;
-			S_.ModificationTimeStamp = 0;
+			S_.ModificationEpochTimeStamp = 0;
 		}
 		void Erase( rrow__ Row )
 		{
@@ -190,7 +190,7 @@ namespace ndbsct {
 		{
 			ERRl();
 		}
-		E_RODISCLOSE_( time_t, ModificationTimeStamp );
+		E_RODISCLOSE_( time_t, ModificationEpochTimeStamp );
 		E_RODISCLOSE_( mdr::size__, Size );
 	};
 
@@ -210,8 +210,9 @@ namespace ndbsct {
 			// Lors d'une suppression d'un enregistrement le fichier derrière '_MemoryFileManager' n'est pas touché, mais les fichiers accessoires
 			// doivent quand même être sauvés, d'où le code ci-dessous.
 
-			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() > TimeStamp ) ) 
-				TimeStamp = _Content->ModificationTimeStamp();
+			if ( ( _Content != NULL ) &&
+				 ( ( TimeStamp == 0 ) || (  _Content->ModificationEpochTimeStamp() > TimeStamp ) ) )
+				TimeStamp = _Content->ModificationEpochTimeStamp();
 
 			return TimeStamp;
 		}
@@ -267,7 +268,7 @@ namespace ndbsct {
 		{
 			uym::state__ State = _MemoryFileManager.Settle();
 
-			if ( ( _Content != NULL ) && ( _Content->ModificationTimeStamp() != 0 ) )
+			if ( ( _Content != NULL ) && ( _Content->ModificationEpochTimeStamp() != 0 ) )
 				_ListFileManager.Settle( _GetUnderlyingFilesLastModificationTime() );
 
 			return State;
