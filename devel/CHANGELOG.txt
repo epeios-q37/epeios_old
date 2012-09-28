@@ -1,5 +1,15 @@
 $Id$
 
+27/09/2012 :
+	- Général :
+		- Adaptation.
+	- DALVIK :
+		- Simplification.
+	- DVKBSE :
+		- Création de variantes de fonctions  utilisant un 'Id' et un 'Name'.
+	- DVKDEV :
+		- Simplification et variantes fonctions 'Install(...)' avec 'Id' et un 'View'.
+
 22/09/2012 :
 	- NDBTBL :
 		- Correction bogue lorsque l'on efface dés le lancement de l'application le dernier élément d'une table.

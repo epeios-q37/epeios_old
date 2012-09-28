@@ -135,11 +135,12 @@ static void DoDalvikRelatedStuff_(
 		Activity, Env->FindClass( "android/app/Activity" ),
 		jvabse::GetMethodID( Env, Activity, "onCreate", "(Landroid/os/Bundle;)V" ),
 		Bundle );
-
+/*
 	Env->CallVoidMethod(
 		Activity,
 		jvabse::GetMethodID( Env, Activity, "setContentView", "(I)V" ),
 		jvabse::GetStaticIntField(  Env, dvkbse::GetRlayoutClass( dalvik::PackageName, Env ), "main" ) );
+*/
 }
 
 static void InitializeFlow_(
@@ -250,7 +251,7 @@ extern "C" {
 		jobject Listener,
 		jobject View)
 	{
-		HandleEvent_<dvkfev::on_click_listener_callback___>( Env, Listener, View, &dvkfev::on_click_listener_callback___::VAOnClick );
+		HandleEvent_<dvkfev::on_click_event_handler__>( Env, Listener, View, &dvkfev::on_click_event_handler__::VAOnClick );
 	}
 
 	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnItemSelectedListener_onItemSelected(
@@ -261,7 +262,7 @@ extern "C" {
 		jint Position,
 		jlong Id )
 	{
-		HandleEvent_<dvkfev::on_item_selected_listener_callback___>( Env, Listener, Parent, &dvkfev::on_item_selected_listener_callback___::VAOnItemSelected, Id );
+		HandleEvent_<dvkfev::on_item_selected_event_handler__>( Env, Listener, Parent, &dvkfev::on_item_selected_event_handler__::VAOnItemSelected, Id );
 	}
 
 	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnItemSelectedListener_onNothingSelected(
@@ -269,7 +270,7 @@ extern "C" {
 		jobject Listener,
 		jobject Parent )
 	{
-		HandleEvent_<dvkfev::on_item_selected_listener_callback___>( Env, Listener, Parent, &dvkfev::on_item_selected_listener_callback___::VAOnNothingSelected );
+		HandleEvent_<dvkfev::on_item_selected_event_handler__>( Env, Listener, Parent, &dvkfev::on_item_selected_event_handler__::VAOnNothingSelected );
 	}
 }
 

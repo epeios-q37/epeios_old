@@ -240,8 +240,10 @@ namespace xulwdg {
 
 }
 
+/*
 # define XULWDG__EH( name )\
 	template <typename target> E_TTCLONE__( event_handler__<E_COVER2( target )>, name##_eh__ );
+*/
 
 # define XULWDG_WIDGET( name, target )	typedef xulwdg::name##__<target> name##__;\
 

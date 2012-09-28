@@ -695,5 +695,15 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &dvkbse	&epeios	&2012\
 	&DalViK BaSE.
 	
+&dvkfbs	&epeios	&2012\
+	&DalViK Frontend BaSe
 &dvkfev	&epeios	&2012\
 	&DalViK Frontend EVent
+&dvkfmn	&epeios	&2012\
+	&DalViK Frontend Main
+&dvkfsf	&epeios	&2012\
+	&DalViK Frontend Session Form
+&dvkfsv	&epeios	&2012\
+	&DalViK Frontend Session View
+&dvkftk	&epeios	&2012\
+	&DalViK Frontend TunK
