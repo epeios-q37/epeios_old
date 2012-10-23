@@ -75,7 +75,9 @@ namespace sclrgstry {
 
 	extern const lcl::rack__ *LocaleRack;	// A définir.
 
-	const rgstry::multi_level_registry_ &GetRegistry( void );
+	const rgstry::registry_ &GetRegistry( void );
+
+	rgstry::row__ GetRoot( void );
 
 	extern rgstry::entry___ Parameters;
 
@@ -84,7 +86,7 @@ namespace sclrgstry {
 	using rgstry::value;
 	using rgstry::value_;
 
-	bso::bool__ Load(
+	void Load(
 		flw::iflow__ &Flow,
 		const char *Directory,
 		const char *RootPath );
@@ -92,45 +94,37 @@ namespace sclrgstry {
 	bso::bool__ IsRegistryReady( void );
 
 	bso::bool__ GetValue(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		str::string_ &Value );
 
 	bso::bool__ GetValues(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		str::strings_ &Values );
 
 	const str::string_ &GetOptionalRegistryValue(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		str::string_ &Value,
 		bso::bool__ *Missing = NULL );
 
 	const char *GetOptionalRegistryValue(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		STR_BUFFER___ &Buffer,
 		bso::bool__ *Missing = NULL );
 
 	const str::string_ &GetMandatoryRegistryValue(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		str::string_ &Value );
 
 	const char *GetMandatoryRegistryValue(
-		const rgstry::entry___ &Entry,
-		const rgstry::tags_ &Tags,
+		const rgstry::tentry__ &Entry,
 		STR_BUFFER___ &Buffer );
 
 # define SCLRGSTRY__RUN( type, name, limit )\
 	type GetMandatoryRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type Limit = limit );\
 	type GetRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Limit = limit );
 
@@ -143,13 +137,11 @@ namespace sclrgstry {
 
 # define SCLRGSTRY__RSN( type, name, min, max )\
 	type GetMandatoryRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type Min = min,\
 		type Max = max );\
 	type GetRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Min = min,\
 		type Max = max );

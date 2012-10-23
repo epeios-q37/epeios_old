@@ -100,11 +100,12 @@ ERREnd
 ERREpilog
 }
 
-void scllocale::Load(
+lcl::level__ scllocale::Load(
 	flw::iflow__ &Flow,
 	const char *Directory,
 	const char *RootPath )
 {
+	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRProlog
 	STR_BUFFER___ STRBuffer;
 	rgstry::context___ Context;
@@ -115,10 +116,7 @@ ERRBegin
 
 	Context.Init();
 
-	switch ( Locale_.Init( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context ) ) {
-	case rgstry::sOK:
-		break;
-	default:
+	if ( ( Level = Locale_.Push( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context ) ) == LCL_UNDEFINED_LEVEL ) {
 		if ( !cio::IsInitialized() )
 			cio::Initialize( cio::t_Default );
 
@@ -130,6 +128,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
+	return Level;
 }
 
 void scllocale::SetLanguage( const str::string_ &Language )

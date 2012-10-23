@@ -97,8 +97,9 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsDirectoryServiceDefs.h"
 # include "nsIDOMDocument.h"
 # include "nsIDOMElement.h"
+# include "nsIDOMAttr.h"
 # include "nsIDOMXULMultSelectCntrlEl.h"
-#  include "nsIDOMXULSelectCntrlEl.h"
+# include "nsIDOMXULSelectCntrlEl.h"
 # include "nsIDOMXULSelectCntrlItemEl.h"
 # include "nsIDOMXULTextboxElement.h"
 # include "nsIDOMXULMenuListElement.h"
@@ -597,6 +598,35 @@ namespace nsxpcm {
 		return Name;
 	}
 
+	template <typename t> inline const str::string_ &GetValue(
+		t *Element,
+		str::string_ &Value )
+	{
+		nsEmbedString EValue;
+
+		T( Element->GetValue( EValue ) );
+
+		Transform( EValue, Value );
+
+		return Value;
+	}
+
+	inline void GetAttributeNameAndValue(
+		nsIDOMAttr *Attribute,
+		str::string_ &Name,
+		str::string_ &Value )
+	{
+		GetName( Attribute, Name );
+		GetValue( Attribute, Value );
+	}
+
+	inline void GetAttributeNameAndValue(
+		nsIDOMNode *Attribute,
+		str::string_ &Name,
+		str::string_ &Value )
+	{
+		GetAttributeNameAndValue( nsxpcm::QueryInterface<nsIDOMAttr>( Attribute ), Name, Value );
+	}
 
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
@@ -818,19 +848,6 @@ namespace nsxpcm {
 #endif
 		
 		T( Element->SetValue( EValue ) );
-	}
-
-	template <typename t> inline const str::string_ &GetValue(
-		t *Element,
-		str::string_ &Value )
-	{
-		nsEmbedString EValue;
-
-		T( Element->GetValue( EValue ) );
-
-		Transform( EValue, Value );
-
-		return Value;
 	}
 
 	inline bso::slong__ GetSelectedIndex( nsIDOMXULSelectControlElement *Element )
@@ -1591,7 +1608,15 @@ namespace nsxpcm {
 		{
 			return _Window;
 		}
+		nsIDOMWindowInternal *Window( void ) const
+		{
+			return _Window;
+		}
 		nsIDOMDocument *GetDocument( void )
+		{
+			return nsxpcm::GetDocument( GetWindow() );
+		}
+		nsIDOMDocument *Document( void )
 		{
 			return nsxpcm::GetDocument( GetWindow() );
 		}

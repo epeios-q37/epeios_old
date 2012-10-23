@@ -102,6 +102,7 @@ namespace xpp {
 		sMissingCypherKey,
 		sMissingKeyOrFormatAttribute,
 		sEmptyResult,
+		sCDataNestingForbidden,
 
 		s_amount,
 		s_Undefined,
@@ -163,23 +164,25 @@ namespace xpp {
 
 	struct _qualified_preprocessor_directives___ {
 		str::string NamespaceWithSeparator;
-		str::string DefineTag;
+		str::string DefineTag_;
 		str::string ExpandTag;
 		str::string SetTag;
 		str::string IfeqTag;
 		str::string BlocTag;
+		str::string CDataTag;
 		str::string CypherTag;
 		str::string AttributeAttribute;	//'<tag xpp:attribute="..." ...>'//
-		str::string XMLNS;	// <... xmlns:xpp="..." ...> ('xpp' ou ce qui a été choidi par l'utilisateur ...).
+		str::string XMLNS;	// <... xmlns:xpp="..." ...> ('xpp' ou ce qui a été choisi par l'utilisateur ...).
 		void reset( bso::bool__ P = true )
 		{
 			NamespaceWithSeparator.reset( P );
 
-			DefineTag.reset( P );
+			DefineTag_.reset( P );
 			ExpandTag.reset( P );
 			SetTag.reset( P );
 			IfeqTag.reset( P );
 			BlocTag.reset( P );
+			CDataTag.reset( P );
 			AttributeAttribute.reset( P );
 			XMLNS.reset( P );
 		}
@@ -422,6 +425,7 @@ namespace xpp {
 		str::string _CypherKey;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
+		bso::ulong__ _CDataNesting;
 		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
 		status__ _InitWithFile(
 			const str::string_ &FileName,
@@ -460,7 +464,7 @@ namespace xpp {
 			_extended_parser___ *&Parser,
 			str::string_ &Data );
 		status__ _HandlePreprocessorDirective(
-			const str::string_ &DirectiveName,
+			int Directive,
 			_extended_parser___ *&Parser );
 	public:
 		void reset( bso::bool__ P = true )
@@ -479,6 +483,7 @@ namespace xpp {
 			_Parser.reset( P );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
+			_CDataNesting = 0;
 		}
 		_extended_parser___(
 			_repository_ &Repository,
@@ -509,6 +514,7 @@ namespace xpp {
 			_CypherKey.Init( CypherKey );
 			_IgnorePreprocessingInstruction = false;
 			_AttributeDefinitionInProgress = false;
+			_CDataNesting = 0;
 
 			return sOK;
 		}

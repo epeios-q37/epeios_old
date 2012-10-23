@@ -60,16 +60,16 @@ extern class ttr_tutor &SCLLOCALETutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-
-#include "str.h"
+# include "err.h"
+# include "flw.h"
+# include "str.h"
+# include "lcl.h"
 
 namespace scllocale {
 
 	const lcl::rack__ &GetRack( void );
 
-	void Load(
+	lcl::level__ Load(
 		flw::iflow__ &Flow,
 		const char *Directory,
 		const char *RootPath );

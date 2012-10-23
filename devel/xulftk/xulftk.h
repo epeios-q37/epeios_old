@@ -119,6 +119,8 @@ namespace xulftk {
 
 			return *_Trunk;
 		}
+		void _GoToHome( void )
+		{}	// Standadisation.
 		void _DefineSession(
 			const str::string_ &FileName,
 			const xpp::criterions___ &Criterions );
@@ -139,6 +141,7 @@ namespace xulftk {
 		{
 			ERRc();	// Si pas surchargé, alors 'xulfmn::web_site_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
+		virtual void XULFTKGoToHome( void ) = 0;
 		virtual void XULFTKDefineSession(
 			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
@@ -186,6 +189,10 @@ namespace xulftk {
 		void SiteURL( str::string_ &URL )
 		{
 			XULFTKSiteURL( URL );
+		}
+		void GoToHome( void )
+		{
+			XULFTKGoToHome();
 		}
 		void DefineSession(
 			const str::string_ &ProjectFileName,
@@ -277,7 +284,7 @@ namespace xulftk {
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void )
 		{
-			UI().Main().Widgets.wdwMain.Close();
+			UI().Main().Close();
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -392,7 +399,7 @@ namespace xulftk {
 		ERREnd
 		ERREpilog
 		}
-		bso::bool__ HandleDefaultProject( void )
+		bso::bool__ FinalizeLaunching( void )
 		{
 			bso::bool__ Defined = false;
 		ERRProlog
@@ -400,10 +407,13 @@ namespace xulftk {
 		ERRBegin
 			DefaultProjectFileName.Init();
 
-			if ( frdrgy::DefaultProject.GetValue( Registry(), DefaultProjectFileName ) ) {
+			if ( Registry().GetValue( frdrgy::DefaultProject, DefaultProjectFileName ) ) {
 				DefineSession( DefaultProjectFileName, xpp::criterions___() );
 				Defined = true;
-			}
+			} else
+				GoToHome();
+
+			UpdateUI();
 
 		ERRErr
 		ERREnd
@@ -423,6 +433,10 @@ namespace xulftk {
 		ERRErr
 		ERREnd
 		ERREpilog
+		}
+		void GoToHome( void )
+		{
+			_UF().GoToHome();
 		}
 		bso::bool__ DefineSession(
 			const str::string_ &ProjectFileName,

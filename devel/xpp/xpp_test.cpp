@@ -109,7 +109,7 @@ ERRBegin
 
 //	Directory = fnm::GetLocation( FILE, Buffer );
 
-	Flow.EOFD( XTF_EOXT );
+//	Flow.EOFD( XTF_EOXT );
 
 	Test.Init();
 

@@ -75,33 +75,89 @@ namespace xulfmn {
 	XULFBS_EH( web_site_eh__ );
 	XULFBS_EH( debug_eh__ );
 	XULFBS_EH( new_project_eh__ );
-	XULFBS_EH( open_project_eh__ );
+	XULFBS_EH( user_project_eh__ );
+	XULFBS_EH( project_type_selection_eh__ );
+	XULFBS_EH( user_project_selection_eh__ );
+	XULFBS_EH( apply_eh__ );
 	XULFBS_EH( close_project_eh__ );
 
-	struct main__
-	: public ui_core__<xulftk::trunk___>
+	class broadcasters__
 	{
 	public:
-		struct broadcasters__ {
-			broadcaster__ bdcCloseProject;
-		} &Broadcasters;
-		struct event_handlers__ {
-			new_project_eh__ ehNewProject;
-			open_project_eh__ ehOpenProject;
-			close_project_eh__ ehCloseProject;
-			about_eh__ ehAbout;
-			web_site_eh__ ehWebSite;
-			debug_eh__ ehDebug;
-			exit_eh__ ehExit;
-		} &EventHandlers;
-		struct widgets__ {
-			window__ wdwMain;
-			deck__ dckMain;
-			widget__
-				vewHome,
-				vewSessionForm,
-				vewSessionView;
-		} &Widgets;
+		broadcaster__ ProjectInProgress;
+		void reset( bso::bool__ P = true )
+		{
+			ProjectInProgress.reset( P );
+		}
+		E_CDTOR( broadcasters__ )
+		void Init( xulftk::trunk___ &Trunk );
+	};
+
+	class event_handlers__
+	{
+	public:
+		new_project_eh__ NewProject;
+		user_project_eh__ UserProject;
+		close_project_eh__ CloseProject;
+		project_type_selection_eh__ ProjectTypeSelection;
+		user_project_selection_eh__ UserProjectSelection;
+		apply_eh__ Apply;
+		about_eh__ About;
+		web_site_eh__ WebSite;
+		debug_eh__ Debug;
+		exit_eh__ Exit;
+		void reset( bso::bool__ P = true )
+		{
+			NewProject.reset( P );
+			UserProject.reset( P );
+			CloseProject.reset( P );
+			ProjectTypeSelection.reset( P );
+			About.reset( P );
+			WebSite.reset( P );
+			Debug.reset( P );
+			Exit.reset( P );
+		}
+		E_CDTOR( event_handlers__ )
+		void Init( xulftk::trunk___ &Trunk );
+	};
+
+	class widgets__
+	{
+	public:
+		menu__ mnuPredefinedProject;
+		deck__ dckMain;
+		deck__ dckProjectType;
+		menulist__ mnlProjectType;
+		menulist__ mnlPredefinedProjectList;
+		textbox__ txbUserProjectLocation;
+		widget__
+			vewHome,
+			vewSessionForm,
+			vewSessionView;
+		void reset( bso::bool__ P = true )
+		{
+			dckMain.reset( P );
+			dckProjectType.reset( P );
+			vewHome.reset( P );
+			vewSessionForm.reset( P );
+			vewSessionView.reset( P );
+		}
+		E_CDTOR( widgets__ )
+		void Init( xulftk::trunk___ &Trunk );
+	};
+
+
+	struct main__
+	: public window__
+	{
+	public:
+		broadcasters__ &Broadcasters;
+		event_handlers__ &EventHandlers;
+		widgets__ &Widgets;
+		void reset( bso::bool__ P = true )
+		{
+			window__::reset( P );
+		}
 		main__(
 			broadcasters__ &Broadcasters,
 			event_handlers__ &EventHandlers,
@@ -109,15 +165,15 @@ namespace xulfmn {
 		: Broadcasters( Broadcasters ),
 		  EventHandlers( EventHandlers ),
 		  Widgets( Widgets )
-		{}
+		{
+			reset( false );
+		}
+		E_DTOR( main__ )
+		void Init(
+			xulftk::trunk___ &Trunk,
+			nsIDOMWindow *Window );
 		void Update( void );
 	};
-
-	void RegisterMainUI(
-		xulftk::trunk___ &Trunk,
-		nsIDOMWindow *Window );
-
-
 }
 
 /*$END$*/

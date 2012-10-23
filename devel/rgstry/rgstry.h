@@ -68,6 +68,7 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "xtf.h"
 #include "cpe.h"
 #include "xpp.h"
+# include "stk.h"
 
 # define RGSTRY__TAG_MARKER	'%'
 
@@ -163,7 +164,6 @@ namespace rgstry {
 	};
 
 
-
 	E_AUTO( path )
 
 	mdr::row__ BuildPath(
@@ -176,6 +176,100 @@ namespace rgstry {
 	E_ROW( row__ );
 	typedef bch::E_BUNCH_( row__ ) rows_;
 	E_AUTO( rows );
+
+	typedef values_	tags_;
+	E_AUTO( tags );
+
+	class entry___
+	{
+	private:
+		void _GetParentPath(
+			bso::bool__ NoTailingSlash,
+			str::string_ &Path ) const
+		{
+			if ( _Parent != NULL ) {
+				_Parent->GetPath( Path );
+
+				if ( Path.Amount() != 0 ) {
+					if ( Path( Path.Last() ) == '/' ) {
+						if ( NoTailingSlash )
+							Path.Remove( Path.Last() );
+					} else if ( !NoTailingSlash )
+						Path.Append( '/' );
+				}
+			}
+		}
+		const bso::bool__ _IsPostInitialized( void ) const
+		{
+			return ( ( _Path.Amount() != 0 )
+				     || ( _RawPath == NULL )
+					 || ( *_RawPath == 0 ) );
+		}
+		void _PostInitialize( void ) const;
+		const str::string_ &_GetPath(
+			const tags_ &Tags,
+			str::string_ &Path ) const;
+	private:
+		const entry___ *_Parent;
+		const char *_RawPath;
+		mutable str::string _Path;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			_Parent = NULL;
+			_RawPath = NULL;
+			_Path.reset( P );
+		}
+		entry___(
+			const char *Path = NULL,	// Non dupliqué !
+			const entry___ &Parent = *(const entry___ *)NULL )
+		{
+			reset( false );
+			Init( Path, Parent );
+		}
+		void Init(
+			const char *Path = NULL,	// Non dupliqué !
+			const entry___ &Parent = *(const entry___ *)NULL )
+		{
+			_Parent = &Parent;
+			_RawPath = Path;
+
+			_Path.Init();
+		}
+		const str::string_ &GetPath(
+			const tags_ &Tags,
+			str::string_ &Path ) const
+		{
+			if ( !_IsPostInitialized() )
+				_PostInitialize();
+
+			return _GetPath( Tags, Path );
+		}
+		const str::string_ &GetPath( str::string_ &Path ) const
+		{
+			return GetPath( tags(), Path );
+		}
+	};
+
+	struct tentry__ {
+		const entry___ *Entry;
+		const tags_ *Tags;
+		tentry__(
+			const entry___ &Entry,
+			const tags_ &Tags = *(const tags_ *)NULL )
+		{
+			this->Entry = &Entry;
+			this->Tags = &Tags;
+		}
+		const str::string_ &GetPath( str::string_ &Path ) const
+		{
+			if ( Tags != NULL )
+				return Entry->GetPath( *Tags, Path );
+			else
+				return Entry->GetPath( Path );
+		}
+	};
+
 
 	// Nature du noeud.
 	enum nature__ 
@@ -657,6 +751,46 @@ namespace rgstry {
 
 			return Value;
 		}
+		const value_ &GetValue(
+			const tentry__ &Entry,
+			row__ Row,
+			bso::bool__ *Missing,
+			buffer &Buffer,
+			mdr::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		bso::bool__ GetValue(
+			const tentry__ &Entry,
+			row__ Row,
+			value_ &Value ) const
+		{
+			buffer Buffer;
+			bso::bool__ Missing = false;
+
+			Value.Append( GetValue( Entry, Row, &Missing, Buffer ) );
+
+			return !Missing;
+		}
+#if 0
+		const value_ &GetValue(
+			const entry___ &Entry,
+			const tags_ &Tags,
+			row__ Row,
+			bso::bool__ *Missing,
+			buffer &Buffer,
+			mdr::row__ *PathErrorRow = NULL ) const;	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+#endif
+		const value_ &GetValue(
+			const tentry__ &Entry,
+			row__ Row,
+			bso::bool__ *Missing,
+			str::string_ &Value,
+			mdr::row__ *PathErrorRow = NULL ) const	// Nota : ne met 'Missing' à 'true' que lorque 'Path' n'existe pas. Si 'Missing' est à 'true', aucune action n'est réalisée.
+		{
+			buffer Buffer;
+
+			Value.Append( GetValue( Entry, Row, Missing, Buffer, PathErrorRow ) );
+
+			return Value;
+		}
 		bso::bool__ GetValues(
 			const path_ &Path,
 			row__ Row,
@@ -666,6 +800,19 @@ namespace rgstry {
 			row__ Row,
 			values_ &Values,
 			mdr::row__ *PathErrorRow = NULL ) const;
+		bso::bool__ GetValues(
+			const tentry__ &Entry,
+			row__ Row,
+			values_ &Values,
+			mdr::row__ *PathErrorRow = NULL ) const;
+#if 0
+		bso::bool__ GetValues(
+			const entry___ &Entry,
+			const tags_ &Tags,
+			row__ Row,
+			values_ &Values,
+			mdr::row__ *PathErrorRow = NULL ) const;
+#endif
 		row__ SetValue(
 			const path_ &Path,
 			const value_ &Value,
@@ -967,7 +1114,7 @@ namespace rgstry {
 		return Status;
 	}
 
-# if 1	// Déprécié, destiné à disparaître. Utiliser 'multi_level_registry_'.
+# if 0	// Déprécié, destiné à disparaître. Utiliser 'multi_level_registry_'.
 	class overloaded_registry___
 	{
 	public:
@@ -1179,9 +1326,8 @@ namespace rgstry {
 		}
 	};
 
-
-	typedef bch::E_BUNCHt_( _entry__, level__ ) _entries_;
-	typedef bch::E_BUNCHt_( time_t, level__ ) _timestamps_;
+	typedef stk::E_BSTACKt_( _entry__, level__ ) _entries_;
+	typedef stk::E_BSTACKt_( time_t, level__ ) _timestamps_;
 
 	// Registre multi-niveau
 	class multi_level_registry_
@@ -1193,16 +1339,16 @@ namespace rgstry {
 		}
 		level__ _RawCreateLevel( void )
 		{
-			level__ Level = TimeStamps.New();
+			level__ Level = TimeStamps.Push( 0 );
 
-			if ( Entries.Append( _entry__() ) != Level )
+			if ( Entries.Push( _entry__() ) != Level )
 				ERRc();
 
 			_Touch( Level );
 
 			return Level;
 		}
-		level__ _RawAddLevel( const _entry__ &Entry )
+		level__ _RawPushLevel( const _entry__ &Entry )
 		{
 			level__ Level = RGSTRY_UNDEFINED_LEVEL;
 
@@ -1299,36 +1445,37 @@ namespace rgstry {
 
 			Entries.Store( Entry, Level );
 		}
-/*		level__ CreateImportedLevel(
-			row__ Row,
-			const registry_ &Registry )
+		level__ PushImportedLevel(
+			const registry_ &Registry,
+			row__ Root )
 		{
-			return _RawCreateLevel( _entry__( Row, Registry ) );
+			return _RawPushLevel( _entry__( Root, Registry ) );
 		}
-		level__ CreatedEmbeddedLevel( void )
+		level__ PushEmbeddedLevel( const name_ &Name = name() )
 		{
-			return _RawCreateLevel( _entry__() );
+			return _RawPushLevel( _entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
 		}
-*/
-		level__ AddImportedLevel(
-			row__ Root,
-			const registry_ &Registry )
-		{
-			return _RawAddLevel( _entry__( Root, Registry ) );
-		}
-		level__ AddEmbeddedLevel( const name_ &Name = name() )
-		{
-			return _RawAddLevel( _entry__( EmbeddedRegistry.CreateRegistry( Name ) ) );
-		}
-		void Add( const multi_level_registry_ &Registry )
+		void Push( const multi_level_registry_ &Registry )
 		{
 			level__ Level = Registry.First();
 
 			while ( Level != RGSTRY_UNDEFINED_LEVEL ) {
-				AddImportedLevel( Registry.GetRoot( Level ), Registry.GetRegistry( Level ) );
+				PushImportedLevel( Registry.GetRegistry( Level ), Registry.GetRoot( Level ) );
 
 				Level = Registry.Next( Level );
 			}
+		}
+		level__ Pop( void )
+		{
+			level__ Level = Entries.Last();
+
+			if ( Entries.Top().Registry == &EmbeddedRegistry )
+				EmbeddedRegistry.Delete( Entries.Top().Root );
+
+			Entries.Pop();
+			TimeStamps.Pop();
+
+			return Level;
 		}
 		void Create(
 			level__ Level,
@@ -1389,6 +1536,21 @@ namespace rgstry {
 		{
 			return GetValue( str::string( PathString ), Value, PathErrorRow );
 		}
+		bso::bool__ GetValue(
+			const tentry__ &Entry,
+			str::string_ &Value,
+			mdr::row__ *PathErrorRow = NULL ) const;
+#if 0
+		bso::bool__ GetValue(
+			const entry___ &Entry,
+			const tags_ &Tags,
+			str::string_ &Value,
+			mdr::row__ *PathErrorRow = NULL ) const;
+		bso::bool__ GetValue(
+			const entry___ &Entry,
+			str::string_ &Value,
+			mdr::row__ *PathErrorRow = NULL ) const;
+#endif
 		bso::bool__ GetValues(
 			level__ Level,
 			const path_ &Path,
@@ -1415,6 +1577,10 @@ namespace rgstry {
 		{
 			return GetValues( str::string( PathString ), Values, PathErrorRow );
 		}
+		bso::bool__ GetValues(
+			const tentry__ &Entry,
+			values_ &Values,
+			mdr::row__ *PathErrorRow = NULL ) const;
 		void SetValue(
 			level__ Level,
 			const str::string_ &PathString,
@@ -1429,6 +1595,21 @@ namespace rgstry {
 			const str::string_ &PathString,
 			const value_ &Value,
 			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		bso::bool__ SetValue(
+			const tentry__ &Entry,
+			const value_ &Value,
+			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+#if 0
+		bso::bool__ SetValue(
+			const entry___ &Entry,
+			const tags_ &Tags,
+			const value_ &Value,
+			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+		bso::bool__ SetValue(
+			const entry___ &Entry,
+			const value_ &Value,
+			mdr::row__ *PathErrorRow = NULL );	// Retourne 'false' si 'PathString' a déjà la valeur 'Value', 'true' sinon.
+#endif
 		bso::bool__ Delete(
 			const path_ &Path,
 			level__ Level )
@@ -1696,214 +1877,6 @@ namespace rgstry {
 	ERREpilog
 		return Value;
 	}
-
-# ifdef _MU
-#  define RGSRTY__MS_BACKUP	_MU
-# endif
-	
-#define _MU( name, type, min, max )\
-	type Get##name(\
-		const multi_level_registry_ &Registry,\
-		type Default,\
-		const tags_ &Tags = tags(),\
-		bso::bool__ *Error = NULL,\
-		type Min = min,\
-		type Max = max )\
-	{\
-		type Value = 0;\
-	ERRProlog\
-		str::string Buffer;\
-	ERRBegin\
-		Buffer.Init();\
-		Value = (type)_GetUnsigned( Registry, GetPath( Tags, Buffer ), Default, Error, Min, Max );\
-	ERRErr\
-	ERREnd\
-	ERREpilog\
-		return Value;\
-	}
-
-
-# ifdef _MS
-#  define RGSRTY__MU_BACKUP	_MS
-# endif
-
-#define _MS( name, type, min, max )\
-	type Get##name(\
-		const multi_level_registry_ &Registry,\
-		type Default,\
-		const tags_ &Tags = tags(),\
-		bso::bool__ *Error = NULL,\
-		type Min = min,\
-		type Max = max )\
-	{\
-		type Value = 0;\
-	ERRProlog\
-		str::string Buffer;\
-	ERRBegin\
-		Buffer.Init();\
-		Value = (type)_GetSigned( Registry, GetPath( Tags, Buffer ), Default, Error, Min, Max );\
-	ERRErr\
-	ERREnd\
-	ERREpilog\
-		return Value;\
-	}
-
-	typedef values_	tags_;
-	E_AUTO( tags );
-
-	class entry___
-	{
-	private:
-		void _GetParentPath(
-			bso::bool__ NoTailingSlash,
-			str::string_ &Path ) const
-		{
-			if ( _Parent != NULL ) {
-				_Parent->GetPath( Path );
-
-				if ( Path.Amount() != 0 ) {
-					if ( Path( Path.Last() ) == '/' ) {
-						if ( NoTailingSlash )
-							Path.Remove( Path.Last() );
-					} else if ( !NoTailingSlash )
-						Path.Append( '/' );
-				}
-			}
-		}
-		const bso::bool__ _IsPostInitialized( void ) const
-		{
-			return ( ( _Path.Amount() != 0 )
-				     || ( _RawPath == NULL )
-					 || ( *_RawPath == 0 ) );
-		}
-		void _PostInitialize( void ) const;
-		const str::string_ &_GetPath(
-			const tags_ &Tags,
-			str::string_ &Path ) const;
-	private:
-		const entry___ *_Parent;
-		const char *_RawPath;
-		mutable str::string _Path;
-	public:
-		void reset( bso::bool__ P = true )
-		{
-			_Parent = NULL;
-			_RawPath = NULL;
-			_Path.reset( P );
-		}
-		entry___(
-			const char *Path = NULL,	// Non dupliqué !
-			const entry___ &Parent = *(const entry___ *)NULL )
-		{
-			reset( false );
-			Init( Path, Parent );
-		}
-		void Init(
-			const char *Path = NULL,	// Non dupliqué !
-			const entry___ &Parent = *(const entry___ *)NULL )
-		{
-			_Parent = &Parent;
-			_RawPath = Path;
-
-			_Path.Init();
-		}
-		const str::string_ &GetPath(
-			const tags_ &Tags,
-			str::string_ &Path ) const
-		{
-			if ( !_IsPostInitialized() )
-				_PostInitialize();
-
-			return _GetPath( Tags, Path );
-		}
-		const str::string_ &GetPath( str::string_ &Path ) const
-		{
-			return GetPath( tags(), Path );
-		}
-		bso::bool__ SetValue(
-			multi_level_registry_ &Registry,
-			const tags_ &Tags,
-			const str::string_ &Value ) const
-		{
-			bso::bool__ Made = false;
-		ERRProlog
-			str::string Buffer;
-		ERRBegin
-			Buffer.Init();
-			Made = Registry.SetValue( GetPath( Tags, Buffer ), Value );
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Made;
-		}
-		bso::bool__ SetValue(
-			multi_level_registry_ &Registry,
-			const str::string_ &Value ) const
-		{
-			return SetValue( Registry, tags(), Value );
-		}
-		bso::bool__ GetValue(
-			const multi_level_registry_ &Registry,
-			const tags_ &Tags,
-			str::string_ &Value ) const
-		{
-			bso::bool__ Made = false;
-		ERRProlog
-			str::string Buffer;
-		ERRBegin
-			Buffer.Init();
-			Made = Registry.GetValue( GetPath( Tags, Buffer ), Value );
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Made;
-		}
-		bso::bool__ GetValue(
-			const multi_level_registry_ &Registry,
-			str::string_ &Value ) const
-		{
-			return GetValue( Registry, tags(), Value );
-		}
-		bso::bool__ GetValues(
-			const multi_level_registry_ &Registry,
-			const tags_ &Tags,
-			values_ &Values ) const
-		{
-			bso::bool__ Made = false;
-		ERRProlog
-			str::string Buffer;
-		ERRBegin
-			Buffer.Init();
-			Made = Registry.GetValues( GetPath( Tags, Buffer ), Values );
-		ERRErr
-		ERREnd
-		ERREpilog
-			return Made;
-		}
-		bso::bool__ GetValues(
-			const multi_level_registry_ &Registry,
-			values_ &Values ) const
-		{
-			return GetValues( Registry, tags(), Values );
-		}
-# ifdef CPE__64_BITS_TYPES_ALLOWED
-		_MU( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
-		_MS( SLL, bso::ullong__, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
-# endif
-		_MU( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
-		_MS( SL, bso::slong__, BSO_SLONG_MIN, BSO_SLONG_MAX )
-		_MU( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
-		_MS( SS, bso::sshort__, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
-		_MU( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
-		_MS( SB, bso::sbyte__, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
-	};
-
-# undef _MU
-# undef _MS
-
-# ifdef RGSRTY__MS_BACKUP
-#  define _MS RGSRTY__MS_BACKUP
-# endif
 
 
 #ifdef _M

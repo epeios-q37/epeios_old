@@ -867,6 +867,52 @@ ERREpilog
 	return *Result;
 }
 
+const value_ &rgstry::registry_::GetValue(
+	const tentry__ &Entry,
+	row__ Row,
+	bso::bool__ *Missing,
+	buffer &Buffer,
+	mdr::row__ *PathErrorRow ) const
+{
+	const value_ *Value = NULL;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Value = &GetValue( Entry.GetPath( Path ), Row, Missing, Buffer, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return *Value;
+}
+
+
+#if 0
+const value_ &rgstry::registry_::GetValue(
+	const entry___ &Entry,
+	const tags_ &Tags,
+	row__ Row,
+	bso::bool__ *Missing,
+	buffer &Buffer,
+	mdr::row__ *PathErrorRow ) const
+{
+	const value_ *Value = NULL;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Entry.GetPath( Tags, Path );
+
+	Value = &GetValue( Path, Row, Missing, Buffer, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return *Value;
+}
+#endif
+
 bso::bool__ rgstry::registry_::GetValues(
 	const path_ &Path,
 	row__ Row,
@@ -918,6 +964,49 @@ ERREnd
 ERREpilog
 	return Exists;
 }
+
+bso::bool__ rgstry::registry_::GetValues(
+	const tentry__ &Entry,
+	row__ Row,
+	values_ &Values,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Result = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Result = GetValues( Entry.GetPath( Path ), Row, Values, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+
+#if 0
+bso::bool__ rgstry::registry_::GetValues(
+	const entry___ &Entry,
+	const tags_ &Tags,
+	row__ Row,
+	values_ &Values,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Result = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Entry.GetPath( Tags, Path );
+
+	Result = GetValues( Path, Row, Values, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Result;
+}
+#endif
 
 bso::bool__ rgstry::registry_::Delete(
 	const str::string_ &PathString,
@@ -975,7 +1064,8 @@ ERREnd
 ERREpilog
 	return Target;
 }
-#if 1
+
+#if 0
 const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,
@@ -1145,6 +1235,64 @@ ERREpilog
 	return Found;
 }
 
+bso::bool__ rgstry::multi_level_registry_::GetValue(
+	const tentry__ &Entry,
+	str::string_ &Value,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Found = GetValue( Entry.GetPath( Path ), Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+#if 0
+bso::bool__ rgstry::multi_level_registry_::GetValue(
+	const entry___ &Entry,
+	const tags_ &Tags,
+	str::string_ &Value,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Entry.GetPath( Tags, Path );
+
+	Found = GetValue( Path, Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+bso::bool__ rgstry::multi_level_registry_::GetValue(
+	const entry___ &Entry,
+	str::string_ &Value,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	tags Tags;
+ERRBegin
+	Tags.Init();
+
+	Found = GetValue( Entry, Tags, Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+#endif
 
 bso::bool__ rgstry::multi_level_registry_::GetValues(
 	const str::string_ &PathString,
@@ -1173,6 +1321,27 @@ ERREnd
 ERREpilog
 	return Found;
 }
+
+bso::bool__ rgstry::multi_level_registry_::GetValues(
+	const tentry__ &Entry,
+	values_ &Values,
+	mdr::row__ *PathErrorRow ) const
+{
+	bso::bool__ Found = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+	Entry.GetPath( Path );
+
+	Found = GetValues( Path, Values, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Found;
+}
+
+
 
 bso::bool__ rgstry::multi_level_registry_::SetValue(
 	const str::string_ &PathString,
@@ -1203,6 +1372,69 @@ ERREnd
 ERREpilog
 	return Set;
 }
+
+bso::bool__ rgstry::multi_level_registry_::SetValue(
+	const tentry__ &Entry,
+	const value_ &Value,
+	mdr::row__ *PathErrorRow )
+{
+	bso::bool__ Set = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Set = SetValue( Entry.GetPath( Path ), Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Set;
+}
+
+#if 0
+bso::bool__ rgstry::multi_level_registry_::SetValue(
+	const entry___ &Entry,
+	const tags_ &Tags,
+	const value_ &Value,
+	mdr::row__ *PathErrorRow )
+{
+	bso::bool__ Set = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Entry.GetPath( Tags, Path );
+
+	Set = SetValue( Path, Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Set;
+}
+
+bso::bool__ rgstry::multi_level_registry_::SetValue(
+	const entry___ &Entry,
+	const value_ &Value,
+	mdr::row__ *PathErrorRow )
+{
+	bso::bool__ Set = false;
+ERRProlog
+	str::string Path;
+ERRBegin
+	Path.Init();
+
+	Entry.GetPath( Path );
+
+	Set = SetValue( Path, Value, PathErrorRow );
+ERRErr
+ERREnd
+ERREpilog
+	return Set;
+}
+#endif
+
+
 
 bso::bool__ rgstry::multi_level_registry_::Delete(
 	const str::string_ &PathString,

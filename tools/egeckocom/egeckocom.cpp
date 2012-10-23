@@ -94,6 +94,7 @@ protected:
 	ERRErr
 // BE CAREFUL : the exception can come from the library. In this case, the error data are NOT available. The library has its own 'ERR' library data.
 #define RN\
+		cio::CErr << txf::commit;\
 		if ( CErrString_.Amount() != 0 ) {\
 			ErrorMessage = CErrString_.Convert( ErrorMessageBuffer );\
 			CErrString_.Init();\
@@ -121,7 +122,7 @@ ERRBegin
 	Tags.Init();
 	Tags.Append( str::string( ComponentId ) );
 
-	registry::GetMandatoryRegistryValue( registry::TaggedComponent, Tags, Component );
+	registry::GetMandatoryRegistryValue( rgstry::tentry__( registry::TaggedComponent, Tags ), Component );
 ERRErr
 ERREnd
 ERREpilog

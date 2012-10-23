@@ -60,17 +60,17 @@ extern class ttr_tutor &LCLTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "rgstry.h"
+# include "err.h"
+# include "flw.h"
+# include "rgstry.h"
 
-#define LCL_TAG_MARKER_C	'%'
-#define LCL_TAG_MARKER_S	"%"
+# define LCL_TAG_MARKER_C	'%'
+# define LCL_TAG_MARKER_S	"%"
 
-#	define LCL_DEFAULT_FILENAME_SUFFIX	".xlcl"
+# define LCL_UNDEFINED_LEVEL	RGSTRY_UNDEFINED_LEVEL
 
 // Facilite la gestion des messages.
-#define LCL_CASE( label, prefix )\
+# define LCL_CASE( label, prefix )\
 	case prefix##label:\
 	return #label;\
 	break;
@@ -78,6 +78,7 @@ extern class ttr_tutor &LCLTutor;
 namespace lcl {
 	using rgstry::status__;
 	using rgstry::context___;
+	using rgstry::level__;
 	using str::strings_;
 	using str::strings;
 
@@ -110,10 +111,9 @@ namespace lcl {
 			str::string_ &Translation ) const;
 	public:
 		struct s {
-			rgstry::registry_::s Registry;
-			rgstry::row__ Root;
+			rgstry::multi_level_registry_::s Registry;
 		} &S_;
-		rgstry::registry_ Registry;
+		rgstry::multi_level_registry_ Registry;
 		locale_( s &S )
 		: S_( S ),
 		  Registry( S.Registry )
@@ -121,12 +121,9 @@ namespace lcl {
 		void reset( bso::bool__ P = true )
 		{
 			Registry.reset( P );
-			S_.Root = NONE;
 		}
 		locale_ &operator =( const locale_ &L )
 		{
-			S_.Root = L.S_.Root;
-
 			Registry = L.Registry;
 
 			return *this;
@@ -137,72 +134,82 @@ namespace lcl {
 
 			Registry.Init();
 		}
-		status__ Init(
+		level__ Push(
 			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			context___ &Context )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, XFlow, Criterions, RootPath, Context ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( XFlow, Criterions, RootPath, Registry, S_.Root, Context );
+			return Level;
 		}
-		status__ Init(
+		level__ Push(
 			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, XFlow, Criterions, RootPath ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( XFlow, Criterions, RootPath, Registry, S_.Root );
+			return Level;
 		}
-		status__ Init(
+		level__ Push(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			context___ &Context )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, FileName, Criterions, RootPath, Context ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root, Context );
+			return Level;
 		}
-		status__ Init(
+		level__ Push(
 			const char *FileName,
 			const char *RootPath,
 			context___ &Context )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, FileName, xpp::criterions___(), RootPath, Context ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root, Context );
+			return Level;
 		}
-		status__ Init(
+		level__ Push(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, FileName, Criterions, RootPath ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( FileName, Criterions, RootPath, Registry, S_.Root );
+			return Level;
 		}
-		status__ Init(
+		level__ Push(
 			const char *FileName,
 			const char *RootPath )
 		{
-			reset();
+			level__ Level = Registry.PushEmbeddedLevel();
 
-			Registry.Init();
+			if ( Registry.Fill( 0, FileName, xpp::criterions___(), RootPath ) != rgstry::sOK )
+				Level = LCL_UNDEFINED_LEVEL;
 
-			return rgstry::FillRegistry( FileName, xpp::criterions___(), RootPath, Registry, S_.Root );
+			return Level;
+		}
+		level__ Pop( void )
+		{
+			Registry.Pop();
 		}
 		void GetLanguages(
 			strings_ &Labels,

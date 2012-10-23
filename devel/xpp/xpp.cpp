@@ -82,6 +82,7 @@ using xml::token__;
 #define IFEQ_TAG			"ifeq"
 #define SET_TAG				"set"
 #define BLOC_TAG			"bloc"
+#define CDATA_TAG			"cdata"
 #define CYPHER_TAG			"cypher"
 #define ATTRIBUTE_ATTRIBUTE	"attribute"
 
@@ -127,6 +128,7 @@ const char *xpp::Label( status__ Status )
 	CASE( BadCypherKey );
 	CASE( MissingCypherKey );
 	CASE( MissingKeyOrFormatAttribute );
+	CASE( CDataNestingForbidden );
 	default:
 		ERRu();
 		break;
@@ -214,8 +216,8 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 	NamespaceWithSeparator.Init( Namespace );
 	NamespaceWithSeparator.Append( ':' );
 
-	DefineTag.Init( NamespaceWithSeparator );
-	DefineTag.Append( DEFINE_TAG );
+	DefineTag_.Init( NamespaceWithSeparator );
+	DefineTag_.Append( DEFINE_TAG );
 
 	ExpandTag.Init( NamespaceWithSeparator );
 	ExpandTag.Append( EXPAND_TAG );
@@ -228,6 +230,9 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 
 	BlocTag.Init( NamespaceWithSeparator );
 	BlocTag.Append( BLOC_TAG );
+
+	CDataTag.Init( NamespaceWithSeparator );
+	CDataTag.Append( CDATA_TAG );
 
 	CypherTag.Init( NamespaceWithSeparator );
 	CypherTag.Append( CYPHER_TAG );
@@ -260,7 +265,7 @@ static mdr::size__ Fill_(
 	return Available;
 }
 
-static inline bso::bool__ BelongsToNamespace_(
+static inline bso::bool__ BelongsToNamespace___(
 	const str::string_ &Name,
 	const str::string_ &NamespaceWithSeparator )
 {
@@ -274,37 +279,45 @@ static inline bso::bool__ BelongsToNamespace_(
 }
 
 enum directive__ {
+	dNone,
+	dUnknown,
 	dDefine,
 	dExpand,
 	dIfeq,
 	dBloc,
+	dCData,
 	dSet,
 	dCypher,
 	dAttribute,
-	t_amount,
-	t_Undefined
+	d_amount,
+	d_Undefined
 };
 
 static inline directive__ GetDirective_(
 	const str::string_ &Name,
 	const _qualified_preprocessor_directives___ &Directives )
 {
-	if ( Directives.DefineTag == Name )
-		return dDefine;
-	else if ( Directives.ExpandTag == Name )
-		return dExpand;
-	else if ( Directives.IfeqTag == Name )
-		return dIfeq;
-	else if ( Directives.BlocTag == Name )
-		return dBloc;
-	else if ( Directives.SetTag == Name )
-		return dSet;
-	else if ( Directives.CypherTag == Name )
-		return dCypher;
-	else if ( Directives.AttributeAttribute == Name )
-		return dAttribute;
-
-	return ::t_Undefined;
+	if ( BelongsToNamespace___( Name, Directives.NamespaceWithSeparator ) )
+		if ( Directives.DefineTag_ == Name )
+			return dDefine;
+		else if ( Directives.ExpandTag == Name )
+			return dExpand;
+		else if ( Directives.IfeqTag == Name )
+			return dIfeq;
+		else if ( Directives.BlocTag == Name )
+			return dBloc;
+		else if ( Directives.CDataTag == Name )
+			return dCData;
+		else if ( Directives.SetTag == Name )
+			return dSet;
+		else if ( Directives.CypherTag == Name )
+			return dCypher;
+		else if ( Directives.AttributeAttribute == Name )
+			return dAttribute;
+		else
+			return dUnknown;
+	else
+		return dNone;
 }
 
 static status__ AwaitingToken_(
@@ -426,7 +439,6 @@ ERREnd
 ERREpilog
 	return Status;
 }
-
 
 static status__ GetDefineNameAndContent_(
 	parser___ &Parser,
@@ -858,16 +870,25 @@ ERREpilog
 
 
 status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
-	const str::string_ &DirectiveName,
+	int Directive,
 	_extended_parser___ *&Parser )
 {
 	Parser = NULL;
 
-	switch ( GetDirective_( DirectiveName, _Directives ) ) {
+	switch ( Directive ) {
+	case dNone:
+		ERRc();
+		break;
+	case dUnknown:
+		return sUnknownDirective;
+		break;
 	case dDefine:
 		return _HandleDefineDirective( Parser );
 		break;
 	case dBloc:
+		ERRc();	// Traité en amont.
+		break;
+	case dCData:
 		ERRc();	// Traité en amont.
 		break;
 	case dExpand:
@@ -883,7 +904,7 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 		return _HandleCypherDirective( Parser );
 		break;
 	default:
-		return sUnknownDirective;
+		ERRc();
 		break;
 	}
 
@@ -1028,7 +1049,7 @@ static bso::bool__ StripHeadingSpaces_(
 {
 	return ( PreviousToken == xml::tValue )
 		   || ( ( PreviousToken == xml::tEndTag )
-		      && ( BelongsToNamespace_( Parser.TagName(), NamespaceWithSeparator )
+		      && ( BelongsToNamespace___( Parser.TagName(), NamespaceWithSeparator )
 			  || ( Parser.Token() == xml::tEndTag ) ) );
 }
 
@@ -1038,6 +1059,8 @@ static void StripHeadingSpaces_( str::string_ &Data )
 		Data.Remove( Data.First() );
 }
 
+#define CDATA_NESTING_MAX	BSO_ULONG_MAX	
+
 status__ xpp::_extended_parser___::Handle(
 	_extended_parser___ *&Parser,
 	str::string_ &Data )
@@ -1046,6 +1069,7 @@ status__ xpp::_extended_parser___::Handle(
 	bso::bool__ Continue = true;
 	xml::token__ PreviousToken = xml::t_Undefined;
 	bso::bool__ StripHeadingSpaces = false;
+	directive__ Directive = d_Undefined;
 
 	Parser = NULL;
 
@@ -1066,83 +1090,165 @@ status__ xpp::_extended_parser___::Handle(
 				Status = sOK;
 			break;
 		case xml::tStartTag:
-			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
-				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc ) {
-					Status = _HandlePreprocessorDirective( _Parser.TagName(), Parser );
+			Directive = GetDirective_( _Parser.TagName(), _Directives );
+
+			if ( Directive == dCData ) {
+				if ( _CDataNesting == CDATA_NESTING_MAX )
+					ERRl();
+
+				if ( _CDataNesting == 0 )
+					Continue = true;
+				else
+					Status = sOK;
+			} else if ( _CDataNesting != 0 ) {
+				Status = sOK;
+			} else {
+				switch ( Directive ) {
+				case dNone:
+					Status = sOK;
+					break;
+				case dBloc:
+					Continue = true;
+					break;
+				default:
+					Status = _HandlePreprocessorDirective( Directive, Parser );
 					
 					if ( Parser == NULL )
 						Continue = true;
-				} else
-					Continue = true;
-			else
-				Status = sOK;
+					break;
+				}
+			}
+
+			Directive = d_Undefined;
 			break;
 		case xml::tAttribute:
-			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) ) {
-				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
-					ERRc();
-				else {
-//					Status = sUnexpectedAttribute;
-//					Tous les attributs sont acceptés (et ignorés), notamment les 'xmlns:...'. Ils ne sont cependant pas reportés sur le flux de sortie.
-					Status = sOK;
-					_Parser.PurgeDumpData();
-				}
-			} else if ( BelongsToNamespace_( _Parser.AttributeName(), _Directives.NamespaceWithSeparator ) ) {
-				if ( GetDirective_( _Parser.AttributeName(), _Directives ) == dAttribute ) {
-					_Parser.PurgeDumpData();
-					Status = _HandleAttributeDirective( _Parser.Value(), Parser, Data );
-				} else
-					Status = sUnknownDirective;
-			} else 
-				Status = sOK;
-			break;
-		case xml::tSpecialAttribute:
-			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
-				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
-					ERRc();
-				else
-					_Parser.PurgeDumpData();
-			Status = sOK;
-			break;
-		case xml::tStartTagClosed:
-			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
-				if ( GetDirective_( _Parser.TagName(), _Directives ) != dBloc )
-					ERRc();
-				else
-					Continue = true;
-			else
-				Status = sOK;
-			break;
-		case xml::tEndTag:
-			if ( BelongsToNamespace_( _Parser.TagName(), _Directives.NamespaceWithSeparator ) )
+			if ( _CDataNesting == 0 ) {
 				switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
+				case dNone:
+					switch ( GetDirective_( _Parser.AttributeName(), _Directives ) ) {
+					case dNone:
+						Status = sOK;
+						break;
+					case dUnknown:
+						Status = sUnknownDirective;
+						break;
+					case dAttribute:
+						_Parser.PurgeDumpData();
+						Status = _HandleAttributeDirective( _Parser.Value(), Parser, Data );
+						break;
+					default:
+						Status = sUnknownDirective;
+						break;
+					}
+					break;
 				case dBloc:
-				case dCypher:
-					StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
-					Continue = true;
+				case dCData:
+					Status = sUnexpectedAttribute;
 					break;
 				default:
 					ERRc();
 					break;
 				}
-			else {
-				StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
+			} else
 				Status = sOK;
+			break;
+		case xml::tSpecialAttribute:
+			if ( _CDataNesting == 0 ) {
+				switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
+				case dNone:
+					break;
+				case dBloc:
+				case dCData:
+					_Parser.PurgeDumpData();
+					// L'attribut n'est pas répercuté sur le flux de sortie.
+					break;
+				default:
+					ERRc();
+					break;
+				}
 			}
+
+			Status = sOK;
+			break;
+		case xml::tStartTagClosed:
+			switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
+			case dNone:
+				Status = sOK;
+				break;
+			case dCData:
+				if ( _CDataNesting == 0 )
+					Continue = true;
+				else
+					Status = sOK;
+				_CDataNesting++;
+				Data.Append( "<![CDATA[" );
+				StripHeadingSpaces = true;
+				break;
+			case dBloc:
+				if ( _CDataNesting == 0 )
+					Continue = true;
+				else
+					Status = sOK;
+				break;
+			default:
+				ERRc();
+				break;
+			}
+			break;
+		case xml::tEndTag:
+				switch ( GetDirective_( _Parser.TagName(), _Directives ) ) {
+				case dNone:
+					if ( _CDataNesting == 0 )
+						StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
+					Status = sOK;
+					break;
+				case dCData:
+					switch( _CDataNesting ) {
+					case 0:
+						ERRc();
+						break;
+					case 1:
+						Continue = true;
+						Data.Append( "]]>" );
+						break;
+					default:
+						Status = sOK;
+						break;
+					}
+					_CDataNesting--;
+					break;
+				case dBloc:
+				case dCypher:
+					if ( _CDataNesting == 0 ) {
+						StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );
+						Continue = true;
+					} else
+						Status = sOK;
+					break;
+				default:
+					ERRc();
+					break;
+				}
 			break;
 		case xml::tValue:
 			Status = sOK;
 			break;
 		case xml::tComment:
-			_Parser.PurgeDumpData();
-			Continue = true;
+			if ( _CDataNesting == 0 ) {
+				_Parser.PurgeDumpData();
+				Continue = true;
+			} else
+				Status = sOK;
 			break;
 		case xml::tCData:
-			_Parser.PurgeDumpData();
-			Data.Append( "<![CDATA[" );
-			Data.Append( _Parser.Value() );
-			Data.Append( "]]>" );
-			Status = sOK;
+			if ( _CDataNesting == 0 ) {
+				_Parser.PurgeDumpData();
+				Data.Append( "<![CDATA[" );
+				Data.Append( _Parser.Value() );
+				Data.Append( "]]>" );
+				Status = sOK;
+			} else
+				Status = sCDataNestingForbidden;
 			break;
 		case xml::t_Processed:
 //			StripHeadingSpaces = StripHeadingSpaces_( PreviousToken, _Parser, _Directives.NamespaceWithSeparator );

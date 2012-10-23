@@ -57,6 +57,8 @@ public:
 
 using namespace frdkrn;
 
+using rgstry::tentry__;
+
 #define CASE( m )\
 	case r##m:\
 	return #m;\
@@ -133,6 +135,47 @@ ERREpilog
 	return Translation;
 }
 
+#define PROJECT_TYPE_NEW		"New"
+#define PROJECT_TYPE_PREDEFINED	"Predefined"
+#define PROJECT_TYPE_USER		"User"
+
+project_type__ frdkrn::GetProjectType(
+	const str::string_ &Label,
+	err::handling__ ErrHandling )
+{
+	if ( Label == PROJECT_TYPE_NEW )
+		return ptNew;
+	else if ( Label == PROJECT_TYPE_PREDEFINED )
+		return ptPredefined;
+	else if ( Label == PROJECT_TYPE_USER )
+		return ptUser;
+	else if ( ErrHandling = err::hThrowException )
+		ERRc();
+	else if ( ErrHandling != err::hUserDefined )
+		ERRc();
+
+	return pt_Undefined;
+}
+
+const str::string_ &frdkrn::GetPredefinedProjectLocation(
+	const str::string_ &Id,
+	const frdrgy::registry_ &Registry,
+	str::string_ &Location )
+{
+ERRProlog
+	rgstry::tags Tags;
+ERRBegin
+	Tags.Init();
+	Tags.Append( Id );
+
+	Registry.GetValue( tentry__( frdrgy::PredefinedBackend, Tags ), Location );
+ERRErr
+ERREnd
+ERREpilog
+	return Location;
+}
+
+
 #define BACKEND_EXTENDED_TYPE_NONE		"None"
 #define BACKEND_EXTENDED_TYPE_EMBEDDED		"Embedded"
 #define BACKEND_EXTENDED_TYPE_DAEMON		"Daemon"
@@ -176,14 +219,15 @@ static const char *GetBackendExtendedTypeLabel_( backend_extended_type__ Type )
 }
 
 
-backend_extended_type__ frdkrn::GetBackendExtendedType( const frdrgy::_registry_ &Registry )
+backend_extended_type__ frdkrn::GetBackendExtendedType( const frdrgy::registry_ &Registry )
 {
 	backend_extended_type__ Type = bxt_Undefined;
 ERRProlog
 	str::string RawType;
 ERRBegin
 	RawType.Init();
-	frdrgy::BackendType.GetValue( Registry, RawType );
+
+	Registry.GetValue( frdrgy::BackendType, RawType );
 
 	Type = GetBackendExtendedType( RawType );
 ERRErr
@@ -196,8 +240,7 @@ void frdkrn::SetBackendExtendedType(
 	frdrgy::_registry_ &Registry,
 	backend_extended_type__ Type )
 {
-
-	frdrgy::BackendType.SetValue( Registry, str::string( GetBackendExtendedTypeLabel_( Type ) ) );
+	Registry.SetValue( frdrgy::BackendType, str::string( GetBackendExtendedTypeLabel_( Type ) ) );
 }
 
 
@@ -233,7 +276,7 @@ static str::string_ &AppendTargetAttributePathItem_(
 
 static inline bso::ulong__ GetBackendPingDelay_( rgstry::multi_level_registry_ &Registry )
 {
-	return frdrgy::BackendPingDelay.GetUL( Registry, 0 );
+	return rgstry::GetUL( Registry, frdrgy::BackendPingDelay, 0 );
 }
 
 recap__ frdkrn::kernel___::_Connect(
@@ -311,17 +354,18 @@ ERRProlog
 	rgstry::tags Tags;
 ERRBegin
 	Id.Init();
-	if ( !frdrgy::Backend.GetValue( Registry, Id ) )
+
+	if ( !Registry.GetValue( frdrgy::Backend, Id ) )
 		ERRReturn;
 
 	Tags.Init();
 	Tags.Append( Id );
 
 	RawType.Init();
-	if ( !frdrgy::PredefinedBackendType.GetValue( Registry, Tags, RawType ) )
+	if ( !Registry.GetValue( tentry__( frdrgy::PredefinedBackendType , Tags) , RawType ) )
 		ERRReturn;
 
-	if ( !frdrgy::PredefinedBackend.GetValue( Registry, Tags, Location ) )
+	if ( !Registry.GetValue( tentry__( frdrgy::PredefinedBackend, Tags ), Location ) )
 		ERRReturn;
 
 	switch ( GetBackendExtendedType( RawType ) ) {
@@ -351,11 +395,11 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	switch ( GetBackendExtendedType( Registry ) ) {
 	case bxtEmbedded:
 		Type = csducl::tLibrary;
-		frdrgy::Backend.GetValue( Registry, Location );
+		Registry.GetValue( frdrgy::Backend, Location );
 		break;
 	case bxtDaemon:
 		Type = csducl::tDaemon;
-		frdrgy::Backend.GetValue( Registry, Location );
+		Registry.GetValue( frdrgy::Backend, Location );
 		break;
 	case bxtPredefined:
 		Type = GetPredefinedBackendTypeAndLocation_( Registry, Location );
@@ -673,7 +717,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	if ( !frdrgy::AuthenticationMode.GetValue( Registry, Value ) )
+	if ( !Registry.GetValue( frdrgy::AuthenticationMode , Value ) )
 		Mode = apmNone;
 	else {
 		if ( Value == "None" )
@@ -693,6 +737,75 @@ ERREpilog
 	return Mode;
 }
 
+static void GetPredefinedProject_(
+	const str::string_ &Id,
+	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	str::string Value;
+	str::string Translation;
+	rgstry::tags Tags;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	Tags.Init();
+	Tags.Append( Id );
+
+	Value.Init();
+	Registry.GetValue( tentry__( frdrgy::PredefinedProjectAlias, Tags ), Value );
+
+	Translation.Init();
+	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );
+
+	Writer.PutAttribute( "Alias", Translation );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void GetPredefinedProjects_(
+	const rgstry::values_ &Ids,
+	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Rack,
+	xml::writer_ &Writer )
+{
+	ctn::E_CMITEM( rgstry::value_ ) Id;
+	mdr::row__ Row = Ids.First();
+
+	Id.Init( Ids );
+
+	while ( Row != NONE ) {
+		Writer.PushTag( "PredefinedProject" );
+		Writer.PutAttribute( "id", Id( Row ) );
+
+		GetPredefinedProject_( Id( Row ), Registry, Rack, Writer );
+
+		Writer.PopTag();
+
+		Row = Ids.Next( Row );
+	}
+}
+
+void frdkrn::GetPredefinedProjects(
+	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
+	xml::writer_ &Writer )
+{
+ERRProlog
+	rgstry::values Ids;
+ERRBegin
+	Ids.Init();
+
+	Registry.GetValues( frdrgy::PredefinedProjectId, Ids );
+
+	GetPredefinedProjects_( Ids, Registry, Locale, Writer );
+ERRErr
+ERREnd
+ERREpilog
+}
+/**/
+
 static void GetPredefinedBackend_(
 	const str::string_ &Id,
 	const frdrgy::registry_ &Registry,
@@ -709,7 +822,7 @@ ERRBegin
 	Tags.Append( Id );
 
 	Value.Init();
-	frdrgy::PredefinedBackendAlias.GetValue( Registry, Tags, Value );
+	Registry.GetValue( tentry__( frdrgy::PredefinedBackendAlias, Tags ), Value );
 
 	Translation.Init();
 	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );
@@ -753,7 +866,7 @@ ERRProlog
 ERRBegin
 	Ids.Init();
 
-	frdrgy::PredefinedBackendId.GetValues( Registry, Ids );
+	Registry.GetValues( frdrgy::PredefinedBackendId, Ids );
 
 	GetPredefinedBackends_( Ids, Registry, Locale, Writer );
 ERRErr

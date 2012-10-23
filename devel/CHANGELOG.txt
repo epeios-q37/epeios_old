@@ -1,5 +1,47 @@
 $Id$
 
+22/10/2012 :
+	- Général :
+		- Adaptation.
+	- RGSTRY
+		- Mise en oeuvre 'tentry__'.
+		- '(multi_level_)registry_' acceptent dorénavant '(t)entry__(_)' en paramètre, au lieu de l'inverse.
+
+19/10/2012 :
+	-	Général :
+		- Adaptation.
+	- CSDULC :
+		- Utilisation de 'bso::ulong__' à la place de 'time_t'.
+	- LCL :
+		- 'Init(...)' -> 'Push(...)' pour la plupart, et ajout de 'Pop()'.
+	- RGSTRY :
+		- Dans 'multi_level_registry_', 'Add(..)' -> 'Push(..)' et ajout de 'Pop(...)'.
+	- SCLREGISTRY :
+		- 'Load(...)' retroune dorénvant 'void' et non plus 'bso::bool__', les erreurs étant gèrées en interne.
+
+17/10/2012 :
+	- XPP :
+		- Ajout balise 'xpp:cdata'.
+
+10/10/2012 :
+	- NSXPCM :
+		- Ajout 'GetAttributeNameAndValue(...)'.
+
+05/10/2012 :
+	- XULFMN :
+		- Simplification et standardisation.
+
+04/10/2012 :
+	- XULFTK:
+		- Ajout (GoToHome(...)' et consorts.
+
+03/10/2012 :
+	- Correction bogue 20.
+
+01/10/2012 :
+	- 'XULFMN' :
+		- 'open_project' et consorts -> 'user_project'.
+
 27/09/2012 :
 	- Général :
 		- Adaptation.

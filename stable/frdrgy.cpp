@@ -63,6 +63,13 @@ rgstry::entry___ frdrgy::LocaleFileName( "LocaleFileName", Parameters );
 
 rgstry::entry___ frdrgy::DefaultProject( "DefaultProject", Parameters );
 
+rgstry::entry___ frdrgy::PredefinedProjects( "PredefinedProjects", Parameters );
+rgstry::entry___ frdrgy::DefaultPredefinedProject( "@Default", PredefinedProjects );
+static rgstry::entry___ FreePredefinedProject_( "PredefinedProject", PredefinedProjects ); 
+rgstry::entry___ frdrgy::PredefinedProjectId( "@id", FreePredefinedProject_ );
+rgstry::entry___ frdrgy::PredefinedProject( FRDRGY_TAGGING_ATTRIBUTE( "id" ), FreePredefinedProject_);
+rgstry::entry___ frdrgy::PredefinedProjectAlias( "@Alias", PredefinedProject );
+
 rgstry::entry___ frdrgy::Backend( "Backend", Parameters );
 rgstry::entry___ frdrgy::BackendAccessMode( "@AccessMode", Backend );
 rgstry::entry___ frdrgy::BackendType( "@Type", Backend );

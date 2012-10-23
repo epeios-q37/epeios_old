@@ -122,7 +122,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	if ( xulfrg::AnnexTargetType.GetValue( Registry, Value ) ) {
+	if ( Registry.GetValue( xulfrg::AnnexTargetType, Value ) ) {
 		if ( Value == "Embedded" )
 			Type = atEmbedded;
 		else if ( Value == "File" )
@@ -172,7 +172,7 @@ ERRProlog
 ERRBegin
 	Target.Init();
 
-	xulfrg::AnnexTarget.GetValue( Registry, Target );
+	Registry.GetValue( xulfrg::AnnexTarget, Target );
 
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
@@ -441,11 +441,11 @@ ERRBegin
 	if ( ProjectFileName.Amount() != 0 ) {
 		Handle_( Kernel().LoadProject( ProjectFileName, _TargetName, Criterions, ProjectId ) );
 		Location.Init();
-		frdrgy::Backend.GetValue( Kernel().Registry(), Location );
+		Kernel().Registry().GetValue( frdrgy::Backend, Location );
 	} else
 		ProjectId.Init( bso::Convert( tol::EpochTime( true ), Buffer ) );
 
-	frdrgy::ProjectId.SetValue( Kernel().Registry(), ProjectId );
+	Kernel().Registry().SetValue( frdrgy::ProjectId, ProjectId );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Kernel().Registry() ) ) {
 	case frdkrn::bxtNone:
@@ -460,6 +460,7 @@ ERRBegin
 		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
 		break;
 	case frdkrn::bxt_Undefined:
+		Type = frdkrn::bxtNone;
 		break;
 	default:
 		ERRc();
@@ -479,7 +480,7 @@ static const str::string_ &GetProjectId_(
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	if ( !frdrgy::ProjectId.GetValue( Trunk.Registry(), ProjectId ) || (  ProjectId.Amount() == 0 ) ) {
+	if ( !Trunk.Registry().GetValue( frdrgy::ProjectId, ProjectId ) || (  ProjectId.Amount() == 0 ) ) {
 		Trunk.UI().LogAndPrompt( Trunk.Kernel().LocaleRack().GetTranslation( "BadOrNoProjectId", PREFIX, Buffer ) );
 		ERRAbort();
 	}
@@ -547,7 +548,7 @@ ERRBegin
 		break;
 	}
 
-	frdrgy::Backend.SetValue( Registry(), Value );
+	Registry().SetValue( frdrgy::Backend, Value );
 	frdkrn::SetBackendExtendedType( Registry(), Type );
 
 	Handle_( Kernel().LaunchProject( CompatibilityInformations, ProjectId, DefaultReportingFunctions() ) );

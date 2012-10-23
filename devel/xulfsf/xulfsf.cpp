@@ -158,7 +158,7 @@ ERRProlog
 ERRBegin
 	RawMode.Init();
 	
-	if ( xulfrg::BackendSelectionMode.GetValue( Registry, RawMode ) ) {
+	if ( Registry.GetValue( xulfrg::BackendSelectionMode, RawMode ) ) {
 		if ( RawMode == "Expert" )
 			Mode = bsmExpert;
 		else if ( RawMode == "Advanced" )
@@ -220,10 +220,10 @@ ERRBegin
 		Disable = true;
 		break;
 	case frdkrn::apmFull:
-		if ( !frdrgy::AuthenticationPassword.GetValue( Registry, Password ) )
+		if ( !Registry.GetValue( frdrgy::AuthenticationPassword, Password ) )
 			ERRu();
 	case frdkrn::apmPartial:
-		if ( !frdrgy::AuthenticationLogin.GetValue( Registry, Login ) )
+		if ( !Registry.GetValue( frdrgy::AuthenticationLogin, Login ) )
 			ERRu();
 	case frdkrn::apmEmpty:
 		break;
@@ -262,7 +262,7 @@ ERRBegin
 	Writer.PushTag( "PredefinedBackends" );
 
 	Default.Init();
-	frdrgy::DefaultPredefinedBackend.GetValue( Registry, Default );
+	Registry.GetValue( frdrgy::DefaultPredefinedBackend, Default );
 
 	if ( Default.Amount() != 0 )
 		Writer.PutAttribute( "Default", Default );

@@ -85,6 +85,12 @@ namespace frdrgy {
 
 	extern rgstry::entry___ DefaultProject;
 
+	extern rgstry::entry___ PredefinedProjects;
+	extern rgstry::entry___ DefaultPredefinedProject;
+	extern rgstry::entry___ PredefinedProjectId;
+	extern rgstry::entry___ PredefinedProject;
+	extern rgstry::entry___ PredefinedProjectAlias;
+
 	extern rgstry::entry___ Backend;
 	extern rgstry::entry___ BackendAccessMode;
 	extern rgstry::entry___ BackendType;
@@ -97,7 +103,7 @@ namespace frdrgy {
 	extern rgstry::entry___ AuthenticationPassword;
 
 	extern rgstry::entry___ PredefinedBackends;
-	extern rgstry::entry___  DefaultPredefinedBackend;
+	extern rgstry::entry___ DefaultPredefinedBackend;
 	extern rgstry::entry___ PredefinedBackendId;
 	extern rgstry::entry___ PredefinedBackend;
 	extern rgstry::entry___ PredefinedBackendAlias;
@@ -167,13 +173,15 @@ namespace frdrgy {
 
 			return *this;
 		}
-		void Init( const rgstry::multi_level_registry_ &ConfigurationRegistry )
+		void Init(
+			const rgstry::registry_ &ConfigurationRegistry,
+			rgstry::row__ ConfigurationRegistryRoot )
 		{
 			_registry_::Init();
 
-			_registry_::Add( ConfigurationRegistry );
-			S_.Project = _registry_::AddEmbeddedLevel( rgstry::name( "Project" ) );
-			S_.Settings= _registry_::AddEmbeddedLevel( rgstry::name( "Settings" ) );
+			_registry_::PushImportedLevel( ConfigurationRegistry, ConfigurationRegistryRoot );
+			S_.Project = _registry_::PushEmbeddedLevel( rgstry::name( "Project" ) );
+			S_.Settings= _registry_::PushEmbeddedLevel( rgstry::name( "Settings" ) );
 		}
 		void DumpProject(
 			bso::bool__ RootToo,

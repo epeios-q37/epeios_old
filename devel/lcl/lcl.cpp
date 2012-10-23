@@ -77,7 +77,7 @@ ERRBegin
 		Path.Append( "\"]/@Wording" );
 
 		Wording.Init();
-		if ( Registry.GetValue( Path, S_.Root, Wording ) )
+		if ( Registry.GetValue( Path, Wording ) )
 			Wordings.Append( Wording );
 		else
 			Wordings.Append( Label( Row ) );
@@ -106,7 +106,7 @@ ERRBegin
 	Path.Append( Text );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -130,7 +130,7 @@ ERRBegin
 	Path.Append( Language );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -154,7 +154,7 @@ ERRBegin
 	Path.Append( Text );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -178,7 +178,7 @@ ERRBegin
 	Path.Append( Language );
 	Path.Append( "\"]" );
 
-	Found = Registry.GetValue( Path, S_.Root, Translation );
+	Found = Registry.GetValue( Path, Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -189,16 +189,14 @@ void lcl::locale_::GetLanguages(
 	strings_ &Labels,
 	strings_ &Wordings ) const
 {
-	if ( S_.Root != NONE ) {
-		mdr::row__ PathErrorRow = NONE;
+	mdr::row__ PathErrorRow = NONE;
 
-		Registry.GetValues( str::string( "Languages/Language/@label" ), S_.Root, Labels, &PathErrorRow );
+	Registry.GetValues( str::string( "Languages/Language/@label" ), Labels, &PathErrorRow );
 
-		_GetCorrespondingLabels( Labels, Wordings );
+	_GetCorrespondingLabels( Labels, Wordings );
 
-		if ( PathErrorRow != NONE )
-			ERRc();
-	}
+	if ( PathErrorRow != NONE )
+		ERRc();
 }
 
 bso::bool__ lcl::locale_::GetTranslation(
@@ -212,11 +210,10 @@ bso::bool__ lcl::locale_::GetTranslation(
 	if ( Prefix == NULL )
 		Prefix = "";
 
-	if ( S_.Root != NONE )
-		if ( !( Found = _GetTranslationFollowingLanguageThenText( Text, Language, Prefix, Translation ) ) )
-			if ( !( Found = _GetTranslationFollowingTextThenLanguage( Text, Language, Prefix, Translation ) ) )
-				if ( !( Found = _GetTranslationFollowingLanguageThenMessage( Text, Language, Prefix, Translation ) ) )	// Pour des raisons de compatibilité ascendante.
-					Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Prefix, Translation );	// Pour des raisons de compatibilité ascendante.
+	if ( !( Found = _GetTranslationFollowingLanguageThenText( Text, Language, Prefix, Translation ) ) )
+		if ( !( Found = _GetTranslationFollowingTextThenLanguage( Text, Language, Prefix, Translation ) ) )
+			if ( !( Found = _GetTranslationFollowingLanguageThenMessage( Text, Language, Prefix, Translation ) ) )	// Pour des raisons de compatibilité ascendante.
+				Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Prefix, Translation );	// Pour des raisons de compatibilité ascendante.
 
 	if ( !Found ) {
 		Translation.Append( Prefix );

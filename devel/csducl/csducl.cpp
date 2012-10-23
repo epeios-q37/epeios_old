@@ -64,7 +64,7 @@ bso::bool__ csducl::universal_client_core::Init(
 	csdlec::library_data__ &LibraryData,
 	csdsnc::log_functions__ &Log,
 	type__ Type,
-	time_t PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
+	bso::ulong__ PingDelay )	// Délai maximum d'inactivité entre deux 'ping'.
 {
 	reset();
 

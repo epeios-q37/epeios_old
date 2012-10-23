@@ -57,6 +57,8 @@ public:
 
 #include "xulftk.h"
 
+#include "fnm.h"
+
 using xulftk::trunk___;
 
 using namespace xulfmn;
@@ -65,7 +67,7 @@ using nsxpcm::event__;
 
 void xulfmn::main__::Update( void )
 {
-	Broadcasters.bdcCloseProject.Enable( Trunk().Kernel().IsProjectInProgress() );
+	Broadcasters.ProjectInProgress.Enable( Trunk().Kernel().IsProjectInProgress() );
 }
 
 #if 0
@@ -81,7 +83,7 @@ void xulfmn::new_project_eh__::NSXPCMOnEvent( event__ )
 	Trunk().DefineSession( str::string(), xpp::criterions___() );
 }
 
-void xulfmn::open_project_eh__::NSXPCMOnEvent( event__ )
+void xulfmn::user_project_eh__::NSXPCMOnEvent( event__ )
 {
 ERRProlog
 	str::string Translation, FileName;
@@ -96,10 +98,94 @@ ERREnd
 ERREpilog
 }
 
+void xulfmn::user_project_selection_eh__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	str::string Translation, FileName;
+ERRBegin
+	Translation.Init();
+	FileName.Init();
+
+	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Trunk().Kernel().LocaleRack(), Translation ), Trunk().Kernel().LocaleRack(), FileName ) )
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.SetValue( FileName );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void xulfmn::apply_eh__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	str::string ProjectTypeLabel;
+	str::string PredefinedProjectId;
+	str::string ProjectLocation;
+	str::string Log;
+ERRBegin
+	ProjectLocation.Init();
+
+	ProjectTypeLabel.Init();
+
+	switch ( frdkrn::GetProjectType( Trunk().UI().Main().Widgets.mnlProjectType.GetValue( ProjectTypeLabel ) ) ) {
+	case frdkrn::ptNew:
+		break;
+	case frdkrn::ptPredefined:
+		PredefinedProjectId.Init();
+		Trunk().UI().Main().Widgets.mnlPredefinedProjectList.GetValue( PredefinedProjectId );
+
+		frdkrn::GetPredefinedProjectLocation( PredefinedProjectId, Trunk().Kernel().Registry(), ProjectLocation );
+		break;
+	case frdkrn::ptUser:
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValue( ProjectLocation );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+
+	Log.Init( "ProjectLocation : \"" );
+	Log.Append( ProjectLocation );
+	Log.Append( '"' );
+
+	Trunk().UI().LogQuietly( Log );
+
+	Trunk().DefineSession( ProjectLocation, xpp::criterions___() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 void xulfmn::close_project_eh__::NSXPCMOnEvent( event__ )
 {
 	Trunk().DropSession();
 }
+
+void xulfmn::project_type_selection_eh__::NSXPCMOnEvent( event__ )
+{
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+	nsxpcm::GetAttribute( EventData().GetTarget(), "value", Value );
+
+	switch ( frdkrn::GetProjectType( Value ) ) {
+	case frdkrn::ptNew:
+		Trunk().UI().Main().Widgets.dckProjectType.SetSelectedIndex( 0 );
+		break;
+	case frdkrn::ptPredefined:
+		Trunk().UI().Main().Widgets.dckProjectType.SetSelectedIndex( 1 );
+		break;
+	case frdkrn::ptUser:
+		Trunk().UI().Main().Widgets.dckProjectType.SetSelectedIndex( 2 );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 void xulfmn::exit_eh__::NSXPCMOnEvent( event__ )
 {
@@ -127,24 +213,17 @@ void xulfmn::debug_eh__::NSXPCMOnEvent( event__ )
 
 /* Registrations */
 
-/* 'broadcaster's */
+#define I( name )\
+	name.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), "bdc" #name ) )
 
-static void Register_(
-	trunk___ &Trunk,
-	broadcaster__ &Broadcaster,
-	const char *Id )
+void xulfmn::broadcasters__::Init( trunk___ &Trunk )
 {
-	Broadcaster.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), Id ) );
+	I( ProjectInProgress );
 }
 
-static void Register_(
-	trunk___ &Trunk,
-	main__::broadcasters__ &Broadcasters )
-{
-	Register_( Trunk, Broadcasters.bdcCloseProject, "bdcCloseProject" );
-}
+#undef I
 
-static void Register_(
+static void InitAndRegister_(
 	trunk___ &Trunk,
 	xulfbs::event_handler__ &EventHandler,
 	const char *Id )
@@ -153,53 +232,125 @@ static void Register_(
 	nsxpcm::Attach( Trunk.UI().Main().Document(), Id, EventHandler );
 }
 
-#define A( name ) Register_( Trunk, EventHandlers.name, #name );	
+#define IR( name )\
+	InitAndRegister_( Trunk, name, "eh" #name );	
 
-static void Register_(
-	trunk___ &Trunk,
-	main__::event_handlers__ &EventHandlers )
+void xulfmn::event_handlers__::Init( trunk___ &Trunk )
 {
-	A( ehNewProject );
-	A( ehOpenProject );
-	A( ehCloseProject );
-	A( ehExit );
-	A( ehAbout );
-	A( ehWebSite );
-	A( ehDebug );
+	IR( NewProject );
+	IR( UserProject );
+	IR( CloseProject );
+	IR( ProjectTypeSelection );
+	IR( UserProjectSelection );
+	IR( Apply );
+
+	IR( Exit );
+	Exit.Add( Trunk.UI().Main().Window(), nsxpcm::efClose );	// Remplace le 'xex:onclose="..."' inopérant sur la balise 'windonw'.
+
+	IR( About );
+	IR( WebSite );
+	IR( Debug );
 }
 
-#define R( name ) Widgets.name.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), #name ) );
+#undef IR
 
-static void Register_(
-	trunk___ &Trunk,
-	main__::widgets__ &Widgets,
-	nsIDOMWindow *Window )
+#define I( name )\
+	name.Init( Trunk, nsxpcm::supports__( Trunk.UI().Main().Window(), #name ) );
+
+static void GetPredefinedProjects_(
+	const frdrgy::registry_ &Registry,
+	const lcl::rack__ &Locale,
+	str::string_ &PredefinedProjects )
 {
-	Widgets.wdwMain.Init( Trunk, nsxpcm::supports__( Window, Window ) );	// Le type n'est pas correct si on passe par l'id.
-	R( dckMain );
-	R( vewHome );
-	R( vewSessionForm );
-	R( vewSessionView );
+ERRProlog
+	flx::E_STRING_OFLOW___ OFlow;
+	txf::text_oflow__ TFlow;
+	xml::writer Writer;
+	str::string Default;
+ERRBegin
+	OFlow.Init( PredefinedProjects );
+	TFlow.Init( OFlow );
+	Writer.Init( TFlow, xml::oIndent, xml::e_Default );
+
+	Writer.PushTag( "PredefinedProjects" );
+
+	Default.Init();
+	Registry.GetValue( frdrgy::DefaultPredefinedProject, Default );
+
+	if ( Default.Amount() != 0 )
+		Writer.PutAttribute( "Default", Default );
+
+	frdkrn::GetPredefinedProjects( Registry, Locale, Writer );
+
+	Writer.PopTag();
+ERRErr
+ERREnd
+ERREpilog
 }
 
-void xulfmn::RegisterMainUI(
-	trunk___ &Trunk,
+static void FillWidget_(
+	const str::string_ &XML,
+	const char *DefaultXSLRootPath,
+	nsIDOMNode *Node,
+	nsIDOMDocument *Document )
+{
+ERRProlog
+	nsIDOMDocumentFragment *Fragment;
+	FNM_BUFFER___ FileNameBuffer;
+ERRBegin
+	nsxpcm::RemoveChildren( Node );
+
+	Fragment = nsxpcm::XSLTransformByFileName( XML, str::string( fnm::BuildFileName( DefaultXSLRootPath, "PredefinedProjectsMenuList", ".xsl", FileNameBuffer ) ), Document, nsxpcm::xslt_parameters() );
+
+	nsxpcm::AppendChild( Node, Fragment );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+static void FillPredefinedProjectsMenu_( trunk___ &Trunk )
+{
+ERRProlog
+	str::string PredefinedProjects;
+ERRBegin
+	PredefinedProjects.Init();
+
+	GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().LocaleRack(), PredefinedProjects );
+
+	Trunk.UI().LogQuietly( PredefinedProjects );
+
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnuPredefinedProject.GetWidget(), Trunk.UI().Main().Document() );
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnlPredefinedProjectList.GetWidget(), Trunk.UI().Main().Document() );
+
+	nsxpcm::SetSelectedItem( Trunk.UI().Main().Widgets.mnlPredefinedProjectList.GetWidget() );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void xulfmn::widgets__::Init( trunk___ &Trunk )
+{
+	I( mnuPredefinedProject );
+	I( dckMain );
+	I( vewHome );
+	I( dckProjectType );
+	I( mnlPredefinedProjectList );
+	I( txbUserProjectLocation );
+	I( mnlProjectType );
+	I( vewSessionForm );
+	I( vewSessionView );
+
+	FillPredefinedProjectsMenu_( Trunk );	// N'a à être fait qu'une seule fois.
+}
+
+#undef I
+
+void xulfmn::main__::Init(
+	xulftk::trunk___ &Trunk,
 	nsIDOMWindow *Window )
 {
-	Trunk.UI().Main().Init( Window, Trunk );
-
-#if 0
-	Trunk.UI().Main().EventHandlers.Window.Init( Trunk );
-	Trunk.UI().Main().EventHandlers.Window.Add( Window );
-#endif
-
-	Register_( Trunk, Trunk.UI().Main().Broadcasters );
-	Register_( Trunk, Trunk.UI().Main().EventHandlers );
-	Register_( Trunk, Trunk.UI().Main().Widgets, Window );
-
-	Trunk.UI().Main().EventHandlers.ehExit.Add( Window, nsxpcm::efClose );	// Remplace le 'xex:onclose="..."' inopérant sur la balise 'windonw'.
-
-	nsxpcm::PatchOverallBadCommandBehavior( Trunk.UI().Main().Document() );
+	window__::Init( Trunk, nsxpcm::supports__( Window, Window ) );
 }
 
 

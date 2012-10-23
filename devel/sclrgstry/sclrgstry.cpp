@@ -64,8 +64,8 @@ using namespace sclrgstry;
 
 #define REGISTRY_FILE_EXTENSION ".xcfg"
 
-static rgstry::multi_level_registry Registry_;
-static rgstry::level__ RootLevel_ = RGSTRY_UNDEFINED_LEVEL;
+static rgstry::registry Registry_;
+static rgstry::row__ Root_ = NONE;
 static STR_BUFFER___ Translation_;
 
 rgstry::entry___ sclrgstry::Parameters( "Parameters" );
@@ -74,12 +74,17 @@ rgstry::entry___ sclrgstry::Language( "Language", Parameters );
 
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
-	return RootLevel_ != RGSTRY_UNDEFINED_LEVEL;
+	return Root_ != NONE;
 }
 
-const rgstry::multi_level_registry_ &sclrgstry::GetRegistry( void )
+const rgstry::registry_ &sclrgstry::GetRegistry( void )
 {
 	return Registry_;
+}
+
+rgstry::row__ sclrgstry::GetRoot( void )
+{
+	return Root_;
 }
 
 static rgstry::status__ FillRegistry_(
@@ -91,12 +96,13 @@ static rgstry::status__ FillRegistry_(
 	rgstry::status__ Status = rgstry::s_Undefined;
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
-	rgstry::row__ Root = Registry_.GetRoot( RootLevel_) ;
 ERRBegin
+	if ( Root_ != NONE )
+		ERRc();
+
 	XFlow.Init( Flow );
 
-	if ( ( Status = rgstry::FillRegistry( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath, Registry_.GetRegistry( RootLevel_), Root, Context ) ) == rgstry::sOK )
-		Registry_.SetRoot( RootLevel_, Root );
+	Status = rgstry::FillRegistry( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath, Registry_, Root_, Context );
 ERRErr
 ERREnd
 ERREpilog
@@ -104,39 +110,21 @@ ERREpilog
 }
 
 bso::bool__ sclrgstry::GetValue(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	str::string_ &Value )
 {
-	bso::bool__ Missing = true;
-ERRProlog
-	str::string TargetedPath;
-ERRBegin
-	TargetedPath.Init();
+	bso::bool__ Missing = false;
 
-	Missing = Entry.GetValue( Registry_, Tags, Value );
-ERRErr
-ERREnd
-ERREpilog
+	Registry_.GetValue( Entry, Root_, &Missing, Value );
+
 	return Missing;
 }
 
 bso::bool__ sclrgstry::GetValues(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	str::strings_ &Values )
 {
-	bso::bool__ Missing = true;
-ERRProlog
-	str::string TargetedPath;
-ERRBegin
-	TargetedPath.Init();
-
-	Missing = Entry.GetValues( Registry_, Tags, Values );
-ERRErr
-ERREnd
-ERREpilog
-	return Missing;
+	return Registry_.GetValues( Entry, Root_, Values );
 }
 
 static str::string_ &GetTranslation_(
@@ -151,9 +139,7 @@ static str::string_ &GetTranslation_(
 	return Translation;
 }
 
-static inline void ReportBadOrNoValueForRegistryEntryError_(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags )
+static inline void ReportBadOrNoValueForRegistryEntryError_( const rgstry::tentry__ &Entry )
 {
 ERRProlog
 	str::string Translation;
@@ -164,7 +150,7 @@ ERRBegin
 	GetTranslation_( "BadOrNoValueForRegistryEntry", Translation );
 
 	Path.Init();
-	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Tags, Path ) );
+	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Path ) );
 
 	cio::CErr << Translation << " !" << txf::nl << txf::commit;
 ERRErr
@@ -193,41 +179,32 @@ ERREnd
 ERREpilog
 }
 
-bso::bool__ sclrgstry::Load(
+void sclrgstry::Load(
 	flw::iflow__ &Flow,
 	const char *Directory,
 	const char *RootPath )
 {
-	bso::bool__ Success = false;
 ERRProlog
 	rgstry::context___ Context;
 	FNM_BUFFER___ FNMBuffer;
 ERRBegin
 	Context.Init();
 
-	switch ( FillRegistry_( Flow, Directory, RootPath, Context ) ) {
-	case rgstry::sOK:
-		Success = true;
-		break;
-	default:
+	if ( FillRegistry_( Flow, Directory, RootPath, Context ) != rgstry::sOK ) {
 		ReportConfigurationFileParsingError_( Context );
 		ERRExit( EXIT_FAILURE );
-		break;
 	}
-
 ERRErr
 ERREnd
 ERREpilog
-	return Success;
 }
 
 const str::string_ &sclrgstry::GetOptionalRegistryValue(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	str::string_ &Value,
 	bso::bool__ *Missing )
 {
-	if ( !GetValue( Entry, Tags, Value ) )
+	if ( !GetValue( Entry, Value ) )
 		if ( Missing != NULL )
 			*Missing = true;
 	
@@ -235,8 +212,7 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 }
 
 const char *sclrgstry::GetOptionalRegistryValue(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
 {
@@ -246,7 +222,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetOptionalRegistryValue( Entry, Tags, Value, &LocalMissing );
+	GetOptionalRegistryValue( Entry, Value, &LocalMissing );
 
 	if ( LocalMissing ) {
 		if ( Missing != NULL )
@@ -260,12 +236,11 @@ ERREpilog
 }
 
 const str::string_ &sclrgstry::GetMandatoryRegistryValue(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	str::string_ &Value )
 {
-	if ( !GetValue( Entry, Tags, Value ) ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
+	if ( !GetValue( Entry, Value ) ) {
+		ReportBadOrNoValueForRegistryEntryError_( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 
@@ -273,8 +248,7 @@ const str::string_ &sclrgstry::GetMandatoryRegistryValue(
 }
 
 const char *sclrgstry::GetMandatoryRegistryValue(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	STR_BUFFER___ &Buffer )
 {
 ERRProlog
@@ -282,7 +256,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetMandatoryRegistryValue( Entry, Tags, Value );
+	GetMandatoryRegistryValue( Entry, Value );
 
 	Value.Convert( Buffer );
 ERRErr
@@ -292,8 +266,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	t Limit,
 	t &Value )
 {
@@ -304,13 +277,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Entry, Tags, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( Limit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
+		ReportBadOrNoValueForRegistryEntryError_( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -320,8 +293,7 @@ ERREpilog
 }
 
 template <typename t> static bso::bool__ GetRegistrySignedNumber_(
-	const rgstry::entry___ &Entry,
-	const rgstry::tags_ &Tags,
+	const rgstry::tentry__ &Entry,
 	t LowerLimit,
 	t UpperLimit,
 	t &Value )
@@ -333,13 +305,13 @@ ERRProlog
 ERRBegin
 	RawValue.Init();
 
-	if ( !( Present = GetValue( Entry, Tags, RawValue ) ) )
+	if ( !( Present = GetValue( Entry, RawValue ) ) )
 		ERRReturn;
 
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );
+		ReportBadOrNoValueForRegistryEntryError_( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -350,28 +322,26 @@ ERREpilog
 
 #define RUN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type Limit  )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Tags, Limit, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );\
+		if ( !GetRegistryUnsignedNumber_( Entry, Limit, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 \
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Limit )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Tags, Limit, Value ) )\
+		if ( !GetRegistryUnsignedNumber_( Entry, Limit, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -388,29 +358,27 @@ RUN( UByte, bso::ubyte__ )
 
 #define RSN( name, type )\
 	type sclrgstry::GetMandatoryRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type Min,\
 		type Max)\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Tags, Min, Max, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry, Tags );\
+		if ( !GetRegistrySignedNumber_( Entry, Min, Max, Value ) ) {\
+			ReportBadOrNoValueForRegistryEntryError_( Entry );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\
 	}\
 	type sclrgstry::GetRegistry##name(\
-		const rgstry::entry___ &Entry,\
-		const rgstry::tags_ &Tags,\
+		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Min,\
 		type Max )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Tags, Min, Max, Value ) )\
+		if ( !GetRegistrySignedNumber_( Entry, Min, Max, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -433,8 +401,6 @@ public:
 	sclrgstrypersonnalization( void )
 	{
 		Registry_.Init();
-
-		RootLevel_ = Registry_.AddEmbeddedLevel();
 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

@@ -70,6 +70,8 @@ using namespace sclmisc;
 
 #define REGISTRY_DEFAULT_FILENAME_SUFFIX ".xcfg"
 
+#define LOCALE_DEFAULT_FILENAME_SUFFIX ".xlcl"
+
 const lcl::rack__ *sclrgstry::LocaleRack = &scllocale::GetRack();
 
 static inline const str::string_ &GetLanguage_( str::string_ &Language )
@@ -79,7 +81,7 @@ static inline const str::string_ &GetLanguage_( str::string_ &Language )
 	if ( !sclrgstry::IsRegistryReady() )
 		ERRc();
 
-	if ( !sclrgstry::Language.GetValue( sclrgstry::GetRegistry(), Language  ) )
+	if ( !sclrgstry::GetRegistry().GetValue( sclrgstry::Language, sclrgstry::GetRoot(), Language  ) )
 		Language = DEFAULT_LANGUAGE;
 
 	return Language;
@@ -210,7 +212,7 @@ static flw::iflow__ &InitializeLocaleFlow_(
 	flf::file_iflow___ &Flow,
 	str::string_ &Directory )
 {
-	if ( !InitializeFlow_( Target, LCL_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
+	if ( !InitializeFlow_( Target, LOCALE_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
 		cio::CErr << "Unable to open locale file !" << txf::nl;
 		ERRExit( EXIT_FAILURE );
 	}

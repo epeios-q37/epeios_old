@@ -74,6 +74,24 @@ extern class ttr_tutor &FRDKRNTutor;
 namespace frdkrn {
 	using namespace frdbkd;
 
+	enum project_type__
+	{
+		ptNew,
+		ptPredefined,
+		ptUser,
+		pt_amount,
+		pt_Undefined
+	};
+
+	project_type__ GetProjectType(
+		const str::string_ &Label,
+		err::handling__ ErrHandling = err::h_Default );
+
+	const str::string_ & GetPredefinedProjectLocation(
+		const str::string_ &Id,
+		const frdrgy::registry_ &Registry,
+		str::string_ &Location );
+
 	enum backend_extended_type__ {
 		bxtNone,	// Non utilisation de 'backend'.
 		bxtPredefined,
@@ -85,7 +103,7 @@ namespace frdkrn {
 
 	backend_extended_type__ GetBackendExtendedType( const str::string_ &RawType );
 
-	backend_extended_type__ GetBackendExtendedType( const frdrgy::_registry_ &Registry );
+	backend_extended_type__ GetBackendExtendedType( const frdrgy::registry_ &Registry );
 
 	void SetBackendExtendedType(
 		frdrgy::_registry_ &Registry,
@@ -323,13 +341,14 @@ namespace frdkrn {
 			reset();
 		}
 		status__ Init(
-			const rgstry::multi_level_registry_ &ConfigurationRegistry,
+			const rgstry::registry_ &ConfigurationRegistry,
+			rgstry::row__ ConfigurationRegistryRoot,
 			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
 			reporting_functions__ &ReportingFunctions )
 		{
-			_Registry.Init( ConfigurationRegistry );
+			_Registry.Init( ConfigurationRegistry, ConfigurationRegistryRoot );
 			_Message.Init();
 			_LocaleRack.Init( Locale, Language );
 			_ProjectOriginalTimeStamp = 0;
@@ -496,6 +515,11 @@ namespace frdkrn {
 	{
 		return Value.ToUB();
 	}
+
+	void GetPredefinedProjects(
+		const frdrgy::registry_ &Registry,
+		const lcl::rack__ &Locale,
+		xml::writer_ &Writer );
 
 	void GetPredefinedBackends(
 		const frdrgy::registry_ &Registry,
