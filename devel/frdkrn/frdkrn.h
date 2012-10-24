@@ -152,16 +152,6 @@ namespace frdkrn {
 
 	const char *GetLabel( recap__ Recap );
 
-	inline const str::string_ &GetTranslation(
-		recap__ Recap,
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
-	{
-		LocaleRack.GetTranslation( GetLabel( Recap ), "FRDKRN_", Translation );
-
-		return Translation;
-	}
-
 	struct error_set___
 	{
 	public:
@@ -185,16 +175,18 @@ namespace frdkrn {
 
 	inline const str::string_ &GetTranslation(
 		const error_set___ &ErrorSet,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Translation )
 	{
-		return rgstry::GetTranslation( ErrorSet.Context, LocaleRack, Translation );
+		return rgstry::GetTranslation( ErrorSet.Context, Locale, Language, Translation );
 	}
 
 	const str::string_ &GetTranslation(
 		recap__ Recap,
 		const error_set___ &ErrorSet,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Translation );
 
 
@@ -207,32 +199,23 @@ namespace frdkrn {
 	class reporting_functions__
 	: public _backend_error_reporting_functions__
 	{
+	private:
+		const class kernel___ *_Kernel;
 	protected:
 		void FBLFRDReport(
 			fblovl::reply__ Reply,
-			const char *Message )
-		{
-			ReportBackendError( Reply, Message );
-		}
-		virtual void FRDKRNReportBackendError(
-			fblovl::reply__ Reply,
-			const char *Message ) = 0;
+			const char *Message );
+		virtual void FRDKRNReportBackendError( const char *Message ) = 0;
 		virtual void FRDKRNReportFrontendError( const char *Message ) = 0;
 	public:
 		void reset ( bso::bool__ = true )
 		{
-			// Standardisation.
+			_Kernel = NULL;
 		}
 		E_VDTOR( reporting_functions__ )
-		void Init( void )
+		void Init( const kernel___ &Kernel )
 		{
 			// Standardisation.
-		}
-		void ReportBackendError(
-			fblovl::reply__ Reply,
-			const char *Message )
-		{
-			FRDKRNReportBackendError( Reply, Message );
 		}
 		void ReportFrontendError( const char *Message )
 		{
@@ -245,14 +228,11 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		lcl::rack__ _LocaleRack;
+		const lcl::locale_ *_Locale;
+		const char *_Language;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
-# if 0
-		frdbkd::_backend___ _Backend;
-# else
 		frdbkd::backend___ _Backend;
-# endif
 		str::string _Message;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
@@ -262,6 +242,7 @@ namespace frdkrn {
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			reporting_functions__ &ReportingFunctions,
+			const char *Language,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions );
 		void _CloseConnection( void )
@@ -291,11 +272,13 @@ namespace frdkrn {
 			const compatibility_informations__ &CompatibilityInformations,
 			csducl::type__ Type,
 			reporting_functions__ &ReportingFunctions,
+			const char *Language,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		recap__ _Connect( // Try to connect using registry content.
 			const compatibility_informations__ &CompatibilityInformations,
 			reporting_functions__ &ReportingFunctions,
+			const char *Language,
 			error_set___ &ErrorSet,
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
@@ -326,7 +309,8 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
-			_LocaleRack.reset( P );
+			_Locale = NULL;
+			_Language = NULL;
 			_Message.reset( P );
 			_ProjectOriginalTimeStamp = 0;
 			_ProjectModificationTimeStamp = 0;
@@ -350,7 +334,8 @@ namespace frdkrn {
 		{
 			_Registry.Init( ConfigurationRegistry, ConfigurationRegistryRoot );
 			_Message.Init();
-			_LocaleRack.Init( Locale, Language );
+			_Locale = &Locale;
+			_Language = Language;
 			_ProjectOriginalTimeStamp = 0;
 			_ReportingFunctions = &ReportingFunctions;
 			// L'initialisation de '_Backend' et '_ClientCore' se fait à la connection.
@@ -372,6 +357,20 @@ namespace frdkrn {
 		{
 			return _Registry;
 		}
+		const lcl::locale_ &Locale( void ) const
+		{
+			if ( _Locale == NULL )
+				ERRc();
+
+			return *_Locale;
+		}
+		const char *Language( void ) const
+		{
+			if ( _Language == NULL )
+				ERRc();
+
+			return _Language;
+		}
 		recap__ LoadProject(
 			const str::string_ &FileName,
 			const char *TargetName,
@@ -389,7 +388,7 @@ namespace frdkrn {
 			recap__ Recap = r_OK;
 			
 			if ( GetBackendExtendedType( Registry() ) != bxtNone )
-				Recap = _Connect( CompatibilityInformations, ReportingFunctions, ErrorSet );
+				Recap = _Connect( CompatibilityInformations, ReportingFunctions, Language(), ErrorSet );
 
 			if ( Recap == r_OK ) {
 				_ProjectOriginalTimeStamp = time( NULL );
@@ -478,14 +477,6 @@ namespace frdkrn {
 		{
 			return _Registry.GetValue( str::string( Path ), Value );
 		}
-		const lcl::rack__ &LocaleRack( void ) const
-		{
-			return _LocaleRack;
-		}
-		const char *Language( void ) const
-		{
-			return _LocaleRack.Language();
-		}
 	};
 
 	enum authentication_prompt_mode__ 
@@ -518,12 +509,14 @@ namespace frdkrn {
 
 	void GetPredefinedProjects(
 		const frdrgy::registry_ &Registry,
-		const lcl::rack__ &Locale,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		xml::writer_ &Writer );
 
 	void GetPredefinedBackends(
 		const frdrgy::registry_ &Registry,
-		const lcl::rack__ &Locale,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		xml::writer_ &Writer );
 
 }

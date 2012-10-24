@@ -114,7 +114,7 @@ namespace xpp {
 		return (status__)Status;
 	}
 
-	const char *Label( status__ Status );
+	const char *GetLabel( status__ Status );
 
 	struct context___ {
 		status__ Status;
@@ -159,7 +159,8 @@ namespace xpp {
 
 	const str::string_ &GetTranslation(
 		const context___ &Context,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Translation );
 
 	struct _qualified_preprocessor_directives___ {
@@ -731,7 +732,8 @@ namespace xpp {
 	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
 	inline const str::string_ &GetTranslation(
 		const preprocessing_iflow___ &PFlow,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Translation )
 	{
 	ERRProlog
@@ -739,7 +741,7 @@ namespace xpp {
 	ERRBegin
 		Context.Init();
 
-		GetTranslation( PFlow.GetContext( Context ), LocaleRack, Translation );
+		GetTranslation( PFlow.GetContext( Context ), Locale, Language, Translation );
 	ERRErr
 	ERREnd
 	ERREpilog

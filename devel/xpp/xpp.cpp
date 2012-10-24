@@ -86,8 +86,6 @@ using xml::token__;
 #define CYPHER_TAG			"cypher"
 #define ATTRIBUTE_ATTRIBUTE	"attribute"
 
-#define MESSAGE_PREFIX	"XPP_"
-
 static inline status__ Convert_( xml::status__ Status )
 {
 	return (status__)Status;
@@ -95,13 +93,13 @@ static inline status__ Convert_( xml::status__ Status )
 
 #define CASE( m )\
 	case s##m:\
-	return #m;\
+	return XPP_NAME "_" #m;\
 	break
 
-const char *xpp::Label( status__ Status )
+const char *xpp::GetLabel( status__ Status )
 {
 	if ( Status < Convert_( xml::s_amount ) )
-		return xml::Label( (xml::status__)Status );
+		return xml::GetLabel( (xml::status__)Status );
 
 	switch( Status ) {
 	CASE( OK );
@@ -139,7 +137,8 @@ const char *xpp::Label( status__ Status )
 
 static void PutFileLineColumn_(
 	const context___ &Context,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &Message )
 {
 ERRProlog
@@ -151,10 +150,10 @@ ERRBegin
 	Values.Init();	
 
 	if ( Context.FileName.Amount() != 0 ) {
-		Message.Append( Rack.GetTranslation( "ErrorInFileAtLineColumn", MESSAGE_PREFIX, SBuffer)  );
+		Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorInFileAtLineColumn", Language , SBuffer)  );
 		Values.Append( Context.FileName );
 	} else
-		Message.Append( Rack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, SBuffer)  );
+		Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorAtLineColumn", Language, SBuffer)  );
 
 	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
 	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
@@ -167,7 +166,8 @@ ERREpilog
 
 static void PutFile_(
 	const context___ &Context,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &Message )
 {
 ERRProlog
@@ -177,7 +177,7 @@ ERRBegin
 	if ( Context.FileName.Amount() == 0 )
 		ERRc();
 
-	Message.Append( Rack.GetTranslation( "ErrorInFile", MESSAGE_PREFIX, Buffer)  );
+	Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorInFile", Language, Buffer)  );
 
 	lcl::ReplaceTag( Message, 1, Context.FileName );
 ERRErr
@@ -187,7 +187,8 @@ ERREpilog
 
 const str::string_ &xpp::GetTranslation(
 	const context___ &Context,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -195,14 +196,14 @@ ERRProlog
 ERRBegin
 	if ( Context.Status < (xpp::status__)xml::s_amount ) {
 		if ( Context.FileName.Amount() != 0 )
-			PutFile_( Context, LocaleRack, Translation );
-		xml::GetTranslation( (xml::status__)Context.Status, LocaleRack, Context.Coord, Translation );
+			PutFile_( Context, Locale, Language, Translation );
+		xml::GetTranslation( (xml::status__)Context.Status, Locale, Language, Context.Coord, Translation );
 	} else {
 		Values.Init();
 
-		PutFileLineColumn_( Context, LocaleRack, Translation );
+		PutFileLineColumn_( Context, Locale, Language, Translation );
 
-		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Translation );
+		Locale.GetTranslation( GetLabel( Context.Status ), Language, Translation );
 		lcl::ReplaceTags( Translation, Values );	// Pour enlever le '%0' en cas de traduation introuvable.
 	}
 ERRErr

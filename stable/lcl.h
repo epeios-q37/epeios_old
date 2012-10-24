@@ -69,12 +69,6 @@ extern class ttr_tutor &LCLTutor;
 
 # define LCL_UNDEFINED_LEVEL	RGSTRY_UNDEFINED_LEVEL
 
-// Facilite la gestion des messages.
-# define LCL_CASE( label, prefix )\
-	case prefix##label:\
-	return #label;\
-	break;
-
 namespace lcl {
 	using rgstry::status__;
 	using rgstry::context___;
@@ -91,23 +85,19 @@ namespace lcl {
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			str::string_ &Translation ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingLanguageThenText(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingTextThenLanguage(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			str::string_ &Translation ) const;
 	public:
 		struct s {
@@ -217,78 +207,14 @@ namespace lcl {
 		bso::bool__ GetTranslation(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			str::string_ &Translation ) const;
 		const char *GetTranslation(
 			const char *Text,
 			const char *Language,
-			const char *Prefix,
 			STR_BUFFER___ &Buffer ) const;	// Si la traduction n'existe pas, 'Text' est renvoyé.
 	};
 
 	E_AUTO( locale );
-
-	struct rack__
-	{
-	private:
-		const locale_ *_Locale;
-		const char *_Language;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			_Locale = NULL;
-			_Language = NULL;
-		}
-		rack__( void )
-		{
-			reset();
-		}
-		rack__(
-			const locale_ &Locale,	// N'est pas dupliqué !
-			const char *Language )	// N'est pas dupliqué !
-		{
-			reset( false );
-
-			_Locale = &Locale;
-			_Language = Language;
-		}
-		void Init(
-			const locale_ &Locale,	// N'est pas dupliqué !
-			const char *Language ) // N'est pas dupliqué !
-		{
-			reset();
-
-			_Locale = &Locale;
-			_Language = Language;
-		}
-		const lcl::locale_ &Locale( void ) const
-		{
-			return *_Locale;
-		}
-		const char *Language( void ) const
-		{
-			return _Language;
-		}
-		void SetLanguage( const char *Language )
-		{
-			_Language = Language;
-		}
-		bso::bool__ GetTranslation(
-			const char *Text,
-			const char *Prefix,
-			str::string_ &Translation ) const
-		{
-			return _Locale->GetTranslation( Text, _Language, Prefix, Translation );
-		}
-		const char *GetTranslation(
-			const char *Text,
-			const char *Prefix,
-			STR_BUFFER___ &Buffer ) const	// Si la traduction n'existe pas, 'Text' est renvoyé.
-		{
-			return _Locale->GetTranslation( Text, _Language, Prefix, Buffer );
-		}
-	};
-
 
 	inline void ReplaceTags(
 		str::string_ &Text,

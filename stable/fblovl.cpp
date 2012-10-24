@@ -55,15 +55,16 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "err.h"
+
 using namespace fblovl;
 
 #define CASE( m )\
 	case r##m:\
-	return #m;\
+	return FBLOVL_NAME "_" #m;\
 	break
 
-
-const char *fblovl::Label( reply__ Reply )
+const char *fblovl::GetLabel( reply__ Reply )
 {
 	switch ( Reply ) {
 	CASE( OK );

@@ -304,7 +304,7 @@ namespace fblfrd {
 		{
 			_ParametersHandlingFunctions->PostProcess( Flow );
 		}
-		void _HandleError(
+		void _ReportError(
 			fblovl::reply__ Reply,
 			const char *Message )
 		{
@@ -359,7 +359,7 @@ namespace fblfrd {
 				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
 					ERRl();
 
-				_HandleError( Reply, Message_ );
+				_ReportError( Reply, Message_ );
 			}
 
 			return Reply;

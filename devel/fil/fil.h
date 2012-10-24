@@ -78,7 +78,7 @@ namespace str {
 }
 
 namespace lcl {
-	struct rack__;
+	class locale_;
 }
 
 #if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
@@ -299,13 +299,7 @@ namespace fil {
 		bs_Undefined
 	};
 
-	const char *Label( backup_status__ Status );
-
-	const str::string_ &GetTranslation(
-		backup_status__ Status,
-		const char *FileName,
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Tranlsation );
+	const char *GetLabel( backup_status__ Status );
 
 	//e How handle the backuped file.
 	enum backup_mode__
@@ -331,7 +325,8 @@ namespace fil {
 	backup_status__ CreateBackupFile(
 		const char *FileName,
 		backup_mode__ Mode,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		txf::text_oflow__ &Flow );
 
 	enum recover_status__
@@ -348,7 +343,8 @@ namespace fil {
 	const str::string_ &GetTranslation(
 		recover_status__ Status,
 		const char *FileName,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Tranlsation );
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
@@ -358,7 +354,8 @@ namespace fil {
 
 	recover_status__ RecoverBackupFile(
 		const char *FileName,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		txf::text_oflow__ &Flow );
 }
 

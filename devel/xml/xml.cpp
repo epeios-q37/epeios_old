@@ -66,16 +66,14 @@ public:
 #include "fnm.h"
 #include "lcl.h"
 
-#define MESSAGE_PREFIX	"XML_"
-
 using namespace xml;
 
 #define CASE( m )\
 	case s##m:\
-	return #m;\
+	return XML_NAME "_" #m;\
 	break
 
-const char *xml::Label( status__ Status )
+const char *xml::GetLabel( status__ Status )
 {
 	switch( Status ) {
 	CASE( OK );

@@ -60,10 +60,6 @@ extern class ttr_tutor &FBLOVLTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "lcl.h"
-
 #define FBLOVL_PROTOCOL_VERSION	"4"
 
 namespace fblovl {
@@ -83,15 +79,8 @@ namespace fblovl {
 		r_Undefined
 	};
 
-	const char *Label( reply__ Reply );
+	const char *GetLabel( reply__ Reply );
 
-	inline const char *GetTranslation(
-		reply__ Reply,
-		const lcl::rack__ &Rack,
-		STR_BUFFER___ &Buffer )
-	{
-		return Rack.GetTranslation( Label( Reply ),  FBLOVL_NAME "_", Buffer );
-	}
 }
 
 /*$END$*/

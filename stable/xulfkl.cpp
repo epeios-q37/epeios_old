@@ -57,12 +57,13 @@ public:
 
 using namespace xulfkl;
 
-#define CASE( message )	\
-	case m##message:\
-		Message = #message;\
-		break
+#define CASE( n )\
+	case m##n:\
+	return XULFKL_NAME "_" #n;\
+	break
 
-static const char *GetRawMessage_( xulfkl::message__ MessageId )
+
+static const char *xulfkl::GetLabel( xulfkl::message__ MessageId )
 {
 
 #if XULFKL_M_AMOUNT != 2
@@ -81,54 +82,6 @@ static const char *GetRawMessage_( xulfkl::message__ MessageId )
 
 	return Message;
 }
-
-static const str::string_ &GetMessage_(
-	message__ Message,
-	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation )
-{
-	LocaleRack.GetTranslation( GetRawMessage_( Message ), XULFKL_NAME "_", Translation );
-
-	return Translation;
-}
-
-static const char *GetMessage_(
-	message__ Message,
-	const lcl::rack__ &LocaleRack,
-	STR_BUFFER___ &Buffer )
-{
-ERRProlog
-	str::string Translation;
-ERRBegin
-	Translation.Init();
-
-	GetMessage_( Message, LocaleRack, Translation );
-
-	Translation.Convert( Buffer );
-ERRErr
-ERREnd
-ERREpilog
-	return Buffer();
-}
-
-const str::string_ &xulfkl::GetTranslation(
-	message__ MessageId,
-	const lcl::rack__ LocaleRack,
-	str::string_ &Message  )
-{
-	return GetMessage_( MessageId, LocaleRack, Message );
-}
-
-const char *xulfkl::GetTranslation(
-	message__ MessageId,
-	const lcl::rack__ LocaleRack,
-	STR_BUFFER___ &Buffer  )
-{
-	return GetMessage_( MessageId, LocaleRack, Buffer );
-}
-
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

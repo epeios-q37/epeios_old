@@ -61,7 +61,7 @@ using rgstry::tentry__;
 
 #define CASE( m )\
 	case r##m:\
-	return #m;\
+	return FRDKRN_NAME "_" #m;\
 	break
 
 const char *frdkrn::GetLabel( recap__ Recap )
@@ -96,19 +96,20 @@ const char *frdkrn::GetLabel( recap__ Recap )
 const str::string_ &frdkrn::GetTranslation(
 	recap__ Recap,
 	const error_set___ &ErrorSet,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &Translation )
 {
 ERRProlog
 	str::string EmbeddedMessage;
 ERRBegin
-	GetTranslation( Recap, LocaleRack, Translation );
+	Locale.GetTranslation( GetLabel( Recap ), Language, Translation );
 
 	switch ( Recap ) {
 		case rProjectParsingError:
 		case rSettingsParsingError:
 			EmbeddedMessage.Init();
-			rgstry::GetTranslation( ErrorSet.Context, LocaleRack, EmbeddedMessage );
+			rgstry::GetTranslation( ErrorSet.Context, Locale, Language, EmbeddedMessage );
 			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
 			break;
 		case rNoOrBadProjectId:
@@ -274,6 +275,32 @@ static str::string_ &AppendTargetAttributePathItem_(
 	return Target;
 }
 
+void frdkrn::reporting_functions__::FBLFRDReport(
+	fblovl::reply__ Reply,
+	const char *Message )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+	str::string Translation;
+ERRBegin
+	if ( _Kernel == NULL )
+		ERRc();
+
+	Translation.Init();
+
+	_Kernel->Locale().GetTranslation( fblovl::GetLabel( Reply ), _Kernel->Language(), Translation );
+
+	Translation.Append( " : " );
+	
+	Translation.Append( Message );
+
+	this->FRDKRNReportBackendError( Translation.Convert( Buffer ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 static inline bso::ulong__ GetBackendPingDelay_( rgstry::multi_level_registry_ &Registry )
 {
 	return rgstry::GetUL( Registry, frdrgy::BackendPingDelay, 0 );
@@ -284,6 +311,7 @@ recap__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	frdkrn::reporting_functions__ &ReportingFunctions,
+	const char *Language, 
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -308,7 +336,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( !_Backend.Init( LocaleRack().Language(), CompatibilityInformations, _ClientCore, ReportingFunctions, ErrorSet.IncompatibilityInformations ) ) {
+	if ( !_Backend.Init( Language, CompatibilityInformations, _ClientCore, ReportingFunctions, ErrorSet.IncompatibilityInformations ) ) {
 		Recap = rIncompatibleBackend;
 		ERRReturn;
 	}
@@ -329,6 +357,7 @@ recap__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	csducl::type__ Type,
 	frdkrn::reporting_functions__ &ReportingFunctions,
+	const char *Language,
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -336,7 +365,7 @@ recap__ frdkrn::kernel___::_Connect(
 ERRProlog
 	STR_BUFFER___ RemoteHostServiceOrLocalLibraryPathBuffer;
 ERRBegin
-	Recap = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, ReportingFunctions, ErrorSet, LogFunctions );
+	Recap = _Connect( RemoteHostServiceOrLocalLibraryPath.Convert( RemoteHostServiceOrLocalLibraryPathBuffer ), CompatibilityInformations, Type, ReportingFunctions, Language, ErrorSet, LogFunctions );
 ERRErr
 ERREnd
 ERREpilog
@@ -419,6 +448,7 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 recap__ frdkrn::kernel___::_Connect(
 	const compatibility_informations__ &CompatibilityInformations,
 	reporting_functions__ &ReportingFunctions,
+	const char *Language,
 	error_set___ &ErrorSet,
 	csdsnc::log_functions__ &LogFunctions )
 {
@@ -432,7 +462,7 @@ ERRBegin
 	switch ( Type = GetBackendTypeAndLocation( _Registry, Location ) ) {
 	case csducl::tLibrary:
 	case csducl::tDaemon:
-		Recap = _Connect( Location, CompatibilityInformations, Type, ReportingFunctions, ErrorSet, LogFunctions );
+		Recap = _Connect( Location, CompatibilityInformations, Type, ReportingFunctions, Language, ErrorSet, LogFunctions );
 		break;
 	case csducl::t_Undefined:
 		Recap = rNoOrBadBackendDefinition;
@@ -450,10 +480,11 @@ ERREpilog
 inline static const str::string_ &Report_(
 	recap__ Recap,
 	const error_set___ &ErrorSet,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const  char *Language,
 	str::string_ &Message )
 {
-	GetTranslation( Recap, ErrorSet, Locale, Message );
+	GetTranslation( Recap, ErrorSet, Locale, Language, Message );
 
 	return Message;
 }
@@ -531,7 +562,7 @@ ERRProlog
 ERRBegin
 	TVoidOFlow.Init( flx::VoidOFlow );
 
-	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, LocaleRack(), TVoidOFlow ) == fil::bsOK )
+	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, Locale(), Language(), TVoidOFlow ) == fil::bsOK )
 		Backuped = true;
 
 	if ( FFlow.Init( FileNameBuffer, err::hUserDefined ) != fil::sSuccess ) {
@@ -556,7 +587,7 @@ ERRBegin
 	Recap = r_OK;
 ERRErr
 	if ( Backuped )
-		fil::RecoverBackupFile( FileNameBuffer, LocaleRack(), TVoidOFlow );
+		fil::RecoverBackupFile( FileNameBuffer, Locale(), Language(), TVoidOFlow );
 ERREnd
 ERREpilog
 	return Recap;
@@ -605,7 +636,7 @@ ERRBegin
 
 	if ( ( Recap = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
 		Status = sWarning;
 		ERRReturn;
 	} else
@@ -631,7 +662,7 @@ ERRBegin
 
 	if ( ( Report = LoadProject( FileName, TargetName, Criterions, Id, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Report, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Report, ErrorSet, Locale(), Language(),_Message );
 		Status = sError;
 		ERRReturn;
 	} else
@@ -656,7 +687,7 @@ ERRBegin
 
 	if ( ( Recap = LaunchProject( CompatibilityInformations, *_ReportingFunctions, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
 		Status = sError;
 		ERRReturn;
 	} else
@@ -697,7 +728,7 @@ ERRBegin
 
 	if ( ( Recap = SaveProject( FileName, TargetName, Id, ErrorSet ) ) != r_OK ) {
 		_Message.Init();
-		GetTranslation( Recap, ErrorSet, LocaleRack(), _Message );
+		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
 		_Message.Append( " !" );
 		Status = sError;
 		ERRReturn;
@@ -740,7 +771,8 @@ ERREpilog
 static void GetPredefinedProject_(
 	const str::string_ &Id,
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -756,7 +788,7 @@ ERRBegin
 	Registry.GetValue( tentry__( frdrgy::PredefinedProjectAlias, Tags ), Value );
 
 	Translation.Init();
-	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );
+	Locale.GetTranslation( Value.Convert( Buffer ), Language, Translation );
 
 	Writer.PutAttribute( "Alias", Translation );
 ERRErr
@@ -767,7 +799,8 @@ ERREpilog
 static void GetPredefinedProjects_(
 	const rgstry::values_ &Ids,
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
@@ -779,7 +812,7 @@ static void GetPredefinedProjects_(
 		Writer.PushTag( "PredefinedProject" );
 		Writer.PutAttribute( "id", Id( Row ) );
 
-		GetPredefinedProject_( Id( Row ), Registry, Rack, Writer );
+		GetPredefinedProject_( Id( Row ), Registry, Locale, Language, Writer );
 
 		Writer.PopTag();
 
@@ -789,7 +822,8 @@ static void GetPredefinedProjects_(
 
 void frdkrn::GetPredefinedProjects(
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -799,7 +833,7 @@ ERRBegin
 
 	Registry.GetValues( frdrgy::PredefinedProjectId, Ids );
 
-	GetPredefinedProjects_( Ids, Registry, Locale, Writer );
+	GetPredefinedProjects_( Ids, Registry, Locale, Language, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -809,7 +843,8 @@ ERREpilog
 static void GetPredefinedBackend_(
 	const str::string_ &Id,
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -825,7 +860,7 @@ ERRBegin
 	Registry.GetValue( tentry__( frdrgy::PredefinedBackendAlias, Tags ), Value );
 
 	Translation.Init();
-	Locale.GetTranslation( Value.Convert( Buffer ), "", Translation );
+	Locale.GetTranslation( Value.Convert( Buffer ), Language, Translation );
 
 	Writer.PutAttribute( "Alias", Translation );
 ERRErr
@@ -836,7 +871,8 @@ ERREpilog
 static void GetPredefinedBackends_(
 	const rgstry::values_ &Ids,
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
@@ -848,7 +884,7 @@ static void GetPredefinedBackends_(
 		Writer.PushTag( "PredefinedBackend" );
 		Writer.PutAttribute( "id", Id( Row ) );
 
-		GetPredefinedBackend_( Id( Row ), Registry, Rack, Writer );
+		GetPredefinedBackend_( Id( Row ), Registry, Locale, Language, Writer );
 
 		Writer.PopTag();
 
@@ -858,7 +894,8 @@ static void GetPredefinedBackends_(
 
 void frdkrn::GetPredefinedBackends(
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	xml::writer_ &Writer )
 {
 ERRProlog
@@ -868,7 +905,7 @@ ERRBegin
 
 	Registry.GetValues( frdrgy::PredefinedBackendId, Ids );
 
-	GetPredefinedBackends_( Ids, Registry, Locale, Writer );
+	GetPredefinedBackends_( Ids, Registry, Locale, Language, Writer );
 ERRErr
 ERREnd
 ERREpilog

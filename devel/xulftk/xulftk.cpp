@@ -61,48 +61,31 @@ public:
 
 using namespace xulftk;
 
-#define PREFIX	XULFTK_NAME "_" 
-
-void xulftk::reporting_functions__::FRDKRNReportBackendError(
-	fblovl::reply__ Reply,
-	const char *RawMessage )
+void xulftk::reporting_functions__::FRDKRNReportBackendError( const char *Message )
 {
-ERRProlog
-	str::string Message;
-	STR_BUFFER___ Buffer;
-ERRBegin
-	if ( _UI == NULL )
+	if ( _Trunk == NULL )
 		ERRc();
 
-	Message.Init( _Rack.GetTranslation( "BackendMessage", PREFIX, Buffer ) );
-
-	Message.Append( " : " );
-
-	Message.Append( fblovl::GetTranslation( Reply, _Rack, Buffer ) );
-
-	Message.Append( " (" );
-
-	Message.Append( RawMessage );
-
-	Message.Append( ")." );
-
-	_UI->LogAndPrompt( Message );
+	_Trunk->UI().LogAndPrompt( Message );
 
 	ERRAbort();
-ERRErr
-ERREnd
-ERREpilog
 }
 
 void xulftk::reporting_functions__::FRDKRNReportFrontendError( const char *Message )
 {
-	if ( _UI == NULL )
+	if ( _Trunk == NULL )
 		ERRc();
 
-	_UI->Alert( Message );
+	_Trunk->UI().Alert( Message );
 
 	ERRAbort();
 }
+
+void xulftk::reporting_functions__::Init( trunk___ &Trunk )
+{
+	_reporting_functions__::Init( Trunk.Kernel() );
+}
+
 
 enum annex_type__
 {
@@ -162,7 +145,8 @@ static bso::bool__ IsValid_(
 static const char *GetAnnexTarget_( 
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	bso::bool__ AlphaNumericOnly,	
 	STR_BUFFER___ &Buffer )
 {
@@ -176,7 +160,7 @@ ERRBegin
 
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
-		Rack.GetTranslation( "MissingOrBadAnnexTargetDefinition", PREFIX, Translation );
+		Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetDefinition", Language, Translation );
 		UI.LogAndPrompt( Translation );
 		ERRReturn;
 	}
@@ -202,14 +186,15 @@ template <typename bag, typename flow> static flow *GetEmbeddedFlow_(
 	bag &Bag,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 	flow *Flow = NULL;
 ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetAnnexTarget_( UI, Registry, Rack, true, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, true, Buffer ) ) == NULL )
 		ERRReturn;
 
 	Bag.Embedded.Init();
@@ -236,14 +221,15 @@ template <typename bag, typename flow> static flow *GetFileFlow_(
 	bag &Bag,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 	flow *Flow = NULL;
 ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetAnnexTarget_( UI, Registry, Rack, false, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, false, Buffer ) ) == NULL )
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
@@ -266,7 +252,8 @@ template <typename bag, typename flow> static flow  *GetFlow_(
 	bag &Bag,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 	flow *Flow = NULL;
 ERRProlog
@@ -274,17 +261,17 @@ ERRProlog
 ERRBegin
 	switch ( GetAnnexType_( Registry )  ) {
 	case atEmbedded:
-		Flow = GetEmbeddedFlow_<bag, flow>( Direction, Bag, UI, Registry, Rack );
+		Flow = GetEmbeddedFlow_<bag, flow>( Direction, Bag, UI, Registry, Locale, Language );
 		break;
 	case atFile:
-		Flow = GetFileFlow_<bag, flow>( Bag, UI, Registry, Rack );
+		Flow = GetFileFlow_<bag, flow>( Bag, UI, Registry, Locale, Language );
 		break;
 	case atVolatile:
 		Flow = GetVolatileFlow_<bag, flow>( Bag );
 		break;
 	case at_Undefined:
 			Translation.Init();
-			Rack.GetTranslation( "MissingOrBadAnnexTypeDefinition", PREFIX, Translation );
+			Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTypeDefinition", Language, Translation );
 			UI.LogAndPrompt( Translation );
 			ERRReturn;
 		break;
@@ -400,7 +387,8 @@ struct ibag___ {
 static rgstry::row__ RetrieveSet_(
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	rgstry::registry_ &Set )
 {
 	rgstry::row__ Root = NONE;
@@ -411,13 +399,13 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( dIn, Bag, UI, Registry, Rack ) ) == NULL ) {
-		UI.LogAndPrompt( Rack.GetTranslation( "UnableToRetrieveSettings", PREFIX, Buffer ) );
+	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( dIn, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToRetrieveSettings", Language, Buffer ) );
 		ERRReturn;
 	}
 
 	if ( ( Root = Read_( *Flow, Set ) ) == NONE ) {
-		UI.LogAndPrompt( Rack.GetTranslation( "UnableToFindSettings", PREFIX, Buffer ) );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFindSettings", Language, Buffer ) );
 		ERRReturn;
 	}
 ERRErr
@@ -481,7 +469,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( !Trunk.Registry().GetValue( frdrgy::ProjectId, ProjectId ) || (  ProjectId.Amount() == 0 ) ) {
-		Trunk.UI().LogAndPrompt( Trunk.Kernel().LocaleRack().GetTranslation( "BadOrNoProjectId", PREFIX, Buffer ) );
+		Trunk.UI().LogAndPrompt( Trunk.Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoProjectId", Trunk.Kernel().Language(), Buffer ) );
 		ERRAbort();
 	}
 ERRErr
@@ -506,7 +494,7 @@ ERRProlog
 ERRBegin
 	Set.Init();
 
-	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) == NONE )
+	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Set ) ) == NONE )
 		ERRReturn;
 
 	ProjectId.Init();
@@ -543,7 +531,7 @@ ERRBegin
 		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValue( Value );
 		break;
 	default:
-		UI().LogAndPrompt( Kernel().LocaleRack().GetTranslation( "BadOrNoBackendType", PREFIX, Buffer ) );
+		UI().LogAndPrompt( Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoBackendType", Kernel().Language(), Buffer ) );
 		ERRAbort();
 		break;
 	}
@@ -564,9 +552,9 @@ ERRProlog
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 ERRBegin
-	Translation.Init( Kernel().LocaleRack().GetTranslation( "ProjectClosingAsking", PREFIX, Buffer ) );
+	Translation.Init( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingAsking", Kernel().Language(), Buffer ) );
 	Translation.Append( ' ' );
-	Translation.Append( Kernel().LocaleRack().GetTranslation( "ProjectClosingWarning", PREFIX, Buffer ) );
+	Translation.Append( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingWarning", Kernel().Language(), Buffer ) );
 
 	Confirmed = UI().Confirm( Translation );
 ERRErr
@@ -594,7 +582,8 @@ static bso::bool__ StoreSet_(
 	rgstry::row__ Root,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
-	const lcl::rack__ &Rack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -604,8 +593,8 @@ ERRProlog
 ERRBegin
 	Bag.Init();
 	
-	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( dOut, Bag, UI, Registry, Rack ) ) == NULL ) {
-		UI.LogAndPrompt( Rack.GetTranslation( "UnableToStoreSettings", PREFIX, Buffer ) );
+	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( dOut, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToStoreSettings", Language, Buffer ) );
 		ERRReturn;
 	}
 
@@ -656,7 +645,7 @@ ERRBegin
 
 	Set.Init();
 
-	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().LocaleRack(), Set ) ) != NONE ) {
+	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().Locale(),Kernel().Language(), Set ) ) != NONE ) {
 		Settings.Init();
 		GetSettings_( Kernel(), Settings );
 
@@ -665,7 +654,7 @@ ERRBegin
 
 		Set_( ProjectId, Settings, Set, Root );
 
-		StoreSet_( Set, Root, UI(), Registry(), Kernel().LocaleRack() );
+		StoreSet_( Set, Root, UI(), Registry(), Kernel().Locale(), Kernel().Language() );
 	}
 
 	Handle_( Kernel().CloseProject() );

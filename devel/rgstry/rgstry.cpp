@@ -63,17 +63,18 @@ public:
 
 using namespace rgstry;
 
-#define MESSAGE_PREFIX	"RGSTRY_"
+#define CASE( m )\
+	case s##m:\
+	return RGSTRY_NAME "_" #m;\
+	break
 
-#define CASE( name )			LCL_CASE( name, s )
-
-const char *rgstry::Label( status__ Status )
+const char *rgstry::GetLabel( status__ Status )
 {
 	switch ( Status ) {
-	CASE( UnableToOpenFile )
-	CASE( ParseError )
-	CASE( UnableToFindRootPath )
-	CASE( RootPathError )
+	CASE( UnableToOpenFile );
+	CASE( ParseError );
+	CASE( UnableToFindRootPath );
+	CASE( RootPathError );
 	default:
 		ERRu();
 		break;
@@ -85,7 +86,8 @@ const char *rgstry::Label( status__ Status )
 
 const str::string_ &rgstry::GetTranslation(
 	const context___ &Context,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &Translation )
 {
 ERRProlog
@@ -102,7 +104,7 @@ ERRBegin
 	case sUnableToOpenFile:
 		Message.Init();
 
-		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Message );
+		Locale.GetTranslation( GetLabel( Context.Status ), Language, Message );
 
 		TagValues.Init();
 		TagValues.Append( Context.FileName );

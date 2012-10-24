@@ -74,7 +74,7 @@ extern class ttr_tutor &RGSTRYTutor;
 
 // Prédéclaration.
 namespace lcl {
-	struct rack__;
+	class locale_;
 }
 
 namespace rgstry {
@@ -1017,7 +1017,7 @@ namespace rgstry {
 		s_Undefined
 	};
 
-	const char *Label( status__ Status );
+	const char *GetLabel( status__ Status );
 
 	typedef xpp::context___ _context___;
 
@@ -1055,7 +1055,8 @@ namespace rgstry {
 
 	const str::string_ &GetTranslation(
 		const context___ &Context,
-		const lcl::rack__ &LocaleRack,
+		const lcl::locale_ &Locale,
+		const char *Language,
 		str::string_ &Translation );
 
 	status__ FillRegistry(

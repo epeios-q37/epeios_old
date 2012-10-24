@@ -79,17 +79,9 @@ namespace xulfkl {
 		m_Undefined
 	};
 
+	const char *GetLabel( message__ Message );
+
 	using frdkrn::kernel___;
-
-	const str::string_ &GetTranslation(
-		message__ Message,
-		const lcl::rack__ LocaleRack,
-		str::string_ &Translation );
-
-	const char *GetTranslation(
-		message__ Message,
-		const lcl::rack__ LocaleRack,
-		STR_BUFFER___ &Buffer );
 }
 
 /*$END$*/

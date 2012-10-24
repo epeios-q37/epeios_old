@@ -92,7 +92,6 @@ ERREpilog
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenMessage(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -102,7 +101,6 @@ ERRBegin
 	Path.Init( "Translations[language=\"" );
 	Path.Append( Language );
 	Path.Append( "\"]/Translation[message=\"" );
-	Path.Append( Prefix );
 	Path.Append( Text );
 	Path.Append( "\"]" );
 
@@ -116,7 +114,6 @@ ERREpilog
 bso::bool__ lcl::locale_::_GetTranslationFollowingMessageThenLanguage(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -124,7 +121,6 @@ ERRProlog
 	str::string Path;
 ERRBegin
 	Path.Init( "Translations[message=\"" );
-	Path.Append( Prefix );
 	Path.Append( Text );
 	Path.Append( "\"]/Translation[language=\"" );
 	Path.Append( Language );
@@ -140,7 +136,6 @@ ERREpilog
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenText(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -150,7 +145,6 @@ ERRBegin
 	Path.Init( "Translations[language=\"" );
 	Path.Append( Language );
 	Path.Append( "\"]/Translation[text=\"" );
-	Path.Append( Prefix );
 	Path.Append( Text );
 	Path.Append( "\"]" );
 
@@ -164,7 +158,6 @@ ERREpilog
 bso::bool__ lcl::locale_::_GetTranslationFollowingTextThenLanguage(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
@@ -172,7 +165,6 @@ ERRProlog
 	str::string Path;
 ERRBegin
 	Path.Init( "Translations[text=\"" );
-	Path.Append( Prefix );
 	Path.Append( Text );
 	Path.Append( "\"]/Translation[language=\"" );
 	Path.Append( Language );
@@ -202,21 +194,16 @@ void lcl::locale_::GetLanguages(
 bso::bool__ lcl::locale_::GetTranslation(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	str::string_ &Translation ) const
 {
 	bso::bool__ Found = false;
 
-	if ( Prefix == NULL )
-		Prefix = "";
-
-	if ( !( Found = _GetTranslationFollowingLanguageThenText( Text, Language, Prefix, Translation ) ) )
-		if ( !( Found = _GetTranslationFollowingTextThenLanguage( Text, Language, Prefix, Translation ) ) )
-			if ( !( Found = _GetTranslationFollowingLanguageThenMessage( Text, Language, Prefix, Translation ) ) )	// Pour des raisons de compatibilité ascendante.
-				Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Prefix, Translation );	// Pour des raisons de compatibilité ascendante.
+	if ( !( Found = _GetTranslationFollowingLanguageThenText( Text, Language, Translation ) ) )
+		if ( !( Found = _GetTranslationFollowingTextThenLanguage( Text, Language, Translation ) ) )
+			if ( !( Found = _GetTranslationFollowingLanguageThenMessage( Text, Language, Translation ) ) )	// Pour des raisons de compatibilité ascendante.
+				Found = _GetTranslationFollowingMessageThenLanguage( Text, Language, Translation );	// Pour des raisons de compatibilité ascendante.
 
 	if ( !Found ) {
-		Translation.Append( Prefix );
 		Translation.Append( Text );
 		Translation.Append( LCL_TAG_MARKER_S "0" );	// Lorsque pas de traduction trouvée, on rajoute le 'marker' remplacé par l'ensemble des paramètres.
 	}
@@ -227,7 +214,6 @@ bso::bool__ lcl::locale_::GetTranslation(
 const char *lcl::locale_::GetTranslation(
 	const char *Text,
 	const char *Language,
-	const char *Prefix,
 	STR_BUFFER___ &Buffer ) const
 {
 ERRProlog
@@ -235,7 +221,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	GetTranslation( Text, Language, Prefix, Translation );
+	GetTranslation( Text, Language, Translation );
 
 	Translation.Convert( Buffer );
 ERRErr

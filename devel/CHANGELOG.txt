@@ -1,5 +1,15 @@
 $Id$
 
+21/10/2012 :
+	- Général :
+		- Adaptation.
+		- Suppression de la fonction 'GetTRanslation(...)' dans la plupart des bibliothèques.
+		- 'GetLabel(...)' de la plupart des bibliothèques retourne dorénavant les labels préfixés.
+	- LCL :
+		- Suppression de 'rack__'.
+		- Suppression 'LCL_CASE(...)'.
+		- Suppression du paramètre 'Prefix'.
+
 22/10/2012 :
 	- Général :
 		- Adaptation.

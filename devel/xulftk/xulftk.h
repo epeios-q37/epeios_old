@@ -80,30 +80,18 @@ namespace xulftk {
 	: public _reporting_functions__
 	{
 	private:
-		xulfui::ui___ *_UI;
-		lcl::rack__ _Rack;
+		trunk___ *_Trunk;
 	protected:
-		virtual void FRDKRNReportBackendError(
-			fblovl::reply__ Reply,
-			const char *RawMessage );
+		virtual void FRDKRNReportBackendError( const char *Message );
 		void FRDKRNReportFrontendError( const char *Message );
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_reporting_functions__::reset( P );
+			_Trunk = NULL;
 		}
 		E_CVDTOR( reporting_functions__ );
-		void Init(
-			xulfui::ui___ &UI,
-			const lcl::locale_ &Locale,
-			const char *Language )
-		{
-			reset();
-
-			_reporting_functions__::Init();
-			_UI = &UI;
-			_Rack.Init( Locale, Language );
-		}
+		void Init( trunk___ &Trunk );
 	};
 
 	class _user_callback__
@@ -311,9 +299,7 @@ namespace xulftk {
 			xulfui::ui___ &UI,
 			xulfkl::kernel___ &Kernel,
 			_user_callback__ &UserCallback,
-			geckoo::steering_callback__ &Steering,
-			const lcl::locale_ &Locale,
-			const char *Language )
+			geckoo::steering_callback__ &Steering )
 		{
 			_UI = &UI;
 			_Kernel = &Kernel;
@@ -321,7 +307,7 @@ namespace xulftk {
 			_UserCallback = &UserCallback;
 			_Steering = &Steering;
 			_DefaultXSLRootPath = DefaultXSLRootPath;
-			_DefaultReportingFunctions.Init( UI, Locale, Language );
+			_DefaultReportingFunctions.Init( *this );
 
 			return frdkrn::sOK;
 		}
@@ -472,7 +458,7 @@ namespace xulftk {
 		ERRProlog
 			STR_BUFFER___ Buffer;
 		ERRBegin
-			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), GetTranslation( xulfkl::mExitConfirmation, Kernel().LocaleRack(), Buffer) ) )
+			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), Kernel().Locale().GetTranslation( xulfkl::GetLabel( xulfkl::mExitConfirmation ), Kernel().Language(), Buffer) ) )
 				Confirmation = _UF().Exit();
 		ERRErr
 		ERREnd

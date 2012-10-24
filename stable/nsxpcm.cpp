@@ -229,11 +229,10 @@ mtx::mutex_handler__ FormHistoryMutex_;
 
 #define CASE( m )\
 	case t##m:\
-	return #m;\
+	return NSXPCM_NAME "_" #m;\
 	break
 
-
-static const char *GetLabel_( text__ Text )
+const char *nsxpcm::GetLabel( text__ Text )
 {
 	switch ( Text ) {
 		CASE( XPRJFilterLabel );
@@ -244,22 +243,6 @@ static const char *GetLabel_( text__ Text )
 	}
 
 	return NULL;	// Pour éviter un 'warning'.
-}
-
-bso::bool__ nsxpcm::GetTranslation(
-	text__ Text,
-	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation )
-{
-	return LocaleRack.GetTranslation( GetLabel_( Text ), "NSXPCM_", Translation );
-}
-
-const char *nsxpcm::GetTranslation(
-	text__ Text,
-	const lcl::rack__ &LocaleRack,
-	STR_BUFFER___ &Buffer  )
-{
-	return LocaleRack.GetTranslation( GetLabel_( Text ), "NSXPCM_", Buffer );
 }
 
 
@@ -710,17 +693,18 @@ static inline PRInt32 ConvertPredefinedFilters_( int Filters )
 
 void AddExtraPredefinedFilters_(
 	int Filters,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	nsIFilePicker *FilePicker )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( Filters & fpmfXPRJ )
-		AddFilter_( GetTranslation( nsxpcm::tXPRJFilterLabel, LocaleRack, Buffer ), "*.xprj", FilePicker );
+		AddFilter_( Locale.GetTranslation( GetLabel( nsxpcm::tXPRJFilterLabel ), Language, Buffer ), "*.xprj", FilePicker );
 
 	if ( Filters & fpmfDynamicLibrary )
-		AddFilter_( GetTranslation( nsxpcm::tDynamicLibraryFilterLabel, LocaleRack, Buffer ), "*." NSXPCM__DYNAMIC_LIBRARY_EXTENSION, FilePicker );
+		AddFilter_( Locale.GetTranslation( GetLabel( nsxpcm::tDynamicLibraryFilterLabel ), Language, Buffer ), "*." NSXPCM__DYNAMIC_LIBRARY_EXTENSION, FilePicker );
 ERRErr
 ERREnd
 ERREpilog
@@ -733,7 +717,8 @@ bso::bool__ nsxpcm::file_picker_::Show(
 	nsIDOMWindow *ParentWindow,
 	file_picker_type__ Type,
 	const char *DefaultExtension,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &FileName )
 {
 	bso::bool__ FileSelected = false;
@@ -762,7 +747,7 @@ ERRBegin
 
 	AddFilters_( Filters, FilePicker );
 
-	AddExtraPredefinedFilters_( S_.PredefinedFilters, LocaleRack, FilePicker );
+	AddExtraPredefinedFilters_( S_.PredefinedFilters, Locale, Language, FilePicker );
 
 	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
 		Transform( DefaultExtension, EString );
@@ -869,7 +854,8 @@ static bso::bool__ FileDialogBox_(
 	file_picker_type__ Type,
 	const char *DefaultExtension,
 	int PredefineFilters,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &FileName )
 {
 	bso::bool__ FileSelected = false;
@@ -880,7 +866,7 @@ ERRBegin
 
 	FilePicker.SetPredefinedFilter( PredefineFilters );
 
-	FileSelected = FilePicker.Show( ParentWindow, Type, DefaultExtension, LocaleRack, FileName );
+	FileSelected = FilePicker.Show( ParentWindow, Type, DefaultExtension, Locale, Language, FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -893,10 +879,11 @@ bso::bool__ nsxpcm::FileOpenDialogBox(
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( ParentWindow, Title, fptOpen, DefaultExtension, PredefinedFilters, LocaleRack, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptOpen, DefaultExtension, PredefinedFilters, Locale, Language, FileName );
 }
 
 bso::bool__ nsxpcm::FileSaveDialogBox(
@@ -904,19 +891,21 @@ bso::bool__ nsxpcm::FileSaveDialogBox(
 	const str::string_ &Title,
 	const char *DefaultExtension,
 	int PredefinedFilters,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( ParentWindow, Title, fptSave, "", PredefinedFilters, LocaleRack, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptSave, "", PredefinedFilters, Locale, Language, FileName );
 }
 
 bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	nsIDOMWindow *ParentWindow,
 	const str::string_ &Title,
-	const lcl::rack__ &LocaleRack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_None, LocaleRack, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_None, Locale, Language, FileName );
 }
 
 void nsxpcm::Delete( widget_cores_ &Widgets )
