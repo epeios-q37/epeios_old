@@ -70,7 +70,7 @@ extern class ttr_tutor &XMLTutor;
 
 // Prédéclaration.
 namespace lcl {
-	class locale_;
+	class meaning_;
 }
 
 namespace xml {
@@ -92,12 +92,10 @@ namespace xml {
 
 	const char *GetLabel( status__ Status );
 
-	const str::string_ &GetTranslation(
+	void GetMessage(
 		status__ Status,
-		const lcl::locale_ &Locale,
-		const char *Language,
 		const coord__ &Coord,	// Obtenu de 'xtf::extended_text_iflow__'.
-		str::string_ &Translation );
+		lcl::meaning_ &Meaning );
 
 
 	class dump_ {

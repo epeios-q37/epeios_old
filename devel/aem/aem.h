@@ -252,7 +252,7 @@ namespace aem {
 		void SetStepValue( step_value__ StepValue )
 		{
 			if ( StepValue >= 128 )
-				ERRu();
+				ERRc();
 
 			S_.Misc = ( S_.Misc & 0xffffff40 | StepValue );
 

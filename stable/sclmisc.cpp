@@ -63,6 +63,7 @@ public:
 
 #include "scllocale.h"
 #include "sclrgstry.h"
+#include "sclerror.h"
 
 using namespace sclmisc;
 
@@ -72,22 +73,6 @@ using namespace sclmisc;
 
 #define LOCALE_DEFAULT_FILENAME_SUFFIX ".xlcl"
 
-const lcl::rack__ *sclrgstry::LocaleRack = &scllocale::GetRack();
-
-static inline const str::string_ &GetLanguage_( str::string_ &Language )
-{
-	bso::bool__ Missing = false;
-
-	if ( !sclrgstry::IsRegistryReady() )
-		ERRc();
-
-	if ( !sclrgstry::GetRegistry().GetValue( sclrgstry::Language, sclrgstry::GetRoot(), Language  ) )
-		Language = DEFAULT_LANGUAGE;
-
-	return Language;
-}
-
-
 static void Initialize_(
 	flw::iflow__ &LocaleFlow,
 	flw::iflow__ &RegistryFlow,
@@ -96,20 +81,9 @@ static void Initialize_(
 	const char *LocaleDirectory,
 	const char *RegistryDirectory )
 {
-ERRProlog
-	str::string Language;
-ERRBegin
-	scllocale::Load( LocaleFlow, LocaleDirectory, LocaleRootPath );
+	scllocale::Push( LocaleFlow, LocaleDirectory, LocaleRootPath );
 
 	sclrgstry::Load( RegistryFlow, RegistryDirectory, RegistryRootPath );
-
-	Language.Init();
-	GetLanguage_( Language );
-
-	scllocale::SetLanguage( Language );
-ERRErr
-ERREnd
-ERREpilog
 }
 
 static void BuildRootPath_(
@@ -227,14 +201,14 @@ static flw::iflow__ &InitializeRegistryFlow_(
 	str::string_ &Directory )
 {
 ERRProlog
-	str::string Translation;
+	lcl::meaning Meaning;
 ERRBegin
 	if ( !InitializeFlow_( Target, REGISTRY_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
-		Translation.Init();
-		cio::CErr << scllocale::GetTranslation( SCLMISC_NAME "_UnableToOpenRegistryFile", Translation );
+		Meaning.Init();
+		Meaning.SetValue( SCLMISC_NAME "_UnableToOpenRegistryFile" );
+		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
-
 ERRErr
 ERREnd
 ERREpilog
@@ -275,12 +249,12 @@ void sclmisc::CreateBackupFile(
 {
 ERRProlog
 	fil::backup_status__ Status = fil::bs_Undefined;
-	str::string Translation;
+	lcl::meaning Meaning;
 ERRBegin
 	if ( ( Status = fil::CreateBackupFile( FileName, Mode, err::hUserDefined ) )!= fil::bsOK ) {
-		Translation.Init();
-		fil::GetTranslation( Status, FileName, scllocale::GetRack(), Translation );
-		cio::CErr << Translation << txf::nl;
+		Meaning.Init();
+		fil::GetMeaning( Status, FileName, Meaning );
+		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -292,12 +266,12 @@ void sclmisc::RecoverBackupFile( const char *FileName )
 {
 ERRProlog
 	fil::recover_status__ Status = fil::rs_Undefined;
-	str::string Translation;
+	lcl::meaning Meaning;
 ERRBegin
 	if ( ( Status = fil::RecoverBackupFile( FileName, err::hUserDefined ) )!= fil::rsOK ) {
-		Translation.Init();
-		fil::GetTranslation( Status, FileName, scllocale::GetRack(), Translation );
-		cio::CErr << Translation << txf::nl;
+		Meaning.Init();
+		fil::GetMeaning( Status, FileName, Meaning );
+		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr

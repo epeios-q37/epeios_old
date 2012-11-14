@@ -40,10 +40,7 @@ using cio::CErr;
 using cio::COut;
 using cio::CIn;
 
-#define CASE( name )			LCL_CASE( name, m )
-#define CASE_N( name, count )	LCL_CASE_N( name, m, count )
-
-const char *locale::Label( message__ Message )
+const char *locale::GetLabel( message__ Message )
 {
 #if	GLOBAL__MESSAGE_AMOUNT != 0
 #	error "Amount of 'message__' entries changed ! Update !"

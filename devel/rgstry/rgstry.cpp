@@ -84,53 +84,43 @@ const char *rgstry::GetLabel( status__ Status )
 
 }
 
-const str::string_ &rgstry::GetTranslation(
+void rgstry::GetMeaning(
 	const context___ &Context,
-	const lcl::locale_ &Locale,
-	const char *Language,
-	str::string_ &Translation )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	lcl::strings TagValues;
-	str::string TagValue;
-	str::string Message;
+	lcl::meaning MeaningBuffer;
 ERRBegin
-	Message.Init();
-
 	switch ( Context.Status ) {
 	case sOK:
 		ERRu();
 		break;
 	case sUnableToOpenFile:
-		Message.Init();
+		Meaning.SetValue( GetLabel( Context.Status ) );
 
-		Locale.GetTranslation( GetLabel( Context.Status ), Language, Message );
-
-		TagValues.Init();
-		TagValues.Append( Context.FileName );
-
-		lcl::ReplaceTags( Message, TagValues );
+		Meaning.AddTag( Context.FileName );
 		break;
 	case sParseError:
-		xpp::GetTranslation( Context, LocaleRack, Message );
+		Meaning.SetValue( GetLabel( Context.Status ) );
+
+		MeaningBuffer.Init();
+		xpp::GetMeaning( Context, MeaningBuffer );
+
+		Meaning.AddTag( MeaningBuffer );
 		break;
 	case sRootPathError:
 		if ( Context.PathErrorRow != NONE )
 			ERRu();
 	case sUnableToFindRootPath:
-		LocaleRack.GetTranslation( Label( Context.Status ), MESSAGE_PREFIX, Message );
+		Meaning.SetValue( GetLabel( Context.Status ) );
 		break;
 	default:
 		ERRu();
 		break;
 	}
-
-	Translation.Append( Message );
-
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
 }
 
 row__ rgstry::registry_::_Search(
@@ -1067,7 +1057,7 @@ ERREpilog
 	return Target;
 }
 
-#if 0
+#if 1
 const value_ &rgstry::overloaded_registry___::GetValue(
 	const str::string_ &PathString,
 	bso::bool__ *Missing,

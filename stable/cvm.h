@@ -76,7 +76,7 @@ namespace cvm {
 		void Test_( void )
 		{
 			if ( Tampon_ == NULL )
-				ERRu();
+				ERRc();
 		}
 	#endif
 	protected:

@@ -304,7 +304,7 @@ namespace mtx {
 		{
 #ifdef MTX__CONTROL
 			if ( IsReleased() )
-				ERRu();
+				ERRc();
 #endif
 			return _GetSign( Counter ) != MTX__UNLOCKED_MUTEX_COUNTER_SIGN;
 		}
@@ -312,7 +312,7 @@ namespace mtx {
 		{
 #ifdef MTX__CONTROL
 				if ( IsReleased() )
-					ERRu();
+					ERRc();
 #endif
 			if ( IsLocked() )
 				switch ( Mode ) {
@@ -323,7 +323,7 @@ namespace mtx {
 					return tht::GetTID() == Owner;
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 
@@ -342,17 +342,17 @@ namespace mtx {
 		{
 #ifdef XXX_DBG
 			if ( !IsLocked() )
-				ERRu();
+				ERRc();
 
 			switch ( Mode ) {
 			case mFree:
 				break;
 			case mOwned:
 				if ( Owner != tht::GetTID() )
-					ERRu();
+					ERRc();
 				break;
 			default:
-				ERRu();
+				ERRc();
 				break;
 			}
 #endif
@@ -377,7 +377,7 @@ namespace mtx {
 			case mOwned:
 				break;
 			default:
-				ERRu();
+				ERRc();
 				break;
 			}
 #endif
@@ -407,7 +407,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRu();
+			ERRc();
 #endif
 		return Handler->IsLocked();
 	}
@@ -418,7 +418,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRu();
+			ERRc();
 #endif
 		return Handler->TryToLock();
 	}
@@ -438,7 +438,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRu();
+			ERRc();
 #endif
 		if ( !TryToLock( Handler ) )
 			WaitUntilUnlocked_( Handler );
@@ -449,7 +449,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRu();
+			ERRc();
 #endif
 		Handler->Unlock();
 	}
@@ -466,10 +466,10 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRu();
+			ERRc();
 
 		if ( Handler->IsLocked() && !EvenIfLocked )
-			ERRu();
+			ERRc();
 #endif
 		delete Handler;
 	}
@@ -505,7 +505,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRu();
+				ERRc();
 #endif
 			mtx::Lock( Handler_ );
 		}
@@ -514,7 +514,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRu();
+				ERRc();
 #endif
 			mtx::Unlock( Handler_ );
 		}
@@ -523,7 +523,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRu();
+				ERRc();
 #endif
 			return mtx::TryToLock( Handler_ );
 		}

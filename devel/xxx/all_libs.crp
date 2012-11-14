@@ -250,6 +250,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 
 &sclbacknd	&epeios	&2011	&SoCLe BACKEND
+&sclerror	&epeios	&2011	&SoCLe ERROR
 &sclgecko	&epeios	&2001	&SoCLe GECKO component
 &scldalvik	&epeios	&2012	&SoCLe DALVIK
 &scllocale	&epeios	&2011	&SoCLe LOCALE

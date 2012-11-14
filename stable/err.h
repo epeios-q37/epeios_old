@@ -81,7 +81,6 @@ extern class ttr_tutor &ERRTutor;
 
 
 namespace err {
-
 	typedef char buffer__[150];
 
 	enum handling__ {
@@ -93,105 +92,27 @@ namespace err {
 	};
 
 	enum type {
-		ok = 0,
-		// no error
-		alc = 1,
-		// allocation error (only RAM)
-		dvc = 2,
-		// device error
-		sys = 4,
-		// system error
-		usr = 8,
-		// user error
-		bkd = 16,
-		// backend error
-		itn = 32,
-		// intentional error; launch the error behavior (user press the ctrl-break key, for example).
-		ccp = 64,
-		// conception error: anything unexpected occurs.
-		frm = 128,
-		// format error.
-		phb = 256,
-		// prohibibition error; a prohibited fonction was called.
-		lmt = 512,
-		// limitation error; a software limitation was reached.
-		mem = 1024,
-		// memory error (all memory type).
-		ext = 2048,
-		// external error; third part error.
+		tAllocation,	// (ERRa)' Erreur lors e l'allocation de RAM.
+		tDevice,		// (ERRd) Erreur signalant un problème avec un périphérique.
+		tSystem,			// (ERRs) Erreur du système.
+		tUser,			// (ERRu) Erreur de l'utilisateur.
+		tBackend,		// (ERRb) Erreur 'backend'.
+		tVacant,		// (ERRv) Appel à une fonction absente (à priori non encore implémentée).	
+		tLimitation,	// (ERRl) Erreur signalant un dépassement d'une limite inhérente à un fonctionnalité.
+		tMemory,		// (ERRm) Erreur lors du traitement d'une focntion mémoire (tout type).
+		tConception,	// (ERRc) Erreur de conception ; une situation algorithmiquement impossible est survenue.
+		tProhibition,	// (ERRp) Erreur du à l'appel d'une focntion non autorisée.
+		tExternal,		// (ERRx) Un erreur du à un acteur extérieur d'est prduite.
+		tFlow,			// (ERRf) Une errreur a été détectée lors du tratiement d'u fluw (pendant du tMemory).
+		t_amount,
+		t_None,		// Signale l'absence d'erreur.
+		t_Free,			// (ERRFree) Pas une erreur au sens propre. Permet de profiter du mécanisme de gestion d'erreur.
+		t_Exit,			// Facilite la gestion d'un 'ERRExit(...)'
+		t_Return,		// Facilite la gestion d'un 'ERRReturn'.
+		t_Abort,		// Facilite la gestion d'un 'ERRAbort()'.
+		t_Undefined
 	};
 
-	enum a
-	{
-		aGeneric
-	};
-		// allocation error
-	enum d
-	{
-		dGeneric
-	};
-		// device error
-	enum s
-	{
-		sGeneric,
-		sPThreadCreateEAGAIN,
-		sPThreadCreateEOther
-	};
-		// system error
-	enum u
-	{
-		uGeneric,
-		uObsolete,	// Calling of obsolete code.
-	};
-		// user error
-	enum b
-	{
-		bGeneric,
-		bTest,	// for testing purpose.
-	};
-		// backend error
-	enum i
-	{
-		iGeneric,
-		iTest,		// A des fins de test.
-		iExit,		// Pour terminer rapidement un programme, suite à une erreur (erreur utilisateur, d'arguments de la ligne de commande, ...).
-		iReturn,	// Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
-		iBeam,		// Pour retourner rapidement à un point donné (test de cette valeur + remise à zéro de l'erreur à la charge de l'utilisateur).
-		iAbort		// Abandonne l'action en cours ; typiquement pour retourner à à la boucle d'attente d'un évènement utilisateur.
-	};
-		// throw error
-	enum c
-	{
-		cGeneric,
-		cIncoherency,	// Pour signaler une incohérence.
-	};
-		// conception error
-	enum f
-	{
-		fGeneric
-	};
-		// format error
-	enum p
-	{
-		pGeneric
-	};
-		// prohibition error
-	enum l
-	{
-		lGeneric,
-		lNotImplemented,	// Non implémenté.
-	};
-		// limit overflow error
-	enum m
-	{
-		mGeneric
-	};
-		// memory error
-	enum x
-	{
-		xGeneric
-	};
-		// external error
 
 	struct err_ {
 		// The exit value of the software.
@@ -209,16 +130,12 @@ namespace err {
 		int
 			Error: 1;	// Erreur en cours de traitement (Entre un 'ERRErr' et un 'ERREnd'.
 # endif
-		// Major code of error.
-		static err::type Major;
-		// Minor code of error
-		static int Minor;
-		// General handler.
+		// Type of error.
+		static err::type Type;
 		void Handler(
 			const char *File = NULL,
 			int Line = 0,
-			err::type Major = Major,
-			int Minor = Minor);
+			err::type Type = Type );
 	};
 
 	void Final( void );
@@ -239,75 +156,59 @@ namespace err {
 	}
 	inline void Unlock( void )
 	{
-		err::ERR.Major = err::ok;
+		err::ERR.Type = err::t_None;
 	}
 # endif
 
+# define ERRCommon( T )	err::ERR.Handler( __FILE__, __LINE__, T )
 
-# define ERRCommon( M, m )	err::ERR.Handler( __FILE__, __LINE__, M, err::m )
-
-# define	ERRA( m )		ERRCommon( err::alc, m )
 //m Throw an allocation error (only RAM).
-# define	ERRa()			ERRA( aGeneric )
+# define ERRa()	ERRCommon( err::tAllocation )
 
-# define	ERRD( m )		ERRCommon( err::dvc, m )
 //m Throw a device error.
-# define ERRd()			ERRD( dGeneric )
+# define ERRd()	ERRCommon( err::tDevice )
 
-# define	ERRS( m )		ERRCommon( err::sys, m )
 //m Throw a system error.
-# define ERRs()			ERRS( sGeneric )
+# define ERRs()	ERRCommon( err::tSystem )
 
-# define ERRU( m )		ERRCommon( err::usr, m )
 //m Throw an user error.
-# define ERRu()			ERRU( uGeneric )
+# define ERRu()	ERRCommon( err::tUser )
 
-# define ERRB( m )		ERRCommon( err::bkd, m )
 //m Throw a backend error.
-# define ERRb()			ERRB( bGeneric )
+# define ERRb()	ERRCommon( err::tBackend )
 
-# define ERRI( m )		ERRCommon( err::itn, m )
-//m Throw an intentional, error without an error.
-# define ERRi()			ERRI( iGeneric )
-
-# define ERRC( m )		ERRCommon( err::ccp, m )
 //m Throw en conception error.
-# define ERRc()			ERRC( cGeneric )
+# define ERRc()	ERRCommon( err::tConception )
 
-# define ERRF( m )		ERRCommon( err::frm, m )
 //m Throw a format error.
-# define ERRf()			ERRF( fGeneric )
+# define ERRF()	ERRCommon( err::tFlow )	//	A renommer ultèrieurement en 'ERRF', en attendant d'avoir détecté les 'ERRf' qui était des erreurs de formats.
 
-# define ERRP( m )		ERRCommon( err::phb, m )
 //m Throw a prohibited function call error.
-# define ERRp()			ERRP( pGeneric )
+# define ERRp()	ERRCommon( err::phb )
 
-# define ERRL( m )		ERRCommon( err::lmt, m )
 //m Throw a limit exceed ferror.
-# define ERRl()			ERRL( lGeneric )
+# define ERRl()	ERRCommon( err::tLimitation )
 
-# define ERRM( m )		ERRCommon( err::mem, m )
 //m Throw a memory error.
-# define ERRm()			ERRM( mGeneric )
+# define ERRm()	ERRCommon( err::tMemory )
 
-# define ERRX( m )		ERRCommon( err::ext, m )
 //m Throw a memory error.
-# define ERRx()			ERRX( xGeneric )
+# define ERRx()	ERRCommon( err::tExternal )
 
-# ifdef ERR__JMPUSE
-//m Throw the handler.
-#  define ERRR()		{longjmp( *err::ERR.Jump, 1 );}
-# else
-#  define ERRR()		throw( err::ERR )
-# endif
+# define ERRv()	ERRCommon( err::tVacant )
 
 # define ERRRst()	{ err::Unlock(); }
 
-//d Major code.
-# define ERRMajor		err::ERR.Major
 
-//d Minor code.
-# define ERRMinor		err::ERR.Minor
+# ifdef ERR__JMPUSE
+//m Throw the handler.
+#  define ERRT()		{longjmp( *err::ERR.Jump, 1 );}
+# else
+#  define ERRT()		throw( err::ERR )
+# endif
+
+//d Error type.
+# define ERRType	err::ERR.Type
 
 //d File in which the error was thrown.
 # define ERRFile			err::ERR.File
@@ -353,11 +254,11 @@ namespace err {
 # endif
 
 # define ERRTestEpilog	if ( ERRError() && !ERRNoError && err::Concerned() )\
-							if ( ( ERRMajor == err::itn ) && ( ERRMinor == err::iReturn ) )\
+							if ( ERRType == err::t_Return )\
 								ERRRst()
 
 //d End of the error bloc.
-# define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRR();
+# define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRT();
 # define ERRFEpilog	ERRCommonEpilog ERRTestEpilog else err::Final();
 # define ERRFProlog	ERRProlog
 # define ERRFBegin	ERRBegin
@@ -382,31 +283,30 @@ namespace err {
 	const char *Message(
 		const char *File,
 		int Line,
-		err::type Major,
-		int Minor,
+		err::type Type,
 		buffer__ &Buffer );
 
 # ifndef ERR__COMPILATION
 	inline const char *Message( buffer__ &Buffer )
 	{
-		return err::Message( ERRFile, ERRLine, ERRMajor, ERRMinor, Buffer );
+		return err::Message( ERRFile, ERRLine, ERRType, Buffer );
 	}
 # endif
 
-# define ERRError()	( ERRMajor != err::ok )
+# define ERRError()	( ERRType != err::t_None )
 
 
 // quitte le logiciel an retournant la valeur 'v'.
-# define ERRExit( v )	{ err::ERR.ExitValue = v; ERRI( iExit ); }
-
-// Pour retourner rapidement à un point donné (test de cette valeur + remise à zéro de l'erreur à la charge de l'utilisateur).
-# define ERRBeam()		ERRI( iBeam )
+# define ERRExit( v )	{ err::ERR.ExitValue = v; ERRCommon( err::t_Exit ); }
 
 // Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
-# define	ERRReturn		ERRI( iReturn )
+# define	ERRReturn		ERRCommon( err::t_Return )
 
-// Abandonne l'action en cours ; typiquement pour retourner à à la boucle d'attente d'un évènement utilisateur.
-# define ERRAbort()		ERRI( iAbort )
+// Interruption de l'action en cours. Utilisé avec un gestionnaire d'interface évennementielle, pour revenir rapîdement à la boucle d'attente.
+# define	ERRAbort()		ERRCommon( err::t_Abort )
+
+// Pour profiter du mécanisme de gestion d'erreur, sans qu'il n'y ai réellement une erreur dans le sens de cette bibliothèque.
+# define ERRFree()			ERRCommon( err::t_Free )
 
 # define ERRExitValue	err::ERR.ExitValue
 }

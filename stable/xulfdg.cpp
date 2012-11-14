@@ -85,7 +85,7 @@ void xulfdg::frontend_error_eh__::NSXPCMOnEvent( event__ )
 ERRProlog
 ERRBegin
 	Trunk().UI().DebugDialog().Close();
-	ERRI( iTest );
+	ERRFree();
 ERRErr
 ERREnd
 ERREpilog
@@ -155,12 +155,13 @@ void xulfdg::Register(
 {
 ERRProlog
 	str::string Id;
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	Id.Init();
 
 	if ( nsxpcm::GetId( nsxpcm::GetElement( Window ), Id ) != XULFDG_DIALOG_ID ) {
-		Trunk.UI().Alert( Trunk.Kernel().LocaleRack().GetTranslation( "IncompatibleDebugDialog", XULFDG_NAME "_", Buffer ) );
+		Translation.Init();
+		Trunk.UI().Alert( Trunk.Kernel().GetTranslation( XULFDG_NAME "_IncompatibleDebugDialog", Translation ) );
 		nsxpcm::Close( Window );
 		ERRReturn;
 	}

@@ -81,7 +81,7 @@ ERRBegin
 		IsInitialized_ = true;
 	}
 
-	Steering = CreateSteering( Data->LauncherIdentification, scllocale::GetRack().Locale(), Data->Language, Data->UP );
+	Steering = CreateSteering( Data->LauncherIdentification, scllocale::GetLocale(), Data->Language, Data->UP );
 ERRErr
 	Steering = NULL;
 	ERRRst();

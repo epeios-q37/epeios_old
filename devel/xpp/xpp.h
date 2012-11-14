@@ -157,11 +157,9 @@ namespace xpp {
 		}
 	};
 
-	const str::string_ &GetTranslation(
+	void GetMeaning(
 		const context___ &Context,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Translation );
+		lcl::meaning_ &Meaning );
 
 	struct _qualified_preprocessor_directives___ {
 		str::string NamespaceWithSeparator;
@@ -730,22 +728,19 @@ namespace xpp {
 	};
 
 	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
-	inline const str::string_ &GetTranslation(
+	inline void GetTranslation(
 		const preprocessing_iflow___ &PFlow,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning )
 	{
 	ERRProlog
 		context___ Context;
 	ERRBegin
 		Context.Init();
 
-		GetTranslation( PFlow.GetContext( Context ), Locale, Language, Translation );
+		GetMeaning( PFlow.GetContext( Context ), Meaning );
 	ERRErr
 	ERREnd
 	ERREpilog
-		return Translation;
 	}
 
 	status__ Encrypt(

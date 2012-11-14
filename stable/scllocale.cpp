@@ -60,50 +60,40 @@ public:
 #include "dir.h"
 #include "cio.h"
 
+#include "sclerror.h"
+
 using namespace scllocale;
 
-#define DEFAULT_LANGUAGE	"en"
-
 static lcl::locale Locale_;
-static STR_BUFFER___ Language_;
-static str::string Translation_;
 
-static lcl::rack__ LocaleRack_( Locale_, Language_() );
-
-const lcl::rack__ &scllocale::GetRack( void )
+const lcl::locale_ &scllocale::GetLocale( void )
 {
-	return LocaleRack_;
+	return Locale_;
 }
 
-static const str::string_ &GetTranslation_( const char *Message )	// NOTA : seulement à usage limité à cette bibiothèque. Ne pas confondre avec 'scllocale::GetTranslation(...)'.
-{
-	Translation_.Init();
-	LocaleRack_.GetTranslation( Message, SCLLOCALE_NAME "_", Translation_ );
-
-	return Translation_;
-}
-
-static void ReportLocaleFileParsingError_( const rgstry::context___ &Context )
+static void ReportLocaleFileParsingError_(
+	const rgstry::context___ &Context,
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	str::string Message, EmbeddedMessage;
+	lcl::meaning MeaningBuffer;
 ERRBegin
-	Message.Init( GetTranslation_( "LocaleFileParsingError" ) );
+	Meaning.SetValue( SCLLOCALE_NAME "_LocaleFileParsingError" );
 
-	EmbeddedMessage.Init();
+	MeaningBuffer.Init();
+	rgstry::GetMeaning( Context, MeaningBuffer );
 
-	lcl::ReplaceTag( Message, 1, rgstry::GetTranslation( Context, LocaleRack_, EmbeddedMessage ) );
-
-	cio::CErr << Message << txf::nl << txf::commit;
+	Meaning.AddTag( MeaningBuffer );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-lcl::level__ scllocale::Load(
+lcl::level__ scllocale::Push(
 	flw::iflow__ &Flow,
 	const char *Directory,
-	const char *RootPath )
+	const char *RootPath,
+	lcl::meaning_ &Meaning )
 {
 	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRProlog
@@ -120,30 +110,35 @@ ERRBegin
 		if ( !cio::IsInitialized() )
 			cio::Initialize( cio::t_Default );
 
-		ReportLocaleFileParsingError_( Context );
-		ERRExit( EXIT_FAILURE );
+		ReportLocaleFileParsingError_( Context, Meaning );
 	}
-
-	SetLanguage( str::string( DEFAULT_LANGUAGE ) );
 ERRErr
 ERREnd
 ERREpilog
 	return Level;
 }
 
-void scllocale::SetLanguage( const str::string_ &Language )
+lcl::level__ scllocale::Push(
+	flw::iflow__ &Flow,
+	const char *Directory,
+	const char *RootPath )
 {
-	LocaleRack_.Init( Locale_, Language.Convert( Language_ ) );
+	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
+ERRProlog
+	lcl::meaning ErrorMeaning;
+ERRBegin
+	ErrorMeaning.Init();
+
+	if ( ( Level = Push( Flow, Directory, RootPath, ErrorMeaning ) ) == LCL_UNDEFINED_LEVEL ) {
+		sclerror::SetMeaning( ErrorMeaning );
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Level;
 }
 
-const str::string_ &scllocale::GetTranslation(
-	const char *Message,
-	str::string_ &Translation )
-{
-	LocaleRack_.GetTranslation( Message, "", Translation );
-
-	return Translation;
-}
 
 
 /* Although in theory this class is inaccessible to the different modules,
@@ -156,9 +151,6 @@ public:
 	scllocalepersonnalization( void )
 	{
 		Locale_.Init();
-		Language_.Init();
-		LocaleRack_.Init( Locale_, "" );
-		Translation_.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

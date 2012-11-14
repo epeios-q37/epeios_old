@@ -130,14 +130,14 @@ namespace fdr {
 #ifdef FDR__TS
 			return mtx::Create( mtx::mOwned );
 #else
-			ERRu();
+			ERRc();
 #endif
 			break;
 		case tsDisabled:
 			return FDR_NO_MUTEX;
 			break;
 		default:
-			ERRu();
+			ERRc();
 			break;
 		}
 
@@ -204,7 +204,7 @@ namespace fdr {
 			if ( IsLocked_( _Mutex ) ) {
 #ifdef FDR_DBG
 				if ( !IsOwner_( _Mutex ) )
-					ERRu();
+					ERRc();
 #endif
 				Unlock_( _Mutex );
 			}
@@ -213,7 +213,7 @@ namespace fdr {
 		{
 #ifdef FDR_DBG
 			if ( _Cache == NULL )
-				ERRu();
+				ERRc();
 
 			if ( _Available != 0 )
 				ERRc();
@@ -260,7 +260,7 @@ namespace fdr {
 			reset();
 #ifdef FDR_DBG
 			if ( Cache == NULL )
-				ERRu();
+				ERRc();
 #endif
 
 			_Cache = Cache;
@@ -284,7 +284,7 @@ namespace fdr {
 		{
 #ifdef FDR_DBG
 			if ( Maximum < 1 )
-				ERRu();
+				ERRc();
 #endif
 			_Lock();
 
@@ -313,7 +313,7 @@ namespace fdr {
 				_Position = 1;
 
 			if ( _Position == 0 )
-				ERRu();	// Appeler 'Unget(...)' deux fois de suite (ou seulement avec des 'View(...)' entre) n'est pas conseillé.
+				ERRc();	// Appeler 'Unget(...)' deux fois de suite (ou seulement avec des 'View(...)' entre) n'est pas conseillé.
 
 			_Cache[--_Position] = Datum;
 			_Available++;
@@ -370,7 +370,7 @@ namespace fdr {
 			if ( IsLocked_( _Mutex ) ) {
 #ifdef FDR_DBG
 				if ( !IsOwner_( _Mutex ) )
-					ERRu();
+					ERRc();
 #endif
 				Unlock_( _Mutex );
 			}
@@ -439,7 +439,7 @@ namespace fdr {
 		void reset( bso::bool__ P = true )
 		{
 			if ( Dummy != 0 )	
-				ERRu();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
+				ERRc();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
 
 			oflow_driver_base___::reset( P );
 		}

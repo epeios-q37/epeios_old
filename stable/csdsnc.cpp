@@ -89,7 +89,7 @@ static void Ping_(
 			Flow.Commit();
 
 			if ( Flow.Get() != 0 )
-				ERRf();
+				ERRF();
 
 			Flow.Dismiss();
 		}

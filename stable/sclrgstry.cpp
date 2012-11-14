@@ -60,6 +60,8 @@ public:
 #include "dir.h"
 #include "fnm.h"
 
+#include "sclerror.h"
+
 using namespace sclrgstry;
 
 #define REGISTRY_FILE_EXTENSION ".xcfg"
@@ -117,7 +119,7 @@ bso::bool__ sclrgstry::GetValue(
 
 	Registry_.GetValue( Entry, Root_, &Missing, Value );
 
-	return Missing;
+	return !Missing;
 }
 
 bso::bool__ sclrgstry::GetValues(
@@ -127,32 +129,19 @@ bso::bool__ sclrgstry::GetValues(
 	return Registry_.GetValues( Entry, Root_, Values );
 }
 
-static str::string_ &GetTranslation_(
-	const char *Message,
-	str::string_ &Translation )
-{
-	if ( LocaleRack == NULL )
-		ERRc();
-
-	LocaleRack->GetTranslation( Message, SCLRGSTRY_NAME "_", Translation );
-
-	return Translation;
-}
-
 static inline void ReportBadOrNoValueForRegistryEntryError_( const rgstry::tentry__ &Entry )
 {
 ERRProlog
-	str::string Translation;
+	lcl::meaning Meaning;
 	str::string Path;
 ERRBegin
-	Translation.Init();
-
-	GetTranslation_( "BadOrNoValueForRegistryEntry", Translation );
+	Meaning.Init();
+	Meaning.SetValue( SCLRGSTRY_NAME "_BadOrNoValueForRegistryEntry" );
 
 	Path.Init();
-	lcl::ReplaceTag( Translation, 1, Entry.GetPath( Path ) );
+	Meaning.AddTag( Entry.GetPath( Path ) );
 
-	cio::CErr << Translation << " !" << txf::nl << txf::commit;
+	sclerror::SetMeaning( Meaning );
 ERRErr
 ERREnd
 ERREpilog
@@ -161,19 +150,18 @@ ERREpilog
 static inline void ReportConfigurationFileParsingError_( const rgstry::context___ &Context )
 {
 ERRProlog
-	str::string Translation;
-	str::string EmbeddedMessage;
+	lcl::meaning Meaning;
+	lcl::meaning MeaningBuffer;
 ERRBegin
-	Translation.Init();
+	Meaning.Init();
+	Meaning.SetValue( SCLRGSTRY_NAME "_ConfigurationFileParsingError" );
 
-	GetTranslation_( "ConfigurationFileParsingError", Translation );
+	MeaningBuffer.Init();
+	rgstry::GetMeaning( Context, MeaningBuffer );
 
-	EmbeddedMessage.Init();
-	rgstry::GetTranslation( Context, *LocaleRack, EmbeddedMessage );
+	Meaning.AddTag( MeaningBuffer );
 
-	lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
-
-	cio::CErr << Translation << " !" << txf::nl << txf::commit;
+	sclerror::SetMeaning( Meaning );
 ERRErr
 ERREnd
 ERREpilog
@@ -186,7 +174,6 @@ void sclrgstry::Load(
 {
 ERRProlog
 	rgstry::context___ Context;
-	FNM_BUFFER___ FNMBuffer;
 ERRBegin
 	Context.Init();
 

@@ -90,6 +90,9 @@ extern class ttr_tutor &NSXPCMTutor;
 # endif
 
 
+# pragma warning( push )
+# pragma warning( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
+
 # include "nsITreeView.h"
 # include "nsITreeContentView.h"
 # include "nsITreeSelection.h"
@@ -122,14 +125,14 @@ extern class ttr_tutor &NSXPCMTutor;
 
 // #include "content/nsIXSLTProcessor.h"
 
-# include "nsEmbedString.h"
+# include "nsStringAPI.h"
 # include "nsCOMPtr.h"
 # include "nsComponentManagerUtils.h"
 # include "nsServiceManagerUtils.h"
 # include "nsIInterfaceRequestor.h"
 # include "nsIDOMEventListener.h"
 # ifdef NSXPCM__GECKO_V1
-#  include "nsIGenericFactory.h"
+#  inclu de "nsIGenericFactory.h"
 # elif defined( NSXPCM__GECKO_V2 ) || defined ( NSXPCM__GECKO_V8 )
 #  include "mozilla/ModuleUtils.h"
 # else
@@ -141,6 +144,8 @@ extern class ttr_tutor &NSXPCMTutor;
 
 # include "nsICommandManager.h"
 # include "nsICommandLineHandler.h"
+
+# pragma warning( pop )
 
 # undef NSXPCM__ENABLE_FORMHISTORY
 
@@ -287,74 +292,72 @@ namespace nsxpcm {
 	E_AUTO( strings );
 #endif
 
-	void Transform(
-		const char *CString,
+	void _Transform(
+		const char *String,
 		mdr::size__ Size,
 		char **JString );
 
-	void Transform(
-		const char *CString,
-		char **JString );
-
-	void Transform(
-		const nsEmbedCString &ECString,
-		nsEmbedString &EString );
-
-	void Transform( 
+	void _Transform(
 		const char *String,
-		nsEmbedString &EString );
-
-	void Transform(
-		const nsEmbedString &EString,
-		nsEmbedCString &ECString );
-
-	void Transform( 
-		const nsEmbedString &EString,
 		char **JString );
 
-	void Transform(
-		const str::string_ &EString,
+	void _Transform(
+		const nsACString &CString,
+		nsAString &WString );
+
+	void _Transform( 
+		const char *String,
+		nsAString &WString );
+
+	void _Transform(
+		const nsAString &WString,
+		nsACString &CString );
+
+	void _Transform( 
+		const nsAString &WString,
 		char **JString );
 
-	void Transform(
+	void _Transform(
 		const str::string_ &String,
-		nsEmbedString &EString );
+		char **JString );
 
-	void Transform( 
-		const nsEmbedString &EString,
+	void TransformC(
+		const str::string_ &String,
+		nsAString &WString );
+
+	void _TransformW(
+		const str::string_ &String,
+		nsAString &WString );
+
+	void TransformC( 
+		const nsAString &WString,
 		str::string_ &String );
 
-	void Transform(
-		const nsEmbedCString &ECString,
+	void _TransformW( 
+		const nsAString &WString,
 		str::string_ &String );
 
-	void Transform(
+	void _Transform(
+		const nsACString &CString,
+		str::string_ &String );
+
+	void _Transform(
 		const str::string_ &String,
-		nsEmbedCString &ECString );
+		nsACString &CString );
 
-	inline void Transform(
+	inline void _Transform(
 		const char *String,
-		nsEmbedCString &ECString )
-	{
-		Transform( str::string( String ), ECString );
-	}
+		nsACString &CString );
 
-	inline void Transform(
+	inline void _Transform(
 		const char *String,
-		nsAString &AString )
+		nsAString &WString )
 	{
-		AString.AssignLiteral( String );
-	}
+		nsCString CString;
 
-	void Transform(
-		const str::string_ &String,
-		nsAString &AString );
-
-	inline void Transform(
-		const nsAString &AString,
-		str::string_ &String )
-	{
-		String.Append( NS_LossyConvertUTF16toASCII( AString ).get() );
+		_Transform( String, CString );
+		NS_CStringToUTF16( CString, NS_CSTRING_ENCODING_NATIVE_FILESYSTEM , WString );
+//		WString.AssignASCII( String );
 	}
 
 	void Split( 
@@ -428,9 +431,9 @@ namespace nsxpcm {
 		const char *Id )
 	{
 		nsIDOMElement *Element = NULL;
-		nsEmbedString EId;
+		nsString EId;
 
-		Transform( Id, EId );
+		_Transform( Id, EId );
 
 		T( Document->GetElementById( EId, &Element ) );
 
@@ -445,9 +448,9 @@ namespace nsxpcm {
 		const str::string_ &Id )
 	{
 		nsIDOMElement *Element = NULL;
-		nsEmbedString EId;
+		nsString EId;
 
-		Transform( Id, EId );
+		TransformC( Id, EId );
 
 		T( Document->GetElementById( EId, &Element ) );
 
@@ -508,16 +511,16 @@ namespace nsxpcm {
 		const char *Name )
 	{
 		nsIDOMElement* Element;
-		nsEmbedString EName;
+		nsString WName;
 
-		Transform( Name, EName );
+		_Transform( Name, WName );
 
 #ifdef NSXPCM_DBG
 		if ( Document == NULL )
 			ERRu();
 #endif
 
-		T( Document->CreateElement( EName, &Element ) );
+		T( Document->CreateElement( WName, &Element ) );
 
 		if ( Element == NULL )
 			ERRs();
@@ -576,7 +579,7 @@ namespace nsxpcm {
 		nsIDOMNode *Node,
 		str::string_ &Name )
 	{
-		nsEmbedString RawName;
+		nsString RawName;
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
@@ -585,56 +588,86 @@ namespace nsxpcm {
 
 		T( Node->GetNodeName( RawName ) );
 
-		Transform( RawName, Name );
+		TransformC( RawName, Name );
 
 		return Name;
 	}
 
-	template <typename t> inline const str::string_ &GetValue(
+	template <typename t> inline const str::string_ &GetValueC(
 		t *Element,
 		str::string_ &Value )
 	{
-		nsEmbedString EValue;
+		nsString WValue;
 
-		T( Element->GetValue( EValue ) );
+		T( Element->GetValue( WValue ) );
 
-		Transform( EValue, Value );
+		TransformC( WValue, Value );
 
 		return Value;
 	}
 
-	inline void GetAttributeNameAndValue(
+	template <typename t> inline const str::string_ &_GetValueW(
+		t *Element,
+		str::string_ &Value )
+	{
+		nsString WValue;
+
+		T( Element->GetValue( WValue ) );
+
+		_TransformW( WValue, Value );
+
+		return Value;
+	}
+
+	inline void GetAttributeNameAndValueC(
 		nsIDOMAttr *Attribute,
 		str::string_ &Name,
 		str::string_ &Value )
 	{
 		GetName( Attribute, Name );
-		GetValue( Attribute, Value );
+		GetValueC( Attribute, Value );
 	}
 
-	inline void GetAttributeNameAndValue(
+	inline void _GetAttributeNameAndValueW(
+		nsIDOMAttr *Attribute,
+		str::string_ &Name,
+		str::string_ &Value )
+	{
+		GetName( Attribute, Name );
+		_GetValueW( Attribute, Value );
+	}
+
+	inline void GetAttributeNameAndValueC(
 		nsIDOMNode *Attribute,
 		str::string_ &Name,
 		str::string_ &Value )
 	{
-		GetAttributeNameAndValue( nsxpcm::QueryInterface<nsIDOMAttr>( Attribute ), Name, Value );
+		GetAttributeNameAndValueC( nsxpcm::QueryInterface<nsIDOMAttr>( Attribute ), Name, Value );
+	}
+
+	inline void _GetAttributeNameAndValueW(
+		nsIDOMNode *Attribute,
+		str::string_ &Name,
+		str::string_ &Value )
+	{
+		_GetAttributeNameAndValueW( nsxpcm::QueryInterface<nsIDOMAttr>( Attribute ), Name, Value );
 	}
 
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
 		const char *Name )
 	{
-		nsEmbedString EName;
+		nsString WName;
 		NSXPCM__BOOL Result;
 
-		Transform( Name, EName );
+		_Transform( Name, WName );
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
 			ERRu();
 #endif
 		
-		T( Element->HasAttribute( EName, &Result ) );
+		T( Element->HasAttribute( WName, &Result ) );
 
 		return Result != 0;
 	}
@@ -651,17 +684,17 @@ namespace nsxpcm {
 		const char *Name,
 		const char *Value )
 	{
-		nsEmbedString EName, EValue;
+		nsString WName, WValue;
 
-		Transform( Name, EName );
-		Transform( Value, EValue );
+		_Transform( Name, WName );
+		_Transform( Value, WValue );
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
 			ERRu();
 #endif
 		
-		T( Element->SetAttribute( EName, EValue ) );
+		T( Element->SetAttribute( WName, WValue ) );
 	}
 
 	inline void SetAttribute(
@@ -677,10 +710,10 @@ namespace nsxpcm {
 		const char *Name,
 		const str::string_ &Value )
 	{
-		nsEmbedString EName, EValue;
+		nsString EName, EValue;
 
-		Transform( Name, EName );
-		Transform( Value, EValue );
+		_Transform( Name, EName );
+		TransformC( Value, EValue );
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
@@ -702,16 +735,16 @@ namespace nsxpcm {
 		nsIDOMElement *Element,
 		const char *Name )
 	{
-		nsEmbedString EName;
+		nsString WName;
 
-		Transform( Name, EName );
+		_Transform( Name, WName );
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
 			ERRu();
 #endif
 		
-		T( Element->RemoveAttribute( EName ) );
+		T( Element->RemoveAttribute( WName ) );
 	}
 
 	inline void RemoveAttribute(
@@ -745,12 +778,12 @@ namespace nsxpcm {
 		const char *Name,
 		str::string_ &Value )
 	{
-		nsEmbedString EName, EValue;
-		Transform( Name, EName );
+		nsString WName, WValue;
+		_Transform( Name, WName );
 
-		T( Element->GetAttribute( EName, EValue ) );
+		T( Element->GetAttribute( WName, WValue ) );
 
-		Transform( EValue, Value );
+		TransformC( WValue, Value );
 
 		return Value;
 	}
@@ -761,13 +794,13 @@ namespace nsxpcm {
 		const char *Name,
 		str::string_ &Value )
 	{
-		nsEmbedString EURI, EName, EValue;
-		Transform( URI, EURI );
-		Transform( Name, EName );
+		nsString WURI, WName, WValue;
+		_Transform( URI, WURI );
+		_Transform( Name, WName );
 
-		T( Element->GetAttributeNS( EURI, EName, EValue ) );
+		T( Element->GetAttributeNS( WURI, WName, WValue ) );
 
-		Transform( EValue, Value );
+		TransformC( WValue, Value );
 
 		return Value;
 	}
@@ -826,20 +859,36 @@ namespace nsxpcm {
 	}
 
 
-	template <typename t> inline void SetValue(
+	template <typename t> inline void SetValueC(
 		t *Element,
 		const str::string_ &Value )
 	{
-		nsEmbedString EValue;
+		nsString WValue;
 
-		Transform( Value, EValue );
+		TransformC( Value, WValue );
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
 			ERRu();
 #endif
 		
-		T( Element->SetValue( EValue ) );
+		T( Element->SetValue( WValue ) );
+	}
+
+	template <typename t> inline void _SetValueW(
+		t *Element,
+		const str::string_ &Value )
+	{
+		nsString WValue;
+
+		_TransformW( Value, WValue );
+
+#ifdef NSXPCM_DBG
+		if ( Element == NULL )
+			ERRu();
+#endif
+		
+		T( Element->SetValue( WValue ) );
 	}
 
 	inline bso::slong__ GetSelectedIndex( nsIDOMXULSelectControlElement *Element )
@@ -1445,7 +1494,7 @@ namespace nsxpcm {
 		event_data__ _EventData;
 		void _OnErr( void )
 		{
-			if ( ERRMajor != err::ok ) {
+			if ( ERRType != err::t_None ) {
 				err::buffer__ Buffer;
 
 				NSXPCMOnErr( err::Message( Buffer )  );
@@ -1454,13 +1503,21 @@ namespace nsxpcm {
 		}
 		void _ErrHandling( void )
 		{
-			if ( ERRMajor == err::itn ) {
-				if ( ERRMinor != err::iAbort )
-					_OnErr(); 
-			} else
-				_OnErr(); 
+			switch ( ERRType ) {
+			case err::t_Exit:
+				break;
+			case err::t_Return:
+				ERRc();
+				break;
+			case err::t_Abort:
+				_OnErr();
+				break;
+			default:
+				_OnErr();
+				break;
+			}
 
-			if ( ERRMajor != err::ok )
+			if ( ERRType != err::t_None )
 				ERRRst()
 		}
 		void _OnEvent(
@@ -1821,14 +1878,24 @@ namespace nsxpcm {
 		}\
 
 # define NSXPCM__VALUE_HANDLING\
-		void SetValue( const str::string_ &Value )\
+		void SetValueC( const str::string_ &Value )\
 		{\
-			nsxpcm::SetValue( GetWidget(), Value );\
+			nsxpcm::SetValueC( GetWidget(), Value );\
 		}\
-		const str::string_ &GetValue( str::string_ &Value )\
+		void S_etValueW( const str::string_ &Value )\
 		{\
-			nsxpcm::GetValue( GetWidget(), Value );\
-\
+			nsxpcm::_SetValueW( GetWidget(), Value );\
+		}\
+		const str::string_ &GetValueC( str::string_ &Value )\
+		{\
+			nsxpcm::GetValueC( GetWidget(), Value );\
+		\
+			return Value;\
+		}\
+		const str::string_ &_GetValueW( str::string_ &Value )\
+		{\
+			nsxpcm::_GetValueW( GetWidget(), Value );\
+		\
 			return Value;\
 		}\
 
@@ -1990,12 +2057,21 @@ namespace nsxpcm {
 		NSXPCM__ITEM_HANDLING
 		NSXPCM__FOCUS_HANDLING
 #endif
-		const str::string_ &GetSelectedItemValue( str::string_ &Value )
+		const str::string_ &GetSelectedItemValueC( str::string_ &Value )
 		{
 			nsIDOMXULSelectControlItemElement *Item = GetSelectedItem();
 
 			if ( Item != NULL )
-				GetValue( Item, Value );
+				GetValueC( Item, Value );
+
+			return Value;
+		}
+		const str::string_ &GetSelectedItemValueW( str::string_ &Value )
+		{
+			nsIDOMXULSelectControlItemElement *Item = GetSelectedItem();
+
+			if ( Item != NULL )
+				GetValueC( Item, Value );
 
 			return Value;
 		}
@@ -2570,7 +2646,7 @@ namespace nsxpcm {
 	{
 	ERRProlog
 		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL, *MasterWindow = NULL;
-		nsEmbedString TransformedURL, TransformedName;
+		nsString TransformedURL, TransformedName;
 	ERRBegin
 		if ( Window != NULL )
 			WindowBuffer = Window;
@@ -2578,8 +2654,8 @@ namespace nsxpcm {
 			WindowBuffer = &DummyWindow;
 
 
-		Transform( URL, TransformedURL );
-		Transform( Name, TransformedName );
+		_Transform( URL, TransformedURL );
+		_Transform( Name, TransformedName );
 
 		if ( ParentWindow == NULL )
 			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
@@ -2611,15 +2687,15 @@ namespace nsxpcm {
 	{
 	ERRProlog
 		nsIDOMWindow **WindowBuffer = NULL, *DummyWindow = NULL, *MasterWindow = NULL;
-		nsEmbedString TransformedURL, TransformedName;
+		nsString TransformedURL, TransformedName;
 	ERRBegin
 		if ( Window != NULL )
 			WindowBuffer = Window;
 		else
 			WindowBuffer = &DummyWindow;
 	
-		Transform( URL, TransformedURL );
-		Transform( Name, TransformedName );
+		_Transform( URL, TransformedURL );
+		_Transform( Name, TransformedName );
 
 		if ( ParentWindow == NULL )
 			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
@@ -2894,7 +2970,7 @@ namespace nsxpcm {
 
 	bso::bool__ GetDirectory(
 		const char *Name,
-		nsEmbedString &Directory,
+		nsACString &Directory,
 		err::handling__ ErrHandling = err::h_Default );
 
 	bso::bool__ GetDirectory(
@@ -3316,10 +3392,10 @@ namespace nsxpcm {
 			_Callback = &Callback;
 			_SearchString.Init();
 		}
-		void SetSearchString( const nsAString &RawSearchString )
+		void SetSearchString( const nsAString &RawSearchWString )
 		{
 			_SearchString.Init();
-			Transform( RawSearchString, _SearchString );
+			TransformC( RawSearchWString, _SearchString );
 		}
 		const str::string_ &GetSearchString( void ) const
 		{

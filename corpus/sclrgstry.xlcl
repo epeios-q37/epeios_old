@@ -6,7 +6,7 @@
 		<Translation language="en">%1</Translation>
 	</Translations>
 	<Translations message="SCLRGSTRY_BadOrNoValueForRegistryEntry">
-		<Translation language="fr">Entrée absente ou incorrecte pour le chemin '%1"</Translation>
+		<Translation language="fr">Entrée absente ou incorrecte pour le chemin '%1'</Translation>
 		<Translation language="en">Bad or no value for path '%1'</Translation>
 	</Translations>
 	<!--

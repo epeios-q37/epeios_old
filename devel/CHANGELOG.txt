@@ -1,5 +1,25 @@
 $Id$
 
+05/11/2012 :
+	- Général :
+		- Adaptation.
+	- ERR :
+		- Refonte.
+
+30/10/2012 :
+	- Général :
+		- Adaptation.
+
+29/10/2012 :
+	- Général :
+		- Adaptation.
+
+26/10/2012 :	
+	- Général :
+		- Adaptation.
+	LCL :
+		- Mise en oeuvre 'meaning(_)' et consorts.
+
 21/10/2012 :
 	- Général :
 		- Adaptation.

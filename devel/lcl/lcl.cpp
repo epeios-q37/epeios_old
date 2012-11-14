@@ -90,7 +90,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenMessage(
-	const char *Text,
+	const str::string_ &Text,
 	const char *Language,
 	str::string_ &Translation ) const
 {
@@ -112,7 +112,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingMessageThenLanguage(
-	const char *Text,
+	const str::string_ &Text,
 	const char *Language,
 	str::string_ &Translation ) const
 {
@@ -134,7 +134,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingLanguageThenText(
-	const char *Text,
+	const str::string_ &Text,
 	const char *Language,
 	str::string_ &Translation ) const
 {
@@ -156,7 +156,7 @@ ERREpilog
 }
 
 bso::bool__ lcl::locale_::_GetTranslationFollowingTextThenLanguage(
-	const char *Text,
+	const str::string_ &Text,
 	const char *Language,
 	str::string_ &Translation ) const
 {
@@ -177,22 +177,8 @@ ERREpilog
 	return Found;
 }
 
-void lcl::locale_::GetLanguages(
-	strings_ &Labels,
-	strings_ &Wordings ) const
-{
-	mdr::row__ PathErrorRow = NONE;
-
-	Registry.GetValues( str::string( "Languages/Language/@label" ), Labels, &PathErrorRow );
-
-	_GetCorrespondingLabels( Labels, Wordings );
-
-	if ( PathErrorRow != NONE )
-		ERRc();
-}
-
-bso::bool__ lcl::locale_::GetTranslation(
-	const char *Text,
+void lcl::locale_::_GetTranslation(
+	const str::string_ &Text,
 	const char *Language,
 	str::string_ &Translation ) const
 {
@@ -207,9 +193,120 @@ bso::bool__ lcl::locale_::GetTranslation(
 		Translation.Append( Text );
 		Translation.Append( LCL_TAG_MARKER_S "0" );	// Lorsque pas de traduction trouvée, on rajoute le 'marker' remplacé par l'ensemble des paramètres.
 	}
-
-	return Found;
 }
+
+
+void lcl::locale_::GetLanguages(
+	strings_ &Labels,
+	strings_ &Wordings ) const
+{
+	mdr::row__ PathErrorRow = NONE;
+
+	Registry.GetValues( str::string( "Languages/Language/@label" ), Labels, &PathErrorRow );
+
+	_GetCorrespondingLabels( Labels, Wordings );
+
+	if ( PathErrorRow != NONE )
+		ERRc();
+}
+
+void lcl::meaning_::AddTag( const meaning_ &Meaning )
+{
+	row__ Row = Meaning.Levels.First();
+	ctn::E_CMITEMt( str::string_, row__ ) Value;
+
+	Value.Init( Meaning.Values );
+
+	while ( Row != NONE ) {
+		_Push( Meaning.Levels( Row ) + 1, Value( Row ) );
+
+		Row = Meaning.Levels.Next( Row );
+	}
+}
+
+void lcl::locale_::_GetTranslation(
+	_levels_ &Levels,
+	_values_ &Values,
+	const char *Language,
+	str::string_ &Translation ) const
+{
+ERRProlog
+	str::string Value;
+	_level__ Level = 0;;
+	str::strings Tags;
+	str::string Buffer;
+ERRBegin
+	Tags.Init();
+
+	if ( !Levels.IsEmpty() ) {
+		Level = Levels.Pop();
+
+		Value.Init();
+		Values.Pop( Value );
+
+		if ( Level == 0 ) {
+			Buffer.Init();
+			_GetTranslation( Value, Language, Buffer );
+		} else
+			Tags.Insert( Value, 0 );
+	}
+
+	while ( !Levels.IsEmpty() ) {
+		Value.Init();
+		Values.Pop( Value );
+
+		if ( Levels.Top() != Level ) {
+			Level = Levels.Pop();
+
+			Buffer.Init();
+			_GetTranslation( Value, Language, Buffer );
+
+			str::ReplaceTags( Buffer, Tags, LCL_TAG_MARKER_C );
+
+			if ( Level == 0 )
+				Translation.Append( Buffer );
+			else {
+				if ( Levels.Push( Level ) != Values.Push( Buffer ) )
+					ERRc();
+			}
+
+			Tags.Init();
+		} else {
+			Tags.Insert( Value, 0 );
+			Levels.Pop();
+		}
+
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+const str::string_  &lcl::locale_::GetTranslation(
+	const meaning_ &Meaning,
+	const char *Language,
+	str::string_ &Translation ) const
+{
+ERRProlog
+	_levels Levels;
+	_values Values;
+ERRBegin
+	Levels.Init();
+	Levels = Meaning.Levels;
+
+	Values.Init();
+	Values = Meaning.Values;
+
+	_GetTranslation( Levels, Values, Language, Translation );
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
+}
+
+
+
+/*
 
 const char *lcl::locale_::GetTranslation(
 	const char *Text,
@@ -229,7 +326,7 @@ ERREnd
 ERREpilog
 	return Buffer;
 }
-
+*/
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

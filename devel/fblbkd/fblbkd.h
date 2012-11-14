@@ -735,7 +735,7 @@ namespace fblbkd {
 		const char *_APIVersion;
 		master_module Master_;
 		STR_BUFFER___ _Language;
-		lcl::rack__ _LocaleRack;
+		const lcl::locale_ *_Locale;
 		const char *_BackendLabel;
 		// Informations à propos du 'backend'.
 		const char *_BackendInformations;
@@ -812,7 +812,9 @@ namespace fblbkd {
 			_ClientOrigin = ClientOrigin;
 			_APIVersion = APIVersion;
 
-			_LocaleRack.Init( Locale, str::string( FBLBKD__DEFAULT_LANGUAGE ).Convert( _Language ) );
+			_Locale = &Locale;
+
+			str::string( FBLBKD__DEFAULT_LANGUAGE ).Convert( _Language );
 
 //			return _TestCompatibility( Flow, APIVersion, MessageLabel, URLLabel );
 		}
@@ -934,14 +936,17 @@ namespace fblbkd {
 		{
 			return _ClientOrigin;
 		}
-		const lcl::rack__ &LocaleRack() const 
+		const lcl::locale_ &Locale() const 
 		{
-			return _LocaleRack;
+			return *_Locale;
 		}
 		void SetLanguage( const char *Language )
 		{
 			str::string( Language ).Convert( _Language );
-			_LocaleRack.SetLanguage( _Language );
+		}
+		const char *Language( void ) const
+		{
+			return _Language;
 		}
 	};
 

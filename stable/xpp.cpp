@@ -137,79 +137,41 @@ const char *xpp::GetLabel( status__ Status )
 
 static void PutFileLineColumn_(
 	const context___ &Context,
-	const lcl::locale_ &Locale,
-	const char *Language,
-	str::string_ &Message )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
 	STR_BUFFER___ SBuffer;
-	lcl::strings Values;
 	bso::integer_buffer__ IBuffer;
 ERRBegin
-
-	Values.Init();	
-
 	if ( Context.FileName.Amount() != 0 ) {
-		Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorInFileAtLineColumn", Language , SBuffer)  );
-		Values.Append( Context.FileName );
+		Meaning.SetValue( XPP_NAME "_ErrorInFileAtLineColumn" );
+		Meaning.AddTag( Context.FileName );
 	} else
-		Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorAtLineColumn", Language, SBuffer)  );
+		Meaning.SetValue( XPP_NAME "_ErrorAtLineColumn" );
 
-	Values.Append( str::string( bso::Convert( Context.Coord.Line, IBuffer ) ) );
-	Values.Append( str::string( bso::Convert( Context.Coord.Column, IBuffer ) ) );
-
-	lcl::ReplaceTags( Message, Values );
+	Meaning.AddTag( bso::Convert( Context.Coord.Line, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Context.Coord.Column, IBuffer ) );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-static void PutFile_(
+void xpp::GetMeaning(
 	const context___ &Context,
-	const lcl::locale_ &Locale,
-	const char *Language,
-	str::string_ &Message )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	lcl::meaning MeaningBuffer;
 ERRBegin
+	PutFileLineColumn_( Context, Meaning );
 
-	if ( Context.FileName.Amount() == 0 )
-		ERRc();
-
-	Message.Append( Locale.GetTranslation( XPP_NAME "_" "ErrorInFile", Language, Buffer)  );
-
-	lcl::ReplaceTag( Message, 1, Context.FileName );
+	if ( Context.Status < (xpp::status__)xml::s_amount )
+		Meaning.AddTag( xml::GetLabel( (xml::status__)Context.Status ) );
+	else
+		Meaning.AddTag( GetLabel( Context.Status ) );
 ERRErr
 ERREnd
 ERREpilog
-}
-
-const str::string_ &xpp::GetTranslation(
-	const context___ &Context,
-	const lcl::locale_ &Locale,
-	const char *Language,
-	str::string_ &Translation )
-{
-ERRProlog
-	lcl::strings Values;
-ERRBegin
-	if ( Context.Status < (xpp::status__)xml::s_amount ) {
-		if ( Context.FileName.Amount() != 0 )
-			PutFile_( Context, Locale, Language, Translation );
-		xml::GetTranslation( (xml::status__)Context.Status, Locale, Language, Context.Coord, Translation );
-	} else {
-		Values.Init();
-
-		PutFileLineColumn_( Context, Locale, Language, Translation );
-
-		Locale.GetTranslation( GetLabel( Context.Status ), Language, Translation );
-		lcl::ReplaceTags( Translation, Values );	// Pour enlever le '%0' en cas de traduation introuvable.
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
 }
 
 void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Namespace )

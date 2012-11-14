@@ -105,7 +105,7 @@ namespace flw {
 		fdr::iflow_driver_base___ &_D( void )
 		{
 			if ( _Driver == NULL )
-				ERRu();
+				ERRc();
 
 			return *_Driver;
 		}
@@ -126,7 +126,7 @@ namespace flw {
 			bso::bool__ &CacheIsEmpty )
 		{
 			if ( _ReadUpTo( Amount, Buffer, Amount, Adjust, CacheIsEmpty ) != Amount )
-				ERRf();
+				ERRc();
 		}
 		// Generic read.
 		size__ _LoopingRawRead(
@@ -226,7 +226,7 @@ namespace flw {
 			bso::bool__ Dummy = false;
 
 			if ( _ReadUpTo( 1, &C, 1, false, Dummy ) == 0 )
-				ERRf();
+				ERRc();
 
 			return C;
 		}
@@ -235,7 +235,7 @@ namespace flw {
 			datum__ C;
 
 			if ( _ReadUpTo( 1, &C, 1, true, CacheIsEmpty ) == 0 )
-				ERRf();
+				ERRc();
 
 			return C;
 		}
@@ -280,7 +280,7 @@ namespace flw {
 		{
 #ifdef FLW_DBG
 			if ( !IsInitialized() )
-				ERRu();
+				ERRc();
 #endif
 
 			return _Driver->IsLocked();
@@ -344,7 +344,7 @@ namespace flw {
 		fdr::oflow_driver_base___ &_D( void )
 		{
 			if ( _Driver == NULL )
-				ERRu();
+				ERRc();
 
 			return *_Driver;
 		}
@@ -539,7 +539,7 @@ namespace flw {
 		{
 #ifdef FLW_DBG
 			if ( !IsInitialized() )
-				ERRu();
+				ERRc();
 #endif
 
 			return _Driver->IsLocked();

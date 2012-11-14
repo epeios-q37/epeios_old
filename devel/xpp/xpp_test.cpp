@@ -139,7 +139,7 @@ ERRBegin
 		case xml::t_Error:
 			Context.Init();
 			PFlow.GetContext( Context );
-			CErr << "Error '" << xpp::Label( Context.Status ) << "' at line " << Context.Coord.Line << " column " << Context.Coord.Column;
+			CErr << "Error '" << xpp::GetLabel( Context.Status ) << "' at line " << Context.Coord.Line << " column " << Context.Coord.Column;
 			if ( Context.FileName.Amount() != 0 )
 				CErr << " in file '" << Context.FileName << '\'';
 			CErr << " !" << txf::nl << txf::commit;
@@ -177,7 +177,7 @@ ERRFBegin
 		COut << txf::commit;
 		CErr << "\nBad arguments.\n";
 		COut << "Usage: " << XPPTutor.Name << " [/i]\n\n";
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 	}
 
 ERRFErr

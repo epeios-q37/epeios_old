@@ -124,17 +124,17 @@ void cio::Initialize( target__ Target )
 		break;
 	case tUser:
 		if ( !COutDriver.IsInitialized() )
-			ERRu();
+			ERRc();
 
 		if ( !CInDriver.IsInitialized() )
-			ERRu();
+			ERRc();
 
 		if ( !CErrDriver.IsInitialized() )
-			ERRu();
+			ERRc();
 
 		break;
 	default:
-		ERRu();
+		ERRc();
 		break;
 	}
 

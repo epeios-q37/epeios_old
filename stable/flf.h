@@ -109,10 +109,10 @@ namespace flf {
 				case err::hUserDefined:
 					break;
 				case err::hThrowException:
-					ERRf();
+					ERRc();
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 			} else {
@@ -176,10 +176,10 @@ namespace flf {
 					return fil::sFailure;
 					break;
 				case err::hThrowException:
-					ERRd();
+					ERRc();
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 			}
@@ -240,10 +240,10 @@ namespace flf {
 				case err::hUserDefined:
 					break;
 				case err::hThrowException:
-					ERRf();
+					ERRc();
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 			} else {
@@ -308,10 +308,10 @@ namespace flf {
 					return fil::sFailure;
 					break;
 				case err::hThrowException:
-					ERRd();
+					ERRc();
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 			}

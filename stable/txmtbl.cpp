@@ -67,7 +67,7 @@ static inline bso::bool__ HandleEscape_(
 	bso::bool__ Retry = false;
 
 	if ( Flow.EndOfFlow() )
-		ERRf();
+		ERRF();
 		
 	switch( C = Flow.Get() ) {
 	case 'n':
@@ -101,7 +101,7 @@ static inline bso::bool__ HandleEscape_(
 		break;
 	default:
 		if ( C != Escape )
-			ERRf();
+			ERRF();
 		break;
 	}
 	

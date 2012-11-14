@@ -63,7 +63,7 @@ using namespace xulfkl;
 	break
 
 
-static const char *xulfkl::GetLabel( xulfkl::message__ MessageId )
+const char *xulfkl::GetLabel( xulfkl::message__ MessageId )
 {
 
 #if XULFKL_M_AMOUNT != 2

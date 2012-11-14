@@ -100,7 +100,7 @@ namespace mdr {
 		// Alloue 'Size' octet.
 		virtual void MDRAllocate( size__ Size )
 		{
-			ERRu();
+			ERRc();
 			// For read-only memory.
 		}
 		/* Si la mémoire repose sur une mémoire persistante (un fichier, par exemple), retourne la taille de cette mémoire,
@@ -120,7 +120,7 @@ namespace mdr {
 			size__ Amount,
 			row_t__ Position )
 		{
-			ERRu();
+			ERRc();
 			// For read-only memory.
 		}
 	public:

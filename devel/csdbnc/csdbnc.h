@@ -113,7 +113,7 @@ namespace csdbnc {
 
 		if ( P == NULL )
 			if ( ErrorHandling == err::hThrowException )
-				ERRu();
+				ERRc();
 			else
 				return NULL;
 		else

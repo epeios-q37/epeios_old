@@ -5,9 +5,9 @@
 		<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
 		<Translation language="en">Unable to open file '%1'</Translation>
 	</Translations>
-	<Translations message="RGSTRY_ParseError">
-		<Translation language="fr">Erreur dans le fichier '%1' (ligne %2, colonne %3 : %4)</Translation>
-		<Translation language="en">Error in file '%1' (line %2, column %3 : %4)</Translation>
+	<Translations message="RGSTRY_ParseError"><!-- On repercute directement le message issu de la bibliothqèque 'XPP/XML'. -->
+		<Translation language="fr">%1</Translation>
+		<Translation language="en">%1</Translation>
 	</Translations>
 	<Translations message="RGSTRY_RootPathErreur">
 		<Translation language="fr">Erreur dans le chemin de la racine</Translation>

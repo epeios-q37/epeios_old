@@ -91,7 +91,7 @@ ERRBegin
 	Translation.Init();
 	FileName.Init();
 
-	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Trunk().Kernel().LocaleRack(), Translation ), Trunk().Kernel().LocaleRack(), FileName ) )
+	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), Trunk().Kernel().GetTranslation( xulfkl::GetLabel( xulfkl::mSelectProjectFile ), Translation ), Trunk().Kernel().Locale(), Trunk().Kernel().Language(), FileName ) )
 		Trunk().DefineSession( FileName, xpp::criterions___() );
 ERRErr
 ERREnd
@@ -106,8 +106,8 @@ ERRBegin
 	Translation.Init();
 	FileName.Init();
 
-	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), GetTranslation( xulfkl::mSelectProjectFile, Trunk().Kernel().LocaleRack(), Translation ), Trunk().Kernel().LocaleRack(), FileName ) )
-		Trunk().UI().Main().Widgets.txbUserProjectLocation.SetValue( FileName );
+	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), Trunk().Kernel().GetTranslation( xulfkl::GetLabel( xulfkl::mSelectProjectFile), Translation ), Trunk().Kernel().Locale(), Trunk().Kernel().Language(), FileName ) )
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.SetValueC( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -125,17 +125,17 @@ ERRBegin
 
 	ProjectTypeLabel.Init();
 
-	switch ( frdkrn::GetProjectType( Trunk().UI().Main().Widgets.mnlProjectType.GetValue( ProjectTypeLabel ) ) ) {
+	switch ( frdkrn::GetProjectType( Trunk().UI().Main().Widgets.mnlProjectType.GetValueC( ProjectTypeLabel ) ) ) {
 	case frdkrn::ptNew:
 		break;
 	case frdkrn::ptPredefined:
 		PredefinedProjectId.Init();
-		Trunk().UI().Main().Widgets.mnlPredefinedProjectList.GetValue( PredefinedProjectId );
+		Trunk().UI().Main().Widgets.mnlPredefinedProjectList.GetValueC( PredefinedProjectId );
 
 		frdkrn::GetPredefinedProjectLocation( PredefinedProjectId, Trunk().Kernel().Registry(), ProjectLocation );
 		break;
 	case frdkrn::ptUser:
-		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValue( ProjectLocation );
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValueC( ProjectLocation );
 		break;
 	default:
 		ERRc();
@@ -259,7 +259,8 @@ void xulfmn::event_handlers__::Init( trunk___ &Trunk )
 
 static void GetPredefinedProjects_(
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &PredefinedProjects )
 {
 ERRProlog
@@ -280,7 +281,7 @@ ERRBegin
 	if ( Default.Amount() != 0 )
 		Writer.PutAttribute( "Default", Default );
 
-	frdkrn::GetPredefinedProjects( Registry, Locale, Writer );
+	frdkrn::GetPredefinedProjects( Registry, Locale, Language, Writer );
 
 	Writer.PopTag();
 ERRErr
@@ -316,7 +317,7 @@ ERRProlog
 ERRBegin
 	PredefinedProjects.Init();
 
-	GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().LocaleRack(), PredefinedProjects );
+GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().Locale(), Trunk.Kernel().Language(), PredefinedProjects );
 
 	Trunk.UI().LogQuietly( PredefinedProjects );
 

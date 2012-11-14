@@ -82,8 +82,8 @@ namespace xulftk {
 	private:
 		trunk___ *_Trunk;
 	protected:
-		virtual void FRDKRNReportBackendError( const char *Message );
-		void FRDKRNReportFrontendError( const char *Message );
+		virtual void FRDKRNReportBackendError( const str::string_ &Message );
+		virtual void FRDKRNReportFrontendError( const str::string_ &Message );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -241,23 +241,7 @@ namespace xulftk {
 			return *_UserCallback;
 		}
 	protected:
-		void Handle_( frdkrn::status__ Status )
-		{
-			switch( Status ) {
-			case frdkrn::sOK:
-				break;
-			case frdkrn::sWarning:
-				_UI->LogAndPrompt( _Kernel->Message() );
-				break;
-			case frdkrn::sError:
-				_UI->Alert( _Kernel->Message() );
-				ERRAbort();
-				break;
-			default:
-				ERRc();
-				break;
-			}
-		}
+		void Handle_( frdkrn::status__ Status );
 		void _DefineSession(
 			const str::string_ &ProjectFileName,	// Si non vide, contient le nom du fichier projet avec lequel préremplir le 'SessionForm'.
 			const xpp::criterions___ &Criterions );	// 'registry' qui contient la configuration de l'application.
@@ -363,10 +347,6 @@ namespace xulftk {
 		{
 			return Kernel().Registry();
 		}
-		const str::string_ &Message( void ) const
-		{
-			return Kernel().Message();
-		}
 		void UpdateUI( void )
 		{
 			UI().Update();
@@ -456,14 +436,17 @@ namespace xulftk {
 		{
 			bso::bool__ Confirmation = false;
 		ERRProlog
-			STR_BUFFER___ Buffer;
+			str::string Translation;
 		ERRBegin
-			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), Kernel().Locale().GetTranslation( xulfkl::GetLabel( xulfkl::mExitConfirmation ), Kernel().Language(), Buffer) ) )
+			Translation.Init();
+			Kernel().Locale().GetTranslation( xulfkl::GetLabel( xulfkl::mExitConfirmation ), Kernel().Language(), Translation );
+
+			if ( Confirmation = nsxpcm::Confirm( UI().Main().Window(), Translation ) )
 				Confirmation = _UF().Exit();
 		ERRErr
 		ERREnd
 		ERREpilog
-		return Confirmation;
+			return Confirmation;
 		}
 		const char *DefaultXSLRootPath( void ) const
 		{

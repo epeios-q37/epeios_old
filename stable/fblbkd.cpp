@@ -75,20 +75,20 @@ enum message__ {
 	m__OK,
 };
 
-#define CASE( m )\
-	case m:\
-		Message = #m + 1;\
-		break
+#define CASE( l )\
+	case m_##l:\
+	return FBLBKD_NAME "_" #l;\
+	break
 
-static const char *Label_( message__ MessageId )
+static const char *GetLabel_( message__ MessageId )
 {
 	const char *Message = NULL;
 	switch ( MessageId ) {
-	CASE( m_UnknowObjectType );
-	CASE( m_UnknowObjectTypeName );
-	CASE( m_UnknowCommandNameOrDescription );
-	CASE( m_BadLanguage );
-	CASE( m_BackendError );
+	CASE( UnknowObjectType );
+	CASE( UnknowObjectTypeName );
+	CASE( UnknowCommandNameOrDescription );
+	CASE( BadLanguage );
+	CASE( BackendError );
 	default:
 		ERRu();
 		break;
@@ -97,19 +97,10 @@ static const char *Label_( message__ MessageId )
 	return Message;
 }
 
-static const str::string_ &GetTranslation_(
-	message__ Message,
-	const lcl::rack__ &Rack,
-	str::string_ &Translation )
-{
-	Rack.GetTranslation( Label_( Message ), "NKDMNG_", Translation );
-
-	return Translation;
-}
-
 static void Report_(
 	message__ Message,
-	const lcl::rack__ &Rack,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	request__ &Request )
 {
 ERRProlog
@@ -118,7 +109,7 @@ ERRProlog
 ERRBegin
 	Translation.Init();
 
-	Request.ReportRequestError( GetTranslation_( Message, Rack, Translation ).Convert( Buffer ) );
+	Request.ReportRequestError( Locale.GetTranslation( GetLabel_( Message ), Language, Translation ).Convert( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -418,7 +409,7 @@ static void ThrowIError_(
 	bso::bool__ &,
 	void * )
 {
-	ERRi();
+	ERRFree();
 
 	Requete.Complete();
 }
@@ -470,7 +461,7 @@ ERRBegin
 	if ( O != FBLBKD_INVALID_TYPE )
 		Request.ObjectOut() = O;
 	else
-		Report_( m_UnknowObjectType, Backend.LocaleRack(), Request );
+		Report_( m_UnknowObjectType, Backend.Locale(), Backend.Language(), Request );
 
 	Request.Complete();
 ERRErr
@@ -498,7 +489,7 @@ ERRBegin
 	if ( ( T != FBLBKD_INVALID_TYPE ) )
 		Request.Id16Out() = *T;
 	else
-		Report_( m_UnknowObjectTypeName, Backend.LocaleRack(), Request );
+		Report_( m_UnknowObjectTypeName, Backend.Locale(), Backend.Language(), Request );
 
 	Request.Complete();
 ERRErr
@@ -641,7 +632,7 @@ ERRBegin
 	if ( ( Command != FBLBKD_INVALID_COMMAND ) )
 		Request.Id16Out() = Command;
 	else
-		Report_( m_UnknowCommandNameOrDescription, Backend.LocaleRack(), Request );
+		Report_( m_UnknowCommandNameOrDescription, Backend.Locale(), Backend.Language(), Request );
 
 	Request.Complete();
 ERRErr
@@ -693,7 +684,7 @@ static void GetLanguage_(
 	bso::bool__ &Deconnexion,
 	void * )
 {
-	Requete.StringOut() = Backend.LocaleRack().Language();
+	Requete.StringOut() = Backend.Language();
 
 	Requete.Complete();
 }
@@ -714,7 +705,7 @@ ERRBegin
 	const str::string_ &Language = Request.StringIn();
 
 	if ( Language.Amount() == 0 )
-		Report_( m_BadLanguage, Backend.LocaleRack(), Request );
+		Report_( m_BadLanguage, Backend.Locale(), Backend.Language(), Request );
 	else
 		Backend.SetLanguage( Language.Convert( Buffer ) );
 
@@ -817,19 +808,20 @@ ERRProlog
 	char Language[10];
 	char RemoteProtocolVersion[10];
 	char RemoteAPIVersion[10];
+	str::string Translation;
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( !flw::GetString( Flow, Language, sizeof( Language ) ) )
-		ERRf();
+		ERRF();
 
 	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
-		ERRf();
+		ERRF();
 
 	if ( !flw::GetString( Flow, RemoteBackendLabel, sizeof( RemoteBackendLabel ) ) )
-		ERRf();
+		ERRF();
 
 	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
-		ERRf();
+		ERRF();
 
 	Flow.Dismiss();
 
@@ -845,9 +837,11 @@ ERRBegin
 
 		SetLanguage( Language );
 
-		flw::PutString( _LocaleRack.GetTranslation( MessageLabel, "", Buffer ), Flow );
-		flw::PutString( _LocaleRack.GetTranslation( URLLabel, "", Buffer ), Flow );
+		Translation.Init();
+		flw::PutString( _Locale->GetTranslation( MessageLabel, Language, Translation ).Convert( Buffer ), Flow );
 
+		Translation.Init();
+		flw::PutString( _Locale->GetTranslation( URLLabel, Language, Translation ).Convert( Buffer ), Flow );
 	} else
 		Flow.Put( 0 );
 

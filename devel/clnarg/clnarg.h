@@ -127,136 +127,119 @@ namespace clnarg {
 		b_Undefined
 	};
 
-	const char *Label( message__ Message );
+	const char *GetLabel( message__ Message );
 
-	const str::string_ &GetTranslation(
+	void GetMeaning(
 		message__ Message,
-		const lcl::rack__ &LocaleRack,
-		str::string_ *Translation,
+		lcl::meaning_ *Meaning,
 		... );
 
-	inline const str::string_ &GetHelpHintMessageTranslation(
+	inline void GetHelpHintMessageMeaning(
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mHelpHintMessage, LocaleRack, &Translation, ProgramName );
+		return GetMeaning( mHelpHintMessage, &Meaning, ProgramName );
 	}
 
-	inline const str::string_ &GetOptionWordingTranslation( 
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetOptionWordingMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mOptionWording, LocaleRack, &Translation );
+		return GetMeaning( mOptionWording, &Meaning );
 	}
 
-	inline const str::string_ &GetOptionsWordingTranslation( 
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetOptionsWordingMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mOptionsWording, LocaleRack, &Translation );
+		return GetMeaning( mOptionsWording, &Meaning );
 	}
 
-	inline const str::string_ &GetArgumentWordingTranslation( 
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetArgumentWordingMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mArgumentWording, LocaleRack, &Translation );
+		return GetMeaning( mArgumentWording, &Meaning );
 	}
 
-	inline const str::string_ &GetArgumentsWordingTranslation( 
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetArgumentsWordingMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mArgumentsWording, LocaleRack, &Translation );
+		return GetMeaning( mArgumentsWording, &Meaning );
 	}
 
-	inline const str::string_ &GetVersionCommandDescription(
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetVersionCommandDescription( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mVersionCommandDescription, LocaleRack, &Translation );
+		return GetMeaning( mVersionCommandDescription, &Meaning );
 	}
 
-	inline const str::string_ &GetLicenseCommandDescription(
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetLicenseCommandDescription( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mLicenseCommandDescription, LocaleRack, &Translation );
+		return GetMeaning( mLicenseCommandDescription, &Meaning );
 	}
 
-	inline const str::string_ &GetHelpCommandDescription(
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetHelpCommandDescription( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mHelpCommandDescription, LocaleRack, &Translation );
+		return GetMeaning( mHelpCommandDescription, &Meaning );
 	}
 
-	inline const str::string_ &GetMissingCommandErrorTranslation(
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetMissingCommandErrorMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mMissingCommandError, LocaleRack, &Translation );
+		return GetMeaning( mMissingCommandError, &Meaning );
 	}
 
-	inline const str::string_ &GetUnknownOptionErrorTranslation(
-		const lcl::rack__ &LocaleRack,
+	inline void GetUnknownOptionErrorMeaning(
 		const char *Option,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mUnknownOptionError, LocaleRack, &Translation, Option );
+		return GetMeaning( mUnknownOptionError, &Meaning, Option );
 	}
 
-	inline const str::string_ &GetMissingOptionArgumentErrorTranslation(
-		const lcl::rack__ &LocaleRack,
+	inline void GetMissingOptionArgumentErrorMeaning(
 		const char *Option,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mMissingOptionArgumentError, LocaleRack, &Translation, Option );
+		return GetMeaning( mMissingOptionArgumentError, &Meaning, Option );
 	}
 
-	inline const str::string_ &GetUnexpectedOptionErrorTranslation(
-		const lcl::rack__ &LocaleRack,
+	inline void GetUnexpectedOptionErrorMeaning(
 		const char *Option,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mUnexpectedOptionError, LocaleRack, &Translation, Option );
+		return GetMeaning( mUnexpectedOptionError, &Meaning, Option );
 	}
 
-	inline const str::string_ &GetWrongNumberOfArgumentsErrorTranslation(
-		const lcl::rack__ &LocaleRack,
-		str::string_ &Translation )
+	inline void GetWrongNumberOfArgumentsErrorMeaning( lcl::meaning_ &Meaning )
 	{
-		return GetTranslation( mWrongNumberOfArgumentsError, LocaleRack, &Translation );
+		return GetMeaning( mWrongNumberOfArgumentsError, &Meaning );
 	}
 
 	void Report(
-		const str::string_ &Message,
+		const lcl::meaning_ &Meaning,
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	void ReportMissingCommandError(
 		const char *ProgramName,
-		const lcl::rack__ &LocalRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	void ReportUnknownOptionError(
 		const char *Option,
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	void ReportMissingOptionArgumentError(
 		const char *Option,
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	void ReportUnexpectedOptionError(
 		const char *Option,
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	void ReportWrongNumberOfArgumentsError(
 		const char *ProgramName,
-		const lcl::rack__ &LocaleRack );
+		const lcl::locale_ &Locale,
+		const char *Language );
 
 	//e View mode
 	enum view {

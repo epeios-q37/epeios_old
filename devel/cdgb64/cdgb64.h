@@ -314,7 +314,7 @@ namespace cdgb64 {
 			ERRc();
 			break;
 		case 1:
-			ERRf();
+			ERRc();
 			break;
 		case 2:
 			Target[2] = 'A';
@@ -384,7 +384,7 @@ namespace cdgb64 {
 		{
 #ifdef CDGB64_DBG
 			if ( _Flow == NULL )
-				ERRu();
+				ERRc();
 #endif
 			_Flow->Dismiss();
 		}

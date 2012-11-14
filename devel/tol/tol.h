@@ -932,7 +932,7 @@ namespace tol {
 		{
 #ifdef TOL_DBG
 			if ( P_ != NULL )
-				ERRu();
+				ERRc();
 #endif
 
 			P_ = P;

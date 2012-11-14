@@ -48,7 +48,7 @@ int main( int argc, char *argv[] )
 {
 ERRFProlog
 ERRFBegin
-	cio::cout << "Test of library " << ERRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::COut << "Test of library " << ERRTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -57,19 +57,19 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cio::cout );
+			TTR.Advertise( cio::COut );
 			break;
 		}
 	default:
-		cio::cout << txf::sync;
-		cio::cerr << "\nBad arguments.\n";
-		cio::cout << "Usage: " << ERRTutor.Name << " [/i]\n\n";
-		ERRi();
+		cio::COut << txf::commit;
+		cio::CErr << "\nBad arguments.\n";
+		cio::COut << "Usage: " << ERRTutor.Name << " [/i]\n\n";
+		ERRExit( EXIT_SUCCESS );
 	}
 
 ERRFErr
 ERRFEnd
-	cio::cout << "\nEnd of program " << ERRTutor.Name << ".\n";
+	cio::COut << "\nEnd of program " << ERRTutor.Name << ".\n";
 ERRFEpilog
 	return ERRExitValue;
 }

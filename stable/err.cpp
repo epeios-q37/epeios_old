@@ -58,9 +58,7 @@ public:
 
 using namespace err;
 
-namespace err {
-	err_ ERR;
-}
+err_ err::ERR;
 
 #include "cio.h"
 
@@ -80,9 +78,7 @@ const char *err_::File = NULL;
 #ifdef ERR__JMPUSE
 jmp_buf *err_::Jump = NULL;
 #endif
-err::type err_::Major = err::ok;
-int err_::Minor = 0;
-err::type ERRFilter = err::ok;
+err::type err_::Type = err::t_None;
 
 #ifdef ERR__THREAD_SAFE
 bool err::Concerned( void )
@@ -102,7 +98,7 @@ void err::Unlock( void )
 
 	M.Init( MutexHandler_ );
 
-	ERR.Major = err::ok;
+	ERR.Type = err::t_None;
 
 	M.Unlock();
 }
@@ -112,8 +108,7 @@ void err::Unlock( void )
 const char *err::Message(
 	const char *Fichier,
 	int Ligne,
-	err::type Majeur,
-	int Mineur,
+	err::type Type,
 	buffer__ &Buffer )
 {
 	tol::buffer__ TOLBuffer;
@@ -124,55 +119,61 @@ const char *err::Message(
 
 	strcat( Buffer, tol::Time( TOLBuffer ) );
 
-	strcat( Buffer, " Error " );
+	strcat( Buffer, " " );
 
-	switch( Majeur ) {
-	case err::alc:
-		strcat( Buffer, "ALC" );
+	switch( Type ) {
+	case err::tAllocation:
+		strcat( Buffer, "Allocation" );
 		break;
-	case err::dvc:
-		strcat( Buffer, "DVC" );
+	case err::tDevice:
+		strcat( Buffer, "Device" );
 		break;
-	case err::sys:
-		strcat( Buffer, "SYS" );
+	case err::tSystem:
+		strcat( Buffer, "System" );
 		break;
-	case err::usr:
-		strcat( Buffer, "USR" );
+	case err::tUser:
+		strcat( Buffer, "User" );
 		break;
-	case err::bkd:
-		strcat( Buffer, "BKD" );
+	case err::tBackend:
+		strcat( Buffer, "Backend" );
 		break;
-	case err::itn:
-		strcat( Buffer, "ITN" );
+	case err::tConception:
+		strcat( Buffer, "Conception" );
 		break;
-	case err::ccp:
-		strcat( Buffer, "CCP" );
+	case err::tFlow:
+		strcat( Buffer, "Flow" );
 		break;
-	case err::frm:
-		strcat( Buffer, "FRM" );
+	case err::tProhibition:
+		strcat( Buffer, "Prohibition" );
 		break;
-	case err::phb:
-		strcat( Buffer, "PHB" );
+	case err::tLimitation:
+		strcat( Buffer, "Limitation" );
 		break;
-	case err::lmt:
-		strcat( Buffer, "LMT" );
+	case err::tMemory:
+		strcat( Buffer, "Memory" );
 		break;
-	case err::mem:
-		strcat( Buffer, "MEM" );
+	case err::tExternal:
+		strcat( Buffer, "External" );
 		break;
-	case err::ext:
-		strcat( Buffer, "EXT" );
+	case t_Free:
+		strcat( Buffer, "FREE" );
+		break;
+	case t_Exit:
+		strcat( Buffer, "EXIT" );
+		break;
+	case t_Return:
+		strcat( Buffer, "RETURN" );
 		break;
 	default:
-		strcat( Buffer, "unknow" );
+		strcat( Buffer, "UNKNOWN" );
 		break;
 	}
 
-	sprintf( strchr( Buffer, 0 ), "(%i)", Mineur );
-	strcat( Buffer, "; F: " );
+	strcat( Buffer, " error : " );
 	strcat( Buffer, fnm::GetFileName( Fichier ) );
-	strcat( Buffer, ", L: " );
+	strcat( Buffer, "(" );
 	sprintf( strchr( Buffer, 0 ), "%i", Ligne );
+	strcat( Buffer, ")" );
 
 	return Buffer;
 }
@@ -182,8 +183,7 @@ const char *err::Message(
 void err_::Handler(
 	const char *Fichier,
 	int Ligne,
-	err::type Majeur,
-	int Mineur )
+	err::type Type )
 {
 #ifdef ERR__THREAD_SAFE
 	if ( ( !ERRError() ) || !err::Concerned() )
@@ -199,8 +199,7 @@ void err_::Handler(
 #endif
 	if ( Fichier && !ERRError() )
 	{
-		this->Major = Majeur;
-		this->Minor = Mineur;
+		this->Type = Type;
 		this->File = Fichier;
 		this->Line = Ligne;
 	} else if ( !ERRError() )
@@ -214,13 +213,13 @@ void err_::Handler(
 is not concerned by the 'ITN' error. Concenrs the whole software, and
 not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
 #ifdef XXX_DBG
-	if ( Majeur != err::itn )
-		this->Major = ( this->Major == Majeur ? Majeur : this->Major );	// Silly, but is only goal is to allow the insertion of a breakpoint.
+	if ( Type < err::t_amount )
+		this->Type = ( this->Type == Type ? Type : this->Type );	// Silly, but is only goal is to allow the insertion of a breakpoint.
 	else
-		this->Major = err::itn;	// Silly too, because same goal.
+		this->Type = ( this->Type == Type ? Type : this->Type );	// Silly too, because same goal.
 #endif
 
-	ERRR();
+	ERRT();
 }
 	/* handler de traitement d'erreur; 'Fichier' contient le nom du fichier,
 	'Ligne' le numéro de ligne, 'Type', le type de l'erreur */
@@ -229,10 +228,10 @@ not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
 void err::Final( void )
 {
 
-	if ( ERR.Major != err::itn ) {
+	if ( ERR.Type != err::t_Exit ) {
 		buffer__ Buffer;
 
-		const char *Message = err::Message( ERR.File, ERR.Line, ERR.Major, ERR.Minor, Buffer );
+		const char *Message = err::Message( ERR.File, ERR.Line, ERR.Type, Buffer );
 
 		if ( ERR.ExitValue == EXIT_SUCCESS )
 			ERR.ExitValue = EXIT_FAILURE;
@@ -288,7 +287,7 @@ public:
 #if 0
 		ERR.Error = false;
 #else
-		ERR.Major = err::ok;
+		ERR.Type = err::t_None;
 #endif
 	}
 	~errpersonnalization( void )

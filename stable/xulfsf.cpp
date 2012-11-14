@@ -63,8 +63,6 @@ public:
 
 #include "nsIDOMEventTarget.h"
 
-#define PREFIX XULFSF_NAME	"_"
-
 using namespace xulfsf;
 
 using nsxpcm::event__;
@@ -102,12 +100,13 @@ void xulfsf::emebedded_backend_selection_eh__::NSXPCMOnEvent( nsxpcm::event__ Ev
 {
 ERRProlog
 	str::string FileName;
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	FileName.Init();
+	Translation.Init();
 
-	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Trunk().UI().SessionForm().Window(), str::string( Trunk().Kernel().LocaleRack().GetTranslation( "EmbeddedBackendFileSelectionDialogBoxTitle", PREFIX, Buffer ) ), Trunk().Kernel().LocaleRack(), FileName ) )
-		Trunk().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( FileName );
+	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Trunk().UI().SessionForm().Window(), str::string( Trunk().Kernel().GetTranslation( XULFDG_NAME "_EmbeddedBackendFileSelectionDialogBoxTitle", Translation ) ), Trunk().Kernel().Locale(), Trunk().Kernel().Language(), FileName ) )
+		Trunk().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValueC( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -236,8 +235,8 @@ ERRBegin
 		break;
 	}
 
-	Widgets.txbLogin.SetValue( Login );
-	Widgets.txbPassword.SetValue( Password );
+	Widgets.txbLogin.SetValueC( Login );
+	Widgets.txbPassword.SetValueC( Password );
 	Broadcasters.bdcAuthentication.Disable( Disable );
 ERRErr
 ERREnd
@@ -246,7 +245,8 @@ ERREpilog
 
 static void GetPredefinedBackends_(
 	const frdrgy::registry_ &Registry,
-	const lcl::rack__ &Locale,
+	const lcl::locale_ &Locale,
+	const char *Language,
 	str::string_ &PredefinedBackends )
 {
 ERRProlog
@@ -267,7 +267,7 @@ ERRBegin
 	if ( Default.Amount() != 0 )
 		Writer.PutAttribute( "Default", Default );
 
-	frdkrn::GetPredefinedBackends( Registry, Locale, Writer );
+	frdkrn::GetPredefinedBackends( Registry, Locale, Language, Writer );
 
 	Writer.PopTag();
 ERRErr
@@ -284,7 +284,7 @@ ERRProlog
 ERRBegin
 	PredefinedBackends.Init();
 
-	GetPredefinedBackends_( Trunk.Registry(),Trunk.Kernel().LocaleRack(), PredefinedBackends );
+	GetPredefinedBackends_( Trunk.Registry(),Trunk.Kernel().Locale(), Trunk.Kernel().Language(), PredefinedBackends );
 
 	Trunk.UI().LogQuietly( PredefinedBackends );
 
@@ -303,10 +303,12 @@ ERREpilog
 void xulfsf::session_form__::Update( void )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
+	Translation.Init();
+
 	if ( !HideUnusedBackendSelectionMode_( Trunk().Registry(), Broadcasters ) )
-		Trunk().UI().LogAndPrompt( Trunk().Kernel().LocaleRack().GetTranslation( "BadValueForBackendSelectionMode", PREFIX, Buffer ) );
+		Trunk().UI().LogAndPrompt( Trunk().Kernel().GetTranslation( XULFSF_NAME "_BadValueForBackendSelectionMode", Translation ) );
 
 	HandleAuthenticationSubForm_( Trunk().Registry(), Broadcasters, Widgets );
 

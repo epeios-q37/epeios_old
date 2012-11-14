@@ -213,7 +213,7 @@ ERRBegin
 	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
 
 	if ( !Success && ( ErrorHandling == err::hThrowException ) )
-		ERRf();
+		ERRd();
 ERRErr
 ERREnd
 	if ( Descriptor != IOP_UNDEFINED_DESCRIPTOR )
@@ -235,14 +235,17 @@ const char* fil::GetBackupFileName(
 	return Buffer;
 }
 
-#define CASE( label )	LCL_CASE( label, bs )
+#define CASE( m )\
+	case bs##m:\
+	return FIL_NAME "_" #m;\
+	break
 
-const char *fil::Label( backup_status__ Status )
+const char *fil::GetLabel( backup_status__ Status )
 {
 	switch ( Status ) {
-	CASE( UnableToRename )
-	CASE( UnableToDuplicate )
-	CASE( UnableToSuppress )
+	CASE( UnableToRename );
+	CASE( UnableToDuplicate );
+	CASE( UnableToSuppress );
 	default:
 		ERRu();
 		break;
@@ -251,28 +254,23 @@ const char *fil::Label( backup_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
-const str::string_ &fil::GetTranslation(
+void fil::GetMeaning(
 	backup_status__ Status,
 	const char *FileName,
-	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	str::string Message;
-	const char *BackupFileName = NULL;
 	FIL_BUFFER___ Buffer;
 ERRBegin
-	Message.Init();
-
-	LocaleRack.GetTranslation( Label( Status ), "EFIL_", Translation );
+	Meaning.SetValue( GetLabel( Status ) );
 
 	switch ( Status ) {
 	case bsUnableToRename:
 	case bsUnableToDuplicate:
-		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
+		Meaning.AddTag( FileName );
 		break;
 	case bsUnableToSuppress:
-		lcl::ReplaceTag( Message, 1, str::string( GetBackupFileName( FileName, Buffer ) ) );
+		Meaning.AddTag( GetBackupFileName( FileName, Buffer ) );
 		break;
 	default:
 		ERRu();
@@ -281,7 +279,6 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
 }
 
 backup_status__ fil::CreateBackupFile(
@@ -371,37 +368,19 @@ ERREpilog
 	return Status;
 }
 
-backup_status__ fil::CreateBackupFile(
-	const char *FileName,
-	backup_mode__ Mode,
-	const lcl::rack__ &LocaleRack,
-	txf::text_oflow__ &Flow )
-{
-	backup_status__ Status = bs_Undefined;
-ERRProlog
-	str::string Translation;
-ERRBegin
-	if ( ( Status = CreateBackupFile( FileName, Mode, err::hUserDefined ) ) != bsOK ) {
-		Translation.Init();
-		GetTranslation( Status, FileName, LocaleRack, Translation );
-		Flow << Translation << txf::nl << txf::commit;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
-
 #undef CASE
 
-#define CASE( label )	LCL_CASE( label, bs )
+#define CASE( m )\
+	case rs##m:\
+	return FIL_NAME "_" #m;\
+	break
 
-const char *fil::Label( recover_status__ Status )
+
+const char *fil::GetLabel( recover_status__ Status )
 {
 	switch ( Status ) {
-	CASE( UnableToRename )
-	CASE( UnableToSuppress )
+	CASE( UnableToRename );
+	CASE( UnableToSuppress );
 	default:
 		ERRu();
 		break;
@@ -410,27 +389,22 @@ const char *fil::Label( recover_status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
-const str::string_ &fil::GetTranslation(
+void fil::GetMeaning(
 	recover_status__ Status,
 	const char *FileName,
-	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	str::string Message;
-	const char *BackupFileName = NULL;
 	FIL_BUFFER___ Buffer;
 ERRBegin
-	Message.Init();
-
-	LocaleRack.GetTranslation( Label( Status ), "FIL_", Translation );
+	Meaning.SetValue( GetLabel( Status ) );
 
 	switch ( Status ) {
 	case rsUnableToRename:
-		lcl::ReplaceTag( Message, 1, str::string( GetBackupFileName( FileName, Buffer ) ) );
+		Meaning.AddTag( GetBackupFileName( FileName, Buffer ) );
 		break;
 	case rsUnableToSuppress:
-		lcl::ReplaceTag( Message, 1, str::string( FileName ) );
+		Meaning.AddTag(  FileName );
 		break;
 	default:
 		ERRu();
@@ -439,7 +413,6 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
 }
 
 recover_status__ fil::RecoverBackupFile(
@@ -475,27 +448,6 @@ ERREnd
 ERREpilog
 	return Status;
 }
-
-recover_status__ fil::RecoverBackupFile(
-	const char *FileName,
-	const lcl::rack__ &LocaleRack,
-	txf::text_oflow__ &Flow )
-{
-	recover_status__ Status = rs_Undefined;
-ERRProlog
-	str::string Translation;
-ERRBegin
-	if ( ( Status = RecoverBackupFile( FileName, err::hUserDefined ) ) != rsOK ) {
-		Translation.Init();
-		GetTranslation( Status, FileName, LocaleRack, Translation );
-		Flow << Translation << txf::nl << txf::commit;
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Status;
-}
-
 
 
 /* Although in theory this class is inaccessible to the different modules,

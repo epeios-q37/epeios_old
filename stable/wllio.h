@@ -86,7 +86,7 @@ namespace wllio {
 		{
 #ifdef WLLIO_DBG
 			if ( _D == WLLIO_UNDEFINED_DESCRIPTOR )
-				ERRu();
+				ERRc();
 #endif
 		}
 	public:

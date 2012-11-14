@@ -366,7 +366,7 @@ ERREpilog
 			if ( _Id == CSDSNB_UNDEFINED )
 				_Id = GetId( *_Flow );
 			else if ( _Flow->Get() != 0 )
-				ERRf();
+				ERRF();
 		}
 	protected:
 		virtual fdr::size__ FDRWrite(

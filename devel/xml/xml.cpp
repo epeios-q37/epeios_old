@@ -94,50 +94,27 @@ const char *xml::GetLabel( status__ Status )
 
 #undef CASE
 
-const str::string_ &xml::GetTranslation(
+void xml::GetMessage(
 	status__ Status,
-	const lcl::rack__ &LocaleRack,
-	str::string_ &Translation )
-{
-	LocaleRack.GetTranslation( Label( Status ), MESSAGE_PREFIX, Translation );
-
-	return Translation;
-}
-
-
-const str::string_ &xml::GetTranslation(
-	status__ Status,
-	const lcl::rack__ &LocaleRack,
 	const coord__ &Coord,
-	str::string_ &Translation )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	str::string Message;
-	STR_BUFFER___ SBuffer;
+	lcl::meaning MeaningBuffer;
 	bso::integer_buffer__ IBuffer;
-	lcl::strings Values;
 ERRBegin
-	Message.Init();
+	Meaning.SetValue( XML_NAME "_ErrorAtLineColumn" );
 
-	LocaleRack.GetTranslation( "ErrorAtLineColumn", MESSAGE_PREFIX, Message );
+	MeaningBuffer.Init();
+	MeaningBuffer.SetValue( GetLabel( Status ) );
 
-	Values.Init();
-	Values.Append( str::string( bso::Convert( Coord.Line, IBuffer ) ) );
-	Values.Append( str::string( bso::Convert( Coord.Column, IBuffer ) ) );
+	Meaning.AddTag( MeaningBuffer );
 
-	lcl::ReplaceTags( Message, Values );
-
-	Translation.Append( Message );
-
-	Message.Init();
-	GetTranslation( Status, LocaleRack, Message );
-
-	Translation.Append( Message );
-
+	Meaning.AddTag( bso::Convert( Coord.Line, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Coord.Column, IBuffer ) );
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
 }
 
 static status__ SkipSpaces_( _flow___ &Flow )

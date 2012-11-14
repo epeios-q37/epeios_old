@@ -68,8 +68,6 @@ extern class ttr_tutor &FRDKRNTutor;
 #include "csdleo.h"
 
 #define FRDKRN_CONFIGURATION_FILE_EXTENSION	"xcfg"
-#define FRDKRN_PROJECT_FILE_EXTENSION		"xprj"
-#define FRDKRN_LOCALE_FILE_EXTENSION		"xlcl"
 
 namespace frdkrn {
 	using namespace frdbkd;
@@ -173,21 +171,17 @@ namespace frdkrn {
 		}
 	};
 
-	inline const str::string_ &GetTranslation(
+	inline void GetMeaning(
 		const error_set___ &ErrorSet,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Translation )
+		lcl::meaning_ &Meaning  )
 	{
-		return rgstry::GetTranslation( ErrorSet.Context, Locale, Language, Translation );
+		return rgstry::GetMeaning( ErrorSet.Context, Meaning );
 	}
 
-	const str::string_ &GetTranslation(
+	void GetMeaning(
 		recap__ Recap,
 		const error_set___ &ErrorSet,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Translation );
+		lcl::meaning_ &Meaning );
 
 
 	bso::bool__ GetDefaultConfigurationFileName(
@@ -205,8 +199,8 @@ namespace frdkrn {
 		void FBLFRDReport(
 			fblovl::reply__ Reply,
 			const char *Message );
-		virtual void FRDKRNReportBackendError( const char *Message ) = 0;
-		virtual void FRDKRNReportFrontendError( const char *Message ) = 0;
+		virtual void FRDKRNReportBackendError( const str::string_ &Message ) = 0;
+		virtual void FRDKRNReportFrontendError( const str::string_ &Message ) = 0;
 	public:
 		void reset ( bso::bool__ = true )
 		{
@@ -217,13 +211,11 @@ namespace frdkrn {
 		{
 			// Standardisation.
 		}
-		void ReportFrontendError( const char *Message )
+		void ReportFrontendError( const str::string_ &Message )
 		{
 			FRDKRNReportFrontendError( Message );
 		}
 	};
-
-
 
 	class kernel___
 	{
@@ -233,7 +225,7 @@ namespace frdkrn {
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
 		frdbkd::backend___ _Backend;
-		str::string _Message;
+		lcl::meaning _Meaning;
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
 		reporting_functions__ *_ReportingFunctions;
@@ -283,19 +275,19 @@ namespace frdkrn {
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
 		virtual void FRDKRNDisconnection( void ) = 0;	// Appelé avant déconnexion du 'backend'.
-		void _Report( const char *Message )const
+		void _Report( const lcl::meaning_ &Meaning )const
 		{
+		ERRProlog
+			str::string Translation;
+		ERRBegin
 			if( _ReportingFunctions == NULL )
 				ERRc();
 
-			return _ReportingFunctions->ReportFrontendError( Message );
-		}
-		void _Report( const str::string_ &Message ) const
-		{
-		ERRProlog
-			STR_BUFFER___ Buffer;
-		ERRBegin
-			_Report( Message.Convert( Buffer ) );
+			Translation.Init();
+
+			Locale().GetTranslation( Meaning, Language(), Translation );
+
+			return _ReportingFunctions->ReportFrontendError( Translation );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -311,7 +303,7 @@ namespace frdkrn {
 			_Registry.reset( P );
 			_Locale = NULL;
 			_Language = NULL;
-			_Message.reset( P );
+			_Meaning.reset( P );
 			_ProjectOriginalTimeStamp = 0;
 			_ProjectModificationTimeStamp = 0;
 			_ReportingFunctions = NULL;
@@ -333,7 +325,7 @@ namespace frdkrn {
 			reporting_functions__ &ReportingFunctions )
 		{
 			_Registry.Init( ConfigurationRegistry, ConfigurationRegistryRoot );
-			_Message.Init();
+			_Meaning.Init();
 			_Locale = &Locale;
 			_Language = Language;
 			_ProjectOriginalTimeStamp = 0;
@@ -444,7 +436,17 @@ namespace frdkrn {
 		{
 			return _ProjectOriginalTimeStamp < ProjectModificationTimeStamp();
 		}
-		E_RWDISCLOSE__( str::string_, Message );
+		E_RWDISCLOSE__( lcl::meaning_ , Meaning );
+		const str::string_ &GetTranslatedMeaning( str::string_ &Translation ) const
+		{
+			return Locale().GetTranslation( Meaning(), Language(), Translation );
+		}
+		const str::string_ &GetTranslation(
+			const char *Message,
+			str::string_ &Translation ) const
+		{
+			return Locale().GetTranslation( Message, Language(), Translation );
+		}
 		void AboutBackend(
 			str::string_ &ProtocolVersion,
 			str::string_ &BackendLabel,

@@ -60,26 +60,27 @@ public:
 
 using namespace clnarg;
 
-#define TRANSLATION_PREFIX	"CLNARG_"
+#define CASE( l )\
+	case m##l:\
+	return CLNARG_NAME "_" #l;\
+	break
 
-#define CASE( label )	LCL_CASE( label, m )
-
-const char *clnarg::Label( message__ Message )
+const char *clnarg::GetLabel( message__ Message )
 {
 	switch ( Message ) {
-		CASE( HelpHintMessage )
-		CASE( OptionWording )
-		CASE( OptionsWording )
-		CASE( ArgumentWording )
-		CASE( ArgumentsWording )
-		CASE( VersionCommandDescription )
-		CASE( LicenseCommandDescription )
-		CASE( HelpCommandDescription )
-		CASE( MissingCommandError )
-		CASE( UnknownOptionError )
-		CASE( MissingOptionArgumentError )
-		CASE( UnexpectedOptionError )
-		CASE( WrongNumberOfArgumentsError )
+		CASE( HelpHintMessage );
+		CASE( OptionWording );
+		CASE( OptionsWording );
+		CASE( ArgumentWording );
+		CASE( ArgumentsWording );
+		CASE( VersionCommandDescription );
+		CASE( LicenseCommandDescription );
+		CASE( HelpCommandDescription );
+		CASE( MissingCommandError );
+		CASE( UnknownOptionError );
+		CASE( MissingOptionArgumentError );
+		CASE( UnexpectedOptionError );
+		CASE( WrongNumberOfArgumentsError );
 	default:
 		ERRu();
 		break;
@@ -89,25 +90,20 @@ const char *clnarg::Label( message__ Message )
 
 }
 
-const str::string_ &clnarg::GetTranslation(
+void clnarg::GetMeaning(
 	message__ Message,
-	const lcl::rack__ &LocaleRack,
-	str::string_ *Translation,	// 'str::string_ &' fait bugger 'va_...' avec VC++ 10.
+	lcl::meaning_ *Meaning,	// 'lcl::menaing_ *' fait bugger 'va_...' avec VC++ 10.
 	... )
 {
-ERRProlog
 	va_list Args;
-	str::string Intermediate;
-ERRBegin
-	Intermediate.Init();
 
-	LocaleRack.GetTranslation( Label( Message ), TRANSLATION_PREFIX, Intermediate );
+	Meaning->SetValue( GetLabel( Message ) );
 
-	va_start( Args, Translation );
+	va_start( Args, Meaning );
 
 	switch ( Message ) {
 	case mHelpHintMessage:
-		lcl::ReplaceTag( Intermediate, 1, str::string( va_arg( Args, const char *) ) );
+		Meaning->AddTag( va_arg( Args, const char *) );
 		break;
 	case mOptionWording:
 	case mOptionsWording:
@@ -122,7 +118,7 @@ ERRBegin
 	case mUnknownOptionError:
 	case mMissingOptionArgumentError:
 	case mUnexpectedOptionError:
-		lcl::ReplaceTag( Intermediate, 1, str::string( va_arg( Args, const char *) ) );
+		Meaning->AddTag( va_arg( Args, const char *) );
 		break;
 	default:
 		ERRu();
@@ -130,12 +126,6 @@ ERRBegin
 	}
 
 	va_end( Args );
-
-	Translation->Append( Intermediate );
-ERRErr
-ERREnd
-ERREpilog
-	return *Translation;
 }
 
 static void Report_(
@@ -159,36 +149,44 @@ ERREnd
 ERREpilog
 }
 
-void clnarg::ReportMissingCommandError(
+void clnarg::Report(
+	const lcl::meaning_ &Meaning,
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Message;
+	str::string Translation;
+	lcl::meaning HelpMeaning;
+	str::string HelpTranslation;
 ERRBegin
-	Message.Init();
+	HelpMeaning.Init();
+	GetHelpHintMessageMeaning( ProgramName, HelpMeaning );
 
-	GetMissingCommandErrorTranslation( LocaleRack ,Message );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
 
-	Report( Message, ProgramName, LocaleRack );
+	HelpTranslation.Init();
+	Locale.GetTranslation( HelpMeaning, Language, HelpTranslation );
+
+	Report_( Translation, HelpTranslation );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void clnarg::Report(
-	const str::string_ &Message,
+void clnarg::ReportMissingCommandError(
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string HelpMessage;
+	lcl::meaning Meaning;
 ERRBegin
-	HelpMessage.Init();
+	Meaning.Init();
+	GetMissingCommandErrorMeaning( Meaning );
 
-	GetHelpHintMessageTranslation( ProgramName, LocaleRack, HelpMessage );
-
-	Report_( Message, HelpMessage );
+	Report( Meaning, ProgramName, Locale, Language );
 ERRErr
 ERREnd
 ERREpilog
@@ -197,16 +195,16 @@ ERREpilog
 void clnarg::ReportUnknownOptionError(
 	const char *Option,
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Message;
+	lcl::meaning Meaning;
 ERRBegin
-	Message.Init();
+	Meaning.Init();
+	GetUnknownOptionErrorMeaning( Option, Meaning );
 
-	GetUnknownOptionErrorTranslation( LocaleRack, Option, Message );
-
-	Report( Message, ProgramName, LocaleRack );
+	Report( Meaning, ProgramName, Locale, Language );
 ERRErr
 ERREnd
 ERREpilog
@@ -215,16 +213,16 @@ ERREpilog
 void clnarg::ReportMissingOptionArgumentError(
 	const char *Option,
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Message;
+	lcl::meaning Meaning;
 ERRBegin
-	Message.Init();
+	Meaning.Init();
+	GetMissingOptionArgumentErrorMeaning( Option, Meaning );
 
-	GetMissingOptionArgumentErrorTranslation( LocaleRack, Option, Message );
-
-	Report( Message, ProgramName, LocaleRack );
+	Report( Meaning, ProgramName, Locale, Language );
 ERRErr
 ERREnd
 ERREpilog
@@ -234,16 +232,16 @@ ERREpilog
 void clnarg::ReportUnexpectedOptionError(
 	const char *Option,
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Message;
+	lcl::meaning Meaning;
 ERRBegin
-	Message.Init();
+	Meaning.Init();
+	GetUnexpectedOptionErrorMeaning( Option, Meaning );
 
-	GetUnexpectedOptionErrorTranslation( LocaleRack, Option, Message );
-
-	Report( Message, ProgramName, LocaleRack );
+	Report( Meaning, ProgramName, Locale, Language );
 ERRErr
 ERREnd
 ERREpilog
@@ -252,16 +250,16 @@ ERREpilog
 
 void clnarg::ReportWrongNumberOfArgumentsError(
 	const char *ProgramName,
-	const lcl::rack__ &LocaleRack )
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Message;
+	lcl::meaning Meaning;
 ERRBegin
-	Message.Init();
+	Meaning.Init();
+	GetWrongNumberOfArgumentsErrorMeaning( Meaning );
 
-	GetWrongNumberOfArgumentsErrorTranslation( LocaleRack ,Message );
-
-	Report( Message, ProgramName, LocaleRack );
+	Report( Meaning, ProgramName, Locale, Language );
 ERRErr
 ERREnd
 ERREpilog

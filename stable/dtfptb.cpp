@@ -216,7 +216,7 @@ bso::ulong__ dtfptb::FittedGetULong( flw::iflow__ &IFlow )
 
 #ifdef DTFPTB_DBG
 		if ( Counter >= 5 )
-			ERRf();
+			ERRF();
 #endif
 
 		Value |= ( Datum & 0X7f ) << ( 7 * Counter );

@@ -82,7 +82,7 @@ namespace mmi {
 	protected:
 		virtual void MDRAllocate( mdr::size__ Capacity )
 		{
-			ERRu();
+			ERRc();
 		}
 		virtual mdr::size__ MDRUnderlyingSize( void )
 		{
@@ -101,7 +101,7 @@ namespace mmi {
 			mdr::size__ Amount,
 			mdr::row_t__ Position )
 		{
-			ERRu();
+			ERRc();
 		}
 	public:
 		_base_indexed_multimemory_driver__( const indexed_multimemory_ *&Multimemoire )
@@ -324,7 +324,7 @@ namespace mmi {
 		}
 		indexed_multimemory_ &operator =( const indexed_multimemory_ &O )
 		{
-			ERRu();
+			ERRc();
 
 			return *this;
 		}
@@ -371,7 +371,7 @@ namespace mmi {
 			if ( Index == NONE )
 				Index = Descripteurs.New();
 			else if ( !Descripteurs.Exists( Index ) )
-				ERRu();
+				ERRc();
 
 			Descripteurs.Store( D, Index );
 

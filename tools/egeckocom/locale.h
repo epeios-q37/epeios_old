@@ -42,14 +42,7 @@ namespace locale {
 
 # define LOCALE__MESSAGE_AMOUNT	0
 
-	const char *Label( message__ Message );
-
-	inline const str::string_ &GetTranlation(
-		message__ Message,
-		str::string_ &Translation )
-	{
-		return scllocale::GetTranslation( Label( Message ), Translation );
-	}
+	const char *GetLabel( message__ Message );
 }
 
 #endif

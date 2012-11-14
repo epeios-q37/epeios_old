@@ -190,7 +190,7 @@ namespace dtfptb {
 		bso::ulong__ ULong = FittedGetULong( Flow );
 
 		if ( ULong > BSO_USHORT_MAX )
-			ERRf();
+			ERRc();
 
 		return (bso::ushort__)ULong;
 	}

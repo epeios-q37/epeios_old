@@ -93,27 +93,25 @@ const char *frdkrn::GetLabel( recap__ Recap )
 # error "'report__' modified !"
 #endif
 
-const str::string_ &frdkrn::GetTranslation(
+void frdkrn::GetMeaning(
 	recap__ Recap,
 	const error_set___ &ErrorSet,
-	const lcl::locale_ &Locale,
-	const char *Language,
-	str::string_ &Translation )
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	str::string EmbeddedMessage;
+	lcl::meaning MeaningBuffer;
 ERRBegin
-	Locale.GetTranslation( GetLabel( Recap ), Language, Translation );
+	Meaning.SetValue( GetLabel( Recap ) );
 
 	switch ( Recap ) {
 		case rProjectParsingError:
 		case rSettingsParsingError:
-			EmbeddedMessage.Init();
-			rgstry::GetTranslation( ErrorSet.Context, Locale, Language, EmbeddedMessage );
-			lcl::ReplaceTag( Translation, 1, EmbeddedMessage );
+			MeaningBuffer.Init();
+			rgstry::GetMeaning( ErrorSet.Context, MeaningBuffer );
+			Meaning.AddTag( MeaningBuffer );
 			break;
 		case rNoOrBadProjectId:
-			lcl::ReplaceTag( Translation, 1, ErrorSet.Misc );
+			Meaning.AddTag( ErrorSet.Misc );
 			break;
 		case rNoOrBadBackendDefinition:
 			break;
@@ -123,7 +121,7 @@ ERRBegin
 		case rIncompatibleBackend:
 		case rBackendError:
 		case rUnableToOpenFile:
-			lcl::ReplaceTag( Translation, 1, ErrorSet.Misc );
+			Meaning.AddTag( ErrorSet.Misc );
 			break;
 		default:
 			ERRc();
@@ -133,7 +131,6 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return Translation;
 }
 
 #define PROJECT_TYPE_NEW		"New"
@@ -280,21 +277,20 @@ void frdkrn::reporting_functions__::FBLFRDReport(
 	const char *Message )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	lcl::meaning Meaning;
 	str::string Translation;
 ERRBegin
 	if ( _Kernel == NULL )
 		ERRc();
 
+	Meaning.Init();
+	Meaning.SetValue( fblovl::GetLabel( Reply ) );
+	Meaning.AddTag( Message );
+
 	Translation.Init();
+	_Kernel->Locale().GetTranslation( Meaning, _Kernel->Language(), Translation );
 
-	_Kernel->Locale().GetTranslation( fblovl::GetLabel( Reply ), _Kernel->Language(), Translation );
-
-	Translation.Append( " : " );
-	
-	Translation.Append( Message );
-
-	this->FRDKRNReportBackendError( Translation.Convert( Buffer ) );
+	this->FRDKRNReportBackendError( Translation );
 ERRErr
 ERREnd
 ERREpilog
@@ -477,18 +473,6 @@ ERREpilog
 	return Recap;
 }
 
-inline static const str::string_ &Report_(
-	recap__ Recap,
-	const error_set___ &ErrorSet,
-	const lcl::locale_ &Locale,
-	const  char *Language,
-	str::string_ &Message )
-{
-	GetTranslation( Recap, ErrorSet, Locale, Language, Message );
-
-	return Message;
-}
-
 static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 {
 	mdr::row__ Row = Id.First();
@@ -562,7 +546,7 @@ ERRProlog
 ERRBegin
 	TVoidOFlow.Init( flx::VoidOFlow );
 
-	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, Locale(), Language(), TVoidOFlow ) == fil::bsOK )
+	if ( fil::CreateBackupFile( FileName.Convert( FileNameBuffer ), fil::bmRename, err::hUserDefined ) == fil::bsOK )
 		Backuped = true;
 
 	if ( FFlow.Init( FileNameBuffer, err::hUserDefined ) != fil::sSuccess ) {
@@ -587,7 +571,7 @@ ERRBegin
 	Recap = r_OK;
 ERRErr
 	if ( Backuped )
-		fil::RecoverBackupFile( FileNameBuffer, Locale(), Language(), TVoidOFlow );
+		fil::RecoverBackupFile( FileNameBuffer, err::hUserDefined );
 ERREnd
 ERREpilog
 	return Recap;
@@ -635,8 +619,8 @@ ERRBegin
 	ErrorSet.Init();
 
 	if ( ( Recap = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
-		_Message.Init();
-		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
+		_Meaning.Init();
+		frdkrn::GetMeaning( Recap, ErrorSet, _Meaning );
 		Status = sWarning;
 		ERRReturn;
 	} else
@@ -661,8 +645,8 @@ ERRBegin
 	ErrorSet.Init();
 
 	if ( ( Report = LoadProject( FileName, TargetName, Criterions, Id, ErrorSet ) ) != r_OK ) {
-		_Message.Init();
-		GetTranslation( Report, ErrorSet, Locale(), Language(),_Message );
+		_Meaning.Init();
+		frdkrn::GetMeaning( Report, ErrorSet, _Meaning );
 		Status = sError;
 		ERRReturn;
 	} else
@@ -686,8 +670,8 @@ ERRBegin
 	ErrorSet.Init();
 
 	if ( ( Recap = LaunchProject( CompatibilityInformations, *_ReportingFunctions, ErrorSet ) ) != r_OK ) {
-		_Message.Init();
-		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
+		_Meaning.Init();
+		frdkrn::GetMeaning( Recap, ErrorSet, _Meaning );
 		Status = sError;
 		ERRReturn;
 	} else
@@ -727,9 +711,8 @@ ERRBegin
 	ErrorSet.Init();
 
 	if ( ( Recap = SaveProject( FileName, TargetName, Id, ErrorSet ) ) != r_OK ) {
-		_Message.Init();
-		GetTranslation( Recap, ErrorSet, Locale(), Language(), _Message );
-		_Message.Append( " !" );
+		_Meaning.Init();
+		frdkrn::GetMeaning( Recap, ErrorSet, _Meaning );
 		Status = sError;
 		ERRReturn;
 	} else

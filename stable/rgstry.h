@@ -74,7 +74,7 @@ extern class ttr_tutor &RGSTRYTutor;
 
 // Prédéclaration.
 namespace lcl {
-	class locale_;
+	class meaning_;
 }
 
 namespace rgstry {
@@ -1053,11 +1053,9 @@ namespace rgstry {
 	};
 
 
-	const str::string_ &GetTranslation(
+	void GetMeaning(
 		const context___ &Context,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Translation );
+		lcl::meaning_ &Meaning );
 
 	status__ FillRegistry(
 		xtf::extended_text_iflow__ &XFlow,
@@ -1115,7 +1113,7 @@ namespace rgstry {
 		return Status;
 	}
 
-# if 0	// Déprécié, destiné à disparaître. Utiliser 'multi_level_registry_'.
+# if 1	// Déprécié, destiné à disparaître. Utiliser 'multi_level_registry_'.
 	class overloaded_registry___
 	{
 	public:

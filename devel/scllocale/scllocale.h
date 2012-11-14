@@ -67,18 +67,18 @@ extern class ttr_tutor &SCLLOCALETutor;
 
 namespace scllocale {
 
-	const lcl::rack__ &GetRack( void );
+	const lcl::locale_ &GetLocale( void );
 
-	lcl::level__ Load(
+	lcl::level__ Push(
+		flw::iflow__ &Flow,
+		const char *Directory,
+		const char *RootPath,
+		lcl::meaning_ &ErrorMeaning );
+
+	lcl::level__ Push(
 		flw::iflow__ &Flow,
 		const char *Directory,
 		const char *RootPath );
-
-	void SetLanguage( const str::string_ &Language );
-
-	const str::string_ &GetTranslation(
-		const char *Message,
-		str::string_ &Translation );
 }
 
 /*$END$*/

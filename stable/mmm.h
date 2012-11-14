@@ -1616,7 +1616,7 @@ namespace mmm {
 
 #ifdef MMM_DBG
 				if ( !_IsFragmentUsed( Header ) )
-					ERRu();
+					ERRc();
 #endif
 				mdr::size__ AmountRed = 0;
 				mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
@@ -1654,7 +1654,7 @@ namespace mmm {
 
 #ifdef MMM_DBG
 				if ( !_IsFragmentUsed( Header ) )
-					ERRu();
+					ERRc();
 #endif
 				mdr::size__ AmountWritten = 0;
 				mdr::size__ FirstFragmentDataSize = _GetUsedFragmentDataSize( Header );
@@ -1681,7 +1681,7 @@ namespace mmm {
 		void Preallocate( mdr::size__ Size )
 		{
 			if ( _Size() > Size )
-				ERRu();
+				ERRc();
 			else if ( _Size() != Size ) {
 				Size -= _Size();
 				row__ Row = _AppendNewFragment( Size );
@@ -1708,7 +1708,7 @@ namespace mmm {
 		void _Set( multimemory_ &Multimemory )
 		{
 			if ( _Multimemory != NULL )
-				ERRu();
+				ERRc();
 
 			_Multimemory = &Multimemory;
 		}

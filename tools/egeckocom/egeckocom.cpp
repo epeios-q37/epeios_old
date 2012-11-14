@@ -27,7 +27,9 @@
 
 #include "locale.h"
 #include "registry.h"
+
 #include "sclmisc.h"
+#include "sclerror.h"
 
 #include "atcplsrch.h"
 
@@ -40,7 +42,7 @@
 
 #define NAME	"egeckocom"
 #define VERSION	"0.1.4"
-#define BUILD	"20120726"
+#define BUILD	"20121114"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -84,8 +86,8 @@ protected:
 #define RP	\
 		nsresult NSResult = NS_OK;\
 	ERRProlog\
-		str::string ErrorMessage;\
-		STR_BUFFER___ ErrorMessageBuffer;\
+		lcl::meaning ErrorMeaning;\
+		str::string ErrorTranslation;\
 		err::buffer__ ERRBuffer;
 
 #define RB	ERRBegin
@@ -95,16 +97,24 @@ protected:
 // BE CAREFUL : the exception can come from the library. In this case, the error data are NOT available. The library has its own 'ERR' library data.
 #define RN\
 		cio::CErr << txf::commit;\
+		ErrorTranslation.Init();\
 		if ( CErrString_.Amount() != 0 ) {\
-			ErrorMessage = CErrString_.Convert( ErrorMessageBuffer );\
+			ErrorTranslation = CErrString_;\
 			CErrString_.Init();\
-		} else if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iBeam ) )\
-			ErrorMessage = err::Message( ERRBuffer );\
+		} else if ( !ErrorMeaning.Levels.IsEmpty() ) {\
+			ERRRst();\
+			scllocale::GetLocale().GetTranslation( ErrorMeaning, _LanguageBuffer, ErrorTranslation );\
+		} else if ( sclerror::IsErrorPending() ) {\
+			ERRRst();\
+			scllocale::GetLocale().GetTranslation( sclerror::GetMeaning(), _LanguageBuffer, ErrorTranslation );\
+			sclerror::ResetMeaning();\
+		} else if ( ERRType != err::t_Free )\
+			ErrorTranslation = err::Message( ERRBuffer );\
 \
 		if ( ERRError() )\
 	 		ERRRst();\
 \
-		nsxpcm::Transform( ErrorMessage, JSErrorMessage );\
+		nsxpcm::_Transform( ErrorTranslation, JSErrorMessage );\
 \
 	ERREnd
 
@@ -165,9 +175,7 @@ NS_IMETHODIMP egeckocom___::Create(
 {
 RP
 	str::string RawLibraryName, CorrectedLibraryName;
-	str::strings Tags;
 	FNM_BUFFER___ LocationBuffer;
-	str::string Translation;
 	STR_BUFFER___ Buffer;
 	str::string ConfigurationDirectory;
 RB
@@ -180,6 +188,13 @@ RB
 		IsInitialized_ = true;
 	}
 
+	_LanguageBuffer.Init();
+
+	if ( ( _LanguageBuffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
+		ERRa();
+
+	strcpy( _LanguageBuffer, Language );
+
 	RawLibraryName.Init();
 	GetComponent_( ComponentId, RawLibraryName );
 
@@ -188,12 +203,6 @@ RB
 	if ( _CurrentSteering != NULL )
 		ERRc();
 
-	_LanguageBuffer.Init();
-
-	if ( ( _LanguageBuffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
-		ERRa();
-
-	strcpy( _LanguageBuffer, Language );
 
 	CorrectedLibraryName.Init();
 
@@ -206,15 +215,11 @@ RB
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		if ( CErrString_.Amount() == 0 ) {
-			Translation.Init();
-			ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_OPEN_COMPONENT, Translation ) );
-			Tags.Init();
-			Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-			Tags.Append( RawLibraryName );
-			lcl::ReplaceTags( ErrorMessage, Tags );
-			ErrorMessage.Append( " !" );
+			ErrorMeaning.Init();
+			ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_OPEN_COMPONENT );
+			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 		}
-		ERRBeam();
+		ERRFree();
 	}
 
 	_CurrentSteering = &_Wrapper.GetSteering();
@@ -233,9 +238,7 @@ NS_IMETHODIMP egeckocom___::Retrieve(
 {
 RP
 	str::string LibraryName;
-	str::strings Tags;
 	STR_BUFFER___ Buffer;
-	str::string Translation;
 RB
 	LibraryName.Init();
 	GetComponent_( ComponentId, LibraryName );
@@ -243,19 +246,17 @@ RB
 	mtx::Lock( _Mutex );
 
 	if ( _CurrentSteering != NULL ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_BAD_RETRIEVE_CONTEXT, Translation ) );
-		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
+		ErrorMeaning.Init();
+		ErrorMeaning.SetValue( MESSAGE_BAD_RETRIEVE_CONTEXT );
+		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+		ERRFree();
 	}
 
 	if ( ( _CurrentSteering = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_RETRIEVE_FAILURE, Translation ) );
-		lcl::ReplaceTag( ErrorMessage, 1, str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
+		ErrorMeaning.Init();
+		ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
+		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+		ERRFree();
 	}
 
 RR
@@ -274,8 +275,6 @@ NS_IMETHODIMP egeckocom___::Register(
 	// Don't know how to get a 'window' from its 'document'.
 RP
 	str::string Id;
-	str::strings Tags;
-	str::string Translation;
 RB
 	if ( !mtx::IsLocked( _Mutex ) )
 		ERRu();
@@ -288,14 +287,11 @@ RB
 	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !_CurrentSteering->Register( Window, Id ) ) {
-		Translation.Init();
-		ErrorMessage.Init( scllocale::GetTranslation( MESSAGE_UNABLE_TO_REGISTER_ELEMENT, Translation ) );
-		Tags.Init();
-		Tags.Append( str::string( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) ) );
-		Tags.Append( Id );
-		lcl::ReplaceTags( ErrorMessage, Tags );
-		ErrorMessage.Append( " !" );
-		ERRBeam();
+		ErrorMeaning.Init();
+		ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_REGISTER_ELEMENT );
+		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+		ErrorMeaning.AddTag( Id );
+		ERRFree();
 	}
 RR
 RN

@@ -543,7 +543,7 @@ namespace bch {
 	public:
 		static mdr::size__ SizeOf( void * )
 		{
-			ERRu();
+			ERRc();
 			return 0;	// To avoid a warning.
 		}
 	};

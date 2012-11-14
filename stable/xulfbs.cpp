@@ -74,11 +74,19 @@ void xulfbs::_Report(
 	if ( Message != NULL )
 		Trunk.UI().LogAndPrompt( Message );
 	else {	// L'erreur a été détectée dans un contexte où les informations ka concernant ne sont pas disponibles, d'où traitement ici.
-		if ( ERRMajor == err::itn ) {
-			if ( ERRMinor != err::iAbort )
-				_RetrieveErrAndReport( Trunk );
-		} else
-				_RetrieveErrAndReport( Trunk );
+		switch (  ERRType ) {
+		case err::t_Exit:
+			ERRc();
+			break;
+		case err::t_Abort:
+			break;
+		case err::t_Return:
+			ERRc();
+			break;
+		default:
+			_RetrieveErrAndReport( Trunk );
+			break;
+		}
 
 		ERRRst();
 	}

@@ -472,7 +472,7 @@ namespace lst {
 		{
 			if ( fil::FileExists( _FileName ) )
 				if ( ErrorHandling == err::hThrowException )
-					ERRf();
+					ERRc();
 				else
 					return false;
 

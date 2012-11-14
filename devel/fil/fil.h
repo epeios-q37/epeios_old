@@ -78,7 +78,7 @@ namespace str {
 }
 
 namespace lcl {
-	class locale_;
+	class meaning_;
 }
 
 #if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
@@ -167,7 +167,7 @@ namespace fil {
 			break;
 #endif
 		case EFAULT:
-			ERRu();
+			ERRc();
 			break;
 		case EACCES:
 			break;
@@ -175,7 +175,7 @@ namespace fil {
 			ERRs();
 			break;
 		case ENAMETOOLONG:
-			ERRu();
+			ERRc();
 			break;
 		default:
 			ERRs();
@@ -191,7 +191,7 @@ namespace fil {
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRc();
 
 		return Stat.st_mtime;
 #elif defined( FIL__POSIX )
@@ -212,7 +212,7 @@ namespace fil {
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRc();
 
 		return Stat.st_size;
 #elif defined( FIL__POSIX )
@@ -233,7 +233,7 @@ namespace fil {
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRc();
 
 		return Stat.st_mode & _S_IFDIR;
 #elif defined( FIL__POSIX )
@@ -254,7 +254,7 @@ namespace fil {
 		struct _stat Stat;
 
 		if ( _stat( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRc();
 
 		return Stat.st_mode & _S_IFREG;
 #elif defined( FIL__POSIX )
@@ -273,7 +273,7 @@ namespace fil {
 	inline void TouchFile( const char *FileName )
 	{
 		if ( utime( FileName, NULL ) != 0 )
-			ERRu();
+			ERRc();
 	}
 
 	inline void RemoveFile( const char *FileName )
@@ -301,6 +301,11 @@ namespace fil {
 
 	const char *GetLabel( backup_status__ Status );
 
+	void GetMeaning(
+		backup_status__ Status,
+		const char *FileName,
+		lcl::meaning_ &Meaning );
+
 	//e How handle the backuped file.
 	enum backup_mode__
 	{
@@ -322,13 +327,6 @@ namespace fil {
 		backup_mode__ Mode,
 		err::handling__ = err::h_Default  );
 
-	backup_status__ CreateBackupFile(
-		const char *FileName,
-		backup_mode__ Mode,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		txf::text_oflow__ &Flow );
-
 	enum recover_status__
 	{
 		rsOK,
@@ -338,25 +336,17 @@ namespace fil {
 		rs_Undefined
 	};
 
-	const char *Label( recover_status__ Status );
+	const char *GetLabel( recover_status__ Status );
 
-	const str::string_ &GetTranslation(
+	void GetMeaning(
 		recover_status__ Status,
 		const char *FileName,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		str::string_ &Tranlsation );
+		lcl::meaning_ &Meaning );
 
 	//f Recover the backup file 'Name' with 'Extension' as extension.
 	recover_status__ RecoverBackupFile(
 		const char *FileName,
 		err::handling__ = err::h_Default  );
-
-	recover_status__ RecoverBackupFile(
-		const char *FileName,
-		const lcl::locale_ &Locale,
-		const char *Language,
-		txf::text_oflow__ &Flow );
 }
 
 /*$END$*/

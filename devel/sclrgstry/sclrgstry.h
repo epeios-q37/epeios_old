@@ -73,7 +73,7 @@ namespace sclrgstry {
 	using rgstry::tags_;
 	using rgstry::tags;
 
-	extern const lcl::rack__ *LocaleRack;	// A définir.
+//	extern const lcl::rack__ *LocaleRack;	// A définir.
 
 	const rgstry::registry_ &GetRegistry( void );
 

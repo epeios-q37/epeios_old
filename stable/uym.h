@@ -112,7 +112,7 @@ namespace uym {
 		{
 #ifdef UYM_DBG
 			if ( _Driver == NULL )
-				ERRu();
+				ERRc();
 #endif
 		}
 	public:
@@ -166,7 +166,7 @@ namespace uym {
 		{
 	#ifdef UYM_DBG
 			if ( !Ignore && !_Driver )
-				ERRu();
+				ERRc();
 	#endif
 			return _Driver;
 		}
@@ -226,10 +226,10 @@ namespace uym {
 #ifdef UYM_DBG
 			if ( Position >= S_.Size )
 				if ( Amount > 0 )
-					ERRu();
+					ERRc();
 
 			if ( ( Position + Amount ) > S_.Size )
-				ERRu();
+				ERRc();
 #endif
 		}
 		void _Recall(
@@ -299,7 +299,7 @@ namespace uym {
 		}
 		untyped_memory_ &operator =( const untyped_memory_ & ) const
 		{
-			ERRu();	// Parce que cette opération n'a pas de sens.
+			ERRc();	// Parce que cette opération n'a pas de sens.
 
 			return *(untyped_memory_ *)NULL;
 		}
@@ -422,7 +422,7 @@ namespace uym {
 			return true;
 			break;
 		default:
-			ERRu();
+			ERRc();
 			break;
 		}
 
@@ -432,7 +432,7 @@ namespace uym {
 	inline bso::bool__ Exists( state__ State )
 	{
 		if ( IsError( State ) )
-			ERRu();
+			ERRc();
 
 #if UYM_STATE_AMOUNT != 3
 #	error "'state__' changed !"
@@ -448,7 +448,7 @@ namespace uym {
 			ERRc();
 			break;
 		default:
-			ERRu();
+			ERRc();
 			break;
 		}
 

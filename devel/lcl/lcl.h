@@ -62,6 +62,7 @@ extern class ttr_tutor &LCLTutor;
 
 # include "err.h"
 # include "flw.h"
+# include "stk.h"
 # include "rgstry.h"
 
 # define LCL_TAG_MARKER_C	'%'
@@ -76,6 +77,91 @@ namespace lcl {
 	using str::strings_;
 	using str::strings;
 
+	E_ROW( row__ );
+
+	typedef bso::ubyte__ _level__;
+
+	typedef stk::E_BSTACKt_( _level__, row__ ) _levels_;
+	E_AUTO( _levels );
+
+
+	typedef stk::E_XMCSTACKt_( str::string_, row__ ) _values_;
+	E_AUTO( _values );
+
+	class meaning_
+	{
+	private:
+		void _Push(
+			_level__ Level,
+			const str::string_ &Value )
+		{
+			if ( Level == BSO_UBYTE_MAX )
+				ERRl();
+
+			if ( Levels.Push( Level ) != Values.Push( Value ) )
+				ERRc();
+		}
+	public:
+		struct s {
+			_levels_::s Levels;
+			_values_::s Values;
+		};
+		_levels_ Levels;
+		_values_ Values;
+		meaning_( s &S )
+		: Levels( S.Levels ),
+		  Values( S.Values )
+		{}
+		void reset( bso::bool__ P )
+		{
+			Levels.reset( P );
+			Values.reset( P );
+		}
+		void plug( mmm::E_MULTIMEMORY_ &MM )
+		{
+			Levels.plug( MM );
+			Values.plug( MM );
+		}
+		meaning_ &operator =( const meaning_ &M )
+		{
+			Levels = M.Levels;
+			Values = M.Values;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Levels.Init();
+			Values.Init();
+		}
+		void SetValue( const str::string_ &Value )
+		{
+			if ( !Levels.IsEmpty() )
+				ERRc();
+
+			_Push( 0, Value );
+		}
+		void SetValue( const char *Value )
+		{
+			SetValue( str::string( Value ) );
+		}
+		void AddTag( const str::string_ &Value )
+		{
+			if ( Levels.IsEmpty() )
+				ERRc();
+
+			_Push( 1, Value );
+		}
+		void AddTag( const char *Value )
+		{
+			AddTag( str::string( Value ) );
+		}
+		void AddTag( const meaning_ &Meaning );
+	};
+
+	E_AUTO( meaning );
+
+
 	class locale_ {
 	private:
 		void _GetCorrespondingLabels(
@@ -83,20 +169,29 @@ namespace lcl {
 			strings_ &Wordings ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingLanguageThenMessage(
-			const char *Text,
+			const str::string_ &Text,
 			const char *Language,
 			str::string_ &Translation ) const;
 		// A des fins de compatibilité ascendente.
 		bso::bool__ _GetTranslationFollowingMessageThenLanguage(
-			const char *Text,
+			const str::string_ &Text,
 			const char *Language,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingLanguageThenText(
-			const char *Text,
+			const str::string_ &Text,
 			const char *Language,
 			str::string_ &Translation ) const;
 		bso::bool__ _GetTranslationFollowingTextThenLanguage(
-			const char *Text,
+			const str::string_ &Text,
+			const char *Language,
+			str::string_ &Translation ) const;
+		void _GetTranslation(
+			const str::string_ &Text,
+			const char *Language,
+			str::string_ &Translation ) const;
+		void _GetTranslation(
+			_levels_ &Levels,
+			_values_ &Values,
 			const char *Language,
 			str::string_ &Translation ) const;
 	public:
@@ -204,32 +299,22 @@ namespace lcl {
 		void GetLanguages(
 			strings_ &Labels,
 			strings_ &Wordings ) const;
-		bso::bool__ GetTranslation(
-			const char *Text,
+		const str::string_  &GetTranslation(
+			const meaning_ &Meaning,
 			const char *Language,
 			str::string_ &Translation ) const;
-		const char *GetTranslation(
-			const char *Text,
+		const str::string_ &GetTranslation(
+			const char *Message,
 			const char *Language,
-			STR_BUFFER___ &Buffer ) const;	// Si la traduction n'existe pas, 'Text' est renvoyé.
+			str::string_ &Translation ) const	// Version simplifiée.
+		{
+			_GetTranslation( str::string( Message ), Language, Translation );
+
+			return Translation ;
+		}
 	};
 
 	E_AUTO( locale );
-
-	inline void ReplaceTags(
-		str::string_ &Text,
-		const strings_ &Values )
-	{
-		str::ReplaceTags( Text, Values, LCL_TAG_MARKER_C );
-	}
-
-	inline void ReplaceTag(
-		str::string_ &Text,
-		bso::ubyte__ Indice,
-		const str::string_ &Value )
-	{
-		str::ReplaceTag( Text, Indice, Value, LCL_TAG_MARKER_C );
-	}
 }
 
 /*$END$*/

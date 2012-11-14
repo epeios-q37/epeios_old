@@ -198,7 +198,7 @@ namespace flm {
 					ERRd();
 					break;
 				default:
-					ERRu();
+					ERRc();
 					break;
 				}
 			}
@@ -383,7 +383,7 @@ namespace flm {
 																		*/
 							Amount = Nombre;
 						else
-							ERRu();
+							ERRc();
 					else
 						ERRd();
 					
@@ -516,9 +516,9 @@ namespace flm {
 				if ( Mode == fil::mReadWrite )
 					Open_( false );
 				else
-					ERRu();
+					ERRc();
 			else if ( Creation != flm::cFirstUse )
-				ERRu();
+				ERRc();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
 		void ReleaseFile( bso::bool__ ReportClosing = true )

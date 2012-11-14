@@ -110,7 +110,7 @@ ERRBegin
 		_Red += Amount;
 
 	if ( _Red > _AmountMax )
-		ERRf();
+		ERRF();
 ERRErr
 ERREnd
 ERREpilog
@@ -139,7 +139,7 @@ ERRBegin
 	Amount = _LoopingWrite( Buffer, Wanted, Minimum );
 
 	if ( Amount == 0 )
-		ERRf();
+		ERRF();
 
 #ifdef FLW_DBG
 		if ( Amount > Wanted )
@@ -152,7 +152,7 @@ ERRBegin
 	_Written += Amount;
 
 	if ( _Written >= _AmountMax )
-		ERRf();
+		ERRF();
 ERRErr
 	_Size = _Free = 0;	// Pour éviter toute nouvelle écriture dans le cache. La prochaine tentative génèrera une erreur.
 	Commit();	// N'écrit rien (à priori) ; juste pour déverouiiler.

@@ -61,7 +61,7 @@ public:
 
 using namespace xulftk;
 
-void xulftk::reporting_functions__::FRDKRNReportBackendError( const char *Message )
+void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
 		ERRc();
@@ -71,7 +71,7 @@ void xulftk::reporting_functions__::FRDKRNReportBackendError( const char *Messag
 	ERRAbort();
 }
 
-void xulftk::reporting_functions__::FRDKRNReportFrontendError( const char *Message )
+void xulftk::reporting_functions__::FRDKRNReportFrontendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
 		ERRc();
@@ -86,6 +86,33 @@ void xulftk::reporting_functions__::Init( trunk___ &Trunk )
 	_reporting_functions__::Init( Trunk.Kernel() );
 }
 
+void xulftk::trunk___::Handle_( frdkrn::status__ Status )
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	_Kernel->GetTranslatedMeaning( Translation );
+
+	switch( Status ) {
+	case frdkrn::sOK:
+		break;
+	case frdkrn::sWarning:
+		_UI->LogAndPrompt( Translation );
+		break;
+	case frdkrn::sError:
+		_UI->Alert( Translation );
+		ERRAbort();
+		break;
+	default:
+		ERRc();
+		break;
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
 
 enum annex_type__
 {
@@ -160,8 +187,8 @@ ERRBegin
 
 	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
 		Translation.Init();
-		Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetDefinition", Language, Translation );
-		UI.LogAndPrompt( Translation );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetDefinition", Language, Translation ) );
+
 		ERRReturn;
 	}
 
@@ -271,8 +298,8 @@ ERRBegin
 		break;
 	case at_Undefined:
 			Translation.Init();
-			Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTypeDefinition", Language, Translation );
-			UI.LogAndPrompt( Translation );
+			UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTypeDefinition", Language, Translation ) );
+
 			ERRReturn;
 		break;
 	default:
@@ -395,17 +422,19 @@ static rgstry::row__ RetrieveSet_(
 ERRProlog
 	flw::iflow__ *Flow = NULL;
 	ibag___ Bag;
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	Bag.Init();
 	
 	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( dIn, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToRetrieveSettings", Language, Buffer ) );
+		Translation.Init();
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToRetrieveSettings", Language, Translation ) );
 		ERRReturn;
 	}
 
 	if ( ( Root = Read_( *Flow, Set ) ) == NONE ) {
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFindSettings", Language, Buffer ) );
+		Translation.Init();
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFindSettings", Language, Translation) );
 		ERRReturn;
 	}
 ERRErr
@@ -442,10 +471,10 @@ ERRBegin
 		ERRl();
 		break;
 	case frdkrn::bxtDaemon:
-		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
+		UI().SessionForm().Widgets.txbDaemonBackend.SetValueC( Location );
 		break;
 	case frdkrn::bxtEmbedded:
-		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValueC( Location );
 		break;
 	case frdkrn::bxt_Undefined:
 		Type = frdkrn::bxtNone;
@@ -466,10 +495,12 @@ static const str::string_ &GetProjectId_(
 	str::string_ &ProjectId )
 {
 ERRProlog
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	if ( !Trunk.Registry().GetValue( frdrgy::ProjectId, ProjectId ) || (  ProjectId.Amount() == 0 ) ) {
-		Trunk.UI().LogAndPrompt( Trunk.Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoProjectId", Trunk.Kernel().Language(), Buffer ) );
+		Translation.Init();
+		Trunk.UI().LogAndPrompt( Trunk.Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoProjectId", Trunk.Kernel().Language(), Translation) );
+
 		ERRAbort();
 	}
 ERRErr
@@ -490,7 +521,7 @@ ERRProlog
 	str::string Value;
 	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 	str::string ProjectId;
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	Set.Init();
 
@@ -512,7 +543,7 @@ ERRBegin
 	}
 
 	Value.Init();
-	UI().SessionForm().Widgets.mnlBackendType.GetValue( Value );
+	UI().SessionForm().Widgets.mnlBackendType.GetValueC( Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
 	case frdkrn::bxtNone:
@@ -520,18 +551,19 @@ ERRBegin
 		break;
 	case frdkrn::bxtPredefined:
 		Value.Init();
-		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValue( Value );
+		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValueC( Value );
 		break;
 	case frdkrn::bxtDaemon:
 		Value.Init();
-		UI().SessionForm().Widgets.txbDaemonBackend.GetValue( Value );
+		UI().SessionForm().Widgets.txbDaemonBackend.GetValueC( Value );
 		break;
 	case frdkrn::bxtEmbedded:
 		Value.Init();
-		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValue( Value );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValueC( Value );
 		break;
 	default:
-		UI().LogAndPrompt( Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoBackendType", Kernel().Language(), Buffer ) );
+		Translation.Init();
+		UI().LogAndPrompt( Kernel().Locale().GetTranslation( XULFTK_NAME "_BadOrNoBackendType", Kernel().Language(), Translation ) );
 		ERRAbort();
 		break;
 	}
@@ -550,11 +582,11 @@ bso::bool__ xulftk::trunk___::_DefendSession( void )
 	bso::bool__ Confirmed = false;
 ERRProlog
 	str::string Translation;
-	STR_BUFFER___ Buffer;
 ERRBegin
-	Translation.Init( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingAsking", Kernel().Language(), Buffer ) );
+	Translation.Init();
+	Translation.Init( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingAsking", Kernel().Language(), Translation) );
 	Translation.Append( ' ' );
-	Translation.Append( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingWarning", Kernel().Language(), Buffer ) );
+	Translation.Append( Kernel().Locale().GetTranslation( XULFTK_NAME "_ProjectClosingWarning", Kernel().Language(), Translation ) );
 
 	Confirmed = UI().Confirm( Translation );
 ERRErr
@@ -589,12 +621,14 @@ static bso::bool__ StoreSet_(
 ERRProlog
 	flw::oflow__ *Flow = NULL;
 	obag___ Bag;
-	STR_BUFFER___ Buffer;
+	str::string Translation;
 ERRBegin
 	Bag.Init();
 	
 	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( dOut, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToStoreSettings", Language, Buffer ) );
+		Translation.Init();
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToStoreSettings", Language, Translation ) );
+
 		ERRReturn;
 	}
 
