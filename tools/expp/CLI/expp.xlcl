@@ -13,7 +13,7 @@
 				<Translation language="en">Process XML file</Translation>
 			</Translations>
 			<Translations message="EncryptCommandDescription">
-				<Translation language="fr">Chiffre fichier XML</Translation>
+				<Translation language="fr">Chiffrement du fichier XML</Translation>
 				<Translation language="en">Encrypt XML file</Translation>
 			</Translations>
 			<Translations message="NamespaceOptionDescription">
@@ -34,23 +34,15 @@
 			</Translations>
 		</xpp:bloc>
 		<xpp:bloc><!-- 'error__' -->
-			<Translations message="ErrorParsingConfigurationFile">
-				<Translation language="fr">%1</Translation>
-				<Translation language="en">%1</Translation>
-			</Translations>
-			<Translations message="ErrorParsingLocaleFile">
-				<Translation language="fr">Erreur dans le fichier de locale : %1</Translation>
-				<Translation language="en">Error in the locale file : %1</Translation>
-			</Translations>
-			<Translations message="UnableToOpenFile">
-				<Translation language="fr">Impossible d'ouvrir le fichier '%1'</Translation>
-				<Translation language="en">Unable to open file '%1'</Translation>
-			</Translations>
-			<Translations message="ProcessingError">
-				<Translation language="fr">Erreur de traitement : %1</Translation>
-				<Translation language="en">Processing error: %1</Translation>
-			</Translations>
-		</xpp:bloc>
+      <Translations message="ProcessingError">
+        <Translation language="fr">Erreur de traitement : %1</Translation>
+        <Translation language="en">Processing error: %1</Translation>
+      </Translations>
+      <Translations message="EncryptionError">
+        <Translation language="fr">Erreur de chiffrement : %1</Translation>
+        <Translation language="en">Encryption error: %1</Translation>
+      </Translations>
+    </xpp:bloc>
 
 		<!--
 			<Translations message="">

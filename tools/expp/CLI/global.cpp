@@ -34,14 +34,15 @@
 
 using namespace global;
 
-static lcl::locale _Locale;
 STR_BUFFER___ _Language;
-lcl::rack__ global::LocaleRack( _Locale, _Language() );
+lcl::locale global::Locale;
 
 #define DEFAULT_LANGUAGE	"en-US"
 
-#define CASE( name )			LCL_CASE( name, m )
-#define CASE_N( name, count )	LCL_CASE_N( name, m, count )
+#define CASE( l )\
+	case m##l:\
+	return #l;\
+	break
 
 const char *global::Label( message__ Message )
 {
@@ -88,7 +89,7 @@ ERRBegin
 	case mEncryptCommandDescription:
 		break;
 	case mNamespaceOptionDescription:
-		lcl::ReplaceTag( Translation, 1, str::string( XPP__PREPROCESSOR_DEFAULT_NAMESPACE ) );
+		str::ReplaceTag( Translation, 1, str::string( XPP__PREPROCESSOR_DEFAULT_NAMESPACE ), LCL_TAG_MARKER_C );
 		break;
 	case mNoIndentOptionDescription:
 	case mSourceFileArgumentDescription:
@@ -107,9 +108,11 @@ ERREpilog
 }
 
 #undef CASE
-#undef CASE_N
 
-#define CASE( label )	LCL_CASE( label, e )
+#define CASE( m )\
+	case e##m:\
+	return #m;\
+	break
 
 const char *global::Label( error__ Error )
 {

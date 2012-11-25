@@ -24,7 +24,8 @@
 // $$Id$$
 
 #include "expp.h"
-#include "global.h"
+#include "locale.h"
+#include "scltool.h"
 
 #include "err.h"
 #include "cio.h"
@@ -34,7 +35,11 @@
 #include "fnm.h"
 #include "flf.h"
 
-using namespace global;
+using cio::CErr;
+using cio::COut;
+using cio::CIn;
+
+const char *scltool::TargetName = NAME;
 
 #define DEFAULT_NAMESPACE	XPP__PREPROCESSOR_DEFAULT_NAMESPACE
 
@@ -85,45 +90,54 @@ struct parameters {
 	}
 };
 
-static void PrintSpecialsCommandsDescriptions( const clnarg::description_ &Description )
+static void PrintSpecialsCommandsDescriptions_(
+	const clnarg::description_ &Description,
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Text;
-	STR_BUFFER___ TranslationBuffer;
 	CLNARG_BUFFER__ Buffer;
+	lcl::meaning Meaning;
+	str::string Translation;
 ERRBegin
-	COut << LocaleRack.GetTranslation( "ProgramDescription", "", TranslationBuffer ) << '.'  << txf::nl;
+	Translation.Init();
+	COut << Locale.GetTranslation( "ProgramDescription", Language, Translation ) << '.'  << txf::nl;
 	COut << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetVersionCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
+	Meaning.Init();
+	clnarg::GetVersionCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetLicenseCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
+	Meaning.Init();
+	clnarg::GetLicenseCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetHelpCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
-
+	Meaning.Init();
+	clnarg::GetHelpCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
 }
 
-
-void PrintUsage( const clnarg::description_ &Description )
+static void PrintUsage_( const clnarg::description_ &Description )
 {
 ERRProlog
-	str::string Translation;
 	STR_BUFFER___ TBuffer;
 	CLNARG_BUFFER__ Buffer;
+	lcl::meaning Meaning;
+	str::string Translation;
 ERRBegin
-	PrintSpecialsCommandsDescriptions( Description );
+	PrintSpecialsCommandsDescriptions_( Description, scllocale::GetLocale(), scltool::GetLanguage() );
 
 	// Commands.
 	COut << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
@@ -132,7 +146,7 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << global::GetTranslation( global::mProcessCommandDescription, Translation ) << '.' << txf::nl;
+	COut << txf::pad << locale::GetProcessCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
 	COut << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
@@ -140,41 +154,41 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << global::GetTranslation( global::mEncryptCommandDescription, Translation ) << '.' << txf::nl;
+	COut << txf::pad << locale::GetEncryptCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
 // Options.
+	Meaning.Init();
+	clnarg::GetOptionsWordingMeaning( Meaning );
 	Translation.Init();
-	COut << clnarg::GetOptionsWordingTranslation( LocaleRack, Translation );
-	COut << " :" << txf::nl;
+	COut << scllocale::GetLocale().GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
 
 	COut << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
 	COut << txf::tab;
-	global::Display( mNamespaceOptionDescription );
-	COut << '.' << txf::nl;
+	Translation.Init();
+	COut << locale::GetNamespaceOptionDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
 	COut << txf::tab;
-	global::Display( mNoIndentOptionDescription );
-	COut << '.' << txf::nl;
+	Translation.Init();
+	COut << locale::GetNoIndentOptionDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
 // Arguments.
+	Meaning.Init();
+	clnarg::GetArgumentsWordingMeaning( Meaning );
 	Translation.Init();
-	COut << clnarg::GetArgumentsWordingTranslation( LocaleRack, Translation );
-	COut << " :" << txf::nl;
+	COut << scllocale::GetLocale().GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
 
 	COut << txf::pad << "<src> :" << txf::nl;
 	COut << txf::tab;
-	global::Display( mSourceFileArgumentDescription );
-	COut << '.' << txf::nl;
+	COut << locale::GetSourceFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "<dst> :" << txf::nl;
 	COut << txf::tab;
-	global::Display( mDestFileArgumentDescription );
-	COut << '.' << txf::nl;
+	COut << locale::GetDestFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -205,7 +219,7 @@ ERRBegin
 	Options.Init();
 
 	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
-		clnarg::ReportUnknownOptionError( Unknown, NAME, LocaleRack );
+		clnarg::ReportUnknownOptionError( Unknown, NAME, scllocale::GetLocale(), scltool::GetLanguage() );
 
 	P = Options.First();
 
@@ -217,7 +231,7 @@ ERRBegin
 			Analyzer.GetArgument( Option, Argument );
 
 			if ( Argument.Amount() == 0 )
-				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oNamespace, Buffer ), NAME, LocaleRack );
+				clnarg::ReportMissingOptionArgumentError( Analyzer.Description().GetOptionLabels( oNamespace, Buffer ), NAME, scllocale::GetLocale(), scltool::GetLanguage() );
 
 			Argument.Convert( Parameters.Namespace );
 
@@ -261,7 +275,7 @@ ERRBegin
 	case 0:
 		break;
 	default:
-		clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
+		clnarg::ReportWrongNumberOfArgumentsError( NAME, scllocale::GetLocale(), scltool::GetLanguage() );
 		break;
 	}
 
@@ -300,7 +314,7 @@ ERRBegin
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cHelp:
-		PrintUsage( Description );
+		PrintUsage_( Description );
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cLicense:
@@ -340,6 +354,7 @@ ERRProlog
 	xpp::status__ Status = xpp::s_Undefined;
 	xpp::context___ Context;
 	xtf::extended_text_iflow__ XFlow;
+	str::string ErrorTranslation;
 ERRBegin
 	Context.Init();
 
@@ -347,8 +362,16 @@ ERRBegin
 
 	if ( ( Status = xpp::Process( XFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
-								  Outfit, OFlow,  Context ) ) != xpp::sOK )
-		Report( eProcessingError, &Context );
+								  Outfit, OFlow,  Context ) ) != xpp::sOK )	{
+		ErrorTranslation.Init();
+
+		locale::GetProcessingErrorTranslation( Context, ErrorTranslation );
+
+		cio::CErr << ErrorTranslation << txf::nl;
+
+		ERRExit( EXIT_FAILURE );
+	}
+
 ERRErr
 ERREnd
 ERREpilog
@@ -370,18 +393,18 @@ ERRProlog
 ERRBegin
 	if ( Source != NULL ) {
 		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess )
-			Report( eUnableToOpenFile, Source );
+			scltool::ReportFileOpeningErrorAndExit( Source );
 
 		Directory = fnm::GetLocation( Source, Buffer );
 	}
 
 	if ( Destination != NULL ) {
-		global::CreateBackupFile( Destination );
+		scltool::CreateBackupFile( Destination );
 
 		BackedUp = true;
 
 		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess )
-			Report( eUnableToOpenFile, Destination );
+			scltool::ReportFileOpeningErrorAndExit( Destination );
 
 		TOFlow.Init( OFlow );
 	}
@@ -390,7 +413,7 @@ ERRBegin
 
 ERRErr
 	if ( BackedUp )
-		global::RecoverBackupFile( Destination );
+		scltool::RecoverBackupFile( Destination );
 ERREnd
 ERREpilog
 }
@@ -407,18 +430,19 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 	bso::bool__ BackedUp = false;
 	xpp::context___ Context;
+	str::string ErrorTranslation;
 ERRBegin
 	if ( Source != NULL )
 		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess )
-			Report( eUnableToOpenFile, Source );
+			scltool::ReportFileOpeningErrorAndExit( Source );
 
 	if ( Destination != NULL ) {
-		global::CreateBackupFile( Destination );
+		scltool::CreateBackupFile( Destination );
 
 		BackedUp = true;
 
 		if ( OFlow.Init( Destination, err::hUserDefined ) != fil::sSuccess )
-			Report( eUnableToOpenFile, Destination );
+			scltool::ReportFileOpeningErrorAndExit( Destination );
 
 		TOFlow.Init( OFlow );
 	}
@@ -428,11 +452,18 @@ ERRBegin
 	if ( xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
-								  ( Destination == NULL ? COut : TOFlow ),  Context ) != xpp::sOK )
-		Report( eEncryptionError, &Context );
+								  ( Destination == NULL ? COut : TOFlow ),  Context ) != xpp::sOK )	{
+		ErrorTranslation.Init();
+
+		locale::GetProcessingErrorTranslation( Context, ErrorTranslation );
+
+		cio::CErr << ErrorTranslation << txf::nl;
+
+		ERRExit( EXIT_FAILURE );
+	}
 ERRErr
 	if ( BackedUp )
-		global::RecoverBackupFile( Destination );
+		scltool::RecoverBackupFile( Destination );
 ERREnd
 ERREpilog
 }
@@ -458,7 +489,7 @@ ERREnd
 ERREpilog
 }
 
-void Main(
+void scltool::Main(
 	int argc,
 	const char *argv[] )
 {

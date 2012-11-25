@@ -37,7 +37,7 @@ namespace global {
 	using cio::COut;
 	using cio::CIn;
 
-	extern lcl::rack__ LocaleRack;
+	extern lcl::locale Locale;
 	
 
 //	using registry::value_;
@@ -62,7 +62,7 @@ namespace global {
 		message__ Message,
 		str::string_ &Translation )
 	{
-		LocaleRack.GetTranslation( Label( Message ), "", Translation );
+		Locale.GetTranslation( Label( Message ), "", Translation );
 
 		return Translation;
 	}
@@ -89,7 +89,7 @@ namespace global {
 		error__ Error,
 		str::string_ &Translation )
 	{
-		LocaleRack.GetTranslation( Label( Error ), "", Translation );
+		Locale.GetTranslation( Label( Error ), "", Translation );
 
 		return Translation;
 	}
