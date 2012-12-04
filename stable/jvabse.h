@@ -86,19 +86,16 @@ namespace jvabse {
 
 	inline void ERRFinal( JNIEnv *Env )
 	{
-		if ( ERRMajor != err::itn ) {
-			err::buffer__ Buffer;
+		err::buffer__ Buffer;
 
-			const char *Message = err::Message( Buffer );
+		const char *Message = err::Message( Buffer );
 
-			if ( ERRExitValue == EXIT_SUCCESS )
-				ERRExitValue = EXIT_FAILURE;
+		if ( ERRExitValue == EXIT_SUCCESS )
+			ERRExitValue = EXIT_FAILURE;
 
-			ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
+		ERRRst();	// To avoid relaunching of current error by objects of the 'FLW' library.
 
-			Env->ThrowNew( Env->FindClass( "java/lang/Exception" ), Message );	}
-		else
-			ERRRst();
+		Env->ThrowNew( Env->FindClass( "java/lang/Exception" ), Message );
 	}
 
 	const str::string_ &Convert(
@@ -140,7 +137,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetMethodID( Class, Name, Signature );
+		jmethodID MethodID = Env->GetMethodID( Class, Name, Signature );
+
+		if ( MethodID == NULL )
+			ERRc();
+
+		return MethodID;
 	}
 
 	inline jmethodID GetMethodID(
@@ -158,7 +160,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetStaticMethodID( Class, Name, Signature );
+		jmethodID MethodID = Env->GetStaticMethodID( Class, Name, Signature );
+
+		if ( MethodID == NULL )
+			ERRc();
+
+		return MethodID;
 	}
 
 	inline jmethodID GetStaticMethodID(
@@ -176,7 +183,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetFieldID( Class, Name, Signature );
+		jfieldID FieldID = Env->GetFieldID( Class, Name, Signature );
+
+		if ( FieldID == NULL )
+			ERRc();
+
+		return FieldID;
 	}
 
 	inline jfieldID GetFieldID(
@@ -185,7 +197,7 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetFieldID( GetClass( Env, Object ), Name, Signature );
+		return GetFieldID( Env, GetClass( Env, Object ), Name, Signature );
 	}
 
 	inline jfieldID GetStaticFieldID(
@@ -194,7 +206,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetStaticFieldID( Class, Name, Signature );
+		jfieldID FieldID = Env->GetStaticFieldID( Class, Name, Signature );
+
+		if ( FieldID == NULL )
+			ERRc();
+
+		return FieldID;
 	}
 
 	inline jint GetIntField(
@@ -235,7 +252,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetObjectField( Object, GetFieldID( Env, Object, Name, Signature ) );
+		jobject Field = Env->GetObjectField( Object, GetFieldID( Env, Object, Name, Signature ) );
+
+		if ( Field == NULL )
+			ERRc();
+
+		return Field;
 	}
 
 	inline jobject GetStaticObjectField(
@@ -244,7 +266,12 @@ namespace jvabse {
 		const char *Name,
 		const char *Signature )
 	{
-		return Env->GetStaticObjectField( Class, GetStaticFieldID( Env, Class, Name, Signature ) );
+		jobject Object = Env->GetStaticObjectField( Class, GetStaticFieldID( Env, Class, Name, Signature ) );;
+
+		if ( Object == NULL )
+			ERRc();
+
+		return Object;
 	}
 
 	inline void SetIntField(
@@ -276,6 +303,7 @@ namespace jvabse {
 			  || ( Signature[0] == 0 )
 			  ||( Signature[strlen( Signature )-1] != ';' ) )
 			ERRc();
+
 		Env->SetObjectField( Object, GetFieldID( Env, Object, Name, Signature ), Value );
 	}
 

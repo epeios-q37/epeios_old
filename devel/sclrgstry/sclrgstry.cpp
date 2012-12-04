@@ -74,6 +74,8 @@ rgstry::entry___ sclrgstry::Parameters( "Parameters" );
 
 rgstry::entry___ sclrgstry::Language( "Language", Parameters );
 
+rgstry::entry___ sclrgstry::Locale( "Locale", Parameters );
+
 bso::bool__ sclrgstry::IsRegistryReady( void )
 {
 	return Root_ != NONE;

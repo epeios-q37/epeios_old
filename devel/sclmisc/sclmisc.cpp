@@ -73,6 +73,65 @@ using namespace sclmisc;
 
 #define LOCALE_DEFAULT_FILENAME_SUFFIX ".xlcl"
 
+static void ReportConfigurationLocaleParsingError_(
+	const rgstry::context___ &Context,
+	lcl::meaning_ &Meaning )
+{
+ERRProlog
+	lcl::meaning MeaningBuffer;
+ERRBegin
+	Meaning.SetValue( SCLMISC_NAME "_ConfigurationLocaleParsingError" );
+
+	MeaningBuffer.Init();
+	rgstry::GetMeaning( Context, MeaningBuffer );
+
+	Meaning.AddTag( MeaningBuffer );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void LoadConfigurationLocale_( const str::string_ &Locale )
+{
+ERRProlog
+	flx::E_STRING_IFLOW__ Flow;
+	rgstry::context___ Context;
+	lcl::meaning ErrorMeaning;
+	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
+ERRBegin
+	Flow.Init( Locale );
+
+	Context.Init();
+	Level = scllocale::Push( Flow, NULL, "Locale", Context );
+
+	if ( Level == LCL_UNDEFINED_LEVEL ) {
+		ErrorMeaning.Init();
+		ReportConfigurationLocaleParsingError_( Context, ErrorMeaning );
+		sclerror::SetMeaning( ErrorMeaning );
+		ERRExit( EXIT_FAILURE );
+	} else if ( Level != 1 )
+		ERRc();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void LoadConfigurationLocale_( void )
+{
+ERRProlog
+	str::string Locale;
+ERRBegin
+	Locale.Init();
+
+	sclrgstry::GetRegistry().GetValue( sclrgstry::Locale, sclrgstry::GetRoot(), Locale );
+
+	if ( Locale.Amount() != 0 )
+		LoadConfigurationLocale_( Locale );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 static void Initialize_(
 	flw::iflow__ &LocaleFlow,
 	flw::iflow__ &RegistryFlow,
@@ -81,9 +140,11 @@ static void Initialize_(
 	const char *LocaleDirectory,
 	const char *RegistryDirectory )
 {
-	scllocale::Push( LocaleFlow, LocaleDirectory, LocaleRootPath );
+	scllocale::Load( LocaleFlow, LocaleDirectory, LocaleRootPath );
 
 	sclrgstry::Load( RegistryFlow, RegistryDirectory, RegistryRootPath );
+
+	LoadConfigurationLocale_();
 }
 
 static void BuildRootPath_(
@@ -278,6 +339,24 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void sclmisc::ReportFileOpeningErrorAndExit( const char *FileName )
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+	Meaning.SetValue( SCLMISC_NAME "_UnableToOpenFile" );
+	Meaning.AddTag( FileName );
+
+	sclerror::SetMeaning( Meaning );
+
+	ERRExit( EXIT_FAILURE );
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 

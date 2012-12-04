@@ -157,6 +157,10 @@ namespace lcl {
 			AddTag( str::string( Value ) );
 		}
 		void AddTag( const meaning_ &Meaning );
+		bso::bool__ IsEmpty( void ) const
+		{
+			return Levels.Amount() == 0;
+		}
 	};
 
 	E_AUTO( meaning );
@@ -227,7 +231,7 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, XFlow, Criterions, RootPath, Context ) != rgstry::sOK )
+			if ( Registry.Fill( Level, XFlow, Criterions, RootPath, Context ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
@@ -239,7 +243,7 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, XFlow, Criterions, RootPath ) != rgstry::sOK )
+			if ( Registry.Fill( Level, XFlow, Criterions, RootPath ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
@@ -252,7 +256,7 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, FileName, Criterions, RootPath, Context ) != rgstry::sOK )
+			if ( Registry.Fill( Level, FileName, Criterions, RootPath, Context ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
@@ -264,7 +268,7 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, FileName, xpp::criterions___(), RootPath, Context ) != rgstry::sOK )
+			if ( Registry.Fill( Level, FileName, xpp::criterions___(), RootPath, Context ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
@@ -276,7 +280,7 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, FileName, Criterions, RootPath ) != rgstry::sOK )
+			if ( Registry.Fill( Level, FileName, Criterions, RootPath ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
@@ -287,10 +291,14 @@ namespace lcl {
 		{
 			level__ Level = Registry.PushEmbeddedLevel();
 
-			if ( Registry.Fill( 0, FileName, xpp::criterions___(), RootPath ) != rgstry::sOK )
+			if ( Registry.Fill( Level, FileName, xpp::criterions___(), RootPath ) != rgstry::sOK )
 				Level = LCL_UNDEFINED_LEVEL;
 
 			return Level;
+		}
+		void Push( const locale_ &Locale )
+		{
+			Registry.Push( Locale.Registry );
 		}
 		level__ Pop( void )
 		{

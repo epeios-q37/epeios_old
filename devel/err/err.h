@@ -94,7 +94,7 @@ namespace err {
 	enum type {
 		tAllocation,	// (ERRa)' Erreur lors e l'allocation de RAM.
 		tDevice,		// (ERRd) Erreur signalant un problème avec un périphérique.
-		tSystem,			// (ERRs) Erreur du système.
+		tSystem,		// (ERRs) Erreur du système.
 		tUser,			// (ERRu) Erreur de l'utilisateur.
 		tBackend,		// (ERRb) Erreur 'backend'.
 		tVacant,		// (ERRv) Appel à une fonction absente (à priori non encore implémentée).	

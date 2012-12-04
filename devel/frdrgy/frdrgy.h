@@ -81,9 +81,8 @@ namespace frdrgy {
 
 	extern rgstry::entry___ Parameters;
 
-	extern rgstry::entry___ LocaleFileName;
-
 	extern rgstry::entry___ DefaultProject;
+	extern rgstry::entry___ Locale;
 
 	extern rgstry::entry___ PredefinedProjects;
 	extern rgstry::entry___ DefaultPredefinedProject;

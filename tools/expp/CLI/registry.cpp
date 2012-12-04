@@ -25,12 +25,3 @@
 
 #include "registry.h"
 
-# define ROOT	""
-
-# define S "/"
-
-rgstry::multi_level_registry registry::Registry;
-
-const char *registry::path::Language = "Language";
-const char *registry::path::LocaleFileName = "LocaleFileName";
-

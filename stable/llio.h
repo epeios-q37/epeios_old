@@ -62,29 +62,47 @@ extern class ttr_tutor &LLIOTutor;
 
 #include "cpe.h"
 
+# undef LLIO__USE_MLLIO
+# undef LLIO__USE_PLLIO
+# undef LLIO__USE_WLLIO
+
 #ifdef CPE__VC
-#	include "wllio.h"
+# define LLLIO__USE_WLLIO
 #elif defined( CPE__LINUX )
-#	include "pllio.h"
+# define LLLIO__USE_PLLIO
 #elif defined( CPE__CYGWIN )
-#	include "pllio.h"
+# define LLLIO__USE_PLLIO
 #elif defined( CPE__MAC )
-//#	include "mllio.h"
-#	include "pllio.h"	// Mac suit la norme POSIX.
+# define LLLIO__USE_PLLIO
+#elif defined( CPE__MINGW )
+# define LLLIO__USE_MLLIO
 #else
-#	error "Undefiend platform !"
+# error "Undefined platform !"
 #endif
 
+# ifdef LLLIO__USE_MLLIO
+#  include "mllio.h"
+#  define LLIO_UNDEFINED_DESCRIPTOR MLLIO_UNDEFINED_DESCRIPTOR
+# elif defined( LLLIO__USE_PLLIO )
+#  include "pllio.h"
+#  define LLIO_UNDEFINED_DESCRIPTOR PLLIO_UNDEFINED_DESCRIPTOR
+# elif defined( LLLIO__USE_WLLIO )
+#  include "wllio.h"
+#  define LLIO_UNDEFINED_DESCRIPTOR WLLIO_UNDEFINED_DESCRIPTOR
+# else
+#  error "Should not occur !!!"
+# endif
+
 namespace llio {
-#ifdef CPE__VC
-	using namespace wllio;
-#	define LLIO_UNDEFINED_DESCRIPTOR	WLLIO_UNDEFINED_DESCRIPTOR
-#elif defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+# ifdef LLLIO__USE_MLLIO
+	using namespace mllio;
+# elif defined( LLLIO__USE_PLLIO )
 	using namespace pllio;
-#	define LLIO_UNDEFINED_DESCRIPTOR	PLLIO_UNDEFINED_DESCRIPTOR
-#else
-#	error
-#endif
+# elif defined( LLLIO__USE_WLLIO )
+	using namespace wllio;
+# else
+#  error "Should not occur !!!"
+# endif
 }
 
 /*$END$*/

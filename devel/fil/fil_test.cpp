@@ -28,17 +28,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
 
 #include "fil.h"
 
 #include "err.h"
-#include "stf.h"
+#include "cio.h"
+
+using cio::COut;
+using cio::CErr;
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+	fil::TouchFile( "test.txt" );
 ERRErr
 ERREnd
 ERREpilog
@@ -49,7 +52,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	fout << "Test of library " << FILTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	COut << "Test of library " << FILTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -58,20 +61,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise();
+			TTR.Advertise( COut );
 			break;
 		}
 	default:
-		fout << txf::sync;
-		ferr << "\nBad arguments.\n";
-		fout << "Usage: " << FILTutor.Name << " [/i]\n\n";
-		ERRt();
+		COut << txf::commit;
+		CErr << "\nBad arguments.\n";
+		COut << "Usage: " << FILTutor.Name << " [/i]\n\n";
+		ERRExit( EXIT_FAILURE );
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	fout << "\nEnd of program " << FILTutor.Name << ".\n";
+	COut << "\nEnd of program " << FILTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

@@ -77,28 +77,28 @@ namespace jvastf {
 	class _flow_driver_common__
 	{
 	private:
-		jvabse::jni_param__ _JNIParam;
+		jvabse::jni_param__ *_JNIParam;
 	protected:
 		jbyteArray _JByteArray;
 		JNIEnv *_JEnv( void )
 		{
-			if ( _JNIParam.Env == NULL )
+			if ( _JNIParam == NULL )
 				ERRc();
 
-			if ( _JNIParam.Env == NULL )
+			if ( _JNIParam->Env == NULL )
 				ERRc();
 
-			return _JNIParam.Env;
+			return _JNIParam->Env;
 		}
 		jobject _JObject( void )
 		{
-			if ( _JNIParam.Env == NULL )
+			if ( _JNIParam == NULL )
 				ERRc();
 
-			if ( _JNIParam.Object == NULL )
+			if ( _JNIParam->Object == NULL )
 				ERRc();
 
-			return _JNIParam.Object;
+			return _JNIParam->Object;
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -107,7 +107,7 @@ namespace jvastf {
 				if( _JByteArray != NULL ) 
 					_JEnv()->DeleteLocalRef( _JByteArray );
 
-			_JNIParam.reset( P );
+			_JNIParam = NULL;
 			_JByteArray = NULL;
 		}
 		E_CVDTOR( _flow_driver_common__ )
@@ -115,7 +115,7 @@ namespace jvastf {
 		{
 			reset();
 
-			_JNIParam = JNIParam;
+			_JNIParam = &JNIParam;
 		}
 	};
 

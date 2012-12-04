@@ -257,7 +257,7 @@ void nsxpcm::GetJSConsole( nsIDOMWindow *ParentWindow )
 	nsxpcm::GetJSConsole( ParentWindow, &JSConsoleWindow_ );
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const char *String,
 	mdr::size__ Size,
 	char **JString )
@@ -271,22 +271,22 @@ void nsxpcm::_Transform(
 		ERRa();
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const char *String,
 	char **JString )
 {
-	_Transform( String, strlen( String ) + 1, JString );
+	Transform( String, strlen( String ) + 1, JString );
 }
 
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const nsACString &CString,
 	nsAString &WString )
 {
 	NS_CStringToUTF16(CString, NS_CSTRING_ENCODING_NATIVE_FILESYSTEM, WString );
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const nsAString &WString,
 	nsACString &CString )
 {
@@ -294,7 +294,7 @@ void nsxpcm::_Transform(
 }
 
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const nsAString &WString,
 	char **JString )
 {
@@ -303,37 +303,37 @@ ERRProlog
 ERRBegin
 	String.Init();
 
-	TransformC( WString, String );
-	_Transform( String, JString );
+	Transform( WString, String );
+	Transform( String, JString );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const str::string_ &String,
 	char **JString )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	_Transform( String.Convert( Buffer ), String.Amount() + 1, JString );
+	Transform( String.Convert( Buffer ), String.Amount() + 1, JString );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-void nsxpcm::TransformC(
+void nsxpcm::Transform(
 	const str::string_ &String,
 	nsAString &WString )
 {
 	nsCString CString;
 
-	_Transform( String, CString );
-	_Transform( CString, WString );
+	Transform( String, CString );
+	Transform( CString, WString );
 }
 
-void nsxpcm::_TransformW(
+void nsxpcm::TransformW(
 	const str::string_ &String,
 	nsAString &WString )
 {
@@ -346,45 +346,45 @@ ERREnd
 ERREpilog
 }
 
-void nsxpcm::TransformC(
+void nsxpcm::Transform(
 	const nsAString &WString,
 	str::string_ &String )
 {
 	nsCString CString;
 
-	_Transform( WString, CString );
-	_Transform( CString, String );
+	Transform( WString, CString );
+	Transform( CString, String );
 }
 
-void nsxpcm::_TransformW(
+void nsxpcm::TransformW(
 	const nsAString &WString,
 	str::string_ &String )
 {
 	String.Append( (const char *)WString.BeginReading(), WString.Length() * sizeof( nsString::char_type) );
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const nsACString &CString,
 	str::string_ &String )
 {
 	String.Append( (const char *)CString.BeginReading(), CString.Length() * sizeof( nsCString::char_type ) );
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const char *String,
 	nsACString &ECString )
 {
 	ECString.Assign( (const nsACString::char_type *)String );
 }
 
-void nsxpcm::_Transform(
+void nsxpcm::Transform(
 	const str::string_ &String,
 	nsACString &CString )
 {
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	_Transform( String.Convert( Buffer ), CString );
+	Transform( String.Convert( Buffer ), CString );
 ERRErr
 ERREnd
 ERREpilog
@@ -473,7 +473,7 @@ ERRBegin
 	
 	Join( Splitted, Separator, Joined );
 
-	_Transform( Joined, JString );
+	Transform( Joined, JString );
 ERRErr
 ERREnd
 ERREpilog
@@ -643,8 +643,8 @@ static inline void AddFilter_(
 {
 	nsString WTitle, WMask;
 
-	_Transform( Title, WTitle );
-	_Transform( Mask, WMask );
+	Transform( Title, WTitle );
+	Transform( Mask, WMask );
 
 	FilePicker->AppendFilter( WTitle, WMask );
 }
@@ -743,7 +743,7 @@ ERRProlog
 ERRBegin
 	CreateInstance( "@mozilla.org/filepicker;1", FilePicker );
 
-	TransformC( Title, WString );
+	Transform( Title, WString );
 
 	if ( ParentWindow == NULL )
 		ERRu();
@@ -763,7 +763,7 @@ ERRBegin
 	AddExtraPredefinedFilters_( S_.PredefinedFilters, Locale, Language, FilePicker );
 
 	if ( ( DefaultExtension != NULL ) && ( *DefaultExtension != 0 ) ) {
-		_Transform( DefaultExtension, WString );
+		Transform( DefaultExtension, WString );
 		T( FilePicker->SetDefaultExtension( WString ) );
 	}
 
@@ -786,7 +786,7 @@ ERRBegin
 	if ( ( Error = File->GetPath( WString ) ) != NS_OK )
 		ERRx();
 
-	TransformC( WString, FileName );
+	Transform( WString, FileName );
 
 	FileSelected = true;
 ERRErr
@@ -1096,7 +1096,7 @@ ERRBegin
 
 	ConvertAndJoin_<id__, id_t__>( Ids, Separator, Joined );
 
-	_Transform( Joined, JString );
+	Transform( Joined, JString );
 ERRErr
 ERREnd
 ERREpilog
@@ -1214,7 +1214,7 @@ ERRBegin
 
 	ConvertAndJoin( Booleans, Separator, Joined );
 
-	_Transform( Joined, JString );
+	Transform( Joined, JString );
 ERRErr
 ERREnd
 ERREpilog
@@ -1278,21 +1278,6 @@ ERREpilog
 }
 #endif
 
-inline static void Transform_(
-	const str::string_ &Text,
-	nsAString &WString )
-{
-	TransformC( Text, WString );
-}
-
-inline static void Transform_(
-	const char *Text,
-	nsAString &WString )
-{
-	_Transform( Text, WString );
-}
-
-
 template <typename t> static void Alert_(
 	nsIDOMWindow *Window,
 	t Text )
@@ -1300,7 +1285,7 @@ template <typename t> static void Alert_(
 ERRProlog
 	nsString WString;
 ERRBegin
-	Transform_( Text, WString );
+	Transform( Text, WString );
 
 	T( GetWindowInternal( Window )->Alert( WString ) );
 ERRErr
@@ -1330,7 +1315,7 @@ template <typename t> bso::bool__ Confirm_(
 ERRProlog
 	nsString WString;
 ERRBegin
-	Transform_( Text, WString );
+	Transform( Text, WString );
 
 	T( GetWindowInternal( Window )->Confirm( WString, &Answer ) );
 ERRErr
@@ -1369,7 +1354,7 @@ ERRBegin
 
 	nsxpcm::GetService<nsIConsoleService>( NS_CONSOLESERVICE_CONTRACTID, ConsoleService );
 
-	TransformC( StampedText, WString );
+	Transform( StampedText, WString );
 
 	T( ConsoleService->LogStringMessage( WString.get() ) );
 ERRErr
@@ -1522,7 +1507,7 @@ ERRBegin
 
 	EventString.Init();
 
-	TransformC( WString, EventString );
+	Transform( WString, EventString );
 
 	Event = Convert_( EventString.Convert( StrBuffer ), false );
 
@@ -1578,7 +1563,7 @@ ERRBegin
 	Attribute->GetName( RawName );
 
 	Name.Init();
-	TransformC( RawName, Name );
+	Transform( RawName, Name );
 
 	NameSpaceWithSeparator.Init( NameSpace );
 	NameSpaceWithSeparator.Append( ':' );
@@ -1596,7 +1581,7 @@ ERRBegin
 	T( Attribute->GetValue( RawValue ) );
 
 	Value.Init();
-	TransformC( RawValue, Value );
+	Transform ( RawValue, Value );
 
 	if ( Value != Id )
 		Event = e_Undefined;
@@ -1622,7 +1607,7 @@ ERRBegin
 	T( Node->GetNodeName( RawName ) );
 
 	Name.Init();
-	TransformC( RawName, Name );
+	Transform( RawName, Name );
 
 	if ( Name == "window" )
 		ERRl();	// J'ignore comment, à partir de cet élément, récupèrer un élément sur lequel un gestionnaire d'évènement soit actif.
@@ -1873,7 +1858,7 @@ NS_IMETHODIMP nsxpcm::tree_view__::GetCellText(
 
 	Text.Init();
 	 _C().GetCellText( aRow, Index, Text );
-	 TransformC( Text, aCellText );
+	 Transform( Text, aCellText );
 ERRErr
 ERREnd
 ERREpilog
@@ -1993,7 +1978,7 @@ ERRBegin
 
 	_C().GetValue( GetSearchString(), index, Value );
 
-	TransformC( Value , _retval );
+	Transform( Value , _retval );
 ERRErr
 ERREnd
 ERREpilog
@@ -2009,7 +1994,7 @@ ERRBegin
 
 	_C().GetLabel( GetSearchString(), index, Label );
 
-	TransformC( Label , _retval );
+	Transform( Label , _retval );
 ERRErr
 ERREnd
 ERREpilog
@@ -2025,7 +2010,7 @@ ERRBegin
 
 	_C().GetComment( GetSearchString(), index, Comment );
 
-	TransformC( Comment , _retval );
+	Transform( Comment , _retval );
 ERRErr
 ERREnd
 ERREpilog
@@ -2098,7 +2083,7 @@ ERRBegin
 	Row = Parameters.First();
 
 	while ( Row != NONE ) {
-		TransformC( Parameter( Row ).Name, Name );
+		Transform( Parameter( Row ).Name, Name );
 
 		nsxpcm::CreateInstance( NS_VARIANT_CONTRACTID, Value );
 		T( Value->SetAsString( Parameter( Row ).Value.Convert( NameBuffer ) ) );
@@ -2151,7 +2136,7 @@ static bso::bool__ _GetXMLDocument(
 	nsString WString;
 	nsCOMPtr<nsIDOMParser> Parser;
 
-	TransformC( XMLString, WString );
+	Transform( XMLString, WString );
 	
 	CreateInstance( NS_DOMPARSER_CONTRACTID, Parser );
 	Result = Parser->ParseFromString( WString.get(), "text/xml", &XMLDocument );
@@ -2168,8 +2153,8 @@ static bso::bool__ _GetXSLStylesheet(
 	nsString Empty;
 	nsCOMPtr<nsIXMLHttpRequest> HTTPRequest;
 
-	_Transform( "GET", Method );
-	_Transform( XSLStylesheetFileName, URL );
+	Transform( "GET", Method );
+	Transform( XSLStylesheetFileName, URL );
 
 	CreateInstance( NS_XMLHTTPREQUEST_CONTRACTID, HTTPRequest );
 
@@ -2341,7 +2326,7 @@ void nsxpcm::LaunchURI( const str::string_ &RawURI )
 	CreateInstance( "@mozilla.org/network/io-service;1", IOService );
 	CreateInstance( "@mozilla.org/uriloader/external-protocol-service;1", ExternalProtocolService );
 
-	_Transform( RawURI, TransformedURI );
+	Transform( RawURI, TransformedURI );
 
 	if ( ( Result = IOService->NewURI( TransformedURI, NULL, NULL, &URI ) ) != NS_OK )
 		ERRu();
@@ -2387,7 +2372,7 @@ bso::bool__ nsxpcm::GetDirectory(
 	if ( !GetDirectory( Name, RawDirectory, ErrHandling ) )
 		return false;
 	
-	_Transform( RawDirectory, Directory );
+	Transform( RawDirectory, Directory );
 
 	if ( Directory.Amount() != Length )
 		Directory.Append( FNM_DIRECTORY_SEPARATOR_CHARACTER );
@@ -2421,7 +2406,7 @@ ERRBegin
 	Row = Splitted.First();
 
 	while ( Row != NONE ) {
-		TransformC( Splitted( Row ), Transformed );
+		Transform( Splitted( Row ), Transformed );
 
 		T( LocalFile->AppendRelativePath( Transformed ) );
 
@@ -2516,7 +2501,7 @@ ERRBegin
 		T( CommandLine->GetArgument( Counter++, RawArgument ) );
 
 		Argument.Init();
-		TransformC( RawArgument, Argument );
+		Transform( RawArgument, Argument );
 		Arguments.Append( Argument );
 	}
 		
@@ -2623,7 +2608,7 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	nsIDOMNodeList *List = NULL;
 	nsString Id;
 
-	_Transform( "key", Id );
+	Transform( "key", Id );
 
 	if ( Document->GetElementsByTagName( Id, &List ) != NS_OK )
 		ERRu();
@@ -2641,7 +2626,7 @@ static nsIDOMWindowInternal *GetWindow_(
 	nsIDOMNode *Node = NULL;
 	nsIDOMWindow *Window = NULL;
 
-	_Transform( TagName, Id );
+	Transform( TagName, Id );
 
 	if ( Document->GetElementsByTagName( Id, &List ) != NS_OK )
 		ERRu();

@@ -40,9 +40,8 @@
 
 #define COMPONENT_VERSION	"5"
 
-#define NAME	"egeckocom"
+#define APP_NAME	"egeckocom"
 #define VERSION	"0.1.4"
-#define BUILD	"20121114"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -114,7 +113,7 @@ protected:
 		if ( ERRError() )\
 	 		ERRRst();\
 \
-		nsxpcm::_Transform( ErrorTranslation, JSErrorMessage );\
+		nsxpcm::Transform( ErrorTranslation, JSErrorMessage );\
 \
 	ERREnd
 
@@ -162,7 +161,7 @@ static void Initialize_( void )
 ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
-	sclmisc::Initialize( NAME, GetConfigurationDirectory_( Buffer ) );
+	sclmisc::Initialize( APP_NAME, GetConfigurationDirectory_( Buffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -176,8 +175,8 @@ NS_IMETHODIMP egeckocom___::Create(
 RP
 	str::string RawLibraryName, CorrectedLibraryName;
 	FNM_BUFFER___ LocationBuffer;
-	STR_BUFFER___ Buffer;
-	str::string ConfigurationDirectory;
+	STR_BUFFER___ Buffer, IdentificationBuffer;
+	str::string ConfigurationDirectory, Identification;
 RB
 	nsCOMPtr<nsxpcm::clh__>CLH;
 
@@ -211,7 +210,12 @@ RB
 
 	CorrectedLibraryName.Append( RawLibraryName );
 
-	_Data.Init( NAME " V" VERSION " Build " BUILD, _LanguageBuffer, fnm::GetLocation( CorrectedLibraryName.Convert( Buffer ), LocationBuffer ) );
+	Identification.Init();
+	Identification.Append( APP_NAME " V" VERSION " Build " __DATE__ " " __TIME__ " (" );
+	Identification.Append( cpe::GetDescription() );
+	Identification.Append( ')' );
+
+	_Data.Init( Identification.Convert( IdentificationBuffer ), _LanguageBuffer, fnm::GetLocation( CorrectedLibraryName.Convert( Buffer ), LocationBuffer ) );
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		if ( CErrString_.Amount() == 0 ) {

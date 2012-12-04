@@ -123,49 +123,52 @@ const char *err::Message(
 
 	switch( Type ) {
 	case err::tAllocation:
-		strcat( Buffer, "Allocation" );
+		strcat( Buffer, "ALC" );
 		break;
 	case err::tDevice:
-		strcat( Buffer, "Device" );
+		strcat( Buffer, "DVC" );
 		break;
 	case err::tSystem:
-		strcat( Buffer, "System" );
+		strcat( Buffer, "SYS" );
 		break;
 	case err::tUser:
-		strcat( Buffer, "User" );
+		strcat( Buffer, "USR" );
 		break;
 	case err::tBackend:
-		strcat( Buffer, "Backend" );
+		strcat( Buffer, "BKD" );
 		break;
 	case err::tConception:
-		strcat( Buffer, "Conception" );
+		strcat( Buffer, "CCP" );
 		break;
 	case err::tFlow:
-		strcat( Buffer, "Flow" );
+		strcat( Buffer, "FLW" );
 		break;
 	case err::tProhibition:
-		strcat( Buffer, "Prohibition" );
+		strcat( Buffer, "PRH" );
 		break;
 	case err::tLimitation:
-		strcat( Buffer, "Limitation" );
+		strcat( Buffer, "LMT" );
 		break;
 	case err::tMemory:
-		strcat( Buffer, "Memory" );
+		strcat( Buffer, "MMR" );
 		break;
 	case err::tExternal:
-		strcat( Buffer, "External" );
+		strcat( Buffer, "EXT" );
 		break;
 	case t_Free:
-		strcat( Buffer, "FREE" );
+		strcat( Buffer, "Free" );
 		break;
 	case t_Exit:
-		strcat( Buffer, "EXIT" );
+		strcat( Buffer, "Exit" );
 		break;
 	case t_Return:
-		strcat( Buffer, "RETURN" );
+		strcat( Buffer, "Return" );
+		break;
+	case t_Abort:
+		strcat( Buffer, "Abort" );
 		break;
 	default:
-		strcat( Buffer, "UNKNOWN" );
+		strcat( Buffer, "Unknown" );
 		break;
 	}
 
@@ -256,6 +259,7 @@ ERRBegin
 			COut << txf::commit;
 			CErr << txf::nl << txf::tab;
 		}
+
 		CErr << "{ " << Message << " }";
 
 		if ( cio::Target() == cio::tConsole )

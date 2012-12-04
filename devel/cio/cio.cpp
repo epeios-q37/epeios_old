@@ -75,11 +75,7 @@ static iof::io_iflow_driver___ _CInDriver;
 #endif
 
 #ifdef IOP__USE_LOWLEVEL_IO
-# if defined( CPE__MS ) || defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
 iop::descriptor__ cio::CInDescriptor = 0, cio::COutDescriptor = 1, cio::CErrDescriptor = 2;
-# else
-#		error "Unknow platform !"
-# endif
 #elif defined( IOP__USE_STANDARD_IO )
 iop::descriptor__ cio::cind = stdin, cio::coutd = stdout, cio::cerrd = stderr;
 #else

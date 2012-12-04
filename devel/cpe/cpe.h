@@ -63,13 +63,12 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-# undef CPE__MS			// Plateforme Microsoft.
-# undef CPE__BEOS		// Plateforme BeOS.
-# undef CPE__MAC		// Plateforme MAC.
-# undef CPE__CYGWIN		// Plateforme CYGWIN.
-# undef CPE__MINGW		// Plateforme MINGW.
-# undef CPE__LINUX		// Platforme Linux
-# undef CPE__ANDROID	// Plateforme Android.
+# undef CPE__MS			// Environnement Microsoft.
+# undef CPE__MAC		// Environnement MAC.
+# undef CPE__CYGWIN		// Environnement CYGWIN.
+# undef CPE__MINGW		// Environnement MINGW.
+# undef CPE__LINUX		// Environnement Linux
+# undef CPE__ANDROID	// Environnement Android.
 
 # undef CPE__VC		// Compilateur VC++
 # undef CPE__VC6	// Compilateur VC++ V6
@@ -79,7 +78,6 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__GCC3	// Compilateur GNU C++ V3.x
 # undef CPE__CW		// Compilateur CodeWarrior
 
-# undef CPE__32BITS		// Cible 32 bits.
 # undef CPE__MT			// Cible multitâche.
 # undef CPE__CONSOLE	// Cible console.
 # undef CPE__LIBRARY	// Cible bibliothèque (DLL, .so, ...)
@@ -87,9 +85,10 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__JAVA		// Cible composant java en code natif.
 # undef CPE__GECKO		// Cible composant Gecko.
 
-# undef CPE__INTEL		// Processeur Intel et compatible.
+# undef CPE__X86		// Processeur Intel et compatible.
 # undef CPE__ARM		// Processeur ARM.
 
+# undef CPE__32BITS		// Processeur 32 bits.
 # undef CPE__64BITS		// Processeur 64 bits.
 
 #undef CPE__64_BITS_TYPES_ALLOWED	// Les types 64 bits sont autorisés.
@@ -142,8 +141,6 @@ extern class ttr_tutor &CPETutor;
 #		define CPE__CYGWIN
 #	elif defined( __MINGW32__ )
 #		define CPE__MINGW
-#	elif defined( __BEOS__ )
-#		define CPE__BEOS
 #	elif defined( __linux__ )
 #		define CPE__LINUX
 #	endif
@@ -208,7 +205,7 @@ extern class ttr_tutor &CPETutor;
 #   define CPE__VC9
 #  endif
 #  ifdef _M_IX86
-#   define CPE__INTEL
+#   define CPE__X86
 #  endif
 # endif
 
@@ -217,7 +214,7 @@ extern class ttr_tutor &CPETutor;
 #   define CPE__GCC3
 #  endif
 #  ifdef __i386__
-#   define CPE__INTEL
+#   define CPE__X86
 #  endif
 #  ifdef __ARM_EABI__
 #   define CPE__ARM
@@ -230,9 +227,15 @@ extern class ttr_tutor &CPETutor;
 # endif
 #endif
 
-# if !defined( CPE__INTEL ) && !defined( CPE__ARM )
+# if !defined( CPE__X86 ) && !defined( CPE__ARM )
 #  error "Unable to guess the processor !"
 # endif
+
+namespace cpe {
+
+	const char *GetDescription( void );
+
+}
 
 
 /*$END$*/

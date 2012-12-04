@@ -746,7 +746,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
 		{
-			Set( Position );
+			this->Set( Position );
 			return Objet_;
 		}
 		//f Return the object at current position.
@@ -805,7 +805,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Set( Position );
+			this->Set( Position );
 			return Objet_;
 		}
 		t &operator()( void )
@@ -1185,7 +1185,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
 		{
-			Set( Position );
+			this->Set( Position );
 			return Objet_;
 		}
 		t &operator()( void )
@@ -1256,7 +1256,7 @@ namespace ctn {
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
 		{
-			Set( Position );
+			this->Set( Position );
 			return Objet_;
 		}
 		const t &operator()( void ) const

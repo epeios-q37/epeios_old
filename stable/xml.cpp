@@ -94,7 +94,7 @@ const char *xml::GetLabel( status__ Status )
 
 #undef CASE
 
-void xml::GetMessage(
+void xml::GetMeaning(
 	status__ Status,
 	const coord__ &Coord,
 	lcl::meaning_ &Meaning )

@@ -76,6 +76,21 @@ namespace xulftk {
 
 	typedef frdkrn::reporting_functions__ _reporting_functions__;
 
+	const str::string_ &BuildAboutText(
+		const char *LauncherIdentification,
+		const char *BuildInformations,
+		const char *AppName,
+		const char *Version,
+		const char *DebugFlag,
+		const char *AuthorName,
+		const char *AuthorContact,
+		const char *Copyright,
+		const char *ProjectAffiliation,
+		const char *SoftwareAffiliation,
+		xulftk::trunk___ &Trunk,
+		str::string_ &Text );
+
+
 	class reporting_functions__
 	: public _reporting_functions__
 	{
@@ -119,9 +134,10 @@ namespace xulftk {
 		void _DropSession( void );
 		// Ferme l'application. Normalement appelé par la redéfinition de 'XULFTKExit()'.
 		void _Exit( void );
-		virtual void XULFTKFormatedInformations(
+		virtual void XULFTKAboutText(
 			const char *LauncherIdentification,
-			str::string_ &Informations )
+			const char *BuildInformations,
+			str::string_ &Text )
 		{
 			ERRc();	// Si pas surchargé, alors 'xulfmn::about_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
@@ -170,9 +186,9 @@ namespace xulftk {
 			_Trunk = &Trunk;
 			_LauncherIdentification = LauncherIdentification;
 		}
-		void FormatedInformations( str::string_ &Informations )
+		void AboutText( str::string_ &Informations )
 		{
-			XULFTKFormatedInformations( _LauncherIdentification, Informations );
+			XULFTKAboutText( _LauncherIdentification, cpe::GetDescription(), Informations );
 		}
 		void SiteURL( str::string_ &URL )
 		{
@@ -351,16 +367,16 @@ namespace xulftk {
 		{
 			UI().Update();
 		}
-		void BrowseInformations( void )
+		void About( void )
 		{
 		ERRProlog
-			str::string Informations;
+			str::string Text;
 		ERRBegin
-			Informations.Init();
+			Text.Init();
 
-			_UF().FormatedInformations( Informations ),
+			_UF().AboutText( Text ),
 
-			UI().Alert( Informations );
+			UI().Alert( Text );
 		ERRErr
 		ERREnd
 		ERREpilog

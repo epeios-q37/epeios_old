@@ -196,7 +196,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &mdr		&epeios		&2000-\
 	&Memory DRiver
 &mllio		&epeios		&\
-	&MacIntosh Low-Level Input/Output
+	&MinGW Low-Level Input/Output
 &mmg		&epeios		&2000-\
 	&Memory MerGer
 &mmi		&epeios		&2000-2001, \

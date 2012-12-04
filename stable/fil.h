@@ -272,8 +272,30 @@ namespace fil {
 	// Modifie la date de modification d'un fichier à la date courante.
 	inline void TouchFile( const char *FileName )
 	{
+# ifdef FIL__MS
+		FILETIME ft;
+		SYSTEMTIME st;
+		HANDLE Handle = CreateFileA( FileName, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+
+		if ( Handle ==  INVALID_HANDLE_VALUE )
+			ERRc();
+
+
+		GetSystemTime( &st );
+		if ( !SystemTimeToFileTime( &st, &ft ) )
+			ERRc();
+
+		if ( !SetFileTime( Handle, (LPFILETIME) NULL, (LPFILETIME) NULL, &ft ) )
+			ERRc();
+# else
+		/*
+		NOTA : Le code ci-dessous fonctionne AUSSI sous Windows, mais SEULEMENT lorsque lancé à partir d'une console DOS,
+		Lorsque lancé à partir d'une console 'Cygwin', il y a un décalage d'une heure 'dépendant de l'heure d'hiver/été ?).
+		*/
+
 		if ( utime( FileName, NULL ) != 0 )
 			ERRc();
+# endif
 	}
 
 	inline void RemoveFile( const char *FileName )

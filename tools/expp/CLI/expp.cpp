@@ -90,8 +90,7 @@ struct parameters {
 	}
 };
 
-static void PrintSpecialsCommandsDescriptions_(
-	const clnarg::description_ &Description,
+static void PrintSpecialsCommandsDescriptions_(	const clnarg::description_ &Description,
 	const lcl::locale_ &Locale,
 	const char *Language )
 {
@@ -195,7 +194,7 @@ ERREnd
 ERREpilog
 }
 
-void PrintHeader( void )
+static void PrintHeader_( void )
 {
 	COut << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
 	COut << COPYRIGHT << txf::nl;
@@ -309,7 +308,7 @@ ERRBegin
 
 	switch ( Analyzer.GetCommand() ) {
 	case cVersion:
-		PrintHeader();
+		PrintHeader_();
 //		TTR.Advertise( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;
@@ -468,7 +467,7 @@ ERREnd
 ERREpilog
 }
 
-void Go( const parameters &Parameters )
+static void Go_( const parameters &Parameters )
 {
 ERRProlog
 ERRBegin
@@ -498,7 +497,7 @@ ERRProlog
 ERRBegin
 	AnalyzeArgs( argc, argv, Parameters );
 
-	Go( Parameters );
+	Go_( Parameters );
 ERRErr
 ERREnd
 ERREpilog

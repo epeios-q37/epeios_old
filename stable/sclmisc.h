@@ -86,6 +86,8 @@ namespace sclmisc {
 		fil::backup_mode__ Mode = fil::bm_Default );
 
 	void RecoverBackupFile( const char *FileName );
+
+	void ReportFileOpeningErrorAndExit( const char *FileName );
 }
 
 /*$END$*/

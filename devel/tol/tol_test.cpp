@@ -34,40 +34,23 @@
 #include "err.h"
 #include "cio.h"
 
-typedef int a;
 
-void fa( a A );
-
-typedef a b;
-typedef a c;
-
-void fb( b A );
-
-E_TYPEDEF( a, d );
-E_TYPEDEF( a, e );
-
-void fd( d D );
-
-void test( void )
-{
-	b B;
-	c C;
-
-	fa( B );	// Passe la compilation.
-	fb( C );	// Passe la compilation.
-
-	d D;
-	e E;
-
-	fa( D );	// Ne passe _pas_ la compilation !
-	fd( E );	// Ne passe _pas_ la compilation !
-}
-
+using cio::COut;
+using cio::CErr;
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 ERRBegin
+    SYSTEMTIME st, lt;
+    
+    GetSystemTime(&st);
+    GetLocalTime(&lt);
+    
+    printf("The system time is: %02d:%02d\n", st.wHour, st.wMinute);
+    printf(" The local time is: %02d:%02d\n", lt.wHour, lt.wMinute);
+
+	cio::COut << tol::DateAndTime() << txf::nl << txf::commit;
 ERRErr
 ERREnd
 ERREpilog
@@ -78,7 +61,7 @@ int main( int argc, char *argv[] )
 	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	cio::cout << "Test of library " << TOLTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	cio::COut << "Test of library " << TOLTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -87,20 +70,20 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cio::cout);
+			TTR.Advertise( cio::COut);
 			break;
 		}
 	default:
-		cio::cout << txf::sync;
-		cio::cerr << "\nBad arguments.\n";
-		cio::cout << "Usage: " << TOLTutor.Name << " [/i]\n\n";
-		ERRi();
+		cio::COut << txf::commit;
+		cio::CErr << "\nBad arguments.\n";
+		cio::COut << "Usage: " << TOLTutor.Name << " [/i]\n\n";
+		ERRExit( EXIT_FAILURE );
 	}
 
 ERRFErr
 	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cio::cout << "\nEnd of program " << TOLTutor.Name << ".\n";
+	cio::COut << "\nEnd of program " << TOLTutor.Name << ".\n";
 ERRFEpilog
 	return ExitCode;
 }

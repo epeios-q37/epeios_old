@@ -58,50 +58,76 @@ public:
 
 #include "fil.h"
 
+using namespace tol;
+
+/*
+	NOTA : Compilé avec VC++ 2010, lorsque lancé dans une console DOS, 'localtime()' retourne le bon résultat,
+	MAIS, lorsque lancé dans une console 'Cygwin' (1.17.10), le résultat est incorrect (différence d'une heure, peut-être lié à l'heure d'hiver/d'été).
+*/
+
 #ifdef TOL__MS		
 LARGE_INTEGER	tol::_TickFrequence;
+#else
+static const char *PosixCoreDateAndTime_(
+	const char *Format,
+	buffer__ &Buffer )
+{
+   struct tm *time_now;
+   time_t secs_now;
+
+   time(&secs_now);
+   time_now = localtime(&secs_now);
+
+   if ( !strftime( Buffer, sizeof( Buffer ), Format, time_now) )
+	ERRl();
+
+   return Buffer;
+}
 #endif
 
 const char *tol::Date( buffer__ &Buffer )
 {
-   struct tm *time_now;
-   time_t secs_now;
+#ifdef TOL__MS
+	SYSTEMTIME LocalTime;
 
-   time(&secs_now);
-   time_now = localtime(&secs_now);
+	GetLocalTime( &LocalTime );
 
-   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y", time_now) )
-	ERRl();
+	sprintf( Buffer, "%02d/%02d/%04d", LocalTime.wDay, LocalTime.wMonth, LocalTime.wYear );
 
-   return Buffer;
+	return Buffer;
+#else
+	return PosixCoreDateAndTime_( "%d/%m/%Y", Buffer );
+#endif
 }
 
 const char *tol::Time( buffer__ &Buffer )
 {
-   struct tm *time_now;
-   time_t secs_now;
+#ifdef TOL__MS
+	SYSTEMTIME LocalTime;
 
-   time(&secs_now);
-   time_now = localtime(&secs_now);
+	GetLocalTime( &LocalTime );
 
-   if ( !strftime( Buffer, sizeof( Buffer ), "%H:%M:%S", time_now) )
-	ERRl();
+	sprintf( Buffer, "%02d:%02d:%02d", LocalTime.wHour, LocalTime.wMinute, LocalTime.wSecond );
 
-   return Buffer;
+	return Buffer;
+#else
+	return PosixCoreDateAndTime_( "%H:%M:%S", Buffer );
+#endif
 }
 
 const char *tol::DateAndTime( buffer__ &Buffer )
 {
-   struct tm *time_now;
-   time_t secs_now;
+#ifdef TOL__MS
+	SYSTEMTIME LocalTime;
 
-   time(&secs_now);
-   time_now = localtime(&secs_now);
+	GetLocalTime( &LocalTime );
 
-   if ( !strftime( Buffer, sizeof( Buffer ), "%d/%m/%Y %H:%M:%S", time_now) )
-	ERRl();
+	sprintf( Buffer, "%02d/%02d/%04d %02d:%02d:%02d", LocalTime.wDay, LocalTime.wMonth, LocalTime.wYear, LocalTime.wHour, LocalTime.wMinute, LocalTime.wSecond );
 
-   return Buffer;
+	return Buffer;
+#else
+	return PosixCoreDateAndTime_( "%d/%m/%Y %H:%M:%S", Buffer );
+#endif
 }
 
 #ifdef CPE__VC
@@ -117,7 +143,7 @@ static inline void ExitOnSignal_( void )
 {
 #if defined( CPE__CYGWIN ) || defined( CPE__LINUX ) || defined ( CPE__MAC )
 	signal( SIGHUP, signal_ );
-#elif defined( CPE__MS )
+#elif defined( CPE__MS ) ||defined ( CPE__MINGW )
 	signal( SIGBREAK, signal_ );
 #else
 #	error "Undefined target !"
@@ -140,7 +166,7 @@ public:
 		to be realized at the launching of the application  */
 		ExitOnSignal_();
 #ifdef TOL__MS		
-		if ( QueryPerformanceCounter( &tol::_TickFrequence ) == 0 )
+		if ( QueryPerformanceFrequency( &tol::_TickFrequence ) == 0 )
 			ERRs();
 #endif
 	}

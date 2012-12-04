@@ -1,12 +1,12 @@
 /*
-	Header for the 'mllio' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'mllio' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@
 
 #define	MLLIO_VERSION	"$Revision$"
 
-#define MLLIO_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define MLLIO_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &MLLIOTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,15 +55,17 @@ extern class ttr_tutor &MLLIOTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D MacIntosh Low-Level Input/Output 
+//D MinGW Low-Level Input/Output 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Not needed. Use 'pllio' module."
+#include "wllio.h"
+
+# define MLLIO_UNDEFINED_DESCRIPTOR WLLIO_UNDEFINED_DESCRIPTOR
 
 namespace mllio {
-
+	using namespace wllio;
 }
 
 /*$END$*/

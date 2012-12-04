@@ -27,46 +27,10 @@
 # define REGISTRY__INC
 
 # include "expp.h"
-# include "rgstry.h"
+# include "sclrgstry.h"
 
 namespace registry {
-	extern rgstry::multi_level_registry Registry;
-
-	using rgstry::value_;
-	E_AUTO( value );
-
-	inline rgstry::status__ FillRegistry(
-		const char *FileName,
-		rgstry::context___ &Context )
-	{
-		return Registry.Fill( Registry.PushEmbeddedLevel(), FileName, xpp::criterions___(),  "Configurations/Configuration[target=\"" NAME "\"]", Context );
-	}
-
-	struct path {
-		static const char *Language;
-		static const char *LocaleFileName;
-	};
-
-	inline bso::bool__ GetValue(
-		const char *Path,
-		value_ &Value )
-	{
-		return Registry.GetValue( Path, Value );
-	}
-
-# define GET_VALUE( name, path )\
-	inline bso::bool__ Get##name( value_ &Value )\
-	{\
-		return GetValue( path, Value );\
-	}\
-
-
-# define GET_ROOT_VALUE( name )\
-	GET_VALUE( name, path::name )
-
-
-	GET_ROOT_VALUE( Language );
-	GET_ROOT_VALUE( LocaleFileName )
+	using namespace sclrgstry;
 }
 
 #endif

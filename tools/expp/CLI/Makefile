@@ -29,11 +29,145 @@ copt =
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 mods = cio clnarg epsmsc err fil flw fnm mmi str tol ttr uym xml xpp lcl rgstry cdgb64
-mods += global registry
+mods += sclmisc scllocale sclerror sclrgstry scltool 
+mods += locale registry
 
+# Don't modify line below.
 os := $(shell uname -o 2>/dev/null || uname -s)
 
-src =
+
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+
+	libs =
+
+endif
+
+##################################
+
+
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+
+	libs = 
+
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+
+endif
+
+##########################################
+
+
+#################################
+# Specific to MinGW environment #
+#################################
+
+ifeq ("$(os)","Msys")
+
+	libs =
+
+endif
+
+##################################
+
+
+##########################
+# For Mac OS environment #
+##########################
+
+ifeq ("$(os)","Darwin")
+
+	libs =
+
+endif
+
+##########################
+
+
+##############################
+# Common to all environment. #
+##############################
+
+# Generates debugging data.
+#co += -g
+
+# General optimization.
+co += -O
+
+# To use with gprof
+#co += -pg
+
+# To force 32 bits target (incompatible with below options).
+co += -m32
+lo += -m32
+
+# To force 64 bits target (incompatible with above options).
+#co += -m64
+#lo += -m64
+
+
+###############################
+###############################
+
+##### Don't modify below ######
+
+###############################
+###############################
+
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+
+endif
+
+##################################
+
+
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+
+endif
+
+##########################################
+
+
+##################################
+# Specific to MinGW environment #
+##################################
+
+ifeq ("$(os)","Msys")
+
+endif
+
+##################################
+
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+
+endif
+
+#########################
+
+
+##################################
+# Common to all GNU environment. #
+##################################
 
 ifndef EPEIOS_SRC
 	src += ../epeios
@@ -41,73 +175,12 @@ else
 	src += $(EPEIOS_SRC)
 endif
 
-##################################
-# Specific to Cygwin environment #
-##################################
-
-ifeq ("$(os)","Cygwin")
-	env = gnu
-	#co += -m32
-	#lo += -m32
-	libs =
-
-	# To use as Windows service.
-	#mods += wintol
-endif
-
-##########################################
-# Specific for the GNU/Linux environment #
-##########################################
-
-ifeq ("$(os)","GNU/Linux")
-	env = gnu
-	#co += -m32
-	#lo += -m32
-	libs = 
-
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-endif
-
-#########################
-# For Mac OS environment #
-#########################
-
-ifeq ("$(os)","Darwin")
-	env = gnu
-	#co += -m32
-	#lo += -m32
-	libs =
-endif
-
-##################################
-# Common to all GNU environment. #
-##################################
-
-ifeq ("$(env)","gnu")
-	lo += -o $(name)
-
-	# Generates debugging data.
-	#co += -g
-
-	# General optimization.
-	co += -O
-
-	# To use with gprof
-	#co += -pg
-endif
-
-######################
-# Don't modify below #
-######################
-
-ifeq ("$(env)","gnu")
-	co := -c $(co)
-	ox = o
-	cc = g++ 
-	larg = $(lo) $(objs)
-	ds = :
-endif
+lo += -o $(name)
+co := -c $(co)
+ox = o
+cc = g++ 
+larg = $(lo) $(objs)
+ds = :
 
 vpath %.cpp $(subst $(ds),:,$(src))
 

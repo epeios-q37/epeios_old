@@ -59,9 +59,8 @@ using namespace frdrgy;
 
 rgstry::entry___ frdrgy::Parameters( "Parameters" );
 
-rgstry::entry___ frdrgy::LocaleFileName( "LocaleFileName", Parameters );
-
 rgstry::entry___ frdrgy::DefaultProject( "DefaultProject", Parameters );
+rgstry::entry___ frdrgy::Locale( "Locale", Parameters );
 
 rgstry::entry___ frdrgy::PredefinedProjects( "PredefinedProjects", Parameters );
 rgstry::entry___ frdrgy::DefaultPredefinedProject( "@Default", PredefinedProjects );

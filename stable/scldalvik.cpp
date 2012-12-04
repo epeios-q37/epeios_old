@@ -68,7 +68,7 @@ public:
 using namespace scldalvik;
 
 // Pour faciliter le débogage.
-#if 0
+#if 1
 DVKBSE_EXPOSE_LOG_FUNCTIONS( "SCLDalvik" )
 #define LOC	 DVKBSE_LOC	
 #endif
@@ -148,10 +148,9 @@ static void InitializeFlow_(
 	JNIEnv *Env,
 	jobject Activity,
 	jclass Raw,
+	jvastf::jni_param__ &Param,
 	jvastf::input_stream_iflow___ &IFlow )
 {
-	jvastf::jni_param__ Param;
-
 	Param.Env = Env;
 	Param.Object = dvkbse::GetRawResourceInputStream( Name, Raw, Env, Activity );
 
@@ -166,15 +165,19 @@ static void Initialize_(
 ERRProlog
 	jvastf::input_stream_iflow___ Configuration, Locale;
 	jclass Raw;
+	jvastf::jni_param__ LocaleParam, ConfigurationParam;
 ERRBegin
+	LOC
 	InitializeCIO_();
-
+	LOC
 	Raw = dvkbse::GetRrawClass( dalvik::PackageName, Env );
-
-	InitializeFlow_( "locale", Env, Activity, Raw, Locale );
-	InitializeFlow_( "configuration", Env, Activity, Raw, Configuration );
-
+	LOC
+	InitializeFlow_( "locale", Env, Activity, Raw, LocaleParam, Locale );
+	LOC
+	InitializeFlow_( "configuration", Env, Activity, Raw, ConfigurationParam, Configuration );
+	LOC
 	sclmisc::Initialize( Locale, Configuration, Target, "", "" );
+	LOC
 ERRErr
 ERREnd
 ERREpilog
@@ -237,13 +240,15 @@ extern "C" {
 		jstring TargetName,
 		jobject Bundle ) 
 	{
+		LOC
 		jvabse::Convert( TargetName, Env, ::TargetName_ );
-
+		LOC
 		DoDalvikRelatedStuff_( Env, Activity, Bundle );
-
+		LOC
 		Initialize_( ::TargetName_, Env, Activity );
-
+		LOC
 		Main_( Env, Activity, Bundle );
+		LOC
 	}
 
 	JNIEXPORT void JNICALL Java_org_zeusw_dalvik_EpeiosOnClickListener_onClick(

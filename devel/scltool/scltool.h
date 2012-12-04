@@ -60,20 +60,27 @@ extern class ttr_tutor &SCLTOOLTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "lcl.h"
+# include "err.h"
+# include "flw.h"
+# include "lcl.h"
+
+# include "sclmisc.h"
+
 
 namespace scltool {
+	using sclmisc::CreateBackupFile;
+	using sclmisc::RecoverBackupFile;
+	using sclmisc::ReportFileOpeningErrorAndExit;
 
 	// A définir par l'utilisateur.
 	extern const char *TargetName;
 
+	const char *GetLanguage( void );
+
 	// A définir par l'utilisateur.
 	void Main(
 		int argc,
-		const char *argv[],
-		const lcl::rack__ &LocaleRack );
+		const char *argv[] );
 
 
 }

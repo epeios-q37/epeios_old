@@ -107,7 +107,7 @@ ERRBegin
 	FileName.Init();
 
 	if ( nsxpcm::XPRJFileOpenDialogBox( Trunk().UI().Main().Window(), Trunk().Kernel().GetTranslation( xulfkl::GetLabel( xulfkl::mSelectProjectFile), Translation ), Trunk().Kernel().Locale(), Trunk().Kernel().Language(), FileName ) )
-		Trunk().UI().Main().Widgets.txbUserProjectLocation.SetValueC( FileName );
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.SetValue( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -125,17 +125,17 @@ ERRBegin
 
 	ProjectTypeLabel.Init();
 
-	switch ( frdkrn::GetProjectType( Trunk().UI().Main().Widgets.mnlProjectType.GetValueC( ProjectTypeLabel ) ) ) {
+	switch ( frdkrn::GetProjectType( Trunk().UI().Main().Widgets.mnlProjectType.GetValue( ProjectTypeLabel ) ) ) {
 	case frdkrn::ptNew:
 		break;
 	case frdkrn::ptPredefined:
 		PredefinedProjectId.Init();
-		Trunk().UI().Main().Widgets.mnlPredefinedProjectList.GetValueC( PredefinedProjectId );
+		Trunk().UI().Main().Widgets.mnlPredefinedProjectList.GetValue( PredefinedProjectId );
 
 		frdkrn::GetPredefinedProjectLocation( PredefinedProjectId, Trunk().Kernel().Registry(), ProjectLocation );
 		break;
 	case frdkrn::ptUser:
-		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValueC( ProjectLocation );
+		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValue( ProjectLocation );
 		break;
 	default:
 		ERRc();
@@ -195,7 +195,7 @@ void xulfmn::exit_eh__::NSXPCMOnEvent( event__ )
 
 void xulfmn::about_eh__::NSXPCMOnEvent( event__ )
 {
-	Trunk().BrowseInformations();
+	Trunk().About();
 }
 
 void xulfmn::web_site_eh__::NSXPCMOnEvent( event__ )

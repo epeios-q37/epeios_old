@@ -61,6 +61,119 @@ public:
 
 using namespace xulftk;
 
+static void GetAuthorText_(
+	const char *Name,
+	const char *Contact,
+	const lcl::locale_ &Locale,
+	const char *Language,
+	str::string_ &Text )
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+	Meaning.SetValue( XULFTK_NAME "_AuthorText" );
+	Meaning.AddTag( Name );
+	Meaning.AddTag( Contact );
+
+	Locale.GetTranslation( Meaning, Language, Text );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void GetAffiliationText_(
+	const char *Tag,
+	const char *Affiliation,
+	const lcl::locale_ &Locale,
+	const char *Language,
+	str::string_ &Text )
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+	Meaning.SetValue( Tag );
+	Meaning.AddTag( Affiliation );
+
+	Locale.GetTranslation( Meaning, Language, Text );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+const str::string_ &xulftk::BuildAboutText(
+	const char *LauncherIdentification,
+	const char *BuildInformations,
+	const char *AppName,
+	const char *Version,
+	const char *DebugFlag,
+	const char *AuthorName,
+	const char *AuthorContact,
+	const char *Copyright,
+	const char *ProjectAffiliation,
+	const char *SoftwareAffiliation,
+	xulftk::trunk___ &Trunk,
+	str::string_ &Text )
+{
+ERRProlog
+	tol::buffer__ Buffer;
+	str::string AuthorText, ProjectAffiliationText, SoftwareAffiliationText, ProtocolVersion, BackendLabel, APIVersion, BackendInformations;
+ERRBegin
+	Text.Append( AppName );
+	Text.Append(" V" );
+	Text.Append( Version );
+	Text.Append( DebugFlag );
+	Text.Append( " Build " __DATE__ " " __TIME__ );
+	Text.Append( " (" );
+	Text.Append( BuildInformations );
+	Text.Append( ")\n\t" );
+
+	AuthorText.Init();
+	GetAuthorText_( AuthorName, AuthorContact, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), AuthorText );
+	Text.Append( AuthorText );
+	Text.Append( "\n\t" );
+
+	Text.Append( " (" );
+	Text.Append( LauncherIdentification );
+	Text.Append( " <" );
+	Text.Append( tol::DateAndTime( Buffer ) );
+	Text.Append( ">)\n" );
+	Text.Append( Copyright );
+
+	if ( ( ProjectAffiliation != NULL ) && ( *ProjectAffiliation != 0 ) ) {
+		Text.Append( "\n\n" );
+		ProjectAffiliationText.Init();
+		GetAffiliationText_( XULFTK_NAME "_ProjectAffiliationText", ProjectAffiliation, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), ProjectAffiliationText );
+		Text.Append( ProjectAffiliationText );
+	}
+
+	Text.Append( "\n\n" );
+	SoftwareAffiliationText.Init();
+	GetAffiliationText_( XULFTK_NAME "_SoftwareAffiliationText", SoftwareAffiliation, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), SoftwareAffiliationText );
+	Text.Append( SoftwareAffiliationText );
+
+	if ( Trunk.Kernel().IsConnected() ) {
+		Text.Append( '\n' );
+		Text.Append( '\n' );
+
+		ProtocolVersion.Init();
+		BackendLabel.Init();
+		APIVersion.Init();
+		BackendInformations.Init();
+
+		Trunk.Kernel().AboutBackend( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
+
+		Text.Append( "Backend : " );
+		Text.Append( BackendInformations );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Text;
+}
+
+
 void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
@@ -471,10 +584,10 @@ ERRBegin
 		ERRl();
 		break;
 	case frdkrn::bxtDaemon:
-		UI().SessionForm().Widgets.txbDaemonBackend.SetValueC( Location );
+		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
 		break;
 	case frdkrn::bxtEmbedded:
-		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValueC( Location );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( Location );
 		break;
 	case frdkrn::bxt_Undefined:
 		Type = frdkrn::bxtNone;
@@ -543,7 +656,7 @@ ERRBegin
 	}
 
 	Value.Init();
-	UI().SessionForm().Widgets.mnlBackendType.GetValueC( Value );
+	UI().SessionForm().Widgets.mnlBackendType.GetValue( Value );
 
 	switch ( Type = frdkrn::GetBackendExtendedType( Value ) ) {
 	case frdkrn::bxtNone:
@@ -551,15 +664,15 @@ ERRBegin
 		break;
 	case frdkrn::bxtPredefined:
 		Value.Init();
-		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValueC( Value );
+		UI().SessionForm().Widgets.mnlPredefinedBackend.GetValue( Value );
 		break;
 	case frdkrn::bxtDaemon:
 		Value.Init();
-		UI().SessionForm().Widgets.txbDaemonBackend.GetValueC( Value );
+		UI().SessionForm().Widgets.txbDaemonBackend.GetValue( Value );
 		break;
 	case frdkrn::bxtEmbedded:
 		Value.Init();
-		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValueC( Value );
+		UI().SessionForm().Widgets.txbEmbeddedBackend.GetValue( Value );
 		break;
 	default:
 		Translation.Init();

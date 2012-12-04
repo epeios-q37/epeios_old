@@ -18,12 +18,6 @@
 #
 # $Id$
 
-ifndef JDK
-	jdk = $(HOME)/jdk
-else
-	jdk = $(JDK)
-
-endif
 name = jexpp
 copt =
 # Epeios general debugging features
@@ -39,147 +33,121 @@ copt += -DCPE_LIBRARY
 copt += -DCPE_ST
 
 # epeios/core
-mods += cdgb64 ctn err 
+mods += cdgb64 ctn err cio
 mods += fil flf flw fnm lcl mmi
 mods += rgstry str tht
 mods += tol ttr uym xml xpp
 
+#
 os := $(shell uname -o 2>/dev/null || uname -s)
 
-src = $(jdk)/include
-
 ifndef EPEIOS_SRC
-	src += ../epeios
+	src = :../epeios
 else
-	src += $(EPEIOS_SRC)
+	src = :$(EPEIOS_SRC)
 endif
 
-src += 
+jdk = $(JDK)
+
+src += :"$(jdk)/include"
+
+##############################
+# Common to all environment. #
+##############################
+
+cc = g++ 
+
+# Generates debugging data.
+#co += -g
+
+# General optimization.
+co += -O
+
+# To use with gprof
+#co += -pg
+
+# To force 32 bits target (incompatible with below options).
+co += -m32
+lo += -m32
+
+# To force 64 bits target (incompatible with above options).
+#co += -m64
+#lo += -m64
+
+##############################
+
 
 ##################################
 # Specific to Cygwin environment #
 ##################################
 
 ifeq ("$(os)","Cygwin")
+
 	target = $(name).dll
 
-	cc = i686-pc-mingw32-g++
-	
-	co += -g
-
-# Needed when compiled woth the 'genuine' g++ compiler.
-#	co += "-D__int64=long long"
-	
-	lo += -Wl,--kill-at -o $(target) -shared
-	
-	libs =
-
-	src += $(jdk)/include/win32
 endif
+
+##################################
+
 
 ##########################################
 # Specific for the GNU/Linux environment #
 ##########################################
 
 ifeq ("$(os)","GNU/Linux")
-	target = $lib(name).so
-	
-	cc = g++
-#	co += -std=c++0x
-	co +=  -static -lc
-	
-	lo += -shared -W1,-soname,$(target) -o $(target)
-	
-	libs = 
+
 	# For sound (i.e. MIDI)-related functions.
 	#libs += -lasound
-	# For pthread-related functions.
-	#libs += -lpthread
 
-	libs += -static -lc
-	
 endif
 
-##################################################
-# Specific for the Linux environment (N900/N810) #
-##################################################
+##########################################
 
-ifeq ("$(os)","Linux")
-	target = $lib(name).so
 
-	cc = g++
-	
-	co +=
-	
-	lo +=
-	
-	libs = 
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-	# For pthread-related functions.
-	#libs += -lpthread
-	
+##################################
+# Specific to MinGW environment #
+##################################
+
+ifeq ("$(os)","Msys")
+
+	target = $(name).dll
+
+	src += :"$(jdk)/include/win32"
+
+	lo += -Wl,--kill-at -shared
+	lo += -m32
+
 endif
+
+##################################
+
 
 #########################
 # For Mac OS environment #
 #########################
 
 ifeq ("$(os)","Darwin")
-	target = lib$(name).jnilib
 
-	cc = c++
-
-	co += -m32
-
-	lo = -m32 -dynamiclib -o $(target)
-	libs += -framework JavaVM
-	
 endif
 
-##############################
-# Common to all environment. #
-##############################
-
-ifeq ("$(env)","gnu")
-#	lo = -o $(name)
-
-	# Generates debugging data.
-	co += -g
-
-	# General optimization.
-	#co += -O
-
-	# To use with gprof
-	#co += -pg
+#########################
 
 
-	#libs += -lm
-	
-endif
+##################################
+# Common to all GNU environment. #
+##################################
 
-######################
-# Don't modify below #
-######################
-
+lo += -o $(target)
 co := -c $(co)
 ox = o
-
-ifdef EPEIOS_CC
-	cc += $(EPEIOS_CC)
-endif
-
 larg = $(lo) $(objs)
-ds = :
 
-vpath %.cpp $(subst $(ds),:,$(src))
+vpath %.cpp $(src)
 
-srcd = $(subst $(ds), ,$(src))
-
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+co += $(copt) $(subst :, -I,$(src)) $(EPEIOS_COPT)
 lo += $(EPEIOS_LOPT)
 
-objs = $(name).$(ox) $(mods:=.$(ox)) 
+objs = $(name).o $(mods:=.o) 
 
 $(target):  $(objs)
 	$(cc) $(larg) $(libs)

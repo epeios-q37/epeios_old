@@ -70,7 +70,7 @@ extern class ttr_tutor &DIRTutor;
 
 #if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__BEOS ) || defined( CPE__MAC )
 #	define DIR__POSIX
-#elif defined( CPE__MS )
+#elif defined( CPE__MS ) || defined( CPE__MINGW )
 #	define DIR__MS
 #else
 #	error "Unknown target !"
@@ -113,7 +113,7 @@ namespace dir {
 
 	inline const char *GetSelfPath( DIR_BUFFER___ &Buffer )
 	{
-#ifdef DIR__MS
+#ifdef DIR__MS 
 		char Path[MAX_PATH];
 		DWORD Size = GetModuleFileNameA( NULL, Path, sizeof( Path ) );
 #endif

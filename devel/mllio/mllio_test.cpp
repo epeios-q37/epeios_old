@@ -1,12 +1,12 @@
 /*
-	Test source for the 'mllio' library by Claude SIMON (http://zeusw.org/intl/contact.html).
-	Copyright (C) 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
+	Test source for the 'mllio' library by Claude SIMON (csimon at zeusw dot org).
+	Copyright (C) 2004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -33,9 +33,9 @@
 #include "err.h"
 #include "cio.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 void Generic( int argc, char *argv[] )
 {
@@ -48,10 +48,9 @@ ERREpilog
 
 int main( int argc, char *argv[] )
 {
-	int ExitCode = EXIT_SUCCESS;
 ERRFProlog
 ERRFBegin
-	cout << "Test of library " << MLLIOTutor.Name << ' ' << __DATE__" "__TIME__"\n";
+	COut << "Test of library " << MLLIOTutor.Name << ' ' << __DATE__" "__TIME__"\n";
 
 	switch( argc ) {
 	case 1:
@@ -60,20 +59,18 @@ ERRFBegin
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )
 		{
-			TTR.Advertise( cout );
+			TTR.Advertise( COut );
 			break;
 		}
 	default:
-		cout << txf::sync;
-		cerr << "\nBad arguments.\n";
-		cout << "Usage: " << MLLIOTutor.Name << " [/i]\n\n";
+		COut << txf::commit;
+		CErr << "\nBad arguments.\n";
+		COut << "Usage: " << MLLIOTutor.Name << " [/i]\n\n";
 		ERRi();
 	}
 
 ERRFErr
-	ExitCode = EXIT_FAILURE;
 ERRFEnd
-	cout << "\nEnd of program " << MLLIOTutor.Name << ".\n";
 ERRFEpilog
-	return ExitCode;
+	return ERRExitValue;
 }

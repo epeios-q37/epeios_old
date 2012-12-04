@@ -104,7 +104,7 @@ static void Close_( iop::descriptor__ D )
 }
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
-#	ifdef CPE__MS
+# if defined( CPE__MS ) || defined (CPE__MINGW )
 
 static inline iop::descriptor__ Open_(
 	const char *Nom,

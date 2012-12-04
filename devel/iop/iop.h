@@ -80,6 +80,8 @@ extern class ttr_tutor &IOPTutor;
 #	define IOP__USE_LOWLEVEL_IO
 #elif defined( CPE__CYGWIN )
 #	define IOP__USE_LOWLEVEL_IO
+#elif defined( CPE__MINGW )
+#	define IOP__USE_LOWLEVEL_IO
 #else
 #	error "Undefined platform ! Define one or use 'IOP_USE_STANDARD_IO'"
 #endif

@@ -31,31 +31,12 @@ class XMLPreprocessorDemo {
 
 	public static void main ( String[] args )	throws Exception
 	{
-		int A = 0;
-		System.out.println( A++ );
-		System.out.flush();
 		System.loadLibrary("jexpp");
-		System.out.println( A++ );
-		System.out.flush();
-		mallocCygwinBug();
-
-		System.out.println( A++ );
-		System.out.flush();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		System.out.println( A++ );
-		System.out.flush();
 		DocumentBuilder builder = factory.newDocumentBuilder();
-		System.out.println( A++ );
-		System.out.flush();
 		File file = new File("../Contacts.xml");
-		System.out.println( A++ );
-		System.out.flush();
 		FileInputStream fstream = new FileInputStream(file);
-		System.out.println( A++ );
-		System.out.flush();
 		XPPInputStream xppstream = new XPPInputStream(fstream);
-		System.out.println( A++ );
-		System.out.flush();
 		
 		Document doc = builder.parse(xppstream);
 		NodeList list = doc.getElementsByTagName("*");

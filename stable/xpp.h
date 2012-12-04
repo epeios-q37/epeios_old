@@ -728,7 +728,7 @@ namespace xpp {
 	};
 
 	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
-	inline void GetTranslation(
+	inline void GetMEaning(
 		const preprocessing_iflow___ &PFlow,
 		lcl::meaning_ &Meaning )
 	{

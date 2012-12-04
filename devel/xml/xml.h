@@ -92,7 +92,7 @@ namespace xml {
 
 	const char *GetLabel( status__ Status );
 
-	void GetMessage(
+	void GetMeaning(
 		status__ Status,
 		const coord__ &Coord,	// Obtenu de 'xtf::extended_text_iflow__'.
 		lcl::meaning_ &Meaning );

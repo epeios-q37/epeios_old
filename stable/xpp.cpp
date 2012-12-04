@@ -165,10 +165,14 @@ ERRProlog
 ERRBegin
 	PutFileLineColumn_( Context, Meaning );
 
+	MeaningBuffer.Init();
+
 	if ( Context.Status < (xpp::status__)xml::s_amount )
-		Meaning.AddTag( xml::GetLabel( (xml::status__)Context.Status ) );
+		MeaningBuffer.SetValue( xml::GetLabel( (xml::status__)Context.Status ) );
 	else
-		Meaning.AddTag( GetLabel( Context.Status ) );
+		MeaningBuffer.SetValue( GetLabel( Context.Status ) );
+
+	Meaning.AddTag( MeaningBuffer );
 ERRErr
 ERREnd
 ERREpilog

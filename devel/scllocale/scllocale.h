@@ -69,16 +69,16 @@ namespace scllocale {
 
 	const lcl::locale_ &GetLocale( void );
 
-	lcl::level__ Push(
+	void Load(
 		flw::iflow__ &Flow,
 		const char *Directory,
-		const char *RootPath,
-		lcl::meaning_ &ErrorMeaning );
+		const char *RootPath );	// Chargement de la locale de base, propre au logiciel.
 
 	lcl::level__ Push(
 		flw::iflow__ &Flow,
 		const char *Directory,
-		const char *RootPath );
+		const char *RootPath,
+		rgstry::context___ &Context );
 }
 
 /*$END$*/

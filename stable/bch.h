@@ -332,7 +332,7 @@ namespace bch {
 		void Truncate( row Row )
 		{
 #ifdef BCH_DBG
-			if ( !Exists( Row ) )
+			if ( !this->Exists( Row ) )
 				ERRu();
 #endif
 			Truncate ( mng::Amount() - *Row );
@@ -484,7 +484,7 @@ namespace bch {
 		{
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row , sh>::operator =( Op );
 
-			Allocate( Op.Amount(), aem::mFit );
+			this->Allocate( Op.Amount(), aem::mFit );
 
 			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
 

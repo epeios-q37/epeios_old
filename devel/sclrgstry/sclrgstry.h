@@ -83,6 +83,8 @@ namespace sclrgstry {
 
 	extern rgstry::entry___ Language;
 
+	extern rgstry::entry___ Locale;	// Du fichier de configuration uniquement.
+
 	using rgstry::value;
 	using rgstry::value_;
 

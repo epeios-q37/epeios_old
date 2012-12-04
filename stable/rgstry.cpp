@@ -1043,7 +1043,7 @@ ERRBegin
 		Root = Callback.GetRoot();
 		break;
 	case xml::sUnexpectedEOF:
-		Root = NONE;
+//		Root = NONE;	// 'Root' peut avoir été in,itilisée par l'utilisateur.
 		PFlow.GetContext( Context );
 		break;
 	default:
@@ -1519,19 +1519,22 @@ status__ rgstry::FillRegistry(
 	context___ &Context )
 {
 	mdr::row__ PathErrorRow = NONE;
+	rgstry::row__ NewRoot = NONE;
 
 	if ( rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) == NONE )
 		return Context.Status = sParseError;
 
 	if ( ( RootPath != NULL ) && ( *RootPath ) )
-		if ( ( RegistryRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &PathErrorRow ) ) == NONE )
+		if ( ( NewRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &PathErrorRow ) ) == NONE )
 			if ( PathErrorRow != NONE ) {
 				Context.PathErrorRow = PathErrorRow;
 				return Context.Status = sRootPathError;
 			} else
 				return Context.Status = sUnableToFindRootPath;
-		else  if ( Registry.GetNature( RegistryRoot ) == nAttribute )
+		else if ( Registry.GetNature( RegistryRoot ) == nAttribute )
 			return Context.Status = sRootPathError;
+		else
+			RegistryRoot = NewRoot;
 
 
 	return sOK;

@@ -31,59 +31,127 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+# copt += -DCPE_MT
 lopt = 
-libs = ttr flw err
+mods = $(name)_test ttr flw err uym cio
 
+os := $(shell uname -o 2>/dev/null || uname -s)
 
+src =
 
-ifeq ("$(EPEIOS_ENV)","windows")
-# object file extension
-ox = obj
-# compiler/linker binary
-cc = bcc32
-# compilation options
-co = -q -c -w-aus
-# linkage options
-lo = -q -e$(name)
-ds = ;
+ifndef EPEIOS_SRC
+	src += epeios
+else
+	src += $(EPEIOS_SRC)
 endif
 
-ifeq ("$(EPEIOS_ENV)","gnu")
-ox = o
-cc = g++ 
-co = -c
-# Generates debugging data.
-co += -g
-# General optimization.
-#co += -O
-# To use with gprof
-#co += -pg
-lo = -o $(name)
-# needed when pthread are used.
-#lo += -lglib -lgthread
-ds = :
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs =
+	
 endif
 
-ifeq ("$(EPEIOS_ENV)","beos")
-ox = o
-cc = g++
-co = -c -g
-lo = -o $(name)
-ds = :
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
 endif
 
-vpath %.cpp $(subst $(ds),:,$(EPEIOS_SRC))
+##################################################
+# Specific for the Linux environment (N900/N810) #
+##################################################
 
-srcd = $(subst $(ds), ,$(EPEIOS_SRC))
+ifeq ("$(os)","Linux")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
+endif
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+	env = gnu
+	
+	lo +=
+	
+	libs =
+	
+endif
+
+##################################
+# Common to all GNU environment. #
+##################################
+
+ifeq ("$(env)","gnu")
+	lo = -o $(name)
+
+	# Generates debugging data.
+	co += -g
+
+	# General optimization.
+	#co += -O
+
+	# To use with gprof
+	#co += -pg
+	
+endif
+
+######################
+# Don't modify below #
+######################
+
+ifeq ("$(env)","gnu")
+	co := -c $(co)
+	ox = o
+	cc = g++ 
+	larg = $(lo) $(objs)
+	ds = :
+endif
+
+vpath %.cpp $(subst $(ds),:,$(src))
+
+srcd = $(subst $(ds), ,$(src))
 
 co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT) $(lopt)
+lo += $(EPEIOS_LOPT)
 
-objs = $(name).$(ox) $(name)_test.$(ox) $(libs:=.$(ox))
+objs = $(name).$(ox) $(mods:=.$(ox)) 
 
 $(name):  $(objs)
-	$(cc) $(lo) $(objs)
+	$(cc) $(larg) $(libs)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $< 
+	$(cc) $(co) $<

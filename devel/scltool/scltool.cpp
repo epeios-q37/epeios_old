@@ -60,18 +60,56 @@ public:
 #include "sclrgstry.h"
 #include "scllocale.h"
 #include "sclmisc.h"
+#include "sclerror.h"
 
 using namespace scltool;
+
+static STR_BUFFER___ Language_;
+
+#define DEFAULT_LANGUAGE	"en"
+
+const char *scltool::GetLanguage( void )
+{
+	if ( Language_ == NULL )
+		return DEFAULT_LANGUAGE;
+
+	return Language_;
+}
+
+static void ReportSCLPendingError_( void )
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	scllocale::GetLocale().GetTranslation( sclerror::GetMeaning(), GetLanguage(), Translation );
+
+	cio::CErr << Translation << '.' << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 int main(
 	int argc,
 	const char *argv[] )
 {
 ERRFProlog
+	str::string Language;
 ERRFBegin
 	sclmisc::Initialize( TargetName, NULL );
-	Main( argc, argv, scllocale::GetRack() );
+
+	sclrgstry::GetValue( sclrgstry::Language, Language );
+
+	Language.Convert( Language_ );
+
+	Main( argc, argv );
 ERRFErr
+	if ( ERRType >= err::t_amount )
+		if ( sclerror::IsErrorPending() )
+			ReportSCLPendingError_();
 ERRFEnd
 	sclmisc::Terminate();
 ERRFEpilog

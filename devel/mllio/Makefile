@@ -1,7 +1,7 @@
-# 'mllio' Makefile by Claude SIMON (csimon@epeios.org)
+# 'mllio' Makefile by Claude SIMON (csimon at zeusw dot org)
 # Builds test executable for the 'mllio' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2004  Claude SIMON (csimon@epeios.org).
+# Copyright (C) 2004  Claude SIMON.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

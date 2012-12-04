@@ -117,7 +117,7 @@ static flw::iflow__ *GetFlow_(
 ERRProlog
 	xpp::context___ Context;
 	lcl::locale Locale;
-	lcl::rack__ Rack;
+	lcl::meaning ErrorMeaning;
 	str::string Translation;
 	STR_BUFFER___ Buffer;
 ERRBegin
@@ -127,6 +127,7 @@ ERRBegin
 
 	Data.Param.Env = Env;
 	Data.Param.Object = GetObjectField( Env, Object, "in", "Ljava/io/InputStream;" );
+
 	Print_( Env, __LOC__ );
 
 	if ( !Data.XPPFlow->EndOfFlow() ) {
@@ -143,11 +144,13 @@ ERRBegin
 		default:
 			Print_( Env, __LOC__ );
 			Locale.Init();
-			Rack.Init( Locale, "" );
 	Print_( Env, __LOC__ );
 
+			ErrorMeaning.Init();
+			xpp::GetMeaning( Context, ErrorMeaning );
+
 			Translation.Init();
-			xpp::GetTranslation( Context, Rack, Translation );
+			Locale.GetTranslation( ErrorMeaning, "", Translation );
 	Print_( Env, __LOC__ );
 
 			Env->ThrowNew( Env->FindClass( "java/lang/Exception" ), Translation.Convert( Buffer ) );
@@ -272,7 +275,7 @@ ERRJProlog
 	xpp::criterions___ C;
 	str::string D, K;
 ERRJBegin
-	Print_( Env, __LOC__ );
+	//Print_( Env, __LOC__ );
 
 	Data = new data___;
 

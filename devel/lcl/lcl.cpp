@@ -214,14 +214,18 @@ void lcl::meaning_::AddTag( const meaning_ &Meaning )
 {
 	row__ Row = Meaning.Levels.First();
 	ctn::E_CMITEMt( str::string_, row__ ) Value;
+	_level__ Level = 0;
 
 	Value.Init( Meaning.Values );
 
 	while ( Row != NONE ) {
-		_Push( Meaning.Levels( Row ) + 1, Value( Row ) );
+		_Push( Level = ( Meaning.Levels( Row ) + 1 ), Value( Row ) );
 
 		Row = Meaning.Levels.Next( Row );
 	}
+
+	if ( Meaning.Levels.Amount() == 1 )
+		_Push( Level + 1, str::string() );	// Lorsque pas de 'tag', on en ajoute un, pour simplifier l'algorithme de la traduction..
 }
 
 void lcl::locale_::_GetTranslation(
@@ -246,9 +250,11 @@ ERRBegin
 
 		if ( Level == 0 ) {
 			Buffer.Init();
-			_GetTranslation( Value, Language, Buffer );
-		} else
+			_GetTranslation( Value, Language, Translation );
+		} else {
+			Buffer.Init();
 			Tags.Insert( Value, 0 );
+		}
 	}
 
 	while ( !Levels.IsEmpty() ) {
@@ -272,6 +278,8 @@ ERRBegin
 
 			Tags.Init();
 		} else {
+//			Buffer.Init();
+			//_GetTranslation( Value, Language, Buffer );
 			Tags.Insert( Value, 0 );
 			Levels.Pop();
 		}

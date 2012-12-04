@@ -55,6 +55,67 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include <string.h>
+
+using namespace cpe;
+
+static const char *Processor_( void )
+{
+#ifdef CPE__X86
+	return "x86";
+#elif defined( ARM )
+	return "ARM";
+#else
+# error
+#endif
+}
+
+static const char *Size_( void )
+{
+#ifdef CPE__32BITS
+	return "32";
+#elif defined( CPE__64BITS )
+	return "64";
+#else
+# error
+#endif
+}
+
+static const char *Enviroment_( void )
+{
+#if defined( CPE__MS )
+	return "Win";
+#elif defined( CPE__MAC
+	return "MacOS";
+#elif defined( CPE__CYGWIN
+	return "Cygwin";
+#elif defined( CPE__MINGW
+	return "MinGW";
+#elif defined( CPE__LINUX
+	return "Linux";
+#elif defined( CPE__ANDROID
+	return "Android";
+#else
+	return "Unknown";
+#endif
+
+}
+
+const char *cpe::GetDescription( void )
+{
+	static char Buffer[100];
+	Buffer[0] = 0;
+
+	strcat( Buffer, Enviroment_() );
+	strcat( Buffer, "_" );
+	strcat( Buffer, Processor_() );
+	strcat( Buffer, "-" );
+	strcat( Buffer, Size_() );
+
+	return Buffer;
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class cpepersonnalization

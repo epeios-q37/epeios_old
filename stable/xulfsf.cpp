@@ -106,7 +106,7 @@ ERRBegin
 	Translation.Init();
 
 	if ( nsxpcm::DynamicLibraryFileOpenDialogBox( Trunk().UI().SessionForm().Window(), str::string( Trunk().Kernel().GetTranslation( XULFDG_NAME "_EmbeddedBackendFileSelectionDialogBoxTitle", Translation ) ), Trunk().Kernel().Locale(), Trunk().Kernel().Language(), FileName ) )
-		Trunk().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValueC( FileName );
+		Trunk().UI().SessionForm().Widgets.txbEmbeddedBackend.SetValue( FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -235,8 +235,8 @@ ERRBegin
 		break;
 	}
 
-	Widgets.txbLogin.SetValueC( Login );
-	Widgets.txbPassword.SetValueC( Password );
+	Widgets.txbLogin.SetValue( Login );
+	Widgets.txbPassword.SetValue( Password );
 	Broadcasters.bdcAuthentication.Disable( Disable );
 ERRErr
 ERREnd

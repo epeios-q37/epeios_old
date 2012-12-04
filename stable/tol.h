@@ -572,7 +572,7 @@ namespace tol {
 	E_TRMIMIC__( LARGE_INTEGER, tick__ );
 	extern LARGE_INTEGER	_TickFrequence;
 
-	inline tick__ Ticks( void )
+	inline tick__ Tick( void )
 	{
 		LARGE_INTEGER Counter;
 
@@ -609,7 +609,7 @@ namespace tol {
 # elif defined( TOL__POSIX )
 	E_TRMIMIC__( timespec, tick__ );
 
-	inline tick__ Ticks( void )
+	inline tick__ Tick( void )
 	{
 		timespec TP;
 
@@ -732,16 +732,16 @@ namespace tol {
 		}
 		void Init( bso::ulong__ Delay )
 		{
-			_Start = Ticks();
+			_Start = Tick();
 			_Delay = Delay;
 		}
 		void Launch( void )
 		{
-			_Start = Ticks();
+			_Start = Tick();
 		}
 		bso::bool__ IsElapsed( void ) const
 		{
-			return MilliSecDiff( Ticks(), _Start ) >= _Delay;
+			return MilliSecDiff( Tick(), _Start ) >= _Delay;
 		}
 	};
 

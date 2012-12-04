@@ -72,7 +72,8 @@ ERRProlog
 ERRBegin
 	Success = XULFUIRegister( Window, Id );
 ERRErr
-	_Trunk->UI().Alert( err::Message( Buffer ) );
+	if ( ERRType != err::t_Abort )
+		_Trunk->UI().Alert( err::Message( Buffer ) );
 	ERRRst();
 ERREnd
 ERREpilog

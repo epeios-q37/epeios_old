@@ -89,57 +89,49 @@ ERREnd
 ERREpilog
 }
 
-lcl::level__ scllocale::Push(
-	flw::iflow__ &Flow,
-	const char *Directory,
-	const char *RootPath,
-	lcl::meaning_ &Meaning )
-{
-	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
-ERRProlog
-	STR_BUFFER___ STRBuffer;
-	rgstry::context___ Context;
-	str::string Language;
-	xtf::extended_text_iflow__ XFlow;
-ERRBegin
-	XFlow.Init( Flow );
-
-	Context.Init();
-
-	if ( ( Level = Locale_.Push( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context ) ) == LCL_UNDEFINED_LEVEL ) {
-		if ( !cio::IsInitialized() )
-			cio::Initialize( cio::t_Default );
-
-		ReportLocaleFileParsingError_( Context, Meaning );
-	}
-ERRErr
-ERREnd
-ERREpilog
-	return Level;
-}
-
-lcl::level__ scllocale::Push(
+void scllocale::Load(
 	flw::iflow__ &Flow,
 	const char *Directory,
 	const char *RootPath )
 {
-	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRProlog
 	lcl::meaning ErrorMeaning;
+	rgstry::context___ Context;
+	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRBegin
-	ErrorMeaning.Init();
+	Context.Init();
+	Level = Push( Flow, Directory, RootPath, Context );
 
-	if ( ( Level = Push( Flow, Directory, RootPath, ErrorMeaning ) ) == LCL_UNDEFINED_LEVEL ) {
+	if ( Level == LCL_UNDEFINED_LEVEL ) {
+		ErrorMeaning.Init();
+		ReportLocaleFileParsingError_( Context, ErrorMeaning );
 		sclerror::SetMeaning( ErrorMeaning );
 		ERRExit( EXIT_FAILURE );
-	}
+	} else if ( Level != 0 )
+		ERRc();
+ERRErr
+ERREnd
+ERREpilog
+}
+
+lcl::level__ scllocale::Push(
+	flw::iflow__ &Flow,
+	const char *Directory,
+	const char *RootPath,
+	rgstry::context___ &Context )
+{
+	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
+ERRProlog
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	XFlow.Init( Flow );
+
+	Level = Locale_.Push( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context );
 ERRErr
 ERREnd
 ERREpilog
 	return Level;
 }
-
-
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

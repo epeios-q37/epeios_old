@@ -166,7 +166,7 @@ ERRBegin
 	Tags.Init();
 	Tags.Append( Id );
 
-	Registry.GetValue( tentry__( frdrgy::PredefinedBackend, Tags ), Location );
+	Registry.GetValue( tentry__( frdrgy::PredefinedProject, Tags ), Location );
 ERRErr
 ERREnd
 ERREpilog
@@ -631,6 +631,55 @@ ERREpilog
 	return Status;
 }
 
+static bso::bool__ LoadProjectLocale_(
+	const str::string_ &LocaleContent,
+	lcl::locale_ &Locale,
+	lcl::context___ &Context )
+{
+	bso::bool__ Success = false;
+ERRProlog
+	flx::E_STRING_IFLOW__ Flow;
+	xtf::extended_text_iflow__ XFlow;
+ERRBegin
+	Flow.Init( LocaleContent );
+	XFlow.Init( Flow );
+
+	if ( Locale.Push( XFlow, xpp::criterions___(), "Locale", Context ) != LCL_UNDEFINED_LEVEL )
+		Success = true;
+ERRErr
+ERREnd
+ERREpilog
+	return Success;
+}
+
+status__ frdkrn::kernel___::_LoadProjectLocale( void )
+{
+	status__ Status = s_Undefined;
+ERRProlog
+	str::string Locale;
+	rgstry::context___ Context;
+ERRBegin
+	Locale.Init();
+
+	Registry().GetValue( frdrgy::Locale, Locale );
+
+	if ( Locale.Amount() != 0 ) {
+		Context.Init();
+		if ( !LoadProjectLocale_( Locale, _Locale, Context ) ) {
+			_Meaning.Init();
+			rgstry::GetMeaning( Context, _Meaning );
+			Status = sWarning;
+		} else
+			Status = sOK;
+	} else
+		Status = sOK;
+
+ERRErr
+ERREnd
+ERREpilog
+	return Status;
+}
+
 status__ frdkrn::kernel___::LoadProject(
 	const str::string_ &FileName,
 	const char *TargetName,
@@ -650,7 +699,7 @@ ERRBegin
 		Status = sError;
 		ERRReturn;
 	} else
-		Status = sOK;
+		Status = _LoadProjectLocale();
 ERRErr
 ERREnd
 ERREpilog

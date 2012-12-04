@@ -2,8 +2,8 @@
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="FRDKRN_ProjectParsingError">
-		<Translation language="fr">Lecture projet ; %1</Translation>
-		<Translation language="en">Project reading; %1</Translation>
+		<Translation language="fr">Lecture projet : %1</Translation>
+		<Translation language="en">Project reading : %1</Translation>
 	</Translations>
 	<Translations text="FRDKRN_ParametersParsingError">
 		<Translation language="fr">Lecture paramètres ; %1</Translation>

@@ -124,8 +124,8 @@ namespace frdkrn {
 
 	enum status__ {
 		sOK,
-		sError,		// An error occured; it must be corrected.
-		sWarning,	// There was a problem, but the program can continue.
+		sError,		// Il y aune erreur, l'action en cours doit être interrompue (Lancer 'ERRAbort()').
+		sWarning,		// Il y a eu un prblème, mais l'action peut être poursuivie.
 		s_amount,
 		s_Undefined
 	};
@@ -220,7 +220,7 @@ namespace frdkrn {
 	class kernel___
 	{
 	private:
-		const lcl::locale_ *_Locale;
+		lcl::locale _Locale;
 		const char *_Language;
 		csducl::universal_client_core _ClientCore;
 		frdrgy::registry _Registry;
@@ -229,6 +229,7 @@ namespace frdkrn {
 		time_t _ProjectOriginalTimeStamp;	// Horodatage de la créationn du chargement du projet ou de sa dernière sauvegarde. Si == 0, pas de projet en cours d'utilisation.
 		time_t _ProjectModificationTimeStamp;	// Horodatage de la dernière modification du projet.
 		reporting_functions__ *_ReportingFunctions;
+		status__ _LoadProjectLocale( void );
 		recap__ _Connect(
 			const str::string_ &RemoteHostServiceOrLocalLibraryPath,
 			const compatibility_informations__ &CompatibilityInformations,
@@ -301,7 +302,7 @@ namespace frdkrn {
 			_Backend.reset( P );
 			_ClientCore.reset( P );
 			_Registry.reset( P );
-			_Locale = NULL;
+			_Locale.reset( P );
 			_Language = NULL;
 			_Meaning.reset( P );
 			_ProjectOriginalTimeStamp = 0;
@@ -326,7 +327,10 @@ namespace frdkrn {
 		{
 			_Registry.Init( ConfigurationRegistry, ConfigurationRegistryRoot );
 			_Meaning.Init();
-			_Locale = &Locale;
+
+			_Locale.Init();
+			_Locale.Push( Locale );
+
 			_Language = Language;
 			_ProjectOriginalTimeStamp = 0;
 			_ReportingFunctions = &ReportingFunctions;
@@ -351,10 +355,7 @@ namespace frdkrn {
 		}
 		const lcl::locale_ &Locale( void ) const
 		{
-			if ( _Locale == NULL )
-				ERRc();
-
-			return *_Locale;
+			return _Locale;
 		}
 		const char *Language( void ) const
 		{

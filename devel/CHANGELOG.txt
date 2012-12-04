@@ -1,5 +1,30 @@
 $Id$
 
+26/11/2012 :
+	- Général :
+		- Adaptation au compilateur 'MinGW'.
+
+25/11/2012 :
+	- XPP :
+		- 'GetMessage(...)' -> 'GetMeaning(...)'.
+
+22/11/2012 :
+	- SCLMISC :
+		- Ajouut 'ReportFileOpeningErrorAndExit(...)'.
+	- SCLTOOL :
+		- Gestion des erreurs issus de SCLERROR.
+
+20/11/2012 :
+	- FIL :
+		- Correction du problème avec 'TouchFile()', qui fonctionnait lorsque le logiciel était lancé à partir d'une console DOS,
+		mais pas lorsque lancé à partir d'une console 'Cygwin' (décalage d'une heure, peut-être dépendat de l'heure d'hiver/d'été).
+	- TOL :
+		Correction bogue similaire relative aux fonctions 'Date(...)', 'Time(...)', 'DateAndTime(...)'.
+
+18/11/2012 :
+	- NDBIDX :
+		- Ajout de 'bind_behaviour__'.
+
 05/11/2012 :
 	- Général :
 		- Adaptation.

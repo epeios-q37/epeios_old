@@ -60,27 +60,27 @@ extern class ttr_tutor &EPSMSCTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "cpe.h"
-#include "txf.h"
-#include "cio.h"
+# include "cio.h"
 
 //d The epeios site URL.
-#define EPSMSC_EPEIOS_URL	"http://zeusw.org/epeios/"
+# define EPSMSC_EPEIOS_URL	"http://zeusw.org/epeios/"
 
 //d The gnu URL.
-#define EPSMSC_GNU_URL	"http://www.gnu.org/"
+# define EPSMSC_GNU_URL	"http://www.gnu.org/"
 
+# if 0
 //d The hypertext link to the Epeios project.
 #define EPSMSC_EPEIOS_LINK	"<A HREF=\"" EPSMSC_EPEIOS_URL "\">Epeios project</A>"
+# endif
 
 //m The hypertext link to the software named 'Name'.
-#define EPSMSC_APP_LINK( Name )\
-	"<A HREF=\"" EPSMSC_EPEIOS_URL "en/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
+# define EPSMSC_APP_LINK( Name )\
+	"<A HREF=zeusw.org/intl/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
 
+# if 0
 //m The invitation to consult the help text for application named 'Name'.
-#define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations."
+# define EPSMSC_HELP_INVITATION( Name )	"Try '" Name " --help' for more informations." 
+#endif
 
 //d The author.
 #define EPSMSC_AUTHOR_NAME	"Claude SIMON"
@@ -91,6 +91,7 @@ extern class ttr_tutor &EPSMSCTutor;
 //d Author mail hypertext link.
 #define EPSMSC_AUTHOR_LINK	"<A HREF=\"" EPSMSC_AUTHOR_CONTACT "\">" EPSMSC_AUTHOR_NAME "</A>"
 
+# if 0
 //d GNU (http://www.gnu.org) Text.
 #define EPSMSC_GNU_PROJECT_AFFILIATION "\tThis program is part of the GNU project, released\n\tunder the aegis of GNU (" EPSMSC_GNU_URL ").\n\tIt uses Epeios (" EPSMSC_EPEIOS_URL ") technologies."
 
@@ -99,6 +100,7 @@ extern class ttr_tutor &EPSMSCTutor;
 
 //d Epeios (http://zeusw.org/epeios/) framework.
 #define EPSMSC_EPEIOS_FRAMEWORK_DEPENDENCE "Relies massively on the Epeios framework (" EPSMSC_EPEIOS_URL ")." 
+# endif
 
 //m Copyright text with yers 'Years' (string) for Epeios.
 #define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
