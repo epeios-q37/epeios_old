@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entities>
+	<Entity Name="Language">
+		<Translation language="en">en</Translation>
+		<Translation language="fr">fr</Translation>
+		<Translation language="de">de</Translation>
+	</Entity>
+
+	<Entity Name="Version.key">
+		<Translation language="en">v</Translation>
+		<Translation language="fr">v</Translation>
+		<Translation language="de">v</Translation>
+	</Entity>
+	
+	<Entity Name="Debug.key">
+		<Translation language="en">d</Translation>
+		<Translation language="fr">d</Translation>
+		<Translation language="de">d</Translation>
+	</Entity>
+
+	<EntitySet Affix="File">
+		<Entity Suffix="lbl">
+			<Translation language="en">File</Translation>
+			<Translation language="fr">Fichier</Translation>
+			<Translation language="de">Datei</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">F</Translation>
+			<Translation language="fr">F</Translation>
+			<Translation language="de">D</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="ProjectType">
+		<Entity Suffix="lbl">
+			<Translation language="en">Project</Translation>
+			<Translation language="fr">Projet</Translation>
+			<Translation language="de">Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">SProject type</Translation>
+			<Translation language="fr">Type de projet</Translation>
+			<Translation language="de">Projekt Typ</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="NewProject">
+		<Entity Suffix="lbl">
+			<Translation language="en">New</Translation>
+			<Translation language="fr">Nouveau</Translation>
+			<Translation language="de">Neues</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Creation of a new project</Translation>
+			<Translation language="fr">Créer un nouveau projet</Translation>
+			<Translation language="de">Kreirung eines neuen Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">N</Translation>
+			<Translation language="fr">N</Translation>
+			<Translation language="de">N</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">N</Translation>
+			<Translation language="fr">N</Translation>
+			<Translation language="de">N</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">Ctrl+&amp;NewProject.key;</Translation>
+			<Translation language="fr">Ctrl+&amp;NewProject.key;</Translation>
+			<Translation language="de">Ctrl+&amp;NewProject.key;</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="UserProject">
+		<Entity Suffix="lbl">
+			<Translation language="en">Load ...</Translation>
+			<Translation language="fr">Ouvrir ...</Translation>
+			<Translation language="de">Öffnen ...</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Load an existing Projekt</Translation>
+			<Translation language="fr">Ouvrir un projet existant</Translation>
+			<Translation language="de">Öffnung eines bestehndes Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">L</Translation>
+			<Translation language="fr">O</Translation>
+			<Translation language="de">O</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">&amp;UserProject.ack;</Translation>
+			<Translation language="fr">&amp;UserProject.ack;</Translation>
+			<Translation language="de">&amp;UserProject.ack;</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">Ctrl+&amp;UserProject.key;</Translation>
+			<Translation language="fr">Ctrl+&amp;UserProject.key;</Translation>
+			<Translation language="de">Ctrl+&amp;UserProject.key;</Translation>
+		</Entity>
+	</EntitySet>
+	
+	<EntitySet Affix="PredefinedProject">
+		<Entity Suffix="lbl">
+			<Translation language="en">Predefined</Translation>
+			<Translation language="fr">Prédefini</Translation>
+			<Translation language="de">Vordefiniert</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Load a predefined project</Translation>
+			<Translation language="fr">Ouvrir un projet prédfini</Translation>
+			<Translation language="de">Öffnung eines vordefierniertes Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">P</Translation>
+			<Translation language="fr">P</Translation>
+			<Translation language="de">P</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">&amp;PredefinedProject.ack;</Translation>
+			<Translation language="fr">&amp;PredefinedProject.ack;</Translation>
+			<Translation language="de">&amp;PredefinedProject.ack;</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">Ctrl+&amp;PredefinedProject.key;</Translation>
+			<Translation language="fr">Ctrl+&amp;PredefinedProject.key;</Translation>
+			<Translation language="de">Ctrl+&amp;PredefinedProject.key;</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="UserProjectSelection">
+		<Entity Suffix="lbl">
+			<Translation language="en">Browse ...</Translation>
+			<Translation language="fr">Parcourir ...</Translation>
+			<Translation language="de">Durchsehen ...</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Select a project file</Translation>
+			<Translation language="fr">Sélectionner a fichier projet</Translation>
+			<Translation language="de">Projekt Datei auswahlen</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">B</Translation>
+			<Translation language="fr">P</Translation>
+			<Translation language="de">D</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">&amp;UserProjectSelection.ack;</Translation>
+			<Translation language="fr">&amp;UserProjectSelection.ack;</Translation>
+			<Translation language="de">&amp;UserProjectSelection.ack;</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">Ctrl+&amp;UserProjectSelection.key;</Translation>
+			<Translation language="fr">Ctrl+&amp;UserProjectSelection.key;</Translation>
+			<Translation language="de">Ctrl+&amp;UserProjectSelection.key;</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="CloseProject">
+		<Entity Suffix="lbl">
+			<Translation language="en">Close</Translation>
+			<Translation language="fr">Fermer</Translation>
+			<Translation language="de">Schließen</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Close project</Translation>
+			<Translation language="fr">Fermer le projet</Translation>
+			<Translation language="de">Schließ Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">C</Translation>
+			<Translation language="fr">F</Translation>
+			<Translation language="de">S</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">&amp;CloseProject.ack;</Translation>
+			<Translation language="fr">&amp;CloseProject.ack;</Translation>
+			<Translation language="de">&amp;CloseProject.ack;</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">CTRL+&amp;CloseProject.key;</Translation>
+			<Translation language="fr">CTRL+&amp;CloseProject.key;</Translation>
+			<Translation language="de">CTRL+&amp;CloseProject.key;</Translation>
+		</Entity>
+	</EntitySet>
+	
+	<EntitySet Affix="Apply">
+		<Entity Suffix="lbl">
+			<Translation language="en">OK</Translation>
+			<Translation language="fr">OK</Translation>
+			<Translation language="de">OK</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Open the projet</Translation>
+			<Translation language="fr">Ouvre le projet</Translation>
+			<Translation language="de">Öffne den Projekt</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">O</Translation>
+			<Translation language="fr">O</Translation>
+			<Translation language="de">O</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="Exit">
+		<Entity Suffix="lbl">
+			<Translation language="en">Exit</Translation>
+			<Translation language="fr">Quitter</Translation>
+			<Translation language="de">Verlassen</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Exit from program</Translation>
+			<Translation language="fr">Quitter le programme</Translation>
+			<Translation language="de">Program verlassen</Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en">E</Translation>
+			<Translation language="fr">Q</Translation>
+			<Translation language="de">P</Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en">&amp;Exit.ack;</Translation>
+			<Translation language="fr">&amp;Exit.ack;</Translation>
+			<Translation language="de">&amp;Exit.ack;</Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en">CTRL+&amp;Exit.key;</Translation>
+			<Translation language="fr">CTRL+&amp;Exit.key;</Translation>
+			<Translation language="de">CTRL+&amp;Exit.key;</Translation>
+		</Entity>
+	</EntitySet>
+
+	<Entity Name="Misc.lbl">
+		<Translation language="en">?</Translation>
+		<Translation language="fr">?</Translation>
+		<Translation language="de">?</Translation>
+	</Entity>
+
+	<EntitySet Affix="About">
+		<Entity Suffix="lbl">
+			<Translation language="en">About ...</Translation>
+			<Translation language="fr">A propos ...</Translation>
+			<Translation language="de">Über ...</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Display informations about this program</Translation>
+			<Translation language="fr">Afficher des informations à propos de cette application</Translation>
+			<Translation language="de">Infomationen über diesen Program zeigen</Translation>
+		</Entity>
+	</EntitySet>
+
+	<EntitySet Affix="WebSite">
+		<Entity Suffix="lbl">
+			<Translation language="en">Web site</Translation>
+			<Translation language="fr">Site Web</Translation>
+			<Translation language="de">Website</Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en">Display the Web site dedicated to this program</Translation>
+			<Translation language="fr">Afficher le site Web dédié à ce programme </Translation>
+			<Translation language="de">Von diesen Program die Website zeigen</Translation>
+		</Entity>
+	</EntitySet>
+
+	<!--
+	<Entity Name="">
+		<Translation language="en"></Translation>
+		<Translation language="fr"></Translation>
+		<Translation language="de"></Translation>
+	</Entity>
+	-->
+	<!--
+	<EntitySet Affix="">
+		<Entity Suffix="lbl">
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Entity>
+		<Entity Suffix="ttt">
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Entity>
+		<Entity Suffix="ack">
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Entity>
+		<Entity Suffix="key">
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Entity>
+		<Entity Suffix="act">
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Entity>
+	</EntitySet>
+	-->
+	<!--
+	<Raw language="">
+		<![CDATA[
+		]]>
+	</Raw>
+	-->
+</Entities>

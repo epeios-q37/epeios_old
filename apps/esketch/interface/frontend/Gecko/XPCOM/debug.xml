@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entities>
+
+	<!--
+	<Entity name="">
+		<Translation language="en"</Translation>
+		<Translation language="fr"</Translation>
+		<Translation language="de"</Translation>
+	</Entity>
+	-->
+
+	<Raw language="en">
+		<![CDATA[
+<!ENTITY DebugDialogBox.title "Debug console">
+
+<!ENTITY JSConsole.label "JS Console">
+<!ENTITY JSConsole.tooltip "Opens Javascript console">
+
+<!ENTITY DOMInspector.label "DOM Inspector">
+<!ENTITY DOMInspector.tooltip "Opens DOM Inspector">
+
+<!ENTITY FrontendError.label "'Frontend' error">
+<!ENTITY FrontendError.tooltip "Launch a 'frontend' error for testing purpose.">
+
+<!ENTITY BackendError.label "'Backend' error">
+<!ENTITY BackendError.tooltip "Launch a 'backend' error for testing purpose.">
+		]]>
+	</Raw>
+	<Raw language="fr">
+		<![CDATA[
+<!ENTITY JSConsole.lbl "JS Console">
+<!ENTITY JSConsole.ttt "Ouvrir la console JavaScript">
+<!ENTITY JSConsole.ack "J">
+
+<!ENTITY DOMInspector.lbl "DOM Inspector">
+<!ENTITY DOMInspector.ttt "Ouvrir 'DOM Inspector'">
+<!ENTITY DOMInspector.ack "D">
+
+<!ENTITY FrontendError.lbl "Erreur 'Frontend'">
+<!ENTITY FrontendError.ttt "Tester une erreur de type 'frontend'">
+<!ENTITY FrontendError.ack "F">
+
+<!ENTITY BackendError.lbl "Erreur 'Backend'">
+<!ENTITY BackendError.ttt "Tester une erreur 'Backend'">
+<!ENTITY BackendError.ack "B">
+		]]>
+	</Raw>
+</Entities>
