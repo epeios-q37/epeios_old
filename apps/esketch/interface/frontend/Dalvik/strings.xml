@@ -1,0 +1,75 @@
+<Strings><!-- NOTA : 'en' is the default one -->
+	<String name="app_name">
+		<Translation language="en">ESketch</Translation>
+	</String>
+	<String name="Main_ProjectType_Prompt">
+		<Translation language="en">Project</Translation>
+		<Translation language="fr">Projet</Translation>
+		<Translation language="de">Projekt</Translation>
+	</String>
+	<String name="Main_PredefinedProjectList_Prompt">
+		<Translation language="en">Predefined projects</Translation>
+		<Translation language="fr">Projets prédéfinis</Translation>
+		<Translation language="de">Vordefinierte Projekte</Translation>
+	</String>
+	<String-Array name="Main_ProjectType_Entries">
+		<Item>
+			<Translation language="en">New</Translation>
+			<Translation language="fr">Nouveau</Translation>
+			<Translation language="de">Neues</Translation>
+		</Item>>
+		<Item>
+			<Translation language="en">Predefined</Translation>
+			<Translation language="fr">Prédefini</Translation>
+			<Translation language="de">Vordefiniert</Translation>
+		</Item>>
+	</String-Array>
+	<String name="Main_Apply">
+		<Translation language="en">OK</Translation>
+		<Translation language="fr">OK</Translation>
+		<Translation language="de">OK</Translation>
+	</String>
+	<String name="SessionForm_BackendType_Prompt">
+		<Translation language="en">Backend</Translation>
+		<Translation language="fr">Moteur de traitement</Translation>
+		<Translation language="de">Handlemotor</Translation>
+	</String>
+	<String name="SessionForm_DaemonBackendLocation_Hint">
+		<Translation language="en">address:port</Translation>
+		<Translation language="fr">adresse:port</Translation>
+		<Translation language="de">Adresse:Port</Translation>
+	</String>
+	<String-Array name="SessionForm_BackendType_Entries">
+		<Item>
+			<Translation language="en">None</Translation>
+			<Translation language="fr">Aucun</Translation>
+			<Translation language="de">Keinen</Translation>
+		</Item>>
+		<Item>
+			<Translation language="en">Predefined</Translation>
+			<Translation language="fr">Prédéfini</Translation>
+			<Translation language="de">Vorgegeben</Translation>
+		</Item>>
+		<Item>
+			<Translation language="en">Daemon</Translation>
+			<Translation language="fr">Daemon</Translation>
+			<Translation language="de">Daemon</Translation>
+		</Item>>
+	</String-Array>
+	<!--
+	<String name="">
+		<Translation language="en"></Translation>
+		<Translation language="fr"></Translation>
+		<Translation language="de"></Translation>
+	</String>
+	-->
+	<!-- NOTE : Pour chae 'Item', TOUTES les langes doivent être représentée !
+	<String-Array name="">
+		<Item>
+			<Translation language="en"></Translation>
+			<Translation language="fr"></Translation>
+			<Translation language="de"></Translation>
+		</Item>>
+	</String-Array>
+	-->
+</Strings>
