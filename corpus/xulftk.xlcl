@@ -41,6 +41,14 @@
     <Translation language="fr">par %1 (%2)</Translation>
     <Translation language="en">by %1 (%2 )</Translation>
   </Translations>
+  <Translations text="XULFTK_AffiliatedSoftwareText">
+    <Translation language="fr">Fait partie de l'application '%1' (%2)</Translation>
+    <Translation language="en">Part of '%1' (%2) application</Translation>
+  </Translations>
+  <Translations text="XULFTK_AffiliatedProjectText">
+    <Translation language="fr">Affilié au projet %1 (%2)</Translation>
+    <Translation language="en">Affiliated to the %1 project (%2)</Translation>
+  </Translations>
   <!--
 	<Translations text="XULFTK_">
 		<Translation language="fr"></Translation>

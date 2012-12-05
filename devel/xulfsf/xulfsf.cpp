@@ -288,13 +288,13 @@ ERRBegin
 
 	Trunk.UI().LogQuietly( PredefinedBackends );
 
-	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget() );
+	nsxpcm::RemoveChildren( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend );
 
 	Fragment = nsxpcm::XSLTransformByFileName( PredefinedBackends, str::string( fnm::BuildFileName( Trunk.DefaultXSLRootPath(), "PredefinedBackendMenuList", ".xsl", FileNameBuffer ) ), Trunk.UI().SessionForm().Document(), nsxpcm::xslt_parameters() );
 
-	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget(), Fragment );
+	nsxpcm::AppendChild( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend, Fragment );
 
-	nsxpcm::SetSelectedItem( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend.GetWidget() );
+	nsxpcm::SetSelectedItem( Trunk.UI().SessionForm().Widgets.mnlPredefinedBackend );
 ERRErr
 ERREnd
 ERREpilog

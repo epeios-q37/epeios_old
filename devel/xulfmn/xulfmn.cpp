@@ -321,10 +321,10 @@ GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().Locale(), Trunk.Kernel()
 
 	Trunk.UI().LogQuietly( PredefinedProjects );
 
-	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnuPredefinedProject.GetWidget(), Trunk.UI().Main().Document() );
-	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnlPredefinedProjectList.GetWidget(), Trunk.UI().Main().Document() );
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnuPredefinedProject, Trunk.UI().Main().Document() );
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnlPredefinedProjectList, Trunk.UI().Main().Document() );
 
-	nsxpcm::SetSelectedItem( Trunk.UI().Main().Widgets.mnlPredefinedProjectList.GetWidget() );
+	nsxpcm::SetSelectedItem( Trunk.UI().Main().Widgets.mnlPredefinedProjectList );
 ERRErr
 ERREnd
 ERREpilog

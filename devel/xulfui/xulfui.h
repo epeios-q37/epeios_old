@@ -264,10 +264,10 @@ namespace xulfui {
 			SetAttribute( "autocompletesearch", GECKOF_AUTOCOMPLETE_COMPONENT_NAME );
 			
 			_OnTextEntered.Init( Callback );
-			geckoo::AddPseudoEventHandler( this->GetWidget(), "ontextentered", _OnTextEntered );
+			geckoo::AddPseudoEventHandler( GetNode(), "ontextentered", _OnTextEntered );
 
 			_OnTextReverted.Init( Callback );
-			geckoo::AddPseudoEventHandler( this->GetWidget(), "ontextreverted", _OnTextReverted );
+			geckoo::AddPseudoEventHandler( GetNode(), "ontextreverted", _OnTextReverted );
 		}
 	public:
 		void reset( bso::bool__ P = true )

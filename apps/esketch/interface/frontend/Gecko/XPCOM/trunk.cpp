@@ -32,7 +32,10 @@ void trunk::user_callback__::XULFTKAboutText(
 		LauncherIdentification, BuildInformations, 
 		APP_NAME, VERSION, DEBUG_FLAG,
 		AUTHOR_NAME, AUTHOR_CONTACT,
-		COPYRIGHT, PROJECT_AFFILIATION, SOFTWARE_AFFILIATION, _T(), Text );
+		COPYRIGHT,
+		AFFILIATED_SOFTWARE_NAME, AFFILIATED_SOFTWARE_URL,
+		AFFILIATED_PROJECT_NAME, AFFILIATED_PROJECT_URL,
+		_T(), Text );
 }
 
 void trunk::trunk___::TestLocaleInProjectFile_( void )

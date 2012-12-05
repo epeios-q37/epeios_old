@@ -85,8 +85,10 @@ namespace xulftk {
 		const char *AuthorName,
 		const char *AuthorContact,
 		const char *Copyright,
-		const char *ProjectAffiliation,
-		const char *SoftwareAffiliation,
+		const char *AffiliatedSoftwareName,
+		const char *AffiliatedSoftwareURL,
+		const char *AffiliatedProjectName,
+		const char *AffiliatedProjectURL,
 		xulftk::trunk___ &Trunk,
 		str::string_ &Text );
 

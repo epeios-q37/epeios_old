@@ -198,8 +198,8 @@ static void PrintHeader_( void )
 {
 	COut << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
 	COut << COPYRIGHT << txf::nl;
-	COut << txf::pad << AFFILIATION << txf::nl;
-	COut << txf::pad << DEPENDENCE << txf::nl;
+//	COut << txf::pad << AFFILIATION << txf::nl;
+//	COut << txf::pad << DEPENDENCE << txf::nl;
 	COut << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
 }
 

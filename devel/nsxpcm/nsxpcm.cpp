@@ -518,7 +518,7 @@ ERRProlog
 	str::string Name;
 	nsIDOMNode *Node = NULL, *Next = NULL;
 ERRBegin
-	Node = GetFirstChild( GetWidget() );
+	Node = GetFirstChild( GetNode() );
 
 	while ( Node != NULL ) {
 		Next = GetNextSibling( Node );
@@ -526,7 +526,7 @@ ERRBegin
 		Name.Init();
 
 		if ( GetNodeName( Node, Name ) == "listitem" )
-			RemoveChild( GetWidget(), Node );
+			RemoveChild( GetNode(), Node );
 
 		Node = Next;
 	}

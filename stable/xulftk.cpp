@@ -84,7 +84,8 @@ ERREpilog
 
 static void GetAffiliationText_(
 	const char *Tag,
-	const char *Affiliation,
+	const char *Name,
+	const char *URL,
 	const lcl::locale_ &Locale,
 	const char *Language,
 	str::string_ &Text )
@@ -94,7 +95,8 @@ ERRProlog
 ERRBegin
 	Meaning.Init();
 	Meaning.SetValue( Tag );
-	Meaning.AddTag( Affiliation );
+	Meaning.AddTag( Name );
+	Meaning.AddTag( URL );
 
 	Locale.GetTranslation( Meaning, Language, Text );
 ERRErr
@@ -111,13 +113,14 @@ const str::string_ &xulftk::BuildAboutText(
 	const char *AuthorName,
 	const char *AuthorContact,
 	const char *Copyright,
-	const char *ProjectAffiliation,
-	const char *SoftwareAffiliation,
+	const char *AffiliatedSoftwareName,
+	const char *AffiliatedSoftwareURL,
+	const char *AffiliatedProjectName,
+	const char *AffiliatedProjectURL,
 	xulftk::trunk___ &Trunk,
 	str::string_ &Text )
 {
 ERRProlog
-	tol::buffer__ Buffer;
 	str::string AuthorText, ProjectAffiliationText, SoftwareAffiliationText, ProtocolVersion, BackendLabel, APIVersion, BackendInformations;
 ERRBegin
 	Text.Append( AppName );
@@ -136,22 +139,22 @@ ERRBegin
 
 	Text.Append( " (" );
 	Text.Append( LauncherIdentification );
-	Text.Append( " <" );
-	Text.Append( tol::DateAndTime( Buffer ) );
-	Text.Append( ">)\n" );
+	Text.Append( ")\n" );
 	Text.Append( Copyright );
 
-	if ( ( ProjectAffiliation != NULL ) && ( *ProjectAffiliation != 0 ) ) {
-		Text.Append( "\n\n" );
-		ProjectAffiliationText.Init();
-		GetAffiliationText_( XULFTK_NAME "_ProjectAffiliationText", ProjectAffiliation, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), ProjectAffiliationText );
-		Text.Append( ProjectAffiliationText );
-	}
-
-	Text.Append( "\n\n" );
+	Text.Append( "\n\n\t" );
 	SoftwareAffiliationText.Init();
-	GetAffiliationText_( XULFTK_NAME "_SoftwareAffiliationText", SoftwareAffiliation, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), SoftwareAffiliationText );
+	GetAffiliationText_( XULFTK_NAME "_AffiliatedSoftwareText", AffiliatedSoftwareName, AffiliatedSoftwareURL, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), SoftwareAffiliationText );
 	Text.Append( SoftwareAffiliationText );
+	Text.Append( '.' );
+
+	if ( ( AffiliatedProjectName != NULL ) && ( *AffiliatedProjectName != 0 ) ) {
+		Text.Append( "\n\t" );
+		ProjectAffiliationText.Init();
+		GetAffiliationText_( XULFTK_NAME "_AffiliatedProjectText", AffiliatedProjectName, AffiliatedProjectURL, Trunk.Kernel().Locale(), Trunk.Kernel().Language(), ProjectAffiliationText );
+		Text.Append( ProjectAffiliationText );
+		Text.Append( '.' );
+	}
 
 	if ( Trunk.Kernel().IsConnected() ) {
 		Text.Append( '\n' );
@@ -196,6 +199,8 @@ void xulftk::reporting_functions__::FRDKRNReportFrontendError( const str::string
 
 void xulftk::reporting_functions__::Init( trunk___ &Trunk )
 {
+	_Trunk = &Trunk;
+
 	_reporting_functions__::Init( Trunk.Kernel() );
 }
 

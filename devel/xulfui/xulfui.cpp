@@ -74,6 +74,8 @@ ERRBegin
 ERRErr
 	if ( ERRType != err::t_Abort )
 		_Trunk->UI().Alert( err::Message( Buffer ) );
+	else
+		Success = true;
 	ERRRst();
 ERREnd
 ERREpilog

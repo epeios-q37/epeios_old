@@ -207,9 +207,9 @@ namespace frdkrn {
 			_Kernel = NULL;
 		}
 		E_VDTOR( reporting_functions__ )
-		void Init( const kernel___ &Kernel )
+		void Init( const class kernel___ &Kernel )
 		{
-			// Standardisation.
+			_Kernel = &Kernel;
 		}
 		void ReportFrontendError( const str::string_ &Message )
 		{

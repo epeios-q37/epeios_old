@@ -235,7 +235,7 @@ namespace flw {
 			datum__ C;
 
 			if ( _ReadUpTo( 1, &C, 1, true, CacheIsEmpty ) == 0 )
-				ERRc();
+				ERRF();
 
 			return C;
 		}
