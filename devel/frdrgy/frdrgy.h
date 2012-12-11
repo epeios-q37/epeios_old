@@ -73,10 +73,6 @@ extern class ttr_tutor &FRDRGYTutor;
 # define FRDRGY_PARAMETERS_PATH	"Parameters" FRDRGY_PATH_SEPARATOR
 # define FRDRGY_PROFILES_PATH	"Profiles" FRDRGY_PATH_SEPARATOR
 
-# define FRDRGY_TAGGING_ATTRIBUTE( attribute ) "[" attribute "=\"%\"]"
-
-# define FRDRGY_TAGGED_ENTRY( tag, attribute )	tag FRDRGY_TAGGING_ATTRIBUTE( attribute )
-
 namespace frdrgy {
 
 	extern rgstry::entry___ Parameters;

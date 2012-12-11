@@ -33,54 +33,30 @@
 #define REGISTRY_TAG_MARKER_CHAR	'%'
 
 namespace registry {
-
 	using namespace sclrgstry;
 
-	struct paths
-	: public sclrgstry::paths
-	{
-		struct modules {
-			struct module {
-				static const char
-					*Id,
-					*Service,
-					*FileName,
-					*ConnectionType;
-			};
-		};
-		static const char *Service;
-		struct log {
-			static const char *FileName;
-			static const char *Mode;
-		};
-	};
+	extern rgstry::entry___ LogFileName;
+	extern rgstry::entry___ LogMode;
 
-	SCLRGSTRY_ORV( GetLogFileName, paths::log::FileName );
+	extern rgstry::entry___ ModuleId;
+	extern rgstry::entry___ ModuleService;
+	extern rgstry::entry___ ModuleFileName;
+	extern rgstry::entry___ ModuleConnectionType;
 
-	inline const str::string_ &GetModuleFileName(
+	const str::string_ &GetModuleFileName(
 		const str::string_ &Id,
 		str::string_ &FileName )
 	{
-		return GetMandatoryRegistryValue( xpath___( paths::modules::module::FileName, Id ), FileName );
+		return sclrgstry::GetMandatoryRegistryValue( rgstry::tentry___( ModuleFileName, Id ), FileName );
 	}
 
-	inline bso::ushort__ GetRawService( const str::string_ &Id )
-	{
-		return GetMandatoryRegistryUShort( xpath___( registry::paths::modules::module::Service, Id ) );
-	}
+	bso::ushort__ GetModuleRawService(
+		const str::string_ &Id,
+		str::string_ &FileName );
 
-	inline bso::ushort__ GetRawModuleConnectionType( const str::string_ &Id )
-	{
-		return GetMandatoryRegistryUShort( xpath___( registry::paths::modules::module::ConnectionType, Id ) );
-	}
-
-	SCLRGSTRY_MRV( GetRawLogFileHandling, paths::log::Mode );
-
-	inline bso::bool__ GetModulesIds( str::strings_ &Ids )
-	{
-		return GetValues( paths::modules::module::Id, Ids );
-	}
-
+	bso::ubyte__ &GetModuleRawConnectionType(
+		const str::string_ &Id,
+		str::string_ &FileName );
 }
 
 #endif

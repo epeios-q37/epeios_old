@@ -27,22 +27,17 @@
 
 using namespace registry;
 
-# define ROOT	""
+using rgstry::entry___;
 
-# define S "/"
+static entry___ Log_( "Log", sclrgstry::Parameters );
+entry___ registry::LogFileName( "FileName", Log_ );
+entry___ registry::LogMode( "@Mode", Log_ );
 
-const char *registry::paths::Service = ROOT "Service";
+static entry___ Modules_( "Modules" );
+static entry___ ModuleFree_( "Module", Modules_ );
+entry___ registry::ModuleId( "@id", ModuleFree_ );
+static entry___ Module_( RGSTRY_TAGGING_ATTRIBUTE( "id" ), ModuleFree_ );
+entry___ registry::ModuleFileName( "FileName", Module_ );
+entry___ registry::ModuleService( "Service", Module_ );
+entry___ registry::ModuleConnectionType( "ConnectionType", Module_ );
 
-#define LOG_FILE_NAME	ROOT "LogFileName" S
-const char *registry::paths::log::FileName = LOG_FILE_NAME;
-const char *registry::paths::log::Mode = LOG_FILE_NAME "@Mode";
-
-#define MODULES	ROOT "Modules" S
-#define RAW_MODULE MODULES "Module" S
-#define RAW_MODULE_ID "id"
-#define MODULE RAW_MODULE "[" RAW_MODULE_ID "=\"" REGISTRY_TAG_MARKER_STRING "1\"]" S
-
-const char *registry::paths::modules::module::Id = RAW_MODULE "@" RAW_MODULE_ID;
-const char *registry::paths::modules::module::ConnectionType = RAW_MODULE "@ConnectionType";
-const char *registry::paths::modules::module::Service = MODULE "Service";
-const char *registry::paths::modules::module::FileName = MODULE "FileName";

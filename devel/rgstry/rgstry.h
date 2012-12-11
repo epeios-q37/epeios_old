@@ -70,7 +70,13 @@ extern class ttr_tutor &RGSTRYTutor;
 #include "xpp.h"
 # include "stk.h"
 
-# define RGSTRY__TAG_MARKER	'%'
+# define RGSTRY__TAG_MARKER_S	"%"
+# define RGSTRY__TAG_MARKER_C	'%'
+
+# define RGSTRY_TAGGING_ATTRIBUTE( attribute ) "[" attribute "=\"" RGSTRY__TAG_MARKER_S "\"]"
+
+# define RGSTRY_TAGGED_ENTRY( tag, attribute )	tag RGSTRY_TAGGING_ATTRIBUTE( attribute )
+
 
 // Prédéclaration.
 namespace lcl {
@@ -252,24 +258,92 @@ namespace rgstry {
 	};
 
 	struct tentry__ {
-		const entry___ *Entry;
-		const tags_ *Tags;
+	private:
+		const entry___ *_Entry;
+		const tags_ *_Tags;
+	protected:
+		tentry__( void )
+		{
+			reset( false );
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Entry = NULL;
+			_Tags = NULL;
+		}
 		tentry__(
 			const entry___ &Entry,
 			const tags_ &Tags = *(const tags_ *)NULL )
 		{
-			this->Entry = &Entry;
-			this->Tags = &Tags;
+			reset( false );
+
+			Init( Entry, Tags );
+		}
+		~tentry__( void )
+		{
+			reset();
+		}
+		void Init(
+			const entry___ &Entry,
+			const tags_ &Tags = *(const tags_ *)NULL )
+		{
+			_Entry = &Entry;
+			_Tags = &Tags;
 		}
 		const str::string_ &GetPath( str::string_ &Path ) const
 		{
-			if ( Tags != NULL )
-				return Entry->GetPath( *Tags, Path );
+			if ( _Tags != NULL )
+				return _Entry->GetPath( *_Tags, Path );
 			else
-				return Entry->GetPath( Path );
+				return _Entry->GetPath( Path );
 		}
 	};
 
+	class tentry___
+	: public tentry__
+	{
+	private:
+		tags _Tags;
+	public:
+		void reset( bso::bool__ P = true )
+		{
+			tentry__::reset( P );
+
+			_Tags.reset( P );
+		}
+		tentry___(
+			const entry___ &Entry,
+			const str::string_ &Tag )
+		{
+			reset( false );
+
+			Init( Entry, Tag );
+		}
+		tentry___(
+			const entry___ &Entry,
+			const char *Tag )
+		{
+			reset( false );
+
+			Init( Entry, Tag );
+		}
+		void Init(
+			const entry___ &Entry,
+			const str::string_ &Tag )
+		{
+			_Tags.Init();
+			_Tags.Append( Tag );
+
+			tentry__::Init( Entry, _Tags );
+		}
+		void Init(
+			const entry___ &Entry,
+			const char *Tag )
+		{
+			Init( Entry, str::string( Tag ) );
+		}
+	};
 
 	// Nature du noeud.
 	enum nature__ 

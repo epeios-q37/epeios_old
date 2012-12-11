@@ -1584,14 +1584,14 @@ static bso::ubyte__ GetTagAmount_( const str::string_ &String )
 
 	mdr::row__ Row = String.First();
 
-	while ( ( Row != NONE ) && ( ( Row = String.Search( RGSTRY__TAG_MARKER, Row ) ) != NONE ) )
+	while ( ( Row != NONE ) && ( ( Row = String.Search( RGSTRY__TAG_MARKER_C, Row ) ) != NONE ) )
 	{
 		Row = String.Next( Row );
 
 		if ( Row == NONE )
 			ERRc();
 
-		if ( String( Row ) != RGSTRY__TAG_MARKER )
+		if ( String( Row ) != RGSTRY__TAG_MARKER_C )
 			if ( Amount == LIMIT )
 				ERRl();
 			else
@@ -1609,12 +1609,12 @@ static void HandleTag_(
 	str::string_ &Target )
 {
 	while ( *Source ) {
-		if ( *Source == RGSTRY__TAG_MARKER ) {
+		if ( *Source == RGSTRY__TAG_MARKER_C ) {
 			Target.Append( '%' );
 
 			Source++;
 
-			if ( *Source != RGSTRY__TAG_MARKER ) {
+			if ( *Source != RGSTRY__TAG_MARKER_C ) {
 				if ( Indice > LIMIT )
 					ERRl();
 
