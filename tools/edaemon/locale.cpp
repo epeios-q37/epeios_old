@@ -56,8 +56,9 @@ const char *locale::Label( message__ Message )
 	return NULL;	// To avoir a 'warning'.
 }
 
-const str::string_ &locale::GetTranslation(
+const lcl::meaning_ &locale::GetMeaning_(
 	message__ Message,
+	lcl::meaning_ *Meaning,
 	... )
 {
 #if	GLOBAL__MESSAGE_AMOUNT != 0
@@ -68,7 +69,7 @@ const str::string_ &locale::GetTranslation(
 
 	va_start( Args, Message );
 
-	Translation = &GetTranslation( Label( Message ) );
+	Meaning->SetValue( Label( Message ) );
 
 	switch ( Message ) {
 	default:
@@ -76,7 +77,7 @@ const str::string_ &locale::GetTranslation(
 		break;
 	}
 
-	return *Translation;
+	return *Meaning;
 }
 
 static struct global_cdtor {

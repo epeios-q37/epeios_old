@@ -106,7 +106,7 @@ protected:
 		} else if ( sclerror::IsErrorPending() ) {\
 			ERRRst();\
 			scllocale::GetLocale().GetTranslation( sclerror::GetMeaning(), _LanguageBuffer, ErrorTranslation );\
-			sclerror::ResetMeaning();\
+			sclerror::ResetPendingError();\
 		} else if ( ERRType != err::t_Free )\
 			ErrorTranslation = err::Message( ERRBuffer );\
 \

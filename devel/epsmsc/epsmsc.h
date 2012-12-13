@@ -73,9 +73,11 @@ extern class ttr_tutor &EPSMSCTutor;
 #define EPSMSC_EPEIOS_LINK	"<A HREF=\"" EPSMSC_EPEIOS_URL "\">Epeios project</A>"
 # endif
 
+# define EPSMSC_APP_URL( name ) "http://zeusw.org/intl/" name "/"
+
 //m The hypertext link to the software named 'Name'.
-# define EPSMSC_APP_LINK( Name )\
-	"<A HREF=zeusw.org/intl/" Name ".html\" TARGET=\"_blank\">" Name "</A>"
+# define EPSMSC_APP_LINK( name )\
+	"<A HREF=" EPSMSC_APP_URL( name ) "\" TARGET=\"_blank\">" name "</A>"
 
 # if 0
 //m The invitation to consult the help text for application named 'Name'.
@@ -103,7 +105,7 @@ extern class ttr_tutor &EPSMSCTutor;
 # endif
 
 //m Copyright text with yers 'Years' (string) for Epeios.
-#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " AUTHOR_NAME " (" AUTHOR_CONTACT ")."
+#define EPSMSC_COPYRIGHT( years )	"Copyright (c) " years " " EPSMSC_AUTHOR_NAME " (" EPSMSC_AUTHOR_CONTACT ")"
 
 							
 namespace epsmsc {

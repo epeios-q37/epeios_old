@@ -312,11 +312,11 @@ namespace lcl {
 			const char *Language,
 			str::string_ &Translation ) const;
 		const str::string_ &GetTranslation(
-			const char *Message,
+			const char *Text,
 			const char *Language,
 			str::string_ &Translation ) const	// Version simplifiée.
 		{
-			_GetTranslation( str::string( Message ), Language, Translation );
+			_GetTranslation( str::string( Text ), Language, Translation );
 
 			return Translation ;
 		}

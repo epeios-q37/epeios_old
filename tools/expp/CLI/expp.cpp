@@ -145,7 +145,7 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << locale::GetProcessCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::mProcessCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
 	COut << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
@@ -153,7 +153,7 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << locale::GetEncryptCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::mEncryptCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
@@ -161,17 +161,19 @@ ERRBegin
 	Meaning.Init();
 	clnarg::GetOptionsWordingMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetLocale().GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
+	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
 
 	COut << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
 	COut << txf::tab;
+	Meaning.Init();
+	locale::GetNamespaceOptionDescriptionMeaning( DEFAULT_NAMESPACE, Meaning );
 	Translation.Init();
-	COut << locale::GetNamespaceOptionDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
 	COut << txf::tab;
 	Translation.Init();
-	COut << locale::GetNoIndentOptionDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << scllocale::GetTranslation( locale::Label( locale::mNoIndentOptionDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
@@ -179,15 +181,17 @@ ERRBegin
 	Meaning.Init();
 	clnarg::GetArgumentsWordingMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetLocale().GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
+	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << " :" << txf::nl;
 
 	COut << txf::pad << "<src> :" << txf::nl;
 	COut << txf::tab;
-	COut << locale::GetSourceFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
+	Translation.Init();
+	COut << scllocale::GetTranslation( locale::Label( locale::mSourceFileArgumentDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "<dst> :" << txf::nl;
 	COut << txf::tab;
-	COut << locale::GetDestFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
+	Translation.Init();
+	COut << scllocale::GetTranslation( locale::Label( locale::mDestFileArgumentDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -196,14 +200,12 @@ ERREpilog
 
 static void PrintHeader_( void )
 {
-	COut << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
+	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	COut << COPYRIGHT << txf::nl;
-//	COut << txf::pad << AFFILIATION << txf::nl;
-//	COut << txf::pad << DEPENDENCE << txf::nl;
-	COut << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
+	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << txf::nl;
 }
 
-static void AnalyzeOptions(
+static void AnalyzeOptions_(
 	clnarg::analyzer___ &Analyzer,
 	parameters &Parameters )
 {
@@ -250,7 +252,7 @@ ERREnd
 ERREpilog
 }
 
-static void AnalyzeFreeArguments(
+static void AnalyzeFreeArguments_(
 	clnarg::analyzer___ &Analyzer,
 	parameters &Parameters )
 {
@@ -283,7 +285,7 @@ ERREnd
 ERREpilog
 }
 
-static void AnalyzeArgs(
+static void AnalyzeArgs_(
 	int argc,
 	const char *argv[],
 	parameters &Parameters )
@@ -331,9 +333,9 @@ ERRBegin
 		ERRc();
 	}
 
-	AnalyzeOptions( Analyzer, Parameters );
+	AnalyzeOptions_( Analyzer, Parameters );
 
-	AnalyzeFreeArguments( Analyzer, Parameters );
+	AnalyzeFreeArguments_( Analyzer, Parameters );
 
 ERRErr
 ERREnd
@@ -353,7 +355,7 @@ ERRProlog
 	xpp::status__ Status = xpp::s_Undefined;
 	xpp::context___ Context;
 	xtf::extended_text_iflow__ XFlow;
-	str::string ErrorTranslation;
+	lcl::meaning Meaning;
 ERRBegin
 	Context.Init();
 
@@ -362,11 +364,9 @@ ERRBegin
 	if ( ( Status = xpp::Process( XFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
 								  Outfit, OFlow,  Context ) ) != xpp::sOK )	{
-		ErrorTranslation.Init();
+		Meaning.Init();
 
-		locale::GetProcessingErrorTranslation( Context, ErrorTranslation );
-
-		cio::CErr << ErrorTranslation << txf::nl;
+		locale::GetProcessingErrorMeaning( Context, Meaning );
 
 		ERRExit( EXIT_FAILURE );
 	}
@@ -429,7 +429,7 @@ ERRProlog
 	flf::file_iflow___ IFlow;
 	bso::bool__ BackedUp = false;
 	xpp::context___ Context;
-	str::string ErrorTranslation;
+	lcl::meaning Meaning;
 ERRBegin
 	if ( Source != NULL )
 		if ( IFlow.Init( Source, err::hUserDefined ) != fil::sSuccess )
@@ -452,11 +452,9 @@ ERRBegin
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
 								  ( Destination == NULL ? COut : TOFlow ),  Context ) != xpp::sOK )	{
-		ErrorTranslation.Init();
+		Meaning.Init();
 
-		locale::GetProcessingErrorTranslation( Context, ErrorTranslation );
-
-		cio::CErr << ErrorTranslation << txf::nl;
+		locale::GetEncryptionErrorMeaning( Context, Meaning );
 
 		ERRExit( EXIT_FAILURE );
 	}
@@ -495,7 +493,7 @@ void scltool::Main(
 ERRProlog
 	parameters Parameters;
 ERRBegin
-	AnalyzeArgs( argc, argv, Parameters );
+	AnalyzeArgs_( argc, argv, Parameters );
 
 	Go_( Parameters );
 ERRErr

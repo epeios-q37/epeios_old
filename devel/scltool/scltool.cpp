@@ -101,6 +101,7 @@ ERRFProlog
 ERRFBegin
 	sclmisc::Initialize( TargetName, NULL );
 
+	Language.Init();
 	sclrgstry::GetValue( sclrgstry::Language, Language );
 
 	Language.Convert( Language_ );

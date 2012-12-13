@@ -72,7 +72,7 @@ const lcl::meaning_ &sclerror::GetMeaning( void )
 	return Meaning_;
 }
 
-void sclerror::ResetMeaning( void )
+void sclerror::ResetPendingError( void )
 {
 	Meaning_.Init();
 }

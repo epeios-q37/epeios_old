@@ -35,9 +35,6 @@
 namespace locale {
 
 	enum message__ {
-		mConfigurationFileParsingError,
-		mLocaleFileParsingError,
-		mBadOrNoValueForRegistryEntry,
 		mUnableToLoadBackend,
 		mUnableToOpenLogFile,
 		m_amount,
@@ -47,12 +44,13 @@ namespace locale {
 // To adjust if above 'enum' is modified.
 # define GLOBAL__MESSAGE_AMOUNT	0
 
-	using scllocale::GetTranslation;
+	using scllocale::GetLocale;
 
 	const char *Label( message__ Message );
 
-	const str::string_ &GetTranslation(
+	const lcl::meaning_ &GetMeaning_(
 		message__ Message,
+		lcl::meaning_ *Meaning,
 		... );
 }
 

@@ -69,6 +69,22 @@ namespace scllocale {
 
 	const lcl::locale_ &GetLocale( void );
 
+	inline const str::string_ &GetTranslation(
+		const char *Text,
+		const char *Language,
+		str::string_ &Translation )
+	{
+		return GetLocale().GetTranslation( Text, Language, Translation );
+	}
+
+	inline const str::string_ &GetTranslation(
+		const lcl::meaning_ &Meaning,
+		const char *Language,
+		str::string_ &Translation )
+	{
+		return GetLocale().GetTranslation( Meaning, Language, Translation );
+	}
+
 	void Load(
 		flw::iflow__ &Flow,
 		const char *Directory,

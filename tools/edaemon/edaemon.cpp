@@ -68,97 +68,50 @@ struct parameters {
 	}
 };
 
-static void PrintSpecialsCommandsDescriptions_(
-	const clnarg::description_ &Description,
-	const lcl::rack__ LocaleRack )
+static void PrintSpecialsCommandsDescriptions_(	const clnarg::description_ &Description,
+	const lcl::locale_ &Locale,
+	const char *Language )
 {
 ERRProlog
-	str::string Text;
 	CLNARG_BUFFER__ Buffer;
+	lcl::meaning Meaning;
+	str::string Translation;
 ERRBegin
-	COut << GetTranslation( "ProgramDescription" ) << '.'  << txf::nl;
+	Translation.Init();
+	COut << Locale.GetTranslation( "ProgramDescription", Language, Translation ) << '.'  << txf::nl;
 	COut << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetVersionCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
+	Meaning.Init();
+	clnarg::GetVersionCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetLicenseCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
+	Meaning.Init();
+	clnarg::GetLicenseCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 
 	COut << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
-	Text.Init();
-	clnarg::GetHelpCommandDescription( LocaleRack, Text );
-	COut << txf::pad << Text << '.' << txf::nl;
-
+	Meaning.Init();
+	clnarg::GetHelpCommandDescription( Meaning );
+	Translation.Init();
+	Locale.GetTranslation( Meaning, Language, Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
 }
 
 #pragma warning ( disable : 4101 ) 
-static void PrintUsage_(
-	const clnarg::description_ &Description,
-	const lcl::rack__ &LocaleRack )
+static void PrintUsage_( const clnarg::description_ &Description )
 {
 ERRProlog
-	STR_BUFFER___ TBuffer;
-	CLNARG_BUFFER__ Buffer;
 ERRBegin
-	PrintSpecialsCommandsDescriptions_( Description, LocaleRack );
-
-#if 0	// Exemples.
-// Commands.
-	COut << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
-	COut << "] [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
-	COut << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
-	COut << "] [<src> [<dst>]]";
-	COut << txf::nl;
-	COut << txf::pad << global::GetTranslation( global::mProcessCommandDescription ) << '.' << txf::nl;
-
-	COut << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
-	COut << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
-	COut << " [" << Description.GetOptionLabels( oNoIndent, Buffer );
-	COut << "] [<src> [<dst>]]";
-	COut << txf::nl;
-	COut << txf::pad << global::GetTranslation( global::mEncryptCommandDescription ) << '.' << txf::nl;
-
-	COut << txf::nl;
-
-// Options.
-	COut << clnarg::GetOptionsWordingTranslation( LocaleRack );
-	COut << " :" << txf::nl;
-
-	COut << txf::pad << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns> :" << txf::nl;
-	COut << txf::tab;
-	global::Display( mNamespaceOptionDescription );
-	COut << '.' << txf::nl;
-
-	COut << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
-	COut << txf::tab;
-	global::Display( mNoIndentOptionDescription );
-	COut << '.' << txf::nl;
-
-	COut << txf::nl;
-
-// Arguments.
-	COut << clnarg::GetArgumentsWordingTranslation( LocaleRack );
-	COut << " :" << txf::nl;
-
-	COut << txf::pad << "<src> :" << txf::nl;
-	COut << txf::tab;
-	global::Display( mSourceFileArgumentDescription );
-	COut << '.' << txf::nl;
-
-	COut << txf::pad << "<dst> :" << txf::nl;
-	COut << txf::tab;
-	global::Display( mDestFileArgumentDescription );
-	COut << '.' << txf::nl;
-#endif
-
+	PrintSpecialsCommandsDescriptions_( Description, scllocale::GetLocale(), scltool::GetLanguage() );
 ERRErr
 ERREnd
 ERREpilog
@@ -167,45 +120,40 @@ ERREpilog
 
 static void PrintHeader_( void )
 {
-	COut << NAME " V" VERSION << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")." << txf::nl;
+	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	COut << COPYRIGHT << txf::nl;
-	COut << txf::pad << AFFILIATION << txf::nl;
-	COut << txf::pad << DEPENDENCE << txf::nl;
-	COut << txf::tab << "Build : "__DATE__ " " __TIME__ << txf::nl;
+	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << txf::nl;
 }
 
 static void AnalyzeOptions_(
 	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters,
-	const lcl::rack__ &LocaleRack )
+	parameters &Parameters )
 {
 ERRProlog
-	epeios::row__ P;
+	mdr::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
 	const bso::char__ *Unknown = NULL;
 	clnarg::argument Argument;
+	clnarg::buffer__ Buffer;
 ERRBegin
 	Options.Init();
 
 	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
-		clnarg::ReportUnknownOptionError( Unknown, NAME, LocaleRack );
+		clnarg::ReportUnknownOptionError( Unknown, NAME, scllocale::GetLocale(), scltool::GetLanguage() );
 
 	P = Options.First();
 
 	while( P != NONE ) {
 		Argument.Init();
 
-#pragma warning ( disable : 4065 ) 
 		switch( Option = Options( P ) ) {
-//		case o:
 		default:
 			ERRc();
 		}
 
 		P = Options.Next( P );
 	}
-#pragma warning ( default : 4065 ) 
 
 ERRErr
 ERREnd
@@ -214,12 +162,11 @@ ERREpilog
 
 static void AnalyzeFreeArguments_(
 	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters,
-	const lcl::rack__ &LocaleRack )
+	parameters &Parameters )
 {
 ERRProlog
 	clnarg::arguments Free;
-	epeios::row__ P;
+	mdr::row__ P;
 ERRBegin
 	Free.Init();
 
@@ -227,15 +174,13 @@ ERRBegin
 
 	P = Free.Last();
 
-#pragma warning ( disable : 4065 ) 
 	switch( Free.Amount() ) {
 	case 0:
 		break;
 	default:
-		clnarg::ReportWrongNumberOfArgumentsError( NAME, LocaleRack );
+		clnarg::ReportWrongNumberOfArgumentsError( NAME, scllocale::GetLocale(), scltool::GetLanguage() );
 		break;
 	}
-#pragma warning ( default : 4065 ) 
 
 ERRErr
 ERREnd
@@ -245,8 +190,7 @@ ERREpilog
 static void AnalyzeArgs_(
 	int argc,
 	const char *argv[],
-	parameters &Parameters,
-	const lcl::rack__ &LocaleRack )
+	parameters &Parameters )
 {
 ERRProlog
 	clnarg::description Description;
@@ -269,23 +213,22 @@ ERRBegin
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cHelp:
-		PrintUsage_( Description, LocaleRack );
+		PrintUsage_( Description );
 		ERRExit( EXIT_SUCCESS );
 		break;
 	case cLicense:
-		epsmsc::PrintLicense();
+		epsmsc::PrintLicense( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;
-//	case c:
 	case CLNARG_NONE:
 		break;
 	default:
 		ERRc();
 	}
 
-	AnalyzeOptions_( Analyzer, Parameters, LocaleRack );
+	AnalyzeOptions_( Analyzer, Parameters );
 
-	AnalyzeFreeArguments_( Analyzer, Parameters, LocaleRack );
+	AnalyzeFreeArguments_( Analyzer, Parameters );
 
 ERRErr
 ERREnd
@@ -309,7 +252,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	registry::GetRawModuleConnectionType( Value );
+	registry::GetModuleRawConnectionType( Value );
 
 	if ( Value == "Straight" )
 		Type = bctStraight;

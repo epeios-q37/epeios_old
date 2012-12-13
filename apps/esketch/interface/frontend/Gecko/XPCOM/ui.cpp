@@ -32,13 +32,13 @@ static void _ShowPanel(
 
 	switch ( Display ) {
 	case dHome:
-		MainPanel = UI.Main.Widgets.vewHome.GetWidget();
+		MainPanel = UI.Main.Widgets.vewHome;
 		break;
 	case dSessionForm:
-		MainPanel = UI.Main.Widgets.vewSessionForm.GetWidget();
+		MainPanel = UI.Main.Widgets.vewSessionForm;
 		break;
 	case dSessionView:
-		MainPanel = UI.Main.Widgets.vewSessionView.GetWidget();
+		MainPanel = UI.Main.Widgets.vewSessionView;
 		break;
 	default:
 		ERRc();

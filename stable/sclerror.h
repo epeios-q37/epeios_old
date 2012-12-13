@@ -69,7 +69,7 @@ namespace sclerror {
 
 	bso::bool__ IsErrorPending( void );
 
-	void ResetMeaning( void );
+	void ResetPendingError( void );
 
 	void SetMeaning( const lcl::meaning_ &Meaning );
 }
