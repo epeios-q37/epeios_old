@@ -42,7 +42,7 @@ namespace locale {
 	};
 
 // To adjust if above 'enum' is modified.
-# define GLOBAL__MESSAGE_AMOUNT	0
+# define GLOBAL__MESSAGE_AMOUNT	2
 
 	using scllocale::GetLocale;
 
@@ -52,6 +52,20 @@ namespace locale {
 		message__ Message,
 		lcl::meaning_ *Meaning,
 		... );
+
+	inline const lcl::meaning_ &GetUnableToOpenLogFileMeaning(
+		const char *FileName,
+		lcl::meaning_ &Meaning )
+	{
+		return GetMeaning_( mUnableToOpenLogFile, &Meaning, FileName );
+	}
+
+	inline const lcl::meaning_ &GetUnableToLoadBackendMeaning(
+		const char *BackendFileName,
+		lcl::meaning_ &Meaning )
+	{
+		return GetMeaning_( mUnableToLoadBackend, &Meaning, BackendFileName );
+	}
 }
 
 #endif

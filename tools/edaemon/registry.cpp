@@ -29,15 +29,21 @@ using namespace registry;
 
 using rgstry::entry___;
 
-static entry___ Log_( "Log", sclrgstry::Parameters );
-entry___ registry::LogFileName( "FileName", Log_ );
-entry___ registry::LogMode( "@Mode", Log_ );
-
 static entry___ Modules_( "Modules" );
 static entry___ ModuleFree_( "Module", Modules_ );
-entry___ registry::ModuleId( "@id", ModuleFree_ );
+static entry___ ModuleId_( "@id", ModuleFree_ );
 static entry___ Module_( RGSTRY_TAGGING_ATTRIBUTE( "id" ), ModuleFree_ );
-entry___ registry::ModuleFileName( "FileName", Module_ );
-entry___ registry::ModuleService( "Service", Module_ );
-entry___ registry::ModuleConnectionType( "ConnectionType", Module_ );
 
+static entry___ ModuleLog_( "Log", Module_ );
+entry___ registry::ModuleLogFileName( "FileName", ModuleLog_ );
+entry___ registry::ModuleLogMode( "@Mode", ModuleLog_ );
+
+entry___ registry::ModuleFileName( "FileName", Module_ );
+
+entry___ registry::ModuleService( "Service", Module_ );
+entry___ registry::ModuleServiceType( "@Type", ModuleService );
+
+bso::bool__ registry::GetModulesIds( rgstry::values_ &Values )
+{
+	return sclrgstry::GetValues( ModuleId_, Values );
+}

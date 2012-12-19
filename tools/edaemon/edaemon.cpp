@@ -27,7 +27,8 @@
 #include "locale.h"
 #include "registry.h"
 
-#include  "scltool.h"
+#include "scltool.h"
+#include "sclerror.h"
 
 #include "err.h"
 #include "cio.h"
@@ -252,7 +253,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	registry::GetModuleRawConnectionType( Value );
+	registry::GetRawModuleServiceType( Id, Value );
 
 	if ( Value == "Straight" )
 		Type = bctStraight;
@@ -260,7 +261,7 @@ ERRBegin
 		Type = bctSwitched;
 	else {
 		Value.Init();
-		CErr << GetTranslation( mBadOrNoValueForRegistryEntry, registry::xpath___( registry::paths::modules::module::ConnectionType, Id ).GetTargetedPath( Value ) ) << txf::nl;
+		sclrgstry::ReportBadOrNoValueForEntryError( registry::ModuleServiceType );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -276,7 +277,7 @@ enum log_file_handling__ {
 	lfh_Undefined,
 };
 
-static log_file_handling__ GetLogFileHandling_( void )
+static log_file_handling__ GetLogFileHandling_( const str::string_ &Id )
 {
 	log_file_handling__ Handling = lfh_Undefined;
 ERRProlog
@@ -284,14 +285,14 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	registry::GetRawLogFileHandling( Value );
+	registry::GetRawModuleLogMode( Id, Value );
 
-	if ( Value == "Append" )
+	if ( ( Value.Amount() == 0 ) ||( Value == "Append" ) )
 		Handling = lfhAppend;
 	else if ( Value == "Drop" )
 		Handling = lfhDrop;
 	else {
-		CErr << GetTranslation( mBadOrNoValueForRegistryEntry, registry::paths::log::Mode ) << '.' << txf::nl;
+		sclrgstry::ReportBadOrNoValueForEntryError( registry::ModuleLogMode );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -301,13 +302,12 @@ ERREpilog
 }
 
 
-using csdleo::shared_data__;
+// using csdleo::shared_data__;
 
 static void UseStraightConnections_(
 	csdsuf::user_functions__ &UserFunctions,
 	const bso::char__ *Backend,
-	csdbns::port__ Port,
-	shared_data__ &SharedData )
+	csdbns::port__ Port )
 {
 ERRProlog
 	csdbns::server___ Server;
@@ -324,8 +324,7 @@ static void UseSwitchingConnections_(
 	csdsuf::user_functions__ &UserFunctions,
 	csdsns::log_functions__ &LogFunctions,
 	const bso::char__ *Backend,
-	csdbns::port__ Port,
-	shared_data__ &SharedData )
+	csdbns::port__ Port )
 {
 ERRProlog
 	csdsns::server___ Server;
@@ -350,7 +349,7 @@ protected:
 		csdsns::log__ Log,
 		csdsns::id__ Id,
 		void *UP,
-		epeios::size__ Amount )
+		mdr::size__ Amount )
 	{
 		tol::buffer__ Buffer;
 
@@ -385,14 +384,15 @@ static void UseSwitchingConnections_(
 	const char *LogFileName,
 	log_file_handling__ LogFileHandling,
 	const bso::char__ *Backend,
-	csdbns::port__ Port,
-	shared_data__ &SharedData )
+	csdbns::port__ Port )
 {
 ERRProlog
 	flf::file_oflow___ FFlow;
 	txf::text_oflow__ TFlow;
 	log_functions__ LogFunctions;
 	fil::mode__ Mode = fil::m_Undefined;
+	lcl::meaning ErrorMeaning;
+	str::string ErrorTranslation;
 ERRBegin
 
 	if ( LogFileName != NULL ) {
@@ -410,13 +410,15 @@ ERRBegin
 		}
 
 		if ( FFlow.Init( LogFileName, Mode, err::hUserDefined ) != fil::sSuccess ) {
-			GetTranslation( mUnableToOpenLogFile, LogFileName );
+			ErrorMeaning.Init();
+			ErrorTranslation.Init();
+			CErr << scllocale::GetTranslation( locale::GetUnableToOpenLogFileMeaning( LogFileName, ErrorMeaning), scltool::GetLanguage(), ErrorTranslation ) << txf::nl << txf::commit;
 			LogFileName = NULL;	// To notify no to use log functions.
 		} else
 			TFlow.Init( FFlow );
 	}
 
-	UseSwitchingConnections_( UserFunctions, LogFileName == NULL ? *(csdsns::log_functions__ *)NULL : LogFunctions, Backend, Port, SharedData );
+	UseSwitchingConnections_( UserFunctions, LogFileName == NULL ? *(csdsns::log_functions__ *)NULL : LogFunctions, Backend, Port );
 ERRErr
 ERREnd
 ERREpilog
@@ -439,28 +441,28 @@ ERRProlog
 	csdsns::server___ Server;
 	lcl::locale SharedLocale;
 	rgstry::registry SharedRegistry;
-	csdleo::shared_data__ SharedData;
+	csdlec::library_data__ LibraryData;
 	data__ &Data = *(data__ *)UP;
+	lcl::meaning Meaning;
 ERRBegin
 	SharedLocale.Init();
 	SharedRegistry.Init();
 
-	SharedData.Init( csdleo::mRemote );
+	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false );
 
-	SharedData.CErr = &cio::CErrDriver;
-	SharedData.COut = &cio::COutDriver;
-
-	if ( !Core.Init( Data.BackendFileName, &SharedData, err::hUserDefined ) ) {
-		CErr << GetTranslation( mUnableToLoadBackend, Data.BackendFileName ) << txf::nl;
+	if ( !Core.Init( Data.BackendFileName, LibraryData, err::hUserDefined ) ) {
+		Meaning.Init();
+		locale::GetUnableToLoadBackendMeaning( Data.BackendFileName, Meaning );
+		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
 
 	switch ( Data.ConnectionType ) {
 	case bctStraight:
-		UseStraightConnections_( Core.GetSteering(), Data.BackendFileName, Data.Port, SharedData );
+		UseStraightConnections_( Core.GetSteering(), Data.BackendFileName, Data.Port );
 		break;
 	case bctSwitched:
-		UseSwitchingConnections_( Core.GetSteering(), Data.LogFileName, Data.LogFileHandling, Data.BackendFileName, Data.Port, SharedData );
+		UseSwitchingConnections_( Core.GetSteering(), Data.LogFileName, Data.LogFileHandling, Data.BackendFileName, Data.Port );
 		break;
 	default:
 		ERRc();
@@ -502,7 +504,7 @@ static void Go_(
 
 static inline csdbns::port__ GetService_( const str::string_ &Id )
 {
-	return registry::GetRawService( Id );
+	return registry::GetRawModuleService( Id );
 }
 
 static void Go_(
@@ -522,19 +524,27 @@ ERREnd
 ERREpilog
 }
 
-
-static void Go_(
-	const str::strings_ &Ids,
-	const char *LogFileName,
-	log_file_handling__ LogFileHandling )
+static void Go_( const str::string_ &Id )
 {
-	epeios::row__ Row = Ids.First();
+ERRProlog
+	STR_BUFFER___ Buffer;
+	const char *LogFileName = NULL;
+ERRBegin
+	Go_( Id, registry::GetModuleLogFileName( Id, Buffer ), GetLogFileHandling_( Id ) );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void Go_( const str::strings_ &Ids )
+{
+	mdr::row__ Row = Ids.First();
 	ctn::E_CMITEM( str::string_ ) Id;
 
 	Id.Init( Ids );
 
 	while( Row != NONE ) {
-		Go_( Id( Row ), LogFileName, LogFileHandling );
+		Go_( Id( Row ) );
 
 		Row = Ids.Next( Row );
 	}
@@ -546,17 +556,13 @@ static void Go_(
 static void Go_( const parameters &Parameters )
 {
 ERRProlog
-	STR_BUFFER___ BackendFileNameBuffer, LogFileNameBuffer;
-	const char *LogFileName = NULL;
 	str::strings Ids;
 ERRBegin
 	Ids.Init();
 
 	registry::GetModulesIds( Ids );
 
-	LogFileName = registry::GetLogFileName( LogFileNameBuffer );
-
-	Go_( Ids, LogFileName, ( LogFileName == NULL ? lfh_Undefined : GetLogFileHandling_() ) );
+	Go_( Ids );
 ERRErr
 ERREnd
 ERREpilog
@@ -566,13 +572,12 @@ const char *scltool::TargetName = NAME;
 
 void scltool::Main(
 	int argc,
-	const char *argv[],
-	const lcl::rack__ &LocaleRack )
+	const char *argv[] )
 {
 ERRProlog
 	parameters Parameters;
 ERRBegin
-	AnalyzeArgs_( argc, argv, Parameters, LocaleRack );
+	AnalyzeArgs_( argc, argv, Parameters );
 
 	Go_( Parameters );
 ERRErr

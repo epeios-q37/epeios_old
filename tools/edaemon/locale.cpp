@@ -38,16 +38,20 @@
 
 using namespace locale;
 
-#define CASE( name )			LCL_CASE( name, m )
-#define CASE_N( name, count )	LCL_CASE_N( name, m, count )
+#define CASE( n )\
+	case m##n:\
+	return XML_NAME "_" #n;\
+	break
 
 const char *locale::Label( message__ Message )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 0
+#if	GLOBAL__MESSAGE_AMOUNT != 2
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
 	switch( Message ) {
+	CASE( UnableToLoadBackend );
+	CASE( UnableToOpenLogFile );
 	default:
 		ERRc();
 		break;
@@ -61,7 +65,7 @@ const lcl::meaning_ &locale::GetMeaning_(
 	lcl::meaning_ *Meaning,
 	... )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 0
+#if	GLOBAL__MESSAGE_AMOUNT != 2
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 	va_list Args;
@@ -72,6 +76,10 @@ const lcl::meaning_ &locale::GetMeaning_(
 	Meaning->SetValue( Label( Message ) );
 
 	switch ( Message ) {
+	case mUnableToOpenLogFile:
+	case mUnableToLoadBackend:
+		Meaning->AddTag( va_arg( Args, const char * ) );
+		break;
 	default:
 		ERRc();
 		break;

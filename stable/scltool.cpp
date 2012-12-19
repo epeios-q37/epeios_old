@@ -102,9 +102,9 @@ ERRFBegin
 	sclmisc::Initialize( TargetName, NULL );
 
 	Language.Init();
-	sclrgstry::GetValue( sclrgstry::Language, Language );
 
-	Language.Convert( Language_ );
+	if ( sclrgstry::GetValue( sclrgstry::Language, Language ) )
+		Language.Convert( Language_ );
 
 	Main( argc, argv );
 ERRFErr

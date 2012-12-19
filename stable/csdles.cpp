@@ -114,11 +114,9 @@ ERRFBegin
 
 	Functions = csdles::CSDLESRetrieveSteering( Data );
 ERRFErr
-	if ( ( ERRMajor != err::itn ) || ( ERRMinor != err::iExit ) ) {
-		OFlow.Init( *Data->CErr, FLW_SIZE_MAX );
-		TOFlow.Init( OFlow );
-		TOFlow << err::Message( Buffer );
-	}
+	OFlow.Init( *Data->CErr, FLW_SIZE_MAX );
+	TOFlow.Init( OFlow );
+	TOFlow << err::Message( Buffer );
 
 	ERRRst();
 ERRFEnd

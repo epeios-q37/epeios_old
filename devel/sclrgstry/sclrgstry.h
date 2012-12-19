@@ -93,7 +93,10 @@ namespace sclrgstry {
 		const char *Directory,
 		const char *RootPath );
 
-	bso::bool__ IsRegistryReady( void );
+	bso::bool__ IsReady( void );
+
+	void ReportBadOrNoValueForEntryError( const rgstry::tentry__ &Entry );
+
 
 	bso::bool__ GetValue(
 		const rgstry::tentry__ &Entry,
@@ -103,84 +106,84 @@ namespace sclrgstry {
 		const rgstry::tentry__ &Entry,
 		str::strings_ &Values );
 
-	const str::string_ &GetOptionalRegistryValue(
+	const str::string_ &GetOptionalValue(
 		const rgstry::tentry__ &Entry,
 		str::string_ &Value,
 		bso::bool__ *Missing = NULL );
 
-	const char *GetOptionalRegistryValue(
+	const char *GetOptionalValue(
 		const rgstry::tentry__ &Entry,
 		STR_BUFFER___ &Buffer,
 		bso::bool__ *Missing = NULL );
 
-	const str::string_ &GetMandatoryRegistryValue(
+	const str::string_ &GetMandatoryValue(
 		const rgstry::tentry__ &Entry,
 		str::string_ &Value );
 
-	const char *GetMandatoryRegistryValue(
+	const char *GetMandatoryValue(
 		const rgstry::tentry__ &Entry,
 		STR_BUFFER___ &Buffer );
 
-# define SCLRGSTRY__RUN( type, name, limit )\
-	type GetMandatoryRegistry##name(\
+# define SCLRGSTRY__UN( type, name, limit )\
+	type GetMandatory##name(\
 		const rgstry::tentry__ &Entry,\
 		type Limit = limit );\
-	type GetRegistry##name(\
+	type Get##name(\
 		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Limit = limit );
 
 # ifdef CPE__64_BITS_TYPES_ALLOWED
-	SCLRGSTRY__RUN( bso::ullong__, ULLong, BSO_ULLONG_MAX )
+	SCLRGSTRY__UN( bso::ullong__, ULLong, BSO_ULLONG_MAX )
 # endif
-	SCLRGSTRY__RUN( bso::ulong__, ULong, BSO_ULONG_MAX )
-	SCLRGSTRY__RUN( bso::ushort__, UShort, BSO_USHORT_MAX )
-	SCLRGSTRY__RUN( bso::ubyte__, UByte, BSO_UBYTE_MAX )
+	SCLRGSTRY__UN( bso::ulong__, ULong, BSO_ULONG_MAX )
+	SCLRGSTRY__UN( bso::ushort__, UShort, BSO_USHORT_MAX )
+	SCLRGSTRY__UN( bso::ubyte__, UByte, BSO_UBYTE_MAX )
 
-# define SCLRGSTRY__RSN( type, name, min, max )\
-	type GetMandatoryRegistry##name(\
+# define SCLRGSTRY__SN( type, name, min, max )\
+	type GetMandatory##name(\
 		const rgstry::tentry__ &Entry,\
 		type Min = min,\
 		type Max = max );\
-	type GetRegistry##name(\
+	type Get##name(\
 		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Min = min,\
 		type Max = max );
 
 # ifdef CPE__64_BITS_TYPES_ALLOWED
-	SCLRGSTRY__RSN( bso::sllong__, SLLong, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
+	SCLRGSTRY__SN( bso::sllong__, SLLong, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
 #endif
-	SCLRGSTRY__RSN( bso::slong__, SLong, BSO_SLONG_MIN, BSO_SLONG_MAX )
-	SCLRGSTRY__RSN( bso::sshort__, SShort, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
-	SCLRGSTRY__RSN( bso::sbyte__, SByte, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
+	SCLRGSTRY__SN( bso::slong__, SLong, BSO_SLONG_MIN, BSO_SLONG_MAX )
+	SCLRGSTRY__SN( bso::sshort__, SShort, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
+	SCLRGSTRY__SN( bso::sbyte__, SByte, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
 
 // To define function retrieving mandatory registry value.
-# define SCLRGSTRY_MRV( name, entry )\
+# define SCLRGSTRY_MV( name, entry )\
 	inline const char *name(\
 		STR_BUFFER___ &Buffer )\
 	{\
-		return GetMandatoryRegistryValue( entry, Buffer );\
+		return GetMandatoryValue( entry, Buffer );\
 	}\
 	inline const str::string_ &name(\
 		str::string_ &Value )\
 	{\
-		return GetMandatoryRegistryValue( entry, Value );\
+		return GetMandatoryValue( entry, Value );\
 	}
 
 // To define function retrieving optional registry value.
-# define SCLRGSTRY_ORV( name, entry )\
+# define SCLRGSTRY_OV( name, entry )\
 	inline const char *name(\
 		STR_BUFFER___ &Buffer,\
 		bso::bool__ *Missing = NULL )\
 	{\
-		return GetOptionalRegistryValue( entry, Buffer, Missing );\
+		return GetOptionalValue( entry, Buffer, Missing );\
 	}\
 	inline const str::string_ &name(\
 		str::string_ &Value,\
 		bso::bool__ *Missing = NULL )\
 	{\
-		return GetOptionalRegistryValue( entry, Value, Missing );\
+		return GetOptionalValue( entry, Value, Missing );\
 	}
 }
 

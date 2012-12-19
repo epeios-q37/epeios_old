@@ -1,9 +1,13 @@
 <Configurations>
 	<Configuration target="edaemon">
-	    <Language>fr</Language>
-		<!-- Optional -->
-		<!--
-			<LocaleFileName>edaemon.xlcl</LocaleFileName>
-		-->
+    <Parameters>
+	  <Language>fr</Language>
+    </Parameters>
+    <Modules>
+      <Module id="esketch">
+        <Service Type="Switched">2000</Service>
+        <FileName>esketchbkd</FileName>
+      </Module>
+    </Modules>
 	</Configuration>
 </Configurations>

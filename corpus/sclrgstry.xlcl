@@ -5,7 +5,7 @@
 		<Translation language="fr">Fichier de configuration : %1</Translation>
 		<Translation language="en">Configuration file : %1</Translation>
 	</Translations>
-	<Translations message="SCLRGSTRY_BadOrNoValueForRegistryEntry">
+	<Translations message="SCLRGSTRY_BadOrNoValueForEntry">
 		<Translation language="fr">Entrée absente ou incorrecte pour le chemin '%1'</Translation>
 		<Translation language="en">Bad or no value for path '%1'</Translation>
 	</Translations>

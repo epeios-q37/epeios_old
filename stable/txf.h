@@ -346,6 +346,10 @@ namespace txf {
 
 			return operator <<( C );
 		}
+		text_oflow__ &operator <<( unsigned int E )
+		{
+			return operator <<( (unsigned long )E );
+		}
 		text_oflow__ &operator <<( long double E )
 		{
 			char C[40];

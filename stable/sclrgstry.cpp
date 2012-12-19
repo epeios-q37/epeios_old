@@ -76,7 +76,7 @@ rgstry::entry___ sclrgstry::Language( "Language", Parameters );
 
 rgstry::entry___ sclrgstry::Locale( "Locale", Parameters );
 
-bso::bool__ sclrgstry::IsRegistryReady( void )
+bso::bool__ sclrgstry::IsReady( void )
 {
 	return Root_ != NONE;
 }
@@ -131,14 +131,14 @@ bso::bool__ sclrgstry::GetValues(
 	return Registry_.GetValues( Entry, Root_, Values );
 }
 
-static inline void ReportBadOrNoValueForRegistryEntryError_( const rgstry::tentry__ &Entry )
+void sclrgstry::ReportBadOrNoValueForEntryError( const rgstry::tentry__ &Entry )
 {
 ERRProlog
 	lcl::meaning Meaning;
 	str::string Path;
 ERRBegin
 	Meaning.Init();
-	Meaning.SetValue( SCLRGSTRY_NAME "_BadOrNoValueForRegistryEntry" );
+	Meaning.SetValue( SCLRGSTRY_NAME "_BadOrNoValueForEntry" );
 
 	Path.Init();
 	Meaning.AddTag( Entry.GetPath( Path ) );
@@ -188,7 +188,7 @@ ERREnd
 ERREpilog
 }
 
-const str::string_ &sclrgstry::GetOptionalRegistryValue(
+const str::string_ &sclrgstry::GetOptionalValue(
 	const rgstry::tentry__ &Entry,
 	str::string_ &Value,
 	bso::bool__ *Missing )
@@ -200,7 +200,7 @@ const str::string_ &sclrgstry::GetOptionalRegistryValue(
 	return Value;
 }
 
-const char *sclrgstry::GetOptionalRegistryValue(
+const char *sclrgstry::GetOptionalValue(
 	const rgstry::tentry__ &Entry,
 	STR_BUFFER___ &Buffer,
 	bso::bool__ *Missing )
@@ -211,7 +211,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetOptionalRegistryValue( Entry, Value, &LocalMissing );
+	GetOptionalValue( Entry, Value, &LocalMissing );
 
 	if ( LocalMissing ) {
 		if ( Missing != NULL )
@@ -224,19 +224,19 @@ ERREpilog
 	return Buffer;
 }
 
-const str::string_ &sclrgstry::GetMandatoryRegistryValue(
+const str::string_ &sclrgstry::GetMandatoryValue(
 	const rgstry::tentry__ &Entry,
 	str::string_ &Value )
 {
 	if ( !GetValue( Entry, Value ) ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry );
+		ReportBadOrNoValueForEntryError( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 
 	return Value;
 }
 
-const char *sclrgstry::GetMandatoryRegistryValue(
+const char *sclrgstry::GetMandatoryValue(
 	const rgstry::tentry__ &Entry,
 	STR_BUFFER___ &Buffer )
 {
@@ -245,7 +245,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	GetMandatoryRegistryValue( Entry, Value );
+	GetMandatoryValue( Entry, Value );
 
 	Value.Convert( Buffer );
 ERRErr
@@ -254,7 +254,7 @@ ERREpilog
 	return Buffer;
 }
 
-template <typename t> static bso::bool__ GetRegistryUnsignedNumber_(
+template <typename t> static bso::bool__ GetUnsignedNumber_(
 	const rgstry::tentry__ &Entry,
 	t Limit,
 	t &Value )
@@ -272,7 +272,7 @@ ERRBegin
 	RawValue.ToNumber( Limit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry );
+		ReportBadOrNoValueForEntryError( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -281,7 +281,7 @@ ERREpilog
 	return Present;
 }
 
-template <typename t> static bso::bool__ GetRegistrySignedNumber_(
+template <typename t> static bso::bool__ GetSignedNumber_(
 	const rgstry::tentry__ &Entry,
 	t LowerLimit,
 	t UpperLimit,
@@ -300,7 +300,7 @@ ERRBegin
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
 	if ( Error != NONE ) {
-		ReportBadOrNoValueForRegistryEntryError_( Entry );
+		ReportBadOrNoValueForEntryError( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -309,28 +309,28 @@ ERREpilog
 	return Present;
 }
 
-#define RUN( name, type )\
-	type sclrgstry::GetMandatoryRegistry##name(\
+#define UN( name, type )\
+	type sclrgstry::GetMandatory##name(\
 		const rgstry::tentry__ &Entry,\
 		type Limit  )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Limit, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry );\
+		if ( !GetUnsignedNumber_( Entry, Limit, Value ) ) {\
+			ReportBadOrNoValueForEntryError( Entry );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 \
 		return Value;\
 	}\
-	type sclrgstry::GetRegistry##name(\
+	type sclrgstry::Get##name(\
 		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Limit )\
 	{\
 		type Value;\
 \
-		if ( !GetRegistryUnsignedNumber_( Entry, Limit, Value ) )\
+		if ( !GetUnsignedNumber_( Entry, Limit, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
@@ -338,28 +338,28 @@ ERREpilog
 
 
 #ifdef CPE__64_BITS_TYPES_ALLOWED
-RUN( ULLong, bso::ullong__ )
+UN( ULLong, bso::ullong__ )
 #endif
 
-RUN( ULong, bso::ulong__ )
-RUN( UShort, bso::ushort__ )
-RUN( UByte, bso::ubyte__ )
+UN( ULong, bso::ulong__ )
+UN( UShort, bso::ushort__ )
+UN( UByte, bso::ubyte__ )
 
-#define RSN( name, type )\
-	type sclrgstry::GetMandatoryRegistry##name(\
+#define SN( name, type )\
+	type sclrgstry::GetMandatory##name(\
 		const rgstry::tentry__ &Entry,\
 		type Min,\
 		type Max)\
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Min, Max, Value ) ) {\
-			ReportBadOrNoValueForRegistryEntryError_( Entry );\
+		if ( !GetSignedNumber_( Entry, Min, Max, Value ) ) {\
+			ReportBadOrNoValueForEntryError( Entry );\
 			ERRExit( EXIT_FAILURE );\
 		}\
 		return Value;\
 	}\
-	type sclrgstry::GetRegistry##name(\
+	type sclrgstry::Get##name(\
 		const rgstry::tentry__ &Entry,\
 		type DefaultValue,\
 		type Min,\
@@ -367,18 +367,18 @@ RUN( UByte, bso::ubyte__ )
 	{\
 		type Value;\
 \
-		if ( !GetRegistrySignedNumber_( Entry, Min, Max, Value ) )\
+		if ( !GetSignedNumber_( Entry, Min, Max, Value ) )\
 			Value = DefaultValue;\
 \
 		return Value;\
 	}
 
 # ifdef CPE__64_BITS_TYPES_ALLOWED
-	RSN( SLLong, bso::sllong__ )
+	SN( SLLong, bso::sllong__ )
 #endif
-	RSN( SLong, bso::slong__ )
-	RSN( SShort, bso::sshort__ )
-	RSN( SByte, bso::sbyte__ )
+	SN( SLong, bso::slong__ )
+	SN( SShort, bso::sshort__ )
+	SN( SByte, bso::sbyte__ )
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
