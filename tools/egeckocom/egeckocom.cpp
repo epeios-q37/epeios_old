@@ -131,7 +131,7 @@ ERRBegin
 	Tags.Init();
 	Tags.Append( str::string( ComponentId ) );
 
-	registry::GetMandatoryRegistryValue( rgstry::tentry__( registry::TaggedComponent, Tags ), Component );
+	registry::GetMandatoryValue( rgstry::tentry__( registry::TaggedComponent, Tags ), Component );
 ERRErr
 ERREnd
 ERREpilog

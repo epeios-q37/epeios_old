@@ -4,6 +4,10 @@ $Id$
 * 0.1.4 *
 *********
 
+- 20/12/2012 :
+	- Adaptation.
+	- PUBLICATION !
+
 - 13/12/2012 :
 	- PUBLICATION.
 
