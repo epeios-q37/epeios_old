@@ -78,17 +78,8 @@ const char *scltool::GetLanguage( void )
 
 static void ReportSCLPendingError_( void )
 {
-ERRProlog
-	str::string Translation;
-ERRBegin
-	Translation.Init();
-
-	scllocale::GetLocale().GetTranslation( sclerror::GetMeaning(), GetLanguage(), Translation );
-
-	cio::CErr << Translation << '.' << txf::nl;
-ERRErr
-ERREnd
-ERREpilog
+	if ( sclerror::ReportPendingError( GetLanguage(), err::hUserDefined ) )
+		ERRRst();
 }
 
 
@@ -109,8 +100,7 @@ ERRFBegin
 	Main( argc, argv );
 ERRFErr
 	if ( ERRType >= err::t_amount )
-		if ( sclerror::IsErrorPending() )
-			ReportSCLPendingError_();
+		ReportSCLPendingError_();
 ERRFEnd
 	sclmisc::Terminate();
 ERRFEpilog

@@ -5,4 +5,5 @@
 	<xpp:expand href="scllocale.xlcl"/>
 	<xpp:expand href="sclmisc.xlcl"/>
 	<xpp:expand href="sclrgstry.xlcl"/>
+	<xpp:expand href="scltool.xlcl"/>
 </xpp:bloc>

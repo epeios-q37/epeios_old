@@ -374,8 +374,8 @@ namespace clnarg {
 	typedef str::string	argument;
 
 	// Arguments.
-	typedef ctn::E_XMCONTAINER_( argument_ ) arguments_;
-	typedef ctn::E_XMCONTAINER( argument_ ) arguments;
+	typedef ctn::E_MCONTAINER_( argument_ ) arguments_;
+	typedef ctn::E_MCONTAINER( argument_ ) arguments;
 
 	// Option list.
 	typedef bch::E_BUNCH_( id__ ) option_list_;

@@ -142,38 +142,38 @@ namespace fblbrd {
 
 	//c Requests descriptions.
 	class descriptions_
-	: public E_XCONTAINER_( description_ )
+	: public E_CONTAINER_( description_ )
 	{
 	public:
 		struct s
-		: public E_XCONTAINER_( description_ )::s
+		: public E_CONTAINER_( description_ )::s
 		{};
 		descriptions_( s &S )
-		: ctn::E_XCONTAINER_( description_ )( S )
+		: ctn::E_CONTAINER_( description_ )( S )
 		{}
 		void reset( bool P = true )
 		{
-			E_XCONTAINER_( description_ )::reset( P );
+			E_CONTAINER_( description_ )::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			E_XCONTAINER_( description_ )::plug( M );
+			E_CONTAINER_( description_ )::plug( M );
 		}
 		descriptions_ &operator =( const descriptions_ &D )
 		{
-			E_XCONTAINER_( description_ )::operator =( D );
+			E_CONTAINER_( description_ )::operator =( D );
 
 			return *this;
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			E_XCONTAINER_( description_ )::Init();
+			E_CONTAINER_( description_ )::Init();
 		}
 		//f Adding 'Description'. Return the position where added.
 		mdr::row__ Add( const description_ &Description )
 		{
-			return E_XCONTAINER_( description_ )::Append( Description );
+			return E_CONTAINER_( description_ )::Append( Description );
 		}
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */

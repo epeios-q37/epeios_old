@@ -2,8 +2,8 @@
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations message="SCLRGSTRY_ConfigurationFileParsingError">
-		<Translation language="fr">Fichier de configuration : %1</Translation>
-		<Translation language="en">Configuration file : %1</Translation>
+		<Translation language="fr">Erreur fichier de configuration : %1</Translation>
+		<Translation language="en">Configuration file error : %1</Translation>
 	</Translations>
 	<Translations message="SCLRGSTRY_BadOrNoValueForEntry">
 		<Translation language="fr">Entrée absente ou incorrecte pour le chemin '%1'</Translation>

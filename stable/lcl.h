@@ -85,7 +85,7 @@ namespace lcl {
 	E_AUTO( _levels );
 
 
-	typedef stk::E_XMCSTACKt_( str::string_, row__ ) _values_;
+	typedef stk::E_MCSTACKt_( str::string_, row__ ) _values_;
 	E_AUTO( _values );
 
 	class meaning_

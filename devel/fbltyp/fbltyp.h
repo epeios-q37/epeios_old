@@ -78,7 +78,7 @@ extern class ttr_tutor &FBLTYPTutor;
 	E_AUTO( name )
 
 #define FBLTYP_ITEMS( item, name )\
-	typedef ctn::E_XMCONTAINER_( item##_ )	name##_;\
+	typedef ctn::E_MCONTAINER_( item##_ )	name##_;\
 	E_AUTO( name )
 
 #define FBLTYP_XITEM( id, name )\
@@ -86,7 +86,7 @@ extern class ttr_tutor &FBLTYPTutor;
 	E_AUTO( name )
 
 #define FBLTYP_XITEMS( item, name )\
-	typedef ctn::E_XCONTAINER_( item##_ )	name##_;\
+	typedef ctn::E_CONTAINER_( item##_ )	name##_;\
 	E_AUTO( name )
 
 # define FBLTYP_MIMIC( stype, sname )	E_TMIMIC__( stype##__, sname##__ )
@@ -197,7 +197,7 @@ namespace fbltyp {
 	};
 
 	//f Values.
-	typedef ctn::E_XMCONTAINER_( value_ ) values_;
+	typedef ctn::E_MCONTAINER_( value_ ) values_;
 	E_AUTO( values )
 
 	template <class id> class extended_item_
@@ -315,37 +315,37 @@ namespace fbltyp {
 	typedef id8_t__ id8__;
 	typedef bch::E_BUNCH_( id8__ ) ids8_t_;
 	E_TMIMIC( ids8_t, ids8 );
-	typedef ctn::E_XMCONTAINER_( ids8_ ) xids8_t_;
+	typedef ctn::E_MCONTAINER_( ids8_ ) xids8_t_;
 	E_TMIMIC( xids8_t, xids8 );
 
 	typedef bso::ushort__ id16_t__;
 	typedef id16_t__ id16__;
 	typedef bch::E_BUNCH_( id16__ ) ids16_t_;
 	E_TMIMIC( ids16_t, ids16 );
-	typedef ctn::E_XMCONTAINER_( ids16_ ) xids16_t_;
+	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
 	E_TMIMIC( xids16_t, xids16 );
 
 	typedef bso::ulong__ id32_t__;
 	typedef id32_t__ id32__;
 	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
 	E_TMIMIC( ids32_t, ids32 );
-	typedef ctn::E_XMCONTAINER_( ids32_ ) xids32_t_;
+	typedef ctn::E_MCONTAINER_( ids32_ ) xids32_t_;
 	E_TMIMIC( xids32_t, xids32 );
 
 	typedef bso::char__ char_t__;
 	typedef char_t__	char__;
 	typedef str::string_	string_;
 	typedef str::string		string;
-	typedef ctn::E_XMCONTAINER_( string_ )	strings_;
-	typedef ctn::E_XMCONTAINER( string_ )	strings;
-	typedef ctn::E_XCONTAINER_( strings_ )	xstrings_;
-	typedef ctn::E_XCONTAINER( strings_ )	xstrings;
+	typedef ctn::E_MCONTAINER_( string_ )	strings_;
+	typedef ctn::E_MCONTAINER( string_ )	strings;
+	typedef ctn::E_CONTAINER_( strings_ )	xstrings_;
+	typedef ctn::E_CONTAINER( strings_ )	xstrings;
 	typedef bso::raw__	byte_t__;
 	typedef byte_t__	byte__;
 	typedef bch::E_BUNCH_( bso::raw__ ) binary_;
 	typedef bch::E_BUNCH( bso::raw__ )	binary;
-	typedef ctn::E_XMCONTAINER_( binary_ ) binaries_;
-	typedef ctn::E_XMCONTAINER( binary_ ) binaries;
+	typedef ctn::E_MCONTAINER_( binary_ ) binaries_;
+	typedef ctn::E_MCONTAINER( binary_ ) binaries;
 	FBLTYP_ITEM( id8__, item8 )
 	FBLTYP_ITEMS( item8, items8 )
 	FBLTYP_ITEM( id16__, item16 )
@@ -362,8 +362,8 @@ namespace fbltyp {
 	typedef fbltyp::detail_<id8__, mdr::row__>	command_detail_	;
 	typedef fbltyp::detail<id8__, mdr::row__>	command_detail;
 	/**/
-	typedef ctn::E_XCONTAINER_( command_detail_ ) commands_details_;
-	typedef ctn::E_XCONTAINER( command_detail_ ) commands_details;
+	typedef ctn::E_CONTAINER_( command_detail_ ) commands_details_;
+	typedef ctn::E_CONTAINER( command_detail_ ) commands_details;
 	typedef bch::E_BUNCH_( object_reference__ ) objects_references_;
 	typedef bch::E_BUNCH( object_reference__ ) objects_references;
 

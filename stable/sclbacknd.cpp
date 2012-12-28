@@ -56,8 +56,8 @@ public:
 /*$BEGIN$*/
 
 #include "sclmisc.h"
-
 #include "scllocale.h"
+#include "sclerror.h"
 
 #include  "lcl.h"
 #include "cio.h"
@@ -111,6 +111,11 @@ ERRBegin
 
 	Steering = RetrieveSteering( Mode, Data->UP, scllocale::GetLocale() );
 ERRErr
+	if ( cio::IsInitialized() )
+		if ( sclerror::ReportPendingError( "en", err::hUserDefined  )) {
+			cio::CErr << txf::nl;
+			ERRRst();
+		}
 ERREnd
 	if ( cio::IsInitialized() ) {
 		cio::COut << txf::commit;

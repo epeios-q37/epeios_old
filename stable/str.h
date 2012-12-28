@@ -505,7 +505,7 @@ namespace str {
 		}
 	};
 
-	typedef ctn::E_XMCONTAINER_( str::string_ ) strings_;
+	typedef ctn::E_MCONTAINER_( str::string_ ) strings_;
 	E_AUTO( strings );
 
 	inline bso::bool__ operator ==(

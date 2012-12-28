@@ -88,8 +88,11 @@ namespace xpp {
 		sUnexpectedAttribute,
 		sUnknownAttribute,
 		sMissingNameAttribute,
+		sEmptyNameAttributeValue,
 		sMissingSelectOrHRefAttribute,
+		sEmptySelectOrHRefAttributeValue,
 		sMissingSelectAttribute,
+		sEmptySelectAttributeValue,
 		sMissingValueAttribute,
 		sMissingNameAndValueAttributes,
 		sMissingSelectAndValueAttributes,
@@ -215,15 +218,15 @@ namespace xpp {
 		}
 	public:
 		struct s {
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Names;
+			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s Names;
 			bch::E_BUNCHt_( xtf::coord__, _rrow__ )::s Coords;
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s FileNames;
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ )::s Contents;
+			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s FileNames;
+			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s Contents;
 		};
-		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Names;
+		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) Names;
 		bch::E_BUNCHt_( xtf::coord__, _rrow__ ) Coords;
-			ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) FileNames;
-		ctn::E_XMCONTAINERt_( str::string_, _rrow__ ) Contents;
+		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) FileNames;
+		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) Contents;
 		_repository_( s &S )
 		: Names( S.Names ),
 		  Coords( S.Coords ),
@@ -348,7 +351,7 @@ namespace xpp {
 		{
 			reset();
 		}
-		ctn::E_XMCONTAINERt( str::string_, _vrow__ ) Names, Values;
+		ctn::E_MCONTAINERt( str::string_, _vrow__ ) Names, Values;
 		void Init( void )
 		{
 			Names.Init();

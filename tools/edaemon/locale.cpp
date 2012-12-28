@@ -40,7 +40,7 @@ using namespace locale;
 
 #define CASE( n )\
 	case m##n:\
-	return XML_NAME "_" #n;\
+	return #n;\
 	break
 
 const char *locale::Label( message__ Message )
@@ -71,7 +71,7 @@ const lcl::meaning_ &locale::GetMeaning_(
 	va_list Args;
 	const str::string_ *Translation = NULL;
 
-	va_start( Args, Message );
+	va_start( Args, Meaning );
 
 	Meaning->SetValue( Label( Message ) );
 

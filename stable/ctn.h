@@ -1038,6 +1038,7 @@ namespace ctn {
 #endif
 
 	//c Same as mono_container_, but for use with object which have a 'Init()' function without parameters.
+# ifdef CTN__EXTEND
 	template <class t, typename r> class mono_extended_container_
 	: public mono_container_<t, r>
 	{
@@ -1089,7 +1090,7 @@ namespace ctn {
 		//f Append object 'Object'. Return position where put.
 		r Append( const t &Object )
 		{
-# if 0
+#  if 0
 			r P = Create_();
 
 			mono_container_<t, r>::operator()() = Object;	// Positionned by 'Create_'.
@@ -1097,9 +1098,9 @@ namespace ctn {
 			mono_container_<t, r>::Flush();
 
 			return P;
-# else
+#  else
 			return mono_container_<t, r>::Append( Object );
-# endif
+#  endif
 		}
 	};
 
@@ -1110,13 +1111,14 @@ namespace ctn {
 	#define E_XMCONTAINERt_( Type, r ) mono_extended_container_< Type, r >
 	#define E_XMCONTAINERt( Type, r ) mono_extended_container< Type, r >
 
-#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
+#  if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_XMCONTAINER_( Type )	mono_extended_container_< Type, mdr::row__ >
 	#define E_XMCONTAINER( Type )	mono_extended_container< Type, mdr::row__ >
-#else
+#  else
 	#define E_XMCONTAINER_( Type )	E_XMCONTAINERt_( Type, mdr::row__ )
 	#define E_XMCONTAINER( Type )	E_XMCONTAINERt( Type, mdr::row__ )
-#endif
+#  endif
+# endif
 
 
 	template <class st> struct item_multi_statique__
@@ -1459,14 +1461,15 @@ namespace ctn {
 	#define E_CONTAINERt_( Type, r ) multi_container_< Type, r >
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
-#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
+# if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	#define E_CONTAINER_( Type )	multi_container_< Type, mdr::row__ >
 	#define E_CONTAINER( Type )		multi_container< Type, mdr::row__ >
-#else
+# else
 	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, mdr::row__ )
 	#define E_CONTAINER( Type )		E_CONTAINERt( Type, mdr::row__ )
-#endif
+# endif
 
+# ifdef CTN__EXTEND
 	//c Same as multi_container_, but for use with object which have a 'Init()' function without parameters.
 	template <class t, typename r> class multi_extended_container_
 	: public multi_container_< t, r >
@@ -1519,7 +1522,7 @@ namespace ctn {
 		//f Append object 'Object'. Return position where put.
 		r Append( const t &Object )
 		{
-# if 0
+#  if 0
 			r P = Create_();
 
 			multi_container_< t, r >::operator()() = Object;	// Positionned by 'Create_'.
@@ -1527,9 +1530,9 @@ namespace ctn {
 			multi_container_< t, r >::Flush();
 
 			return P;
-# else
+#  else
 			return multi_container_< t, r >::Append( Object );
-# endif
+#  endif
 		}
 	};
 
@@ -1540,13 +1543,15 @@ namespace ctn {
 	#define E_XCONTAINERt_( Type, r ) multi_extended_container_< Type, r >
 	#define E_XCONTAINERt( Type, r ) multi_extended_container< Type, r >
 
-#if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
+#  if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
 	 #define E_XCONTAINER_( Type )	multi_extended_container_< Type, mdr::row__ >
 	 #define E_XCONTAINER( Type )	multi_extended_container< Type, mdr::row__ >
-#else	
+#  else	
 	 #define E_XCONTAINER_( Type )	E_XCONTAINERt_( Type, mdr::row__ )
 	 #define E_XCONTAINER( Type )	E_XCONTAINERt( Type, mdr::row__ )
-#endif
+#  endif
+
+# endif
 
 }
 

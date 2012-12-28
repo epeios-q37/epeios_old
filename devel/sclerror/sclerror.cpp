@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+#include "scllocale.h"
+
 using namespace sclerror;
 
 static lcl::meaning Meaning_;
@@ -87,6 +89,33 @@ void sclerror::SetMeaning( const lcl::meaning_ &Meaning )
 
 	Meaning_ = Meaning;
 }
+
+bso::bool__ sclerror::ReportPendingError(
+	const char *Language,
+	txf::text_oflow__ &TOFlow,
+	err::handling__ ErrHandling )
+{
+	bso::bool__ PendingErrorAvailable = false;
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	if ( IsErrorPending() )
+		PendingErrorAvailable = true;
+
+	if ( PendingErrorAvailable ) {
+		scllocale::GetTranslation( GetMeaning(), Language, Translation );
+		TOFlow << Translation;
+	} else if ( ErrHandling != err::hUserDefined )
+		ERRc();
+ERRErr
+ERREnd
+ERREpilog
+	return PendingErrorAvailable;
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

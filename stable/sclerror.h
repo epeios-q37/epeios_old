@@ -63,6 +63,7 @@ extern class ttr_tutor &SCLERRORTutor;
 # include "err.h"
 # include "flw.h"
 # include "lcl.h"
+# include "cio.h"
 
 namespace sclerror {
 	const lcl::meaning_ &GetMeaning( void );
@@ -72,6 +73,19 @@ namespace sclerror {
 	void ResetPendingError( void );
 
 	void SetMeaning( const lcl::meaning_ &Meaning );
+
+	bso::bool__ ReportPendingError(
+		const char *Language,
+		txf::text_oflow__ &TOFLow = cio::CErr,
+		err::handling__ ErrHandling = err::h_Default );
+
+	inline bso::bool__ ReportPendingError(
+		const char *Language,
+		err::handling__ ErrHandling  )
+	{
+		return ReportPendingError( Language, cio::CErr, ErrHandling );
+	}
+
 }
 
 /*$END$*/

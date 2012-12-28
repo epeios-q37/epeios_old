@@ -95,6 +95,16 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #endif
 #endif
 
+static int Test_( void )
+{
+	return 5;
+}
+
+static void ExitFunction_( void )
+{
+	Test_();
+}
+
 csdleo::user_functions__ *CSDLEORetrieveSteering( csdleo::shared_data__ *Data )
 {
 	csdleo::user_functions__ *Functions = NULL;
@@ -103,6 +113,8 @@ ERRFProlog
 	txf::text_oflow__ TOFlow;
 	err::buffer__ Buffer;
 ERRFBegin
+	atexit( ExitFunction_ );
+
 	if ( Data == NULL )
 		ERRu();
 

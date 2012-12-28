@@ -110,7 +110,7 @@ namespace ndbtbl {
 
 	typedef bch::E_BUNCH( index_ * ) _indexes;
 
-	typedef ctn::E_XMCONTAINER_( datum_ ) data_;
+	typedef ctn::E_MCONTAINER_( datum_ ) data_;
 	E_AUTO( data );
 
 	typedef bch::E_BUNCH_( mdr::row__ ) rows_;

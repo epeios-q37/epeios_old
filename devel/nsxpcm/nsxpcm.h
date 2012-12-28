@@ -2368,7 +2368,7 @@ namespace nsxpcm {
 
 	E_AUTO( file_picker_filter );
 
-	typedef ctn::E_XCONTAINER_( file_picker_filter_ ) file_picker_filters_;
+	typedef ctn::E_CONTAINER_( file_picker_filter_ ) file_picker_filters_;
 	E_AUTO( file_picker_filters );
 
 	enum file_picker_type__
@@ -2853,7 +2853,7 @@ namespace nsxpcm {
 
 	E_AUTO( xslt_parameter );
 
-	typedef ctn::E_XCONTAINER_( xslt_parameter_ ) _xslt_parameters_;
+	typedef ctn::E_CONTAINER_( xslt_parameter_ ) _xslt_parameters_;
 
 	class xslt_parameters_
 	: public _xslt_parameters_
@@ -2996,7 +2996,7 @@ namespace nsxpcm {
 	typedef str::string_ argument_;
 	typedef str::string argument;
 
-	typedef ctn::E_XMCONTAINER_( argument_ ) arguments_;
+	typedef ctn::E_MCONTAINER_( argument_ ) arguments_;
 	E_AUTO( arguments )
 
 	bso::ulong__ GetArguments(

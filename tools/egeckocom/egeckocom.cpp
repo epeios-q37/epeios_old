@@ -182,17 +182,17 @@ RB
 
 	nsxpcm::GetService( CLH_CONTRACTID, CLH );
 
-	if ( !IsInitialized_ ) {
-		Initialize_();
-		IsInitialized_ = true;
-	}
-
 	_LanguageBuffer.Init();
 
 	if ( ( _LanguageBuffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
 		ERRa();
 
 	strcpy( _LanguageBuffer, Language );
+
+	if ( !IsInitialized_ ) {
+		Initialize_();
+		IsInitialized_ = true;
+	}
 
 	RawLibraryName.Init();
 	GetComponent_( ComponentId, RawLibraryName );
@@ -222,6 +222,7 @@ RB
 			ErrorMeaning.Init();
 			ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_OPEN_COMPONENT );
 			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+			ErrorMeaning.AddTag( ComponentId );
 		}
 		ERRFree();
 	}

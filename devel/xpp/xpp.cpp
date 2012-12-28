@@ -111,8 +111,11 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( UnexpectedAttribute );
 	CASE( UnknownAttribute );
 	CASE( MissingNameAttribute );
+	CASE( EmptyNameAttributeValue );
 	CASE( MissingSelectOrHRefAttribute );
+	CASE( EmptySelectOrHRefAttributeValue );
 	CASE( MissingSelectAttribute );
+	CASE( EmptySelectAttributeValue );
 	CASE( MissingValueAttribute );
 	CASE( MissingNameAndValueAttributes );
 	CASE( MissingSelectAndValueAttributes );
@@ -324,6 +327,9 @@ static status__ GetDefineNameAttributeValue_(
 
 	Value = Parser.Value();
 
+	if ( Value.Amount() == 0 )
+		return sEmptyNameAttributeValue;
+
 	return sOK;
 }
 
@@ -474,6 +480,13 @@ ERRBegin
 	if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectOrHRefAttribute ) ) != sOK )
 		ERRReturn;
 
+	Value = Parser.Value();
+
+	if ( Value.Amount() == 0 ) {
+		Status = sEmptySelectOrHRefAttributeValue;
+		ERRReturn;
+	}
+
 	if ( Parser.AttributeName() == EXPAND_TAG_HREF_ATTRIBUTE )
 		Type = etFile;
 	else if ( Parser.AttributeName() == EXPAND_TAG_SELECT_ATTRIBUTE )
@@ -483,7 +496,6 @@ ERRBegin
 		ERRReturn;
 	}
 
-	Value = Parser.Value();
 ERRErr
 ERREnd
 ERREpilog
@@ -613,7 +625,10 @@ static status__ GetSetNameAndValue_(
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingNameAttribute ) ) == sOK ) {
 				if ( Parser.AttributeName() == SET_TAG_NAME_ATTRIBUTE )
-					Name.Append( Parser.Value() );
+					if ( Parser.Value() == 0 )
+						Status = sEmptyNameAttributeValue;
+					else
+						Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}
@@ -675,7 +690,10 @@ static status__ GetIfeqSelectAndValue_(
 
 			if ( ( Status = AwaitingToken_( Parser, xml::tAttribute, sMissingSelectAttribute ) ) == sOK ) {
 				if ( Parser.AttributeName() == IFEQ_TAG_SELECT_ATTRIBUTE )
-					Name.Append( Parser.Value() );
+					if ( Parser.Value().Amount() == 0 )
+						Status = sEmptySelectAttributeValue;
+					else
+						Name.Append( Parser.Value() );
 				else
 					Status = sUnknownAttribute;
 			}

@@ -61,10 +61,10 @@ typedef str::string		datum;
 
 
 
-typedef ctn::E_XMCONTAINER_( datum_ ) data_;
+typedef ctn::E_MCONTAINER_( datum_ ) data_;
 E_AUTO( data )
 
-typedef ctn::E_XCONTAINER_( data_ ) data_cluster_;
+typedef ctn::E_CONTAINER_( data_ ) data_cluster_;
 E_AUTO( data_cluster )
 
 void Print( const data_ &Data )
@@ -186,7 +186,7 @@ void EssaiBasic( void )
 {
 ERRProlog
 	mmm::multimemory MM;
-	E_XMCONTAINER( str::string_ ) C;
+	E_MCONTAINER( str::string_ ) C;
 //	MITEM( str::string_ ) E;
 ERRBegin
 	MM.Init();
@@ -294,7 +294,7 @@ void PetitEssai( int argc, const char *argv[] )
 {
 ERRProlog
 	mmm::multimemory M;
-	E_XMCONTAINER( str::string_ ) CS;
+	E_MCONTAINER( str::string_ ) CS;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS;
@@ -369,7 +369,7 @@ ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
-	E_XMCONTAINER( str::string_ ) CS, CD;
+	E_MCONTAINER( str::string_ ) CS, CD;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS, ECD;
@@ -492,8 +492,8 @@ void EssaiBogue( int argc, const char *argv[] )
 {
 ERRProlog
 	str::string S;
-	E_XMCONTAINER( str::string_ ) CS;
-	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) CC;
+	E_MCONTAINER( str::string_ ) CS;
+	E_CONTAINER( E_MCONTAINER_( str::string_ ) ) CC;
 //	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
 ERRBegin
 	CC.Init();
@@ -560,13 +560,13 @@ ERRProlog
 	int a = A( A_( 3 ) );
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
-	E_XMCONTAINER( str::string_ ) CC;
-	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
-	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
+	E_MCONTAINER( str::string_ ) CC;
+	E_CONTAINER( E_MCONTAINER_( str::string_ ) ) Cm;
+	E_CONTAINER( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) CM;
 	str::string S;
 /*	fch_flot_sortie_fichier FO;
 	fch_flot_entree_fichier FI;
-*/	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) ECM;
+*/	E_ITEM( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) ECM;
 //	ITEM( MCONTAINER_( str::string_ ) ) ECm;
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
@@ -680,14 +680,14 @@ void EssaiPersistence( int argc, const char *argv[] )
 ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 	int a = A( A_( 3 ) );
-	E_XMCONTAINER( str::string_ ) CC;
-	E_XCONTAINER( E_XMCONTAINER_( str::string_ ) ) Cm;
-	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) CM;
-	ctn::container_file_manager___<E_XCONTAINER_( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) )> FileManager;
+	E_MCONTAINER( str::string_ ) CC;
+	E_CONTAINER( E_MCONTAINER_( str::string_ ) ) Cm;
+	E_CONTAINER( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) CM;
+	ctn::container_file_manager___<E_CONTAINER_( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) )> FileManager;
 	str::string S;
 /*	fch_flot_sortie_fichier FO;
 	fch_flot_entree_fichier FI;
-*/	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) ECM;
+*/	E_ITEM( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) ECM;
 //	ITEM( MCONTAINER_( str::string_ ) ) ECm;
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
@@ -802,7 +802,7 @@ ERREpilog
 
 
 void SP2(
-	E_XMCONTAINER_( str::string_ ) &O,
+	E_MCONTAINER_( str::string_ ) &O,
 	char M,
 	char m )
 {
@@ -832,11 +832,11 @@ ERREpilog
 
 
 void SP1(
-	E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) &O,
+	E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) &O,
 	char M)
 {
 ERRProlog
-	E_ITEM( E_XMCONTAINER_( str::string_ ) ) E;
+	E_ITEM( E_MCONTAINER_( str::string_ ) ) E;
 ERRBegin
 	E.Init( O );
 
@@ -855,7 +855,7 @@ ERREpilog
 }
 
 void SSP2(
-	const E_XMCONTAINER_( str::string_ ) &O,
+	const E_MCONTAINER_( str::string_ ) &O,
 	char M,
 	char m )
 {
@@ -875,12 +875,12 @@ ERREpilog
 
 
 void SSP1(
-	const E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) &O,
+	const E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) &O,
 	char M)
 
 {
 ERRProlog
-	E_CITEM( E_XMCONTAINER_( str::string_ ) ) E;
+	E_CITEM( E_MCONTAINER_( str::string_ ) ) E;
 ERRBegin
 	E.Init( O );
 
@@ -904,8 +904,8 @@ ERRProlog
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
-	E_XCONTAINER( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) GC;
-	E_ITEM( E_XCONTAINER_( E_XMCONTAINER_( str::string_ ) ) ) EGC;
+	E_CONTAINER( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) GC;
+	E_ITEM( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) EGC;
 	char M;
 ERRBegin
 	ID = flm::GetId();
@@ -960,7 +960,7 @@ ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
-	E_XMCONTAINER( str::string_ ) C;
+	E_MCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
 ERRBegin
 	ID = flm::GetId();
@@ -991,7 +991,7 @@ ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
-	E_XCONTAINER( str::string_ ) C;
+	E_CONTAINER( str::string_ ) C;
 	E_ITEM( str::string_ ) E;
 ERRBegin
 	ID = flm::GetId();
@@ -1022,8 +1022,8 @@ ERRProlog
 	flm::id__ ID = FLM_UNDEFINED_ID;
 	flm::E_FILE_MEMORY_DRIVER___ F;
 	mmm::multimemory M;
-	E_XCONTAINER( str::string_ ) CS;
-	E_XCONTAINER( E_XCONTAINER_( str::string_ ) ) CC;
+	E_CONTAINER( str::string_ ) CS;
+	E_CONTAINER( E_CONTAINER_( str::string_ ) ) CC;
 //	ITEM( str::string_ ) ECS;
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
@@ -1122,7 +1122,7 @@ ERRFBegin
 		cout << txf::commit;
 		cerr << "\nBad arguments.\n";
 		cout << "Usage: " << CTNTutor.Name << " [/i]\n\n";
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 	}
 
 ERRFErr

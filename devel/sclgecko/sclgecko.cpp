@@ -59,10 +59,29 @@ public:
 
 #include "sclmisc.h"
 #include "scllocale.h"
+#include "sclerror.h"
 
 using namespace sclgecko;
 
 static bso::bool__ IsInitialized_ = false;
+
+static STR_BUFFER___ Language_;
+
+#define DEFAULT_LANGUAGE	"en"
+
+static const char *GetLanguage_( void )
+{
+	if ( Language_ == NULL )
+		return DEFAULT_LANGUAGE;
+
+	return Language_;
+}
+
+static void ReportSCLPendingError_( void )
+{
+	if ( sclerror::ReportPendingError( GetLanguage_(), err::hUserDefined ) )
+		ERRRst();
+}
 
 geckoo::steering_callback__ *geckob::GECKOBCreateSteering( geckoo::shared_data__ *Data )
 {
@@ -83,13 +102,12 @@ ERRBegin
 
 	Steering = CreateSteering( Data->LauncherIdentification, scllocale::GetLocale(), Data->Language, Data->UP );
 ERRErr
+	if ( ERRType >= err::t_amount )
+		ReportSCLPendingError_();
+
 	Steering = NULL;
-	ERRRst();
 ERREnd
-	if ( cio::IsInitialized() ) {
-		cio::COut << txf::commit;
-		cio::CErr << txf::commit;
-	}
+	sclmisc::Terminate();
 ERREpilog
 	return Steering;
 }

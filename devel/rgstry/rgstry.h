@@ -137,7 +137,7 @@ namespace rgstry {
 
 	E_AUTO( path_item );
 
-	typedef ctn::E_XCONTAINER_( path_item_ ) _path_items_;
+	typedef ctn::E_CONTAINER_( path_item_ ) _path_items_;
 
 	class path_
 	: public _path_items_
@@ -176,7 +176,7 @@ namespace rgstry {
 		const str::string_ &PathString,
 		path_ &Path );
 
-	typedef ctn::E_XMCONTAINER_( value_ )	values_;
+	typedef ctn::E_MCONTAINER_( value_ )	values_;
 	E_AUTO( values )
 
 	E_ROW( row__ );

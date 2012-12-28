@@ -247,11 +247,19 @@ static flw::iflow__ &InitializeLocaleFlow_(
 	flf::file_iflow___ &Flow,
 	str::string_ &Directory )
 {
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
 	if ( !InitializeFlow_( Target, LOCALE_DEFAULT_FILENAME_SUFFIX, SuggestedDirectory, Flow, Directory ) ) {
-		cio::CErr << "Unable to open locale file !" << txf::nl;
+		Meaning.Init();
+		Meaning.SetValue( "" );	// Ne sera pas traduit, puisque la locale n'a pas pu être lu.
+		Meaning.AddTag( "Unable to open locale file" );	// Ceci remaplacera le '%0' ci-dessus.
+		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
-
+ERRErr
+ERREnd
+ERREpilog
 	return Flow;
 }
 

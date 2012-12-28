@@ -300,7 +300,7 @@ namespace xml {
 	private:
 		_context__ _Context;
 		token__ _Token;
-		stk::E_XMCSTACK( str::string_ ) _Tags;
+		stk::E_MCSTACK( str::string_ ) _Tags;
 		bso::bool__ _EmptyTag;	// A 'true' pour '<tag/>', sinon à 'false'.
 		_flow___ _Flow;
 		str::string _TagName;
@@ -563,7 +563,7 @@ namespace xml {
 		void _WriteTabs( bso::ulong__ Amount ) const;
 	public:
 		struct s {
-			stk::E_XMCSTACK_( name_ )::s Tags;
+			stk::E_MCSTACK_( name_ )::s Tags;
 			txf::text_oflow__ *Flow;
 			bso::bool__ TagNameInProgress;
 			bso::bool__ TagValueInProgress;
@@ -571,7 +571,7 @@ namespace xml {
 			special_char_handling__ SpecialCharHandling;
 			bso::bool__ Ignore;
 		} &S_;
-		stk::E_XMCSTACK_( name_ ) Tags;
+		stk::E_MCSTACK_( name_ ) Tags;
 		writer_( s &S )
 		: S_( S ),
 		  Tags( S.Tags )

@@ -194,6 +194,7 @@ namespace stk {
 	#define E_BSTACK_( item )	E_BSTACKt_( item, stk::row__ )
 	#define E_BSTACK( item )	E_BSTACKt( item, stk::row__ )
 
+# ifdef XTN__EXTEND
 	#define E_XCSTACKt_( item, row )	stack_< ctn::E_XCONTAINERt_( item, row ), item, row >
 	#define E_XCSTACKt( item, row )	stack< ctn::E_XCONTAINERt_( item, row ), item, row >
 
@@ -205,7 +206,19 @@ namespace stk {
 
 	#define E_XMCSTACK_( item )		E_XMCSTACKt_( item, stk::row__ )
 	#define E_XMCSTACK( item )		E_XMCSTACKt( item, stk::row__ )
+# else
+	#define E_CSTACKt_( item, row )	stack_< ctn::E_CONTAINERt_( item, row ), item, row >
+	#define E_CSTACKt( item, row )	stack< ctn::E_CONTAINERt_( item, row ), item, row >
 
+	#define E_CSTACK_( item )		E_CSTACKt_( item, stk::row__ )
+	#define E_CSTACK( item )		E_CSTACKt( item, stk::row__ )
+
+	#define E_MCSTACKt_( item, row )	stack_< ctn::E_MCONTAINERt_( item, row ), item, row >
+	#define E_MCSTACKt( item, row )	stack< ctn::E_MCONTAINERt_( item, row ), item, row >
+
+	#define E_MCSTACK_( item )		E_MCSTACKt_( item, stk::row__ )
+	#define E_MCSTACK( item )		E_MCSTACKt( item, stk::row__ )
+# endif
 }
 
 /*$END$*/

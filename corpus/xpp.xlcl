@@ -36,15 +36,27 @@
 		<Translation language="fr">attribut 'name' manquant</Translation>
 		<Translation language="en">missing 'name' attribute</Translation>
 	</Translations>
-	<Translations text="XPP_MissingSelectOrHRefAttribute">
-		<Translation language="fr">attribut 'select' ou 'href' manquant</Translation>
-		<Translation language="en">missing 'select' or 'href' attribute</Translation>
-	</Translations>
-	<Translations text="XPP_MissingSelectAttribute">
-		<Translation language="fr">attribut 'select' manquant</Translation>
-		<Translation language="en">missing 'select' attribute</Translation>
-	</Translations>
-	<Translations text="XPP_MissingValueAttribute">
+  <Translations text="XPP_EmptyNameAttributeValue">
+    <Translation language="fr">valeur pour l'attribut 'name' absente</Translation>
+    <Translation language="en">'name' attribute value is empty</Translation>
+  </Translations>
+  <Translations text="XPP_MissingSelectOrHRefAttribute">
+    <Translation language="fr">attribut 'select' ou 'href' manquant</Translation>
+    <Translation language="en">missing 'select' or 'href' attribute</Translation>
+  </Translations>
+  <Translations text="XPP_EmptySelectOrHRefAttributeValue">
+    <Translation language="fr">valeur pour l'attribut 'select' ou 'href' absente</Translation>
+    <Translation language="en">'select' or 'href' attribute value is empty</Translation>
+  </Translations>
+  <Translations text="XPP_MissingSelectAttribute">
+    <Translation language="fr">attribut 'select' manquant</Translation>
+    <Translation language="en">missing 'select' attribute</Translation>
+  </Translations>
+  <Translations text="XPP_EmptySelectAttributeValue">
+    <Translation language="fr">valeur pour l'attribut 'select' absente</Translation>
+    <Translation language="en">'select' attribute value is epmpty</Translation>
+  </Translations>
+  <Translations text="XPP_MissingValueAttribute">
 		<Translation language="fr">attribut 'value' manquant</Translation>
 		<Translation language="en">missing 'value' attribute</Translation>
 	</Translations>

@@ -4,6 +4,9 @@ $Id$
 * 0.1.4 *
 *********
 
+23/12/2012 :
+	- Correction bogue messages non traduits lorsqu'une erreur survient durant l'initialisation du composant.
+
 - 20/12/2012 :
 	- Adaptation.
 	- PUBLICATION !
