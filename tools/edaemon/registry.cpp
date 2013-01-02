@@ -29,10 +29,8 @@ using namespace registry;
 
 using rgstry::entry___;
 
-static entry___ Modules_( "Modules" );
-static entry___ ModuleFree_( "Module", Modules_ );
-static entry___ ModuleId_( "@id", ModuleFree_ );
-static entry___ Module_( RGSTRY_TAGGING_ATTRIBUTE( "id" ), ModuleFree_ );
+static entry___ Definitions_( "Definitions" );
+static entry___ Module_( "Module", Definitions_ );
 
 static entry___ ModuleLog_( "Log", Module_ );
 entry___ registry::ModuleLogFileName( "FileName", ModuleLog_ );
@@ -42,8 +40,3 @@ entry___ registry::ModuleFileName( "FileName", Module_ );
 
 entry___ registry::ModuleService( "Service", Module_ );
 entry___ registry::ModuleServiceType( "@Type", ModuleService );
-
-bso::bool__ registry::GetModulesIds( rgstry::values_ &Values )
-{
-	return sclrgstry::GetValues( ModuleId_, Values );
-}

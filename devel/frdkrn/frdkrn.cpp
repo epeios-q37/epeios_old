@@ -72,7 +72,7 @@ const char *frdkrn::GetLabel( recap__ Recap )
 
 	switch( Recap ) {
 		CASE( ProjectParsingError );
-		CASE( SettingsParsingError );
+		CASE( SetupParsingError );
 		CASE( NoOrBadProjectId );
 		CASE( NoOrBadBackendDefinition );
 		CASE( NoBackendLocation );
@@ -105,7 +105,7 @@ ERRBegin
 
 	switch ( Recap ) {
 		case rProjectParsingError:
-		case rSettingsParsingError:
+		case rSetupParsingError:
 			MeaningBuffer.Init();
 			rgstry::GetMeaning( ErrorSet.Context, MeaningBuffer );
 			Meaning.AddTag( MeaningBuffer );
@@ -578,7 +578,7 @@ ERREpilog
 }
 
 
-recap__ frdkrn::kernel___::FillSettingsRegistry(
+recap__ frdkrn::kernel___::FillSetupRegistry(
 	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions,
 	error_set___ &ErrorSet )
@@ -588,14 +588,14 @@ ERRProlog
 	STR_BUFFER___ FileNameBuffer, PathBuffer;
 ERRBegin
 	
-	switch ( _Registry.FillSettings( SettingsXFlow, Criterions, "Settings", ErrorSet.Context ) ) {
+	switch ( _Registry.FillSetup( SettingsXFlow, Criterions, FRDKRN_SETUP_LABEL, ErrorSet.Context ) ) {
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
 		ERRc();
 		break;
 	default:
-		Recap = rSettingsParsingError;
+		Recap = rSetupParsingError;
 		ERRReturn;
 		break;
 	}
@@ -607,7 +607,7 @@ ERREpilog
 	return Recap;
 }
 
-status__ frdkrn::kernel___::FillSettingsRegistry(
+status__ frdkrn::kernel___::FillSetupRegistry(
 	xtf::extended_text_iflow__ &SettingsXFlow,
 	const xpp::criterions___ &Criterions )
 {
@@ -618,7 +618,7 @@ ERRProlog
 ERRBegin
 	ErrorSet.Init();
 
-	if ( ( Recap = FillSettingsRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
+	if ( ( Recap = FillSetupRegistry( SettingsXFlow, Criterions, ErrorSet ) ) != r_OK ) {
 		_Meaning.Init();
 		frdkrn::GetMeaning( Recap, ErrorSet, _Meaning );
 		Status = sWarning;

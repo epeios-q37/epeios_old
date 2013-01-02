@@ -41,39 +41,29 @@ namespace registry {
 	extern rgstry::entry___ ModuleLogFileName;
 	extern rgstry::entry___ ModuleLogMode;
 
-	inline const char *GetModuleLogFileName(
-		const str::string_ &Id,
-		STR_BUFFER___ &FileName )
+	inline const char *GetModuleLogFileName( STR_BUFFER___ &FileName )
 	{
-		return sclrgstry::GetOptionalValue( rgstry::tentry___( ModuleLogFileName, Id ), FileName );
+		return sclrgstry::GetOptionalValue( ModuleLogFileName, FileName );
 	}
 
-	inline const str::string_ &GetRawModuleLogMode(
-		const str::string_ &Id,
-		str::string_ &Mode )
+	inline const str::string_ &GetRawModuleLogMode( str::string_ &Mode )
 	{
-		return sclrgstry::GetOptionalValue( rgstry::tentry___( ModuleLogMode, Id ), Mode );
+		return sclrgstry::GetOptionalValue( ModuleLogMode, Mode );
 	}
 
-	bso::bool__ GetModulesIds( rgstry::values_ &Values );
-
-	inline const str::string_ &GetModuleFileName(
-		const str::string_ &Id,
-		str::string_ &FileName )
+	inline const str::string_ &GetModuleFileName( str::string_ &FileName )
 	{
-		return sclrgstry::GetMandatoryValue( rgstry::tentry___( ModuleFileName, Id ), FileName );
+		return sclrgstry::GetMandatoryValue( ModuleFileName, FileName );
 	}
 
-	inline bso::ushort__ GetRawModuleService( const str::string_ &Id )
+	inline bso::ushort__ GetRawModuleService( void )
 	{
-		return sclrgstry::GetMandatoryUShort( rgstry::tentry___( ModuleService, Id ) );
+		return sclrgstry::GetMandatoryUShort( ModuleService );
 	}
 
-	inline const str::string_ &GetRawModuleServiceType(
-		const str::string_ &Id,
-		str::string_ &Type )
+	inline const str::string_ &GetRawModuleServiceType( str::string_ &Type )
 	{
-		return sclrgstry::GetMandatoryValue( rgstry::tentry___( ModuleServiceType, Id ), Type );
+		return sclrgstry::GetMandatoryValue( ModuleServiceType, Type );
 	}
 }
 

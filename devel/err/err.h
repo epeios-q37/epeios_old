@@ -92,20 +92,20 @@ namespace err {
 	};
 
 	enum type {
-		tAllocation,	// (ERRa)' Erreur lors e l'allocation de RAM.
+		tAllocation,	// (ERRa) Erreur lors de l'allocation de RAM.
 		tDevice,		// (ERRd) Erreur signalant un problème avec un périphérique.
 		tSystem,		// (ERRs) Erreur du système.
 		tUser,			// (ERRu) Erreur de l'utilisateur.
 		tBackend,		// (ERRb) Erreur 'backend'.
-		tVacant,		// (ERRv) Appel à une fonction absente (à priori non encore implémentée).	
+		tVacant,		// (ERRv) Appel à une fonctionnalité absente (à priori non encore implémentée).	
 		tLimitation,	// (ERRl) Erreur signalant un dépassement d'une limite inhérente à un fonctionnalité.
-		tMemory,		// (ERRm) Erreur lors du traitement d'une focntion mémoire (tout type).
+		tMemory,		// (ERRm) Erreur lors du traitement d'une fonction mémoire (tout type).
 		tConception,	// (ERRc) Erreur de conception ; une situation algorithmiquement impossible est survenue.
-		tProhibition,	// (ERRp) Erreur du à l'appel d'une focntion non autorisée.
-		tExternal,		// (ERRx) Un erreur du à un acteur extérieur d'est prduite.
-		tFlow,			// (ERRf) Une errreur a été détectée lors du tratiement d'u fluw (pendant du tMemory).
+		tProhibition,	// (ERRp) Erreur du à l'appel d'une fonctionnalité non autorisée.
+		tExternal,		// (ERRx) Un erreur du à un acteur extérieur s'est prduite.
+		tFlow,			// (ERRf) Une errreur a été détectée lors du traitement d'un flux (pendant du 'tMemory').
 		t_amount,
-		t_None,		// Signale l'absence d'erreur.
+		t_None,			// Signale l'absence d'erreur.
 		t_Free,			// (ERRFree) Pas une erreur au sens propre. Permet de profiter du mécanisme de gestion d'erreur.
 		t_Exit,			// Facilite la gestion d'un 'ERRExit(...)'
 		t_Return,		// Facilite la gestion d'un 'ERRReturn'.

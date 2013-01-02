@@ -61,6 +61,10 @@ public:
 
 using namespace xulftk;
 
+#define SETUP_LABEL		FRDKRN_SETUP_LABEL
+
+#define SETUPS_LABEL	SETUP_LABEL "s"
+
 static void GetAuthorText_(
 	const char *Name,
 	const char *Contact,
@@ -292,7 +296,6 @@ static const char *GetAnnexTarget_(
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::locale_ &Locale,
 	const char *Language,
-	bso::bool__ AlphaNumericOnly,	
 	STR_BUFFER___ &Buffer )
 {
 	const char *Result = NULL;
@@ -303,9 +306,9 @@ ERRBegin
 
 	Registry.GetValue( xulfrg::AnnexTarget, Target );
 
-	if ( !IsValid_( Target, AlphaNumericOnly ) ) {
+	if ( !IsValid_( Target, true ) ) {
 		Translation.Init();
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetDefinition", Language, Translation ) );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTarget", Language, Translation ) );
 
 		ERRReturn;
 	}
@@ -339,7 +342,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, true, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, Buffer ) ) == NULL )
 		ERRReturn;
 
 	Bag.Embedded.Init();
@@ -374,7 +377,7 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *Target = NULL;
 ERRBegin
-	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, false, Buffer ) ) == NULL )
+	if ( ( Target = GetAnnexTarget_( UI, Registry, Locale, Language, Buffer ) ) == NULL )
 		ERRReturn;
 
 	if ( Bag.FileFlow.Init( Target, err::hUserDefined ) != fil::sSuccess )
@@ -416,7 +419,7 @@ ERRBegin
 		break;
 	case at_Undefined:
 			Translation.Init();
-			UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTypeDefinition", Language, Translation ) );
+			UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetType", Language, Translation ) );
 
 			ERRReturn;
 		break;
@@ -446,9 +449,9 @@ ERREnd
 ERREpilog
 }
 
-static rgstry::row__ Read_(
+static rgstry::row__ ReadSetups_(
 	flw::iflow__ &Flow,
-	rgstry::registry_ &Set )
+	rgstry::registry_ &Setups )
 {
 	rgstry::row__ Root = NONE;
 ERRProlog
@@ -456,7 +459,7 @@ ERRProlog
 ERRBegin
 	XFlow.Init( Flow );
 
-	if ( rgstry::FillRegistry( XFlow, xpp::criterions___(), "SettingsSet", Set, Root ) != rgstry::sOK )
+	if ( rgstry::FillRegistry( XFlow, xpp::criterions___(), SETUPS_LABEL, Setups, Root ) != rgstry::sOK )
 		Root = NONE;
 ERRErr
 ERREnd
@@ -464,22 +467,22 @@ ERREpilog
 	return Root;
 }
 
-static const str::string_ &BuildPath_(
+static const str::string_ &BuildSetupPath_(
 	const str::string_ &Id,
 	str::string_ &Path )
 {
-	Path.Append( "Settings[id=\"" );
+	Path.Append( SETUP_LABEL "[id=\"" );
 	Path.Append( Id );
 	Path.Append( "\"]" );
 
 	return Path;
 }
 
-static bso::bool__ Get_(
+static bso::bool__ GetSetup_(
 	const str::string_ &Id,
-	const rgstry::registry_ &Set,
+	const rgstry::registry_ &Setups,
 	rgstry::row__ Root,
-	str::string_ &Settings )
+	str::string_ &Setup )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -487,19 +490,19 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	BuildPath_( Id, Path );
+	BuildSetupPath_( Id, Path );
 
-	Success = Set.GetValue( Path, Root, Settings );
+	Success = Setups.GetValue( Path, Root, Setup );
 ERRErr
 ERREnd
 ERREpilog
 	return Success;
 }
 
-static void Set_(
+static void SetSetup_(
 	const str::string_ &Id,
-	const str::string_ &Settings,
-	rgstry::registry_ &Set,
+	const str::string_ &Setup,
+	rgstry::registry_ &Setups,
 	rgstry::row__ Root )
 {
 ERRProlog
@@ -507,9 +510,9 @@ ERRProlog
 ERRBegin
 	Path.Init();
 
-	BuildPath_( Id, Path );
+	BuildSetupPath_( Id, Path );
 
-	Set.SetValue( Path, Settings, Root );
+	Setups.SetValue( Path, Setup, Root );
 ERRErr
 ERREnd
 ERREpilog
@@ -529,12 +532,12 @@ struct ibag___ {
 	}
 };
 
-static rgstry::row__ RetrieveSet_(
+static rgstry::row__ RetrieveSetups_(
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
 	const lcl::locale_ &Locale,
 	const char *Language,
-	rgstry::registry_ &Set )
+	rgstry::registry_ &Setups )
 {
 	rgstry::row__ Root = NONE;
 ERRProlog
@@ -546,13 +549,13 @@ ERRBegin
 	
 	if ( ( Flow = GetFlow_<ibag___,flw::iflow__>( dIn, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
 		Translation.Init();
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToRetrieveSettings", Language, Translation ) );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToRetrieve" SETUPS_LABEL, Language, Translation ) );
 		ERRReturn;
 	}
 
-	if ( ( Root = Read_( *Flow, Set ) ) == NONE ) {
+	if ( ( Root = ReadSetups_( *Flow, Setups ) ) == NONE ) {
 		Translation.Init();
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFindSettings", Language, Translation) );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFind" SETUPS_LABEL, Language, Translation) );
 		ERRReturn;
 	}
 ERRErr
@@ -586,7 +589,7 @@ ERRBegin
 	case frdkrn::bxtNone:
 		break;
 	case frdkrn::bxtPredefined:
-		ERRl();
+		ERRv();
 		break;
 	case frdkrn::bxtDaemon:
 		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
@@ -632,32 +635,32 @@ void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__
 {
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
-	rgstry::registry Set;
+	rgstry::registry Setups;
 	rgstry::row__ Root = NONE;
-	str::string Settings;
+	str::string Setup;
 	flx::E_STRING_IFLOW__ Flow;
 	str::string Value;
 	frdkrn::backend_extended_type__ Type = frdkrn::bxt_Undefined;
 	str::string ProjectId;
 	str::string Translation;
 ERRBegin
-	Set.Init();
+	Setups.Init();
 
-	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Set ) ) == NONE )
+	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Setups ) ) == NONE )
 		ERRReturn;
 
 	ProjectId.Init();
 	GetProjectId_( *this, ProjectId );
 
-	Settings.Init();
-	Get_( ProjectId, Set, Root, Settings );
+	Setup.Init();
+	GetSetup_( ProjectId, Setups, Root, Setup );
 
-	if ( Settings.Amount() != 0 ) {
-		Flow.Init( Settings );
+	if ( Setup.Amount() != 0 ) {
+		Flow.Init( Setup );
 
 		XFlow.Init( Flow );
 
-		Handle_( Kernel().FillSettingsRegistry( XFlow, xpp::criterions___() ) );
+		Handle_( Kernel().FillSetupRegistry( XFlow, xpp::criterions___() ) );
 	}
 
 	Value.Init();
@@ -727,8 +730,8 @@ struct obag___ {
 	}
 };
 
-static bso::bool__ StoreSet_(
-	const rgstry::registry_ &Set,
+static bso::bool__ StoreSetups_(
+	const rgstry::registry_ &Setups,
 	rgstry::row__ Root,
 	xulfui::ui___ &UI,
 	const rgstry::multi_level_registry_ &Registry,
@@ -740,21 +743,22 @@ ERRProlog
 	flw::oflow__ *Flow = NULL;
 	obag___ Bag;
 	str::string Translation;
+	STR_BUFFER___ Buffer;
 ERRBegin
 	Bag.Init();
 	
 	if ( ( Flow = GetFlow_<obag___,flw::oflow__>( dOut, Bag, UI, Registry, Locale, Language ) ) == NULL ) {
 		Translation.Init();
-		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToStoreSettings", Language, Translation ) );
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToStore" SETUPS_LABEL, Language, Translation ) );
 
 		ERRReturn;
 	}
 
-	Write_( Set, Root, *Flow );
+	Write_( Setups, Root, *Flow );
 
 	Bag.EmbeddedFlow.reset();
 
-	UI.SaveAnnex( "Annex", Bag.Embedded );
+	UI.SaveAnnex( GetAnnexTarget_( UI, Registry, Locale, Language, Buffer), Bag.Embedded );
 
 	Success = true;
 ERRErr
@@ -763,20 +767,20 @@ ERREpilog
 	return Success;
 }
 
-static void GetSettings_(
+static void GetSetup_(
 	const xulfkl::kernel___ &Kernel,
-	str::string_ &Settings )
+	str::string_ &Setup )
 {
 ERRProlog
 	flx::E_STRING_OFLOW___ Flow;
 	txf::text_oflow__ TFlow;
 	xml::writer Writer;
 ERRBegin
-	Flow.Init( Settings );
+	Flow.Init( Setup );
 	TFlow.Init( Flow );
 	Writer.Init( TFlow, xml::oCompact, xml::e_Default );
 
-	Kernel.DumpSettingsRegistry( Writer );
+	Kernel.DumpSetupRegistry( Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -786,8 +790,8 @@ ERREpilog
 void xulftk::trunk___::_DropSession( void )
 {
 ERRProlog
-	str::string Settings;
-	rgstry::registry Set;
+	str::string Setup;
+	rgstry::registry Setups;
 	rgstry::row__ Root = NONE;
 	str::string ProjectId;
 ERRBegin
@@ -795,18 +799,18 @@ ERRBegin
 	if ( !Kernel().IsProjectInProgress() )
 		ERRReturn;
 
-	Set.Init();
+	Setups.Init();
 
-	if ( ( Root = RetrieveSet_( UI(), Registry(), Kernel().Locale(),Kernel().Language(), Set ) ) != NONE ) {
-		Settings.Init();
-		GetSettings_( Kernel(), Settings );
+	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(),Kernel().Language(), Setups ) ) != NONE ) {
+		Setup.Init();
+		GetSetup_( Kernel(), Setup );
 
 		ProjectId.Init();
 		GetProjectId_( *this, ProjectId );
 
-		Set_( ProjectId, Settings, Set, Root );
+		SetSetup_( ProjectId, Setup, Setups, Root );
 
-		StoreSet_( Set, Root, UI(), Registry(), Kernel().Locale(), Kernel().Language() );
+		StoreSetups_( Setups, Root, UI(), Registry(), Kernel().Locale(), Kernel().Language() );
 	}
 
 	Handle_( Kernel().CloseProject() );

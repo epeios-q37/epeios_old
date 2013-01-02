@@ -131,18 +131,18 @@ static void AnalyzeOptions_(
 	parameters &Parameters )
 {
 ERRProlog
-	mdr::row__ P;
+//	mdr::row__ P;
 	clnarg::option_list Options;
-	clnarg::id__ Option;
+//	clnarg::id__ Option;
 	const bso::char__ *Unknown = NULL;
 	clnarg::argument Argument;
-	clnarg::buffer__ Buffer;
+//	clnarg::buffer__ Buffer;
 ERRBegin
 	Options.Init();
 
 	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
 		clnarg::ReportUnknownOptionError( Unknown, NAME, scllocale::GetLocale(), scltool::GetLanguage() );
-
+#if 0
 	P = Options.First();
 
 	while( P != NONE ) {
@@ -151,11 +151,12 @@ ERRBegin
 		switch( Option = Options( P ) ) {
 		default:
 			ERRc();
+			break;
 		}
 
 		P = Options.Next( P );
 	}
-
+#endif
 ERRErr
 ERREnd
 ERREpilog
@@ -245,7 +246,7 @@ enum backend_connection_type__ {
 	bct_Undefined
 };
 
-static backend_connection_type__ GetModuleConnectionType_( const str::string_ &Id )
+static backend_connection_type__ GetModuleConnectionType_( void )
 {
 	backend_connection_type__ Type = bct_Undefined;
 ERRProlog
@@ -253,7 +254,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	registry::GetRawModuleServiceType( Id, Value );
+	registry::GetRawModuleServiceType( Value );
 
 	if ( Value == "Straight" )
 		Type = bctStraight;
@@ -277,7 +278,7 @@ enum log_file_handling__ {
 	lfh_Undefined,
 };
 
-static log_file_handling__ GetLogFileHandling_( const str::string_ &Id )
+static log_file_handling__ GetLogFileHandling_( void )
 {
 	log_file_handling__ Handling = lfh_Undefined;
 ERRProlog
@@ -285,7 +286,7 @@ ERRProlog
 ERRBegin
 	Value.Init();
 
-	registry::GetRawModuleLogMode( Id, Value );
+	registry::GetRawModuleLogMode( Value );
 
 	if ( ( Value.Amount() == 0 ) ||( Value == "Append" ) )
 		Handling = lfhAppend;
@@ -301,9 +302,6 @@ ERREpilog
 	return Handling;
 }
 
-
-static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
-
 static void UseStraightConnections_(
 	csdsuf::user_functions__ &UserFunctions,
 	const bso::char__ *Backend,
@@ -315,9 +313,6 @@ ERRBegin
 	Server.Init( Port, UserFunctions );
 
 	Server.Process();
-
-	mtx::Lock( Mutex_ );
-	mtx::Unlock( Mutex_ );
 ERRErr
 ERREnd
 ERREpilog
@@ -335,9 +330,6 @@ ERRBegin
 	Server.Init( Port, UserFunctions, LogFunctions );
 
 	Server.Process();
-
-	mtx::Lock( Mutex_ );
-	mtx::Unlock( Mutex_ );
 ERRErr
 ERREnd
 ERREpilog
@@ -430,76 +422,38 @@ ERREnd
 ERREpilog
 }
 
-struct data__
+static csdlec::library_embedded_client_core__ *Go_(
+	const bso::char__ *BackendFileName,
+	csdbns::port__ Port,
+	backend_connection_type__ ConnectionType,
+	const char *LogFileName,
+	log_file_handling__ LogFileHandling )
 {
-	const str::string_ *ModuleId;
-	const bso::char__ *BackendFileName;
-	csdbns::port__ Port;
-	backend_connection_type__ ConnectionType;
-	const char *LogFileName;
-	log_file_handling__ LogFileHandling;
-	csdlec::library_embedded_client_core__ *Core;	// Set by called function;
-	mtx::mutex_handler__ Mutex;
-	void reset( bso::bool__ = true )
-	{
-		ModuleId = NULL;
-		BackendFileName = NULL;
-		ConnectionType = bct_Undefined;
-		LogFileName = NULL;
-		LogFileHandling = lfh_Undefined;
-		Core = NULL;
-		Mutex = MTX_INVALID_HANDLER;
-	}
-	E_CDTOR( data__ );
-};
-
-
-static void Go_( void *UP )
-{
-ERRProlog
 	csdlec::library_embedded_client_core__ *Core = NULL;
+ERRProlog
 	lcl::locale SharedLocale;
 	rgstry::registry SharedRegistry;
 	csdlec::library_data__ LibraryData;
-	data__ &Data = *(data__ *)UP;
 	lcl::meaning Meaning;
-	str::string Translation, ModuleId;
+	str::string Translation;
 	err::buffer__ ErrBuffer;
-	const bso::char__ *BackendFileName = NULL;
-	csdbns::port__ Port = 0;
-	backend_connection_type__ ConnectionType = bct_Undefined;
-	const char *LogFileName = NULL;
-	log_file_handling__ LogFileHandling = lfh_Undefined;
 ERRBegin
 	SharedLocale.Init();
 	SharedRegistry.Init();
 
-	ModuleId.Init();
-	ModuleId = *Data.ModuleId;
-
-	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false, (void *)Data.BackendFileName );
+	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false, (void *)BackendFileName );
 
 	if ( ( Core = new csdlec::library_embedded_client_core__ ) == NULL )
 		ERRa();
 
-	if ( !Core->Init( Data.BackendFileName, LibraryData, err::hUserDefined ) ) {
+	if ( !Core->Init( BackendFileName, LibraryData, err::hUserDefined ) ) {
 		Meaning.Init();
-		locale::GetUnableToLoadBackendMeaning( Data.BackendFileName, Meaning );
+		locale::GetUnableToLoadBackendMeaning( BackendFileName, Meaning );
 		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
 
-	BackendFileName = Data.BackendFileName;
-	Port = Data.Port;
-	LogFileName = Data.LogFileName;
-	LogFileHandling = Data.LogFileHandling;
-
-	Data.Core = Core;
-
-	mtx::Unlock( Data.Mutex );
-
-
-	switch ( Data.ConnectionType ) {
+	switch ( ConnectionType ) {
 	case bctStraight:
 		UseStraightConnections_( Core->GetSteering(), BackendFileName, Port );
 		break;
@@ -513,7 +467,6 @@ ERRBegin
 ERRErr
 	Meaning.Init();
 	Meaning.SetValue( "ModuleError" );
-	Meaning.AddTag( ModuleId );
 
 	if ( ERRType >= err::t_amount ) {
 		if ( sclerror::IsErrorPending() )
@@ -530,50 +483,17 @@ ERRErr
 	scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation );
 
 	cio::CErr << Translation << txf::nl << txf::commit;
-	ERRRst();
 ERREnd
 ERREpilog
+	return Core;
+}
+
+static inline csdbns::port__ GetService_( void )
+{
+	return registry::GetRawModuleService();
 }
 
 static csdlec::library_embedded_client_core__ *Go_(
-	const str::string_ &ModuleId,
-	const bso::char__ *BackendFileName,
-	csdbns::port__ Port,
-	backend_connection_type__ ConnectionType,
-	const char *LogFileName,
-	log_file_handling__ LogFileHandling )
-{
-	data__ Data;
-
-	Data.ModuleId = &ModuleId;
-	Data.BackendFileName = BackendFileName;
-	Data.Port = Port;
-	Data.ConnectionType = ConnectionType;
-	Data.LogFileName = LogFileName;
-	Data.LogFileHandling = LogFileHandling;
-
-	Data.Mutex = mtx::Create( mtx::mFree );
-
-	mtx::Lock( Data.Mutex );
-
-	mtk::Launch( Go_, &Data );
-
-	mtx::Lock( Data.Mutex );
-
-	if ( Data.Core == NULL )
-		ERRc();
-
-	return Data.Core;
-}
-
-
-static inline csdbns::port__ GetService_( const str::string_ &Id )
-{
-	return registry::GetRawModuleService( Id );
-}
-
-static csdlec::library_embedded_client_core__ *Go_(
-	const str::string_ &Id,
 	const char *LogFileName,
 	log_file_handling__ LogFileHandling )
 {
@@ -584,84 +504,43 @@ ERRProlog
 ERRBegin
 	ModuleFileName.Init();
 
-	Core = Go_( Id, registry::GetModuleFileName( Id, ModuleFileName ).Convert( Buffer ), GetService_( Id ), GetModuleConnectionType_( Id ), LogFileName, LogFileHandling );
+	Core = Go_( registry::GetModuleFileName( ModuleFileName ).Convert( Buffer ), GetService_(), GetModuleConnectionType_(), LogFileName, LogFileHandling );
 ERRErr
 ERREnd
 ERREpilog
 	return Core;
 }
 
-static csdlec::library_embedded_client_core__ *Go_( const str::string_ &Id )
+static csdlec::library_embedded_client_core__ *Core_ = NULL;
+
+static csdlec::library_embedded_client_core__ *Go_( void )
 {
 	csdlec::library_embedded_client_core__ *Core = NULL;
 ERRProlog
 	STR_BUFFER___ Buffer;
 	const char *LogFileName = NULL;
 ERRBegin
-	Core = Go_( Id, registry::GetModuleLogFileName( Id, Buffer ), GetLogFileHandling_( Id ) );
+	Core = Go_( registry::GetModuleLogFileName( Buffer ), GetLogFileHandling_() );
 ERRErr
 ERREnd
 ERREpilog
 	return Core;
 }
 
-typedef bch::E_BUNCH_( csdlec::library_embedded_client_core__ * ) cores_;
-E_AUTO( cores );
-
-static void Go_(
-	const str::strings_ &Ids,
-	cores_ &Cores )
-{
-	mdr::row__ Row = Ids.First();
-	ctn::E_CMITEM( str::string_ ) Id;
-
-	Id.Init( Ids );
-
-	while( Row != NONE ) {
-		if ( Cores.Append( Go_( Id( Row ) ) ) != Row )
-			ERRc();
-
-		Row = Ids.Next( Row );
-	}
-}
-
-static str::strings Ids_;
-static cores Cores_;
-
 static void ExitFunction_( void )
 {
-	mdr::row__ Row = Cores_.Last();
-	ctn::E_CMITEM( str::string_ ) Id;
+	if ( Core_ != NULL )
+		delete Core_;
 
-	Id.Init( Ids_ );
-
-	cio::COut << txf::nl;
-
-	while( Row != NONE ) {
-		cio::COut << "Terminating '" << Id( Row ) << "'..." << txf::nl << txf::commit;
-		Cores_( Row )->GetSteering().Exit();
-		delete Cores_( Row );
-		cio::COut << '\'' << Id( Row ) << " terminated." << txf::nl << txf::commit;
-
-		Row = Ids_.Previous( Row );
-	}
+	Core_ = NULL;
 }
 
 
 static void Go_( const parameters &Parameters )
 {
-	Ids_.Init();
-	registry::GetModulesIds( Ids_ );
-
-	Cores_.Init();
-
-	Mutex_ = mtx::Create( mtx::mFree );
-
-	mtx::Lock( Mutex_ );
-
-	Go_( Ids_, Cores_ );
-
 	atexit( ExitFunction_ );
+
+	Go_();
 
 	while ( 1 )
 		tht::Suspend( 1000 );

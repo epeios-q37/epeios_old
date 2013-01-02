@@ -1,13 +1,13 @@
 <Configurations>
 	<Configuration target="edaemon">
     <Parameters>
-	  <Language>fr</Language>
+  	  <Language>fr</Language>
     </Parameters>
-    <Modules>
-      <Module id="esketch">
+    <Definitions>
+     <Module>
         <Service Type="Switched">2000</Service>
         <FileName>h:\bin\esketchbkd</FileName>
-      </Module>
-    </Modules>
-	</Configuration>
+     </Module>
+    </Definitions>
+  </Configuration>
 </Configurations>

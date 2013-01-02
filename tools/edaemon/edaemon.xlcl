@@ -5,11 +5,11 @@
 		<xpp:expand href="epeios.xlcl"/>
 		<Translations text="ProgramDescription">
 			<Translation language="fr">'Daemoniseur' du projet Epeios</Translation>
-			<Translation language="en">Epesio project's 'daemonizer'</Translation>
+			<Translation language="en">Epeios project's 'daemonizer'</Translation>
 		</Translations>
     <Translations text="ModuleError">
-      <Translation language="fr">Erreur module '%1' : %2</Translation>
-      <Translation language="en">Error module '%1' : %2</Translation>
+      <Translation language="fr">Erreur module : %1</Translation>
+      <Translation language="en">Module error : %1</Translation>
     </Translations>
     <Translations text="UnableToLoadBackend">
       <Translation language="fr">Impossible de charger le moteur de traitement '%1'</Translation>

@@ -70,7 +70,7 @@ extern class ttr_tutor &CSDLEOTutor;
 # define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		CSDLEORetrieveSteering
 # define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		CSDLEOReleaseSteering
 
-# define CSDLEO_SHARED_DATA_VERSION	"1"
+# define CSDLEO_SHARED_DATA_VERSION	"2"
 
 namespace csdleo {
 	using namespace csdsuf;
@@ -144,7 +144,7 @@ namespace csdleo {
 
 	class shared_data__
 	: public data_control__,
-		public data__
+	  public data__
 	{
 	public:
 		void reset( bso::bool__ P = true )

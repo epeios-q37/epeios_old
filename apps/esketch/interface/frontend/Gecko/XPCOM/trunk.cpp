@@ -37,23 +37,3 @@ void trunk::user_callback__::XULFTKAboutText(
 		AFFILIATED_PROJECT_NAME, AFFILIATED_PROJECT_URL,
 		_T(), Text );
 }
-
-void trunk::trunk___::TestLocaleInProjectFile_( void )
-{
-ERRProlog
-	str::string Translation;
-ERRBegin
-	Translation.Init();
-	Kernel().GetTranslation( "Test", Translation );
-	UI().LogAndPrompt( Translation );
-
-	Translation.Init();
-	Kernel().GetTranslation( "Essai", Translation );
-	UI().LogAndPrompt( Translation );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
-

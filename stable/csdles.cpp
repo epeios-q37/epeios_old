@@ -57,6 +57,8 @@ public:
 
 using namespace csdles;
 
+static bch::E_BUNCH( csdleo::user_functions__ *) Steerings_;
+
 #ifdef CPE__MS
 # define FUNCTION_SPEC __declspec(dllexport)
 #else
@@ -95,19 +97,32 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #endif
 #endif
 
-static int Test_( void )
+static void Terminate_( void )
 {
-	return 5;
+	mdr::row__ Row = Steerings_.First();
+	csdleo::user_functions__ *Steering = NULL;
+
+	while ( Row != NONE ) {
+
+		Steering = Steerings_( Row );
+
+		if ( Steering != NULL )
+			Steering->Exit();
+
+		Steerings_.Store( NULL, Row );
+
+		Row = Steerings_.Next( Row );
+	}
 }
 
 static void ExitFunction_( void )
 {
-	Test_();
+	Terminate_();
 }
 
 csdleo::user_functions__ *CSDLEORetrieveSteering( csdleo::shared_data__ *Data )
 {
-	csdleo::user_functions__ *Functions = NULL;
+	csdleo::user_functions__ *Steering = NULL;
 ERRFProlog
 	flw::standalone_oflow__<> OFlow;
 	txf::text_oflow__ TOFlow;
@@ -124,7 +139,10 @@ ERRFBegin
 	if ( Data->Control != Data->ControlComputing() )
 		ERRc();
 
-	Functions = csdles::CSDLESRetrieveSteering( Data );
+	Steering = csdles::CSDLESRetrieveSteering( Data );
+
+	if ( Steering != NULL )
+		Steerings_.Append( Steering );
 ERRFErr
 	OFlow.Init( *Data->CErr, FLW_SIZE_MAX );
 	TOFlow.Init( OFlow );
@@ -133,7 +151,7 @@ ERRFErr
 	ERRRst();
 ERRFEnd
 ERRFEpilog
-	return Functions;
+	return Steering;
 }
 
 void CSDLEOReleaseSteering( csdleo::user_functions__ *Steering )
@@ -150,11 +168,13 @@ class csdlespersonnalization
 public:
 	csdlespersonnalization( void )
 	{
+		Steerings_.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
 	~csdlespersonnalization( void )
 	{
+		Terminate_();
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

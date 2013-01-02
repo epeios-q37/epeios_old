@@ -69,6 +69,8 @@ extern class ttr_tutor &SCLBACKNDTutor;
 
 namespace sclbacknd {
 
+	const char *GetLanguage( void );
+
 	// A définir par l'utilisateur.
 	extern const char *TargetName;
 
@@ -80,6 +82,10 @@ namespace sclbacknd {
 
 	// A définir par l'utilisateur.
 	void ReleaseSteering( csdleo::user_functions__ *Steering );	// To overload.
+
+	void DisplayModuleClosingMessage( void );
+
+	void DisplayModuleClosedMessage( void );
 }
 
 /*$END$*/

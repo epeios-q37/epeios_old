@@ -69,6 +69,8 @@ extern class ttr_tutor &FRDKRNTutor;
 
 #define FRDKRN_CONFIGURATION_FILE_EXTENSION	"xcfg"
 
+# define FRDKRN_SETUP_LABEL "Setup"
+
 namespace frdkrn {
 	using namespace frdbkd;
 
@@ -133,7 +135,7 @@ namespace frdkrn {
 	// Si modifié, modifier 'GetLabel_(...)' en conséquence ainsi que le '.xlcl' associé.
 	enum recap__ {
 		rProjectParsingError,		// Error during project file handling. See 'ErrorSet' for more details.
-		rSettingsParsingError,		// Error during settings data handling. See 'ErrorSet' for more details.
+		rSetupParsingError,			// Error during setup data handling. See 'ErrorSet' for more details.
 		rNoOrBadProjectId,
 		rNoOrBadBackendDefinition,
 		rNoBackendLocation,
@@ -408,16 +410,16 @@ namespace frdkrn {
 			const str::string_ &FileName,
 			const char *TargetName,
 			const str::string_ &Id );
-		recap__ FillSettingsRegistry(
-			xtf::extended_text_iflow__ &SettingsXFlow,
+		recap__ FillSetupRegistry(
+			xtf::extended_text_iflow__ &SetupXFlow,
 			const xpp::criterions___ &Criterions,
 			error_set___ &ErrorSet );
-		status__ FillSettingsRegistry(
-			xtf::extended_text_iflow__ &SettingsXFlow,
+		status__ FillSetupRegistry(
+			xtf::extended_text_iflow__ &SetupXFlow,
 			const xpp::criterions___ &Criterions );
-		recap__ DumpSettingsRegistry( xml::writer_ &Writer ) const
+		recap__ DumpSetupRegistry( xml::writer_ &Writer ) const
 		{
-			_Registry.DumpSettings( true, Writer);
+			_Registry.DumpSetup( true, Writer);
 
 			return r_OK;
 		}

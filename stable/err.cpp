@@ -152,6 +152,9 @@ const char *err::Message(
 	case err::tMemory:
 		strcat( Buffer, "MMR" );
 		break;
+	case err::tVacant:
+		strcat( Buffer, "VCT" );
+		break;
 	case err::tExternal:
 		strcat( Buffer, "EXT" );
 		break;

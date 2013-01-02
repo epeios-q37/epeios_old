@@ -143,7 +143,7 @@ namespace frdrgy {
 		{
 			rgstry::level__
 				Project,
-				Settings;
+				Setup;
 		} &S_;
 		registry_( s &S )
 		: S_( S ),
@@ -153,7 +153,7 @@ namespace frdrgy {
 		{
 			_registry_::reset( P );
 
-			S_.Project = S_.Settings = RGSTRY_UNDEFINED_LEVEL;
+			S_.Project = S_.Setup = RGSTRY_UNDEFINED_LEVEL;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{
@@ -164,7 +164,7 @@ namespace frdrgy {
 			_registry_::operator =( R );
 
 			S_.Project = R.S_.Project;
-			S_.Settings = R.S_.Settings;
+			S_.Setup = R.S_.Setup;
 
 			return *this;
 		}
@@ -176,7 +176,7 @@ namespace frdrgy {
 
 			_registry_::PushImportedLevel( ConfigurationRegistry, ConfigurationRegistryRoot );
 			S_.Project = _registry_::PushEmbeddedLevel( rgstry::name( "Project" ) );
-			S_.Settings= _registry_::PushEmbeddedLevel( rgstry::name( "Settings" ) );
+			S_.Setup= _registry_::PushEmbeddedLevel( rgstry::name( "Setup" ) );
 		}
 		void DumpProject(
 			bso::bool__ RootToo,
@@ -184,11 +184,11 @@ namespace frdrgy {
 		{
 			_DumpRegistry( S_.Project, RootToo, Writer );
 		}
-		void DumpSettings(
+		void DumpSetup(
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const
 		{
-			_DumpRegistry( S_.Settings, RootToo, Writer );
+			_DumpRegistry( S_.Setup, RootToo, Writer );
 		}
 		rgstry::status__ FillProject(
 			const char *FileName,
@@ -198,33 +198,33 @@ namespace frdrgy {
 		{
 			return _registry_::Fill( S_.Project, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillSettings(
+		rgstry::status__ FillSetup(
 			const char *FileName,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Settings, FileName, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Setup, FileName, Criterions, RootPath, Context );
 		}
-		rgstry::status__ FillSettings(
+		rgstry::status__ FillSetup(
 			xtf::extended_text_iflow__ &XFlow,
 			const xpp::criterions___ &Criterions,
 			const char *RootPath,
 			rgstry::context___ &Context )
 		{
-			return _registry_::Fill( S_.Settings, XFlow, Criterions, RootPath, Context );
+			return _registry_::Fill( S_.Setup, XFlow, Criterions, RootPath, Context );
 		}
-		void CreateSettingsPath( const str::string_ &Path )
+		void CreateSetupPath( const str::string_ &Path )
 		{
-			_registry_::Create( S_.Settings, Path );
+			_registry_::Create( S_.Setup, Path );
 		}
 		time_t ProjectTimeStamp( void ) const
 		{
 			return TimeStamp( S_.Project );
 		}
-		time_t SettingsTimeStamp( void ) const
+		time_t SetupTimeStamp( void ) const
 		{
-			return TimeStamp( S_.Settings );
+			return TimeStamp( S_.Setup );
 		}
 		bso::bool__ GetProjectValue(
 			const str::string_ &Path,
@@ -232,11 +232,11 @@ namespace frdrgy {
 		{
 			return _registry_::GetValue( S_.Project, Path, Value );
 		}
-		bso::bool__ GetSettingsValue(
+		bso::bool__ GetSetupValue(
 			const str::string_ &Path,
 			str::string_ &Value ) const
 		{
-			return _registry_::GetValue( S_.Settings, Path, Value );
+			return _registry_::GetValue( S_.Setup, Path, Value );
 		}
 	};
 

@@ -73,6 +73,12 @@ using namespace sclbacknd;
 
 static bso::bool__ IsInitialized_ = false;
 
+const char *sclbacknd::GetLanguage( void )
+{
+	return "en";	// A modifier.
+}
+
+
 csdleo::user_functions__ *csdles::CSDLESRetrieveSteering( csdleo::data__ *Data )
 {
 	csdleo::user_functions__ *Steering = NULL;
@@ -112,7 +118,7 @@ ERRBegin
 	Steering = RetrieveSteering( Mode, Data->UP, scllocale::GetLocale() );
 ERRErr
 	if ( cio::IsInitialized() )
-		if ( sclerror::ReportPendingError( "en", err::hUserDefined  )) {
+		if ( sclerror::ReportPendingError( GetLanguage(), err::hUserDefined  )) {
 			cio::CErr << txf::nl;
 			ERRRst();
 		}
@@ -129,6 +135,34 @@ void csdles::CSDLESReleaseSteering( csdleo::user_functions__ *Steering )
 {
 	ReleaseSteering( Steering );
 }
+
+void sclbacknd::DisplayModuleClosingMessage( void )
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	cio::COut << scllocale::GetTranslation( SCLBACKND_NAME "_ModuleClosing", GetLanguage(), Translation ) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+void sclbacknd::DisplayModuleClosedMessage( void )
+{
+ERRProlog
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+
+	cio::COut << scllocale::GetTranslation( SCLBACKND_NAME "_ModuleClosed", GetLanguage(), Translation ) << txf::nl;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 
 /* Although in theory this class is inaccessible to the different modules,

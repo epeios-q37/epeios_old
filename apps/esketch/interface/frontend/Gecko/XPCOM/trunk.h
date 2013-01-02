@@ -66,7 +66,6 @@ namespace trunk {
 			/// To modify if there are other criterium for project modification.
 			return Kernel().IsProjectModified();
 		}
-		void TestLocaleInProjectFile_( void );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -97,7 +96,6 @@ namespace trunk {
 		void FinalizeDefineSession( void )
 		{
 			UI().Show( ui::dSessionForm );
-			TestLocaleInProjectFile_();
 		}
 		void FinalizeApplySession( void )
 		{

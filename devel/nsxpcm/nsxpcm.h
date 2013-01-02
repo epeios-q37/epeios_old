@@ -288,7 +288,7 @@ namespace nsxpcm {
 	using fblfrd::strings_;
 	using fblfrd::strings;
 #else
-	typedef ctn::E_XMCONTAINER_( string_ ) strings_;
+	typedef ctn::E_MCONTAINER_( string_ ) strings_;
 	E_AUTO( strings );
 #endif
 

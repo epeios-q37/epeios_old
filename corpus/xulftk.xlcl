@@ -13,25 +13,25 @@
 		<Translation language="fr">Toutes les modifications vont être perdues !</Translation>
 		<Translation language="en">All modifications will be lost !</Translation>
 	</Translations>
-	<Translations text="XULFTK_MissingOrBadAnnexTargetDefinition">
-		<Translation language="fr">Absence ou mauvaise valeur pour la définition de la cible de l'annexe.</Translation>
-		<Translation language="en">Bad or no value for annex target value.</Translation>
+	<Translations text="XULFTK_MissingOrBadAnnexTarget">
+		<Translation language="fr">Absence ou mauvaise valeur pour la cible de l'annexe.</Translation>
+		<Translation language="en">Bad or no value for annex target.</Translation>
 	</Translations>
-	<Translations text="XULFTK_MissingOrBadAnnexStorageDefinition">
-		<Translation language="fr">Absence ou mauvaise valeur pour la définition du stockage de l'annexe.</Translation>
-		<Translation language="en">Bad or no value for annex storage definition.</Translation>
+	<Translations text="XULFTK_MissingOrBadAnnexTargetType">
+		<Translation language="fr">Absence ou mauvaise valeur pour le type de la cible de l'annexe.</Translation>
+		<Translation language="en">Bad or no value for annex target type.</Translation>
 	</Translations>
-	<Translations text="XULFTK_UnableToStoreSettings">
-		<Translation language="fr">Impossible de stocker les réglages.</Translation>
-		<Translation language="en">Unable to store settings.</Translation>
+	<Translations text="XULFTK_UnableToStoreSetups">
+		<Translation language="fr">Impossible de stocker les paramétrages.</Translation>
+		<Translation language="en">Unable to store setups.</Translation>
 	</Translations>
-	<Translations text="XULFTK_UnableToRetrieveSettings">
-		<Translation language="fr">Impossible de récupèrer les réglages.</Translation>
-		<Translation language="en">Unable to retrieve settings.</Translation>
+	<Translations text="XULFTK_UnableToRetrieveSetups">
+		<Translation language="fr">Impossible de récupèrer les paramétrages.</Translation>
+		<Translation language="en">Unable to retrieve setups.</Translation>
 	</Translations>
-	<Translations text="XULFTK_UnableToFindSettings">
-		<Translation language="fr">Règlages introuvables.</Translation>
-		<Translation language="en">Unable to find settings.</Translation>
+	<Translations text="XULFTK_UnableToFindSetups">
+		<Translation language="fr">Paramétrages introuvables.</Translation>
+		<Translation language="en">Unable to find setups.</Translation>
 	</Translations>
 	<Translations text="XULFTK_BadOrNoProjectId">
 		<Translation language="fr">Identifiant de projet absent ou incorrect.</Translation>
