@@ -693,6 +693,7 @@ namespace flx {
 
 # ifdef FLX__MT
 
+#  if 0 // Bogué !!!
 	// Permet de lire à partir d'un 'iflow' ce qui est écrit dans un 'oflow'.
 	class mediator_ioflow_driver___
 	: public fdr::ioflow_driver___<>
@@ -710,14 +711,12 @@ namespace flx {
 			fdr::size__ Maximum )
 		{
 			mtx::Lock( _Write );
-			mtx::Unlock( _Write );
 
 			_Buffer = Buffer;
 			_Size = Maximum;
 			_Red = 0;
 
 			mtx::Unlock( _Read );
-			mtx::Lock( _Write );
 
 			return _Red;
 		}
@@ -729,7 +728,6 @@ namespace flx {
 		{
 
 			mtx::Lock( _Read );
-			mtx::Unlock( _Read );
 
 			if ( Maximum > _Size )
 				Maximum = _Size;
@@ -739,7 +737,6 @@ namespace flx {
 			_Red = Maximum;
 
 			mtx::Unlock( _Write );
-			mtx::Lock( _Read );
 
 			return Maximum;
 		}
@@ -785,8 +782,8 @@ namespace flx {
 
 			_Buffer = NULL;
 
-			_Read = mtx::Create( mtx::mFree );
-			_Write = mtx::Create( mtx::mFree );
+			_Read = mtx::Create( mtx::mSynchronizing );
+			_Write = mtx::Create( mtx::mSynchronizing );
 
 			mtx::Lock( _Read );
 		}
@@ -804,6 +801,7 @@ namespace flx {
 			flw::standalone_ioflow__<OutCacheSize>Init( _Driver );
 		}
 	};
+#  endif
 
 # endif
 }

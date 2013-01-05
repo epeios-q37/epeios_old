@@ -89,18 +89,14 @@ bool err::Concerned( void )
 void err::Unlock( void )
 {
 #if 0
-#ifdef ERR_DBG	// Doesn't work (is ignored because there was necessary an error before ...
+#ifdef ERR_DBG	// Doesn't work (is ignored because there was necessary an error before ...)
 	if ( !ERR.Error || !err::Concerned() )
 		ERRu();
 #endif
 #endif
-	mtx::mutex___ M;
-
-	M.Init( MutexHandler_ );
-
 	ERR.Type = err::t_None;
 
-	M.Unlock();
+	mtx::Unlock( MutexHandler_ );
 }
 #endif
 
@@ -194,11 +190,7 @@ void err_::Handler(
 #ifdef ERR__THREAD_SAFE
 	if ( ( !ERRError() ) || !err::Concerned() )
 	{
-		mtx::mutex___ M;
-
-		M.Init( MutexHandler_ );
-
-		M.Lock();
+		mtx::Lock( MutexHandler_ );
 
 		ThreadID_ = mtk::GetTID();
 	}
@@ -289,7 +281,7 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 #ifdef ERR__THREAD_SAFE
-		MutexHandler_ = mtx::Create( mtx::mFree );
+		MutexHandler_ = mtx::Create( mtx::mProtecting );
 #endif
 #if 0
 		ERR.Error = false;

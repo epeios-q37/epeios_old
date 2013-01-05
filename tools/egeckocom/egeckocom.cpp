@@ -47,8 +47,8 @@
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
 #define EGECKOCOM_CID  EIGECKOCOM_IID
 
-static mtx::mutex_handler__ _Mutex = MTX_INVALID_HANDLER;	// To protect access to following object.
-static geckoo::steering_callback__ *_CurrentSteering = NULL;
+static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;	// To protect access to following object.
+static geckoo::steering_callback__ *CurrentSteering_ = NULL;
 static bso::bool__ IsInitialized_ = false;
 
 static str::string COutString_;
@@ -197,9 +197,9 @@ RB
 	RawLibraryName.Init();
 	GetComponent_( ComponentId, RawLibraryName );
 
-	mtx::Lock( _Mutex );
+	mtx::Lock( Mutex_ );
 
-	if ( _CurrentSteering != NULL )
+	if ( CurrentSteering_ != NULL )
 		ERRc();
 
 
@@ -227,12 +227,12 @@ RB
 		ERRFree();
 	}
 
-	_CurrentSteering = &_Wrapper.GetSteering();
+	CurrentSteering_ = &_Wrapper.GetSteering();
 RR
-	_CurrentSteering = NULL;
+	CurrentSteering_ = NULL;
 
-	if ( mtx::IsLocked( _Mutex ) )
-		mtx::Unlock( _Mutex );
+	if ( mtx::IsLocked( Mutex_ ) )
+		mtx::Unlock( Mutex_ );
 RN
 RE
 }
@@ -248,16 +248,16 @@ RB
 	LibraryName.Init();
 	GetComponent_( ComponentId, LibraryName );
 
-	mtx::Lock( _Mutex );
+	mtx::Lock( Mutex_ );
 
-	if ( _CurrentSteering != NULL ) {
+	if ( CurrentSteering_ != NULL ) {
 		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_BAD_RETRIEVE_CONTEXT );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 		ERRFree();
 	}
 
-	if ( ( _CurrentSteering = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
+	if ( ( CurrentSteering_ = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
 		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
@@ -265,10 +265,10 @@ RB
 	}
 
 RR
-	_CurrentSteering = NULL;
+	CurrentSteering_ = NULL;
 
-	if ( mtx::IsLocked( _Mutex ) )
-		mtx::Unlock( _Mutex );
+	if ( mtx::IsLocked( Mutex_ ) )
+		mtx::Unlock( Mutex_ );
 RN
 RE
 }
@@ -281,17 +281,17 @@ NS_IMETHODIMP egeckocom___::Register(
 RP
 	str::string Id;
 RB
-	if ( !mtx::IsLocked( _Mutex ) )
+	if ( !mtx::IsLocked( Mutex_ ) )
 		ERRu();
 
-	if ( _CurrentSteering == NULL )
+	if ( CurrentSteering_ == NULL )
 		ERRu();
 
 	Id.Init();
 
 	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
-	if ( !_CurrentSteering->Register( Window, Id ) ) {
+	if ( !CurrentSteering_->Register( Window, Id ) ) {
 		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_REGISTER_ELEMENT );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
@@ -309,15 +309,15 @@ NS_IMETHODIMP egeckocom___::Stop(
 {
 RP
 RB
-	if ( !mtx::IsLocked( _Mutex ) )
+	if ( !mtx::IsLocked( Mutex_ ) )
 		ERRu();
 
-	if ( _CurrentSteering == NULL )
+	if ( CurrentSteering_ == NULL )
 		ERRu();
 
-	_CurrentSteering = NULL;
+	CurrentSteering_ = NULL;
 
-	mtx::Unlock( _Mutex );
+	mtx::Unlock( Mutex_ );
 RR
 RN
 RE
@@ -466,7 +466,7 @@ static class cdtor__ {
 public:
 	cdtor__( void )
 	{
-		_Mutex = mtx::Create( mtx::mOwned );
+		Mutex_ = mtx::Create( mtx::mProtecting );
 
 		COutString_.Init();
 		COutDriver_.Init( COutString_, fdr::tsDisabled );
@@ -482,10 +482,10 @@ public:
 	}
 	~cdtor__( void )
 	{
-		if ( _Mutex != MTX_INVALID_HANDLER )
-			mtx::Delete( _Mutex );
+		if ( Mutex_ != MTX_INVALID_HANDLER )
+			mtx::Delete( Mutex_ );
 
-		_Mutex = MTX_INVALID_HANDLER;
+		Mutex_ = MTX_INVALID_HANDLER;
 
 		if ( IsInitialized_ )
 			sclmisc::Terminate();

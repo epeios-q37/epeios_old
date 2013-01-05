@@ -647,7 +647,7 @@ ERRBegin
 	Setups.Init();
 
 	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Setups ) ) == NONE )
-		ERRReturn;
+		ERRAbort();
 
 	ProjectId.Init();
 	GetProjectId_( *this, ProjectId );

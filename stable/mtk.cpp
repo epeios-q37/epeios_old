@@ -229,10 +229,10 @@ namespace {
 		Common.UP = NULL;
 		Common.Amount = 0;
 		Common.Routine = NULL;
-		Common.Data = mtx::Create( mtx::mFree );
-		Common.Thread = mtx::Create( mtx::mFree );
-		Common.Store = mtx::Create( mtx::mFree );
-		Common.Exclusion = mtx::Create( mtx::mFree );
+		Common.Data = mtx::Create( mtx::mProtecting );
+		Common.Thread = mtx::Create( mtx::mSynchronizing );
+		Common.Store = mtx::Create( mtx::mSynchronizing );
+		Common.Exclusion = mtx::Create( mtx::mProtecting );
 
 		mtx::Lock( Common.Thread );
 

@@ -424,7 +424,7 @@ public:
 		flm::MaxFileAmount = FLM__MAX_FILE_AMOUNT;
 
 #ifdef FLM__MT
-		Mutex_ = mtx::Create( mtx::mOwned );
+		Mutex_ = mtx::Create( mtx::mProtecting );
 #endif
 
 		/* place here the actions concerning this library

@@ -184,7 +184,7 @@ namespace flm {
 			reset();
 
 #ifdef FLM__MT
-			_Mutex = mtx::Create( mtx::mOwned );
+			_Mutex = mtx::Create( mtx::mProtecting );
 #endif
 
 			_D = fil::Open( FileName, Mode );

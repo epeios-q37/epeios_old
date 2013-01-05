@@ -128,7 +128,7 @@ namespace fdr {
 		switch ( ThreadSafety ) {
 		case tsEnabled:
 #ifdef FDR__TS
-			return mtx::Create( mtx::mOwned );
+			return mtx::Create( mtx::mProtecting );
 #else
 			ERRc();
 #endif

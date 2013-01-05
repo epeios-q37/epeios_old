@@ -61,6 +61,8 @@ using namespace geckob;
 
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
 static geckoo::steering_callback__ *LoneSteering_ = NULL;
+static bso::ulong__ Counter_ = 0;
+#define COUNTER_MAX	BSO_ULONG_MAX
 
 #ifdef CPE__MS
 # define FUNCTION_SPEC __declspec(dllexport)
@@ -122,16 +124,26 @@ geckoo::steering_callback__ *GECKOORetrieveSteering( void )
 	if ( !mtx::IsLocked( Mutex_ ) )
 		ERRc();
 
+	if ( !mtx::IsOwner( Mutex_ ) )
+		ERRc();
+
 	if ( LoneSteering_ == NULL )
 		ERRc();
 
 	Steering = LoneSteering_;
-	LoneSteering_ = NULL;
 
-	mtx::Unlock( Mutex_ );
+	if ( Counter_ == 0 )
+		ERRc();
+
+	Counter_--;
+
+	if ( Counter_ == 0 ) {
+		LoneSteering_ = NULL;
+
+		mtx::Unlock( Mutex_ );
+	}
 
 	return Steering;
-
 }
 
 void GECKOODeleteSteering( geckoo::steering_callback__ *Steering )
@@ -141,12 +153,22 @@ void GECKOODeleteSteering( geckoo::steering_callback__ *Steering )
 
 void geckob::SetSteering( geckoo::steering_callback__ &Steering )
 {
-	mtx::Lock( Mutex_ );
+	bso::bool__ FreshLock = false;
 
-	if ( LoneSteering_ != NULL )
-		ERRc();
+	if ( mtx::Lock( Mutex_ ) ) {
+		if ( Counter_ != 0 )
+			ERRc();
 
-	LoneSteering_ = &Steering;
+		if ( LoneSteering_ != NULL )
+			ERRc();
+
+		LoneSteering_ = &Steering;
+	}
+
+	if ( Counter_ == COUNTER_MAX )
+		ERRl();
+
+	Counter_ ++;
 }
 
 
@@ -161,7 +183,7 @@ class geckobpersonnalization
 public:
 	geckobpersonnalization( void )
 	{
-		Mutex_ = mtx::Create( mtx::mFree );
+		Mutex_ = mtx::Create( mtx::mProtecting );
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

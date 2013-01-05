@@ -2672,7 +2672,7 @@ public:
 		FormHistoryMutex_ = mtx::Create( mtx::mOwned );
 #	endif
 #endif
-		MasterWindowMutex_ = mtx::Create( mtx::mOwned );
+		MasterWindowMutex_ = mtx::Create( mtx::mProtecting );
 		MasterWindows_.Init();
 	}
 	~nsxpcmpersonnalization( void )

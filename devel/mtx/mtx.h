@@ -139,10 +139,13 @@ extern class ttr_tutor &MTXTutor;
 namespace mtx {
 
 	enum mode__ {
-		mFree,	// Le mutex n'a pas de propriétaire. N'importe quel 'thread' peut le déverrouiller.
-		mOwned,	// Le thread propriétaire peut le verrouiller autant de fois qu'il le veut sans être bloqué.
-				// En mode 'debug', une erreur est génèrée si le mutex est déverrouiller pas un thread autre que le 
-				// propriétaire.
+		mSynchronizing,	// Pour synchroniser deux threads.
+						// Seul un autre thread que celui qui a 'lock'é peut 'unlock'er.
+						// Usage typique : un thread initialise des données et est bloqué jusqu'à ce qu'un autre thread ai lues ces données.
+		mProtecting,	// Pour protèger une ressource.
+						// Le thread qui a 'lock'é peut 'lock'er à nouveau autant de fois que qu'il veut sans être bloqué.
+						// Seul le trhad ayant 'lock'é peut 'unlock'er.
+						// Usage typique : utilisation d'une ressource par un thread, les autres threads ne puvant accèder à cette ressource tant qu'il n'a pas terminé.
 		m_amount,
 		m_Undefined
 	};
@@ -308,7 +311,7 @@ namespace mtx {
 #endif
 			return _GetSign( Counter ) != MTX__UNLOCKED_MUTEX_COUNTER_SIGN;
 		}
-		bso::bool__ TryToLock( void )
+		bso::bool__ TryToLock( bso::bool__ *AlreadyLocked )	// 'AlreadyLocked' significatif seulement si valeur retournée == 'true'.
 		{
 #ifdef MTX__CONTROL
 				if ( IsReleased() )
@@ -316,10 +319,12 @@ namespace mtx {
 #endif
 			if ( IsLocked() )
 				switch ( Mode ) {
-				case mFree:
+				case mSynchronizing:
 					return false;
 					break;
-				case mOwned:
+				case mProtecting:
+					if ( AlreadyLocked != NULL )
+						*AlreadyLocked = true;
 					return tht::GetTID() == Owner;
 					break;
 				default:
@@ -332,6 +337,8 @@ namespace mtx {
 
 			if ( _DecAndTest( Counter ) ) {
 				Owner = tht::GetTID();
+				if ( AlreadyLocked != NULL )
+					*AlreadyLocked = false;
 				return true;
 			} else {
 				_Inc( Counter );
@@ -340,22 +347,23 @@ namespace mtx {
 		}
 		void Unlock( void )
 		{
-#ifdef XXX_DBG
 			if ( !IsLocked() )
 				ERRc();
 
 			switch ( Mode ) {
-			case mFree:
+			case mSynchronizing:
+				if ( IsOwner() )
+					ERRc();
 				break;
-			case mOwned:
-				if ( Owner != tht::GetTID() )
+			case mProtecting:
+				if ( !IsOwner() )
 					ERRc();
 				break;
 			default:
 				ERRc();
 				break;
 			}
-#endif
+
 			_Inc( Counter );
 
 			Owner = THT_UNDEFINED_THREAD_ID;
@@ -371,16 +379,14 @@ namespace mtx {
 			this->Mode = Mode;
 			Owner = THT_UNDEFINED_THREAD_ID;
 
-#ifdef MTX_DBG
 			switch( this->Mode ) {
-			case mFree:
-			case mOwned:
+			case mSynchronizing:
+			case mProtecting:
 				break;
 			default:
 				ERRc();
 				break;
 			}
-#endif
 
 		}
 		~mutex__( void )
@@ -414,13 +420,15 @@ namespace mtx {
 
 
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
-	inline bso::bool__ TryToLock( mutex_handler__ Handler )
+	inline bso::bool__ TryToLock(
+		mutex_handler__ Handler,
+		bso::bool__ AlreadyLocked = *(bso::bool__ *)NULL )	// 'AlreadyLocked' significatif seulement si valeur retournée == 'true'.
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
 			ERRc();
 #endif
-		return Handler->TryToLock();
+		return Handler->TryToLock( &AlreadyLocked );
 	}
 
 	// Wait until mutex unlocked.
@@ -434,14 +442,18 @@ namespace mtx {
 	}
 
 	//f Lock 'Handler'. Blocks until lock succeed.
-	inline void Lock( mutex_handler__ Handler )
+	inline bso::bool__ Lock( mutex_handler__ Handler )
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
 			ERRc();
 #endif
-		if ( !TryToLock( Handler ) )
+		bso::bool__ AlreadyLocked = false;
+
+		if ( !TryToLock( Handler, AlreadyLocked ) )
 			WaitUntilUnlocked_( Handler );
+
+		return !AlreadyLocked;
 	}
 
 	//f Unlock 'Handler'.
@@ -501,7 +513,7 @@ namespace mtx {
 			Handler_ = Handler;
 		}
 		//f Lock the semaphore.
-		void Lock( void )
+		bso::bool__ Lock( void )
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
@@ -516,7 +528,7 @@ namespace mtx {
 			if ( Handler_ == MTX__INVALID_HANDLER )
 				ERRc();
 #endif
-			mtx::Unlock( Handler_ );
+			return mtx::Unlock( Handler_ );
 		}
 		//f Try to lock without blocking. Return true if success, false otherwise.
 		bso::bool__ TryToLock( void )
