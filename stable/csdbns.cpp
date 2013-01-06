@@ -371,7 +371,7 @@ ERRBegin
 	if ( Socket != SCK_INVALID_SOCKET ) {
 
 		Data.Functions = _SocketFunctions;
-		Data.Mutex = mtx::Create( mtx::mFree );
+		Data.Mutex = mtx::Create( mtx::mSynchronizing );
 
 		mtx::Lock( Data.Mutex );	// Unlocked by the 'Traiter_()' function.
 
@@ -423,7 +423,7 @@ public:
 #ifdef CPE__MT
 		Repository_.reset( false );
 		Repository_.Init();
-		Mutex_ = mtx::Create( mtx::mOwned );
+		Mutex_ = mtx::Create( mtx::mProtecting );
 #endif
 	}
 	~csdbnspersonnalization( void )

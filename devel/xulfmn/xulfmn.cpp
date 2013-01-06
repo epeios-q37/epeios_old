@@ -293,6 +293,7 @@ static void FillWidget_(
 	const str::string_ &XML,
 	const char *DefaultXSLRootPath,
 	nsIDOMNode *Node,
+	const char *XSLFileNameAffix,
 	nsIDOMDocument *Document )
 {
 ERRProlog
@@ -301,7 +302,7 @@ ERRProlog
 ERRBegin
 	nsxpcm::RemoveChildren( Node );
 
-	Fragment = nsxpcm::XSLTransformByFileName( XML, str::string( fnm::BuildFileName( DefaultXSLRootPath, "PredefinedProjectsMenuList", ".xsl", FileNameBuffer ) ), Document, nsxpcm::xslt_parameters() );
+	Fragment = nsxpcm::XSLTransformByFileName( XML, str::string( fnm::BuildFileName( DefaultXSLRootPath, XSLFileNameAffix, ".xsl", FileNameBuffer ) ), Document, nsxpcm::xslt_parameters() );
 
 	nsxpcm::AppendChild( Node, Fragment );
 ERRErr
@@ -317,14 +318,16 @@ ERRProlog
 ERRBegin
 	PredefinedProjects.Init();
 
-GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().Locale(), Trunk.Kernel().Language(), PredefinedProjects );
+	GetPredefinedProjects_( Trunk.Registry(),Trunk.Kernel().Locale(), Trunk.Kernel().Language(), PredefinedProjects );
 
 	Trunk.UI().LogQuietly( PredefinedProjects );
 
-	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnuPredefinedProject, Trunk.UI().Main().Document() );
-	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnlPredefinedProjectList, Trunk.UI().Main().Document() );
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnuPredefinedProject, "PredefinedProjectsMenu", Trunk.UI().Main().Document() );
+	FillWidget_( PredefinedProjects, Trunk.DefaultXSLRootPath(), Trunk.UI().Main().Widgets.mnlPredefinedProjectList, "PredefinedProjectsMenuList", Trunk.UI().Main().Document() );
 
 	nsxpcm::SetSelectedItem( Trunk.UI().Main().Widgets.mnlPredefinedProjectList );
+
+	// La sélection de l'item de 'Trunk.UI().Main().Widgets.mnuPredefinedProject'  est réalisé directement en XSL.
 ERRErr
 ERREnd
 ERREpilog

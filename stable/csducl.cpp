@@ -72,7 +72,7 @@ bso::bool__ csducl::universal_client_core::Init(
 
 	switch ( Type ) {
 	case tDaemon:
-		Success = _DaemonAccess.Init( Backend, Log, PingDelay );
+ 		Success = _DaemonAccess.Init( Backend, Log, PingDelay );
 		break;
 	case tLibrary:
 		Success = _LibraryAccess.Init( Backend, LibraryData, err::hUserDefined );

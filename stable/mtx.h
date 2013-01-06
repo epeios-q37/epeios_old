@@ -146,6 +146,7 @@ namespace mtx {
 						// Le thread qui a 'lock'é peut 'lock'er à nouveau autant de fois que qu'il veut sans être bloqué.
 						// Seul le trhad ayant 'lock'é peut 'unlock'er.
 						// Usage typique : utilisation d'une ressource par un thread, les autres threads ne puvant accèder à cette ressource tant qu'il n'a pas terminé.
+		mFreeDeprecated,	// Ancien 'mFree'. Normallement à supprimer au profit de l'un des deux autres. 
 		m_amount,
 		m_Undefined
 	};
@@ -319,6 +320,7 @@ namespace mtx {
 #endif
 			if ( IsLocked() )
 				switch ( Mode ) {
+				case mFreeDeprecated:
 				case mSynchronizing:
 					return false;
 					break;
@@ -351,6 +353,8 @@ namespace mtx {
 				ERRc();
 
 			switch ( Mode ) {
+			case mFreeDeprecated:
+				break;
 			case mSynchronizing:
 				if ( IsOwner() )
 					ERRc();
@@ -380,6 +384,7 @@ namespace mtx {
 			Owner = THT_UNDEFINED_THREAD_ID;
 
 			switch( this->Mode ) {
+			case mFreeDeprecated:
 			case mSynchronizing:
 			case mProtecting:
 				break;
@@ -422,7 +427,7 @@ namespace mtx {
 	//f Try to lock 'Handler' without blocking. Return 'true' if locks succeed, false otherwise.
 	inline bso::bool__ TryToLock(
 		mutex_handler__ Handler,
-		bso::bool__ AlreadyLocked = *(bso::bool__ *)NULL )	// 'AlreadyLocked' significatif seulement si valeur retournée == 'true'.
+		bso::bool__ &AlreadyLocked = *(bso::bool__ *)NULL )	// 'AlreadyLocked' significatif seulement si valeur retournée == 'true'.
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )

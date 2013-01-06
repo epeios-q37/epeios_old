@@ -116,10 +116,10 @@ namespace lck {
 		{
 			reset();
 
-			ReadCounterProtection = mtx::Create( mtx::mFree );
-			WritingRequest = mtx::Create( mtx::mFree );
-			WritingPermission = mtx::Create( mtx::mFree );
-			OverflowProtection = mtx::Create( mtx::mFree );
+			ReadCounterProtection = mtx::Create( mtx::mFreeDeprecated );
+			WritingRequest = mtx::Create( mtx::mFreeDeprecated );
+			WritingPermission = mtx::Create( mtx::mFreeDeprecated );
+			OverflowProtection = mtx::Create( mtx::mFreeDeprecated );
 		}
 		void WaitUntilReadingAllowed( void )
 		{
@@ -275,7 +275,7 @@ namespace lck {
 
 			_Object = &Object;
 			_Access.Lock.Init();
-			_Access.Mutex = mtx::Create( mtx::mFree );
+			_Access.Mutex = mtx::Create( mtx::mFreeDeprecated );
 		}
 		control___ &operator =( const control___ &C )
 		{
