@@ -270,22 +270,10 @@ namespace {
 			mtx::Lock( Common.Data );		
 		}
 		
-		mtx::TryToLock( Common.Data);
-		mtx::Unlock(Common.Data );
-		
-		mtx::TryToLock( Common.Thread);
-		mtx::Unlock(Common.Thread);
-		
-		mtx::TryToLock(Common.Store);
-		mtx::Unlock(Common.Store);
-		
-		mtx::TryToLock(Common.Exclusion);
-		mtx::Unlock(Common.Exclusion);
-		
-		mtx::Delete( Common.Data );
-		mtx::Delete( Common.Thread );
-		mtx::Delete( Common.Store );
-		mtx::Delete( Common.Exclusion );
+		mtx::Delete( Common.Data, true );
+		mtx::Delete( Common.Thread, true );
+		mtx::Delete( Common.Store, true );
+		mtx::Delete( Common.Exclusion, true );
 	}
 	
 	void Launcher_( void * )

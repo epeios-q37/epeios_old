@@ -80,6 +80,8 @@ namespace sclgecko {
 	// A définir par l'utilisateur.
 	void DeleteSteering( geckoo::steering_callback__ *Steering );
 
+	void SetElementsAttributesFromRegistry( nsxpcm::window__ &Window );
+
 }
 
 /*$END$*/

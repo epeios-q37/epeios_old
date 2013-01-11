@@ -1688,11 +1688,14 @@ namespace nsxpcm {
 		bso::bool__ Handle( nsIDOMEvent *Event );
 		nsIDOMElement *GetElement( void )
 		{
-			return QueryInterface<nsIDOMElement>( _Supports );
+			if ( _Window == _Supports )	// Si 'true', alors le 'widget' est une 'window' et 'QueryInterface...' ne fonctionne pas.
+				return nsxpcm::GetElement( _Window );
+			else
+				return QueryInterface<nsIDOMElement>( _Supports );
 		}
 		nsIDOMNode *GetNode( void )
 		{
-			return QueryInterface<nsIDOMNode>( _Supports );
+			return QueryInterface<nsIDOMNode>( GetElement() );
 		}
 		operator nsIDOMElement*( void )
 		{
