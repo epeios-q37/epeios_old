@@ -228,12 +228,16 @@ namespace xulfui {
 	private:
 		xulftk::trunk___ *_Trunk;
 	protected:
+		virtual void GECKOOPreRegistration( void );
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id );
-		virtual bso::bool__ XULFUIRegister(
+		virtual void GECKOOPostRegistration( void );
+		virtual void XULFUIPreRegistration( void ) = 0;
+		virtual bso::bool__ XULFUIRegister( 
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
+		virtual void XULFUIPostRegistration( void ) = 0;
 	public:
 		void reset( bso::bool__ P = true )
 		{

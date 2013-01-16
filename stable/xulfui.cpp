@@ -82,6 +82,36 @@ ERREpilog
 	return Success;
 }
 
+void xulfui::steering_callback__::GECKOOPreRegistration( void )
+{
+ERRProlog
+	err::buffer__ Buffer;
+ERRBegin
+	XULFUIPreRegistration();
+ERRErr
+	if ( ERRType != err::t_Abort )
+		_Trunk->UI().Alert( err::Message( Buffer ) );
+
+	ERRRst();
+ERREnd
+ERREpilog
+}
+
+void xulfui::steering_callback__::GECKOOPostRegistration( void )
+{
+ERRProlog
+	err::buffer__ Buffer;
+ERRBegin
+	XULFUIPostRegistration();
+ERRErr
+	if ( ERRType != err::t_Abort )
+		_Trunk->UI().Alert( err::Message( Buffer ) );
+
+	ERRRst();
+ERREnd
+ERREpilog
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

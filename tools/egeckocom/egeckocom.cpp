@@ -47,9 +47,6 @@
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
 #define EGECKOCOM_CID  EIGECKOCOM_IID
 
-static bso::ulong__ Counter_ = 0;
-#define COUNTER_MAX	BSO_ULONG_MAX
-
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;	// To protect access to following object.
 static geckoo::steering_callback__ *CurrentSteering_ = NULL;
 static bso::bool__ IsInitialized_ = false;
@@ -203,14 +200,8 @@ RB
 	if ( !mtx::Lock( Mutex_ ) )
 		ERRc();
 
-	if ( Counter_ != 0 )
-		ERRc();
-
-	Counter_ = 1;
-
 	if ( CurrentSteering_ != NULL )
 		ERRc();
-
 
 	CorrectedLibraryName.Init();
 
@@ -237,13 +228,13 @@ RB
 	}
 
 	CurrentSteering_ = &_Wrapper.GetSteering();
+
+	CurrentSteering_->PreRegistration();
 RR
 	CurrentSteering_ = NULL;
 
-	if ( mtx::IsLocked( Mutex_ ) ) {
-		Counter_ = 0;
+	if ( mtx::IsLocked( Mutex_ ) )
 		mtx::Unlock( Mutex_ );
-	}
 RN
 RE
 }
@@ -259,47 +250,28 @@ RB
 	LibraryName.Init();
 	GetComponent_( ComponentId, LibraryName );
 
-	if ( mtx::Lock( Mutex_ ) ) {
-		if ( Counter_ != 0 )
-			ERRc();
+	 mtx::Lock( Mutex_ );
 
-		if ( CurrentSteering_ != NULL ) {
-			ErrorMeaning.Init();
-			ErrorMeaning.SetValue( MESSAGE_BAD_RETRIEVE_CONTEXT );
-			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
-			ERRFree();
-		}
-
-		if ( ( CurrentSteering_ = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-			ErrorMeaning.Init();
-			ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
-			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
-			ERRFree();
-		}
-	} else {
-		if ( CurrentSteering_ == NULL )
-			ERRc();
-		
-		if ( CurrentSteering_ != geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) {
-			ErrorMeaning.Init();
-			ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
-			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
-			ERRFree();
-		}
+	if ( CurrentSteering_ != NULL ) {
+		ErrorMeaning.Init();
+		ErrorMeaning.SetValue( MESSAGE_BAD_RETRIEVE_CONTEXT );
+		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+		ERRFree();
 	}
 
-	if ( Counter_ == COUNTER_MAX )
-		ERRl();
+	if ( ( CurrentSteering_ = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
+		ErrorMeaning.Init();
+		ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
+		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
+		ERRFree();
+	}
 
-	Counter_++;
-
+	CurrentSteering_->PreRegistration();
 RR
 	CurrentSteering_ = NULL;
 
-	if ( mtx::IsLocked( Mutex_ ) ) {
-		Counter_ = 0;
+	if ( mtx::IsLocked( Mutex_ ) )
 		mtx::Unlock( Mutex_ );
-	}
 RN
 RE
 }
@@ -346,12 +318,9 @@ RB
 	if ( CurrentSteering_ == NULL )
 		ERRu();
 
+	CurrentSteering_->PostRegistration();
+
 	CurrentSteering_ = NULL;
-
-	if ( Counter_ == 0 )
-		ERRc();
-
-	Counter_--;
 
 	mtx::Unlock( Mutex_ );
 RR

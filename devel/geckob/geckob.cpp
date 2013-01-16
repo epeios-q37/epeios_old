@@ -61,8 +61,6 @@ using namespace geckob;
 
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
 static geckoo::steering_callback__ *LoneSteering_ = NULL;
-static bso::ulong__ Counter_ = 0;
-#define COUNTER_MAX	BSO_ULONG_MAX
 
 #ifdef CPE__MS
 # define FUNCTION_SPEC __declspec(dllexport)
@@ -132,16 +130,9 @@ geckoo::steering_callback__ *GECKOORetrieveSteering( void )
 
 	Steering = LoneSteering_;
 
-	if ( Counter_ == 0 )
-		ERRc();
+	LoneSteering_ = NULL;
 
-	Counter_--;
-
-	if ( Counter_ == 0 ) {
-		LoneSteering_ = NULL;
-
-		mtx::Unlock( Mutex_ );
-	}
+//	geckob::GECKOBRetrieveSteering();
 
 	return Steering;
 }
@@ -155,20 +146,12 @@ void geckob::SetSteering( geckoo::steering_callback__ &Steering )
 {
 	bso::bool__ FreshLock = false;
 
-	if ( mtx::Lock( Mutex_ ) ) {
-		if ( Counter_ != 0 )
-			ERRc();
+	mtx::Lock( Mutex_ );
 
-		if ( LoneSteering_ != NULL )
-			ERRc();
+	if ( LoneSteering_ != NULL )
+		ERRc();
 
-		LoneSteering_ = &Steering;
-	}
-
-	if ( Counter_ == COUNTER_MAX )
-		ERRl();
-
-	Counter_ ++;
+	LoneSteering_ = &Steering;
 }
 
 
@@ -190,7 +173,7 @@ public:
 	~geckobpersonnalization( void )
 	{
 		if ( Mutex_ != MTX_INVALID_HANDLER )
-			mtx::Delete( Mutex_ );
+			mtx::Delete( Mutex_, true );
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
 	}

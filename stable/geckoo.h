@@ -66,11 +66,11 @@ extern class ttr_tutor &GECKOOTutor;
 
 # include "nsxpcm.h"
 
-# define GECKOO_OVERLAPPING_VERSION	"4"
+# define GECKOO_OVERLAPPING_VERSION	"5"
 
-# define GECKOO_CREATE_STEERING_FUNCTION_NAME			GECKOOCreateSteering
-# define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME			GECKOORetrieveSteering
-# define GECKOO_DELETE_STEERING_FUNCTION_NAME			GECKOODeleteSteering
+# define GECKOO_CREATE_STEERING_FUNCTION_NAME		GECKOOCreateSteering
+# define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME		GECKOORetrieveSteering
+# define GECKOO_DELETE_STEERING_FUNCTION_NAME		GECKOODeleteSteering
 
 namespace geckoo {
 	typedef mdr::row__ id__;
@@ -103,9 +103,11 @@ namespace geckoo {
 
 	class steering_callback__ {
 	protected:
+		virtual void GECKOOPreRegistration( void ) = 0;
 		virtual bso::bool__ GECKOORegister(
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
+		virtual void GECKOOPostRegistration( void ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -121,6 +123,14 @@ namespace geckoo {
 			const str::string_ &Id )
 		{
 			return GECKOORegister( Window, Id );
+		}
+		void PreRegistration( void )
+		{
+			GECKOOPreRegistration();
+		}
+		void PostRegistration( void )
+		{
+			GECKOOPostRegistration();
 		}
 	};
 
@@ -172,6 +182,7 @@ namespace geckoo {
 
 	typedef steering_callback__ *(create_steering)( shared_data__ * );
 	typedef steering_callback__ *(retrieve_steering)( void );
+	typedef void (release_steering)( void );
 	typedef void (delete_steering)( steering_callback__ * );
 
 }
