@@ -1,7 +1,7 @@
 /*
-	Header for the 'sclbacknd' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	Header for the 'amm' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 20132004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef SCLBACKND__INC
-#define SCLBACKND__INC
+#ifndef AMM__INC
+#define AMM__INC
 
-#define SCLBACKND_NAME		"SCLBACKND"
+#define AMM_NAME		"AMM"
 
-#define	SCLBACKND_VERSION	"$Revision$"
+#define	AMM_VERSION	"$Revision$"
 
-#define SCLBACKND_OWNER		"Claude SIMON"
+#define AMM_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &SCLBACKNDTutor;
+extern class ttr_tutor &AMMTutor;
 
-#if defined( XXX_DBG ) && !defined( SCLBACKND_NODBG )
-#define SCLBACKND_DBG
+#if defined( XXX_DBG ) && !defined( AMM_NODBG )
+#define AMM_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,40 +55,79 @@ extern class ttr_tutor &SCLBACKNDTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D SoCLe BACKEND 
+//D Aggregated MeMory 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-#error "Obsoloete ! Use 'SCLDAEMON' instead."
-// NOTA : Servira ultèrieruement comme 'cocle' pour un 'backend' au sen Epeis.
+# include "err.h"
+# include "flw.h"
 
-#include "err.h"
-#include "flw.h"
+# include "uym.h"
 
-#include "csdleo.h"
+# define AMM_DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
 
-#include "fblbur.h"
+namespace amm {
+	typedef mdr::row_t__ descriptor__;
 
-namespace sclbacknd {
+	typedef struct _dsize__ {
+		mdr::datum__ Size[AMM_DSIZE_SIZE_MAX];
+		_dsize__( void )
+		{
+			memset( Size, 0, AMM_DSIZE_SIZE_MAX );
+		}
+	} dsize__;
 
-	const char *GetLanguage( void );
+	mdr::size__ Convert( dsize__ Size );
 
-	// A définir par l'utilisateur.
-	extern const char *TargetName;
+	dsize__ Convert( mdr::size__ Size );
 
-	// A définir par l'utilisateur.
-	csdleo::user_functions__ *RetrieveSteering(
-		fblbur::mode__ Mode,
-		void *UP,
-		const lcl::locale_ &Locale );	// To overload !
+	class aggregate_memory_
+	{
+	private:
+		mdr::size__ _Size( void )
+		{
+			return Memory.Size();
+		}
+		void _AllocateNew( void )
+		{
+		}
+	public:
+		uym::untyped_memory_ Memory;
+		struct s {
+			uym::untyped_memory_::s Memory;
+			mdr::row__ FreeFragment;
+		} &S_;
+		aggregate_memory_( s &S )
+		: S_( S ),
+		  Memory( S.Memory )
+		{}
+		void reset( bso::bool__  P = true )
+		{
+			Memory.reset( P );
+			S_.FreeFragment = NONE;
+		}
+		aggregate_memory_ operator =( const aggregate_memory_ &AM )
+		{
+			Memory = AM.Memory;
+			S_.FreeFragment = NONE;
 
-	// A définir par l'utilisateur.
-	void ReleaseSteering( csdleo::user_functions__ *Steering );	// To overload.
+			return *this;
+		}
+		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		{
+			Memory.plug( MD );
+		}
+		void Init( void )
+		{
+			Memory.Init();
+			S_.FreeFragment = NONE;
+		}
+		descriptor__ Allocate( mdr::size__ Size )
+		{
 
-	void DisplayModuleClosingMessage( void );
-
-	void DisplayModuleClosedMessage( void );
+		}
+	};
 }
 
 /*$END$*/

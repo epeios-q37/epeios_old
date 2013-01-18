@@ -233,11 +233,13 @@ namespace xulfui {
 			nsIDOMWindow *Window,
 			const str::string_ &Id );
 		virtual void GECKOOPostRegistration( void );
-		virtual void XULFUIPreRegistration( void ) = 0;
+		virtual void XULFUIPreRegistration( void )
+		{}
 		virtual bso::bool__ XULFUIRegister( 
 			nsIDOMWindow *Window,
 			const str::string_ &Id ) = 0;
-		virtual void XULFUIPostRegistration( void ) = 0;
+		virtual void XULFUIPostRegistration( void )
+		{}
 	public:
 		void reset( bso::bool__ P = true )
 		{

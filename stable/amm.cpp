@@ -1,0 +1,125 @@
+/*
+	'amm' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'amm' header file ('amm.h').
+	Copyright (C) 20132004 Claude SIMON.
+
+	This file is part of the Epeios (http://zeusw.org/epeios/) project.
+
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+ 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, go to http://www.fsf.org/
+	or write to the:
+  
+         	         Free Software Foundation, Inc.,
+           59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+
+
+//	$Id$
+
+#define AMM__COMPILATION
+
+#include "amm.h"
+
+class ammtutor
+: public ttr_tutor
+{
+public:
+	ammtutor( void )
+	: ttr_tutor( AMM_NAME )
+	{
+#ifdef AMM_DBG
+		Version = AMM_VERSION "\b\bD $";
+#else
+		Version = AMM_VERSION;
+#endif
+		Owner = AMM_OWNER;
+		Date = "$Date$";
+	}
+	virtual ~ammtutor( void ){}
+};
+
+/******************************************************************************/
+				  /* do not modify anything above this limit */
+				  /*			  unless specified			 */
+				  /*******************************************/
+/*$BEGIN$*/
+
+using namespace amm;
+
+/* Although in theory this class is inaccessible to the different modules,
+it is necessary to personalize it, or certain compiler would not work properly */
+
+mdr::size__ amm::Convert( dsize__ DSize )
+{
+	mdr::size__ Size = 0;
+	bso::ubyte__ Position = 0;
+
+	while ( ( DSize.Size[Position] & 0x80 ) && ( Position <= AMM_DSIZE_SIZE_MAX ) )	{
+		Size = ( Size << 7 ) + DSize.Size[Position++] & 0x7f;
+	}
+
+	if ( Position == AMM_DSIZE_SIZE_MAX )
+		ERRc();
+
+	return ( Size << 7 ) + DSize.Size[Position];
+}
+
+dsize__ amm::Convert( mdr::size__ Size )
+{
+	dsize__ DSize;
+	bso::ubyte__ Position = 0;
+
+	DSize.Size[0] = Size & 0x80;
+	Size <<= 7;
+
+	while ( Size != 0 ) {
+		DSize.Size[Position++] |= 0x80;
+
+		DSize.Size[Position] = Size & 0x8f;
+
+		Size <<= 7;
+	}
+
+	return DSize;
+}
+
+
+class ammpersonnalization
+: public ammtutor
+{
+public:
+	ammpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the launching of the application  */
+	}
+	~ammpersonnalization( void )
+	{
+		/* place here the actions concerning this library
+		to be realized at the ending of the application  */
+	}
+};
+
+
+/*$END$*/
+				  /********************************************/
+				  /* do not modify anything belove this limit */
+				  /*			  unless specified		   	  */
+/******************************************************************************/
+
+// 'static' by GNU C++.
+
+static ammpersonnalization Tutor;
+
+ttr_tutor &AMMTutor = Tutor;

@@ -129,7 +129,7 @@ namespace ssnmng {
 	{
 	protected:
 		virtual void LSTAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			Table.Allocate( Size, Mode );
@@ -142,10 +142,10 @@ namespace ssnmng {
 		}
 		//v Permit to make an allocation with a affected structure.
 		virtual void SSNMNGAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 		virtual void _Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 	public:
 		struct s
@@ -322,7 +322,7 @@ namespace ssnmng {
 	{
 	private:
 		void _Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			pointers_::Allocate( Size, Mode );

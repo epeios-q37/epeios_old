@@ -60,10 +60,11 @@ extern class ttr_tutor &CGIMNGTutor;
 
 /*$BEGIN$*/
 
-#include "csdbns.h"
-#include "ssnmng.h"
-#include "cgiarg.h"
-#include "lck.h"
+# include "csdbns.h"
+# include "ssnmng.h"
+# include "cgiarg.h"
+# include "lck.h"
+# include "csdleo.h"
 
 
 namespace cgimng {
@@ -133,15 +134,15 @@ namespace cgimng {
 	{
 	private:
 		void _Delete(
-			epeios::size__ Old,
-			epeios::size__ New );
+			mdr::size__ Old,
+			mdr::size__ New );
 		void _Create(
-			epeios::size__ Old,
-			epeios::size__ New );
+			mdr::size__ Old,
+			mdr::size__ New );
 	protected:
-		virtual void SSNMNGAllocate( epeios::size__ Size )
+		virtual void SSNMNGAllocate( mdr::size__ Size )
 		{
-			epeios::size__ OldSize = Mutexes.Amount();
+			mdr::size__ OldSize = Mutexes.Amount();
 
 			if ( OldSize > Size )
 				_Delete( OldSize, Size );
@@ -249,7 +250,7 @@ namespace cgimng {
 			_LogData.Functions = &LogFunctions;
 
 			if ( _LogData.Functions != NULL )
-				_LogData.Mutex = mtx::Create( mtx::mOwned );
+				_LogData.Mutex = mtx::Create( mtx::mProtecting );
 		}
 		void Create(
 			void *UP,
@@ -301,19 +302,19 @@ namespace cgimng {
 	class core_manager
 	: public sessions,
 	  public tool___,
-	  public csdscm::user_functions__
+	  public csdleo::user_functions__
 	{
 	protected:
 		cgimng::user_functions__ *UserFunctions_;
 		virtual void SSNMNGAllocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode )
 		{}
 		virtual void *CSDPreProcess( const char *Origin )
 		{
 			return NULL;
 		}
-		csdscm::action__ CSDProcess(
+		csdleo::action__ CSDProcess(
 			flw::ioflow__ &Client,
 			void *UP );
 		void CSDPostProcess( void *UP )

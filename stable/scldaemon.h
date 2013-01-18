@@ -1,7 +1,7 @@
 /*
-	Header for the 'sclbacknd' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	Header for the 'scldaemon' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 20132004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef SCLBACKND__INC
-#define SCLBACKND__INC
+#ifndef SCLDAEMON__INC
+#define SCLDAEMON__INC
 
-#define SCLBACKND_NAME		"SCLBACKND"
+#define SCLDAEMON_NAME		"SCLDAEMON"
 
-#define	SCLBACKND_VERSION	"$Revision$"
+#define	SCLDAEMON_VERSION	"$Revision$"
 
-#define SCLBACKND_OWNER		"Claude SIMON"
+#define SCLDAEMON_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &SCLBACKNDTutor;
+extern class ttr_tutor &SCLDAEMONTutor;
 
-#if defined( XXX_DBG ) && !defined( SCLBACKND_NODBG )
-#define SCLBACKND_DBG
+#if defined( XXX_DBG ) && !defined( SCLDAEMON_NODBG )
+#define SCLDAEMON_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,13 +55,10 @@ extern class ttr_tutor &SCLBACKNDTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D SoCLe BACKEND 
+//D SoCLe DAEMON 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-
-#error "Obsoloete ! Use 'SCLDAEMON' instead."
-// NOTA : Servira ultèrieruement comme 'cocle' pour un 'backend' au sen Epeis.
 
 #include "err.h"
 #include "flw.h"
@@ -70,8 +67,7 @@ extern class ttr_tutor &SCLBACKNDTutor;
 
 #include "fblbur.h"
 
-namespace sclbacknd {
-
+namespace scldaemon {
 	const char *GetLanguage( void );
 
 	// A définir par l'utilisateur.

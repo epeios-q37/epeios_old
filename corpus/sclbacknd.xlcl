@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Translations text="SCLBACKND_ModuleClosing">
-		<Translation language="fr">Veuillez patientez : module en cours de fermeture...</Translation>
-		<Translation language="en">Please wait : closing module ...</Translation>
-	</Translations>
-  <Translations text="SCLBACKND_ModuleClosed">
-    <Translation language="fr">Module fermé.</Translation>
-    <Translation language="en">Module closed.</Translation>
-  </Translations>
-
   <!--
 	<Translations text="SCLBACKND_">
 		<Translation language="fr"></Translation>

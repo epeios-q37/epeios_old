@@ -84,7 +84,7 @@ const char *cgimng::GetLogLabel( log__ Log )
 
 }
 
-csdscm::action__ cgimng::core_manager::CSDProcess(
+csdleo::action__ cgimng::core_manager::CSDProcess(
 	flw::ioflow__ &Client,
 	void *UP )
 {
@@ -103,7 +103,7 @@ ERRBegin
 ERRErr
 ERREnd
 ERREpilog
-	return csdscm::aStop;
+	return csdleo::aStop;
 }
 
 
@@ -159,7 +159,7 @@ ERRBegin
 		ERRa();
 
 	Data->UP = UP;
-	Data->Mutex = mtx::Create( mtx::mFree );
+	Data->Mutex = mtx::Create( mtx::mSynchronizing );
 	Data->InUse = true;
 
 	SID.Init();

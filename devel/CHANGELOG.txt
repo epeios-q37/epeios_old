@@ -1,5 +1,9 @@
 $Id$
 
+18/01/2013 :
+	- CGIMNG :
+		- Adaptation.
+
 30/12/2012 :
 	- CSDLEO :
 		- 'CSDLEO_SHARED_DATA_VERSION' passe à '2' (suite à une modification annulée, mais on la laisse, au cas où...).

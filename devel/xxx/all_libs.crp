@@ -9,6 +9,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 # Epeios core libraries.
 &aem		&epeios		&2001-\
 	&Amount/Extent managing
+&amm		&epeios		&2013\
+	&Aggregated MeMory
 &bch		&epeios		&2001-\
 	&BunCH
 &bfl		&epeios		&\
@@ -250,6 +252,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 
 &sclbacknd	&epeios	&2011	&SoCLe BACKEND
+&scldaemon	&epeios	&2013	&SoCLe DAEMON
 &sclerror	&epeios	&2011	&SoCLe ERROR
 &sclgecko	&epeios	&2001	&SoCLe GECKO component
 &scldalvik	&epeios	&2012	&SoCLe DALVIK

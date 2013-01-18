@@ -60,6 +60,9 @@ extern class ttr_tutor &SCLBACKNDTutor;
 
 /*$BEGIN$*/
 
+#error "Obsoloete ! Use 'SCLDAEMON' instead."
+// NOTA : Servira ultèrieruement comme 'cocle' pour un 'backend' au sen Epeis.
+
 #include "err.h"
 #include "flw.h"
 
