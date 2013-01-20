@@ -412,6 +412,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&CGI (Common Gateway Interface) ARGument
 &cgidat		&epeios		&2002-\
 	&CGI (Common Gateway Interface) DATa
+&cgigat		&epeios		&2001-\
+	&CGI (Common Gateway Interface) GATe
 &cgimng		&epeios		&2001,2003-\
 	&CGI (Common Gateway Interface) MaNaGer
 &cgitol		&epeios		&2002-\
