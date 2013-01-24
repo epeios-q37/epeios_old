@@ -59,7 +59,7 @@ public:
 
 using namespace cgigat;
 
-void cgigat::cgi_gate___::_Process(
+void cgigat::cgi_gate__::_Process(
 	const cgiarg::arguments_ &Arguments,
 	str::string_ &XML,
 	str::string_ &XSLFileName )
@@ -73,7 +73,7 @@ ERRBegin
 	TFlow.Init( SFlow );
 	Writer.Init( TFlow, xml::oCompact, xml::e_Default );
 
-	_UserFunctions->_Process( Arguments, Writer, XSLFileName );
+	_Process( Arguments, Writer, XSLFileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -81,31 +81,31 @@ ERREpilog
 
 
 
-csdsuf::action__ cgigat::cgi_gate___::CSDSUFProcess(
+csdsuf::action__ cgigat::cgi_gate__::CSDSUFProcess(
 	flw::ioflow__ &Flow,
 	void *UP )
 {
 ERRProlog
 	cgiarg::arguments Arguments;
 	str::string XML;
-	str::string XMLFileName;
+	str::string XSLFileName;
 	txf::text_oflow__ TFlow;
 ERRBegin
 	Arguments.Init();
 	Arguments.Parse( Flow );
 
 	XML.Init();
-	XMLFileName.Init();
+	XSLFileName.Init();
 
-	_Process( Arguments, XML, XMLFileName );
+	_Process( Arguments, XML, XSLFileName );
 
 	TFlow.Init( Flow );
 
-	TFlow << XMLFileName << txf::nl << XML;
+	TFlow << XSLFileName << txf::nl << XML << txf::commit;
 ERRErr
 ERREnd
 ERREpilog
-	return csdsuf::aContinue;
+	return csdsuf::aStop;	// Pour fermer la connection.
 }
 
 

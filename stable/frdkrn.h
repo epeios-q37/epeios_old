@@ -204,13 +204,15 @@ namespace frdkrn {
 		virtual void FRDKRNReportBackendError( const str::string_ &Message ) = 0;
 		virtual void FRDKRNReportFrontendError( const str::string_ &Message ) = 0;
 	public:
-		void reset ( bso::bool__ = true )
+		void reset ( bso::bool__ P = true )
 		{
+			_backend_error_reporting_functions__::reset( P );
 			_Kernel = NULL;
 		}
 		E_VDTOR( reporting_functions__ )
 		void Init( const class kernel___ &Kernel )
 		{
+			_backend_error_reporting_functions__::Init();
 			_Kernel = &Kernel;
 		}
 		void ReportFrontendError( const str::string_ &Message )
@@ -399,7 +401,6 @@ namespace frdkrn {
 			str::string_ &Id );
 		status__ LaunchProject(
 			const compatibility_informations__ &CompatibilityInformations,
-			str::string_ &Id,
 			reporting_functions__ &ReportingFunctions );
 		recap__ SaveProject(
 			const str::string_ &FileName,

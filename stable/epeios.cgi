@@ -1,7 +1,7 @@
-#!C:\apps\Cygwin\bin\perl -w
+#!"C:\strawberry\perl\bin\perl.exe"
 #Modify the previous and the two next lines to fit to your configuration !
-my $sabcmd = "/cygdrive/h/bin/sabcmd";	# Location of the 'sabcmd' command.
-my $tmp = "/cygdrive/h/temp";	# Location of the directory where to put the temporary files.
+my $sabcmd = "h:/bin/sabcmd";	# Location of the 'sabcmd' command.
+my $tmp = "h:/temp";	# Location of the directory where to put the temporary files.
 
 # $Id$
 
@@ -151,8 +151,8 @@ while ( length $buffer  ) {
 
 close Socket_Handle;
 
-my ($context,$lang,$XML) = ( $result =~ m$(\w*)\s(\w*)((.|\n)*)$ );
-my $XML = substr $result, length($context) + length( $lang ) + 1;
+my ($context,$XML) = ( $result =~ m$([^\r\n\f]*)((.|\n)*)$ );
+my $XML = substr $result, length($context) + 2;
 
 #my $XML = XMLin( $result );
 #my $context = $XML->{ Content }->{ Action } . $XML->{ Content }->{ Target };
@@ -163,18 +163,17 @@ if ( ( length( $path ) ne 0 )
 	$path .= '/';
 }
 
-my $XSL = $path.$skin."/".$lang."/".$context.".xsl";
+my $XSL = $path.$skin."/".$context.".xsl";
 
 if ( $state eq 'debug' ) {
 	print "Context : $context\n";
-	print "Language : $lang\n";
 	print "XSL's file : $XSL\n\n";
 	print "XML : $XML\n";
 	print "Result : $result\n";
 }
 
 if ( $state eq 'prod' ) {
-	print $cgi->header, sopen( $XML, "$sabcmd \"file://$XSL\"" );
+	print $cgi->header, sopenf( $XML, "$sabcmd \"file://$XSL\"" );
 }
 if ( $state eq 'xml' ) {
  	print "$XML";

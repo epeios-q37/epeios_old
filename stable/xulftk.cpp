@@ -692,7 +692,7 @@ ERRBegin
 	Registry().SetValue( frdrgy::Backend, Value );
 	frdkrn::SetBackendExtendedType( Registry(), Type );
 
-	Handle_( Kernel().LaunchProject( CompatibilityInformations, ProjectId, DefaultReportingFunctions() ) );
+	Handle_( Kernel().LaunchProject( CompatibilityInformations, DefaultReportingFunctions() ) );
 ERRErr
 ERREnd
 ERREpilog

@@ -60,38 +60,51 @@ using namespace amm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-mdr::size__ amm::Convert( dsize__ DSize )
+xssize__ amm::Decode( dsize__ DSize )
 {
-	mdr::size__ Size = 0;
+	xssize__ XSSize;
 	bso::ubyte__ Position = 0;
 
-	while ( ( DSize.Size[Position] & 0x80 ) && ( Position <= AMM_DSIZE_SIZE_MAX ) )	{
-		Size = ( Size << 7 ) + DSize.Size[Position++] & 0x7f;
+	XSSize.Flags = DSize[0] & 3;
+	XSSize.Size = ( DSize[0] & 0x7c ) >> 2;
+
+	while ( ( DSize[Position] & 0x80 ) && ( Position++ < AMM_DSIZE_SIZE_MAX ) )	{
+		XSSize.Size += ( DSize[Position++] & 0x7f ) << ( 5 + Position * 7 );
 	}
 
 	if ( Position == AMM_DSIZE_SIZE_MAX )
 		ERRc();
 
-	return ( Size << 7 ) + DSize.Size[Position];
+	XSSize.Size += DSize[Position++] << ( 5 + Position * 7 );
+
+	return XSSize;
 }
 
-dsize__ amm::Convert( mdr::size__ Size )
+xdsize__ amm::Encode(
+	ssize__ Size,
+	flags__ Flags )
 {
-	dsize__ DSize;
-	bso::ubyte__ Position = 0;
+	xdsize__ XDSize;
 
-	DSize.Size[0] = Size & 0x7f;
-	Size >>= 7;
+	if ( Flags > 3 )
+		ERRc();
+
+	XDSize.Size[0] = Flags + ( ( Size && 0x3f ) << 2 );
+	Size >>= 5;
+
+	XSize.Length++;
 
 	while ( Size != 0 ) {
-		DSize.Size[Position++] |= 0x80;
+		XSize.Size[Position++] |= 0x80;
 
-		DSize.Size[Position] = Size & 0x7f;
+		XSize.Size[Position] = Size & 0x7f;
+
+		XSize.Length++;
 
 		Size >>= 7;
 	}
 
-	return DSize;
+	return XSize;
 }
 
 

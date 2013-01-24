@@ -708,7 +708,6 @@ ERREpilog
 
 status__ frdkrn::kernel___::LaunchProject(
 	const compatibility_informations__ &CompatibilityInformations,
-	str::string_ &Id,
 	reporting_functions__ &ReportingFunctions )
 {
 	status__ Status = s_Undefined;

@@ -70,17 +70,43 @@ extern class ttr_tutor &AMMTutor;
 namespace amm {
 	typedef mdr::row_t__ descriptor__;
 
-	typedef struct _dsize__ {
-		mdr::datum__ Size[AMM_DSIZE_SIZE_MAX];
-		_dsize__( void )
+	// 'Dynamic size' : taile de taille variable.
+	typedef mdr::datum__ dsize__[AMM_DSIZE_SIZE_MAX];
+
+	// 'static size' : taille de taille fixe.
+	typedef mdr::size__ ssize__;
+
+	typedef bso::ubyte__ flags__;
+
+	struct xssize__
+	{
+		ssize__ Size;
+		flags__ Flags;
+		xssize__( void )
+		{
+			Size  = 0;
+			Flags = 0;
+		}
+	};
+
+
+	// 'extended synamix size' : les deux premiers bits sont des drapeax.
+	struct xdsize__
+	{
+		dsize__ Size;
+		bso::ubyte__ Length;
+		xdsize__( void )
 		{
 			memset( Size, 0, AMM_DSIZE_SIZE_MAX );
+			Length = 0;
 		}
-	} dsize__;
+	} xsize__;
 
-	mdr::size__ Convert( dsize__ Size );
+	xssize__ Decode( dsize__ XDSize );
 
-	dsize__ Convert( mdr::size__ Size );
+	xdsize__ Encode(
+		dsize__ Size,
+		flags__ Flags );
 
 	class aggregate_memory_
 	{

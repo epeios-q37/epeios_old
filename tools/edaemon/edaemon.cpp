@@ -258,7 +258,7 @@ ERRBegin
 
 	if ( Value == "Straight" )
 		Type = bctStraight;
-	if ( Value == "Switched" )
+	else if ( Value == "Switched" )
 		Type = bctSwitched;
 	else {
 		Value.Init();

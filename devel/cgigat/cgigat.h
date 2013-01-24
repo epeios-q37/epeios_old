@@ -72,9 +72,10 @@ extern class ttr_tutor &CGIGATTutor;
 
 namespace cgigat {
 
-	class cgi_gate___;
-
-	class user_functions__
+	typedef csdsuf::user_functions__ _server_user_functions__;
+		
+	class cgi_gate__
+	: public _server_user_functions__
 	{
 	private:
 		void _Process(
@@ -84,32 +85,6 @@ namespace cgigat {
 		{
 			CGIDATProcess( Arguments, Writer, XMLFileName );
 		}
-	protected:
-		virtual void CGIDATProcess(
-			const cgiarg::arguments_ &Arguments,
-			xml::writer_ &Writer,
-			str::string_ XMLFileName ) = 0;
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		E_CVDTOR( user_functions__ )
-		void Init( void )
-		{
-			// Standardisation.
-		}
-		friend class cgigat::cgi_gate___;
-	};
-
-	typedef csdsuf::user_functions__ _server_user_functions__;
-		
-	class cgi_gate___
-	: private _server_user_functions__
-	{
-	private:
-		csdbns::server___ _Server;
-		cgigat::user_functions__ *_UserFunctions;
 		void _Process(
 			const cgiarg::arguments_ &Arguments,
 			str::string_ &XML,
@@ -125,22 +100,20 @@ namespace cgigat {
 		{}
 		void CSDSUFExit( void )
 		{}
+	protected:
+		virtual void CGIDATProcess(
+			const cgiarg::arguments_ &Arguments,
+			xml::writer_ &Writer,
+			str::string_ &XMLFileName ) = 0;
 	public:
 		void reset( bso::bool__ P = true )
 		{
-			_Server.reset( P );
 			_server_user_functions__::reset( P );
-			_UserFunctions = NULL;
 		}
-		E_CVDTOR( cgi_gate___ )
-		void Init(
-			csdbns::port__ Port,
-			cgigat::user_functions__ &UserFunctions,
-			err::handling__ ErrHandling = err::h_Default )
+		E_CVDTOR( cgi_gate__ )
+		void Init( void )
 		{
-			_UserFunctions = &UserFunctions;
 			_server_user_functions__::Init();
-			_Server.Init( Port, *this, ErrHandling );
 		}
 	};
 }
