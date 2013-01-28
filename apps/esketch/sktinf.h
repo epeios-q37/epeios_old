@@ -27,7 +27,7 @@
 # include "epsmsc.h"
 
 # define SKTINF_VERSION 					"0.1.0"
-# define SKTINF_COPYRIGHT_YEARS				"2012"
+# define SKTINF_COPYRIGHT_YEARS				"2013"
 # define SKTINF_LC_AFFIX					"esketch"
 # define SKTINF_UC_AFFIX					"ESKETCH"
 # define SKTINF_MC_AFFIX					"eSketch"

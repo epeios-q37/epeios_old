@@ -37,12 +37,47 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
+#define DELTA	10000
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	mdr::size__ Size = 0;
+	amm::xsize__ XSize;
+	tol::timer__ Timer;
+	bso::ubyte__ Length = 0;
 ERRBegin
+	Timer.Init( 100 );
+	Timer.Launch();
+
+	do {
+		if ( Size >= ( MDR_SIZE_MAX - DELTA ) ) 
+			Size = MDR_SIZE_MAX;
+		else
+			Size += DELTA;
+
+
+		XSize = amm::Convert( Size );
+
+		if( Timer.IsElapsed() ) {
+			cio::COut << Size << txf::pad << (bso::ulong__)XSize.Length << txf::rfl << txf::commit;
+			Timer.Launch();
+		}
+
+		if ( amm::Convert( XSize.Size() ) != Size )
+			ERRc();
+
+		if ( Length != XSize.Length ) {
+			cio::COut << Size << txf::pad << (bso::ulong__)( Length = XSize.Length ) << txf::nl << txf::commit;
+			Timer.Launch();
+		}
+
+
+	} while ( Size < MDR_SIZE_MAX );
+
 ERRErr
 ERREnd
+	cio::COut << txf::commit;
 ERREpilog
 }
 
@@ -66,7 +101,7 @@ ERRFBegin
 		COut << txf::commit;
 		CErr << "\nBad arguments.\n";
 		COut << "Usage: " << AMMTutor.Name << " [/i]\n\n";
-		ERRi();
+		ERRExit( EXIT_FAILURE );
 	}
 
 ERRFErr

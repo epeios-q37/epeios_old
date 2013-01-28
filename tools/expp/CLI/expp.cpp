@@ -26,6 +26,7 @@
 #include "expp.h"
 #include "locale.h"
 #include "scltool.h"
+#include "sclerror.h"
 
 #include "err.h"
 #include "cio.h"
@@ -367,6 +368,8 @@ ERRBegin
 		Meaning.Init();
 
 		locale::GetProcessingErrorMeaning( Context, Meaning );
+
+		sclerror::SetMeaning( Meaning );
 
 		ERRExit( EXIT_FAILURE );
 	}

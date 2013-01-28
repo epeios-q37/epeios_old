@@ -65,48 +65,45 @@ extern class ttr_tutor &AMMTutor;
 
 # include "uym.h"
 
-# define AMM_DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
+# define AMM__DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
 
 namespace amm {
+
+// Prédéclarations.
+	struct _xsize__;
+	typedef _xsize__ xsize__;
+
+	xsize__ Convert( mdr::size__ Size );
+
 	typedef mdr::row_t__ descriptor__;
 
 	// 'Dynamic size' : taile de taille variable.
-	typedef mdr::datum__ dsize__[AMM_DSIZE_SIZE_MAX];
+	typedef mdr::datum__ dsize__[AMM__DSIZE_SIZE_MAX];
 
-	// 'static size' : taille de taille fixe.
-	typedef mdr::size__ ssize__;
+	typedef bso::ubyte__ _length__;
+# define AMM__LENGTH_MAX BSO_UBYTE_MAX
 
-	typedef bso::ubyte__ flags__;
-
-	struct xssize__
-	{
-		ssize__ Size;
-		flags__ Flags;
-		xssize__( void )
+	typedef struct _xsize__ {
+	private:
+		dsize__ _Size;
+	public:
+		const mdr::datum__ *Size( void ) const
 		{
-			Size  = 0;
-			Flags = 0;
+			if ( Length == 0 )
+				ERRc();
+
+			return _Size + AMM__DSIZE_SIZE_MAX - Length;
 		}
-	};
-
-
-	// 'extended synamix size' : les deux premiers bits sont des drapeax.
-	struct xdsize__
-	{
-		dsize__ Size;
-		bso::ubyte__ Length;
-		xdsize__( void )
+		_length__ Length;
+		_xsize__( void )
 		{
-			memset( Size, 0, AMM_DSIZE_SIZE_MAX );
+			memset( _Size, 0, sizeof( _Size ) );
 			Length = 0;
 		}
+		friend xsize__ amm::Convert( mdr::size__ Size );
 	} xsize__;
 
-	xssize__ Decode( dsize__ XDSize );
-
-	xdsize__ Encode(
-		dsize__ Size,
-		flags__ Flags );
+	mdr::size__ Convert( const mdr::datum__ *DSize );
 
 	class aggregate_memory_
 	{

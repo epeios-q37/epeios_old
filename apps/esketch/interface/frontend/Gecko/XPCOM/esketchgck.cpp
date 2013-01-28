@@ -28,9 +28,9 @@
 
 #include "binding.h"
 
-const char *sclgecko::TargetName = APP_NAME;
+const char *sclgecko::SCLGECKOProgramName = PROGRAM_NAME;
 
-geckoo::steering_callback__ *sclgecko::CreateSteering(
+xulfui::steering_callback__ *sclgecko::SCLGECKOCreateSteering(
 	const char *LauncherIdentification,
 	const lcl::locale_ &Locale,
 	const char *Language,
@@ -57,7 +57,7 @@ ERREpilog
 }
 
 
-void sclgecko::DeleteSteering( geckoo::steering_callback__ *Steering )
+void sclgecko::SCLGECKODeleteSteering( xulfui::steering_callback__ *Steering )
 {
 	if ( Steering != NULL )
 		delete Steering;

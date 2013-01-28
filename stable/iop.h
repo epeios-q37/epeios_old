@@ -100,14 +100,12 @@ namespace iop {
 	typedef llio::lowlevel_output__		output__;
 	typedef llio::lowlevel_io__			io__;
 	using llio::descriptor__;
-	using llio::amount__;
 #	define IOP_UNDEFINED_DESCRIPTOR	LLIO_UNDEFINED_DESCRIPTOR
 #elif defined( IOP__USE_STANDARD_IO )
 	typedef cslio::standard_input__		input__;
 	typedef cslio::standard_output__		output__;
 	typedef cslio::standard_io__			io__;
 	using cslio::descriptor__;
-	using cslio::amount__;
 #	define IOP_UNDEFINED_DESCRIPTOR	CSLIO_UNDEFINED_DESCRIPTOR
 #else
 #	error "Undefined I/O enviroment !"

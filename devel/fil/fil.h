@@ -81,13 +81,38 @@ namespace lcl {
 	class meaning_;
 }
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
-#	define FIL__POSIX
-#elif defined( CPE__MS ) || defined( CPE__MINGW )
-#	define FIL__MS
-#else
-#	error "Undefined platform !."
-#endif
+# if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+#  define FIL__POSIX
+# elif defined( CPE__MS ) || defined( CPE__MINGW )
+#  define FIL__MS
+# else
+#  error "Undefined platform !."
+# endif
+
+# ifdef CPE__32BITS
+#  define FIL__32
+# elif defined CPE__64BITS
+#  define FIL__64
+# else
+#  error
+# endif
+
+# ifdef FIL__MS
+#  ifdef FIL__32
+#   define FIL__STAT	_stat32
+#   define FIL__FSTAT	_fstat32
+#  endif
+#  ifdef FIL__64
+#   define FIL__STAT	_stat64
+#   define FIL__FSTAT	_fstat64
+#  endif
+# endif
+
+# ifdef FIL__POSIX
+#  define FIL__STAT		stat
+#  define FIL__FSTAT	fstat32
+# endif
+
 
 
 #ifdef FIL_BACKUP_FILE_EXTENSION
@@ -141,19 +166,11 @@ namespace fil {
 	//f Return true if the file 'Name' exists, false otherwise.
 	inline bool FileExists( const char *FileName )
 	{
-#ifdef FIL__MS
-		struct _stat Stat;
+		struct FIL__STAT Stat;
 
-		if ( _stat( FileName, &Stat ) == 0 )
+		if ( FIL__STAT( FileName, &Stat ) == 0 )
 			return true;
-#elif defined( FIL__POSIX )
-		struct stat Stat;
 
-		if ( stat( FileName, &Stat ) == 0 )
-			return true;
-#else
-#	error
-#endif
 		switch ( errno ) {
 		case EBADF:
 			ERRs();	// Normalement, cette erreur ne peut arriver, compte tenu de la focntion utilisée.
@@ -187,86 +204,52 @@ namespace fil {
 
 	inline time_t GetFileLastModificationTime( const char *FileName )
 	{
-#ifdef FIL__MS
-		struct _stat Stat;
+		struct FIL__STAT Stat;
 
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRc();
-
-		return Stat.st_mtime;
-#elif defined( FIL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
+		if ( FIL__STAT( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mtime;
-#else
-#	error
-#endif
+	}
+
+	inline bso::size__ GetFileSize( iop::descriptor__ Descriptor )
+	{
+		struct FIL__STAT Stat;
+
+		if ( FIL__FSTAT( Descriptor, &Stat ) != 0 )
+			ERRu();
+
+		return Stat.st_size;
 	}
 
 	inline bso::size__ GetFileSize( const char *FileName )
 	{
-#ifdef FIL__MS
-		struct _stat Stat;
+		struct FIL__STAT Stat;
 
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRc();
-
-		return Stat.st_size;
-#elif defined( FIL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
+		if ( FIL__STAT( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_size;
-#else
-#	error
-#endif
 	}
 
 	inline bso::size__ IsDirectory( const char *FileName )
 	{
-#ifdef FIL__MS
-		struct _stat Stat;
+		struct FIL__STAT Stat;
 
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRc();
-
-		return Stat.st_mode & _S_IFDIR;
-#elif defined( FIL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
+		if ( FIL__STAT( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mode & S_IFDIR;
-#else
-#	error
-#endif
 	}
 
 	inline bso::size__ IsFile( const char *FileName )
 	{
-#ifdef FIL__MS
-		struct _stat Stat;
+		struct FIL__STAT Stat;
 
-		if ( _stat( FileName, &Stat ) != 0 )
-			ERRc();
-
-		return Stat.st_mode & _S_IFREG;
-#elif defined( FIL__POSIX )
-		struct stat Stat;
-
-		if ( stat( FileName, &Stat ) != 0 )
+		if ( FIL__STAT( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mode & S_IFREG;
-#else
-#	error
-#endif
 	}
 
 	// Modifie la date de modification d'un fichier à la date courante.

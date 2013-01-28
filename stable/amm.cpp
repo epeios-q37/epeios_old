@@ -60,40 +60,43 @@ using namespace amm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-mdr::size__ amm::Convert( dsize__ DSize )
+xsize__ amm::Convert( mdr::size__ Size )
 {
-	mdr::size__ Size = 0;
-	bso::ubyte__ Position = 0;
+	xsize__ XSize;
+	_length__ Position = AMM__DSIZE_SIZE_MAX - 1;
 
-	while ( ( DSize.Size[Position] & 0x80 ) && ( Position <= AMM_DSIZE_SIZE_MAX ) )	{
-		Size = ( Size << 7 ) + DSize.Size[Position++] & 0x7f;
-	}
-
-	if ( Position == AMM_DSIZE_SIZE_MAX )
-		ERRc();
-
-	return ( Size << 7 ) + DSize.Size[Position];
-}
-
-dsize__ amm::Convert( mdr::size__ Size )
-{
-	dsize__ DSize;
-	bso::ubyte__ Position = 0;
-
-	DSize.Size[0] = Size & 0x80;
-	Size <<= 7;
+	XSize._Size[Position] = Size & 0x7f;
+	Size >>= 7;
 
 	while ( Size != 0 ) {
-		DSize.Size[Position++] |= 0x80;
+		if ( Position-- == 0 )
+			ERRc();
 
-		DSize.Size[Position] = Size & 0x8f;
-
-		Size <<= 7;
+		XSize._Size[Position] = ( Size & 0x7f ) | 0x80; 
+		Size >>= 7;
 	}
 
-	return DSize;
+	XSize.Length = AMM__DSIZE_SIZE_MAX - Position;
+
+	return XSize;
 }
 
+#define LIMIT ( MDR_SIZE_MAX >> 7 )
+
+mdr::size__ amm::Convert( const mdr::datum__ *DSize )
+{
+	_length__ Position = 0;
+	mdr::size__ Size = 0;
+
+	{
+		if ( Size > LIMIT )
+			ERRc();
+
+		Size = Size << ( 7 + DSize[Position] & 0x7f );
+	} while ( DSize[Position++] & 0x7f );
+
+	return Size;
+}
 
 class ammpersonnalization
 : public ammtutor

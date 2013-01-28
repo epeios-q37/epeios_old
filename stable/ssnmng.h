@@ -60,11 +60,12 @@ extern class ttr_tutor &SSNMNGTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "lst.h"
-#include "idxbtq.h"
-#include "str.h"
+# include "err.h"
+# include "flw.h"
+# include "lst.h"
+# include "idxbtq.h"
+# include "str.h"
+# include "lstbch.h"
 
 #ifndef SSNMNG_SIZE
 //d Size of the session id.
@@ -116,42 +117,58 @@ namespace ssnmng {
 	struct chrono__ {
 		time_t Relative;
 		time_t Absolute;
-		bso::bool__ AlwaysValid;	// A vrai si la session est toujours considèré comme valide, quel que soit sa durée d'existence.
+		bso::bool__ Immortal;	// A vrai si la session est toujours considèré comme valide, quel que soit sa durée d'existence.
 	};
 
-	typedef lst::E_LISTt_( row__ )	_list_;
-	typedef que::E_MQUEUEt_( row__ ) _queue_;
-
-	//c A session manager.
-	class base_sessions_manager_
-	: public _list_,
-	  public _queue_
+	class user_functions__
 	{
 	protected:
-		virtual void LSTAllocate(
-			mdr::size__ Size,
-			aem::mode__ Mode )
+		virtual void SSNMNGDelete( void *UP ) = 0;
+	public:
+		void reset( bso::bool__ = true )
 		{
-			Table.Allocate( Size, Mode );
-			Index.Allocate( Size, Mode );
-			Chronos.Allocate( Size, Mode );
-			_Allocate( Size, Mode );
-			SSNMNGAllocate( Size, Mode );
-			_queue_::Allocate( Size, Mode );
+			// Standardisation.
+		}
+		E_CVDTOR( user_functions__ );
+		void Init( void )
+		{
+			// Standardisation.
+		}
+		void Delete( void *UP )
+		{
+			SSNMNGDelete( UP );
+		}
+	};
+
+
+	//c A session manager.
+	class sessions_manager_
+	{
+	private:
+		user_functions__ *_UserFunctions;
+		user_functions__ &_UF( void )
+		{
+			if ( _UserFunctions == NULL )
+				ERRc();
+
+			return *_UserFunctions;
+		}
+		void _Close( const rows_ &Rows );
+		void _AdjustSizes( void )
+		{
+			mdr::size__ Size = Pointers.Extent();
+
+			Queue.Allocate( Size, aem::mFit );
+			Table.Allocate( Size, aem::mFit );
+			Index.Allocate( Size, aem::mFit );
+			Chronos.Allocate( Size, aem::mFit );
 			
 		}
-		//v Permit to make an allocation with a affected structure.
-		virtual void SSNMNGAllocate(
-			mdr::size__ Size,
-			aem::mode__ Mode ) = 0;
-		virtual void _Allocate(
-			mdr::size__ Size,
-			aem::mode__ Mode ) = 0;
 	public:
 		struct s
-		: public _list_::s,
-		public _queue_::s
 		{
+			lstbch::E_LBUNCHt_( void *, row__ )::s Pointers;
+			que::E_MQUEUEt_( row__ )::s Queue;
 			bch::E_BUNCHt_( session_id__, row__ )::s Table;
 			idxbtq::E_INDEXt_( row__ )::s Index;
 			bch::E_BUNCHt_( chrono__, row__ )::s Chronos;
@@ -159,86 +176,89 @@ namespace ssnmng {
 			bso::ushort__ Relative;
 			row__ Root;
 		} &S_;
-		//o The table of session ids.
+		lstbch::E_LBUNCHt_( void *, row__ ) Pointers;
+		que::E_MQUEUEt_( row__ ) Queue;
 		bch::E_BUNCHt_( session_id__, row__ ) Table;
-		//o The index.
 		idxbtq::E_INDEXt_( row__ ) Index;
-		//o The timing.
 		bch::E_BUNCHt_( chrono__, row__ ) Chronos;
-		base_sessions_manager_( s &S )
+		sessions_manager_( s &S )
 		: S_( S ),
-		  _list_( S ),
+		  Pointers( S.Pointers ),
+		  Queue( S.Queue ),
 		  Table( S.Table ),
 		  Index( S.Index ),
-		  Chronos( S.Chronos ),
-		  _queue_( S )
+		  Chronos( S.Chronos )
 		{}
 		void reset( bool P = true )
 		{
 			S_.Absolute = S_.Relative = 0;
 			S_.Root = NONE;
+			_UserFunctions = NULL;
 
-			_list_::reset( P );
+			Pointers.reset( P );
+			Queue.reset( P );
 			Table.reset( P );
 			Index.reset( P );
 			Chronos.reset( P );
-			_queue_::reset( P );
 		}
 		void plug( mmm::multimemory_ &M )
 		{
-			_list_::plug( M );
+			Pointers.plug( M );
+			Queue.plug( M );
 			Table.plug( M );
 			Index.plug( M );
 			Chronos.plug( M );
-			_queue_::plug( M );
 		}
-		base_sessions_manager_ &operator =( const base_sessions_manager_ &S )
+		sessions_manager_ &operator =( const sessions_manager_ &SM )
 		{
-			_list_::operator =( S );
-			Table = S.Table;
-			Index = S.Index;
-			Chronos = S.Chronos;
-			_queue_::operator =( S );
+			Pointers = SM.Pointers;
+			Queue = SM.Queue;
+			Table = SM.Table;
+			Index = SM.Index;
+			Chronos = SM.Chronos;
 
-			S_.Relative = S.S_.Relative;
-			S_.Absolute = S.S_.Absolute;
-			S_.Root = S.S_.Root;
+			S_.Relative = SM.S_.Relative;
+			S_.Absolute = SM.S_.Absolute;
+			S_.Root = SM.S_.Root;
 
 			return *this;
 		}
 		//f Initialization with 'Relative' and 'Absolute' amonut of second.
 		void Init(
 			bso::ushort__ Relative,
-			bso::ushort__ Absolute  )
+			bso::ushort__ Absolute,
+			user_functions__ &UserFunctions )
 		{
-			_list_::Init();
+			Pointers.Init();
 			Table.Init();
 			Index.Init();
 			Chronos.Init();
-			_queue_::Init();
+			Queue.Init();
 
 			S_.Relative = Relative;
 			S_.Absolute = Absolute;
 			S_.Root = NONE;
+			_UserFunctions = &UserFunctions;
 		}
 		//f Return the position of a mandatory new session.
-		row__ Open( void );
+		row__ New( void *UP );
 		//f Remove the session id at position 'Position'.
-		void Close( row__ Position )
+		void Close( row__ Row )
 		{
-			S_.Root = Index.Delete( Position, S_.Root );
-			_list_::Delete( Position );
-			_queue_::Delete( Position );
+			_UF().Delete( Pointers( Row ) );
+			S_.Root = Index.Delete( Row, S_.Root );
+			Pointers.Delete( Row );
+			Queue.Delete( Row );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		row__ Position( const session_id__ &SessionID ) const
+		row__ Search( const session_id__ &SessionID ) const
 		{
-			return Position( SessionID.Value() );
+			return Search( SessionID.Value() );
 		}
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		row__ Position( const char *SessionID ) const;
+		row__ Search( const char *SessionID ) const;
 		//f Return the position of 'SessionID' or NONE if non-existent.
-		row__ Position( const str::string_ &SessionID ) const;
+		row__ Search( const str::string_ &SessionID ) const;
 		//f Return the session id. corresponding to 'Position'.
 		session_id__ SessionID( row__ Position )
 		{
@@ -252,41 +272,41 @@ namespace ssnmng {
 			if ( time( &C.Relative ) == -1 )
 				ERRs();
 
-			C.AlwaysValid = false;
+			C.Immortal = false;
 
 			Chronos.Store( C, P );
 	#ifdef SSNMNG_DBG
-			if ( _queue_::Amount() == 0 )
+			if ( Queue.Amount() == 0 )
 				ERRu();
 	#endif
 
-			if ( ( _queue_::Amount() != 1 ) && ( _queue_::Tail() != P ) ) {
-				_queue_::Delete( P );
-				_queue_::BecomeNext( P, _queue_::Tail() );
+			if ( ( Queue.Amount() != 1 ) && ( Queue.Tail() != P ) ) {
+				Queue.Delete( P );
+				Queue.BecomeNext( P, Queue.Tail() );
 			}
 		}
 		//f La session concernée est toujours considèrée comme valide, jusqu'au prochain 'Touch()',
-		void MarkAsAlwaysValid( row__ P )
+		void MarkAsImmortal( row__ P )
 		{
 			chrono__ C = Chronos.Get( P );
 
-			C.AlwaysValid = true;
+			C.Immortal = true;
 
 			Chronos.Store( C, P );
 		}
 		//f Return true if session corresponding to 'P' is valid.
-		bso::bool__ IsValid( row__ P ) const
+		bso::bool__ IsAlive( row__ P ) const
 		{
 			chrono__ C = Chronos.Get( P );
 
-			return ( C.AlwaysValid
+			return ( C.Immortal
 				     || ( ( difftime( time( NULL ), C.Absolute ) < S_.Absolute )
 				          && ( difftime( time( NULL ), C.Relative ) < S_.Relative ) ) );
 		}
 		//f Return true if session (which must exists) corresponding to row 'Row' is expired, false otherwise.
 		bso::bool__ IsExpired( row__ Row ) const
 		{
-			return !IsValid( Row );
+			return !IsAlive( Row );
 		}
 		//f Balance the index. 
 		void Balance( void )
@@ -297,86 +317,12 @@ namespace ssnmng {
 		//f Put in 'Expired' the expired sessions.
 		void GetExpired( rows_ &Expired ) const;
 		void GetAll( rows_ &Rows ) const;
-		E_NAVt( _queue_::, row__ )
-	};
-
-	E_AUTO( base_sessions_manager )
-
-	class user_functions__
-	{
-	protected:
-		virtual void SSNMNGDelete( void *UP ) = 0;
-	public:
-		void Delete( void *UP )
-		{
-			SSNMNGDelete( UP );
-		}
-	};
-
-	typedef bch::E_BUNCHt_( void *, row__ ) pointers_;
-	E_AUTO( pointers )
-
-	class sessions_manager_
-	: public base_sessions_manager_,
-	  public pointers_
-	{
-	private:
-		void _Allocate(
-			mdr::size__ Size,
-			aem::mode__ Mode )
-		{
-			pointers_::Allocate( Size, Mode );
-		}
-		user_functions__ *_UserFunctions;
-		void _Close( const rows_ &Rows );
-	public:
-		struct s
-		: public base_sessions_manager_::s,
-		  public pointers_::s
-		{};
-		sessions_manager_( s &S )
-		: base_sessions_manager_( S ),
-		  pointers_( S )
-		{}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
-		{
-			base_sessions_manager_::plug( MM );
-			pointers_::plug( MM );
-		}
-		sessions_manager_ &operator =( const sessions_manager_ &SM )
-		{
-			base_sessions_manager_::operator =( SM );
-			pointers_::operator =( SM );
-
-			return *this;
-		}
-		void reset( bso::bool__ P = true )
-		{
-			if ( P )
-				CloseAll();
-			_UserFunctions = NULL;
-			base_sessions_manager_::reset( P );
-	  		pointers_::reset( P );
-
-		}
-		void Init(
-			bso::ushort__ Relative,
-			bso::ushort__ Absolute,
-			user_functions__ &UserFunctions )
-		{
-			base_sessions_manager_::Init( Relative, Absolute );
-			pointers_::Init();
-			_UserFunctions = &UserFunctions;
-		}
-		void Close( row__ Row )
-		{
-			_UserFunctions->Delete( pointers_::Get( Row ) );
-			base_sessions_manager_::Close( Row );
-		}
 		void CloseAll( void );
 		void CloseExpired( void );
-		E_NAVt( base_sessions_manager_::, row__ )
+		E_NAVt( Queue., row__ )
 	};
+
+	E_AUTO( sessions_manager )
 }
 
 /*$END$*/

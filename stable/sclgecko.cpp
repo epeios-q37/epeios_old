@@ -57,6 +57,8 @@ public:
 
 #include "cio.h"
 
+#include "geckob.h"
+
 #include "sclmisc.h"
 #include "scllocale.h"
 #include "sclerror.h"
@@ -97,11 +99,11 @@ ERRBegin
 		cio::Initialize( cio::tUser );
 
 		// Do not work when placed in 'global_cdtor'.
-		sclmisc::Initialize( TargetName, Data->Path );
+		sclmisc::Initialize( SCLGECKOProgramName, Data->Path );
 		IsInitialized_ = true;
 	}
 
-	Steering = CreateSteering( Data->LauncherIdentification, scllocale::GetLocale(), Data->Language, Data->UP );
+	Steering = SCLGECKOCreateSteering( Data->LauncherIdentification, scllocale::GetLocale(), Data->Language, Data->UP );
 ERRErr
 	if ( ERRType >= err::t_amount )
 		ReportSCLPendingError_();
@@ -115,7 +117,7 @@ ERREpilog
 
 void geckob::GECKOBDeleteSteering( geckoo::steering_callback__ *Steering )
 {
-	DeleteSteering( Steering );
+	SCLGECKODeleteSteering( (xulfui::steering_callback__ *)Steering );
 }
 
 #include "frdrgy.h"

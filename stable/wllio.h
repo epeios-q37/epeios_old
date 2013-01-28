@@ -72,7 +72,7 @@ extern class ttr_tutor &WLLIOTutor;
 
 namespace wllio {
 
-	typedef int amount__;
+	using bso::size__;
 
 	typedef int descriptor__;
 
@@ -89,6 +89,12 @@ namespace wllio {
 				ERRc();
 #endif
 		}
+		unsigned int _Patch( size__ Amount )
+		{
+			return (unsigned int)( Amount > INT_MAX ? INT_MAX : Amount );
+			// Comme les fonctions ('_reae', '_write_'...) retournent un 'int' pour indiquer le nombre d'octets effectivement trairés,
+			// Je suppose que l'on ne peut faire traité que 'INT_MAX' octets à la fois.
+		}
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -102,14 +108,14 @@ namespace wllio {
 		{
 			reset();
 		}
-		void Seek( long Offset )
+		void Seek( size__ Offset )
 		{
 			_Test();
 
-			if ( _lseek( _D, Offset, SEEK_SET ) != Offset )
+			if ( _lseeki64( _D, Offset, SEEK_SET ) != Offset )
 				ERRd();
 		}
-		long Size( void )
+/*		long Size( void )
 		{
 			long Size;
 
@@ -120,7 +126,7 @@ namespace wllio {
 
 			return Size;
 		}
-		void Init( descriptor__ D )
+*/		void Init( descriptor__ D )
 		{
 			_D = D;
 		}
@@ -158,16 +164,18 @@ namespace wllio {
 		{
 			io_core__::Init( D );
 		}
-		unsigned int Read(
-			amount__ Amount,
+		size__ Read(
+			size__ Amount,
 			void *Buffer )
 		{
-			_Test();
+			int Result;
 
-			if ( ( Amount = _read( _D, Buffer, Amount ) ) == -1 )
+			if ( ( Result = _read( _D, Buffer, _Patch( Amount ) ) ) == -1 )
 				ERRd();
+			else if ( Result < 0 )
+				ERRs();
 
-			return Amount;
+			return Result;
 		}
 		bso::bool__ OnEOF( void )
 		{
@@ -217,14 +225,18 @@ namespace wllio {
 		{
 			io_core__::Init( D );
 		}
-		int Write(
+		size__ Write(
 			const void *Buffer,
-			amount__ Amount )
+			size__ Amount )
 		{
-			if ( ( Amount = _write( _D, Buffer, Amount ) ) == -1 )
-				ERRd();
+			int Result;
 
-			return Amount;
+			if ( ( Result = _write( _D, Buffer, _Patch( Amount ) ) ) == -1 )
+				ERRd();
+			else if ( Result < 0 )
+				ERRs();
+
+			return Result;
 		}
 		void Flush( void )
 		{

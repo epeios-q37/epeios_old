@@ -32,7 +32,7 @@
 # include "frdkernl.h"
 # include "ui.h"
 
-# define APP_NAME					SKTINF_LC_AFFIX	"gck"
+# define PROGRAM_NAME				SKTINF_LC_AFFIX	"gck"
 # define VERSION					"0.1.0"
 # define AFFILIATED_PROJECT_NAME	SKTINF_AFFILIATED_PROJECT_NAME
 # define AFFILIATED_PROJECT_URL		SKTINF_AFFILIATED_PROJECT_URL
@@ -40,7 +40,6 @@
 # define AFFILIATED_SOFTWARE_URL	SKTINF_AFFILIATED_SOFTWARE_URL
 # define AUTHOR_NAME				SKTINF_AUTHOR_NAME
 # define AUTHOR_CONTACT				SKTINF_AUTHOR_CONTACT
-# define HELP						EPSMSC_HELP_INVITATION( NAME )
 # define COPYRIGHT					SKTINF_COPYRIGHT
 # define WEBSITE_URL				SKTINF_WEBSITE_URL
 
@@ -87,7 +86,7 @@ namespace trunk {
 			_trunk__::Init( SKTINF_LC_AFFIX, "chrome://" SKTINF_LC_AFFIX "/content/xsl/", _UI, _Kernel, UserCallback, Steering ),
 			_UI.Init( *this );
 
-			return _Kernel.Init( ConfigurationRegistry, ConfigurationRegistryRoot, APP_NAME, Locale, Language, DefaultReportingFunctions() );
+			return _Kernel.Init( ConfigurationRegistry, ConfigurationRegistryRoot, PROGRAM_NAME, Locale, Language, DefaultReportingFunctions() );
 		}
 		void FinalizeGoToHome( void )
 		{

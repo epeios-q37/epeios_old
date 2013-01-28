@@ -664,19 +664,20 @@ namespace bso {
 	}
 #endif
 
+# if 0
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )
 	{
 		return Convert( (ullong__)Value, Buffer );
 	}
-
-#ifndef CPE__MT
+#  ifndef CPE__MT
 	inline const char *Convert( size__ Value )
 	{
 		return Convert( (ullong__)Value );
 	}
-#endif
+#  endif
+# endif
 
 
 }

@@ -30,7 +30,7 @@ void trunk::user_callback__::XULFTKAboutText(
 {
 	xulftk::BuildAboutText(
 		LauncherIdentification, BuildInformations, 
-		APP_NAME, VERSION, DEBUG_FLAG,
+		PROGRAM_NAME, VERSION, DEBUG_FLAG,
 		AUTHOR_NAME, AUTHOR_CONTACT,
 		COPYRIGHT,
 		AFFILIATED_SOFTWARE_NAME, AFFILIATED_SOFTWARE_URL,

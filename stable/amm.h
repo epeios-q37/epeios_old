@@ -65,22 +65,45 @@ extern class ttr_tutor &AMMTutor;
 
 # include "uym.h"
 
-# define AMM_DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
+# define AMM__DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
 
 namespace amm {
+
+// Prédéclarations.
+	struct _xsize__;
+	typedef _xsize__ xsize__;
+
+	xsize__ Convert( mdr::size__ Size );
+
 	typedef mdr::row_t__ descriptor__;
 
-	typedef struct _dsize__ {
-		mdr::datum__ Size[AMM_DSIZE_SIZE_MAX];
-		_dsize__( void )
+	// 'Dynamic size' : taile de taille variable.
+	typedef mdr::datum__ dsize__[AMM__DSIZE_SIZE_MAX];
+
+	typedef bso::ubyte__ _length__;
+# define AMM__LENGTH_MAX BSO_UBYTE_MAX
+
+	typedef struct _xsize__ {
+	private:
+		dsize__ _Size;
+	public:
+		const mdr::datum__ *Size( void ) const
 		{
-			memset( Size, 0, AMM_DSIZE_SIZE_MAX );
+			if ( Length == 0 )
+				ERRc();
+
+			return _Size + AMM__DSIZE_SIZE_MAX - Length;
 		}
-	} dsize__;
+		_length__ Length;
+		_xsize__( void )
+		{
+			memset( _Size, 0, sizeof( _Size ) );
+			Length = 0;
+		}
+		friend xsize__ amm::Convert( mdr::size__ Size );
+	} xsize__;
 
-	mdr::size__ Convert( dsize__ Size );
-
-	dsize__ Convert( mdr::size__ Size );
+	mdr::size__ Convert( const mdr::datum__ *DSize );
 
 	class aggregate_memory_
 	{

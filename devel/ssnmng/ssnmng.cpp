@@ -102,21 +102,23 @@ static bso::sign__ Search_(
 	return Test;
 }
 
-row__ ssnmng::base_sessions_manager_::Open( void )
+row__ ssnmng::sessions_manager_::New( void *UP )
 {
-	row__ P = _list_::New();
+	row__ Row = Pointers.Add( UP );
 	session_id__ SessionID;
 	chrono__ C;
 
+	_AdjustSizes();
+
 	do {
 		SessionID.New();
-	} while( Position( SessionID ) != NONE );
+	} while( Search( SessionID ) != NONE );
 
-	Table.Store( SessionID, P );
+	Table.Store( SessionID, Row );
 
 	if ( S_.Root == NONE ) {
-		S_.Root = P;
-		_queue_::Create( P );
+		S_.Root = Row;
+		Queue.Create( Row );
 	} else {
 		idxbtq::E_ISEEKERt__( row__ ) Seeker;
 
@@ -124,17 +126,17 @@ row__ ssnmng::base_sessions_manager_::Open( void )
 
 		switch ( Search_( Table, SessionID.Value(), Seeker ) ) {
 		case 1:
-			S_.Root = Index.BecomeGreater( P, Seeker.GetCurrent(), S_.Root );
+			S_.Root = Index.BecomeGreater( Row, Seeker.GetCurrent(), S_.Root );
 			break;
 		case -1:
-			S_.Root = Index.BecomeLesser( P, Seeker.GetCurrent(), S_.Root );
+			S_.Root = Index.BecomeLesser( Row, Seeker.GetCurrent(), S_.Root );
 			break;
 		default:
 			ERRc();
 			break;
 		}
 
-		_queue_::BecomeNext( P, _queue_::Tail() );
+		Queue.BecomeNext( Row, Queue.Tail() );
 	}
 
 
@@ -144,14 +146,14 @@ row__ ssnmng::base_sessions_manager_::Open( void )
 	if ( time( &C.Absolute ) == -1 )
 		ERRs();
 
-	C.AlwaysValid = false;
+	C.Immortal = false;
 
-	Chronos.Store( C, P );
+	Chronos.Store( C, Row );
 
-	return P;
+	return Row;
 }
 
-row__ ssnmng::base_sessions_manager_::Position( const char *SessionID ) const
+row__ ssnmng::sessions_manager_::Search( const char *SessionID ) const
 {
 	if ( S_.Root != NONE )	{
 		idxbtq::E_ISEEKERt__( row__ ) Seeker;
@@ -167,7 +169,7 @@ row__ ssnmng::base_sessions_manager_::Position( const char *SessionID ) const
 	return NONE;
 }
 
-row__ ssnmng::base_sessions_manager_::Position( const str::string_ &SessionID ) const
+row__ ssnmng::sessions_manager_::Search( const str::string_ &SessionID ) const
 {
 	char Buffer[SSNMNG_SIZE+1];
 
@@ -178,10 +180,10 @@ row__ ssnmng::base_sessions_manager_::Position( const str::string_ &SessionID ) 
 
 	Buffer[SSNMNG_SIZE] = 0;
 
-	return Position( Buffer );
+	return Search( Buffer );
 }
 
-void ssnmng::base_sessions_manager_::GetExpired( rows_ &Expired ) const
+void ssnmng::sessions_manager_::GetExpired( rows_ &Expired ) const
 {
 	row__ Row = First();
 
@@ -193,7 +195,7 @@ void ssnmng::base_sessions_manager_::GetExpired( rows_ &Expired ) const
 	}
 }
 
-void ssnmng::base_sessions_manager_::GetAll( rows_ &Rows ) const
+void ssnmng::sessions_manager_::GetAll( rows_ &Rows ) const
 {
 	row__ Row = First();
 
@@ -206,7 +208,7 @@ void ssnmng::base_sessions_manager_::GetAll( rows_ &Rows ) const
 
 void ssnmng::sessions_manager_::_Close( const rows_ &Rows )
 {
-	epeios::row__ Row = Rows.First();
+	mdr::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
 		Close( Rows( Row ) );

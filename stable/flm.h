@@ -108,7 +108,7 @@ extern class ttr_tutor &FLMTutor;
 namespace flm {
 	extern fdr::size__ MaxFileAmount;
 
-	typedef iop::amount__ position__;
+	typedef bso::size__ position__;
 	// type définissant une position dans la mémoire
 
 	// Identifiant sous lequel est regroupé un ensemble de fichiers.
@@ -215,7 +215,7 @@ namespace flm {
 		{
 			_Unlock();
 		}
-		void Seek( long Offset )
+		void Seek( bso::size__ Offset )
 		{
 			_Lock();
 
@@ -223,8 +223,8 @@ namespace flm {
 
 			_Unlock();
 		}
-		unsigned int Read(
-			unsigned int Amount,
+		bso::size__ Read(
+			bso::size__ Amount,
 			void *Buffer )
 		{
 			_Lock();
@@ -235,9 +235,9 @@ namespace flm {
 
 			return Amount;
 		}
-		unsigned int Write(
+		bso::size__ Write(
 			const void *Buffer,
-			unsigned int Amount )
+			bso::size__ Amount )
 		{
 			_Lock();
 
@@ -251,7 +251,7 @@ namespace flm {
 		{
 			_Lock();
 
-			mdr::size__ Size = _Core.Size();
+			mdr::size__ Size = fil::GetFileSize( _D );
 
 			_Unlock();
 
@@ -293,7 +293,7 @@ namespace flm {
 		// nom du fichier
 		char *Nom_;
 		// taille du fichier
-		iop::amount__ TailleFichier_;
+		bso::size__ TailleFichier_;
 		struct {
 			int
 				// signale si le Stream est ouvert ou non
@@ -345,7 +345,7 @@ namespace flm {
 					
 					Open_( true );
 				
-					File_.Seek( TailleFichier_ - (iop::amount__)1 );
+					File_.Seek( TailleFichier_ - 1 );
 
 					if ( File_.Write( &Datum, 1 ) != 1 ) {
 						if ( !Temoin_.Manuel )
@@ -361,12 +361,12 @@ namespace flm {
 	protected:
 		void Read(
 			position__ Position,
-			iop::amount__ Nombre,
+			bso::size__ Nombre,
 			void *Tampon )
 		{
 			Open_( false );
 
-			iop::amount__ Amount;
+			bso::size__ Amount;
 
 			File_.Seek( Position );
 				
@@ -398,12 +398,12 @@ namespace flm {
 			retourne le nombre d'octets effectivement lus */
 		void Write(
 			const void *Tampon,
-			unsigned int Nombre,
+			bso::size__ Nombre,
 			position__ Position )
 		{
 			Open_( true );
 
-			iop::amount__ Amount;
+			bso::size__ Amount;
 
 			File_.Seek( Position );
 
@@ -420,7 +420,7 @@ namespace flm {
 /*			else
 				File_.Flush();
 */		}
-		void Allocate( iop::amount__ Capacite )
+		void Allocate( bso::size__ Capacite )
 		{
 			if ( ( TailleFichier_ == 0 ) && fil::FileExists( Nom_ ) )
 				TailleFichier_ = fil::GetFileSize( Nom_ );
@@ -629,7 +629,7 @@ namespace flm {
 	protected:
 		virtual void MDRAllocate( mdr::size__ Size )
 		{
-			memoire_fichier_base___::Allocate( (iop::amount__)Size );
+			memoire_fichier_base___::Allocate( Size );
 		}
 		// alloue 'Taille' octets
 		virtual mdr::size__ MDRUnderlyingSize( void )
@@ -641,11 +641,7 @@ namespace flm {
 			mdr::size__ Amount,
 			mdr::datum__ *Buffer )
 		{
-#ifdef FLM_DBG
-			if ( Amount > UINT_MAX )
-				ERRl();
-#endif
-			memoire_fichier_base___::Read( (position__)Position, (unsigned int)Amount, Buffer );
+			memoire_fichier_base___::Read( Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		virtual void MDRStore(
@@ -653,11 +649,7 @@ namespace flm {
 			mdr::size__ Amount,
 			mdr::row_t__ Position )
 		{
-#ifdef FLM_DBG
-			if ( Amount > UINT_MAX )
-				ERRl();
-#endif
-			memoire_fichier_base___::Write( Buffer, (unsigned int)Amount, (position__)Position );
+			memoire_fichier_base___::Write( Buffer, Amount, Position );
 		}
 	public:
 		file_memory_driver___( void )

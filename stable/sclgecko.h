@@ -64,21 +64,21 @@ extern class ttr_tutor &SCLGECKOTutor;
 # include "flw.h"
 # include "lcl.h"
 
-# include "geckob.h"
+# include "xulfui.h"
 
 namespace sclgecko {
 	// A définir par l'utilisateur.
-	extern const char *TargetName;
+	extern const char *SCLGECKOProgramName;
 
 	// A définir par l'utilisateur.
-	geckoo::steering_callback__ *CreateSteering(
+	xulfui::steering_callback__ *SCLGECKOCreateSteering(
 		const char *LauncherIdentification,
 		const lcl::locale_ &Locale,
 		const char *Language,
 		void *UP );	// To overload !
 
 	// A définir par l'utilisateur.
-	void DeleteSteering( geckoo::steering_callback__ *Steering );
+	void SCLGECKODeleteSteering( xulfui::steering_callback__ *Steering );
 
 	void SetElementsAttributesFromRegistry( nsxpcm::window__ &Window );
 

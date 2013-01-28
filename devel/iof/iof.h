@@ -70,6 +70,8 @@ namespace iof {
 	typedef iop::output__		_output__;
 	typedef iop::io__			_io__;
 
+	using bso::size__;
+
 	class _output_driver__
 	: public _output__
 	{
@@ -152,7 +154,7 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax )
+			size__ AmountMax )
 		{
 			_Driver.Init( D, fdr::tsDisabled );
 			oflow__::Init( _Driver, _Cache, sizeof( _Cache ), AmountMax );
@@ -241,7 +243,7 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax )
+			size__ AmountMax )
 		{
 			_Driver.Init( D, fdr::tsDisabled );
 			iflow__::Init( _Driver, AmountMax );
@@ -311,7 +313,7 @@ namespace iof {
 		}
 		void Init(
 			iop::descriptor__ D,
-			iop::amount__ AmountMax,
+			size__ AmountMax,
 			fdr::thread_safety__ ThreadSafety )
 		{
 			_io__::Init( D );

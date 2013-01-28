@@ -207,6 +207,9 @@ extern class ttr_tutor &CPETutor;
 #  ifdef _M_IX86
 #   define CPE__X86
 #  endif
+#  ifdef _M_X64
+#   define CPE__X86
+#  endif
 # endif
 
 # ifdef CPE__GCC

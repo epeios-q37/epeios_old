@@ -60,53 +60,43 @@ using namespace amm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-xssize__ amm::Decode( dsize__ DSize )
+xsize__ amm::Convert( mdr::size__ Size )
 {
-	xssize__ XSSize;
-	bso::ubyte__ Position = 0;
+	xsize__ XSize;
+	_length__ Position = AMM__DSIZE_SIZE_MAX - 1;
 
-	XSSize.Flags = DSize[0] & 3;
-	XSSize.Size = ( DSize[0] & 0x7c ) >> 2;
-
-	while ( ( DSize[Position] & 0x80 ) && ( Position++ < AMM_DSIZE_SIZE_MAX ) )	{
-		XSSize.Size += ( DSize[Position++] & 0x7f ) << ( 5 + Position * 7 );
-	}
-
-	if ( Position == AMM_DSIZE_SIZE_MAX )
-		ERRc();
-
-	XSSize.Size += DSize[Position++] << ( 5 + Position * 7 );
-
-	return XSSize;
-}
-
-xdsize__ amm::Encode(
-	ssize__ Size,
-	flags__ Flags )
-{
-	xdsize__ XDSize;
-
-	if ( Flags > 3 )
-		ERRc();
-
-	XDSize.Size[0] = Flags + ( ( Size && 0x3f ) << 2 );
-	Size >>= 5;
-
-	XSize.Length++;
+	XSize._Size[Position] = Size & 0x7f;
+	Size >>= 7;
 
 	while ( Size != 0 ) {
-		XSize.Size[Position++] |= 0x80;
+		if ( Position-- == 0 )
+			ERRc();
 
-		XSize.Size[Position] = Size & 0x7f;
-
-		XSize.Length++;
-
+		XSize._Size[Position] = ( Size & 0x7f ) | 0x80; 
 		Size >>= 7;
 	}
+
+	XSize.Length = AMM__DSIZE_SIZE_MAX - Position;
 
 	return XSize;
 }
 
+#define LIMIT ( MDR_SIZE_MAX >> 7 )
+
+mdr::size__ amm::Convert( const mdr::datum__ *DSize )
+{
+	_length__ Position = 0;
+	mdr::size__ Size = 0;
+
+	do {
+		if ( Size > LIMIT )
+			ERRc();
+
+		Size = ( Size << 7 ) + ( DSize[Position] & 0x7f );
+	} while ( DSize[Position++] & 0x80 );
+
+	return Size;
+}
 
 class ammpersonnalization
 : public ammtutor
