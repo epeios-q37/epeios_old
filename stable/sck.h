@@ -66,15 +66,15 @@ extern class ttr_tutor &SCKTutor;
 #include "flw.h"
 #include "tol.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define SCK__POSIX
-#elif defined( CPE__MS )
-#	define SCK__MS
+#elif defined( CPE__WIN )
+#	define SCK__WIN
 #else
 #	error "Uknown target !"
 #endif
 
-#ifdef SCK__MS
+#ifdef SCK__WIN
 #	include <winsock.h>
 #	define SCK_INVALID_SOCKET		INVALID_SOCKET
 #	define SCK_SOCKET_ERROR			SOCKET_ERROR
@@ -125,7 +125,7 @@ extern class ttr_tutor &SCKTutor;
 
 namespace sck {
 	using flw::datum__;
-#ifdef SCK__MS
+#ifdef SCK__WIN
 	typedef SOCKET socket__;
 	typedef char *	cast__;
 #elif defined( SCK__POSIX )
@@ -156,7 +156,7 @@ namespace sck {
 	{
 		if ( !Ready_ )
 		{
-#ifdef SCK__MS
+#ifdef SCK__WIN
 			WORD wVersionRequested;
 			WSADATA wsaData;
 
@@ -190,7 +190,7 @@ namespace sck {
 	//f 'Error' becomes the error value returned by 'SCKError()'.
 	inline void Error( error__ Error )
 	{
-#ifdef SCK__MS
+#ifdef SCK__WIN
 		WSASetLastError( Error );
 #elif defined( SCK__POSIX )
 		errno = Error;
@@ -202,7 +202,7 @@ namespace sck {
 	//f Return the last error.
 	inline error__ Error( void )
 	{
-#ifdef SCK__MS
+#ifdef SCK__WIN
 		return WSAGetLastError();
 #elif defined( SCK__POSIX )
 		return errno;
@@ -213,7 +213,7 @@ namespace sck {
 
 	inline const char *ErrorDescription( error__ Error )
 	{
-#ifdef SCK__MS
+#ifdef SCK__WIN
 		return ("Not implemented" );
 #elif defined( SCK__POSIX )
 		return strerror( Error );
@@ -237,7 +237,7 @@ namespace sck {
 		else
 			V = (unsigned long *)"1111";
 
-#	ifdef SCK__MS
+#	ifdef SCK__WIN
 		ioctlsocket( Socket, FIONBIO, V );
 #	elif defined( SCK__POSIX )
 		ioctl( Socket, FIONBIO, V );
@@ -269,7 +269,7 @@ namespace sck {
 	//f Close the socket 'Socket'.
 	inline void Close( socket__ Socket )
 	{
-#ifdef SCK__MS
+#ifdef SCK__WIN
 	//	shutdown( Socket, 2 );
 		if ( closesocket( Socket ) == SCK_SOCKET_ERROR )
 			ERRd();

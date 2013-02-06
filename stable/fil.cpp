@@ -104,7 +104,7 @@ static void Close_( iop::descriptor__ D )
 }
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
-# if defined( CPE__MS ) || defined (CPE__MINGW )
+# if defined( FIL__WIN )
 
 static inline iop::descriptor__ Open_(
 	const char *Nom,
@@ -143,7 +143,7 @@ static void Close_( iop::descriptor__ D )
 		ERRd();
 }
 
-#	elif defined( CPE__LINUX ) ||  defined( CPE__CYGWIN ) ||  defined( CPE__MAC )
+#	elif defined( FIL__POSIX )
 static inline iop::descriptor__ Open_(
 	const char *Nom,
 	mode__ Mode )

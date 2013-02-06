@@ -112,11 +112,8 @@ namespace str {
 		{
 			if ( NULL == S )
 				S = "";
-#ifdef STR_DBG
-			if ( strlen( S ) > MDR_SIZE_MAX )
-				ERRu();
-#endif
-			return (mdr::size__)strlen( S );
+
+			return strlen( S );
 		}
 	};
 
@@ -159,11 +156,8 @@ namespace str {
 		{
 			if ( NULL == Seed )
 				Seed = "";
-#ifdef STR_DBG
-			if ( strlen( Seed ) > MDR_SIZE_MAX )
-				ERRu();
-#endif
-			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, (mdr::size__)strlen( Seed ) );
+
+			E_BUNCHx_( bso::char__, _string_size_handler )::Init( Seed, strlen( Seed ) );
 		}
 		//f Initialization with 'Seed'.
 		void Init( const str::string_ &Seed )
@@ -178,12 +172,9 @@ namespace str {
 		{
 			if ( NULL == Chaine )
 				Chaine = "";
-#ifdef STR_DBG
-			if ( strlen( Chaine ) > MDR_SIZE_MAX )
-				ERRu();
-#endif
+
 			Init();
-			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, (mdr::size__)strlen( Chaine ) );
+			E_BUNCHx_( bso::char__, _string_size_handler )::StoreAndAdjust( Chaine, strlen( Chaine ) );
 
 			return *this;
 		}
@@ -448,11 +439,6 @@ namespace str {
 		: string_( static_ )
 		{
 			reset( false );
-
-#ifdef STR_DBG
-			if ( Length > MDR_SIZE_MAX )
-				ERRu();
-#endif
 
 			string_::Init();
 			string_::Append( S, Length );

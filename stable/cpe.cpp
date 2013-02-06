@@ -83,18 +83,20 @@ static const char *Size_( void )
 
 static const char *Enviroment_( void )
 {
-#if defined( CPE__MS )
+#if defined( CPE__WIN )
 	return "Win";
-#elif defined( CPE__MAC
+#elif defined( CPE__MAC )
 	return "MacOS";
-#elif defined( CPE__CYGWIN
+#elif defined( CPE__CYGWIN )
 	return "Cygwin";
-#elif defined( CPE__MINGW
+#elif defined( CPE__MINGW )
 	return "MinGW";
-#elif defined( CPE__LINUX
+#elif defined( CPE__LINUX )
 	return "Linux";
-#elif defined( CPE__ANDROID
+#elif defined( CPE__ANDROID )
 	return "Android";
+#elif defined( CPE__POSIX )
+	return "POSIX";
 #else
 	return "Unknown";
 #endif

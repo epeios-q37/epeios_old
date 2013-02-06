@@ -72,7 +72,7 @@ extern class ttr_tutor &IOPTutor;
 
 #ifdef IOP_USE_STANDARD_IO
 #	define IOP__USE_STANDARD_IO
-#elif defined( CPE__MS )
+#elif defined( CPE__WIN )
 #	define IOP__USE_LOWLEVEL_IO
 #elif defined( CPE__LINUX )
 #	define IOP__USE_LOWLEVEL_IO

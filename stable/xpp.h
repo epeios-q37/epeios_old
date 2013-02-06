@@ -722,7 +722,7 @@ namespace xpp {
 			const criterions___ &Criterions )
 		{
 			_FlowDriver.Init( XFlow, fdr::tsDisabled, Criterions );
-			_iflow__::Init( _FlowDriver, FLW_SIZE_MAX );
+			_iflow__::Init( _FlowDriver, FLW_AMOUNT_MAX );
 		}
 		const context___ &GetContext( context___ &Context ) const
 		{

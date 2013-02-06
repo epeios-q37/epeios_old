@@ -63,12 +63,13 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-# undef CPE__MS			// Environnement Microsoft.
+# undef CPE__WIN		// Environnement Windows.
 # undef CPE__MAC		// Environnement MAC.
 # undef CPE__CYGWIN		// Environnement CYGWIN.
 # undef CPE__MINGW		// Environnement MINGW.
 # undef CPE__LINUX		// Environnement Linux
 # undef CPE__ANDROID	// Environnement Android.
+# undef CPE__POSIX		// Environemment POSIX.
 
 # undef CPE__VC		// Compilateur VC++
 # undef CPE__VC6	// Compilateur VC++ V6
@@ -76,7 +77,6 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__VC9	// Compilateur VC++ V9 (2008)
 # undef CPE__GCC	// Compilateur GNU C++.
 # undef CPE__GCC3	// Compilateur GNU C++ V3.x
-# undef CPE__CW		// Compilateur CodeWarrior
 
 # undef CPE__MT			// Cible multitâche.
 # undef CPE__CONSOLE	// Cible console.
@@ -91,12 +91,6 @@ extern class ttr_tutor &CPETutor;
 # undef CPE__32BITS		// Processeur 32 bits.
 # undef CPE__64BITS		// Processeur 64 bits.
 
-#undef CPE__64_BITS_TYPES_ALLOWED	// Les types 64 bits sont autorisés.
-
-#ifndef CPE_64_BITS_FORBIDDEN
-#	define CPE__64_BITS_TYPES_ALLOWED
-#endif
-
 # ifdef CPE_GECKO
 #  define CPE__GECKO
 # endif
@@ -110,59 +104,60 @@ extern class ttr_tutor &CPETutor;
 #  define CPE__LIBRARY
 # endif
 
-#ifdef _MSC_VER
-#	define CPE__MS
-#	define CPE__VC
-#	ifdef _WIN32
-#		define CPE__32BITS
-#	endif	
-#	ifdef _MT
-#		ifndef CPE_ST
-#			define CPE__MT
-#		endif
-#	elif defined( CPE_MT )
-#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
-#	endif
-#endif
+# ifdef _MSC_VER
+#  define CPE__WIN
+#  define CPE__VC
+#  ifdef _WIN64
+#   define CPE__64BITS
+#  elif defined( _WIN32 )
+#   define CPE__32BITS
+#  else
+#   error "Unknown bitness".
+#  endif	
+#  ifdef _MT
+#   ifndef CPE_ST
+#    define CPE__MT
+#   endif
+#  elif defined( CPE_MT )
+#   error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
+#  endif
+# endif
 
 #ifdef __APPLE__
-#	define CPE__MAC
+# define CPE__MAC
+# define CPE__GCC
+# define CPE__POSIX
 #endif
-
-#ifdef CPE__MAC
-#	define CPE__MAC
-#	define CPE__GCC
-#endif
-
 
 #ifdef __GNUC__
-#	define CPE__GCC
-#	ifdef __CYGWIN__
-#		define CPE__CYGWIN
-#	elif defined( __MINGW32__ )
-#		define CPE__MINGW
-#	elif defined( __linux__ )
-#		define CPE__LINUX
-#	endif
-#	ifdef __ANDROID__
-#		define CPE__ANDROID
-#	endif
-#endif
-
-#ifdef __MWERKS__
-#	define CPE__CW
-#	ifdef _MT
-#		ifndef CPE_ST
-#			define CPE__MT
-#		endif
-#	elif defined( CPE_MT )
-#		error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
-#	endif
-#	ifdef macintosh
-#		define CPE__MAC	// We are under Macintosh.
-#	else
-#		define CPE__MS	// We are under Microsoft OS
-#	endif
+# define CPE__GCC
+# ifdef __CYGWIN__
+#  define CPE__CYGWIN
+#  define CPE__POSIX
+#  ifdef __CYGWIN64__
+#   define CPE__64BITS
+#  elif defined( __CYGWIN32__ )
+#   define CPE__32BITS
+#  else
+#   error "Unknown bitness".
+#  endif	
+# elif defined( __MINGW32__ )
+#  define CPE__MINGW
+#  define CPE__WIN
+#  ifdef _WIN64
+#   define CPE__64BITS
+#  elif defined( _WIN32 )
+#   define CPE__32BITS
+#  else
+#   error "Unknown bitness".
+#  endif	
+# elif defined( __linux__ )
+#  define CPE__LINUX
+#  define CPE__POSIX
+# endif
+# ifdef __ANDROID__
+#   define CPE__ANDROID
+# endif
 #endif
 
 #ifndef CPE__MT
@@ -177,7 +172,7 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef CPE_LIBRARY
 #	define CPE__LIBRARY
-#elif defined( CPE__MS )
+#elif defined( CPE__WIN )
 #	if defined( _USRDLL ) || defined( _WINDLL )
 #		define CPE__LIBRARY
 #	endif

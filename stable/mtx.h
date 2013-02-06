@@ -76,11 +76,11 @@ extern class ttr_tutor &MTXTutor;
 #endif
 
 #ifdef MTX__USE_ATOMIC_OPERATIONS
-#	if defined( CPE__MS )
+#	if defined( CPE__WIN )
 #		if defined (CPE__CYGWIN )
 #			define MTX__USE_PTHREAD_MUTEX
 #		else
-#			define MTX__USE_MS_ATOMIC_OPERATIONS
+#			define MTX__USE_WIN_ATOMIC_OPERATIONS
 #		endif
 #	elif defined (CPE__LINUX )
 #		if ( MTX__USE_ATOMIC_LIB )
@@ -151,7 +151,7 @@ namespace mtx {
 		m_Undefined
 	};
 
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 	typedef LONG counter__;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 	typedef atomic_t	counter__;
@@ -181,7 +181,7 @@ namespace mtx {
 		int Value,
 		bso::bool__ Destroy )	// Retourne le signe de 'Counter'.
 	{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		Counter = Value;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		atomic_set( &Counter, Value );
@@ -211,7 +211,7 @@ namespace mtx {
 
 	inline bso::sign__ _GetSign( counter__ &Counter )	// Retourne le signe de 'Counter'.
 	{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		return Counter;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_read( &Counter );
@@ -228,7 +228,7 @@ namespace mtx {
 
 	inline int _GetValue( counter__ &Counter )	// Retourne la valeur de 'Counter'.
 	{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		return Counter;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_read( &Counter );
@@ -245,7 +245,7 @@ namespace mtx {
 
 	inline void _Inc( counter__ &Counter )	// Incrémente 'Counter'.
 	{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		InterlockedIncrement( &Counter );
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		atomic_inc( &Counter );
@@ -266,7 +266,7 @@ namespace mtx {
 
 	inline bso::bool__ _DecAndTest( counter__ &Counter )	// Décrémente 'Counter'.et retourne 'true' si à zéro.
 	{
-#ifdef	MTX__USE_MS_ATOMIC_OPERATIONS
+#ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		return InterlockedDecrement( &Counter ) == 0;
 #elif defined( MTX__USE_LINUX_ATOMIC_OPERATIONS )
 		return atomic_dec_and_test( &Counter );

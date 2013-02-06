@@ -159,7 +159,7 @@ namespace crptgr {
 		void Init(
 			flw::oflow__ &Flow,
 			const str::string_ &Key,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( Flow, Key, fdr::tsDisabled );
 			_oflow__::Init( _Driver, AmountMax );
@@ -267,7 +267,7 @@ namespace crptgr {
 		void Init(
 			flw::iflow__ &Flow,
 			const str::string_ &Key,
-			flw::size__ AmountMax = FLW_SIZE_MAX )	// 'Key' n'est PAS dupliqué.
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )	// 'Key' n'est PAS dupliqué.
 		{
 			_Driver.Init( Flow, Key, fdr::tsDisabled );
 			_iflow__::Init( _Driver, AmountMax );

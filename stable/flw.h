@@ -84,7 +84,7 @@ extern class ttr_tutor &FLWTutor;
 #	endif
 #endif
 
-#define FLW_SIZE_MAX	FDR_SIZE_MAX
+# define FLW_AMOUNT_MAX ((bso::size__)-1)
 
 namespace flw {
 	using fdr::datum__;
@@ -235,7 +235,7 @@ namespace flw {
 			datum__ C;
 
 			if ( _ReadUpTo( 1, &C, 1, true, CacheIsEmpty ) == 0 )
-				ERRc();
+				ERRF();
 
 			return C;
 		}
@@ -578,14 +578,8 @@ namespace flw {
 		const char *String,
 		oflow__ &OutputFlow )
 	{
-		size_t Length = strlen( String );
-
-		if ( Length >= FLW_SIZE_MAX )
-			ERRl();
-
-		OutputFlow.Write( String, (size__)( Length + 1 ) );
+		OutputFlow.Write( String, (size__)( strlen( String ) + 1 ) );
 	}
-
 
 	//c Basic input/output flow.
 	class ioflow__
@@ -668,12 +662,7 @@ inline flw::oflow__ &operator <<(
 	flw::oflow__ &OFlow,
 	const char *String )
 {
-	size_t Length = strlen( String );
-
-	if ( Length > FLW_SIZE_MAX )
-		ERRl();
-
-	OFlow.Write( String, (flw::size__)Length );
+	OFlow.Write( String, strlen( String ) );
 
 	return OFlow;
 }

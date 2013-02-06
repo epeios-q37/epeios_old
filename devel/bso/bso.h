@@ -66,13 +66,6 @@ extern class ttr_tutor &BSOTutor;
 #include "err.h"
 #include "cpe.h"
 
-#ifndef BSO_64_BITS_TYPES_FORBIDDEN
-#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined( BSO_64_BITS_TYPES_ALLOWED )
-#		define BSO__64_BITS_TYPES_ALLOWED
-#	endif
-#endif
-
-
 namespace bso {
 	//t Basic data, without any basically signification.
 	typedef unsigned char raw__;
@@ -214,7 +207,6 @@ namespace bso {
 	};
 
 
-#ifdef BSO__64_BITS_TYPES_ALLOWED
 	// Portable 64 bits integer. Internal use only.
 	template <typename t> class p_64_bits__
 	{
@@ -229,7 +221,7 @@ namespace bso {
 			P[1] = (raw__)( ( Op >> 8 ) & 0xff );
 			P[2] = (raw__)( ( Op >> 16 ) & 0xff );
 			P[3] = (raw__)( ( Op >> 24 ) & 0xff );
-			P[5] = (raw__)( ( Op >> 32 ) & 0xff );
+			P[4] = (raw__)( ( Op >> 32 ) & 0xff );
 			P[5] = (raw__)( ( Op >> 40 ) & 0xff );
 			P[6] = (raw__)( ( Op >> 48 ) & 0xff );
 			P[7] = (raw__)( ( Op >> 56 ) & 0xff );
@@ -251,9 +243,6 @@ namespace bso {
 		}
 	};
 
-
-#endif
-
 	//d Maximal value of a 'slong__'.
 	#define BSO_SLONG_MAX	LONG_MAX
 	//d Minimal value of a 'slong__'.
@@ -274,7 +263,6 @@ namespace bso {
 		{}
 	};
 
-#ifdef BSO__64_BITS_TYPES_ALLOWED
 	//d Maximal value of a 'sllong__'.
 	#define BSO_SLLONG_MAX	LLONG_MAX
 	//d Minimal value of a 'sllong__'.
@@ -294,8 +282,6 @@ namespace bso {
 		: p_64_bits__<sllong__>( Op )
 		{}
 	};
-
-#endif
 
 	//d Maximal value of a 'ulong__'.
 	#define BSO_ULONG_MAX	ULONG_MAX
@@ -317,8 +303,6 @@ namespace bso {
 		{}
 	};
 
-#ifdef BSO__64_BITS_TYPES_ALLOWED
-
 	//d Maximal value of a 'ullong__'.
 	#define BSO_ULLONG_MAX	ULLONG_MAX
 	//d Minimal value of a 'ullong__'.
@@ -339,23 +323,22 @@ namespace bso {
 		{}
 	};
 
-#endif
-
+/*
 # ifdef SIZE_MAX
 #  define BSO_SIZE_MAX	SIZE_MAX
 # elif defined( __SIZE__MAX__ )	// For 'MinGW'.
-#  define BSO_SIZE_MAX	__SIZE__MAX
+#  define BSO_SIZE_MAX	__SIZE__MAX__
 # else	// For some 'g++' version.
 #  define BSO_SIZE_MAX	((size_t)-1)
 # endif
-
 	//d Minimal value of a 'size__'.
-	#define BSO_SIZE_MIN	( 0 )
+# define BSO_SIZE_MIN	( 0 )
+*/
 
 	//t Size of a memory .
 	typedef size_t size__;
 
-# if BSO_SIZE_MAX == ULONG_MAX
+# ifdef CPE__32BITS
 	class p_size__
 	: public p_32_bits__<size__>
 	{
@@ -364,7 +347,7 @@ namespace bso {
 		: p_32_bits__<size__>( Op )
 		{}
 	};
-# elif BSO_SIZE_MAX == ULLONG_MAX
+# elif defined ( CPE__64BITS )
 	class p_size__
 	: public p_64_bits__<size__>
 	{
@@ -373,7 +356,9 @@ namespace bso {
 		: p_64_bits__<size__>( Op )
 		{}
 	};
-#endif
+# else
+#  error "No biteness defined !"
+# endif
 
 	//t Short-sized float.
 	typedef float sfloat__;
@@ -452,8 +437,11 @@ namespace bso {
 		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
 	};
 
-#ifdef BSO__64_BITS_TYPES_ALLOWED
+#ifdef CPE__64BITS
 	typedef ullong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#else
+	typedef ulong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#endif
 
 	inline const char *Convert(
 		ullong__ Value,
@@ -473,9 +461,6 @@ namespace bso {
 	}
 #	endif
 
-#else
-	typedef ulong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
-#endif
 
 	inline const char *Convert(
 		bso::ulong__ Value,
@@ -528,8 +513,11 @@ namespace bso {
 	}
 #endif
 
-#ifdef BSO__64_BITS_TYPES_ALLOWED
+#ifdef CPE__64BITS
 	typedef sllong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#else
+	typedef slong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+#endif
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
@@ -550,9 +538,6 @@ namespace bso {
 	}
 #	endif
 
-#else
-	typedef slong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
-#endif
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
@@ -664,7 +649,7 @@ namespace bso {
 	}
 #endif
 
-# if 0
+# ifdef CPE__32BITS
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )

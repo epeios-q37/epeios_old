@@ -64,10 +64,10 @@ extern class ttr_tutor &CSDBNCTutor;
 #include "flw.h"
 #include "sck.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN )|| defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define CSDBNC__POSIX
-#elif defined( CPE__MS )
-#	define CSDBNC__MS
+#elif defined( CPE__WIN )
+#	define CSDBNC__WIN
 #else
 #	error "Unknown target !"
 #endif
@@ -77,7 +77,7 @@ extern class ttr_tutor &CSDBNCTutor;
 #	include <netinet/in.h>
 #	include <arpa/inet.h>
 #	include <netdb.h>
-#elif !defined( CSDBNC__MS )
+#elif !defined( CSDBNC__WIN )
 #	error "Unknow compiler enviroment"
 #endif
 

@@ -189,7 +189,7 @@ void mtk::LaunchAndKill(
 {
 ERRProlog
 ERRBegin
-#ifdef MTK__MS
+#ifdef MTK__WIN
 	if ( _beginthread( Routine, 4096, UP ) == (unsigned long)-1 )
 		ERRs();
 #elif defined( MTK__POSIX )

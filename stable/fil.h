@@ -81,10 +81,10 @@ namespace lcl {
 	class meaning_;
 }
 
-# if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+# if defined( CPE__POSIX )
 #  define FIL__POSIX
-# elif defined( CPE__MS ) || defined( CPE__MINGW )
-#  define FIL__MS
+# elif defined( CPE__WIN )
+#  define FIL__WIN
 # else
 #  error "Undefined platform !."
 # endif
@@ -97,20 +97,35 @@ namespace lcl {
 #  error
 # endif
 
-# ifdef FIL__MS
+# ifdef FIL__WIN
 #  ifdef FIL__32
-#   define FIL__STAT	_stat32
-#   define FIL__FSTAT	_fstat32
+#   ifdef CPE__MINGW
+#    define FIL__STATS	__stat32
+#    define FIL__STATF	_stat32
+#    define FIL__FSTAT	_fstat32
+#   else
+#    define FIL__STATS	_stat32
+#    define FIL__STATF	_stat32
+#    define FIL__FSTAT	_fstat32
+#   endif
 #  endif
 #  ifdef FIL__64
-#   define FIL__STAT	_stat64
-#   define FIL__FSTAT	_fstat64
+#   ifdef CPE__MINGW
+#    define FIL__STATS	__stat64
+#    define FIL__STATF	_stat64
+#    define FIL__FSTAT	_fstat64
+#   else
+#    define FIL__STATS	_stat64
+#    define FIL__STATF	_stat64
+#    define FIL__FSTAT	_fstat64
+#   endif
 #  endif
 # endif
 
 # ifdef FIL__POSIX
-#  define FIL__STAT		stat
-#  define FIL__FSTAT	fstat32
+#  define FIL__STATS	stat
+#  define FIL__STATF	stat
+#  define FIL__FSTAT	fstat
 # endif
 
 
@@ -166,9 +181,9 @@ namespace fil {
 	//f Return true if the file 'Name' exists, false otherwise.
 	inline bool FileExists( const char *FileName )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
-		if ( FIL__STAT( FileName, &Stat ) == 0 )
+		if ( FIL__STATF( FileName, &Stat ) == 0 )
 			return true;
 
 		switch ( errno ) {
@@ -204,9 +219,9 @@ namespace fil {
 
 	inline time_t GetFileLastModificationTime( const char *FileName )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
-		if ( FIL__STAT( FileName, &Stat ) != 0 )
+		if ( FIL__STATF( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mtime;
@@ -214,7 +229,7 @@ namespace fil {
 
 	inline bso::size__ GetFileSize( iop::descriptor__ Descriptor )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
 		if ( FIL__FSTAT( Descriptor, &Stat ) != 0 )
 			ERRu();
@@ -224,9 +239,9 @@ namespace fil {
 
 	inline bso::size__ GetFileSize( const char *FileName )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
-		if ( FIL__STAT( FileName, &Stat ) != 0 )
+		if ( FIL__STATF( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_size;
@@ -234,9 +249,9 @@ namespace fil {
 
 	inline bso::size__ IsDirectory( const char *FileName )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
-		if ( FIL__STAT( FileName, &Stat ) != 0 )
+		if ( FIL__STATF( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mode & S_IFDIR;
@@ -244,9 +259,9 @@ namespace fil {
 
 	inline bso::size__ IsFile( const char *FileName )
 	{
-		struct FIL__STAT Stat;
+		struct FIL__STATS Stat;
 
-		if ( FIL__STAT( FileName, &Stat ) != 0 )
+		if ( FIL__STATF( FileName, &Stat ) != 0 )
 			ERRu();
 
 		return Stat.st_mode & S_IFREG;
@@ -255,7 +270,7 @@ namespace fil {
 	// Modifie la date de modification d'un fichier à la date courante.
 	inline void TouchFile( const char *FileName )
 	{
-# ifdef FIL__MS
+# ifdef FIL__WIN
 		FILETIME ft;
 		SYSTEMTIME st;
 		HANDLE Handle = CreateFileA( FileName, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );

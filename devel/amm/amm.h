@@ -65,45 +65,166 @@ extern class ttr_tutor &AMMTutor;
 
 # include "uym.h"
 
-# define AMM__DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
-
 namespace amm {
 
-// Prédéclarations.
-	struct _xsize__;
-	typedef _xsize__ xsize__;
+	enum flag_position__ {
+		// Statut du fragment ; 0 : libre (free), 1 : occupé (used).
+		fpFragmentStatus,
+		// Type d'un fragment libre ; 0 : normal (regular), 1: orphelin (orphan).
+		fpFreeFragmentType,
+		// Type du predecesseur d'un fragment occupé ; 0 : libre (free) ; 1 : occupé (used).
+		fpUsedFragmentPredecessorStatus = fpFreeFragmentType,
+		// Signification de la taille embarquée ; 0 : Taille du fragment (fragment size) ; 1 : Longueur de la taille du fragment (fragemnt size length).
+		fpEmbeddedSizeMeaning
+	};
 
-	xsize__ Convert( mdr::size__ Size );
+	enum flag_mask__ {
+		fmFragmentStatus = 1 << fpFragmentStatus,
+		fmFreeFragmentType = 1 << fpFreeFragmentType,
+		fmUsedFragmentPredecessorStatus = 1 << fpUsedFragmentPredecessorStatus,
+		fmEmbeddedSizeMeaning = 1 << fpEmbeddedSizeMeaning
+	};
+
+	using mdr::size__;
+
+	typedef mdr::datum__ header__;
+
+	inline bso::bool__ IsFragmentUsed( header__ Header )
+	{
+		return Header & fmFragmentStatus;
+	}
+
+	inline bso::bool__ IsFragmentFree( header__ Header )
+	{
+		return !IsFragmentUsed( Header );
+	}
+
+	inline bso::bool__ IsFreeFragmentOrphan( header__ Header )
+	{
+		if ( !IsFragmentFree( Header ) )
+			ERRc();
+
+		return ( Header & fmFreeFragmentType ) != 0;
+	}
+
+	inline bso::bool__ IsFreeFragmentRegular( header__ Header )
+	{
+		return !IsFreeFragmentRegular( Header );
+	}
+
+	inline bso::bool__ MeansEmbeddedSizeFragmentSizeLength( header__ Header )
+	{
+		return ( Header & fmEmbeddedSizeMeaning ) != 0;
+	}
+
+	inline bso::bool__ MeansEmbeddedSizeFragmentSize( header__ Header )
+	{
+		return !MeansEmbeddedSizeFragmentSize( Header );
+	}
+
+	inline bso::bool__ MeansUsedFragmentEmbeddedSizeFragmentSize( header__ Header )
+	{
+		if ( !IsFragmentUsed( Header ) )
+			ERRc();
+
+		return MeansEmbeddedSizeFragmentSizeLength( Header );
+	}
+
+	inline bso::bool__ MeansUsedFragmentEmbeddedSizeFragmentSizeLength( header__ Header )
+	{
+		return !MeansUsedFragmentEmbeddedSizeFragmentSize( Header );
+	}
+
+	inline bso::bool__ MeansFreeFragmentEmbeddedSizeFragmentSize( header__ Header )
+	{
+		if ( !IsFragmentFree( Header ) )
+			ERRc();
+
+		return MeansEmbeddedSizeFragmentSizeLength( Header );
+	}
+
+	inline bso::bool__ MeansFreeFragmentEmbeddedSizeFragmentSizeLength( header__ Header )
+	{
+		return !MeansFreeFragmentEmbeddedSizeFragmentSize( Header );
+	}
+
+	inline size__ GetFragmentSize( header__ Header )
+	{
+		if ( !amm::MeansEmbeddedSizeFragmentSize( Header ) )
+			ERRc();
+
+		return ( Header >> 3 ) + 1;
+	}
+
+	inline size__ GetUsedFragmentSize( header__ Header )
+	{
+		if ( !IsFragmentUsed( Header ) )
+			ERRc();
+
+		return GetFragmentSize( Header );
+	}
+
+	inline size__ GetFreeFragmentSize(header__ Header )
+	{
+		if ( !IsFragmentFree( Header ) )
+			ERRc();
+
+		return GetFragmentSize( Header );
+	}
+
+	typedef bso::ulong__ flength__;	// Longueur de la taille d'une fragment (32 bits) (fragemnt size length).
+
+	inline flength__ GetFragmentSizeLength( header__ Header )
+	{
+		if ( !amm::MeansEmbeddedSizeFragmentSizeLength( Header ) )
+			ERRc();
+
+		return 1 << ( Header >> 3 );
+	}
+
+	inline flength__ GetUsedFragmentSizeLength(header__ Header )
+	{
+		if ( !IsFragmentUsed( Header ) )
+			ERRc();
+
+		return GetFragmentSizeLength( Header );
+	}
+
+	inline flength__ GetFreeFragmentSizeLength(header__ Header )
+	{
+		if ( !IsFragmentFree( Header ) )
+			ERRc();
+
+		return GetFragmentSizeLength( Header );
+	}
+
+	inline void MarkAsFreeFragment( header__ &Header )
+	{
+		Header &= ~fmFragmentStatus;
+	}
+
+	inline void MarkAsUsedFragment( header__ &Header )
+	{
+		Header |= fmFragmentStatus;
+	}
+
+	inline void MarkAsRegularFreeFragment( header__ &Header )
+	{
+		if (!IsFragmentFree( Header ) )
+			ERRc();
+
+		Header &= ~fmFreeFragmentType;
+	}
+
+	inline void MarkAsOrphanFreeFragment( header__ &Header )
+	{
+		if (!IsFragmentFree( Header ) )
+			ERRc();
+
+		Header |= fmFreeFragmentType;
+	}
 
 	typedef mdr::row_t__ descriptor__;
-
-	// 'Dynamic size' : taile de taille variable.
-	typedef mdr::datum__ dsize__[AMM__DSIZE_SIZE_MAX];
-
-	typedef bso::ubyte__ _length__;
-# define AMM__LENGTH_MAX BSO_UBYTE_MAX
-
-	typedef struct _xsize__ {
-	private:
-		dsize__ _Size;
-	public:
-		const mdr::datum__ *Size( void ) const
-		{
-			if ( Length == 0 )
-				ERRc();
-
-			return _Size + AMM__DSIZE_SIZE_MAX - Length;
-		}
-		_length__ Length;
-		_xsize__( void )
-		{
-			memset( _Size, 0, sizeof( _Size ) );
-			Length = 0;
-		}
-		friend xsize__ amm::Convert( mdr::size__ Size );
-	} xsize__;
-
-	mdr::size__ Convert( const mdr::datum__ *DSize );
 
 	class aggregate_memory_
 	{

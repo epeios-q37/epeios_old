@@ -144,7 +144,7 @@ ERRFBegin
 	if ( Steering != NULL )
 		Steerings_.Append( Steering );
 ERRFErr
-	OFlow.Init( *Data->CErr, FLW_SIZE_MAX );
+	OFlow.Init( *Data->CErr, FLW_AMOUNT_MAX );
 	TOFlow.Init( OFlow );
 	TOFlow << err::Message( Buffer );
 

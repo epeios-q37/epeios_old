@@ -87,7 +87,7 @@ namespace cio {
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			oflow__::Init( COutDriver, _Cache, sizeof( _Cache ), AmountMax );
 		}
@@ -112,7 +112,7 @@ namespace cio {
 		{
 			reset();
 		}
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_CoutF.Init( AmountMax );
 			text_oflow__::Init( _CoutF );
@@ -126,7 +126,7 @@ namespace cio {
 	private:
 		flw::datum__ _Cache[IOP__BUFFER_SIZE];
 	public:
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			oflow__::Init( CErrDriver, _Cache, sizeof( _Cache ), AmountMax ) ;
 		}
@@ -151,7 +151,7 @@ namespace cio {
 		{
 			reset();
 		}
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_CerrF.Init( AmountMax );
 			text_oflow__::Init( _CerrF );
@@ -162,7 +162,7 @@ namespace cio {
 	: public flw::iflow__
 	{
 	public:
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			iflow__::Init( CInDriver, AmountMax );
 		}
@@ -187,7 +187,7 @@ namespace cio {
 		{
 			reset();
 		}
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_CinF.Init( AmountMax );
 			text_iflow__::Init( _CinF );

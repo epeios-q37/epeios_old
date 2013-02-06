@@ -151,7 +151,7 @@ namespace flx {
 		void Init(
 			const fdr::datum__ *Buffer,
 			fdr::thread_safety__ ThreadSafety,
-			bso::size__ Size = BSO_SIZE_MAX )
+			bso::size__ Size = FLW_AMOUNT_MAX )
 		{
 			reset();
 
@@ -188,8 +188,8 @@ namespace flx {
 		needed if you are sure that you don't exceed the buffer size. */
 		void Init(
 			const flw::datum__ *Buffer,
-			bso::size__ Size = BSO_SIZE_MAX,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			bso::size__ Size = FLW_AMOUNT_MAX,
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( Buffer, fdr::tsDisabled, Size );
 			_iflow__::Init( _Driver, AmountMax );
@@ -283,7 +283,7 @@ namespace flx {
 		void Init(
 			flw::datum__ *Buffer,
 			bso::size__ Size,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 
@@ -373,7 +373,7 @@ namespace flx {
 		void Init(
 			const bunch_ &Bunch,
 			mdr::row_t__ Position = 0,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 
@@ -458,7 +458,7 @@ namespace flx {
 		//f Initializing with the buffer bunch 'Bunch'.
 		void Init(
 			bunch_ &Bunch,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 
@@ -525,7 +525,7 @@ namespace flx {
 		{
 			reset();
 		}
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_oflow__::Init( VoidOFlowDriver, _Cache, sizeof( _Cache ), AmountMax );
 		}
@@ -580,7 +580,7 @@ namespace flx {
 		{
 			reset();
 		}
-		void Init( flw::size__ AmountMax = FLW_SIZE_MAX )
+		void Init( flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			iflow__::Init( VoidIFlowDriver, AmountMax );
 		}

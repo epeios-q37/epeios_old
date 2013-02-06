@@ -71,6 +71,8 @@ extern class ttr_tutor &MDRTutor;
 
 # define NONE ((mdr::row_t__)-1)
 
+# define MDR__DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
+
 namespace mdr {
 
 	//t The position in a memory.
@@ -92,6 +94,41 @@ namespace mdr {
 
 	//t The type of the datum in a memory.
 	typedef bso::raw__	datum__;
+
+// Prédéclarations.
+	struct _xsize__;
+	typedef _xsize__ xsize__;
+
+	xsize__ Convert( size__ Size );
+
+	// 'Dynamic size' : taile de taille variable.
+	typedef mdr::datum__ dsize__[MDR__DSIZE_SIZE_MAX];
+
+	typedef bso::ubyte__ _length__;
+# define MDRM__LENGTH_MAX BSO_UBYTE_MAX
+
+	typedef struct _xsize__ {
+	private:
+		dsize__ _Size;
+	public:
+		const mdr::datum__ *Size( void ) const
+		{
+			if ( Length == 0 )
+				ERRc();
+
+			return _Size + MDR__DSIZE_SIZE_MAX - Length;
+		}
+		_length__ Length;
+		_xsize__( void )
+		{
+			memset( _Size, 0, sizeof( _Size ) );
+			Length = 0;
+		}
+		friend xsize__ mdr::Convert( mdr::size__ Size );
+	} xsize__;
+
+	size__ Convert( const mdr::datum__ *DSize );
+
 
 	//c Abstract memory driver. Use 'E_MEMORY_DRIVER__' instead directly this class.
 	class memory_driver__

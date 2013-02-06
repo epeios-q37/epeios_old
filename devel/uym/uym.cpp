@@ -220,7 +220,7 @@ void untyped_memory_::Store(
 	_Copy( Source, Offset, *this, Position, Amount, Buffer, BUFFER_SIZE );
 }
 
-#define BUFFER_SIZE_MAX		FLW_SIZE_MAX
+#define BUFFER_SIZE_MAX		FLW_AMOUNT_MAX
 
 void untyped_memory_::WriteToFlow(
 	mdr::row_t__ Position,

@@ -216,7 +216,7 @@ namespace csducl {
 		}
 		void Init(
 			universal_client_core &Core,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 

@@ -68,16 +68,16 @@ extern class ttr_tutor &DIRTutor;
 
 #include <limits.h>
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__BEOS ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define DIR__POSIX
-#elif defined( CPE__MS ) || defined( CPE__MINGW )
-#	define DIR__MS
+#elif defined( CPE__WIN )
+#	define DIR__WIN
 #else
 #	error "Unknown target !"
 #endif
 
 
-#ifdef DIR__MS
+#ifdef DIR__WIN
 #	include <direct.h>
 #	include <windows.h>
 # define DIR_PATH_MAX_SIZE	MAX_PATH
@@ -113,7 +113,7 @@ namespace dir {
 
 	inline const char *GetSelfPath( DIR_BUFFER___ &Buffer )
 	{
-#ifdef DIR__MS 
+#ifdef DIR__WIN 
 		char Path[MAX_PATH];
 		DWORD Size = GetModuleFileNameA( NULL, Path, sizeof( Path ) );
 #endif
@@ -152,7 +152,7 @@ namespace dir {
 
 	inline state__ CreateDir( const char *Path )
 	{
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		switch ( _mkdir( Path ) ) {
 #elif defined( DIR__POSIX )
 		switch ( mkdir( Path, 0777 ) ) {
@@ -200,7 +200,7 @@ namespace dir {
 	inline state__ DropDir( const char *Path )
 	{
 #pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		switch ( _rmdir( Path ) ) {
 #elif defined( DIR__POSIX )
 		switch ( rmdir( Path ) ) {
@@ -248,7 +248,7 @@ namespace dir {
 	inline state__ ChangeDir( const char *Path )
 	{
 #pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		switch ( _chdir( Path ) ) {
 #elif defined( DIR__POSIX )
 		switch ( chdir( Path ) ) {
@@ -293,7 +293,7 @@ namespace dir {
 		return s_Undefined;	// Pour éviter un 'warning'.
 	}
 
-#ifdef DIR__MS
+#ifdef DIR__WIN
 	typedef HANDLE	handle___;
 #	define DIR_INVALID_HANDLE	INVALID_HANDLE_VALUE
 #elif defined( DIR__POSIX )
@@ -308,7 +308,7 @@ namespace dir {
 		const char *Directory,
 		handle___ &Handle )
 	{
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		static WIN32_FIND_DATAA File;
 		HANDLE &hSearch = Handle;
 		char SearchString[MAX_PATH+1] = "";
@@ -362,7 +362,7 @@ namespace dir {
 		if ( Handle == DIR_INVALID_HANDLE )
 			ERRu();
 #endif
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		static WIN32_FIND_DATAA File;
 		HANDLE &hSearch = Handle;
 
@@ -398,7 +398,7 @@ namespace dir {
 		if ( Handle == DIR_INVALID_HANDLE )
 			ERRu();
 #endif
-#ifdef DIR__MS
+#ifdef DIR__WIN
 		if ( !FindClose( Handle ) )
 			ERRs();
 

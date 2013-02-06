@@ -69,17 +69,17 @@ extern class ttr_tutor &TOLTutor;
 
 # include "cpe.h"
 
-# if defined( CPE__LINUX ) || defined( CPE__MAC )
+# if defined( CPE__POSIX )
 #  define TOL__POSIX
-# elif defined( CPE__MS ) || defined ( CPE__MINGW ) || defined( CPE__CYGWIN )
-#  define TOL__MS
+# elif defined( CPE__WIN )
+#  define TOL__WIN
 #  include "Windows.h"
 # else
 #  error "Undefined compilation enviroment."
 # endif
 
 
-#ifdef TOL__MS
+#ifdef TOL__WIN
 #	include <sys/utime.h>
 #elif defined( TOL__POSIX )
 #	include <utime.h>
@@ -568,7 +568,7 @@ namespace tol {
 # define TOL_TICK_DIFF_OVERFLOW	BSO_ULONG_MAX
 
 // Horloge de précision. N'est utile que pour comparer 2 
-# ifdef TOL__MS
+# ifdef TOL__WIN
 	E_TRMIMIC__( LARGE_INTEGER, tick__ );
 	extern LARGE_INTEGER	_TickFrequence;
 

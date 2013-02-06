@@ -60,43 +60,6 @@ using namespace amm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-xsize__ amm::Convert( mdr::size__ Size )
-{
-	xsize__ XSize;
-	_length__ Position = AMM__DSIZE_SIZE_MAX - 1;
-
-	XSize._Size[Position] = Size & 0x7f;
-	Size >>= 7;
-
-	while ( Size != 0 ) {
-		if ( Position-- == 0 )
-			ERRc();
-
-		XSize._Size[Position] = ( Size & 0x7f ) | 0x80; 
-		Size >>= 7;
-	}
-
-	XSize.Length = AMM__DSIZE_SIZE_MAX - Position;
-
-	return XSize;
-}
-
-#define LIMIT ( MDR_SIZE_MAX >> 7 )
-
-mdr::size__ amm::Convert( const mdr::datum__ *DSize )
-{
-	_length__ Position = 0;
-	mdr::size__ Size = 0;
-
-	do {
-		if ( Size > LIMIT )
-			ERRc();
-
-		Size = ( Size << 7 ) + ( DSize[Position] & 0x7f );
-	} while ( DSize[Position++] & 0x80 );
-
-	return Size;
-}
 
 class ammpersonnalization
 : public ammtutor

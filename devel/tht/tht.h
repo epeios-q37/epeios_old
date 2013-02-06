@@ -62,15 +62,15 @@ extern class ttr_tutor &THTTutor;
 
 #include "err.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define THT__POSIX
-#elif defined ( CPE__MS ) ||defined( CPE__MINGW )
-#	define THT__MS
+#elif defined ( CPE__WIN )
+#	define THT__WIN
 #else
 #	error "Unknown target !"
 #endif
 
-#ifdef THT__MS
+#ifdef THT__WIN
 #	include <process.h>
 #	include <windows.h>
 #elif defined( THT__POSIX )
@@ -86,7 +86,7 @@ extern class ttr_tutor &THTTutor;
 
 
 namespace tht {
-#ifdef THT__MS
+#ifdef THT__WIN
 	typedef DWORD	thread_id__;
 #elif defined( THT__POSIX )
 	typedef pthread_t	thread_id__;
@@ -95,7 +95,7 @@ namespace tht {
 	//f Return an unique ID for the current thread.
 	inline thread_id__ GetTID( void )
 	{
-#ifdef THT__MS
+#ifdef THT__WIN
 		return GetCurrentThreadId();
 #elif defined( THT__POSIX )
 		return pthread_self();

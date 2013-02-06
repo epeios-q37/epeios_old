@@ -65,7 +65,7 @@ using namespace tol;
 	MAIS, lorsque lancé dans une console 'Cygwin' (1.17.10), le résultat est incorrect (différence d'une heure, peut-être lié à l'heure d'hiver/d'été).
 */
 
-#ifdef TOL__MS		
+#ifdef TOL__WIN		
 LARGE_INTEGER	tol::_TickFrequence;
 #else
 static const char *PosixCoreDateAndTime_(
@@ -87,7 +87,7 @@ static const char *PosixCoreDateAndTime_(
 
 const char *tol::Date( buffer__ &Buffer )
 {
-#ifdef TOL__MS
+#ifdef TOL__WIN
 	SYSTEMTIME LocalTime;
 
 	GetLocalTime( &LocalTime );
@@ -102,7 +102,7 @@ const char *tol::Date( buffer__ &Buffer )
 
 const char *tol::Time( buffer__ &Buffer )
 {
-#ifdef TOL__MS
+#ifdef TOL__WIN
 	SYSTEMTIME LocalTime;
 
 	GetLocalTime( &LocalTime );
@@ -117,7 +117,7 @@ const char *tol::Time( buffer__ &Buffer )
 
 const char *tol::DateAndTime( buffer__ &Buffer )
 {
-#ifdef TOL__MS
+#ifdef TOL__WIN
 	SYSTEMTIME LocalTime;
 
 	GetLocalTime( &LocalTime );
@@ -141,9 +141,9 @@ static inline void signal_( int s )
 
 static inline void ExitOnSignal_( void )
 {
-#if defined( CPE__CYGWIN ) || defined( CPE__LINUX ) || defined ( CPE__MAC )
+#if defined( TOL__POSIX )
 	signal( SIGHUP, signal_ );
-#elif defined( CPE__MS ) ||defined ( CPE__MINGW )
+#elif defined( TOL__WIN )
 	signal( SIGBREAK, signal_ );
 #else
 #	error "Undefined target !"
@@ -165,7 +165,7 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 		ExitOnSignal_();
-#ifdef TOL__MS		
+#ifdef TOL__WIN		
 		if ( QueryPerformanceFrequency( &tol::_TickFrequence ) == 0 )
 			ERRs();
 #endif

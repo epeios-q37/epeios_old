@@ -66,10 +66,10 @@ extern class ttr_tutor &FNMTutor;
 #include "cpe.h"
 #include "tol.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define FNM__POSIX
-#elif defined( CPE__MS ) || defined( CPE__MINGW )
-#	define FNM__MS
+#elif defined( CPE__WIN )
+#	define FNM__WIN
 #else
 #	error "Unknown target !"
 #endif
@@ -196,7 +196,7 @@ namespace fnm
 	};
 }
 
-#ifdef FNM__MS
+#ifdef FNM__WIN
 #	define FNM_DIRECTORY_SEPARATOR_STRING	"\\"
 #	define FNM_DIRECTORY_SEPARATOR_CHARACTER	'\\'
 #elif defined( FNM__POSIX )

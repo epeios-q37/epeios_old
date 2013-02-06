@@ -121,7 +121,7 @@ ERRProlog
 	Socket = SCK_INVALID_SOCKET;
 	timeval TimeOutStruct;
 	struct sockaddr_in SockAddr;
-#ifdef SCK__MS
+#ifdef SCK__WIN
     int
 #elif defined( SCK__POSIX )
 	socklen_t

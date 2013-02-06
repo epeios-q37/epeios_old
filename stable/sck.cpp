@@ -66,7 +66,7 @@ public:
 
 using namespace sck;
 
-#ifdef CPE__MS
+#ifdef CPE__WIN
 bool sck::Ready_ = false;
 #else
 bool sck::Ready_ = true;

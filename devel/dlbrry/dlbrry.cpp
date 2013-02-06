@@ -57,15 +57,15 @@ public:
 
 using namespace dlbrry;
 
-#if defined( CPE__LINUX ) || defined( CPE__BEOS ) || defined( CPE__CYGWIN ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define TARGET_POSIX
-#elif defined( CPE__MS )
-#	define TARGET_MS
+#elif defined( CPE__WIN )
+#	define TARGET_WIN
 #else
 #	error "Unknown target !"
 #endif
 
-#ifdef TARGET_MS
+#ifdef TARGET_WIN
 #	include <windows.h>
 #elif defined ( TARGET_POSIX )
 #	include <dlfcn.h>
@@ -78,7 +78,7 @@ bso::bool__ dlbrry::dynamic_library___::_LoadLibrary( const char *LibraryName )
 	if ( _LibraryHandler != NULL )
 		ERRc();
 
-#ifdef TARGET_MS
+#ifdef TARGET_WIN
 	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
 		return false;
 #elif defined( TARGET_POSIX )
@@ -96,7 +96,7 @@ bso::bool__ dlbrry::dynamic_library___::_UnloadLibrary( void  )
 	if ( _LibraryHandler == NULL )
 		ERRc();
 
-#ifdef TARGET_MS
+#ifdef TARGET_WIN
 	if ( !FreeLibrary( (HMODULE)_LibraryHandler) )
 		return false;
 #elif defined( TARGET_POSIX )
@@ -119,7 +119,7 @@ void * dlbrry::dynamic_library___::GetFunction( const char *FunctionName )
 	if ( !IsInitialized() )
 		ERRc();
 
-#ifdef TARGET_MS
+#ifdef TARGET_WIN
 	Function = GetProcAddress( (HMODULE)_LibraryHandler, FunctionName );
 #elif defined( TARGET_POSIX )
 	Function = dlsym( _LibraryHandler, FunctionName );

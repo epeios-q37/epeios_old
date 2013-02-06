@@ -319,12 +319,7 @@ namespace txf {
 		}
 		text_oflow__ &operator <<( const char *C )
 		{
-			size_t Length = strlen( C );
-
-			if ( Length > FLW_SIZE_MAX )
-				ERRl();
-
-			Ecrire_( (const datum__ *)C, (size__)Length );
+			Ecrire_( (const datum__ *)C, strlen( C ) );
 
 			return *this;
 		}
@@ -430,7 +425,7 @@ namespace txf {
 	// Place une fin de ligne sur le txft.
 	TXF_DFS( nl )
 	{
-#if defined( CPE__MS ) || defined( CPE__CYGWIN ) || defined( CPE__MINGW )
+#if defined( CPE__WIN ) || defined( CPE__CYGWIN ) || defined( CPE__MINGW )
 		return Flow << "\r\n";
 #elif defined( CPE__LINUX ) || defined( CPE__MAC )
 		return Flow << '\n';

@@ -252,7 +252,7 @@ namespace cdgb64 {
 		}
 		void Init(
 			flw::oflow__ &Flow,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( Flow, fdr::tsDisabled );
 			_oflow__::Init( _Driver, AmountMax  );
@@ -428,7 +428,7 @@ namespace cdgb64 {
 		}
 		void Init(
 			flw::iflow__ &Flow,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( Flow );
 			_iflow___::Init( _Driver, AmountMax  );

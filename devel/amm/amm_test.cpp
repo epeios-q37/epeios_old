@@ -37,13 +37,13 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
-#define DELTA	10000
+#define DELTA	1000
 
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	mdr::size__ Size = 0;
-	amm::xsize__ XSize;
+	mdr::xsize__ XSize;
 	tol::timer__ Timer;
 	bso::ubyte__ Length = 0;
 ERRBegin
@@ -57,14 +57,14 @@ ERRBegin
 			Size += DELTA;
 
 
-		XSize = amm::Convert( Size );
+		XSize = mdr::Convert( Size );
 
 		if( Timer.IsElapsed() ) {
 			cio::COut << Size << txf::pad << (bso::ulong__)XSize.Length << txf::rfl << txf::commit;
 			Timer.Launch();
 		}
 
-		if ( amm::Convert( XSize.Size() ) != Size )
+		if ( mdr::Convert( XSize.Size() ) != Size )
 			ERRc();
 
 		if ( Length != XSize.Length ) {

@@ -154,7 +154,7 @@ namespace pllio {
 			io_core__::Init( D );
 		}
 		unsigned int Read(
-			amount__ Amount,
+			size__ Amount,
 			void *Buffer )
 		{
 			_Test();
@@ -210,7 +210,7 @@ namespace pllio {
 		}
 		int Write(
 			const void *Buffer,
-			amount__ Amount )
+			size__ Amount )
 		{
 			_Test();
 

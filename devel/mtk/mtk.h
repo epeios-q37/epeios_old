@@ -65,10 +65,10 @@ extern class ttr_tutor &MTKTutor;
 #include "errno.h"
 #include "tht.h"
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN ) || defined( CPE__BEOS ) || defined( CPE__MAC )
+#if defined( CPE__POSIX )
 #	define MTK__POSIX
-#elif defined( CPE__MS ) || defined( CPE__MINGW )
-#	define MTK__MS
+#elif defined( CPE__WIN )
+#	define MTK__WIN
 #else
 #	error "Unknown target !"
 #endif
@@ -78,7 +78,7 @@ extern class ttr_tutor &MTKTutor;
 #endif
 
 
-#ifdef MTK__MS
+#ifdef MTK__WIN
 #	include <process.h>
 #	include <windows.h>
 #elif defined( MTK__POSIX )

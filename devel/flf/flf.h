@@ -164,7 +164,7 @@ namespace flf {
 			const char *FileName,
 			fil::mode__ Mode = fil::mReadOnly,
 			err::handling__ ErrorHandling = err::h_Default,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 
@@ -192,7 +192,7 @@ namespace flf {
 			const char *FileName,
 			err::handling__ ErrorHandling,
 			fil::mode__ Mode = fil::mReadOnly,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			return Init( FileName, Mode, ErrorHandling, AmountMax );
 		}
@@ -296,7 +296,7 @@ namespace flf {
 			const char *FileName,
 			fil::mode__ Mode = fil::mRemove,
 			err::handling__ ErrorHandling = err::h_Default,
-			flw::size__ AmountMax = FLW_SIZE_MAX )
+			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();
 
