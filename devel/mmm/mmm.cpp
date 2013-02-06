@@ -64,14 +64,14 @@ static void Display_(
 	if ( Position == NONE )
 		Flow << "NONE";
 	else
-		Flow << (bso::ullong__)*Position;
+		Flow << *Position;
 }
 
 void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 {
 	bso::ulong__ UsedFragmentTotalSize = 0, UsedFragmentDataSize = 0, FreeFragmentSize = 0;
 
-	Flow << "Size : " << (bso::ullong__)_Size() << txf::tab;
+	Flow << "Size : " << _Size() << txf::tab;
 	Flow << "FreeFragment : ";
 	Display_( S_.FreeFragment, Flow );
 	Flow << txf::tab;
@@ -88,34 +88,34 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 		mdr::datum__ Header[MMM_HEADER_MAX_LENGTH];
 
 		while ( Position != NONE ) {
-			Flow << (bso::ullong__)*Position << txf::tab << ": ";
+			Flow << *Position << txf::tab << ": ";
 
 			_GetHeader( Position, Header );
 
 			if ( _IsFragmentUsed( Header ) ) {
-				Flow << "USED" << txf::tab << (bso::ullong__)_GetUsedFragmentTotalSize( Header ) << txf::tab << (bso::ullong__)( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << (bso::ullong__)_GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
+				Flow << "USED" << txf::tab << _GetUsedFragmentTotalSize( Header ) << txf::tab << ( *Position + _GetUsedFragmentTotalSize( Header ) ) << txf::tab << _GetUsedFragmentDataSize( Header ) << txf::tab << txf::tab;
 
 				UsedFragmentTotalSize += _GetUsedFragmentTotalSize( Header );
 				UsedFragmentDataSize += _GetUsedFragmentDataSize( Header );
 
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
-					Flow << (bso::ullong__)*_GetFreeFragmentPosition( Position );
+					Flow << *_GetFreeFragmentPosition( Position );
 				else
 					Flow << "NONE";
 
 				Flow << txf::tab;
 
 				if ( _IsUsedFragmentLinkFlagSet( Header ) )
-					Flow << (bso::ullong__)*_GetUsedFragmentLink( Position, Header );
+					Flow << *_GetUsedFragmentLink( Position, Header );
 				else
 					Flow << "NONE";
 
 				Position = _GetUsedFragmentNextFragmentPosition( Position, Header );
 			} else if ( _IsFragmentFree( Header ) ) {
 				if ( _IsFreeFragmentOrphan( Header ) ) {
-					Flow << "Orph." << txf::tab << (bso::ullong__)_GetFreeFragmentSize( Header ) << txf::tab << (bso::ullong__)( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab;
+					Flow << "Orph." << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab;
 				} else {
-					Flow << "Free" << txf::tab << (bso::ullong__)_GetFreeFragmentSize( Header ) << txf::tab << (bso::ullong__)( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab << txf::tab << txf::tab;
+					Flow << "Free" << txf::tab << _GetFreeFragmentSize( Header ) << txf::tab << ( *Position + _GetFreeFragmentSize( Header ) ) << txf::tab << txf::tab << txf::tab;
 					Display_( _GetFreeFragmentPreviousFreeFragmentPosition( Header ), Flow );
 					Flow << txf::tab;
 					Display_( _GetFreeFragmentNextFreeFragmentPosition( Header ), Flow );

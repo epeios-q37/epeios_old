@@ -66,7 +66,7 @@ extern class ttr_tutor &CSDBNSTutor;
 
 # include "csdsuf.h"
 
-# ifdef CPE__MS
+# ifdef CPE__WIN
 #  ifndef CSD_NO_SERVICE_HANDLING
 #   define CSD__HANDLE_SERVICE	// Handles the Windows service system.
 #  endif

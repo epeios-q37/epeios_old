@@ -2532,7 +2532,7 @@ namespace nsxpcm {
 		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, Language, FileName );
 	}
 
-# ifdef CPE__MS
+# ifdef CPE__WIN
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dll"
 # elif defined( CPE__LINUX )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "so"

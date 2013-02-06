@@ -199,7 +199,7 @@ namespace ltf {
 			flw::size__ Size )
 		{
 			_Driver.Init( TFlow, Data, Size, fdr::tsDisabled );
-			oflow__::Init( _Driver, NULL, 0, FLW_SIZE_MAX );
+			oflow__::Init( _Driver, NULL, 0, FLW_AMOUNT_MAX );
 		}
 		void Clear( void )
 		{

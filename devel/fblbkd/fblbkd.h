@@ -192,7 +192,7 @@ namespace fblbkd {
 		{
 			reset();
 
-			_Flow.Init( Driver, _Cache, sizeof( _Cache ), FDR_SIZE_MAX );
+			_Flow.Init( Driver, _Cache, sizeof( _Cache ), FLW_AMOUNT_MAX );
 			TFlow.Init( _Flow );
 			log_functions__::Init();
 		}

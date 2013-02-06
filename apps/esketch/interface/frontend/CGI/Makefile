@@ -23,7 +23,7 @@ mods += sck ssnmng str tht tol ttr uym xml xpp
 mods += cgiarg cgigat
 
 # epeios/csd
-mods += csdbnc csdlec csducl csdsnc
+mods += csdbnc csdlec csdles csdsnc csducl
 
 # epeios/fbl
 mods += fblcmd fblcst fblfrb fblfrd fblovl fbltyp
@@ -49,7 +49,9 @@ os := $(shell uname -o 2>/dev/null || uname -s)
 
 ifeq ("$(os)","Cygwin")
 
-	lo = -shared -W1,-soname,$(name).so -o $(name).so 
+	target = $(name).dll
+
+	lo = -shared -W1,-soname,$(target) -o $(target)
 	lo +=
 
 	libs =
