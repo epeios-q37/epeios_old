@@ -58,6 +58,8 @@ public:
 using namespace frdrgy;
 
 rgstry::entry___ frdrgy::Parameters( "Parameters" );
+rgstry::entry___ frdrgy::Definitions( "Definitions" );
+rgstry::entry___ frdrgy::Settings( "Settings" );
 
 rgstry::entry___ frdrgy::DefaultProject( "DefaultProject", Parameters );
 rgstry::entry___ frdrgy::Locale( "Locale", Parameters );
