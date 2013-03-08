@@ -60,7 +60,7 @@ using namespace mdr;
 xsize__ mdr::Convert( size__ Size )
 {
 	xsize__ XSize;
-	_length__ Position = MDR__DSIZE_SIZE_MAX - 1;
+	length__ Position = MDR__DSIZE_SIZE_MAX - 1;
 
 	XSize._Size[Position] = Size & 0x7f;
 	Size >>= 7;
@@ -73,7 +73,7 @@ xsize__ mdr::Convert( size__ Size )
 		Size >>= 7;
 	}
 
-	XSize.Length = MDR__DSIZE_SIZE_MAX - Position;
+	XSize._Length = MDR__DSIZE_SIZE_MAX - Position;
 
 	return XSize;
 }
@@ -82,7 +82,7 @@ xsize__ mdr::Convert( size__ Size )
 
 size__ mdr::Convert( const mdr::datum__ *DSize )
 {
-	_length__ Position = 0;
+	length__ Position = 0;
 	size__ Size = 0;
 
 	do {

@@ -17,7 +17,7 @@ namespace rpkctx {
 
 	typedef bso::ubyte__ coeff__;
 
-	typedef epeios::size__ amount__;
+	typedef mdr::size__ amount__;
 #	define RPKCTX_AMOUNT_MAX	EPEIOS_SIZE_MAX
 
 	E_TMIMIC( rrows, pool );

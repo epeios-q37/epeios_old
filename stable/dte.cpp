@@ -93,9 +93,9 @@ raw_date__ dte::date__::_Convert(
 	year__ Year ) const
 {
 	if ( Year > ( ( 2 << 14 ) - 1 )
-		 || ( Month == 0 )
+//		 || ( Month == 0 )
 		 || ( Month > 12 )
-		 || ( Day == 0 )
+//		 || ( Day == 0 )
 		 || ( Day > GetAmountOfDaysInMonth( Month, Year ) ) )
 		return DTE_INVALID_DATE;
 	else

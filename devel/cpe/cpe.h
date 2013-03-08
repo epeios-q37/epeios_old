@@ -156,7 +156,12 @@ extern class ttr_tutor &CPETutor;
 #  define CPE__POSIX
 # endif
 # ifdef __ANDROID__
-#   define CPE__ANDROID
+#  define CPE__ANDROID
+#  if ( __SIZEOF_POINTER__ == 4 )
+#   define CPE__32BITS
+#  else
+#   error "New biteness : patching required !"
+# endif
 # endif
 #endif
 

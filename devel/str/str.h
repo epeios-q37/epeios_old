@@ -66,10 +66,6 @@ extern class ttr_tutor &STRTutor;
 #include "cpe.h"
 #include "ctn.h"
 
-#ifdef CPE__64_BITS_TYPES_ALLOWED
-#	define STR__64_BITS_TYPES_ALLOWED
-#endif
-
 #define STR_HEXADECIMAL_MARKER	'#'	// LEs nombres préfixés par ce caractère sont considèrés comme exprimés en hexadécimal.
 
 namespace str {
@@ -296,10 +292,8 @@ namespace str {
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
-#ifdef STR__64_BITS_TYPES_ALLOWED
 		STR_UN( ULL, bso::ullong__, BSO_ULLONG_MAX )
 		STR_SN( SLL, bso::sllong__, BSO_SLLONG_MAX, BSO_SLLONG_MIN )
-#endif
 		STR_UN( UL, bso::ulong__, BSO_ULONG_MAX )
 		STR_SN( SL, bso::slong__, BSO_SLONG_MAX, BSO_SLONG_MIN )
 		STR_UN( US, bso::ushort__, BSO_USHORT_MAX )
@@ -315,10 +309,12 @@ namespace str {
 		}
 		void *ToPointer( mdr::row__ *ErrP = NULL )
 		{
-# ifdef STR__64_BITS_TYPES_ALLOWED
+# ifdef CPE__64BITS
 			return (void *)ToULL( ErrP, str::b16 );
-# else
+# elif defined ( CPE__32BITS )
 			return (void *)ToUL( ErrP, str::b16 );
+# else
+#  error "Unnknown bitness !"
 # endif
 		}
 		void ToNumber(

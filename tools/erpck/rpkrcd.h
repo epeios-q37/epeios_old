@@ -86,7 +86,7 @@ namespace rpkrcd {
 
 	E_AUTO( record )
 
-	typedef ctn:: E_XCONTAINERt_( record_, rrow__ ) records_;
+	typedef ctn:: E_CONTAINERt_( record_, rrow__ ) records_;
 	E_AUTO( records )
 
 	inline rrow__ SearchRecord(

@@ -77,7 +77,7 @@ namespace rpkals {
 
 	E_AUTO( record_alias );
 
-	typedef ctn::E_XMCONTAINER_( record_alias_ ) record_aliases_;
+	typedef ctn::E_MCONTAINER_( record_alias_ ) record_aliases_;
 	E_AUTO( record_aliases )
 
 	class table_alias_
@@ -134,7 +134,7 @@ namespace rpkals {
 	E_AUTO( table_alias );
 
 
-	typedef ctn::E_XMCONTAINER_( table_alias_ ) table_aliases_;
+	typedef ctn::E_MCONTAINER_( table_alias_ ) table_aliases_;
 	E_AUTO( table_aliases )
 
 	class aliases_ {
@@ -177,18 +177,18 @@ namespace rpkals {
 
 	E_AUTO( aliases )
 
-	inline epeios::row__ FindRecordAlias_(
+	inline mdr::row__ FindRecordAlias_(
 		const str::string_ &Label,
 		const record_aliases_ &Aliases )
 	{
-		return SearchInMono<record_aliases_, record_alias_, epeios::row__>( Label, Aliases );
+		return SearchInMono<record_aliases_, record_alias_, mdr::row__>( Label, Aliases );
 	}
 
-	inline epeios::row__ FindTableAlias_(
+	inline mdr::row__ FindTableAlias_(
 		const str::string_ &Label,
 		const table_aliases_ &Aliases )
 	{
-		return SearchInMono<table_aliases_, table_alias_, epeios::row__>( Label, Aliases );
+		return SearchInMono<table_aliases_, table_alias_, mdr::row__>( Label, Aliases );
 	}
 
 	trow__ SearchTable(

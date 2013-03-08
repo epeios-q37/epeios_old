@@ -25,19 +25,21 @@
 
 #include "sktinf.h"
 
-#include "frdkernl.h"
+#include "frdinstc.h"
 
 #include "cgigat.h"
 #include "ssnmng.h"
+
+#include "sclcgi.h"
 
 #define NAME	SKTINF_LC_AFFIX	"cgi"
 #define VERSION	"0.1.0"
 
 const char *scldaemon::TargetName = NAME;
 
-typedef cgigat::cgi_gate__ _gate__;
+typedef frdinstc::instance___ instance___;
 
-typedef frdkernl::kernel___ kernel___;
+typedef sclcgi::steering_callback__ _steering_callback__;
 
 typedef frdkrn::reporting_functions__ _reporting_functions__;
 
@@ -49,194 +51,96 @@ protected:
 	virtual void FRDKRNReportFrontendError( const str::string_ &Message ) {}
 };
 
-namespace sclcgi {
-	enum session_handling__ 
-	{
-		shKeepAlive,
-		shClose,
-		sh_amount,
-		sh_Undefined
-	};
-
-	void *SCLCGINewSession( const cgiarg::arguments_ &Arguments );
-	session_handling__ SCLCGIHandleQuery(
-		void *UP,
-		const cgiarg::arguments_ &Arguments,
-		xml::writer_ &Writer,
-		str::string_ &XMLFileName );
-	void SCLCGIReportEpiredSession(
-		xml::writer_ &Writer,
-		str::string_ &XMLFileName );
-	void SCLCGIDeleteSession( void *UP );
-}
-
-class instance___
-{
-public:
-	void Init( void )
-	{}
-};
-
-void *sclcgi::SCLCGINewSession( const cgiarg::arguments_ &Arguments )
-{
-	instance___ *Instance = NULL;
-ERRProlog
-ERRBegin
-	Instance = new instance___;
-
-	if ( Instance == NULL )
-		ERRa();
-
-	Instance->Init();
-ERRErr
-	if ( Instance != NULL )
-		delete Instance;
-
-	Instance = NULL;
-ERREnd
-ERREpilog
-	return Instance;
-}
-
-sclcgi::session_handling__ sclcgi::SCLCGIHandleQuery(
-		void *UP,
-		const cgiarg::arguments_ &Arguments,
-		xml::writer_ &Writer,
-		str::string_ &XMLFileName )
-{
-	Writer.PushTag( "Coucou" );
-	XMLFileName = "Test";
-
-	return sclcgi::shKeepAlive;
-}
-
-void sclcgi::SCLCGIReportEpiredSession(
-	xml::writer_ &Writer,
-	str::string_ &XMLFileName )
-{
-	Writer.PushTag( "Coucou" );
-	XMLFileName = "Test";
-}
-
-
-void sclcgi::SCLCGIDeleteSession( void *UP )
-{
-	if( UP == NULL )
-		ERRc();
-
-	delete (instance___ *)UP;
-}
-
-typedef ssnmng::user_functions__ _user_functions__;
-
-class user_functions__
-: public _user_functions__
-{
-protected:
-	virtual void SSNMNGDelete( void *UP )
-	{
-		sclcgi::SCLCGIDeleteSession( UP );
-	}
-};
-
-
-static class gate__
-: public _gate__
+class steering_callback__
+: public _steering_callback__
 {
 private:
-	kernel___ _Kernel;
-	ssnmng::sessions_manager _Sessions;
-	::user_functions__ _UserFunctions;
+	frdkernl::kernel___ _Kernel;
 	reporting_functions__ _ReportingFunctions;
 protected:
-	virtual void CGIDATProcess(
-		const cgiarg::arguments_ &Arguments,
+	virtual void *SCLCGINewSession( const cgiarg::arguments_ &Arguments )
+	{
+		instance___ *Instance = NULL;
+	ERRProlog
+	ERRBegin
+		Instance = new instance___;
+
+		if ( Instance == NULL )
+			ERRa();
+
+		Instance->Init( _Kernel );
+	ERRErr
+		if ( Instance != NULL )
+			delete Instance;
+
+		Instance = NULL;
+	ERREnd
+	ERREpilog
+		return Instance;
+	}
+	virtual sclcgi::session_handling__ SCLCGIHandleQuery(
+			void *UP,
+			const cgiarg::arguments_ &Arguments,
+			xml::writer_ &Writer,
+			str::string_ &XSLFileName )
+	{
+		Writer.PushTag( "Handle" );
+		XSLFileName = "Test";
+
+		return sclcgi::shKeepAlive;
+	}
+	virtual void SCLCGIReportExpiredSession(
 		xml::writer_ &Writer,
 		str::string_ &XSLFileName )
 	{
-	ERRProlog
-		void *UP = NULL;
-		ssnmng::row__ SessionRow = NONE;
-		cgiarg::row__ ArgRow = NONE;
-		str::string RawSession;
-		ssnmng::session_id__ Session;
-	ERRBegin
-		ArgRow = Arguments.Locate( "_session" );
-		RawSession.Init();
+		Writer.PushTag( "End" );
+		XSLFileName = "Test";
+	}
+	virtual void SCLCGIDeleteSession( void *UP )
+	{
+		if( UP == NULL )
+			ERRc();
 
-		if ( ArgRow == NONE )
-			SessionRow = _Sessions.New( sclcgi::SCLCGINewSession( Arguments ) );
-		else if ( ( SessionRow = _Sessions.Search( Arguments.GetValue( ArgRow, RawSession ) ) ) == NONE )
-			sclcgi::SCLCGIReportEpiredSession( Writer, XSLFileName );
-		else if ( _Sessions.IsExpired( SessionRow ) ) {
-			_Sessions.Close( SessionRow );	// Appelle 'sclcgi::SCLCGI::DeleteSession.
-			sclcgi::SCLCGIReportEpiredSession( Writer, XSLFileName );
-			SessionRow = NONE;
-		}
-
-		if ( SessionRow != NONE ) {
-			Session.Init();
-			_Sessions.SessionID( SessionRow );
-
-			switch ( sclcgi::SCLCGIHandleQuery( UP, Arguments, Writer, XSLFileName ) ) {
-			case sclcgi::shKeepAlive:
-				break;
-			case sclcgi::shClose:
-				_Sessions.Close( SessionRow );	// Appelle 'sclcgi::SCLCGI::DeleteSession.
-				break;
-			default:
-				ERRc();
-				break;
-			}
-		}
-	ERRErr
-	ERREnd
-	ERREpilog
+		delete (instance___ *)UP;
 	}
 public:
 	void reset( bso::bool__ P = true )
 	{
-		_gate__::reset( P );
-		_ReportingFunctions.reset( P );
-		_Sessions.reset( P );
-		_UserFunctions.reset( P );
 		_Kernel.reset( P );
+		_steering_callback__::reset( P );
+		_ReportingFunctions.reset( P );
 	}
-	E_CVDTOR( gate__ )
+	E_CVDTOR( steering_callback__ )
 	void Init( void )
 	{
-		_gate__::Init();
 		_ReportingFunctions.Init( _Kernel );
-		_Kernel.Init( sclrgstry::GetRegistry(), sclrgstry::GetRoot(), NAME, scllocale::GetLocale(), "en", _ReportingFunctions );
-		_UserFunctions.Init();
-		_Sessions.Init( 60, 60, _UserFunctions );
+		_Kernel.Init( sclrgstry::GetRegistry(), sclrgstry::GetRoot(), NAME, scllocale::GetLocale(), sclcgi::GetLanguage(), _ReportingFunctions );
+		_steering_callback__::Init();
 	}
-} _Gate;
+};
 
-csdleo::user_functions__ *scldaemon::RetrieveSteering(
-	fblbur::mode__ Mode,
-	void *UP,
-	const lcl::locale_ &Locale )
+
+sclcgi::steering_callback__ *sclcgi::SCLCGICreateSteering( void )
 {
-	csdleo::user_functions__ *Functions = NULL;
+	steering_callback__ *SteeringCallback = NULL;
 ERRProlog
 ERRBegin
-	_Gate.Init();
+	if ( ( SteeringCallback = new ::steering_callback__ ) == NULL )
+		ERRc();
 
-	Functions = &_Gate;
+	SteeringCallback->Init();
 ERRErr
-	ERRRst();
+	if ( SteeringCallback != NULL )
+		delete SteeringCallback;
 
-	Functions = NULL;
+	SteeringCallback = NULL;
 ERREnd
 ERREpilog
-	return Functions;
+	return SteeringCallback;
 }
 
 
-void scldaemon::ReleaseSteering( csdleo::user_functions__ *Steering )
+void sclcgi::SCLCGIDeleteSteering( steering_callback__ *SteeringCallback )
 {
-	if ( Steering != NULL )
-		delete Steering;
+	delete SteeringCallback;
 }
-

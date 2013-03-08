@@ -15,7 +15,7 @@ trow__ rpkals::SearchTable(
 	const table_aliases_ &Aliases )
 {
 	ctn::E_CMITEM( table_alias_ ) Alias;
-	epeios::row__ Row = Aliases.First();
+	mdr::row__ Row = Aliases.First();
 
 	Alias.Init( Aliases );
 

@@ -147,7 +147,7 @@ namespace dtr {
 		}
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
-			epeios::size__ Size,
+			mdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Tree.Allocate( Size, Mode );
@@ -295,7 +295,7 @@ namespace dtr {
 			return Parent( Node ) != NONE;
 		}
 		//f Return amount of nodes.
-		epeios::size__ Amount( void ) const
+		mdr::size__ Amount( void ) const
 		{
 			return Tree.Amount();
 		}

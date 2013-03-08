@@ -35,7 +35,7 @@ void Dump_(
 	const rrows_ &Records,
 	xml::writer_ &Writer )
 {
-	epeios::row__ Row = Records.First();
+	mdr::row__ Row = Records.First();
 
 	while ( Row != NONE ) {
 		Writer.PushTag( RECORD_TAG_NAME );
@@ -53,7 +53,7 @@ static rrow__ RetrieveRecordId_( xml::parser___ &Parser )
 {
 	rrow__ Id = NONE;
 	bso::bool__ Continue = true;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 
 	while ( Continue ) {
 		switch ( Parser.Parse( xml::tfObvious ) ) {
@@ -90,7 +90,7 @@ static void Retrieve_(
 	rrows_ &Records )
 {
 	bso::bool__ Continue = true;
-	epeios::row__ Error = NONE;
+	mdr::row__ Error = NONE;
 	rrow__ Row = NONE;
 
 	while ( Continue ) {

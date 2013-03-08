@@ -69,9 +69,9 @@ extern class ttr_tutor &MDRTutor;
 
 #define MDR_INTERNAL_MEMORY_DRIVER *(mdr::E_MEMORY_DRIVER__ *)NULL
 
-# define NONE ((mdr::row_t__)-1)
+# define NONE ( (mdr::row_t__) -1 )
 
-# define MDR__DSIZE_SIZE_MAX ((8*sizeof( mdr::size__))/7+1)
+# define MDR__DSIZE_SIZE_MAX ( ( ( 8 * sizeof( mdr::size__ ) ) / 7 ) + 1 )
 
 namespace mdr {
 
@@ -104,26 +104,31 @@ namespace mdr {
 	// 'Dynamic size' : taile de taille variable.
 	typedef mdr::datum__ dsize__[MDR__DSIZE_SIZE_MAX];
 
-	typedef bso::ubyte__ _length__;
+	typedef bso::ubyte__ length__;
 # define MDRM__LENGTH_MAX BSO_UBYTE_MAX
 
 	typedef struct _xsize__ {
 	private:
 		dsize__ _Size;
+		length__ _Length;
 	public:
-		const mdr::datum__ *Size( void ) const
+		const mdr::datum__ *DSizeBuffer( void ) const
 		{
-			if ( Length == 0 )
+			if ( _Length == 0 )
 				ERRc();
 
-			return _Size + MDR__DSIZE_SIZE_MAX - Length;
+			return _Size + MDR__DSIZE_SIZE_MAX - _Length;
 		}
-		_length__ Length;
-		_xsize__( void )
+		length__ BufferSize( void ) const
+		{
+			return _Length;
+		}
+		void reset( bso::bool__ = true )
 		{
 			memset( _Size, 0, sizeof( _Size ) );
-			Length = 0;
+			_Length = 0;
 		}
+		E_CVDTOR( _xsize__ );
 		friend xsize__ mdr::Convert( mdr::size__ Size );
 	} xsize__;
 

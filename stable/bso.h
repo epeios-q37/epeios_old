@@ -323,17 +323,7 @@ namespace bso {
 		{}
 	};
 
-/*
-# ifdef SIZE_MAX
-#  define BSO_SIZE_MAX	SIZE_MAX
-# elif defined( __SIZE__MAX__ )	// For 'MinGW'.
-#  define BSO_SIZE_MAX	__SIZE__MAX__
-# else	// For some 'g++' version.
 #  define BSO_SIZE_MAX	((size_t)-1)
-# endif
-	//d Minimal value of a 'size__'.
-# define BSO_SIZE_MIN	( 0 )
-*/
 
 	//t Size of a memory .
 	typedef size_t size__;

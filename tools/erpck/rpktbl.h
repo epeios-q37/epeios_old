@@ -69,7 +69,7 @@ namespace rpktbl {
 
 	E_AUTO( table )
 
-	typedef ctn::E_XCONTAINERt_( table_, trow__ ) tables_;
+	typedef ctn::E_CONTAINERt_( table_, trow__ ) tables_;
 	E_AUTO( tables );
 
 	inline trow__ SearchTable(
@@ -105,7 +105,7 @@ namespace rpktbl {
 	}
 
 	inline void Insert(
-		epeios::row__ AliasRow,
+		mdr::row__ AliasRow,
 		const record_aliases_ &Aliases,
 		const tables_ &Tables,
 		record_ &Record )

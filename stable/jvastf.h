@@ -186,7 +186,7 @@ namespace jvastf {
 		E_CVDTOR( input_stream_iflow___ )
 		void Init(
 			jni_param__ &JNIParam,
-			bso::size__ AmountMax = FLW_SIZE_MAX )
+			bso::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( JNIParam );
 			_iflow__::Init( _Driver, AmountMax );
@@ -264,7 +264,7 @@ namespace jvastf {
 		E_CVDTOR( output_stream_oflow___ )
 		void Init(
 			jni_param__ &JNIParam,
-			bso::size__ AmountMax = FLW_SIZE_MAX )
+			bso::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			_Driver.Init( JNIParam );
 			_oflow__::Init( _Driver, AmountMax );

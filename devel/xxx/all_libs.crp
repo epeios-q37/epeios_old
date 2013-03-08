@@ -252,6 +252,7 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &sbt		&epeios		&2000-		&Simplified Binary Tree
 
 &sclbacknd	&epeios	&2011	&SoCLe BACKEND
+&sclcgi		&epeios	&2013	&SoCLe CGI (Common Gateway Interface)
 &scldaemon	&epeios	&2013	&SoCLe DAEMON
 &sclerror	&epeios	&2011	&SoCLe ERROR
 &sclgecko	&epeios	&2001	&SoCLe GECKO component

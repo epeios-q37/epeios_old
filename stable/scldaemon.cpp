@@ -115,7 +115,7 @@ ERRBegin
 		break;
 	}
 
-	Steering = RetrieveSteering( Mode, Data->UP, scllocale::GetLocale() );
+	Steering = RetrieveSteering( Mode, scllocale::GetLocale() );
 ERRErr
 	if ( cio::IsInitialized() )
 		if ( sclerror::ReportPendingError( GetLanguage(), err::hUserDefined  )) {
