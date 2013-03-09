@@ -879,6 +879,42 @@ namespace amm {
 			Memory.Init();
 			S_.Free.Init();
 		}
+		descriptor__ Allocate( size__ Size )
+		{
+			if ( Size == 0 )
+				return NONE;
+			else
+				return _Allocate( Size );
+		}
+		void Free( descriptor__ Descriptor )
+		{
+			if ( Descriptor != NONE ) 
+				return _Free( Descriptor );
+		}
+		descriptor__ Reallocate(
+			descriptor__ Descriptor,
+			size__ Size )
+		{
+			descriptor__ NewDescriptor = NONE;
+
+			if ( Size == 0 )
+				Free( Descriptor );
+			else if ( Descriptor == NONE )
+				NewDescriptor = Allocate( Size );
+			else {
+				size__ OldSize = _GetSize( Descriptor );
+				NewDescriptor = _Allocate( Size );
+
+				if ( OldSize > Size )
+					OldSize = Size;
+
+				Memory.Store( Memory, OldSize, *NewDescriptor, *Descriptor );
+
+				_Free( Descriptor );
+			}
+
+			return NewDescriptor;
+		}
 	};
 }
 
