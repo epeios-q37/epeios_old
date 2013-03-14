@@ -60,6 +60,8 @@ extern class ttr_tutor &MMMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'AGS' instead !"
+
 #include "err.h"
 #include "flw.h"
 #include "bso.h"

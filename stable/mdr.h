@@ -60,6 +60,8 @@ extern class ttr_tutor &MDRTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'SDR' instead !"
+
 //D Memory DRiver.
 
 #include "err.h"

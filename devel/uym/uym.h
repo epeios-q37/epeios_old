@@ -60,6 +60,8 @@ extern class ttr_tutor &UYMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'UYS' instead !".
+
 #include "err.h"
 #include "tol.h"
 #include "mdr.h"

@@ -1,7 +1,7 @@
 /*
-	Header for the 'amm' library by Claude SIMON (csimon at zeusw dot org)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
-$_RAW_$
+	Header for the 'ags' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) 20132004 Claude SIMON.
+
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef AMM__INC
-#define AMM__INC
+#ifndef AGS__INC
+#define AGS__INC
 
-#define AMM_NAME		"AMM"
+#define AGS_NAME		"AGS"
 
-#define	AMM_VERSION	"$Revision$"
+#define	AGS_VERSION	"$Revision$"
 
-#define AMM_OWNER		"Claude SIMON"
+#define AGS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &AMMTutor;
+extern class ttr_tutor &AGSTutor;
 
-#if defined( XXX_DBG ) && !defined( AMM_NODBG )
-#define AMM_DBG
+#if defined( XXX_DBG ) && !defined( AGS_NODBG )
+#define AGS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
@@ -55,90 +55,106 @@ extern class ttr_tutor &AMMTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Aggregated MeMory 
+//D Aggregated Storage 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
 # include "err.h"
 # include "flw.h"
-# include "mdr.h"
-// # include "uym.h"	// déporté, parce 'amm.h' est inclus par 'uym.h'.
+# include "sdr.h"
+// # include "uys.h"	// déporté, parce 'ags.h' est inclus par 'uys.h'.
 
-namespace amm {
+# ifdef UYS__INC
+#  ifndef UYS__HEADER_HANDLED
+#   define AGS__HANDLE_PART_ONE
+#   undef AGS__INC
+#  else
+#   define AGS__HANDLE_PART_TWO
+#  endif
+# else
+#  define AGS__HANDLE_PART_ONE
+#  define AGS__HANDLE_PART_TWO
+# endif
 
-	E_TMIMIC__( mdr::row_t__, descriptor__ );
+# ifdef AGS__HANDLE_PART_ONE
+#  ifdef	AGS__PART_ONE_HANDLED
+#   error
+#  endif
+#  ifdef	AGS__PART_TWO_HANDLED
+#   error
+#  endif
 
-	class aggregated_memory_driver__
-	: public mdr::E_MEMORY_DRIVER__
+# define AGS_UNDEFINED_DESCRIPTOR	( (ags::descriptor__)NONE )
+
+namespace ags {
+
+	E_TMIMIC__( sdr::row_t__, descriptor__ );
+
+	class aggregated_storage_;
+
+	class aggregated_storage_driver__
+	: public sdr::E_STORAGE_DRIVER__
 	{
 	private:
 		descriptor__ &_Descriptor;
 		// memoire à laquelle il a été affecté
-		class multimemory_ *Multimemoire_;
+		class aggregated_storage_ *Storage_;
 		void _Free();
 	protected:
-		virtual void MDRAllocate( mdr::size__ Size );
+		virtual void SDRAllocate( sdr::size__ Size );
 		// Fonction déportée.
-		virtual mdr::size__ MDRUnderlyingSize( void );
+		virtual sdr::size__ SDRUnderlyingSize( void );
 		// fonction déportée
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer );
+		virtual void SDRRecall(
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer );
 		// fonction déportée
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position );
+		virtual void SDRStore(
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position );
 	public:
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( Multimemoire_ != NULL )
+				if ( Storage_ != NULL )
 					_Free();
 			} else
-				Multimemoire_ = NULL;
+				Storage_ = NULL;
 
-			E_MEMORY_DRIVER__::reset( P );
+			E_STORAGE_DRIVER__::reset( P );
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
-		aggregated_memory_driver__( descriptor__ &Descriptor )
+		aggregated_storage_driver__( descriptor__ &Descriptor )
 		: _Descriptor( Descriptor ),
-		  E_MEMORY_DRIVER__()
+		  E_STORAGE_DRIVER__()
 		{
 			reset( false );
 		}
-		E_VDTOR( aggregated_memory_driver__ )
-		//f Initialization with the 'Multimemory' multimemory.
-		void Init( multimemory_ &Multimemory )
+		E_VDTOR( aggregated_storage_driver__ )
+		void Init( aggregated_storage_ &Storage )
 		{
 			reset();
 
-			Multimemoire_ = &Multimemory;
-			E_MEMORY_DRIVER__::Init();
+			Storage_ = &Storage;
+			E_STORAGE_DRIVER__::Init();
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
-		//f Return the current descriptor.
 		descriptor__ Descriptor( void ) const
 		{
 			return _Descriptor;
 		}
-		//f Return the used multimemory.
-		multimemory_ *Multimemory( void ) const
+		aggregated_storage_ *Storage( void ) const
 		{
-			return Multimemoire_;
+			return Storage_;
 		}
 	};
-}
-
-# include "uym.h"
-
-namespace amm {
 
 	/*
 	NOTA :
@@ -204,15 +220,15 @@ namespace amm {
 		f_All = fStatus | fPredecessorStatus | fSizeType,
 	};
 
-# define AMM_HEADER_SIZE			sizeof( amm::header__ )
-# define AMM_EMBEDDED_VALUE_MAX		( ~amm::f_All >> amm::fp_SizeBegin )
-# define AMM_SHORT_SIZE_MAX			( AMM_EMBEDDED_VALUE_MAX + 1 )
-# define AMM_LONG_SIZE_SIZE_MAX		sizeof( mdr::dsize__ )
-# define AMM_FULL_HEADER_SIZE_MAX	( AMM_HEADER_SIZE + AMM_LONG_SIZE_SIZE_MAX )
+# define AGS_HEADER_SIZE			sizeof( ags::header__ )
+# define AGS_EMBEDDED_VALUE_MAX		( ~ags::f_All >> ags::fp_SizeBegin )
+# define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
+# define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
+# define AGS_FULL_HEADER_SIZE_MAX	( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
 
-	using mdr::size__;
+	using sdr::size__;
 
-	typedef mdr::datum__ header__;
+	typedef sdr::datum__ header__;
 
 	inline bso::bool__ IsUsed( header__ Header )
 	{
@@ -328,7 +344,7 @@ namespace amm {
 
 	inline bso::bool__ CanValueBeEmbedded( size__ Value )
 	{
-		return Value <= AMM_EMBEDDED_VALUE_MAX;
+		return Value <= AGS_EMBEDDED_VALUE_MAX;
 	}
 
 	inline bso::bool__ IsFreeFragmentSizeShortSuitable( size__ Size )
@@ -344,7 +360,7 @@ namespace amm {
 		if ( Size == 0 )
 			ERRc();
 
-		return Size <= AMM_SHORT_SIZE_MAX;
+		return Size <= AGS_SHORT_SIZE_MAX;
 	}
 
 	inline bso::bool__ IsSizeShortSuitable(
@@ -379,7 +395,7 @@ namespace amm {
 		if ( IsUsedFragmentSizeShortSuitable( Size ) )
 			ERRc();
 
-		return Size - AMM_SHORT_SIZE_MAX;
+		return Size - AGS_SHORT_SIZE_MAX;
 	}
 
 	inline size__ AdjustLongSize(
@@ -411,7 +427,7 @@ namespace amm {
 		Header = ( Header & f_All ) | ( (bso::ubyte__)Value >> fp_SizeBegin );
 	}
 
-	typedef mdr::xsize__ _xsize__;
+	typedef sdr::xsize__ _xsize__;
 
 	class xsize__ {
 	private:
@@ -432,7 +448,7 @@ namespace amm {
 			_Size = Size;
 
 			if ( !IsSizeShortSuitable( Size, Status ) )
-				_XSize = mdr::Convert( AdjustLongSize( Size, Status ) );
+				_XSize = sdr::Convert( AdjustLongSize( Size, Status ) );
 
 			_Status = Status;
 		}
@@ -447,7 +463,7 @@ namespace amm {
 				return _Size;
 				break;
 			case sUsed:
-				return _XSize.BufferSize() + AMM_HEADER_SIZE + _Size;
+				return _XSize.BufferSize() + AGS_HEADER_SIZE + _Size;
 				break;
 			default:
 				ERRc();
@@ -468,7 +484,7 @@ namespace amm {
 		{
 			return _XSize.BufferSize() == 0;
 		}
-		const mdr::datum__ *DSizeBuffer( void ) const
+		const sdr::datum__ *DSizeBuffer( void ) const
 		{
 			return _XSize.DSizeBuffer();
 		}
@@ -488,13 +504,13 @@ namespace amm {
 			status__ PredecessorStatus )
 		{
 			Mark( _Header, Status );
-			amm::MarkPredecessorStatus( _Header, PredecessorStatus );
+			ags::MarkPredecessorStatus( _Header, PredecessorStatus );
 
 			if ( IsShortSuitable() ) {
-				amm::MarkSizeAsShort( _Header );
+				ags::MarkSizeAsShort( _Header );
 				SetEmbeddedValue( _Header, xsize__::Size() - 1 );
 			} else
-				amm::MarkSizeAsShort( _Header );
+				ags::MarkSizeAsShort( _Header );
 		}
 	public:
 		void reset( bso::bool__  P = true )
@@ -527,9 +543,9 @@ namespace amm {
 	};
 
 
-	inline const mdr::datum__ *FindLongSizeBegin( const mdr::datum__ *Buffer )
+	inline const sdr::datum__ *FindLongSizeBegin( const sdr::datum__ *Buffer )
 	{
-		bso::ubyte__ Counter = AMM_LONG_SIZE_SIZE_MAX;
+		bso::ubyte__ Counter = AGS_LONG_SIZE_SIZE_MAX;
 
 		if ( Buffer[--Counter] & fSizeType )
 			ERRc();
@@ -545,7 +561,7 @@ namespace amm {
 	struct tracker__
 	{
 	public:
-		mdr::row_t__ Row;
+		sdr::row_t__ Row;
 		size__ Size;
 		void reset( bso::bool__ = true )
 		{
@@ -558,7 +574,7 @@ namespace amm {
 			reset();
 		}
 		void Init(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			size__ Size )
 		{
 			if ( ( Row ==  NONE ) || ( Size == 0 ) )
@@ -581,57 +597,73 @@ namespace amm {
 		}
 	};
 
-	typedef mdr::datum__ meta_data__[AMM_FULL_HEADER_SIZE_MAX];
+	typedef sdr::datum__ meta_data__[AGS_FULL_HEADER_SIZE_MAX];
+}
 
 
-	class aggregate_memory_
+#  define AGS__PART_ONE_HANDLED
+# endif
+
+# ifdef AGS__HANDLE_PART_TWO
+#  ifndef AGS__PART_ONE_HANDLED
+#   error
+#  endif
+#  ifdef AGS__PART_TWO_HANDLED
+#   error
+# endif
+
+# include "uys.h"
+
+namespace ags {
+
+	class aggregated_storage_
 	{
 	private:
-		mdr::size__ _Size( void ) const
+		sdr::size__ _Size( void ) const
 		{
-			return Memory.Size();
+			return Storage.Size();
 		}
 		void _Read(
-			mdr::row_t__ Position,
+			sdr::row_t__ Position,
 			size__ Size,
-			mdr::datum__ *Data ) const
+			sdr::datum__ *Data ) const
 		{
-			Memory.Recall( Size, Position, Data );
+			Storage.Recall( Size, Position, Data );
 		}
 		void _Write(
-			const mdr::datum__ *Data,
-			mdr::row_t__ Position,
+			const sdr::datum__ *Data,
+			sdr::row_t__ Position,
 			size__ Size )
 		{
-			Memory.Store( Data, Size, Position );
+			Storage.Store( Data, Size, Position );
 		}
-		mdr::row_t__ _GetPriorMetaData(	// Retourne la position du début des méta-données.
-			mdr::row_t__ Row,	// Si pointe sur le début d'un fragment (cas d'un fragment libre), est probablement sans signification.
+		sdr::row_t__ _GetPriorMetaData(	// Retourne la position du début des méta-données.
+			sdr::row_t__ Row,	// Si pointe sur le début d'un fragment (cas d'un fragment libre), est probablement sans signification.
 			header__ &Header,
 			size__ &Size ) const
 		{
-			mdr::datum__ Buffer[AMM_FULL_HEADER_SIZE_MAX];
-			size__ Amount = ( Row < AMM_FULL_HEADER_SIZE_MAX ? Row : AMM_FULL_HEADER_SIZE_MAX );
+			sdr::datum__ Buffer[AGS_FULL_HEADER_SIZE_MAX];
+			size__ Amount = ( Row < AGS_FULL_HEADER_SIZE_MAX ? Row : AGS_FULL_HEADER_SIZE_MAX );
 
 			if ( Amount == 0 )
 				ERRc();
 
 			_Read( Row - Amount, Amount, Buffer );
 
-			if ( Buffer[Size] & amm::fSizeType ) {
+			if ( Buffer[Size] & ags::fSizeType ) {
 				Header = (header__)Buffer[Amount];
 				Size = GetShortSize( Header );
 				Row--;
 			} else {
-				const mdr::datum__ *Pointer = FindLongSizeBegin( &Buffer[Amount] );
-				Size = mdr::Convert( Pointer );
+				const sdr::datum__ *Pointer = FindLongSizeBegin( &Buffer[Amount] );
+				Size = sdr::Convert( Pointer );
 				Header = *--Pointer;
 				 Row -= &Buffer[Amount] - Pointer + 1;
 			}
 
 			return Row;
 		}
-		size__ _GetPriorSize( mdr::row_t__ Row ) const
+		size__ _GetPriorSize( sdr::row_t__ Row ) const
 		{
 			size__ Size;
 			header__ Header;
@@ -641,16 +673,16 @@ namespace amm {
 			return Size;
 		}
 		void _Get(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			header__ &Header ) const
 		{
-			_Read( Row, AMM_HEADER_SIZE, &Header );
+			_Read( Row, AGS_HEADER_SIZE, &Header );
 		}
 		void _Set(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			header__ Header )
 		{
-			_Write( &Header, Row, AMM_HEADER_SIZE );
+			_Write( &Header, Row, AGS_HEADER_SIZE );
 		}
 		bso::bool__ _IsTailFragmentFree( void ) const
 		{
@@ -665,7 +697,7 @@ namespace amm {
 			}
 		}
 		void _UpdatePredecessorStatus(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			status__ Status )	// Le statut du prédecesseur du premier fragment reflète en fait le statut du dernier fragment.
 		{
 			header__ Header;
@@ -687,32 +719,32 @@ namespace amm {
 			else
 				return 0;
 		}
-		mdr::row_t__ _GetTailFreeFragment( void ) const
+		sdr::row_t__ _GetTailFreeFragment( void ) const
 		{
 			return _Size() - _GetTailFreeSize();
 		}
-		size__ _GetLongSize( mdr::row_t__ Row ) const
+		size__ _GetLongSize( sdr::row_t__ Row ) const
 		{
-			mdr::dsize__ DSize;
+			sdr::dsize__ DSize;
 			size__ Limit = _Size() - Row;
 
-			_Read( Row, AMM_LONG_SIZE_SIZE_MAX > Limit ? Limit : AMM_LONG_SIZE_SIZE_MAX, (mdr::datum__ *)&DSize );
+			_Read( Row, AGS_LONG_SIZE_SIZE_MAX > Limit ? Limit : AGS_LONG_SIZE_SIZE_MAX, (sdr::datum__ *)&DSize );
 
-			return mdr::Convert( DSize );
+			return sdr::Convert( DSize );
 		}
 		void _GetMetaData(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			header__ &Header,
 			size__ &Size ) const
 		{
 			_Get( Row, Header );
 
-			if ( amm::IsSizeShort( Header ) )
-				Size = amm::GetShortSize( Header );
+			if ( ags::IsSizeShort( Header ) )
+				Size = ags::GetShortSize( Header );
 			else
-				Size = _GetLongSize( Row + AMM_HEADER_SIZE );
+				Size = _GetLongSize( Row + AGS_HEADER_SIZE );
 		}
-		size__ _GetFragmentSize( mdr::row_t__ Row ) const
+		size__ _GetFragmentSize( sdr::row_t__ Row ) const
 		{
 			header__ Header;
 			size__ Size = 0;
@@ -725,23 +757,23 @@ namespace amm {
 		{
 			return _GetPriorSize( *Descriptor );
 		}
-		bso::bool__ _IsLast( mdr::row_t__ Row ) const
+		bso::bool__ _IsLast( sdr::row_t__ Row ) const
 		{
 			return ( Row + _GetFragmentSize( Row ) ) == _Size();
 		}
 		void _WriteHeader(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const header__ Header )
 		{
-			_Write( &Header, Row, AMM_HEADER_SIZE );
+			_Write( &Header, Row, AGS_HEADER_SIZE );
 		}
 		descriptor__ _WriteHeadMetaData(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const xheader__ XHeader )
 		{
 			_WriteHeader( Row, XHeader.Header() );
 
-			Row += AMM_HEADER_SIZE;
+			Row += AGS_HEADER_SIZE;
 
 			if ( !XHeader.IsShortSuitable() ) {
 				_Write( XHeader.DSizeBuffer(), Row, XHeader.DSizeBufferLength() );
@@ -751,7 +783,7 @@ namespace amm {
 			return Row;
 		}
 		void _WriteTailMetaData(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const xheader__ &XHeader )
 		{
 			if ( XHeader.IsShortSuitable() )
@@ -765,14 +797,14 @@ namespace amm {
 			case 2:
 				break;
 			default:
-				_Write( (const mdr::datum__ *)"\x0", Row + XHeader.Size() - XHeader.DSizeBufferLength() - 1, 1 );
+				_Write( (const sdr::datum__ *)"\x0", Row + XHeader.Size() - XHeader.DSizeBufferLength() - 1, 1 );
 			case 3:
 				_Write( XHeader.DSizeBuffer(), Row + XHeader.Size() - XHeader.DSizeBufferLength(), XHeader.DSizeBufferLength() );
 				break;
 			}
 		}
 		descriptor__ _SetFragment(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const xheader__ &XHeader )
 		{
 			if ( XHeader.Status() == sFree )
@@ -781,7 +813,7 @@ namespace amm {
 			return _WriteHeadMetaData( Row, XHeader );
 		}
 		descriptor__ _SetFragment(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const xsize__ &XSize,
 			status__ PredecessorStatus )
 		{
@@ -792,8 +824,8 @@ namespace amm {
 			return _SetFragment( Row, XHeader );
 		}
 		void _SetAsFreeFragment(
-			mdr::row_t__ Row,
-			mdr::size__ Size,
+			sdr::row_t__ Row,
+			sdr::size__ Size,
 			status__ PredecessorStatus )
 		{
 			xsize__ XSize;
@@ -808,19 +840,19 @@ namespace amm {
 			bso::bool__ &UsingTail )
 		{
 			size__ TailAvailableSize = _GetTailFreeSize();
-			mdr::row_t__ Row = _Size() - TailAvailableSize;
+			sdr::row_t__ Row = _Size() - TailAvailableSize;
 
 			UsingTail = TailAvailableSize != 0;
 
 			if ( TailAvailableSize >= XSize.Size() )
 				ERRc();
 
-			Memory.Allocate( _Size() - TailAvailableSize + XSize.FragmentSize() );
+			Storage.Allocate( _Size() - TailAvailableSize + XSize.FragmentSize() );
 
 			return _SetFragment( Row, XSize, PredecessorStatus );
 		}
 		descriptor__ _SetUsedFragmentUsingFreeFragment(
-			mdr::row_t__ Row,
+			sdr::row_t__ Row,
 			const xsize__ &XSize,
 			status__ PredecessorStatus )
 		{
@@ -834,11 +866,11 @@ namespace amm {
 
 			return Descriptor;
 		}
-		mdr::row_t__ _GetUsableFreeFragmentIfAvailable(
+		sdr::row_t__ _GetUsableFreeFragmentIfAvailable(
 			const xsize__ &XSize,
 			bso::bool__ &All )
 		{
-			mdr::row_t__ Row = NONE;
+			sdr::row_t__ Row = NONE;
 
 			if ( S_.Free.IsSuitable( XSize.Size(), All ) ) {
 				Row = S_.Free.Row;
@@ -847,10 +879,10 @@ namespace amm {
 
 			return Row;
 		}
-		descriptor__ _Allocate( mdr::size__ Size )
+		descriptor__ _Allocate( sdr::size__ Size )
 		{
 			xsize__ XSize;
-			mdr::row_t__ Row = NONE;
+			sdr::row_t__ Row = NONE;
 			descriptor__ Descriptor = NONE;
 			bso::bool__ All = false;
 			size__ Available = _GetTailFreeSize();
@@ -881,11 +913,11 @@ namespace amm {
 		{
 			header__ Header;
 			size__ Size;
-			mdr::row_t__ Row = _GetPriorMetaData( *Descriptor, Header, Size );
-			mdr::row_t__ Next = *Descriptor + Size;
+			sdr::row_t__ Row = _GetPriorMetaData( *Descriptor, Header, Size );
+			sdr::row_t__ Next = *Descriptor + Size;
 
 			if ( !_IsLast( Row ) ) {
-				mdr::row_t__ SuccessorRow = *Descriptor + Size;
+				sdr::row_t__ SuccessorRow = *Descriptor + Size;
 				header__ SuccessorHeader;
 				size__ SuccessorSize = 0;
 
@@ -924,34 +956,34 @@ namespace amm {
 			}
 		}
 	public:
-		uym::untyped_memory_ Memory;
+		uys::untyped_storage_ Storage;
 		struct s {
-			uym::untyped_memory_::s Memory;
+			uys::untyped_storage_::s Storage;
 			tracker__ Free;	// Ne doit pas pointer sur le dernier fragment, même s'il s'agit du seul.
 		} &S_;
-		aggregate_memory_( s &S )
+		aggregated_storage_( s &S )
 		: S_( S ),
-		  Memory( S.Memory )
+		  Storage( S.Storage )
 		{}
 		void reset( bso::bool__  P = true )
 		{
-			Memory.reset( P );
+			Storage.reset( P );
 			S_.Free.reset( P );
 		}
-		aggregate_memory_ operator =( const aggregate_memory_ &AM )
+		aggregated_storage_ operator =( const aggregated_storage_ &AS )
 		{
-			Memory = AM.Memory;
-			S_.Free = AM.S_.Free;
+			Storage = AS.Storage;
+			S_.Free = AS.S_.Free;
 
 			return *this;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_STORAGE_DRIVER__ &MD )
 		{
-			Memory.plug( MD );
+			Storage.plug( MD );
 		}
 		void Init( void )
 		{
-			Memory.Init();
+			Storage.Init();
 			S_.Free.Init();
 		}
 		descriptor__ Allocate( size__ Size )
@@ -983,7 +1015,7 @@ namespace amm {
 				if ( OldSize > Size )
 					OldSize = Size;
 
-				Memory.Store( Memory, OldSize, *NewDescriptor, *Descriptor );
+				Storage.Store( Storage, OldSize, *NewDescriptor, *Descriptor );
 
 				_Free( Descriptor );
 			}
@@ -992,22 +1024,32 @@ namespace amm {
 		}
 		void Read(
 			descriptor__ Descriptor,
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer )
 		{
-			Memory.Recall( *Descriptor + Position, Amount, Buffer );
+			Storage.Recall( *Descriptor + Position, Amount, Buffer );
 		}
 		void Write(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
 			descriptor__ Descriptor,
-			mdr::row_t__ Position )
+			sdr::row_t__ Position )
 		{
-			Memory.Store( Buffer, Amount, *Descriptor + Position );
+			Storage.Store( Buffer, Amount, *Descriptor + Position );
 		}
 	};
+
+	E_AUTO( aggregated_storage )
+
+# define E_ASTORAGE_	aggregated_storage_
+# define E_ASTORAGE	aggregated_storage
 }
+
+#endif
+
+# undef AGS__HANDLE_PART_ONE
+# undef AGS__HANDLE_PART_TWO
 
 /*$END$*/
 				  /********************************************/

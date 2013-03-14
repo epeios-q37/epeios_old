@@ -62,7 +62,7 @@ extern class ttr_tutor &BCHTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "tym.h"
+#include "tys.h"
 #include "aem.h"
 #include "dtfptb.h"
 #include "flm.h"

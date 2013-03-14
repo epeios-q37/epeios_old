@@ -1,6 +1,6 @@
 /*
-	'amm' library by Claude SIMON (csimon at zeusw dot org)
-	Requires the 'amm' header file ('amm.h').
+	'sdr' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'sdr' header file ('sdr.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define AMM__COMPILATION
+#define SDR__COMPILATION
 
-#include "amm.h"
+#include "sdr.h"
 
-class ammtutor
+class sdrtutor
 : public ttr_tutor
 {
 public:
-	ammtutor( void )
-	: ttr_tutor( AMM_NAME )
+	sdrtutor( void )
+	: ttr_tutor( SDR_NAME )
 	{
-#ifdef AMM_DBG
-		Version = AMM_VERSION "\b\bD $";
+#ifdef SDR_DBG
+		Version = SDR_VERSION "\b\bD $";
 #else
-		Version = AMM_VERSION;
+		Version = SDR_VERSION;
 #endif
-		Owner = AMM_OWNER;
+		Owner = SDR_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~ammtutor( void ){}
+	virtual ~sdrtutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,60 +55,60 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace amm;
+using namespace sdr;
+
+xsize__ sdr::Convert( size__ Size )
+{
+	xsize__ XSize;
+	length__ Position = SDR__DSIZE_SIZE_MAX - 1;
+
+	XSize._Size[Position] = Size & 0x7f;
+	Size >>= 7;
+
+	while ( Size != 0 ) {
+		if ( Position-- == 0 )
+			ERRc();
+
+		XSize._Size[Position] = ( Size & 0x7f ) | 0x80; 
+		Size >>= 7;
+	}
+
+	XSize._Length = SDR__DSIZE_SIZE_MAX - Position;
+
+	return XSize;
+}
+
+#define LIMIT ( SDR_SIZE_MAX >> 7 )
+
+size__ sdr::Convert( const sdr::datum__ *DSize )
+{
+	length__ Position = 0;
+	size__ Size = 0;
+
+	do {
+		if ( Size > LIMIT )
+			ERRc();
+
+		Size = ( Size << 7 ) + ( DSize[Position] & 0x7f );
+	} while ( DSize[Position++] & 0x80 );
+
+	return Size;
+}
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-inline void aggregated_memory_driver__::_Free( void )
-{
-	if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
-		Multimemoire_->Free( _Descriptor );
-}
-
-inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
-{
-	_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size, _Addendum );
-}
-
-inline mdr::size__ multimemory_driver__::MDRUnderlyingSize( void )
-{
-	if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
-		return Multimemoire_->Size( _Descriptor );
-	else
-		return 0;
-}
-
-inline void multimemory_driver__::MDRRecall(
-	mdr::row_t__ Position,
-	mdr::size__ Amount,
-	mdr::datum__ *Buffer )
-{
-	Multimemoire_->Read( _Descriptor, Position, Amount, Buffer, _Addendum );
-}
-// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-inline void multimemory_driver__::MDRStore(
-	const mdr::datum__ *Buffer,
-	mdr::size__ Amount,
-	mdr::row_t__ Position )
-{
-	Multimemoire_->Write( Buffer, Amount, _Descriptor, Position, _Addendum );
-}
-
-}
-
-
-
-class ammpersonnalization
-: public ammtutor
+class sdrpersonnalization
+: public sdrtutor
 {
 public:
-	ammpersonnalization( void )
+	sdrpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~ammpersonnalization( void )
+	~sdrpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -124,6 +124,6 @@ public:
 
 // 'static' by GNU C++.
 
-static ammpersonnalization Tutor;
+static sdrpersonnalization Tutor;
 
-ttr_tutor &AMMTutor = Tutor;
+ttr_tutor &SDRTutor = Tutor;

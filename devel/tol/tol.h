@@ -288,7 +288,7 @@ public:\
 
 
 //d Create a new type for a row named 'Type'.
-# define E_ROW( Type )	E_TMIMIC__( mdr::row_t__, Type )
+# define E_ROW( Type )	E_TMIMIC__( sdr::row_t__, Type )
 
 /* Permet de transformer 2 arguments en 1; si un argument d'une macro
 a besoin de contenir une virgule, cette macro est là pour ça
@@ -794,11 +794,11 @@ namespace tol {
 	{\
 		return Object Next( P );\
 	}\
-	mdr::size__ Amount( void ) const\
+	sdr::size__ Amount( void ) const\
 	{\
 		return Object Amount();\
 	}\
-	mdr::size__ Extent( void ) const\
+	sdr::size__ Extent( void ) const\
 	{\
 		return Object Extent();\
 	}\
@@ -815,28 +815,28 @@ namespace tol {
 car 'E_XNAVt(...)' fait elle-même appel à une macro. Aussi faudra-t'il explicitement appelé 'E_NAVt(...)' et cette macro-ci
 pour parvenir au même résultat que 'E_XNAVt(...)'. */
 # define E_NAVXt( Object, Type )\
-	Type First( mdr::size__ Offset ) const\
+	Type First( sdr::size__ Offset ) const\
 	{\
 		return Object  First( Offset );\
 	}\
-	Type Last( mdr::size__ Offset ) const\
+	Type Last( sdr::size__ Offset ) const\
 	{\
 		return Object Last( Offset );\
 	}\
 	Type Previous(\
 		Type P,\
-		mdr::size__ Offset ) const\
+		sdr::size__ Offset ) const\
 	{\
 		return Object Previous( P, Offset );\
 	}\
 	Type Next(\
 		Type P,\
-		mdr::size__ Offset ) const\
+		sdr::size__ Offset ) const\
 	{\
 		return Object Next( P, Offset  );\
 	}\
 	void Allocate(\
-		mdr::size__ Size,\
+		sdr::size__ Size,\
 		aem::mode__ Mode = aem::m_Default )\
 	{\
 		Object Allocate( Size, Mode );\
@@ -846,22 +846,22 @@ pour parvenir au même résultat que 'E_XNAVt(...)'. */
 		E_NAVt( Object, Type )\
 		E_NAVXt( Object, Type )
 
-# define E_NAV( Object )	E_NAVt( Object, mdr::row__ )
-# define E_NAVX( Object )	E_NAVXt( Object, mdr::row__ )
-# define E_XNAV( Object )	E_XNAVt( Object, mdr::row__ )
+# define E_NAV( Object )	E_NAVt( Object, sdr::row__ )
+# define E_NAVX( Object )	E_NAVXt( Object, sdr::row__ )
+# define E_XNAV( Object )	E_XNAVt( Object, sdr::row__ )
 
 namespace mmm {
 	class multimemory_;
 }
 
-namespace mdr {
+namespace sdr {
 	struct row__;
 }
 
 namespace tol {
 
 	// A basic object 't' becomes a normal object.
-	template <class t, typename r = mdr::row__> class object_
+	template <class t, typename r = sdr::row__> class object_
 	{
 	public:
 		struct s

@@ -60,6 +60,8 @@ extern class ttr_tutor &TYMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'TYS' instead !"
+
 #include "err.h"
 #include "flw.h"
 #include "uym.h"

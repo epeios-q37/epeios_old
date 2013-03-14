@@ -1,12 +1,12 @@
 /*
-	Header for the 'flm' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	Header for the 'fls' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@
 
 //	$Id$
 
-#ifndef FLM__INC
-#define FLM__INC
+#ifndef FLS__INC
+#define FLS__INC
 
-#define FLM_NAME		"FLM"
+#define FLS_NAME		"FLS"
 
-#define	FLM_VERSION	"$Revision$"
+#define	FLS_VERSION	"$Revision$"
 
-#define FLM_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define FLS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &FLMTutor;
+extern class ttr_tutor &FLSTutor;
 
-#if defined( XXX_DBG ) && !defined( FLM_NODBG )
-#define FLM_DBG
+#if defined( XXX_DBG ) && !defined( FLS_NODBG )
+#define FLS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,50 +55,47 @@ extern class ttr_tutor &FLMTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D FiLe Memory 
+//D FiLe Storage 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
-//D FiLe Memory.
 
-# error "Obsolete ! Use 'FLS' instead !"
+# include "cpe.h"
+# include "tol.h"
+# include "err.h"
+# include "flw.h"
+# include "sdr.h"
+# include "iop.h"
+# include "fil.h"
 
-#include "cpe.h"
-#include "tol.h"
-#include "err.h"
-#include "flw.h"
-#include "mdr.h"
-#include "iop.h"
-#include "fil.h"
+# if defined( CPE__WIN ) || defined ( CPE__MINGW ) || defined ( CPE__CYGWIN )
+#  define FLS_DEFAULT_MAX_FILE_AMOUNT	1000
+# elif defined ( CPE__LINUX )
+#  define FLS_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
+# elif defined ( CPE__MAC )
+#  define FLS_DEFAULT_MAX_FILE_AMOUNT	200	// Mac, par défaut, ne peut ouvrir que 256 descripteurs (socket comprises).
+# else
+#  error "Unimplemented target !"
+# endif
 
-#if defined( CPE__MS ) || defined ( CPE__MINGW ) || defined ( CPE__CYGWIN )
-#	define FLM_DEFAULT_MAX_FILE_AMOUNT	1000
-#elif defined ( CPE__LINUX )
-#	define FLM_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
-#elif defined ( CPE__MAC )
-#	define FLM_DEFAULT_MAX_FILE_AMOUNT	200	// Mac, par défaut, ne peut ouvrir que 256 descripteurs (socket comprises).
+
+#ifdef FLS_MAX_FILE_AMOUNT
+#	define FLS__MAX_FILE_AMOUNT	FLS_MAX_FILE_AMOUNT
 #else
-#	error "Unimplemented target !"
+#	define FLS__MAX_FILE_AMOUNT	FLS_DEFAULT_MAX_FILE_AMOUNT
 #endif
 
 
-#ifdef FLM_MAX_FILE_AMOUNT
-#	define FLM__MAX_FILE_AMOUNT	FLM_MAX_FILE_AMOUNT
-#else
-#	define FLM__MAX_FILE_AMOUNT	FLM_DEFAULT_MAX_FILE_AMOUNT
-#endif
-
-
-#ifndef FLM_NO_MT
+#ifndef FLS_NO_MT
 #	ifdef CPE__MT
-#		define FLM__MT
+#		define FLS__MT
 #	endif
 #endif
 
 
-#ifndef FLM_NO_AUTOFLUSH
-#	ifdef FLM__MT
-#		define FLM__AUTOFLUSH
+#ifndef FLS_NO_AUTOFLUSH
+#	ifdef FLS__MT
+#		define FLS__AUTOFLUSH
 #	endif
 #endif
 
@@ -107,7 +104,7 @@ extern class ttr_tutor &FLMTutor;
 # endif
 
 
-namespace flm {
+namespace fls {
 	extern fdr::size__ MaxFileAmount;
 
 	typedef bso::size__ position__;
@@ -115,15 +112,11 @@ namespace flm {
 
 	// Identifiant sous lequel est regroupé un ensemble de fichiers.
 	E_ROW( id__ );
-	#define FLM_UNDEFINED_ID	NONE
+	#define FLS_UNDEFINED_ID	NONE
 
 	id__ GetId( void );
 
 	void ReleaseId( id__ ID );
-
-	/*******************************************************************/
-	/* CLASSE DE BASE DE GESTION D'UNE MEMOIRE STOCKEE DANS UN FICHIER */
-	/*******************************************************************/
 
 	enum creation
 	{
@@ -138,18 +131,18 @@ namespace flm {
 	private:
 		iop::descriptor__ _D;
 		_io__ _Core;
-#ifdef FLM__MT
+#ifdef FLS__MT
 		mtx::mutex_handler__ _Mutex;
 #endif
 		void _Lock( void )
 		{
-#ifdef FLM__MT
+#ifdef FLS__MT
 			mtx::Lock( _Mutex );
 #endif
 		}
 		void _Unlock( void )
 		{
-#ifdef FLM__MT
+#ifdef FLS__MT
 			mtx::Unlock( _Mutex );
 #endif
 		}
@@ -159,14 +152,14 @@ namespace flm {
 			if ( P ) {
 				if ( _D != IOP_UNDEFINED_DESCRIPTOR )
 					fil::Close( _D );
-#ifdef FLM__MT
+#ifdef FLS__MT
 				if ( _Mutex != MTX_INVALID_HANDLER )
 					mtx::Delete( _Mutex );
 #endif
 			}
 
 			_D = IOP_UNDEFINED_DESCRIPTOR;
-#ifdef FLM__MT
+#ifdef FLS__MT
 			_Mutex = MTX_INVALID_HANDLER;
 #endif
 		}
@@ -185,7 +178,7 @@ namespace flm {
 		{
 			reset();
 
-#ifdef FLM__MT
+#ifdef FLS__MT
 			_Mutex = mtx::Create( mtx::mProtecting );
 #endif
 
@@ -249,11 +242,11 @@ namespace flm {
 
 			return Amount;
 		}
-		mdr::size__ Size( void )
+		sdr::size__ Size( void )
 		{
 			_Lock();
 
-			mdr::size__ Size = fil::GetFileSize( _D );
+			sdr::size__ Size = fil::GetFileSize( _D );
 
 			_Unlock();
 
@@ -276,7 +269,7 @@ namespace flm {
 	E_ROW( row__ );
 
 	row__ _Register(
-		class memoire_fichier_base___ &MFB,
+		class file_storage___ &FS,
 		id__ ID );
 	void _Unregister(
 		row__ Row,
@@ -288,7 +281,7 @@ namespace flm {
 
 	void ReleaseFiles( id__ ID );
 
-	class memoire_fichier_base___
+	class file_storage___
 	{
 	private:
 		_file___ File_;
@@ -343,7 +336,7 @@ namespace flm {
 				Flush();	// Pour mettre à jour la taille physique du fichier pour que la méthode 'GetFileSize(...)' retourne la bonne valeur.
 
 				if ( !fil::FileExists( Nom_ ) || ( (bso::size__)TailleFichier_ > fil::GetFileSize( Nom_ ) ) ) {
-					mdr::datum__ Datum = 0;
+					sdr::datum__ Datum = 0;
 					
 					Open_( true );
 				
@@ -436,14 +429,7 @@ namespace flm {
 				File_.Flush();
 		}
 	public:
-		memoire_fichier_base___( void )
-		{
-			reset( false );
-		}
-		~memoire_fichier_base___( void )
-		{
-			reset();
-		}
+		E_CVDTOR( file_storage___ )
 		void reset( bool P  = true )
 		{
 			if ( P )
@@ -470,14 +456,14 @@ namespace flm {
 			Temoin_.Mode = fil::mReadOnly;
 			TailleFichier_ = 0;
 			_Row = NONE;
-			_ID = FLM_UNDEFINED_ID;
+			_ID = FLS_UNDEFINED_ID;
 			_EpochTimeStamp = 0;
 		}
 		void Init(
 			id__ ID,
 			const char *NomFichier = NULL,
 			fil::mode__ Mode = fil::mReadWrite,
-			flm::creation Creation = flm::cFirstUse )
+			fls::creation Creation = fls::cFirstUse )
 		{
 			if ( NomFichier )
 			{
@@ -514,12 +500,12 @@ namespace flm {
 
 			Temoin_.Mode = Mode;
 
-			if ( Creation == flm::cNow  )
+			if ( Creation == fls::cNow  )
 				if ( Mode == fil::mReadWrite )
 					Open_( false );
 				else
 					ERRc();
-			else if ( Creation != flm::cFirstUse )
+			else if ( Creation != fls::cFirstUse )
 				ERRc();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
@@ -596,7 +582,7 @@ namespace flm {
 			else
 				return 0;
 		}
-		mdr::size__ FileSize( void )
+		sdr::size__ FileSize( void )
 		{
 #	if 0
 			Open_( false );
@@ -623,69 +609,69 @@ namespace flm {
 		}
 	};
 
-	//c The standard memory driver which handle a file as memory.
-	class file_memory_driver___
-	: public mdr::memory_driver__,
-	  public memoire_fichier_base___
+	//c The standard storage driver which handle a file as storage.
+	class file_storage_driver___
+	: public sdr::E_STORAGE_DRIVER__,
+	  public file_storage___
 	{
 	protected:
-		virtual void MDRAllocate( mdr::size__ Size )
+		virtual void SDRAllocate( sdr::size__ Size )
 		{
-			memoire_fichier_base___::Allocate( Size );
+			file_storage___::Allocate( Size );
 		}
 		// alloue 'Taille' octets
-		virtual mdr::size__ MDRUnderlyingSize( void )
+		virtual sdr::size__ SDRUnderlyingSize( void )
 		{
 			return FileSize();
 		}
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
+		virtual void SDRRecall(
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer )
 		{
-			memoire_fichier_base___::Read( Position, Amount, Buffer );
+			file_storage___::Read( Position, Amount, Buffer );
 		}
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+		virtual void SDRStore(
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
-			memoire_fichier_base___::Write( Buffer, Amount, Position );
+			file_storage___::Write( Buffer, Amount, Position );
 		}
 	public:
-		file_memory_driver___( void )
-		: memory_driver__(),
-		  memoire_fichier_base___()
+		file_storage_driver___( void )
+		: E_STORAGE_DRIVER__(),
+		  file_storage___()
 		{}
 		void reset( bool P = true )
 		{
-			memoire_fichier_base___::reset( P );
-			E_MEMORY_DRIVER__::reset( P );
+			file_storage___::reset( P );
+			E_STORAGE_DRIVER__::reset( P );
 		}
 		//f Return the mode.
 		fil::mode__ Mode( void ) const
 		{
-			return memoire_fichier_base___::Mode();
+			return file_storage___::Mode();
 		}
 		//f 'Mode' becomes the mode.
 		fil::mode__ Mode( fil::mode__ Mode )
 		{
-			return memoire_fichier_base___::Mode( Mode );
+			return file_storage___::Mode( Mode );
 		}
 		//f Initialize using 'Filename' as file, open it in mode 'Mode'.
 		void Init(
 			id__ ID,
 			const char *FileName = NULL,
 			fil::mode__ Mode = fil::mReadWrite,
-			flm::creation Creation = flm::cFirstUse )
+			fls::creation Creation = fls::cFirstUse )
 		{
-			memoire_fichier_base___::Init( ID, FileName, Mode, Creation );
-			E_MEMORY_DRIVER__::Init();
+			file_storage___::Init( ID, FileName, Mode, Creation );
+			E_STORAGE_DRIVER__::Init();
 		}
 	};
 
-	#define E_FILE_MEMORY_DRIVER___	file_memory_driver___
+	#define E_FILE_STORAGE_DRIVER___	file_storage_driver___
 
 	void ReleaseInactiveFiles_(
 		bso::ulong__ Delay,	// in s.

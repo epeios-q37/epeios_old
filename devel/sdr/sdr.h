@@ -1,12 +1,12 @@
 /*
-	Header for the 'mdr' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'sdr' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@ $_RAW_$
 
 //	$Id$
 
-#ifndef MDR__INC
-#define MDR__INC
+#ifndef SDR__INC
+#define SDR__INC
 
-#define MDR_NAME		"MDR"
+#define SDR_NAME		"SDR"
 
-#define	MDR_VERSION	"$Revision$"
+#define	SDR_VERSION	"$Revision$"
 
-#define MDR_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define SDR_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &MDRTutor;
+extern class ttr_tutor &SDRTutor;
 
-#if defined( XXX_DBG ) && !defined( MDR_NODBG )
-#define MDR_DBG
+#if defined( XXX_DBG ) && !defined( SDR_NODBG )
+#define SDR_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,46 +55,39 @@ extern class ttr_tutor &MDRTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Memory DRiver 
+//D Storage DRiver 
 /* End addendum to automatic documentation generation part. */
 
-/*$BEGIN$*/
+# include "err.h"
+# include "bso.h"
+# include "tol.h"
 
-# error "Obsolete ! Use 'SDR' instead !"
+#define SDR_INTERNAL_STORAGE_DRIVER *(sdr::E_STORAGE_DRIVER__ *)NULL
 
-//D Memory DRiver.
+# define NONE ( (sdr::row_t__) -1 )
 
-#include "err.h"
-#include "flw.h"
-#include "bso.h"
-#include "tol.h"
+# define SDR__DSIZE_SIZE_MAX ( ( ( 8 * sizeof( sdr::size__ ) ) / 7 ) + 1 )
 
-#define MDR_INTERNAL_MEMORY_DRIVER *(mdr::E_MEMORY_DRIVER__ *)NULL
+namespace sdr {
 
-# define NONE ( (mdr::row_t__) -1 )
-
-# define MDR__DSIZE_SIZE_MAX ( ( ( 8 * sizeof( mdr::size__ ) ) / 7 ) + 1 )
-
-namespace mdr {
-
-	//t The position in a memory.
+	//t The position in a storage.
 	typedef bso::size__	row_t__;
 	E_TMIMIC__( row_t__, row__ );
 
 	typedef bso::p_size__	p_row_t__;
 	E_TMIMIC__( p_row_t__, p_row__ );
 
-	#define MDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
+	#define SDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
-	//t The size of a memory.
+	//t The size of a storage.
 	using bso::size__;
-	#define MDR_SIZE_MAX	BSO_SIZE_MAX
+	#define SDR_SIZE_MAX	BSO_SIZE_MAX
 
 	//t The portable version of a 'size__'.
 	using bso::p_size__;
-	#define MDR_P_SIZE_MAX	BSO_P_SIZE_MAX
+	#define SDR_P_SIZE_MAX	BSO_P_SIZE_MAX
 
-	//t The type of the datum in a memory.
+	//t The type of the datum in a storage.
 	typedef bso::raw__	datum__;
 
 // Prédéclarations.
@@ -104,22 +97,22 @@ namespace mdr {
 	xsize__ Convert( size__ Size );
 
 	// 'Dynamic size' : taile de taille variable.
-	typedef mdr::datum__ dsize__[MDR__DSIZE_SIZE_MAX];
+	typedef sdr::datum__ dsize__[SDR__DSIZE_SIZE_MAX];
 
 	typedef bso::ubyte__ length__;
-# define MDRM__LENGTH_MAX BSO_UBYTE_MAX
+# define SDRM__LENGTH_MAX BSO_UBYTE_MAX
 
 	typedef struct _xsize__ {
 	private:
 		dsize__ _Size;
 		length__ _Length;
 	public:
-		const mdr::datum__ *DSizeBuffer( void ) const
+		const sdr::datum__ *DSizeBuffer( void ) const
 		{
 			if ( _Length == 0 )
 				ERRc();
 
-			return _Size + MDR__DSIZE_SIZE_MAX - _Length;
+			return _Size + SDR__DSIZE_SIZE_MAX - _Length;
 		}
 		length__ BufferSize( void ) const
 		{
@@ -131,48 +124,48 @@ namespace mdr {
 			_Length = 0;
 		}
 		E_CVDTOR( _xsize__ );
-		friend xsize__ mdr::Convert( mdr::size__ Size );
+		friend xsize__ sdr::Convert( sdr::size__ Size );
 	} xsize__;
 
-	size__ Convert( const mdr::datum__ *DSize );
+	size__ Convert( const sdr::datum__ *DSize );
 
 
-	//c Abstract memory driver. Use 'E_MEMORY_DRIVER__' instead directly this class.
-	class memory_driver__
+	//c Abstract storage driver. Use 'E_STORAGE_DRIVER__' instead directly this class.
+	class storage_driver__
 	{
 	protected:
 		// Alloue 'Size' octet.
-		virtual void MDRAllocate( size__ Size )
+		virtual void SDRAllocate( size__ Size )
 		{
 			ERRc();
-			// For read-only memory.
+			// For read-only storage.
 		}
 		/* Si la mémoire repose sur une mémoire persistante (un fichier, par exemple), retourne la taille de cette mémoire,
 		ou, si non initialisée (fichier absent, par exemple), ou non persistente, retourne 0 */
-		virtual size__ MDRUnderlyingSize( void )
+		virtual size__ SDRUnderlyingSize( void )
 		{
 			return 0;
 		}
 		//v Recall 'Amount' at position 'Position' and put them in 'Buffer'.
-		virtual void MDRRecall(
+		virtual void SDRRecall(
 			row_t__ Position,
 			size__ Amount,
 			datum__ *Buffer ) = 0;
-		//v Write 'Amount' bytes from 'Buffer' to memory at position 'Position'.
-		virtual void MDRStore(
+		//v Write 'Amount' bytes from 'Buffer' to storage at position 'Position'.
+		virtual void SDRStore(
 			const datum__ *Buffer,
 			size__ Amount,
 			row_t__ Position )
 		{
 			ERRc();
-			// For read-only memory.
+			// For read-only storage.
 		}
 	public:
-		memory_driver__( void )
+		storage_driver__( void )
 		{
 			reset( false );
 		}
-		virtual ~memory_driver__( void )	// to be sure that the destructor of dervaed classes are call.
+		virtual ~storage_driver__( void )	// to be sure that the destructor of dervaed classes are call.
 		{
 			reset( true );
 		}
@@ -185,14 +178,14 @@ namespace mdr {
 		{
 			reset();
 		}
-		//f Allocate 'Size' bytes in memory.
+		//f Allocate 'Size' bytes in storage.
 		void Allocate( size__ Size )
 		{
-			MDRAllocate( Size );
+			SDRAllocate( Size );
 		}
 		size__ UnderlyingSize( void )
 		{
-			return MDRUnderlyingSize();
+			return SDRUnderlyingSize();
 		}
 		//f Recall 'Amount' at position 'Position' and put them into 'Buffer'. Return 'Buffer'.
 		void Recall(
@@ -200,7 +193,7 @@ namespace mdr {
 			size__ Amount,
 			datum__ *Buffer )
 		{
-			MDRRecall( Position, Amount, Buffer );
+			SDRRecall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at position 'Position'.
 		void Store(
@@ -208,12 +201,14 @@ namespace mdr {
 			size__ Amount,
 			row_t__ Position )
 		{
-			MDRStore( Buffer, Amount, Position );
+			SDRStore( Buffer, Amount, Position );
 		}
 	};
 
-	#define E_MEMORY_DRIVER__	memory_driver__
+	#define E_STORAGE_DRIVER__	storage_driver__
 }
+
+/*$END$*/
 
 /*$END$*/
 				  /********************************************/

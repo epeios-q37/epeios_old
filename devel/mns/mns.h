@@ -1,12 +1,12 @@
 /*
-	Header for the 'cvm' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2000-2001, 2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	Header for the 'mns' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@
 
 //	$Id$
 
-#ifndef CVM__INC
-#define CVM__INC
+#ifndef MNS__INC
+#define MNS__INC
 
-#define CVM_NAME		"CVM"
+#define MNS_NAME		"MNS"
 
-#define	CVM_VERSION	"$Revision$"
+#define	MNS_VERSION	"$Revision$"
 
-#define CVM_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define MNS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &CVMTutor;
+extern class ttr_tutor &MNSTutor;
 
-#if defined( XXX_DBG ) && !defined( CVM_NODBG )
-#define CVM_DBG
+#if defined( XXX_DBG ) && !defined( MNS_NODBG )
+#define MNS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,62 +55,59 @@ extern class ttr_tutor &CVMTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D ConVentional Memory 
+//D MaiN Storage 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-# error "Obsolete ! Use 'MNS' instead !"
-
 # include "err.h"
 # include "flw.h"
-# include "mdr.h"
+# include "sdr.h"
 # include "cpe.h"
 
-namespace cvm {
-	//c Basic conventional memory.
-	class basic_conventional_memory__
+namespace mns {
+	class main_storage__
 	{
-		mdr::size__ _Size;
-		mdr::datum__ *&Tampon_;
+		sdr::size__ _Size;
+		sdr::datum__ *&Tampon_;
 			// le contenu de la mémoire
-	#ifdef CVM_DBG
+# ifdef MNS_DBG
 		void Test_( void )
 		{
 			if ( Tampon_ == NULL )
 				ERRc();
 		}
-	#endif
+# endif
 	protected:
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets
 		void Recall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer )
 		{
-	#ifdef CVM_DBG
+# ifdef MNS_DBG
 			if ( Amount )
 				Test_();
-	#endif
+# endif
 			memcpy( Buffer, Tampon_ + Position, Amount );
 		}
 		// écrit 'Nombre' octets à partir de 'Position' dans 'Tampon'
 		void Store(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
-	#ifdef CVM_DBG
+# ifdef MNS_DBG
 			if (Amount ) 
 				Test_();
-	#endif
+# endif
 			memcpy( Tampon_ + Position, Buffer, Amount );
 		}
 		// alloue 'Nombre' octets
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			if ( Size > _Size ) {
-				mdr::datum__ *Tampon = (mdr::datum__ *)realloc( Tampon_, Size );
+				sdr::datum__ *Tampon = (sdr::datum__ *)realloc( Tampon_, Size );
 
 				if ( ( Tampon == NULL ) && ( Size != 0 ) )
 					ERRa();
@@ -130,12 +127,12 @@ namespace cvm {
 			Tampon_ = NULL;
 			_Size = 0;
 		}
-		basic_conventional_memory__( mdr::datum__ *&Pointer )
+		main_storage__( sdr::datum__ *&Pointer )
 		: Tampon_( Pointer )
 		{
 			reset( false );
 		}
-		virtual ~basic_conventional_memory__( void )
+		virtual ~main_storage__( void )
 		{
 			reset( true );
 		}
@@ -147,69 +144,67 @@ namespace cvm {
 		}
 	};
 
-	//c Conventional memory driver.
-	class conventional_memory_driver__
-	: public mdr::E_MEMORY_DRIVER__,
-	  public basic_conventional_memory__
+	class main_storage_driver__
+	: public sdr::E_STORAGE_DRIVER__,
+	  public main_storage__
 	{
 	protected:
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
+		virtual void SDRRecall(
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer )
 		{
-			basic_conventional_memory__::Recall( Position, Amount, Buffer );
+			main_storage__::Recall( Position, Amount, Buffer );
 		}
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Nombre,
-			mdr::row_t__ Position )
+		virtual void SDRStore(
+			const sdr::datum__ *Buffer,
+			sdr::size__ Nombre,
+			sdr::row_t__ Position )
 		{
-			basic_conventional_memory__::Store( Buffer, Nombre, Position );
+			main_storage__::Store( Buffer, Nombre, Position );
 		}
 		// alloue 'Taille' octets
-		virtual void MDRAllocate( mdr::size__ Size )
+		virtual void SDRAllocate( sdr::size__ Size )
 		{
-			basic_conventional_memory__::Allocate( Size );
+			main_storage__::Allocate( Size );
 		}
 	public:
 		void reset( bool P = true )
 		{
-			basic_conventional_memory__::reset( P );
-			E_MEMORY_DRIVER__::reset( P );
+			main_storage__::reset( P );
+			E_STORAGE_DRIVER__::reset( P );
 		}
-		conventional_memory_driver__( mdr::datum__ *&Buffer )
-		: memory_driver__(),
-		  basic_conventional_memory__( Buffer )
+		main_storage_driver__( sdr::datum__ *&Buffer )
+		: E_STORAGE_DRIVER__(),
+		  main_storage__( Buffer )
 		{
 			reset( false );
 		}
-		virtual ~conventional_memory_driver__( void )
+		virtual ~main_storage_driver__( void )
 		{
 			reset( true );
 		}
 		//f Initialization.
 		void Init( void )
 		{
-			basic_conventional_memory__::Init();
-			E_MEMORY_DRIVER__::Init();
+			main_storage__::Init();
+			E_STORAGE_DRIVER__::Init();
 		}
 	};
 
 	class standalone_conventional_memory_driver___
-	: public conventional_memory_driver__
+	: public main_storage_driver__
 	{
 	private:
-		mdr::datum__ *_Buffer;
+		sdr::datum__ *_Buffer;
 	public:
 		standalone_conventional_memory_driver___( void )
-		: conventional_memory_driver__( _Buffer )
-		{
-		}
+		: main_storage_driver__( _Buffer )
+		{}
 	};
 
-	#define E_CONVENTIONAL_MEMORY_DRIVER__ standalone_conventional_memory_driver___
+	#define E_MAIN_STORAGE_DRIVER__ standalone_main_storage_driver___
 }
 
 /*$END$*/

@@ -1,6 +1,6 @@
 /*
-	'amm' library by Claude SIMON (csimon at zeusw dot org)
-	Requires the 'amm' header file ('amm.h').
+	'mns' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'mns' header file ('mns.h').
 	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
@@ -27,26 +27,26 @@ $_RAW_$
 
 //	$Id$
 
-#define AMM__COMPILATION
+#define MNS__COMPILATION
 
-#include "amm.h"
+#include "mns.h"
 
-class ammtutor
+class mnstutor
 : public ttr_tutor
 {
 public:
-	ammtutor( void )
-	: ttr_tutor( AMM_NAME )
+	mnstutor( void )
+	: ttr_tutor( MNS_NAME )
 	{
-#ifdef AMM_DBG
-		Version = AMM_VERSION "\b\bD $";
+#ifdef MNS_DBG
+		Version = MNS_VERSION "\b\bD $";
 #else
-		Version = AMM_VERSION;
+		Version = MNS_VERSION;
 #endif
-		Owner = AMM_OWNER;
+		Owner = MNS_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~ammtutor( void ){}
+	virtual ~mnstutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,60 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-using namespace amm;
+using namespace mns;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-inline void aggregated_memory_driver__::_Free( void )
-{
-	if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
-		Multimemoire_->Free( _Descriptor );
-}
-
-inline void multimemory_driver__::MDRAllocate( mdr::size__ Size )
-{
-	_Descriptor = Multimemoire_->Reallocate( _Descriptor, Size, _Addendum );
-}
-
-inline mdr::size__ multimemory_driver__::MDRUnderlyingSize( void )
-{
-	if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
-		return Multimemoire_->Size( _Descriptor );
-	else
-		return 0;
-}
-
-inline void multimemory_driver__::MDRRecall(
-	mdr::row_t__ Position,
-	mdr::size__ Amount,
-	mdr::datum__ *Buffer )
-{
-	Multimemoire_->Read( _Descriptor, Position, Amount, Buffer, _Addendum );
-}
-// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-inline void multimemory_driver__::MDRStore(
-	const mdr::datum__ *Buffer,
-	mdr::size__ Amount,
-	mdr::row_t__ Position )
-{
-	Multimemoire_->Write( Buffer, Amount, _Descriptor, Position, _Addendum );
-}
-
-}
-
-
-
-class ammpersonnalization
-: public ammtutor
+class mnspersonnalization
+: public mnstutor
 {
 public:
-	ammpersonnalization( void )
+	mnspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~ammpersonnalization( void )
+	~mnspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -124,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static ammpersonnalization Tutor;
+static mnspersonnalization Tutor;
 
-ttr_tutor &AMMTutor = Tutor;
+ttr_tutor &MNSTutor = Tutor;

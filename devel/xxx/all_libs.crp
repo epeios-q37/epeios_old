@@ -11,6 +11,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Amount/Extent managing
 &amm		&epeios		&2013\
 	&Aggregated MeMory
+&ags		&epeios		&2013\
+	&Aggregated Storage
 &bch		&epeios		&2001-\
 	&BunCH
 &bfl		&epeios		&\
@@ -138,6 +140,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&FiLe Flow
 &flm		&epeios		&2000-\
 	&FiLe Memory
+&fls		&epeios		&2013-\
+	&FiLe Storage
 &flw		&epeios		&2000-\
 	&FLoW
 &flx		&epeios		&2000-\
@@ -165,6 +169,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&Graphical User Interface
 &htp		&epeios		&2002, \
 	&Hypertext Transfert Protocol
+&ias		&epeios		&\
+	&Indexed Aggregated Storage
 &ids		&epeios		&2002, \
 	&ID Store
 &idx		&epeios		&2010\
@@ -213,6 +219,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&MultiMeMory v1
 &mmm2		&epeios		&\
 	&MultiMeMory v2
+&mns	&epeios	&\
+	&MaiN Storage
 &msg		&epeios		&\
 	&MeSsaGes
 &mtk		&epeios		&2000-2001, 2003-\
@@ -263,6 +271,9 @@ NAME		PROJECT		COPYRIGHT_DATES\
 &scltool	&epeios	&2011	&SoCLe TOOL
 
 &sck		&epeios		&2000-		&SoCKet
+&sdr		&epeios		&2013-\
+	&Storage DRiver
+
 &spp		&epeios		&2000-		&Shared PiPe
 &srv		&epeios		&2000-2001, 	&SeRVer
 &srvhvy		&epeios		&\
@@ -297,10 +308,14 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&TeXt Manager TabBLe
 &tym		&epeios		&2000-\
 	&TYped Memory
+&tys		&epeios		&2013-\
+	&TYped Storage
 &uif		&epeios		&\
 	&User Interface Framework (based on wxWidgets).
 &uym		&epeios		&2000-\
 	&UnTyped Memory
+&uys		&epeios		&2013-\
+	&UnTyped Storage
 &wintol		&epeios	&\
 	&WINdows TOols
 &wllio		&epeios		&\

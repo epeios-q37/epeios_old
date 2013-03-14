@@ -61,6 +61,8 @@ extern class ttr_tutor &FLMTutor;
 /*$BEGIN$*/
 //D FiLe Memory.
 
+# error "Obsolete ! Use 'FLS' instead !"
+
 #include "cpe.h"
 #include "tol.h"
 #include "err.h"

@@ -1,12 +1,12 @@
 /*
-	Header for the 'uym' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	Header for the 'uys' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -24,27 +24,27 @@
 
 //	$Id$
 
-#ifndef UYM__INC
-#define UYM__INC
+#ifndef UYS__INC
+#define UYS__INC
 
-#define UYM_NAME		"UYM"
+#define UYS_NAME		"UYS"
 
-#define	UYM_VERSION	"$Revision$"
+#define	UYS_VERSION	"$Revision$"
 
-#define UYM_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define UYS_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
-extern class ttr_tutor &UYMTutor;
+extern class ttr_tutor &UYSTutor;
 
-#if defined( XXX_DBG ) && !defined( UYM_NODBG )
-#define UYM_DBG
+#if defined( XXX_DBG ) && !defined( UYS_NODBG )
+#define UYS_DBG
 #endif
 
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,64 +55,45 @@ extern class ttr_tutor &UYMTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D UnTyped Memory 
+//D UnTyped Storage 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
 
-# error "Obsolete ! Use 'UYS' instead !".
-
-#include "err.h"
-#include "tol.h"
-#include "mdr.h"
-#include "cvm.h"
-#include "mmm.h"
-#ifndef FLM__COMPILATION	// To avoid resursive inclusion.
-#	include "flm.h"
-#endif
+# include "err.h"
+# include "tol.h"
+# include "sdr.h"
+# include "mns.h"
+# include "ags.h"
+# ifndef FLS__COMPILATION	// To avoid resursive inclusion.
+#  include "fls.h"
+# endif
 
 //d Value that a position can not have.
-#define UYM_UNREACHABLE_POSITION	((mdr::row_t__)-1)
+#define UYS_UNREACHABLE_POSITION	((sdr::row_t__)-1)
 
-//d Maximal size of a memory.
-#define UYM_MAX_SIZE			UYM_UNREACHABLE_POSITION
+//d Maximal size of a storage.
+#define UYS_MAX_SIZE			UYS_UNREACHABLE_POSITION
 
-#ifdef UYM__DEFAULT_MEMORY_DRIVER
-#	define UYM_DEFAULT_MEMORY_DRIVER UYM__DEFAULT_MEMORY_DRIVER
+#ifdef UYS__DEFAULT_STORAGE_DRIVER
+#	define UYS_DEFAULT_STORAGE_DRIVER UYS__DEFAULT_STORAGE_DRIVER
 #else
-#	define UYM_DEFAULT_MEMORY_DRIVER cvm::conventional_memory_driver__
+#	define UYS_DEFAULT_STORAGE_DRIVER mns::main_storage_driver__
 #endif
 
-/*
-
-#ifdef DED_MS
-	#ifdef __MSDOS__
-		#include "mfg.h"
-		#define UYM_PILOTE_DEFAUT mfg_pilote_memoire_fragmentee
-	#else
-		#include "mmb.h"
-		#define UYM_PILOTE_DEFAUT mmb_pilote_memoire_monobloc
-	#endif
-#else
-	#include "mmb.h"
-	#define UYM_PILOTE_DEFAUT mmb_pilote_memoire_monobloc
-#endif
-*/
-
-namespace uym {
-	// Pilote mémoire.
-	class _memory_driver__
+namespace uys {
+	class _storage_driver__
 	{
 	private:
 		// Le pilote.
-		mdr::E_MEMORY_DRIVER__ *_Driver;
+		sdr::E_STORAGE_DRIVER__ *_Driver;
 		// Indique si le pilote a été défini de manière interne ou non.
 		bso::bool__ _Internal;
-		// Uniquement pour la 'conventional_memory__'.
-		mdr::datum__ *_CVMBuffer;
+		// Uniquement pour la 'conventional_storage__'.
+		sdr::datum__ *_CVMBuffer;
 		void _Test( void ) const
 		{
-#ifdef UYM_DBG
+#ifdef UYS_DBG
 			if ( _Driver == NULL )
 				ERRc();
 #endif
@@ -136,15 +117,15 @@ namespace uym {
 
 			_CVMBuffer = NULL;
 		}
-		_memory_driver__( void )
+		_storage_driver__( void )
 		{
 			reset( false );
 		}
-		virtual ~_memory_driver__( void )
+		virtual ~_storage_driver__( void )
 		{
 			reset( true );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &Driver )
+		void plug( sdr::E_STORAGE_DRIVER__ &Driver )
 		{
 			reset();
 
@@ -155,30 +136,30 @@ namespace uym {
 		{
 			if ( _Driver == NULL )
 			{
-				if ( ( _Driver = new UYM_DEFAULT_MEMORY_DRIVER( _CVMBuffer ) ) == NULL )
+				if ( ( _Driver = new UYS_DEFAULT_STORAGE_DRIVER( _CVMBuffer ) ) == NULL )
 					ERRa();
 				else
 				{
 					_Internal = true;
-					((UYM_DEFAULT_MEMORY_DRIVER *)_Driver)->Init();
+					((UYS_DEFAULT_STORAGE_DRIVER *)_Driver)->Init();
 				}
 			}
 		}
-		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false ) const
+		sdr::E_STORAGE_DRIVER__ *Driver( bso::bool__ Ignore = false ) const
 		{
-	#ifdef UYM_DBG
+	#ifdef UYS_DBG
 			if ( !Ignore && !_Driver )
 				ERRc();
 	#endif
 			return _Driver;
 		}
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			_Test();
 
 			_Driver->Allocate( Size );
 		}
-		mdr::size__ UnderlyingSize( void )
+		sdr::size__ UnderlyingSize( void )
 		{
 //			_Test();	// Traité ci-dessous.
 
@@ -188,9 +169,9 @@ namespace uym {
 				return 0;
 		}
 		void Recall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer ) const
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer ) const
 		{
 			_Test();
 
@@ -200,9 +181,9 @@ namespace uym {
 				_Driver->Recall( Position, Amount, Buffer );
 		}
 		void Store(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
 			_Test();
 
@@ -213,19 +194,19 @@ namespace uym {
 		}
 	};
 
-	//c Untyped memory.
-	class untyped_memory_
+	//c Untyped storage.
+	class untyped_storage_
 	{
 	private:
 		// Le pilote mémoire.
-		_memory_driver__ _Driver;
+		_storage_driver__ _Driver;
 		// l'éventuel pilote de la multimemoire
-		mmm::multimemory_driver__ _MultimemoryDriver;
+		ags::aggregated_storage_driver__ _AggregatedStorageDriver;
 		void _Test(
-			mdr::row_t__ Position,
-			mdr::size__ Amount ) const
+			sdr::row_t__ Position,
+			sdr::size__ Amount ) const
 		{
-#ifdef UYM_DBG
+#ifdef UYS_DBG
 			if ( Position >= S_.Size )
 				if ( Amount > 0 )
 					ERRc();
@@ -235,24 +216,24 @@ namespace uym {
 #endif
 		}
 		void _Recall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount, 
-			mdr::datum__ *Buffer ) const
+			sdr::row_t__ Position,
+			sdr::size__ Amount, 
+			sdr::datum__ *Buffer ) const
 		{
 			_Test( Position, Amount );
 
 			_Driver.Recall( Position, Amount, Buffer );
 		}
 		void _Store(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
 			_Test( Position, Amount );
 
 			_Driver.Store( Buffer, Amount, Position );
 		}
-		void _Allocate( mdr::size__ Size )
+		void _Allocate( sdr::size__ Size )
 		{
 			if ( Size != S_.Size ) {
 				_Driver.Allocate( Size );
@@ -261,30 +242,28 @@ namespace uym {
 		}
 	public:
 		struct s {
-			mdr::size__ Size;
-			mmm::descriptor__ MultimemoryDriverDescriptor;
-			bso::ubyte__ MultimemoryDriverAddendum;
+			sdr::size__ Size;
+			ags::descriptor__ Descriptor;
 		} &S_;
 		void reset( bool P = true )
 		{
 			_Driver.reset( P );
-			_MultimemoryDriver.reset( P );
+			_AggregatedStorageDriver.reset( P );
 
 			S_.Size = 0;
-			S_.MultimemoryDriverDescriptor = MMM_UNDEFINED_DESCRIPTOR;
-			S_.MultimemoryDriverAddendum = 0;
+			S_.Descriptor = AGS_UNDEFINED_DESCRIPTOR;
 		}
-		untyped_memory_( s &S )
+		untyped_storage_( s &S )
 		: S_( S ),
-		  _MultimemoryDriver( S.MultimemoryDriverDescriptor, S.MultimemoryDriverAddendum )
+		  _AggregatedStorageDriver( S.Descriptor )
 		{
 			reset( false );
 		}
-		~untyped_memory_( void )
+		~untyped_storage_( void )
 		{
 			reset();
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &Driver  )
+		void plug( sdr::E_STORAGE_DRIVER__ &Driver  )
 		{
 			reset();
 
@@ -292,18 +271,18 @@ namespace uym {
 			S_.Size = _Driver.UnderlyingSize();
 
 		}
-		void plug( mmm::multimemory_ &MMM )
+		void plug( ags::aggregated_storage_ &AS )
 		{
-			_MultimemoryDriver.Init( MMM );
-			_Driver.plug( _MultimemoryDriver );
+			_AggregatedStorageDriver.Init( AS );
+			_Driver.plug( _AggregatedStorageDriver );
 			S_.Size = _Driver.UnderlyingSize();
 
 		}
-		untyped_memory_ &operator =( const untyped_memory_ & ) const
+		untyped_storage_ &operator =( const untyped_storage_ & ) const
 		{
 			ERRc();	// Parce que cette opération n'a pas de sens.
 
-			return *(untyped_memory_ *)NULL;
+			return *(untyped_storage_ *)NULL;
 		}
 		//f Initialization.
 		void Init( void )
@@ -315,47 +294,47 @@ namespace uym {
 			S_.Size = _Driver.UnderlyingSize();
 		}
 		void WriteToFlow(
-			mdr::row_t__ Position,
-			mdr::size__ Size,
+			sdr::row_t__ Position,
+			sdr::size__ Size,
 			flw::oflow__ &OFlow ) const;
 		void ReadFromFlow(
 			flw::iflow__  &IFlow,
-			mdr::row_t__ Position,
-			mdr::size__ Size );
+			sdr::row_t__ Position,
+			sdr::size__ Size );
 		//f Allocates 'Capacity' bytes.
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			_Allocate( Size );
 		}
 		/*f Recall 'Amount' bytes at 'Position' and put them in 'Buffer'.
-		Ignore is only for 'UYM_DBG' mode and for the 'MMG' library.
+		Ignore is only for 'UYS_DBG' mode and for the 'MMG' library.
 		When 'true', it didn't make the test about the size. */
 		void Recall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer ) const
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer ) const
 		{
 			_Recall( Position, Amount, Buffer );
 		}
 		//f Store 'Amount' bytes from 'Buffer' at 'Offset'.
 		void Store(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
 			_Store( Buffer, Amount, Position );
 		}
 		//f Put byte at 'Position' in 'Datum'.
 		void Recall(
-			mdr::row_t__ Position,
-			mdr::datum__ &Datum ) const
+			sdr::row_t__ Position,
+			sdr::datum__ &Datum ) const
 		{
 			Recall( Position, 1, &Datum );
 		}
 		//f Return byte at 'Position'.
-		mdr::datum__ Get( mdr::row_t__ Position ) const
+		sdr::datum__ Get( sdr::row_t__ Position ) const
 		{
-			mdr::datum__ D;
+			sdr::datum__ D;
 
 			Recall( Position, D );
 
@@ -363,41 +342,41 @@ namespace uym {
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			mdr::datum__ Datum,
-			mdr::row_t__ Position )
+			sdr::datum__ Datum,
+			sdr::row_t__ Position )
 		{
 			_Store( &Datum, 1, Position );
 		}
 		void Put(
-			mdr::datum__ Datum,
-			mdr::row_t__ Position )
+			sdr::datum__ Datum,
+			sdr::row_t__ Position )
 		{
 			Store( Datum, Position );
 		}
 		//f Store 'Amount' bytes at 'Position' in 'Begin' at 'Offset'.
 		void Store(
-			const untyped_memory_ &Source,
-			mdr::size__ Amount,
-			mdr::row_t__ Position,
-			mdr::row_t__ Offset = 0 );
+			const untyped_storage_ &Source,
+			sdr::size__ Amount,
+			sdr::row_t__ Position,
+			sdr::row_t__ Offset = 0 );
 		//f Store 'Count' 'Object's of size 'Size' at 'Position'.
 		void Store(
-			const mdr::datum__ *Object,
-			mdr::size__ Size,
-			mdr::row_t__ Position,
-			mdr::size__ Count );
+			const sdr::datum__ *Object,
+			sdr::size__ Size,
+			sdr::row_t__ Position,
+			sdr::size__ Count );
 		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
-		mdr::row_t__ Search(
-			const mdr::datum__ *Objet,
-			mdr::size__ Size,
-			mdr::row_t__ Begin,
-			mdr::row_t__ End ) const;
-		//f Return the used memory driver. 'Ignore' is only for 'UYM_DBG' mode and for the 'MMG' library.
-		mdr::E_MEMORY_DRIVER__ *Driver( bso::bool__ Ignore = false )
+		sdr::row_t__ Search(
+			const sdr::datum__ *Objet,
+			sdr::size__ Size,
+			sdr::row_t__ Begin,
+			sdr::row_t__ End ) const;
+		//f Return the used storage driver. 'Ignore' is only for 'UYS_DBG' mode and for the 'MMG' library.
+		sdr::E_STORAGE_DRIVER__ *Driver( bso::bool__ Ignore = false )
 		{
 			return _Driver.Driver( Ignore );
 		}
-		E_RWDISCLOSE_( mdr::size__, Size );
+		E_RWDISCLOSE_( sdr::size__, Size );
 	};
 
 	enum state__ {	// Statut de l'opération de connection.
@@ -408,11 +387,11 @@ namespace uym {
 		s_Undefined
 	};
 
-#define UYM_STATE_AMOUNT	3
+#define UYS_STATE_AMOUNT	3
 
 	inline bso::bool__ IsError( state__ State )
 	{
-#if UYM_STATE_AMOUNT != 3
+#if UYS_STATE_AMOUNT != 3
 #	error "'state__' changed !"
 #endif
 		switch ( State ) {
@@ -436,7 +415,7 @@ namespace uym {
 		if ( IsError( State ) )
 			ERRc();
 
-#if UYM_STATE_AMOUNT != 3
+#if UYS_STATE_AMOUNT != 3
 #	error "'state__' changed !"
 #endif
 		switch ( State ) {
@@ -457,22 +436,22 @@ namespace uym {
 		return false;	// Pour éviter un 'warning'.
 	}
 
-	typedef flm::E_FILE_MEMORY_DRIVER___ _file_memory_driver___;
+	typedef fls::E_FILE_STORAGE_DRIVER___ _file_storage_driver___;
 
-	class untyped_memory_file_manager___
-	: public _file_memory_driver___
+	class untyped_storage_file_manager___
+	: public _file_storage_driver___
 	{
 	public:
 		void Init( 
 			const char *FileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
-			_file_memory_driver___::Init( ID, FileName, Mode, flm::cFirstUse );
+			_file_storage_driver___::Init( ID, FileName, Mode, fls::cFirstUse );
 
 			if ( Persistent )
-				_file_memory_driver___::Persistent();
+				_file_storage_driver___::Persistent();
 		}
 		bso::bool__ CreateFiles( err::handling__ ErrHandling = err::h_Default )
 		{
@@ -480,11 +459,11 @@ namespace uym {
 		}
 		fil::mode__ Mode( fil::mode__ Mode )
 		{
-			return _file_memory_driver___::Mode( Mode );
+			return _file_storage_driver___::Mode( Mode );
 		}
 		fil::mode__ Mode( void ) const
 		{
-			return _file_memory_driver___::Mode();
+			return _file_storage_driver___::Mode();
 		}
 		state__ State( void ) const
 		{
@@ -502,69 +481,68 @@ namespace uym {
 		state__ Settle( void )
 		{
 			if ( Mode() == fil::mReadWrite )
-				_file_memory_driver___::Flush();
+				_file_storage_driver___::Flush();
 
 			return State();
 		}
 		friend state__ Plug(
-			untyped_memory_ &Memory,
-			untyped_memory_file_manager___ &FileManager );
+			untyped_storage_ &Storage,
+			untyped_storage_file_manager___ &FileManager );
 	};
 
 	inline state__ Plug(
-		untyped_memory_ &Memory,
-		untyped_memory_file_manager___ &FileManager )
+		untyped_storage_ &Storage,
+		untyped_storage_file_manager___ &FileManager )
 	{
 		state__ State = ( FileManager.Exists() ? sExists : sAbsent );
 
-		Memory.plug( FileManager );
+		Storage.plug( FileManager );
 
-		Memory.Allocate( FileManager.UnderlyingSize() );
+		Storage.Allocate( FileManager.UnderlyingSize() );
 
 		return State;
 	}
 
-	//c Untyped memory. 
-	class untyped_memory
-	: public untyped_memory_
+	class untyped_storage
+	: public untyped_storage_
 	{
 	private:
-		untyped_memory_::s S_;
+		untyped_storage_::s S_;
 	public:
-		untyped_memory( void )
-		: untyped_memory_( S_ )
+		untyped_storage( void )
+		: untyped_storage_( S_ )
 		{}
 	};
 
 
 	//d A position take this value if an object cannot be find.
 #ifndef NONE
-	#define NONE	UYM_UNREACHABLE_POSITION
+	#define NONE	UYS_UNREACHABLE_POSITION
 #endif
 
 	void _Copy(
-		const class untyped_memory_ &Source,
-		mdr::row_t__ PosSource,
-		class untyped_memory_ &Dest,
-		mdr::row_t__ PosDest,
-		mdr::size__ Quantity,
-		mdr::datum__ *Buffer,
-		mdr::size__ BufferSize );
+		const class untyped_storage_ &Source,
+		sdr::row_t__ PosSource,
+		class untyped_storage_ &Dest,
+		sdr::row_t__ PosDest,
+		sdr::size__ Quantity,
+		sdr::datum__ *Buffer,
+		sdr::size__ BufferSize );
 
 	//f Return 'E1' - 'E2' which begin at 'BeginS1' and 'BeginS2' and have a length of 'Quantity'.
 	bso::sign__ Compare(
-		const untyped_memory_ &M1,
-		const untyped_memory_ &M2,
-		mdr::row_t__ BeginM1,
-		mdr::row_t__ BeginM2,
-		mdr::size__ Quantity );
+		const untyped_storage_ &M1,
+		const untyped_storage_ &M2,
+		sdr::row_t__ BeginM1,
+		sdr::row_t__ BeginM2,
+		sdr::size__ Quantity );
 
 	void _Fill(
-		const mdr::datum__ *Object,
-		mdr::size__ Size,
-		mdr::size__ Count,
-		mdr::row_t__ Position,
-		mdr::datum__ *Data );
+		const sdr::datum__ *Object,
+		sdr::size__ Size,
+		sdr::size__ Count,
+		sdr::row_t__ Position,
+		sdr::datum__ *Data );
 #if 0
 	row__ _Position(
 		const datum__ *Objet,
@@ -574,7 +552,7 @@ namespace uym {
 		const datum__ *Data );
 #endif
 
-	template <typename m> class _memory__
+	template <typename m> class _storage__
 	: public m
 	{
 	public:
@@ -585,12 +563,12 @@ namespace uym {
 		{
 			m::reset( P );
 		}
-		_memory__( s &S = *(s *)NULL )
+		_storage__( s &S = *(s *)NULL )
 		: m( S )
 		{
 			reset( false );
 		}
-		~_memory__( void )
+		~_storage__( void )
 		{
 			reset( true );
 		}
@@ -599,127 +577,127 @@ namespace uym {
 		{}
 		//f Put in 'Buffer' 'Amount' bytes at 'Position'.
 		void Recall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer ) const
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer ) const
 		{
 			memcpy( Buffer, m::Data_ + Position, Amount ); 
 		}
 		//f Write to 'Position' 'Amount' bytes from 'Buffer'.
 		void Store(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
 			memcpy( m::Data_ + Position, Buffer, Amount ); 
 		}
 		//f Return byte at 'Position'.
-		mdr::datum__ Get( mdr::row_t__ Position ) const
+		sdr::datum__ Get( sdr::row_t__ Position ) const
 		{
 			return *m::Data_[Position];
 		}
 		//f Write 'Byte' at 'Position'.
 		void Store(
-			mdr::datum__ Datum,
-			mdr::row_t__ Position )
+			sdr::datum__ Datum,
+			sdr::row_t__ Position )
 		{
 			*m::Data_[Position] = Datum;
 		}
 		void Put(
-			mdr::datum__ Datum,
-			mdr::row_t__ Position )
+			sdr::datum__ Datum,
+			sdr::row_t__ Position )
 		{
 			Store( Datum, Position );
 		}
 		/*f Write to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
-			const _memory__ &Source,
-			mdr::size__ Quantity,
-			mdr::row_t__ Position = 0,
-			mdr::row_t__ Offset = 0 )
+			const _storage__ &Source,
+			sdr::size__ Quantity,
+			sdr::row_t__ Position = 0,
+			sdr::row_t__ Offset = 0 )
 		{
 			memmove( m::Data_ + Offset, Source.m::Data_ + Position, Quantity ); 
 		}
 		/*f Store to 'Offset' 'Quantity' bytes at 'Position' from 'Source'. */
 		void Store(
-			const untyped_memory_ &Source,
-			mdr::size__ Quantity,
-			mdr::row_t__ Position = 0,
-			mdr::row_t__ Offset = 0 )
+			const untyped_storage_ &Source,
+			sdr::size__ Quantity,
+			sdr::row_t__ Position = 0,
+			sdr::row_t__ Offset = 0 )
 		{
 			Source.Recall( Position, Quantity, *m::Data_ + Offset );
 		}
 		//f Fill at 'Position' with 'Object' of size 'Size' 'Count' times.
 		void Store(
-			const mdr::datum__ *Object,
-			mdr::size__ Size,
-			mdr::row_t__ Position,
-			mdr::size__ Count )
+			const sdr::datum__ *Object,
+			sdr::size__ Size,
+			sdr::row_t__ Position,
+			sdr::size__ Count )
 		{
 			_Store( Object, Size, Count, Position, m::Data_ );
 		}
 		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
-		mdr::row_t__ Search(
-			const mdr::datum__ *Object,
-			mdr::size__ Size,
-			mdr::row_t__ Begin,
-			mdr::row_t__ End ) const
+		sdr::row_t__ Search(
+			const sdr::datum__ *Object,
+			sdr::size__ Size,
+			sdr::row_t__ Begin,
+			sdr::row_t__ End ) const
 		{
 			return _Search( Object, Size, Begin, End, m::Data_ );
 		}
 		//f Return the used buffer.
-		const mdr::datum__ *Buffer( void ) const
+		const sdr::datum__ *Buffer( void ) const
 		{
 			return m::Data_;
 		}
 	};
 
-	//c A fixed-size memory of size 'size'.
-	template <int size> class _untyped_memory__
+	//c A fixed-size storage of size 'size'.
+	template <int size> class _untyped_storage__
 	{
 	protected:
-		mdr::datum__ Data_[size];
+		sdr::datum__ Data_[size];
 	public:
 		void reset( bso::bool__ = true )
 		{}
 		struct s {};	// To simplify use in library 'BCH'
-		_untyped_memory__( s &S = *(s *)NULL )
+		_untyped_storage__( s &S = *(s *)NULL )
 		{
 			reset( false );
 		}
-		~_untyped_memory__( void )
+		~_untyped_storage__( void )
 		{
 			reset();
 		}
 		// Simplifies the 'SET' library.
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			if ( Size >= size )
 				ERRl();
 		}
 	};
 
-	//c A untyped memory using conventional memory.
-	class _untyped_memory___
+	//c A untyped storage using conventional storage.
+	class _untyped_storage___
 	{
 	protected:
-		tol::E_FPOINTER___( mdr::datum__ ) Data_;
+		tol::E_FPOINTER___( sdr::datum__ ) Data_;
 	public:
 		struct s {};	// To simplify use in library 'BCH'
 		void reset( bso::bool__ P = true )
 		{
 			Data_.reset( P );
 		}
-		_untyped_memory___( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
+		_untyped_storage___( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
 		{
 			reset( false );
 		}
-		~_untyped_memory___( void )
+		~_untyped_storage___( void )
 		{
 			reset( true );
 		}
 		//f Allocation of size 'Size'.
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			Data_ = realloc( Data_, Size );
 		}
@@ -730,22 +708,22 @@ namespace uym {
 		}
 	};
 
-	template <int size> class untyped_memory__
-	: public _memory__< _untyped_memory__< size > >
+	template <int size> class untyped_storage__
+	: public _storage__< _untyped_storage__< size > >
 	{
 	public:
 		struct s
-		: _memory__< _untyped_memory__< size > >::s
+		: _storage__< _untyped_storage__< size > >::s
 		{};
-		untyped_memory__( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
-		: _memory__< _untyped_memory__< size > >( S )
+		untyped_storage__( s &S = *(s *)NULL )	// To simplify use in library 'BCH'
+		: _storage__< _untyped_storage__< size > >( S )
 		{}
 	};
 
-	typedef _memory__< _untyped_memory___>	untyped_memory___;
+	typedef _storage__< _untyped_storage___>	untyped_storage___;
 }
 
-#define UYM__HEADER_HANDLED	// A destination de 'MMM'.
+# define UYS__HEADER_HANDLED	// A destination de 'AGS'.
 
 /*$END$*/
 				  /********************************************/

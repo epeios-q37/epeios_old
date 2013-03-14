@@ -60,6 +60,8 @@ extern class ttr_tutor &CVMTutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'MNS' instead !"
+
 # include "err.h"
 # include "flw.h"
 # include "mdr.h"
