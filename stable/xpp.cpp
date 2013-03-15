@@ -214,13 +214,13 @@ void xpp::_qualified_preprocessor_directives___::Init( const str::string_ &Names
 	XMLNS.Append( Namespace );
 }
 
-static mdr::size__ Fill_(
-	mdr::datum__ *&Buffer,
-	mdr::size__ &Wanted,
+static sdr::size__ Fill_(
+	sdr::datum__ *&Buffer,
+	sdr::size__ &Wanted,
 	const str::string_ &Data,
-	mdr::size__ &Position )
+	sdr::size__ &Position )
 {
-	mdr::size__ Available = Data.Amount() - Position;
+	sdr::size__ Available = Data.Amount() - Position;
 
 	if ( Wanted < Available )
 		Available = Wanted;
@@ -899,11 +899,11 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 
 }
 
-static mdr::row__ ExtractAttributeName_(
+static sdr::row__ ExtractAttributeName_(
 	const str::string_ &Source,
 	str::string_ &Value )
 {
-	mdr::row__ Row = Source.First();
+	sdr::row__ Row = Source.First();
 
 	while ( ( Row != NONE )
 		    && ( isalnum( Source( Row ) ) || ( Source( Row ) == ':' ) || ( Source( Row ) == '_' ) ) ) {
@@ -922,7 +922,7 @@ status__ xpp::_extended_parser___::_HandleAttributeDirective(
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string AttributeName, MacroName;
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 ERRBegin
 	AttributeName.Init();
 
@@ -1270,13 +1270,13 @@ void xpp::_preprocessing_iflow_driver___::_DeleteParsers( void )
 		delete _Parsers.Pop();
 }
 
-mdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
-	mdr::size__ Maximum,
-	mdr::datum__ *Buffer )
+sdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
+	sdr::size__ Maximum,
+	sdr::datum__ *Buffer )
 {
 	_extended_parser___ *Parser = NULL;
-	mdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
-	mdr::size__ CumulativeRed = PonctualRed;
+	sdr::size__ PonctualRed = Fill_( Buffer, Maximum, _Data, _Position );
+	sdr::size__ CumulativeRed = PonctualRed;
 
 
 	while ( ( CumulativeRed == 0 ) && ( Maximum > CumulativeRed ) && ( _CurrentParser != NULL ) ) {

@@ -1,7 +1,7 @@
-# 'ctn' Makefile by Claude SIMON (csimon@epeios.org)
+# 'ctn' Makefile by Claude SIMON (csimon at zeusw dot org)
 # Builds test executable for the 'ctn' library.
 # Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2000-2003  Claude SIMON (csimon@epeios.org).
+# Copyright (C) 2000-2004  Claude SIMON.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -29,35 +29,129 @@ copt =
 copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
-copt += -DCPE_ST
 lopt = 
-libs = ttr tol flw err uym mmi str cio fil
+mods = $(name)_test
+mods += ags fls ias ttr tol flw cio err uys sdr str
 
 
 
-ifeq ("$(EPEIOS_ENV)","windows")
-# compilation options
-co = -q -c -w-aus -w-inl
-# linkage options
-lo = -q -e$(name)
+os := $(shell uname -o 2>/dev/null || uname -s)
+
+src =
+
+ifndef EPEIOS_SRC
+	src += epeios
+else
+	src += $(EPEIOS_SRC)
 endif
 
-ifeq ("$(EPEIOS_ENV)","gnu")
-co = -c
-# Generates debugging data.
-co += -g
-# General optimization.
-#co += -O
-# To use with gprof
-#co += -pg
-lo = -o $(name)
-# needed when pthread are used.
-#lo += -lpthread
+##################################
+# Specific to Cygwin environment #
+##################################
+
+ifeq ("$(os)","Cygwin")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs =
+	
 endif
 
-ifeq ("$(EPEIOS_ENV)","beos")
-co = -c -g
-lo = -o $(name)
+##########################################
+# Specific for the GNU/Linux environment #
+##########################################
+
+ifeq ("$(os)","GNU/Linux")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
 endif
 
-include ../xxx/LibMakefile.footer
+##################################################
+# Specific for the Linux environment (N900/N810) #
+##################################################
+
+ifeq ("$(os)","Linux")
+	env = gnu
+	
+	co +=
+	
+	lo +=
+	
+	libs = 
+	# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+	# For pthread-related functions.
+	#libs += -lpthread
+	
+endif
+
+#########################
+# For Mac OS environment #
+#########################
+
+ifeq ("$(os)","Darwin")
+	env = gnu
+	
+	lo +=
+	
+	libs =
+	
+endif
+
+##################################
+# Common to all GNU environment. #
+##################################
+
+ifeq ("$(env)","gnu")
+	lo = -o $(name)
+
+	# Generates debugging data.
+	co += -g
+
+	# General optimization.
+	#co += -O
+
+	# To use with gprof
+	#co += -pg
+	
+endif
+
+######################
+# Don't modify below #
+######################
+
+ifeq ("$(env)","gnu")
+	co := -c $(co)
+	ox = o
+	cc = g++ 
+	larg = $(lo) $(objs)
+	ds = :
+endif
+
+vpath %.cpp $(subst $(ds),:,$(src))
+
+srcd = $(subst $(ds), ,$(src))
+
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+lo += $(EPEIOS_LOPT)
+
+objs = $(name).$(ox) $(mods:=.$(ox)) 
+
+$(name):  $(objs)
+	$(cc) $(larg) $(libs)
+	
+%.$(ox): %.cpp
+	$(cc) $(co) $<

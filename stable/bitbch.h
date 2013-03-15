@@ -62,7 +62,7 @@ extern class ttr_tutor &BITBCHTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "tym.h"
+#include "tys.h"
 #include "aem.h"
 
 /* ATTENTION: si la taille du réceptacle n'est plus de 1 octet, modifier la valeur
@@ -76,7 +76,7 @@ des #define ci-dessous. */
 namespace bitbch {
 	
 	using aem::amount_extent_manager_;
-	using mdr::row_t__;
+	using sdr::row_t__;
 
 	// Type du receptacle de bits.
 	typedef bso::ubyte__		receptacle__;
@@ -104,7 +104,7 @@ namespace bitbch {
 		{
 			memset( Table_, BITBCH__RECEPTACLE_VALUE_MAX, t * sizeof( receptacle__ ) );
 		}
-		mdr::size__ Taille( void ) const
+		sdr::size__ Taille( void ) const
 		{
 			return t;
 		}
@@ -232,7 +232,7 @@ namespace bitbch {
 				return Previous( t - 1, Value );
 		}
 		//f Return the size.
-		mdr::size__ Size( void ) const
+		sdr::size__ Size( void ) const
 		{
 			return t;
 		}
@@ -270,26 +270,26 @@ namespace bitbch {
 	: public amount_extent_manager_<r>
 	{
 	private:
-		mdr::size__ Convert_( mdr::size__ Amount )
+		sdr::size__ Convert_( sdr::size__ Amount )
 		{
 			return Amount ? ( Amount - 1 ) / BITBCH__RECEPTACLE_SIZE_IN_BITS + 1 : 0;
 		}
 		bso::bool__ Lire_( r Position ) const
 		{
-			return functions__<tym::E_MEMORYt_( receptacle__, r ), r>::Lire( Position, Table );
+			return functions__<tys::E_STORAGEt_( receptacle__, r ), r>::Lire( Position, Table );
 		}
 		// retourne la valeur du bit à la position 'Position' (>=0)
 		void Ecrire_(
 			bso::bool__ Valeur,
 			r Position )
 		{
-			functions__<tym::E_MEMORYt_( receptacle__, r ), r>::Ecrire( Valeur, Position, Table );
+			functions__<tys::E_STORAGEt_( receptacle__, r ), r>::Ecrire( Valeur, Position, Table );
 
 	//		Table.Ecrire( Indice, (receptacle__)( ( Table.Objet(Indice) & (receptacle__)~( (receptacle__)1 << Offset ) ) | ( !Valeur << Offset ) ) );
 		}
 		// place un bit de valeur 'Valeur' à la position 'Position'
 		void Allouer_(
-			mdr::size__ Nombre,
+			sdr::size__ Nombre,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( amount_extent_manager_<r>::AmountToAllocate( Nombre, Mode ) )
@@ -298,11 +298,11 @@ namespace bitbch {
 		// alloue 'Nombre' (>=1) bits
 	public:
 		// Tableau contenant les bits.
-		tym::E_MEMORYt_(receptacle__, r) Table;
+		tys::E_STORAGEt_(receptacle__, r) Table;
 		struct s
 		: public aem::amount_extent_manager_<r>::s
 		{
-			typename tym::E_MEMORYt_(receptacle__, r )::s Table;
+			typename tys::E_STORAGEt_(receptacle__, r )::s Table;
 		};
 		bit_bunch_( s &S )
 		: aem::amount_extent_manager_<r>( S ),
@@ -312,13 +312,13 @@ namespace bitbch {
 			Table.reset( P );
 			amount_extent_manager_<r>::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( sdr::E_STORAGE_DRIVER__ &SD )
 		{
-			Table.plug( M );
+			Table.plug( SD );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MDriver )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Table.plug( MDriver );
+			Table.plug( AS );
 		}
 		bit_bunch_ &operator =( const bit_bunch_ &O )
 		{
@@ -355,7 +355,7 @@ namespace bitbch {
 		}
 		//f Allocate enough room to contain 'Size' bits.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Allouer_( Size, Mode );
@@ -369,7 +369,7 @@ namespace bitbch {
 			return amount_extent_manager_<r>::Amount() - 1;
 		}
 		//f Return the position of the first of 'Size' new bits.
-		r New( mdr::size__ Size = 1 )
+		r New( sdr::size__ Size = 1 )
 		{
 			row_t__ P = amount_extent_manager_<r>::Amount();
 
@@ -394,8 +394,8 @@ namespace bitbch {
 	#define E_BIT_BUNCHt_( row )	bit_bunch_< row >
 	#define E_BIT_BUNCHt( row )		bit_bunch< row >
 
-	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( mdr::row__ )
-	#define E_BIT_BUNCH		E_BIT_BUNCHt( mdr::row__ )
+	#define E_BIT_BUNCH_	E_BIT_BUNCHt_( sdr::row__ )
+	#define E_BIT_BUNCH		E_BIT_BUNCHt( sdr::row__ )
 
 	void And(
 		const E_BIT_BUNCH_ &O1,
@@ -504,7 +504,7 @@ namespace bitbch {
 			return Get( Position );
 		}
 		//f Allocate enough room to contain 'Size' pairs of bits.
-		void Allocate( mdr::size__ Size )
+		void Allocate( sdr::size__ Size )
 		{
 			T1.Allocate( Size );
 			T2.Allocate( Size );

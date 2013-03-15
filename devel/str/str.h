@@ -89,22 +89,22 @@ namespace str {
 
 	_guint__ _GenericUnsignedConversion(
 		const class string_ &String,
-		mdr::row__ Begin,
-		mdr::row__ *ErrP,
+		sdr::row__ Begin,
+		sdr::row__ *ErrP,
 		base__ Base,
 		_guint__ Limit );
 
 	_gsint__ _GenericSignedConversion(
 		const class string_ &String,
-		mdr::row__ Begin,
-		mdr::row__ *ErrP,
+		sdr::row__ Begin,
+		sdr::row__ *ErrP,
 		base__ Base,
 		_gsint__ PositiveLimit,
 		_gsint__ NegativeLimit );
 
 	class _string_size_handler {
 	public:
-		static mdr::size__ SizeOf( const char *S )
+		static sdr::size__ SizeOf( const char *S )
 		{
 			if ( NULL == S )
 				S = "";
@@ -128,13 +128,13 @@ namespace str {
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &Driver )
+		void plug( sdr::E_STORAGE_DRIVER__ &Driver )
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::plug( Driver );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_BUNCHx_( bso::char__, _string_size_handler )::plug( M );
+			E_BUNCHx_( bso::char__, _string_size_handler )::plug( AS );
 		}
 		string_ &operator =( const string_ &O )
 		{
@@ -176,18 +176,18 @@ namespace str {
 		}
 		//f Convert 'Amount' characters at 'Position' from string to a 'char *'.
 		const char *Convert(
-			mdr::row__ Position,
-			mdr::size__ Amount,
+			sdr::row__ Position,
+			sdr::size__ Amount,
 			STR_BUFFER___ &Buffer ) const;
 		const char *Convert(
-			mdr::row__ Position,
+			sdr::row__ Position,
 			STR_BUFFER___ &Buffer ) const
 		{
-			return Convert( Position, TYM_MAX_SIZE, Buffer );
+			return Convert( Position, TYS_MAX_SIZE, Buffer );
 		}
 		const char *Convert( STR_BUFFER___ &Buffer ) const
 		{
-			return Convert( 0, TYM_MAX_SIZE, Buffer );
+			return Convert( 0, TYS_MAX_SIZE, Buffer );
 		}
 		//f Filter out the 'Model' charactere.
 		void FilterOut( char Model );
@@ -201,7 +201,7 @@ namespace str {
 			StripLeadingCharacter( Model );
 			StripTailingCharacter( Model );
 		}
-		string_ &Truncate( mdr::row__ Row )
+		string_ &Truncate( sdr::row__ Row )
 		{
 			E_BUNCHx_( bso::char__, _string_size_handler )::Truncate( Row );
 
@@ -223,25 +223,25 @@ namespace str {
 			bso::ulong__ Position,
 			const string_ &Value );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
-		mdr::row__ Search(
+		sdr::row__ Search(
 			const string_ &S,
-			mdr::row__ Start = 0 ) const;
+			sdr::row__ Start = 0 ) const;
 		//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'NONE' if no occurence.
-		mdr::row__ Search(
+		sdr::row__ Search(
 			char C,
-			mdr::row__ Start = 0 ) const;
+			sdr::row__ Start = 0 ) const;
 		// NOTA : Les méthodes 'ToNumber'(...)' facilitent la mise en oeuvre de 'template's.
 #define STR_UN( name, type, limit )\
 	type To##name(\
-			mdr::row__ Begin,\
-			mdr::row__ *ErrP,\
+			sdr::row__ Begin,\
+			sdr::row__ *ErrP,\
 			base__ Base,\
 			type Limit = limit ) const\
 		{\
 			return (type)_GenericUnsignedConversion( *this, Begin, ErrP, Base, Limit );\
 		}\
 		type To##name(\
-			mdr::row__ *ErrP = NULL,\
+			sdr::row__ *ErrP = NULL,\
 			base__ Base = bAuto,\
 			type Limit = limit ) const\
 		{\
@@ -249,21 +249,21 @@ namespace str {
 		}\
 		void ToNumber(\
 			type &Number,\
-			mdr::row__ *Error = NULL ) const\
+			sdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error );\
 		}\
 		void ToNumber(\
 			type Limit,\
 			type &Number,\
-			mdr::row__ *Error = NULL ) const\
+			sdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error, bAuto, Limit );\
 		}
 #define STR_SN( name, type, positive_limit, negative_limit )\
 	type To##name(\
-			mdr::row__ Begin,\
-			mdr::row__ *ErrP,\
+			sdr::row__ Begin,\
+			sdr::row__ *ErrP,\
 			base__ Base,\
 			type PositiveLimit = positive_limit,\
 			type NegativeLimit = negative_limit ) const\
@@ -271,7 +271,7 @@ namespace str {
 			return (type)_GenericSignedConversion( *this, Begin, ErrP, Base, PositiveLimit, NegativeLimit );\
 		}\
 		type To##name(\
-			mdr::row__ *ErrP = NULL,\
+			sdr::row__ *ErrP = NULL,\
 			base__ Base = bAuto,\
 			type PositiveLimit = positive_limit,\
 			type NegativeLimit = negative_limit ) const\
@@ -280,7 +280,7 @@ namespace str {
 		}\
 		void ToNumber(\
 			type &Number,\
-			mdr::row__ *Error = NULL ) const\
+			sdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error );\
 		}\
@@ -288,7 +288,7 @@ namespace str {
 			type PositiveLimit,\
 			type NegativeLimit,\
 			type &Number,\
-			mdr::row__ *Error = NULL ) const\
+			sdr::row__ *Error = NULL ) const\
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
@@ -301,13 +301,13 @@ namespace str {
 		STR_UN( UB, bso::ubyte__, BSO_UBYTE_MAX )
 		STR_SN( SB, bso::sbyte__, BSO_SBYTE_MAX, BSO_SBYTE_MIN )
 		bso::lfloat__ ToLF(
-			mdr::row__ *ErrP,
-			mdr::row__ Begin ) const;
-		bso::lfloat__ ToLF( mdr::row__ *ErrP = NULL ) const
+			sdr::row__ *ErrP,
+			sdr::row__ Begin ) const;
+		bso::lfloat__ ToLF( sdr::row__ *ErrP = NULL ) const
 		{
 			return ToLF( ErrP, 0 );
 		}
-		void *ToPointer( mdr::row__ *ErrP = NULL )
+		void *ToPointer( sdr::row__ *ErrP = NULL )
 		{
 # ifdef CPE__64BITS
 			return (void *)ToULL( ErrP, str::b16 );
@@ -319,7 +319,7 @@ namespace str {
 		}
 		void ToNumber(
 			bso::lfloat__ &Number,
-			mdr::row__ *Error = NULL ) const
+			sdr::row__ *Error = NULL ) const
 		{
 			Number = ToLF( Error );
 		}
@@ -344,9 +344,9 @@ namespace str {
 	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
-		mdr::row__ BeginS1,
-		mdr::row__ BeginS2,
-		mdr::size__ Amount )
+		sdr::row__ BeginS1,
+		sdr::row__ BeginS2,
+		sdr::size__ Amount )
 	{
 		return bch::Compare( S1, S2, BeginS1 ,BeginS2 , Amount );
 	}
@@ -355,11 +355,11 @@ namespace str {
 	inline bso::sign__ Compare(
 		const string_ &S1,
 		const string_ &S2,
-		mdr::row__ BeginS1 = 0,
-		mdr::row__ BeginS2 = 0 )
+		sdr::row__ BeginS1 = 0,
+		sdr::row__ BeginS2 = 0 )
 	{
 		bso::sign__ Resultat;
-		mdr::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
+		sdr::size__ T1 = S1.Amount() - *BeginS1, T2 = S2.Amount() - *BeginS2;
 
 		if ( ( Resultat = Compare( S1, S2, BeginS1, BeginS2, T1 < T2 ? T1 : T2 ) ) != 0 )
 			return Resultat;
@@ -431,7 +431,7 @@ namespace str {
 		}
 		string(
 			const char *S,
-			mdr::size__ Length )
+			sdr::size__ Length )
 		: string_( static_ )
 		{
 			reset( false );

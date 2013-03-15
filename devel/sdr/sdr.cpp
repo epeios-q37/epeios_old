@@ -80,7 +80,9 @@ xsize__ sdr::Convert( size__ Size )
 
 #define LIMIT ( SDR_SIZE_MAX >> 7 )
 
-size__ sdr::Convert( const sdr::datum__ *DSize )
+size__ sdr::Convert(
+	const sdr::datum__ *DSize,
+	sdr::size__ &Length )
 {
 	length__ Position = 0;
 	size__ Size = 0;
@@ -91,6 +93,9 @@ size__ sdr::Convert( const sdr::datum__ *DSize )
 
 		Size = ( Size << 7 ) + ( DSize[Position] & 0x7f );
 	} while ( DSize[Position++] & 0x80 );
+
+	if ( &Length != NULL )
+		Length = Position;
 
 	return Size;
 }

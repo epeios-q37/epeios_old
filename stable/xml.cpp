@@ -286,7 +286,7 @@ static status__ GetCommentOrCData_(
 		return sUnexpectedCharacter;
 }
 
-static mdr::size__ GetId_(
+static sdr::size__ GetId_(
 	_flow___ &Flow,
 	str::string_ &Id )
 {
@@ -300,7 +300,7 @@ static mdr::size__ GetId_(
 	return Size;
 }
 
-static inline mdr::size__ GetName_( 
+static inline sdr::size__ GetName_( 
 	_flow___ &Flow,
 	str::string_ &Name )
 {
@@ -1082,7 +1082,7 @@ void xml::TransformUsingEntities(
 	bso::bool__ DelimiterOnly )
 {
 ERRProlog
-	mdr::row__ Position = Target.First();
+	sdr::row__ Position = Target.First();
 	bso::char__ C;
 	str::string Buffer;
 ERRBegin

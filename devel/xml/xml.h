@@ -116,13 +116,13 @@ namespace xml {
 
 			S_.Coord.reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_STORAGE_DRIVER__ &SD )
 		{
-			Data.plug( MD );
+			Data.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Data.plug( MM );
+			Data.plug( AS );
 		}
 		dump_ &operator =( const dump_ &D )
 		{
@@ -590,9 +590,9 @@ namespace xml {
 			S_.SpecialCharHandling = sch_Undefined;
 			S_.Ignore = false;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Tags.plug( MM );
+			Tags.plug( AS );
 		}
 		writer_ &operator =( const writer_ &W )
 		{

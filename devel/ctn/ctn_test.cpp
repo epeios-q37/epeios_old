@@ -37,7 +37,7 @@
 #include "err.h"
 #include "cio.h"
 #include "str.h"
-#include "flm.h"
+#include "fls.h"
 
 using namespace ctn;
 
@@ -69,7 +69,7 @@ E_AUTO( data_cluster )
 
 void Print( const data_ &Data )
 {
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 	ctn::E_CMITEM( datum_ ) Datum;
 
 	Datum.Init( Data );
@@ -91,7 +91,7 @@ void Fill( data_cluster_ &DataCluster )
 {
 ERRProlog
 
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 	data Data;
 ERRBegin
 
@@ -118,7 +118,7 @@ ERREpilog
 
 void PrintV( data_cluster_ &DataCluster )
 {
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 
 	DataCluster.Flush();
 
@@ -138,7 +138,7 @@ void PrintV( data_cluster_ &DataCluster )
 
 void PrintC( const data_cluster_ &DataCluster )
 {
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 	ctn::E_CITEM( data_ ) Data;
 
 	Data.Init( DataCluster );
@@ -159,7 +159,7 @@ void BugTracking( void )
 {
 ERRProlog
 	data_cluster DataCluster;
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 ERRBegin
 	DataCluster.Init();
 	Fill( DataCluster );
@@ -185,13 +185,13 @@ ERREpilog
 void EssaiBasic( void )
 {
 ERRProlog
-	mmm::multimemory MM;
+	ags::E_ASTORAGE AS;
 	E_MCONTAINER( str::string_ ) C;
 //	MITEM( str::string_ ) E;
 ERRBegin
-	MM.Init();
+	AS.Init();
 //	MM.Preallocate( 10000 );
-	C.plug( MM );
+	C.plug( AS );
 	C.Init();
 //	MM.DisplayStructure( cout );
 #if 0
@@ -206,6 +206,8 @@ ERRBegin
 	C( 1 ) = "hello";
 #else
 	C.Append( str::string( "coucou" ) );
+	AS.DisplayStructure( cout );
+	cout << txf::nl << txf::commit;
 //	MM.DisplayStructure( cout );
 
 	C.Insert( str::string( "hello" ), 0 );
@@ -251,7 +253,7 @@ ERRBegin
 			I1.Set( 0 );
 //			S2 = Liste[0];
 
-		for ( mdr::row_t__ i = 1; i < Liste.Amount(); i++ )
+		for ( sdr::row_t__ i = 1; i < Liste.Amount(); i++ )
 		{
 			S = I1();
 			I1.Set( i );
@@ -293,16 +295,16 @@ void Remplir( str::string_ &S )
 void PetitEssai( int argc, const char *argv[] )
 {
 ERRProlog
-	mmm::multimemory M;
+	ags::E_ASTORAGE AS;
 	E_MCONTAINER( str::string_ ) CS;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS;
 	str::string Str;
-	mdr::row__ P;
+	sdr::row__ P;
 ERRBegin
-	M.Init();
-	CS.plug( M );
+	AS.Init();
+	CS.plug( AS );
 	CS.Init();
 	CS.Allocate( 2 );
 	ECS.Init( CS );
@@ -366,22 +368,22 @@ ERREpilog
 void Essai( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory M;
+	fls::id__ ID = FLS_UNDEFINED_ID;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE AS;
 	E_MCONTAINER( str::string_ ) CS, CD;
 /*	fch_flot_sortie_fichier S;
 	fch_flot_entree_fichier E;
 */	E_MITEM( str::string_ ) ECS, ECD;
 	str::string Str;
-	mdr::row__ P;
+	sdr::row__ P;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID );
 	F.Automatic();
 //	M.plug( F );
-	M.Init();
-	CS.plug( M );
+	AS.Init();
+	CS.plug( AS );
 	CS.Init();
 	CS.Allocate( 12 );
 	ECS.Init( CS );
@@ -479,8 +481,8 @@ ERRBegin
 	cout << txf::nl;
 ERRErr
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 ERREpilog
 
 }
@@ -499,14 +501,14 @@ ERRBegin
 	CC.Init();
 //	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
 
-	CC.Dynamics.Multimemoire.Preallocate( 100000 );
+	CC.Dynamics.AStorage.Preallocate( 100000 );
 //	CC.Dynamics.Multimemoire.DisplayStructure( cio::cout );
 
 	CS.Init();
 //	CS.Dynamics.Multimemoire.Preallocate( 100000 );
 
 	CC.Allocate( 1 );
-	CC.Dynamics.Multimemoire.DisplayStructure( cout );
+	CC.Dynamics.AStorage.DisplayStructure( cout );
 //
 	CS.Allocate( 1 );
 //	CS.Dynamics.Multimemoire.DisplayStructure( cio::cout );
@@ -521,24 +523,24 @@ ERRBegin
 	cout << CS( 0 ) << " ";
 	CS.Flush();
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cout );
+	CS.Dynamics.AStorage.DisplayStructure( cout );
 
 	cout << '\t';
 
 	CC( 0 ).Init();
-	CC.Dynamics.Multimemoire.DisplayStructure( cout );
+	CC.Dynamics.AStorage.DisplayStructure( cout );
 	CC() = CS;
 
 	CC.Flush();
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cout );
-	CC.Dynamics.Multimemoire.DisplayStructure( cout );
+	CS.Dynamics.AStorage.DisplayStructure( cout );
+	CC.Dynamics.AStorage.DisplayStructure( cout );
 
 	cout << txf::nl;
 
 	CS = CC( 0 );
 
-	CS.Dynamics.Multimemoire.DisplayStructure( cout );
+	CS.Dynamics.AStorage.DisplayStructure( cout );
 
 	S = CS( 0 );
 
@@ -556,10 +558,10 @@ ERREpilog
 void EssaiCopie( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
+	fls::id__ ID = FLS_UNDEFINED_ID;
 	int a = A( A_( 3 ) );
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory Mm;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE Mm;
 	E_MCONTAINER( str::string_ ) CC;
 	E_CONTAINER( E_MCONTAINER_( str::string_ ) ) Cm;
 	E_CONTAINER( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) CM;
@@ -571,7 +573,7 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID, "a.tmp" );
 //	F.Manuel();
 	Mm.plug( F );
@@ -678,7 +680,7 @@ ERREpilog
 void EssaiPersistence( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
+	fls::id__ ID = FLS_UNDEFINED_ID;
 	int a = A( A_( 3 ) );
 	E_MCONTAINER( str::string_ ) CC;
 	E_CONTAINER( E_MCONTAINER_( str::string_ ) ) Cm;
@@ -692,8 +694,8 @@ ERRProlog
 	E_MITEM( str::string_ ) ECC;
 	char M, m, C;
 ERRBegin
-	ID = flm::GetId();
-	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", "Test.cmf", fil::mReadWrite, true, ID );
+	ID = fls::GetId();
+	FileManager.Init( "Test.cst", "Test.cdn", "Test.cmm", fil::mReadWrite, true, ID );
 
 	Cm.Init();
 	CC.Init();
@@ -757,7 +759,7 @@ ERRBegin
 		cout << "***** RECUPERATION *****" << txf::nl << txf::commit;
 	}
 
-	CM.Dynamics.Multimemoire.DisplayStructure( cout );
+	CM.Dynamics.AStorage.DisplayStructure( cout );
 
 
 	cout << "--------------" << txf::nl;
@@ -794,8 +796,8 @@ ERRBegin
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 	// instructions à exécuter, erreur ou non
 ERREpilog
 }
@@ -900,15 +902,15 @@ ERREpilog
 void EssaiDirect( int argc, const char *argv[] )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory Mm;
+	fls::id__ ID = FLS_UNDEFINED_ID;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE Mm;
 //	CONTAINER( CONTAINER_( ctn_conteneur_polymemoire_< UTL_2EN1( str::string_, str::string_::s ) > ) ) GC;
 	E_CONTAINER( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) GC;
 	E_ITEM( E_CONTAINER_( E_MCONTAINER_( str::string_ ) ) ) EGC;
 	char M;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID, "b.tmp");
 	F.Manual();
 	Mm.plug( F );
@@ -948,8 +950,8 @@ ERRBegin
 ERRErr
 	// instructions à exécuter si erreur
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 	// instructions à exécuter, erreur ou non
 ERREpilog
 }
@@ -957,13 +959,13 @@ ERREpilog
 void EssaiSimpleMono( void )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory M;
+	fls::id__ ID = FLS_UNDEFINED_ID;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE M;
 	E_MCONTAINER( str::string_ ) C;
 	E_MITEM( str::string_ ) E;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID, "coucou.tmp" );
 //	M.plug( F );
 	M.Init();
@@ -980,21 +982,21 @@ ERRBegin
 	cout << E(1) << txf::nl;
 ERRErr
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 ERREpilog
 }
 
 void EssaiSimpleMulti( void )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory M;
+	fls::id__ ID = FLS_UNDEFINED_ID;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE M;
 	E_CONTAINER( str::string_ ) C;
 	E_ITEM( str::string_ ) E;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID, "coucou.tmp" );
 	M.plug( F );
 	M.Init();
@@ -1011,23 +1013,23 @@ ERRBegin
 	cout << E(1) << txf::nl;
 ERRErr
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 ERREpilog
 }
 
 void EssaiConteneurDansConteneur( void )
 {
 ERRProlog
-	flm::id__ ID = FLM_UNDEFINED_ID;
-	flm::E_FILE_MEMORY_DRIVER___ F;
-	mmm::multimemory M;
+	fls::id__ ID = FLS_UNDEFINED_ID;
+	fls::E_FILE_STORAGE_DRIVER___ F;
+	ags::E_ASTORAGE M;
 	E_CONTAINER( str::string_ ) CS;
 	E_CONTAINER( E_CONTAINER_( str::string_ ) ) CC;
 //	ITEM( str::string_ ) ECS;
 //	ITEM( CONTENEUR_( str::string_ ) ) ECC;
 ERRBegin
-	ID = flm::GetId();
+	ID = fls::GetId();
 	F.Init( ID, "temp.tmp" );
 	M.plug( F );
 	M.Init();
@@ -1076,8 +1078,8 @@ ERRBegin
 	CS.Flush();
 ERRErr
 ERREnd
-	if ( ID != FLM_UNDEFINED_ID )
-		flm::ReleaseId( ID );
+	if ( ID != FLS_UNDEFINED_ID )
+		fls::ReleaseId( ID );
 ERREpilog
 }
 

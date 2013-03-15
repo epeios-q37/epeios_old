@@ -1,13 +1,13 @@
 /*
-	'bch' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Requires the 'bch' header file ('bch.h').
-	Copyright (C) 2001-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	'ias' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'ias' header file ('ias.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define BCH__COMPILATION
+#define IAS__COMPILATION
 
-#include "bch.h"
+#include "ias.h"
 
-class bchtutor
+class iastutor
 : public ttr_tutor
 {
 public:
-	bchtutor( void )
-	: ttr_tutor( BCH_NAME )
+	iastutor( void )
+	: ttr_tutor( IAS_NAME )
 	{
-#ifdef BCH_DBG
-		Version = BCH_VERSION "\b\bD $";
+#ifdef IAS_DBG
+		Version = IAS_VERSION "\b\bD $";
 #else
-		Version = BCH_VERSION;
+		Version = IAS_VERSION;
 #endif
-		Owner = BCH_OWNER;
+		Owner = IAS_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~bchtutor( void ){}
+	virtual ~iastutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,42 +55,48 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "sdr.h"
+using namespace ias;
 
-using namespace bch;
-
-void bch::_GetRelations(
-	const uym::untyped_memory_ &Sorted,
-	const uym::untyped_memory_ &Unsorted,
-	mdr::size__ Size,
-	mdr::row_t__ Limit,
-	mdr::datum__ *Buffer,
-	E_BUNCH_( mdr::row__ ) &Relations )
+void indexed_aggregated_storage_::AllouerMoins_(
+	sdr::size__ CapaciteCourante,
+	sdr::size__ CapaciteDemandee,
+	aem::mode__ Mode )
 {
-	mdr::row_t__ Row = 0;
+	while ( CapaciteCourante-- > CapaciteDemandee )
+		AStorage.Free( Descriptors.Get( CapaciteCourante ) );
 
-	while ( Row < Limit ) {
-		Sorted.Recall( Row, Size, Buffer );
-		Relations.Append( Unsorted.Search( Buffer, Size, 0, Limit ) / Size );
+	Descriptors.Allocate( CapaciteDemandee, Mode );
+}
 
-		Row += Size;
-	}
+void indexed_aggregated_storage_::RemoveWithoutReallocating(
+	sdr::row__ Position,
+	sdr::size__ ActualCapacity,
+	sdr::size__ Amount )
+{
+	sdr::size__ Counter = Amount;
+
+	while( Counter-- )
+		AStorage.Free( Descriptors.Get( *Position + Counter ) );
+
+	Descriptors.Store( Descriptors, ActualCapacity - *Position - Amount, *Position, *Position + Amount );
+
+	Initialize_( ActualCapacity - Amount, ActualCapacity );
 }
 
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class bchpersonnalization
-: public bchtutor
+class iaspersonnalization
+: public iastutor
 {
 public:
-	bchpersonnalization( void )
+	iaspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~bchpersonnalization( void )
+	~iaspersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -106,6 +112,6 @@ public:
 
 // 'static' by GNU C++.
 
-static bchpersonnalization Tutor;
+static iaspersonnalization Tutor;
 
-ttr_tutor &BCHTutor = Tutor;
+ttr_tutor &IASTutor = Tutor;

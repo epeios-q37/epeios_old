@@ -1,12 +1,12 @@
 /*
-	Header for the 'ctn' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'ctn' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	CTN_VERSION	"$Revision$"
 
-#define CTN_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define CTN_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &CTNTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -62,7 +62,7 @@ extern class ttr_tutor &CTNTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "mmi.h"
+#include "ias.h"
 #include "cpe.h"
 #include "aem.h"
 
@@ -77,7 +77,7 @@ extern class ttr_tutor &CTNTutor;
 
 namespace ctn {
 
-	using mdr::size__;
+	using sdr::size__;
 	using aem::amount_extent_manager_;
 
 
@@ -87,7 +87,7 @@ namespace ctn {
 	{
 	private:
 		void _Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
@@ -105,14 +105,15 @@ namespace ctn {
 #endif
 	public:
 		//r All the static parts.
-		tym::E_MEMORYt_( st, r ) Statics;
+		tys::E_STORAGEt_( st, r ) Statics;
 		//r All the dynamic parts.
-		mmi::indexed_multimemory_ Dynamics;
+		ias::indexed_aggregated_storage_ Dynamics;
 		struct s
 		: public aem::amount_extent_manager_<r>::s
 		{
-			typename tym::E_MEMORYt_( st, r )::s Statics;
-			mmi::indexed_multimemory_::s Dynamics;
+			typename tys::E_STORAGEt_( st, r )::s Statics;
+//			tys::E_STORAGEt_( st, r )::s Statics;
+			ias::indexed_aggregated_storage_::s Dynamics;
 		};
 		basic_container_( s &S )
 		: Dynamics( S.Dynamics ),
@@ -125,10 +126,10 @@ namespace ctn {
 			Statics.reset( P );
 			amount_extent_manager_<r>::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Dynamics.plug( M );
-			Statics.plug( M );
+			Dynamics.plug( AS );
+			Statics.plug( AS );
 	//		amount_extent_manager_::plug( M );	// Not relevant
 		}
 		basic_container_ &operator =( const basic_container_ &O )
@@ -179,15 +180,15 @@ namespace ctn {
 		}
 		//f Allocation room for 'Size' object of statical part 'ST'.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			const st &ST,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			mdr::size__ AncCap;
-			mdr::size__ Amount = Size;
+			sdr::size__ AncCap;
+			sdr::size__ Amount = Size;
 
 			AncCap = amount_extent_manager_<r>::Amount();
 
@@ -218,7 +219,7 @@ namespace ctn {
 			Statics.Store( ST, Row );
 		}
 		void DecreaseTo(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
@@ -230,14 +231,14 @@ namespace ctn {
 		// Comme 'ecrire()', sauf pour la multimémoire, qui contient la partie dynamique.
 	/*	void EcrireToutDansFlotSaufPartiesDynamiques( flo_sortie_ &Flot ) const
 		{
-			FLOEcrire( *Multimemoire.S_, Flot );
+			FLOEcrire( *AStorage.S_, Flot );
 			Dynamique.ecrire( Flot );
 			Statique.ecrire( Flot );
 		}
 		// Comme 'lire()', sauf pour la multimémoire, qui contient la partie dynamique.
 		void LireToutDeFlotSaufPartiesDynamiques( flo_entree_ &Flot )
 		{
-			FLOLire( Flot, *Multimemoire.S_ );
+			FLOLire( Flot, *AStorage.S_ );
 			Dynamique.lire( Flot );
 			Statique.lire( Flot );
 		}
@@ -249,7 +250,7 @@ namespace ctn {
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			mdr::size__ Extent = this->Extent();
+			sdr::size__ Extent = this->Extent();
 
 			if ( amount_extent_manager_<r>::Force( Size ) ) {
 				Dynamics.Allocate( Size, Extent );
@@ -260,14 +261,14 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			aem::mode__ Mode )
 		{
 #ifdef CTN_DBG
 			FlushTest();
 #endif
-			mdr::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
-			mdr::size__ NewAmount = CurrentAmount - Amount;
+			sdr::size__ CurrentAmount = amount_extent_manager_<r>::Amount();
+			sdr::size__ NewAmount = CurrentAmount - Amount;
 
 			Dynamics.RemoveWithoutReallocating( *Position, CurrentAmount, Amount );
 			Statics.Store( Statics, NewAmount - *Position, Position, *Position + Amount );
@@ -276,7 +277,7 @@ namespace ctn {
 		}
 		//f Remove 'Amount' objects from the end of the container.
 		void Truncate(
-			mdr::size__ Amount = 1,
+			sdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 	#ifdef CTN_DBG
@@ -298,7 +299,7 @@ namespace ctn {
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			r Row = 0,
 			aem::mode__ Mode = aem::m_Default )
 		{
@@ -318,11 +319,11 @@ namespace ctn {
 #endif
 			Crop( Last - First + 1, First, Mode );
 		}
-		static mdr::size__ GetStaticsItemSize( void )
+		static sdr::size__ GetStaticsItemSize( void )
 		{
 			return sizeof( st );
 		}
-		void SubInit( mdr::size__ Size )
+		void SubInit( sdr::size__ Size )
 		{
 			amount_extent_manager_<r>::Init( Size );
 			amount_extent_manager_<r>::SetStepValue( 0 );
@@ -333,8 +334,8 @@ namespace ctn {
 	template <typename container> class container_file_manager___
 	{
 	private:
-		tym::memory_file_manager___ _Statics;
-		mmi::indexed_multimemory_file_manager___ _Dynamics;
+		tys::storage_file_manager___ _Statics;
+		ias::indexed_aggregated_storage_file_manager___ _Dynamics;
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -353,45 +354,44 @@ namespace ctn {
 			const char *StaticsFileName,
 			const char *DynamicsDescriptorsFileName,
 			const char *DynamicsMultimemoryFileName,
-			const char *DynamicsMultimemoryFreeFragmentPositionsFileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
 			_Statics.Init( StaticsFileName, Mode, Persistent, ID );
-			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, DynamicsMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_Dynamics.Init( DynamicsDescriptorsFileName, DynamicsMultimemoryFileName, Mode, Persistent, ID );
 		}
-		uym::state__ State( void ) const
+		uys::state__ State( void ) const
 		{
-			uym::state__ State = _Statics.State();
+			uys::state__ State = _Statics.State();
 
-			if ( !uym::IsError( State ) )
+			if ( !uys::IsError( State ) )
 				if ( State != _Dynamics.State() )
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _Statics.Bind();
+			uys::state__ State = _Statics.Bind();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _Dynamics.Bind() != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _Statics.Settle();
+			uys::state__ State = _Statics.Settle();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _Dynamics.Settle() != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 		}
@@ -431,11 +431,11 @@ namespace ctn {
 			_Statics.Drop();
 			_Dynamics.Drop();
 		}
-		tym::memory_file_manager___ &StaticsFileManager( void )
+		tys::storage_file_manager___ &StaticsFileManager( void )
 		{
 			return _Statics;
 		}
-		mmi::indexed_multimemory_file_manager___ &DynamicsFileManager( void )
+		ias::indexed_aggregated_storage_file_manager___ &DynamicsFileManager( void )
 		{
 			return _Dynamics;
 		}
@@ -470,25 +470,25 @@ namespace ctn {
 		}
 	};
 
-	template <typename container, typename file_manager> inline uym::state__ Plug(
+	template <typename container, typename file_manager> inline uys::state__ Plug(
 		container &Container,
 		file_manager &FileManager )
 	{
-		uym::state__ State = tym::Plug( Container.Statics, FileManager.StaticsFileManager() );
+		uys::state__ State = tys::Plug( Container.Statics, FileManager.StaticsFileManager() );
 
-		if ( uym::IsError( State ) ) {
+		if ( uys::IsError( State ) ) {
 			FileManager.reset();
 			return State;
 		}
 
 		// Container.SetStepValue( 0 );	// Made by 'SubInit(...)'.
 
-		if ( !uym::IsError( State ) ) {
-			if ( mmi::Plug( Container.Dynamics, FileManager.DynamicsFileManager() ) != State ) {
+		if ( !uys::IsError( State ) ) {
+			if ( ias::Plug( Container.Dynamics, FileManager.DynamicsFileManager() ) != State ) {
 				FileManager.reset();
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 			} else
-				Container.SubInit( Container.Dynamics.Descripteurs.Amount() );
+				Container.SubInit( Container.Dynamics.Descriptors.Amount() );
 		}
 
 		return State;
@@ -522,7 +522,7 @@ namespace ctn {
 		basic_container_<st, r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
-		mmi::indexed_multimemory_driver__ Pilote_;
+		ias::indexed_aggregated_storage_driver__ Pilote_;
 	public:
 		struct s
 		: public st
@@ -625,7 +625,7 @@ namespace ctn {
 		const basic_container_<st,r> *Conteneur_;
 		/* Pilote permettant l'accés à la partie dynamique des objets contenus
 		dans le conteneur auquel cet élément est rattaché. */
-		mmi::const_indexed_multimemory_driver__ Pilote_;
+		ias::const_indexed_aggregated_storage_driver__ Pilote_;
 	public:
 		struct s
 		: public st
@@ -703,7 +703,7 @@ namespace ctn {
 	template <class st> struct item_mono_statique__
 	: public st
 	{
-		mdr::size__ Extent;
+		sdr::size__ Extent;
 	};
 
 	/*c To reach an object from a 'MCONTAINER_( t )'. Use 'MITEM( t )'
@@ -842,12 +842,12 @@ namespace ctn {
 	#define E_CMITEMt( Type, r )	const_mono_item< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_MITEM( Type )		volatile_mono_item< Type, mdr::row__ >
-	#define E_CMITEM( Type )	const_mono_item< Type, mdr::row__ >
+	#define E_MITEM( Type )		volatile_mono_item< Type, sdr::row__ >
+	#define E_CMITEM( Type )	const_mono_item< Type, sdr::row__ >
 #else
 	//s To reach an item from 'MCONTAINER_( Type )' , but only for reading.
-	#define E_MITEM( Type )		E_MITEMt( Type, mdr::row__ )
-	#define E_CMITEM( Type )	E_CMITEMt( Type, mdr::row__ )
+	#define E_MITEM( Type )		E_MITEMt( Type, sdr::row__ )
+	#define E_CMITEM( Type )	E_CMITEMt( Type, sdr::row__ )
 #endif
 
 	/*c Container for object of type 'Type', which need only one memory.
@@ -953,7 +953,7 @@ namespace ctn {
 		}
 		//f Allocate room for 'Size' objects.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_MITEMt( t, r ) E;
@@ -997,9 +997,9 @@ namespace ctn {
 		}
 
 		//f Create a new object and return its position.
-		r New( mdr::size__ Size = 1 )
+		r New( sdr::size__ Size = 1 )
 		{
-			mdr::row_t__ P = this->Amount();
+			sdr::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -1008,7 +1008,7 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			mdr::size__ Amount = 1,
+			sdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
@@ -1030,18 +1030,18 @@ namespace ctn {
 	#define E_MCONTAINERt( Type, r )	mono_container< Type, r >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_MCONTAINER_( Type )	mono_container_< Type, mdr::row__ >
-	#define E_MCONTAINER( Type )	mono_container< Type, mdr::row__ >
+	#define E_MCONTAINER_( Type )	mono_container_< Type, sdr::row__ >
+	#define E_MCONTAINER( Type )	mono_container< Type, sdr::row__ >
 #else
-	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, mdr::row__ )
-	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, mdr::row__ )
+	#define E_MCONTAINER_( Type )	E_MCONTAINERt_( Type, sdr::row__ )
+	#define E_MCONTAINER( Type )	E_MCONTAINERt( Type, sdr::row__ )
 #endif
 
 	template <class st> struct item_multi_statique__
 	: public st
 	{
-		mmm::multimemory_::s Multimemoire;
-		mdr::size__ Extent;
+		ags::aggregated_storage_::s AStorage;
+		sdr::size__ Extent;
 	};
 
 	/*c To reach an object from a 'CONTAINER_( t )'. Use 'ITEM( t )'
@@ -1052,7 +1052,7 @@ namespace ctn {
 	private:
 		t Objet_;
 	public:
-		mmm::multimemory_ Multimemoire;
+		ags::aggregated_storage_ AStorage;
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -1062,25 +1062,25 @@ namespace ctn {
 			item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::reset( P );
 
 			Objet_.reset( false );
-			Multimemoire.reset( P );
+			AStorage.reset( P );
 
-			Multimemoire.plug( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
-			Objet_.plug( Multimemoire );
+			AStorage.plug( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
+			Objet_.plug( AStorage );
 		}
 		volatile_multi_item( void )
 		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
-		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
+		  AStorage( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.AStorage )
 		{
 			reset( false );
 		}
 		// Remplace la fonction d'initialisation.
 		volatile_multi_item( basic_container_< item_multi_statique__< typename t::s >, r > &Conteneur )
 		: Objet_( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
-		  Multimemoire( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
+		  AStorage( item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.AStorage )
 		{
 			reset( false );
 
-			Multimemoire.Init();
+			AStorage.Init();
 			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Conteneur );
 		}
 		~volatile_multi_item( void )
@@ -1093,7 +1093,7 @@ namespace ctn {
 #ifdef CTN_DBG
 			Container.FlushTest();
 #endif
-			Multimemoire.Init();
+			AStorage.Init();
 			item_base_volatile__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
 		}
 		volatile_multi_item &operator =( const volatile_multi_item &O )
@@ -1133,7 +1133,7 @@ namespace ctn {
 	private:
 		t Objet_;
 	public:
-		mmm::multimemory_ Multimemoire;
+		ags::aggregated_storage_ AStorage;
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
@@ -1143,14 +1143,14 @@ namespace ctn {
 			item_base_const__< item_multi_statique__<typename_ t::s>, r >::reset(  P) ;
 
 			Objet_.reset( false );
-			Multimemoire.reset( P );
+			AStorage.reset( P );
 
-			Multimemoire.plug( item_base_const__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
-			Objet_.plug( Multimemoire );
+			AStorage.plug( item_base_const__< item_multi_statique__< typename_ t::s >, r >::Pilote_ );
+			Objet_.plug( AStorage );
 		}
 		const_multi_item( void )
 		: Objet_( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_ ),
-		  Multimemoire( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.Multimemoire )
+		  AStorage( item_base_const__< item_multi_statique__< typename_ t::s >, r >::ctn_S_.AStorage )
 		{
 			reset( false );
 		}
@@ -1164,7 +1164,7 @@ namespace ctn {
 #ifdef CTN_DBG
 			Container.FlushTest();
 #endif
-			Multimemoire.Init();
+			AStorage.Init();
 			item_base_const__< item_multi_statique__< typename_ t::s >, r >::Init( Container );
 		}
 		const_multi_item &operator =( const const_multi_item &O )
@@ -1192,11 +1192,11 @@ namespace ctn {
 	#define E_CITEMt( Type,r  )		const_multi_item< Type, r  >
 
 #if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_ITEM( Type )			volatile_multi_item< Type, mdr::row__ >
-	#define E_CITEM( Type )			const_multi_item< Type, mdr::row__  >
+	#define E_ITEM( Type )			volatile_multi_item< Type, sdr::row__ >
+	#define E_CITEM( Type )			const_multi_item< Type, sdr::row__  >
 #else
-	#define E_ITEM( Type )			E_ITEMt( Type, mdr::row__ )
-	#define E_CITEM( Type )			E_CITEMt( Type, mdr::row__ )
+	#define E_ITEM( Type )			E_ITEMt( Type, sdr::row__ )
+	#define E_CITEM( Type )			E_CITEMt( Type, sdr::row__ )
 #endif
 
 	/*c Container for objects 't', with static part 'st', which need more then one memory.
@@ -1302,7 +1302,7 @@ namespace ctn {
 		}
 		//f Allocate room for 'Capacity' objects.
 		void Allocate(
-			mdr::size__ Capacity,
+			sdr::size__ Capacity,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_ITEMt( t, r ) E;
@@ -1335,9 +1335,9 @@ namespace ctn {
 			return *this;
 		}
 		//f Create a new object and return its position.
-		r New( mdr::size__ Size = 1 )
+		r New( sdr::size__ Size = 1 )
 		{
-			mdr::row_t__ P = this->Amount();
+			sdr::row_t__ P = this->Amount();
 
 			Allocate( P + Size );
 
@@ -1356,7 +1356,7 @@ namespace ctn {
 		//f Remove 'Amount' entries from 'Position'.
 		void Remove(
 			r Position,
-			mdr::size__ Amount = 1,
+			sdr::size__ Amount = 1,
 			aem::mode__ Mode = aem::m_Default )
 		{
 #ifdef CTN_DBG
@@ -1378,11 +1378,11 @@ namespace ctn {
 	#define E_CONTAINERt( Type, r ) multi_container< Type, r >
 
 # if defined( CPE__USE_GCC_WORKAROUND ) || defined( CPE__USE_WC_WORKAROUND )
-	#define E_CONTAINER_( Type )	multi_container_< Type, mdr::row__ >
-	#define E_CONTAINER( Type )		multi_container< Type, mdr::row__ >
+	#define E_CONTAINER_( Type )	multi_container_< Type, sdr::row__ >
+	#define E_CONTAINER( Type )		multi_container< Type, sdr::row__ >
 # else
-	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, mdr::row__ )
-	#define E_CONTAINER( Type )		E_CONTAINERt( Type, mdr::row__ )
+	#define E_CONTAINER_( Type )	E_CONTAINERt_( Type, sdr::row__ )
+	#define E_CONTAINER( Type )		E_CONTAINERt( Type, sdr::row__ )
 # endif
 }
 

@@ -63,6 +63,7 @@ extern class ttr_tutor &AGSTutor;
 # include "err.h"
 # include "flw.h"
 # include "sdr.h"
+# include "txf.h"
 // # include "uys.h"	// déporté, parce 'ags.h' est inclus par 'uys.h'.
 
 # ifdef UYS__INC
@@ -99,8 +100,8 @@ namespace ags {
 	private:
 		descriptor__ &_Descriptor;
 		// memoire à laquelle il a été affecté
-		class aggregated_storage_ *Storage_;
-		void _Free();
+		class aggregated_storage_ *_AStorage;
+		void _Free( void );
 	protected:
 		virtual void SDRAllocate( sdr::size__ Size );
 		// Fonction déportée.
@@ -121,10 +122,10 @@ namespace ags {
 		void reset( bool P = true )
 		{
 			if ( P ) {
-				if ( Storage_ != NULL )
+				if ( _AStorage != NULL )
 					_Free();
 			} else
-				Storage_ = NULL;
+				_AStorage = NULL;
 
 			E_STORAGE_DRIVER__::reset( P );
 
@@ -137,11 +138,11 @@ namespace ags {
 			reset( false );
 		}
 		E_VDTOR( aggregated_storage_driver__ )
-		void Init( aggregated_storage_ &Storage )
+		void Init( aggregated_storage_ &AStorage )
 		{
 			reset();
 
-			Storage_ = &Storage;
+			_AStorage = &AStorage;
 			E_STORAGE_DRIVER__::Init();
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
@@ -150,9 +151,9 @@ namespace ags {
 		{
 			return _Descriptor;
 		}
-		aggregated_storage_ *Storage( void ) const
+		aggregated_storage_ *AStorage( void ) const
 		{
-			return Storage_;
+			return _AStorage;
 		}
 	};
 
@@ -171,6 +172,23 @@ namespace ags {
 		s_amount,
 		s_Undefined
 	};
+
+	inline void Display(
+		status__ Status,
+		txf::text_oflow__ &Flow )
+	{
+		switch ( Status ) {
+		case sFree:
+			Flow << 'F';
+			break;
+		case sUsed:
+			Flow << 'U';
+			break;
+		default:
+			ERRc();
+			break;
+		}
+	}
 
 	enum flag_position__ {
 		/*
@@ -221,18 +239,18 @@ namespace ags {
 	};
 
 # define AGS_HEADER_SIZE			sizeof( ags::header__ )
-# define AGS_EMBEDDED_VALUE_MAX		( ~ags::f_All >> ags::fp_SizeBegin )
+# define AGS_EMBEDDED_VALUE_MAX		( (bso::ubyte__)( ~ags::f_All >> ags::fp_SizeBegin ) )
 # define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
 # define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
 # define AGS_FULL_HEADER_SIZE_MAX	( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
 
 	using sdr::size__;
 
-	typedef sdr::datum__ header__;
+	E_TMIMIC__( sdr::datum__, header__ );
 
 	inline bso::bool__ IsUsed( header__ Header )
 	{
-		return ( Header & fStatus ) != 0;
+		return ( *Header & fStatus ) != 0;
 	}
 
 	inline bso::bool__ IsFree( header__ Header )
@@ -240,9 +258,14 @@ namespace ags {
 		return !IsUsed( Header );
 	}
 
+	inline status__ Status( header__ Header )
+	{
+		return IsUsed( Header ) ? sUsed : sFree;
+	}
+
 	inline bso::bool__ IsSizeShort( header__ Header )
 	{
-		return ( Header & fSizeType ) != 0;
+		return ( *Header & fSizeType ) != 0;
 	}
 
 	inline bso::bool__ IsSizeLong( header__ Header )
@@ -252,7 +275,7 @@ namespace ags {
 
 	inline bso::bool__ IsPredecessorUsed( header__ Header )
 	{
-		return ( Header & fPredecessorStatus ) != 0;
+		return ( *Header & fPredecessorStatus ) != 0;
 	}
 
 	inline bso::bool__ IsPredecessorFree( header__ Header )
@@ -260,9 +283,14 @@ namespace ags {
 		return !IsPredecessorUsed( Header );
 	}
 
+	inline status__ PredecessorStatus( header__ Header )
+	{
+		return IsPredecessorUsed( Header ) ? sUsed : sFree;
+	}
+
 	inline size__ GetEmbeddedValue( header__ Header )
 	{
-		return ( ( Header & ~f_All ) >> fp_SizeBegin );
+		return ( ( *Header & ~f_All ) >> fp_SizeBegin );
 	}
 
 	inline size__ GetRawShortSize( header__ Header )
@@ -278,14 +306,34 @@ namespace ags {
 		return GetRawShortSize( Header ) + 1;
 	}
 
+	inline void Display(
+		header__ Header,
+		txf::text_oflow__ &Flow )
+	{
+		Display( Status( Header ), Flow );
+
+		if ( IsSizeLong( Header ) )
+			Flow << 'L';
+		else if ( IsSizeShort( Header ) )
+			Flow << 'S';
+		else
+			ERRc();
+
+		Flow << '(';
+
+		Display( PredecessorStatus( Header ), Flow );
+
+		Flow << ')';
+	}
+
 	inline void MarkAsFree( header__ &Header )
 	{
-		Header &= ~fStatus;
+		*Header &= ~fStatus;
 	}
 
 	inline void MarkAsUsed( header__ &Header )
 	{
-		Header |= fStatus;
+		*Header |= fStatus;
 	}
 
 	inline void Mark(
@@ -307,15 +355,15 @@ namespace ags {
 
 	inline void MarkPredecessorAsFree( header__ &Header )
 	{
-		Header &= ~fPredecessorStatus;
+		*Header &= ~fPredecessorStatus;
 	}
 
 	inline void MarkPredecessorAsUsed( header__ &Header )
 	{
-		Header |= fPredecessorStatus;
+		*Header |= fPredecessorStatus;
 	}
 
-	void MarkPredecessorStatus(
+	inline void MarkPredecessorStatus(
 		header__ &Header,
 		status__ Status )
 	{
@@ -334,12 +382,12 @@ namespace ags {
 
 	inline void MarkSizeAsShort( header__ &Header )
 	{
-		Header &= ~fSizeType;
+		*Header &= ~fSizeType;
 	}
 
 	inline void MarkSizeAsLong( header__ &Header )
 	{
-		Header |= fSizeType;
+		*Header |= fSizeType;
 	}
 
 	inline bso::bool__ CanValueBeEmbedded( size__ Value )
@@ -424,7 +472,7 @@ namespace ags {
 		if ( !CanValueBeEmbedded( Value ) )
 			ERRc();
 
-		Header = ( Header & f_All ) | ( (bso::ubyte__)Value >> fp_SizeBegin );
+		Header = ( *Header & f_All ) | ( (bso::ubyte__)Value >> fp_SizeBegin );
 	}
 
 	typedef sdr::xsize__ _xsize__;
@@ -504,13 +552,13 @@ namespace ags {
 			status__ PredecessorStatus )
 		{
 			Mark( _Header, Status );
-			ags::MarkPredecessorStatus( _Header, PredecessorStatus );
+			MarkPredecessorStatus( _Header, PredecessorStatus );
 
 			if ( IsShortSuitable() ) {
-				ags::MarkSizeAsShort( _Header );
+				MarkSizeAsShort( _Header );
 				SetEmbeddedValue( _Header, xsize__::Size() - 1 );
 			} else
-				ags::MarkSizeAsShort( _Header );
+				MarkSizeAsLong( _Header );
 		}
 	public:
 		void reset( bso::bool__  P = true )
@@ -628,7 +676,7 @@ namespace ags {
 			size__ Size,
 			sdr::datum__ *Data ) const
 		{
-			Storage.Recall( Size, Position, Data );
+			Storage.Recall( Position, Size, Data );
 		}
 		void _Write(
 			const sdr::datum__ *Data,
@@ -644,21 +692,22 @@ namespace ags {
 		{
 			sdr::datum__ Buffer[AGS_FULL_HEADER_SIZE_MAX];
 			size__ Amount = ( Row < AGS_FULL_HEADER_SIZE_MAX ? Row : AGS_FULL_HEADER_SIZE_MAX );
+			sdr::datum__ *Pointer = &Buffer[Amount]-1;
 
 			if ( Amount == 0 )
 				ERRc();
 
 			_Read( Row - Amount, Amount, Buffer );
 
-			if ( Buffer[Size] & ags::fSizeType ) {
-				Header = (header__)Buffer[Amount];
+			if ( *Pointer & fSizeType ) {
+				Header = (header__)*Pointer;
 				Size = GetShortSize( Header );
 				Row--;
 			} else {
-				const sdr::datum__ *Pointer = FindLongSizeBegin( &Buffer[Amount] );
-				Size = sdr::Convert( Pointer );
-				Header = *--Pointer;
-				 Row -= &Buffer[Amount] - Pointer + 1;
+				const sdr::datum__ *SizePointer = FindLongSizeBegin( Pointer );
+				Size = sdr::Convert( SizePointer );
+				Header = *--SizePointer;
+				 Row -= Pointer - SizePointer + 1;
 			}
 
 			return Row;
@@ -676,13 +725,25 @@ namespace ags {
 			sdr::row_t__ Row,
 			header__ &Header ) const
 		{
-			_Read( Row, AGS_HEADER_SIZE, &Header );
+			_Read( Row, AGS_HEADER_SIZE, &*Header );
 		}
 		void _Set(
 			sdr::row_t__ Row,
 			header__ Header )
 		{
-			_Write( &Header, Row, AGS_HEADER_SIZE );
+			_Write( &*Header, Row, AGS_HEADER_SIZE );
+		}
+		status__ _TailFragmentStatus( void )
+		{
+			if ( _Size() == 0 )
+				return s_Undefined;
+			else {
+				header__ Header;
+
+				_Get( 0, Header );
+
+				return Status( Header );
+			}
 		}
 		bso::bool__ _IsTailFragmentFree( void ) const
 		{
@@ -721,37 +782,56 @@ namespace ags {
 		}
 		sdr::row_t__ _GetTailFreeFragment( void ) const
 		{
-			return _Size() - _GetTailFreeSize();
+			if ( _GetTailFreeSize() == 0 )
+				return NONE;
+			else
+				return _Size() - _GetTailFreeSize();
 		}
-		size__ _GetLongSize( sdr::row_t__ Row ) const
+		size__ _GetLongSize(
+			sdr::row_t__ Row,
+			sdr::size__ &SizeLength ) const
 		{
 			sdr::dsize__ DSize;
 			size__ Limit = _Size() - Row;
 
 			_Read( Row, AGS_LONG_SIZE_SIZE_MAX > Limit ? Limit : AGS_LONG_SIZE_SIZE_MAX, (sdr::datum__ *)&DSize );
 
-			return sdr::Convert( DSize );
+			return sdr::Convert( DSize, SizeLength );
+		}
+		void _GetMetaData(
+			sdr::row_t__ Row,
+			header__ &Header,
+			size__ &Size,
+			size__ &FullHeaderLength ) const
+		{
+			_Get( Row, Header );
+			size__ SizeLength = 0;
+
+			if ( IsSizeShort( Header ) )
+				Size = GetShortSize( Header );
+			else
+				Size = _GetLongSize( Row + AGS_HEADER_SIZE, SizeLength );
+
+			FullHeaderLength = SizeLength + AGS_HEADER_SIZE;
 		}
 		void _GetMetaData(
 			sdr::row_t__ Row,
 			header__ &Header,
 			size__ &Size ) const
 		{
-			_Get( Row, Header );
+			size__ Dummy = 0;
 
-			if ( ags::IsSizeShort( Header ) )
-				Size = ags::GetShortSize( Header );
-			else
-				Size = _GetLongSize( Row + AGS_HEADER_SIZE );
+			return _GetMetaData( Row, Header, Size, Dummy );
 		}
 		size__ _GetFragmentSize( sdr::row_t__ Row ) const
 		{
 			header__ Header;
 			size__ Size = 0;
+			size__ FullHeaderLength = 0;
 
-			_GetMetaData( Row, Header, Size );
+			_GetMetaData( Row, Header, Size, FullHeaderLength );
 
-			return Size;
+			return Size + 1 + ( IsUsed( Header ) ? FullHeaderLength : 0 );
 		}
 		size__ _GetSize( descriptor__ Descriptor ) const
 		{
@@ -765,7 +845,7 @@ namespace ags {
 			sdr::row_t__ Row,
 			const header__ Header )
 		{
-			_Write( &Header, Row, AGS_HEADER_SIZE );
+			_Write( &*Header, Row, AGS_HEADER_SIZE );
 		}
 		descriptor__ _WriteHeadMetaData(
 			sdr::row_t__ Row,
@@ -955,6 +1035,23 @@ namespace ags {
 					S_.Free.Init( Row, Size );
 			}
 		}
+		void _Display(
+			sdr::row_t__ Row,
+			txf::text_oflow__ &Flow ) const
+		{
+			header__ Header;
+			sdr::size__ Size;
+
+			Flow << Row << ' ';
+
+			_GetMetaData( Row, Header, Size );
+				
+			_Get( Row, Header );
+
+			Display( Header, Flow );
+
+			Flow << " : "<<  Size;
+		}
 	public:
 		uys::untyped_storage_ Storage;
 		struct s {
@@ -981,10 +1078,35 @@ namespace ags {
 		{
 			Storage.plug( MD );
 		}
+		void plug( aggregated_storage_ &AS )
+		{
+			Storage.plug( AS );
+		}
 		void Init( void )
 		{
 			Storage.Init();
 			S_.Free.Init();
+		}
+		void Preallocate( sdr::size__ Size )
+		{
+			if ( _Size() > Size )
+				ERRc();
+			else if ( _Size() != Size ) {
+				sdr::row_t__ Row = _Size();
+
+				Size -= _Size();
+
+				Storage.Allocate( _Size() + Size );
+
+				if ( _GetTailFreeSize() != 0 ) {
+					Row = _GetTailFreeFragment();
+					Size += _GetTailFreeSize();
+				}
+
+				_SetAsFreeFragment( Row, Size, Row == 0 ? sFree : _TailFragmentStatus() );
+
+				_UpdateFirstFragmentPredecessorStatus( sFree );
+			}
 		}
 		descriptor__ Allocate( size__ Size )
 		{
@@ -1026,7 +1148,7 @@ namespace ags {
 			descriptor__ Descriptor,
 			sdr::row_t__ Position,
 			sdr::size__ Amount,
-			sdr::datum__ *Buffer )
+			sdr::datum__ *Buffer ) const
 		{
 			Storage.Recall( *Descriptor + Position, Amount, Buffer );
 		}
@@ -1038,9 +1160,30 @@ namespace ags {
 		{
 			Storage.Store( Buffer, Amount, *Descriptor + Position );
 		}
+		size__ Size( descriptor__ Descriptor ) const
+		{
+			return _GetSize( Descriptor );
+		}
+		void DisplayStructure( txf::text_oflow__ &Flow ) const;
+		friend uys::state__ Plug(
+			aggregated_storage_ &Storage,
+			class aggrgated_storage_file_manager___ &FileManager );
 	};
 
 	E_AUTO( aggregated_storage )
+
+	typedef uys::untyped_storage_file_manager___ aggregated_storage_file_manager___;
+
+	inline uys::state__ Plug(
+		aggregated_storage_ &AStorage,
+		aggregated_storage_file_manager___ &FileManager )
+	{
+		AStorage.Init();
+
+		return uys::Plug( AStorage.Storage, FileManager );
+	}
+
+
 
 # define E_ASTORAGE_	aggregated_storage_
 # define E_ASTORAGE	aggregated_storage

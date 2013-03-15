@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "mdr.h"
+#include "sdr.h"
 
 using namespace bch;
 

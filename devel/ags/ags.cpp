@@ -57,6 +57,56 @@ public:
 
 using namespace ags;
 
+void aggregated_storage_driver__::_Free( void )
+{
+	if ( _Descriptor != AGS_UNDEFINED_DESCRIPTOR )
+		_AStorage->Free( _Descriptor );
+}
+
+void aggregated_storage_driver__::SDRAllocate( sdr::size__ Size )
+{
+	_Descriptor = _AStorage->Reallocate( _Descriptor, Size );
+}
+
+sdr::size__ aggregated_storage_driver__::SDRUnderlyingSize( void )
+{
+	if ( _Descriptor != AGS_UNDEFINED_DESCRIPTOR )
+		return _AStorage->Size( _Descriptor );
+	else
+		return 0;
+}
+
+void aggregated_storage_driver__::SDRRecall(
+	sdr::row_t__ Position,
+	sdr::size__ Amount,
+	sdr::datum__ *Buffer )
+{
+	_AStorage->Read( _Descriptor, Position, Amount, Buffer );
+}
+// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
+void aggregated_storage_driver__::SDRStore(
+	const sdr::datum__ *Buffer,
+	sdr::size__ Amount,
+	sdr::row_t__ Position )
+{
+	_AStorage->Write( Buffer, Amount, _Descriptor, Position );
+}
+
+
+void ags::aggregated_storage_::DisplayStructure( txf::text_oflow__ &Flow ) const
+{
+	sdr::row_t__ Row = 0;
+
+	while ( Row < _Size() ) {
+		_Display( Row, Flow );
+
+		Row += _GetFragmentSize( Row );
+
+		Flow << txf::pad << txf::commit;
+	}
+}
+
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

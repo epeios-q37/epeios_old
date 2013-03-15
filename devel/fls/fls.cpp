@@ -66,7 +66,7 @@ public:
 
 using namespace fls;
 
-mdr::size__ fls::MaxFileAmount = FLS__MAX_FILE_AMOUNT;
+sdr::size__ fls::MaxFileAmount = FLS__MAX_FILE_AMOUNT;
 
 #ifdef FLS__MT
 static mtx::mutex_handler__ Mutex_;
@@ -99,7 +99,7 @@ struct _data__ {
 #ifdef FLS__AUTOFLUSH
 	bso::bool__ ToFlush;	// Doit être 'flushé' si à 'true'.
 #endif
-	memoire_fichier_base___ *File;
+	file_storage___ *File;
 	id__ ID;
 	void reset( bso::bool__ = true )
 	{
@@ -142,7 +142,7 @@ void fls::ReleaseId( id__ ID )
 }
 
 row__ fls::_Register(
-	memoire_fichier_base___ &MFB,
+	file_storage___ &FS,
 	id__ ID )
 {
 	row__ Row = NONE;
@@ -150,7 +150,7 @@ row__ fls::_Register(
 #ifdef FLS__AUTOFLUSH
 		false,
 #endif
-		&MFB, ID };
+		&FS, ID };
 
 	Lock_();
 
@@ -338,7 +338,7 @@ static void _Search(
 
 static void _Release( const bch::E_BUNCH_( row__ ) &Rows )
 {
-	mdr::row__ Row = Rows.First();
+	sdr::row__ Row = Rows.First();
 
 	while ( Row != NONE ) {
 		List_( Rows( Row ) ).File->ReleaseFile( false );

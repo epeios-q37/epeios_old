@@ -60,6 +60,8 @@ extern class ttr_tutor &MMITutor;
 
 /*$BEGIN$*/
 
+# error "Obsolete ! Use 'IAS' instead !"
+
 #include "err.h"
 #include "flw.h"
 #include "mmm.h"

@@ -63,7 +63,7 @@ extern class ttr_tutor &IDSTutor;
 #include "err.h"
 #include "flw.h"
 #include "stk.h"
-#include "mmm.h"
+#include "ags.h"
 
 namespace ids {
 
@@ -93,13 +93,13 @@ namespace ids {
 			Released.reset( P );
 			S_.FirstUnused = 0;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_STORAGE_DRIVER__ &SD )
 		{
-			Released.plug( MD );
+			Released.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Released.plug( MM );
+			Released.plug( AS );
 		}
 		ids_store_ &operator =( const ids_store_ &IS )
 		{
@@ -184,7 +184,7 @@ namespace ids {
 			return S_.FirstUnused;
 		}
 		//f Return the amount of released IDs.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Released.Amount();
 		}

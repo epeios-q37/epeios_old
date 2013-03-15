@@ -127,7 +127,9 @@ namespace sdr {
 		friend xsize__ sdr::Convert( sdr::size__ Size );
 	} xsize__;
 
-	size__ Convert( const sdr::datum__ *DSize );
+	size__ Convert(
+		const sdr::datum__ *DSize,
+		sdr::size__ &Length = *(sdr::size__ *)NULL );
 
 
 	//c Abstract storage driver. Use 'E_STORAGE_DRIVER__' instead directly this class.

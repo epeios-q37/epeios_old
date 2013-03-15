@@ -60,19 +60,14 @@ extern class ttr_tutor &AEMTutor;
 
 /*$BEGIN$*/
 
-/* Addendum to the automatic documentation generation part. */
-//D Amount/Extent managing.
-/* End addendum to automatic documentation generation part. */
-
-#include "err.h"
-#include "flw.h"
-#include "tym.h"
+# include "err.h"
+# include "flw.h"
+# include "sdr.h"
 
 //d The coefficient between step value and step size.
-#define AEM_STEP_COEFFICIENT	256
+# define AEM_STEP_COEFFICIENT	256
 
 namespace aem {
-	using namespace tym;
 
 	//e Mode of the allocation.
 	enum mode__ {
@@ -107,27 +102,27 @@ namespace aem {
 		{
 			return (step_size__)( StepValue_() * AEM_STEP_COEFFICIENT );
 		}
-		mdr::size__ _GuessExtent( mdr::size__ Size )
+		sdr::size__ _GuessExtent( sdr::size__ Size )
 		{
 			step_size__ Step = StepSize_();
 
 			return ( Size ? ( ( ( ( Size - 1 ) / Step ) + 1 ) * Step ) : 0 );
 		}
-		mdr::size__ Adjust_( mdr::size__ Size )
+		sdr::size__ Adjust_( sdr::size__ Size )
 		{
 			S_.Amount = Size;
 			S_.Misc = _GuessExtent( Size ) | ( S_.Misc & 0xff );
 
 			return S_.Misc & 0xffffff00;
 		}
-		mdr::size__ Extent_( void ) const
+		sdr::size__ Extent_( void ) const
 		{
 			if ( S_.Misc <= 0xff )
 				return S_.Amount;
 			else
 				return S_.Misc & 0xffffff00;
 		}
-		bso::bool__ Decrease_( mdr::size__ &Size )
+		bso::bool__ Decrease_( sdr::size__ &Size )
 		{
 			if ( Extent_() >= ( StepSize_() + Size ) ) {
 				Size = Adjust_( Size );
@@ -137,7 +132,7 @@ namespace aem {
 				return false;
 			}
 		}
-		bso::bool__ Increase_( mdr::size__ &Size )
+		bso::bool__ Increase_( sdr::size__ &Size )
 		{
 			Size = Adjust_( Size );
 
@@ -148,7 +143,7 @@ namespace aem {
 		the real size to allocate. If 'Mode' = 'mFit', 'Extent' is forced to be equal
 		to 'Size'. */
 		bso::bool__ AmountToAllocate(
-			mdr::size__ &Size,
+			sdr::size__ &Size,
 			mode__ Mode )
 		{
 			if ( Size == S_.Amount )
@@ -171,9 +166,9 @@ namespace aem {
 					return false;
 				}
 		}
-		bso::bool__ Preallocate( mdr::size__ &Size )
+		bso::bool__ Preallocate( sdr::size__ &Size )
 		{
-			mdr::size__ Extent = Extent_();
+			sdr::size__ Extent = Extent_();
 
 			Size = _GuessExtent( Size );
 
@@ -194,7 +189,7 @@ namespace aem {
 		}
 		/*f Force the amount and extent to exactly 'Size'.
 		Return true if the amount or the extent wasn't equal to 'Size'. */
-		bso::bool__ Force( mdr::size__ Size )
+		bso::bool__ Force( sdr::size__ Size )
 		{
 			bso::bool__ NotEqual = ( Extent() != Size ) || ( S_.Amount != Size );
 
@@ -239,12 +234,12 @@ namespace aem {
 			Force( Amount );
 		}
 		//f Return the extent.
-		mdr::size__ Extent( void ) const
+		sdr::size__ Extent( void ) const
 		{
 			return Extent_();
 		}
 		//f Return the amount.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return S_.Amount;
 		}
@@ -285,7 +280,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row Last( mdr::size__ Offset ) const
+		row Last( sdr::size__ Offset ) const
 		{
 			row Row = Last();
 
@@ -302,7 +297,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row First( mdr::size__ Offset ) const
+		row First( sdr::size__ Offset ) const
 		{
 			row Row = First();
 
@@ -314,7 +309,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			mdr::size__ Offset ) const
+			sdr::size__ Offset ) const
 		{
 			if ( ( *Current += Offset ) < S_.Amount )
 				return Current;
@@ -329,7 +324,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			mdr::size__ Offset ) const
+			sdr::size__ Offset ) const
 		{
 			if ( *Current >= Offset )
 				return *Current - Offset;
@@ -356,27 +351,27 @@ namespace aem {
 
 	//c A amount/extent manager.
 	template <typename row> class amount_extent_manager_
-	: public core_amount_extent_manager_<row, mdr::size__>
+	: public core_amount_extent_manager_<row, sdr::size__>
 	{
 	public:
 		struct s
-		: core_amount_extent_manager_<row, mdr::size__>::s
+		: core_amount_extent_manager_<row, sdr::size__>::s
 		{};
 		amount_extent_manager_( s &S )
-		: core_amount_extent_manager_<row, mdr::size__>( S )
+		: core_amount_extent_manager_<row, sdr::size__>( S )
 		{}
 	};
 
 	//c A portable amount/extent manager.
 	template <typename row> class p_amount_extent_manager_
-	: public core_amount_extent_manager_<row, mdr::p_size__>
+	: public core_amount_extent_manager_<row, sdr::p_size__>
 	{
 	public:
 		struct s
-		: core_amount_extent_manager_<row, mdr::p_size__>::s
+		: core_amount_extent_manager_<row, sdr::p_size__>::s
 		{};
 		p_amount_extent_manager_( s &S )
-		: core_amount_extent_manager_<row, mdr::p_size__>( S )
+		: core_amount_extent_manager_<row, sdr::p_size__>( S )
 		{}
 	};
 
@@ -390,7 +385,7 @@ namespace aem {
 		/*f Return true if a allocation is needed for size 'Size'. 'Size' then contains
 		the real size to allocate. */
 		bso::bool__ AmountToAllocate(
-			mdr::size__ &Size,
+			sdr::size__ &Size,
 			mode__ Mode)
 		{
 			Amount_ = Size;
@@ -419,12 +414,12 @@ namespace aem {
 			Amount_ = 0;
 		}
 		//f Return the extent.
-		mdr::size__ Extent( void ) const
+		sdr::size__ Extent( void ) const
 		{
 			return extent;
 		}
 		//f Return the amount.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Amount_;
 		}
@@ -436,7 +431,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row Last( mdr::size__ Offset ) const
+		row Last( sdr::size__ Offset ) const
 		{
 			row Row = Last();
 
@@ -453,7 +448,7 @@ namespace aem {
 			else
 				return NONE;
 		}
-		row First( mdr::size__ Offset ) const
+		row First( sdr::size__ Offset ) const
 		{
 			row Row = First();
 
@@ -465,7 +460,7 @@ namespace aem {
 		//f Return the position of 'Offset' next to 'Current'.
 		row Next(
 			row Current,
-			mdr::size__ Offset ) const
+			sdr::size__ Offset ) const
 		{
 			if ( ( *Current += Offset ) < Amount_ )
 				return Current;
@@ -480,7 +475,7 @@ namespace aem {
 		//f Return the position of 'Offset' previous to 'Current'.
 		row Previous(
 			row Current,
-			mdr::size__ Offset ) const
+			sdr::size__ Offset ) const
 		{
 			if ( *Current >= Offset )
 				return *Current - Offset;
@@ -506,27 +501,27 @@ namespace aem {
 
 	//c Core amount/extent manager for fixed size set of object.
 	template <int extent, typename row> class amount_extent_manager__
-	: public core_amount_extent_manager__<extent, row, mdr::size__>
+	: public core_amount_extent_manager__<extent, row, sdr::size__>
 	{
 	public:
 		struct s
-		: public core_amount_extent_manager__<extent, row, mdr::size__>::s
+		: public core_amount_extent_manager__<extent, row, sdr::size__>::s
 		{};
 		amount_extent_manager__( s &S = *(s *)NULL )
-		: core_amount_extent_manager__<extent, row, mdr::size__>( S )
+		: core_amount_extent_manager__<extent, row, sdr::size__>( S )
 		{}
 	};
 
 	//c Core amount/extent manager for fixed size set of object.
 	template <int extent, typename row> class p_amount_extent_manager__
-	: public core_amount_extent_manager__<extent, row, mdr::p_size__>
+	: public core_amount_extent_manager__<extent, row, sdr::p_size__>
 	{
 	public:
 		struct s
-		: public core_amount_extent_manager__<extent, row, mdr::p_size__>::s
+		: public core_amount_extent_manager__<extent, row, sdr::p_size__>::s
 		{};
 		p_amount_extent_manager__( s &S = *(s *)NULL )
-		: core_amount_extent_manager__<extent, row, mdr::p_size__>( S )
+		: core_amount_extent_manager__<extent, row, sdr::p_size__>( S )
 		{}
 	};
 

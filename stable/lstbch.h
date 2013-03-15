@@ -77,7 +77,7 @@ namespace lstbch {
 	{
 	protected:
 		virtual void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			bunch_<type, row>::Allocate( Size, Mode );
@@ -96,10 +96,10 @@ namespace lstbch {
 			list_<row, row_t>::reset( P );
 			bunch_<type, row>::reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			list_<row, row_t>::plug( MM );
-			bunch_<type, row>::plug( MM );
+			list_<row, row_t>::plug( AS );
+			bunch_<type, row>::plug( AS );
 		}
 		list_bunch_ &operator =( const list_bunch_ &LB )
 		{
@@ -169,7 +169,7 @@ namespace lstbch {
 
 	E_AUTO3( list_bunch )
 
-#ifndef FLM__COMPILATION
+#ifndef FLS__COMPILATION
 
 	class list_bunch_file_manager___
 	{
@@ -201,7 +201,7 @@ namespace lstbch {
 			const char *ListFileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
 			reset();
 
@@ -209,25 +209,25 @@ namespace lstbch {
 			_ListFileManager.Init( ListFileName, Mode, Persistent );
 
 		}
-		uym::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
+		uys::state__ Bind( void )	// A n'appeler qu'aprés un appel à 'Plug(...)'.
 		{
-			uym::state__ State = _BunchFileManager.Bind();
+			uys::state__ State = _BunchFileManager.Bind();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 			
 			if ( _ListFileManager.Bind( _BunchFileManager.TimeStamp() ) != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _BunchFileManager.Settle();
+			uys::state__ State = _BunchFileManager.Settle();
 
 			if ( _BunchFileManager.IsPersistent() && _BunchFileManager.Exists() )
 				if ( _ListFileManager.Settle( _BunchFileManager.TimeStamp() ) != State )
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 
 			return State;
 		}
@@ -236,12 +236,12 @@ namespace lstbch {
 			_ListFileManager.Drop();
 			_BunchFileManager.Drop();
 		}
-		uym::state__ State( void ) const
+		uys::state__ State( void ) const
 		{
-			uym::state__ State = _BunchFileManager.State();
+			uys::state__ State = _BunchFileManager.State();
 
 			if ( State != _ListFileManager.State() )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 		}
@@ -255,7 +255,7 @@ namespace lstbch {
 			if ( !Success )
 				return false;
 
-			if ( uym::IsError( Settle() ) ) {
+			if ( uys::IsError( Settle() ) ) {
 				_BunchFileManager.Drop();
 				Success = false;
 			}
@@ -289,24 +289,24 @@ namespace lstbch {
 
 			return Is;
 		}
-		template <typename list_bunch> friend uym::state__ Plug(
+		template <typename list_bunch> friend uys::state__ Plug(
 			list_bunch &ListBunch,
 			list_bunch_file_manager___ &FileManager );
 	};
 
 
-	template <typename list_bunch> uym::state__ Plug(
+	template <typename list_bunch> uys::state__ Plug(
 		list_bunch &ListBunch,
 		list_bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = bch::Plug( ListBunch.Bunch(), FileManager._BunchFileManager );
+		uys::state__ State = bch::Plug( ListBunch.Bunch(), FileManager._BunchFileManager );
 
-		if ( uym::IsError( State ) )
+		if ( uys::IsError( State ) )
 			FileManager.reset();
 		else {
 			if ( lst::Plug( ListBunch, FileManager._ListFileManager, FileManager._BunchFileManager.FileSize() / ListBunch.GetItemSize(), FileManager._BunchFileManager.TimeStamp() ) != State ) {
 				FileManager.reset();
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 			}
 		}
 
@@ -317,11 +317,11 @@ namespace lstbch {
 	#define E_LBUNCHtx_( type, row, row_t )		list_bunch_<type, row, row_t>
 	#define E_LBUNCHtx( type, row, row_t )		list_bunch<type, row, row_t>
 
-	#define E_LBUNCHt_( type, row )	E_LBUNCHtx_( type, row, mdr::row_t__)
-	#define E_LBUNCHt( type, row )	E_LBUNCHtx( type, row, mdr::row_t__)
+	#define E_LBUNCHt_( type, row )	E_LBUNCHtx_( type, row, sdr::row_t__)
+	#define E_LBUNCHt( type, row )	E_LBUNCHtx( type, row, sdr::row_t__)
 
-	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, mdr::row__ )
-	#define  E_LBUNCH( type )		E_LBUNCHt( type, mdr::row__ )
+	#define  E_LBUNCH_( type )		E_LBUNCHt_( type, sdr::row__ )
+	#define  E_LBUNCH( type )		E_LBUNCHt( type, sdr::row__ )
 }
 
 /*$END$*/

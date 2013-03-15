@@ -30,7 +30,7 @@ copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DCPE_MT
 lopt = 
-mods = $(name)_test ttr tol flw cio err uym
+mods = $$(name)_test ttr tol flw cio err uym
 
 $_RAW_$
 

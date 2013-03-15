@@ -57,14 +57,14 @@ public:
 #include "flf.h"
 
 static inline void Save_(
-	mdr::row__ Row,
+	sdr::row__ Row,
 	flw::oflow__ &Flow )
 {
 	dtfptb::FixedPutULong( *Row, Flow );
 }
 
 static void Save_(
-	const stk::E_BSTACK_( mdr::row__ ) &Bunch,
+	const stk::E_BSTACK_( sdr::row__ ) &Bunch,
 	flw::oflow__ &Flow )
 {
 	stk::row__ Row = Bunch.First();
@@ -76,22 +76,22 @@ static void Save_(
 	}
 }
 
-uym::state__ lst::WriteToFile_(
+uys::state__ lst::WriteToFile_(
 	const store_ &Store,
 	const char *FileName )
 {
-	uym::state__ State = uym::s_Undefined;
+	uys::state__ State = uys::s_Undefined;
 ERRProlog
 	flf::file_oflow___ Flow;
 ERRBegin
 	if ( Flow.Init( FileName ) != fil::sSuccess ) {
-		State = uym::sInconsistent;
+		State = uys::sInconsistent;
 		ERRReturn;
 	}
 
 	Save_( Store.Released, Flow );
 
-	State = uym::sExists;
+	State = uys::sExists;
 ERRErr
 ERREnd
 ERREpilog
@@ -100,17 +100,17 @@ ERREpilog
 
 static inline void Load_(
 	flw::iflow__ &Flow,
-	mdr::row__ &Row )
+	sdr::row__ &Row )
 {
 	Row = dtfptb::FixedGetULong( Flow );
 }
 	
 static void Load_(
 	flw::iflow__ &Flow,
-	mdr::size__ Amount,
-	stk::E_BSTACK_( mdr::row__ ) &Stack )
+	sdr::size__ Amount,
+	stk::E_BSTACK_( sdr::row__ ) &Stack )
 {
-	mdr::row__ Row;
+	sdr::row__ Row;
 
 	while ( Amount-- ) {
 		Load_( Flow, Row );
@@ -118,22 +118,22 @@ static void Load_(
 	}
 }
 
-uym::state__ lst::ReadFromFile_(
+uys::state__ lst::ReadFromFile_(
 	const char *FileName,
 	store_ &Store )
 {
-	uym::state__ State = uym::s_Undefined;
+	uys::state__ State = uys::s_Undefined;
 ERRProlog
 	flf::file_iflow___ Flow;
 ERRBegin
 	if ( Flow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
-		State = uym::sInconsistent;
+		State = uys::sInconsistent;
 		ERRReturn;
 	}
 
-	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( mdr::row__ ), Store.Released );
+	Load_( Flow, fil::GetFileSize( FileName ) / sizeof( sdr::row__ ), Store.Released );
 
-	State = uym::sExists;
+	State = uys::sExists;
 ERRErr
 ERREnd
 ERREpilog
@@ -141,9 +141,9 @@ ERREpilog
 }
 
 // Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-mdr::row_t__ lst::Successeur_(
-	mdr::row_t__ Element,
-	mdr::size__ Amount,
+sdr::row_t__ lst::Successeur_(
+	sdr::row_t__ Element,
+	sdr::size__ Amount,
 	const store_ &Libres )
 {
 	while( ( ++Element < Amount ) && Libres.IsAvailable( Element ) ) {};
@@ -155,8 +155,8 @@ mdr::row_t__ lst::Successeur_(
 }
 
 // Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-mdr::row_t__ lst::Predecesseur_(
-	mdr::row_t__ Element,
+sdr::row_t__ lst::Predecesseur_(
+	sdr::row_t__ Element,
 	const store_ &Libres )
 {
 	bso::bool__ Trouve = false;
@@ -170,8 +170,8 @@ mdr::row_t__ lst::Predecesseur_(
 }
 
 void lst::MarkAsReleased_(
-	mdr::row_t__ First,
-	mdr::row_t__ Last,
+	sdr::row_t__ First,
+	sdr::row_t__ Last,
 	store_ &Store )
 {
 	while ( First < Last )

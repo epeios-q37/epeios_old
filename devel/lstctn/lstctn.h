@@ -74,7 +74,7 @@ namespace lstctn {
 	{
 	protected:
 		virtual void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			container::Allocate( Size, Mode );
@@ -93,10 +93,10 @@ namespace lstctn {
 			list_<row, row_t>::reset( P );
 			container::reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			list_<row, row_t>::plug( MM );
-			container::plug( MM );
+			list_<row, row_t>::plug( AS );
+			container::plug( AS );
 		}
 		list_container_ &operator =( const list_container_ &LC )
 		{
@@ -197,7 +197,7 @@ namespace lstctn {
 			const char *ListFileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
 			reset();
 
@@ -222,38 +222,38 @@ namespace lstctn {
 
 			return Mode;
 		}
-		uym::state__ State( void ) const
+		uys::state__ State( void ) const
 		{
-			uym::state__ State = _ContainerFileManager.State();
+			uys::state__ State = _ContainerFileManager.State();
 
-			if ( !uym::IsError( State ) )
+			if ( !uys::IsError( State ) )
 				if ( State != _ListFileManager.State() )
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _ContainerFileManager.Bind();
+			uys::state__ State = _ContainerFileManager.Bind();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _ListFileManager.Bind( _ContainerFileManager.TimeStamp() ) != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _ContainerFileManager.Settle();
+			uys::state__ State = _ContainerFileManager.Settle();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _ContainerFileManager.IsPersistent() && _ContainerFileManager.Exists() )
 				if ( _ListFileManager.Settle( _ContainerFileManager.TimeStamp() ) != State )
-						State = uym::sInconsistent;
+						State = uys::sInconsistent;
 
 			return State;
 		}
@@ -269,7 +269,7 @@ namespace lstctn {
 			if ( !Success )
 				return false;
 
-			if ( uym::IsError( Settle() ) ) {
+			if ( uys::IsError( Settle() ) ) {
 				_ContainerFileManager.Drop();
 				Success = false;
 			}
@@ -281,16 +281,16 @@ namespace lstctn {
 			_ContainerFileManager.ReleaseFiles();
 			_ListFileManager.ReleaseFiles();
 		}
-		uym::state__ Plug( container &ListContainer )
+		uys::state__ Plug( container &ListContainer )
 		{
-			uym::state__ State = ctn::Plug( ListContainer.Container(), _ContainerFileManager );
+			uys::state__ State = ctn::Plug( ListContainer.Container(), _ContainerFileManager );
 
-			if ( uym::IsError( State ) ) {
+			if ( uys::IsError( State ) ) {
 				reset();
 			} else {
 				if ( lst::Plug( ListContainer, _ListFileManager, _ContainerFileManager.StaticsFileManager().FileSize() /  ListContainer.GetStaticsItemSize(), _ContainerFileManager.TimeStamp() ) != State ) {
 					reset();
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 				}
 			}
 
@@ -317,7 +317,7 @@ namespace lstctn {
 		}
 	};
 
-	template <typename list_container> inline uym::state__ Plug(
+	template <typename list_container> inline uys::state__ Plug(
 		list_container &ListContainer,
 		list_container_file_manager___<list_container> &FileManager )
 	{
@@ -389,38 +389,38 @@ namespace lstctn {
 	#define E_LMCONTAINERtx_( type, row, row_t )	list_container_< ctn::E_MCONTAINERt_( type, row ), row, row_t >
 	#define E_LMCONTAINERtx( type, row, row_t )		list_container< ctn::E_MCONTAINERt_( type, row ), row, row_t >
 
-	#define E_LMCONTAINERt_( type, row )	E_LMCONTAINERtx_( type, row, mdr::row_t__ )
-	#define E_LMCONTAINERt( type, row )		E_LMCONTAINERtx( type, row, mdr::row_t__ )
+	#define E_LMCONTAINERt_( type, row )	E_LMCONTAINERtx_( type, row, sdr::row_t__ )
+	#define E_LMCONTAINERt( type, row )		E_LMCONTAINERtx( type, row, sdr::row_t__ )
 
-	#define E_LMCONTAINER_( type )			E_LMCONTAINERt_( type, mdr::row__ )
-	#define E_LMCONTAINER( type )			E_LMCONTAINERt( type, mdr::row__ )
+	#define E_LMCONTAINER_( type )			E_LMCONTAINERt_( type, sdr::row__ )
+	#define E_LMCONTAINER( type )			E_LMCONTAINERt( type, sdr::row__ )
 
 	#define E_LCONTAINERtx_( type, row, row_t )		list_container_< ctn::E_CONTAINERt_( type, row ), row, row_t >
 	#define E_LCONTAINERtx( type, row, row_t )		list_container< ctn::E_CONTAINERt_( type, row ), row, row_t >
 
-	#define E_LCONTAINERt_( type, row )		E_LCONTAINERtx_( type, row, mdr::row_t__ )
-	#define E_LCONTAINERt( type, row )		E_LCONTAINERtx( type, row, mdr::row_t__ )
+	#define E_LCONTAINERt_( type, row )		E_LCONTAINERtx_( type, row, sdr::row_t__ )
+	#define E_LCONTAINERt( type, row )		E_LCONTAINERtx( type, row, sdr::row_t__ )
 
-	#define E_LCONTAINER_( type )			E_LCONTAINERt_( type, mdr::row__ )
-	#define E_LCONTAINER( type )			E_LCONTAINERt( type, mdr::row__ )
+	#define E_LCONTAINER_( type )			E_LCONTAINERt_( type, sdr::row__ )
+	#define E_LCONTAINER( type )			E_LCONTAINERt( type, sdr::row__ )
 
 	#define E_LXMCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_MCONTAINERt_( type, row ), type, row, row_t >
 	#define E_LXMCONTAINERtx( type, row, row_t )	list_xcontainer< ctn::E_MCONTAINERt_( type, row ), type, row, row_t >
 
-	#define E_LXMCONTAINERt_( type, row )	E_LXMCONTAINERtx_( type, row, mdr::row_t__ )
-	#define E_LXMCONTAINERt( type, row )	E_LXMCONTAINERtx( type, row, mdr::row_t__ )
+	#define E_LXMCONTAINERt_( type, row )	E_LXMCONTAINERtx_( type, row, sdr::row_t__ )
+	#define E_LXMCONTAINERt( type, row )	E_LXMCONTAINERtx( type, row, sdr::row_t__ )
 
-	#define E_LXMCONTAINER_( type )			E_LXMCONTAINERt_( type, mdr::row__ )
-	#define E_LXMCONTAINER( type )			E_LXMCONTAINERt( type, mdr::row__ )
+	#define E_LXMCONTAINER_( type )			E_LXMCONTAINERt_( type, sdr::row__ )
+	#define E_LXMCONTAINER( type )			E_LXMCONTAINERt( type, sdr::row__ )
 
 	#define E_LXCONTAINERtx_( type, row, row_t )	list_xcontainer_< ctn::E_CONTAINERt_( type, row ), type, row, row_t >
 	#define E_LXCONTAINERtx( type, row, row_t )		list_xcontainer< ctn::E_CONTAINERt_( type, row ), type, row, row_t >
 
-	#define E_LXCONTAINERt_( type, row )	E_LXCONTAINERtx_( type, row, mdr::row_t__ )
-	#define E_LXCONTAINERt( type, row )		E_LXCONTAINERtx( type, row, mdr::row_t__ )
+	#define E_LXCONTAINERt_( type, row )	E_LXCONTAINERtx_( type, row, sdr::row_t__ )
+	#define E_LXCONTAINERt( type, row )		E_LXCONTAINERtx( type, row, sdr::row_t__ )
 
-	#define E_LXCONTAINER_( type )			E_LXCONTAINERt_( type, mdr::row__ )
-	#define E_LXCONTAINER( type )			E_LXCONTAINERt( type, mdr::row__ )
+	#define E_LXCONTAINER_( type )			E_LXCONTAINERt_( type, sdr::row__ )
+	#define E_LXCONTAINER( type )			E_LXCONTAINERt( type, sdr::row__ )
 
 }
 

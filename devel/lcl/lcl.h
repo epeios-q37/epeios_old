@@ -117,10 +117,10 @@ namespace lcl {
 			Levels.reset( P );
 			Values.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Levels.plug( MM );
-			Values.plug( MM );
+			Levels.plug( AS );
+			Values.plug( AS );
 		}
 		meaning_ &operator =( const meaning_ &M )
 		{

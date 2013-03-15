@@ -316,7 +316,7 @@ namespace flx {
 		{}
 	private:
 		const bunch_ *Bunch_;
-		mdr::row_t__ Position_;
+		sdr::row_t__ Position_;
 	public:
 		void reset( bool P = true )
 		{
@@ -336,7 +336,7 @@ namespace flx {
 		void Init(
 			const bunch_ &Bunch,
 			fdr::thread_safety__ ThreadSafety,
-			mdr::row_t__ Position = 0 )
+			sdr::row_t__ Position = 0 )
 		{
 			reset();
 
@@ -372,7 +372,7 @@ namespace flx {
 		//f Initializing with the bunch buffer 'Set'.
 		void Init(
 			const bunch_ &Bunch,
-			mdr::row_t__ Position = 0,
+			sdr::row_t__ Position = 0,
 			flw::size__ AmountMax = FLW_AMOUNT_MAX )
 		{
 			reset();

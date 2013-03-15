@@ -81,13 +81,13 @@ namespace stk {
 		{
 			structure::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MDriver )
+		void plug( sdr::E_STORAGE_DRIVER__ &SD )
 		{
-			structure::plug( MDriver );
+			structure::plug( SD );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			structure::plug( M );
+			structure::plug( AS );
 		}
 		stack_ &operator =( const stack_ &S )
 		{

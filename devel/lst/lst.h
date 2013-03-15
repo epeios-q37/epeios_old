@@ -66,50 +66,50 @@ extern class ttr_tutor &LSTTutor;
 
 namespace lst {
 
-	typedef ids::E_IDS_STORE_( mdr::row__ ) store_;
+	typedef ids::E_IDS_STORE_( sdr::row__ ) store_;
 
 	// Retourne l'id de la première entrée disponible (hors pile des 'released').
-	uym::state__ WriteToFile_(
+	uys::state__ WriteToFile_(
 		const store_ &Store,
 		const char *FileName );
 
-	uym::state__ ReadFromFile_(
+	uys::state__ ReadFromFile_(
 		const char *FileName,
 		store_ &Store );
 
-	inline uym::state__ Test_(
+	inline uys::state__ Test_(
 		const char *FileName,
 		time_t ReferenceTimeStamp )
 	{
 		if ( FileName == NULL )
-			return uym::sInconsistent;
+			return uys::sInconsistent;
 
 		if ( !fil::FileExists( FileName ) )
-			return uym::sAbsent;
+			return uys::sAbsent;
 
 		if ( fil::GetFileLastModificationTime( FileName ) <= ReferenceTimeStamp )
-			return uym::sInconsistent;
+			return uys::sInconsistent;
 
-		return uym::sExists;
+		return uys::sExists;
 	}
 
-	mdr::row_t__ Successeur_(
-		mdr::row_t__ Element,
-		mdr::size__ Amount,
+	sdr::row_t__ Successeur_(
+		sdr::row_t__ Element,
+		sdr::size__ Amount,
 		const store_ &Libres );
 
-	mdr::row_t__ Predecesseur_(
-		mdr::row_t__ Element,
+	sdr::row_t__ Predecesseur_(
+		sdr::row_t__ Element,
 		const store_ &Libres );
 
 	void Insert_(
-		mdr::row_t__ First,
-		mdr::row_t__ Last,
+		sdr::row_t__ First,
+		sdr::row_t__ Last,
 		store_ &Store );
 
 	void MarkAsReleased_(
-		mdr::row_t__ First,
-		mdr::row_t__ Last,
+		sdr::row_t__ First,
+		sdr::row_t__ Last,
 		store_ &Store );
 
 
@@ -121,19 +121,19 @@ namespace lst {
 		permet de synchroniser la taille de la liste avec d'autres ensembles;
 		'Size' est la capacité allouée. */
 		virtual void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 	private:
 		// Return the extent, based on 'Locations'.
-		mdr::row_t__ Extent_( void ) const
+		sdr::row_t__ Extent_( void ) const
 		{
 			return *Locations.GetFirstAvailable();
 		}
-		mdr::row_t__ Nouveau_( aem::mode__ Mode )
+		sdr::row_t__ Nouveau_( aem::mode__ Mode )
 		{
 			bso::bool__ Released = false;
 
-			mdr::row_t__ New = *Locations.New( Released );
+			sdr::row_t__ New = *Locations.New( Released );
 
 			if ( !Released )
 				LSTAllocate( Extent_(), Mode );
@@ -141,12 +141,12 @@ namespace lst {
 			return New;
 		}
 		// Retourne l'élément succédant à 'Element', ou LST_INEXISTANT si inexistant.
-		mdr::row_t__ Successeur_( mdr::row_t__ Element ) const
+		sdr::row_t__ Successeur_( sdr::row_t__ Element ) const
 		{
 			return lst::Successeur_( Element, Extent_(), Locations );
 		}
 		// Retourne l'élément précédent 'Element', ou LST_INEXISTANT si inexistant.
-		mdr::row_t__ Predecesseur_( mdr::row_t__ Element ) const
+		sdr::row_t__ Predecesseur_( sdr::row_t__ Element ) const
 		{
 			return lst::Predecesseur_( Element, Locations );
 		}
@@ -165,13 +165,13 @@ namespace lst {
 		{
 			Locations.reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &M )
+		void plug( sdr::E_STORAGE_DRIVER__ &SD )
 		{
-			Locations.plug( M );
+			Locations.plug( SD );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Locations.plug( M );
+			Locations.plug( AS );
 		}
 		list_ &operator =( const list_ &L )
 		{
@@ -237,7 +237,7 @@ namespace lst {
 			else
 				return NONE;
 		}
-		r First( mdr::size__ Offset ) const
+		r First( sdr::size__ Offset ) const
 		{
 			r Row = First();
 
@@ -251,7 +251,7 @@ namespace lst {
 		{
 			if ( Extent_() )
 			{
-				mdr::row_t__ P = Extent_() - 1;
+				sdr::row_t__ P = Extent_() - 1;
 
 				if ( !Locations.IsAvailable( P ) )
 					return P;
@@ -261,7 +261,7 @@ namespace lst {
 			else
 				return NONE;
 		}
-		r Last( mdr::size__ Offset ) const
+		r Last( sdr::size__ Offset ) const
 		{
 			r Row = Last();
 
@@ -278,7 +278,7 @@ namespace lst {
 		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
 		r Next(
 			r Entry,
-			mdr::size__ Offset = 1 ) const
+			sdr::size__ Offset = 1 ) const
 		{
 			if ( ( *Entry += Offset ) < Extent_() )
 				if ( !Locations.IsAvailable( *Entry ) )
@@ -291,7 +291,7 @@ namespace lst {
 		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
 		r Previous(
 			r Entry,
-			mdr::size__ Offset = 1 ) const
+			sdr::size__ Offset = 1 ) const
 		{
 			if ( ( *Entry -= Offset ) > 0 )
 				if ( !Locations.IsAvailable( *Entry ) )
@@ -302,12 +302,12 @@ namespace lst {
 				return NONE;
 		}
 		//f Amount of entries, NOT the extent of the list.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Extent_() - Locations.Amount();
 		}
 		//f Extent of list.
-		mdr::size__ Extent( void ) const
+		sdr::size__ Extent( void ) const
 		{
 			return Extent_();
 		}
@@ -321,7 +321,7 @@ namespace lst {
 		}
 		// Ne peut être appelé que lorsqu'il y a aucune entrée libre.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Locations.Amount() != 0 )
@@ -340,11 +340,11 @@ namespace lst {
 	#define E_LISTtx_( r, r_t )	list_<r, r_t>
 
 	//d Handle a list of objects.
-	#define E_LISTt( r )	E_LISTtx( r, mdr::row_t__ )
-	#define E_LISTt_( r )	E_LISTtx_( r, mdr::row_t__ )
+	#define E_LISTt( r )	E_LISTtx( r, sdr::row_t__ )
+	#define E_LISTt_( r )	E_LISTtx_( r, sdr::row_t__ )
 
-	#define E_LIST	E_LISTt( mdr::row__ )
-	#define E_LIST_	E_LISTt_( mdr::row__ )
+	#define E_LIST	E_LISTt( sdr::row__ )
+	#define E_LIST_	E_LISTt_( sdr::row__ )
 
 #ifndef FLM__COMPILATION
 
@@ -404,34 +404,34 @@ namespace lst {
 		{
 			return _Persistent;
 		}
-		uym::state__ State( void ) const
+		uys::state__ State( void ) const
 		{
 			return Test_( _FileName, 0 );
 		}
-		uym::state__ Bind( time_t ReferenceTimeStamp )
+		uys::state__ Bind( time_t ReferenceTimeStamp )
 		{
-			uym::state__ State = Test_( FileName(), ReferenceTimeStamp );
+			uys::state__ State = Test_( FileName(), ReferenceTimeStamp );
 
-			if ( uym::Exists( State ) )
+			if ( uys::Exists( State ) )
 				State = ReadFromFile_( FileName(), *_Store );
 
 			return State;
 		}
-		uym::state__ Settle( time_t ReferenceTimeStamp )
+		uys::state__ Settle( time_t ReferenceTimeStamp )
 		{
-			uym::state__ State = uym::s_Undefined;
+			uys::state__ State = uys::s_Undefined;
 
 			if ( _Store == NULL )
-				return uym::sInconsistent;
+				return uys::sInconsistent;
 
 			if ( ( ReferenceTimeStamp == 0 )
 				|| ( !fil::FileExists( _FileName ) )
 				|| ( fil::GetFileLastModificationTime( _FileName ) <= ReferenceTimeStamp ) )
 					State = WriteToFile_( *_Store, _FileName );
 			else
-				State = uym::sExists;
+				State = uys::sExists;
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 			
 			while ( fil::GetFileLastModificationTime( _FileName ) <= ReferenceTimeStamp ) {
@@ -463,7 +463,7 @@ namespace lst {
 		}
 		bso::bool__ Exists( void ) const
 		{
-			return uym::Exists( State() );
+			return uys::Exists( State() );
 		}
 #ifdef CPE__VC
 #	undef CreateFile
@@ -492,15 +492,15 @@ namespace lst {
 	};
 
 
-	template <typename list> uym::state__ Plug(
+	template <typename list> uys::state__ Plug(
 		list &List,
 		list_file_manager___ &FileManager,
-		mdr::row__ FirstUnused,
+		sdr::row__ FirstUnused,
 		time_t ReferenceTimeStamp )
 	{
-		uym::state__ State = Test_( FileManager.FileName(), ReferenceTimeStamp );
+		uys::state__ State = Test_( FileManager.FileName(), ReferenceTimeStamp );
 
-		if ( uym::IsError( State ) )
+		if ( uys::IsError( State ) )
 			FileManager.reset();
 		else {
 			FileManager.Set( List.Locations );
@@ -518,7 +518,7 @@ namespace lst {
 		// Table de l'occupation de la liste.
 		bitbch::bit_bunch__<t, r> Occupation_;
 		// Nombre d'éléments dans la liste.
-		mdr::size__ Nombre_;
+		sdr::size__ Nombre_;
 	public:
 		list__( void )
 		{
@@ -548,7 +548,7 @@ namespace lst {
 		//f Return the position of a new entry.
 		r CreateEntry( err::handling__ ErrorHandling = err::h_Default  )
 		{
-			mdr::row_t__ Position = NONE;
+			sdr::row_t__ Position = NONE;
 
 			if ( Nombre_ == t ) 
 			{

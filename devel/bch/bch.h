@@ -60,17 +60,17 @@ extern class ttr_tutor &BCHTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "tys.h"
-#include "aem.h"
-#include "dtfptb.h"
-#include "flm.h"
+# include "err.h"
+# include "flw.h"
+# include "tys.h"
+# include "aem.h"
+# include "dtfptb.h"
+# include "fls.h"
 
-#ifndef MMI__INC
-#	undef BCH__INC
-#	include "mmi.h"
-#else
+# ifndef IAS__INC
+#  undef BCH__INC
+#  include "ias.h"
+# else
 
 
 namespace bch {
@@ -84,8 +84,8 @@ namespace bch {
 		/* Pousse (décalge vers la fin de l'ensemble) les objets à la position
 		'Position' de 'Quantite' positions */
 		void Pousser_(
-			mdr::row_t__ Position,
-			mdr::size__ Quantite )
+			sdr::row_t__ Position,
+			sdr::size__ Quantite )
 		{
 			Allouer_( mng::Amount() + Quantite, aem::m_Default );
 			mmr::Store( *this, mng::Amount() - Position - Quantite, Position + Quantite, Position );
@@ -93,9 +93,9 @@ namespace bch {
 		// Insere à 'PosDest' 'Quantite' objets situé à partir de 'PosSource' de 'Source'.
 		void Inserer_(
 			const mmr &Source,
-			mdr::size__ Quantite,
-			mdr::row_t__ PosSource,
-			mdr::row_t__ PosDest )
+			sdr::size__ Quantite,
+			sdr::row_t__ PosSource,
+			sdr::row_t__ PosDest )
 		{
 			Pousser_( PosDest, Quantite );
 			mmr::Store( Source, Quantite, PosDest, PosSource );
@@ -103,22 +103,22 @@ namespace bch {
 		// Insere 'Quantite' objets de 'Objets' à 'Position'.
 		void Inserer_(
 			const type *Objets,
-			mdr::size__ Quantite,
-			mdr::row_t__ Position )
+			sdr::size__ Quantite,
+			sdr::row_t__ Position )
 		{
 			Pousser_( Position, Quantite );
 			mmr::Store( Objets, Quantite, Position );
 		}
 		// Allocation de la place nécessaire à 'Taille' objets.
 		void Allouer_(
-			mdr::size__ Taille,
+			sdr::size__ Taille,
 			aem::mode__ Mode )
 		{
 			if ( mng::AmountToAllocate( Taille, Mode ) )
 				mmr::Allocate( Taille );
 		}
 		// allocate if the set not big enough.
-		void AllocateIfNecessary_( mdr::size__ Quantity )
+		void AllocateIfNecessary_( sdr::size__ Quantity )
 		{
 			if ( Quantity > mng::Amount() )
 				Allouer_( Quantity, aem::m_Default );
@@ -152,7 +152,7 @@ namespace bch {
 		//f Initialization with 'Seed' containing 'Size' objects.
 		void Init(
 			const type *Seed,
-			mdr::size__ Size )
+			sdr::size__ Size )
 		{
 			this->Init();
 			
@@ -160,25 +160,25 @@ namespace bch {
 		}
 		//f Allocate 'Size' objects. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Allouer_( Size, Mode );
 		}
 		//f Allocate 'Size' objects and fill newly created object with 'Object'. Extent is forced to 'Size' when 'Mode' = 'mFit'.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			const type &Object,
 			aem::mode__ Mode = aem::m_Default )
 		{
-			mdr::size__ PreviousSize = mng::Amount();
+			sdr::size__ PreviousSize = mng::Amount();
 
 			Allouer_( Size, Mode );
 
 			if ( Size > PreviousSize )
 				Store( Object, PreviousSize, Size - PreviousSize );
 		}
-		void Preallocate( mdr::size__ Size )
+		void Preallocate( sdr::size__ Size )
 		{
 			if ( mng::Preallocate( Size ) )
 				mmr::Allocate( Size );
@@ -187,7 +187,7 @@ namespace bch {
 		Adjust the size of the bunch. */
 		void StoreAndAdjust_(
 			const mmr &Bunch,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
@@ -197,7 +197,7 @@ namespace bch {
 		}
 /*		void StoreAndAdjust__(
 			const _bunch &Bunch,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Row = 0,
 			row Offset = 0 )
 		{
@@ -215,7 +215,7 @@ namespace bch {
 		//f Store at 'Offset' 'Amount' objects from 'Buffer'.
 		void StoreAndAdjust(
 			const type *Buffer,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Offset = 0 )
 		{
 			Allocate( Amount + *Offset );
@@ -247,7 +247,7 @@ namespace bch {
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
 			const type *Buffer,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			row Position = this->Amount();
 
@@ -272,14 +272,14 @@ namespace bch {
 		//f Append 'Amount' 'Object's. Return the position where appended.
 		void Append(
 			const type &Object,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			StoreAndAdjust( Object, this->Amount(), Amount );
 		}
 		//f Append 'Amount' objects at 'Position' from 'Bunch'. Return the position where the object are put.
 		row Append(
 			const mmr &Bunch,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Offset = 0 )
 		{
 			row Position = this->Amount();
@@ -320,7 +320,7 @@ namespace bch {
 			return Get( this->Last() );
 		}
 		//f Remove 'Amount' objects from the end of the bunch.
-		void Truncate( mdr::size__ Amount = 1 )
+		void Truncate( sdr::size__ Amount = 1 )
 		{
 #ifdef BCH_DBG
 			if ( Amount > this->Amount() )
@@ -339,7 +339,7 @@ namespace bch {
 		}
 		//f Remove all objects but 'Amount()' objects from 'Row'. The size of the bunch is readjusted.
 		void Crop(
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Row = 0 )
 		{
 			Truncate( this->Amount() - ( *Row + Amount ) );
@@ -360,7 +360,7 @@ namespace bch {
 		//f Insert at 'RowDest' 'Amount' objects from 'Source' at 'RowSource'.
 		void Insert(
 			const mmr &Source,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row RowSource,
 			row RowDest )
 		{
@@ -383,7 +383,7 @@ namespace bch {
 		//f Insert at 'Row' 'Amount' objects from 'Source'.
 		void Insert(
 			const type *Source,
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			row Row )
 		{
 			Inserer_( Source, Amount, *Row );
@@ -398,16 +398,16 @@ namespace bch {
 		//f Remove 'Amount' objects at row 'Row'. The size of the set is reduced.
 		void Remove(
 			row Row,
-			mdr::size__ Amount = 1)
+			sdr::size__ Amount = 1)
 		{
 			mmr::Store( *this, this->Amount() - ( Amount + *Row ), Row, *Row + Amount );
 
 			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
 		//f Return the row of the first of 'Amount' new object.
-		row New( mdr::size__ Amount = 1 )
+		row New( sdr::size__ Amount = 1 )
 		{
-			mdr::row_t__ P = this->Amount();
+			sdr::row_t__ P = this->Amount();
 
 			Allouer_( P + Amount, aem::m_Default );
 
@@ -432,7 +432,7 @@ namespace bch {
 		void FillWithAndAdjust(
 			const type &Object,
 			row Row,
-			mdr::size__ Count )
+			sdr::size__ Count )
 		{
 			Allocate( *Row + Count );
 
@@ -464,29 +464,29 @@ namespace bch {
 
 	/*c The core set of static object of type 'type'. Internal use only. */
 	template <class type, typename row, typename mng, typename sh> class _bunch_
-	: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >
+	: public _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >
 	{
 	private:
-		mmi::indexed_multimemory_driver__ _IndexedMultimemoryDriver;
+		ias::indexed_aggregated_storage_driver__ _IASDriver;
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::s
+		: public _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::s
 		{};
 		_bunch_( s &S )
-		: _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >( S )
+		: _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >( S )
 		{};
 		void reset( bool P = true )
 		{
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::reset( P );
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().reset( P );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::reset( P );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Memory().reset( P );
 		}
 		_bunch_ &operator =( const _bunch_ &Op )
 		{
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row , sh>::operator =( Op );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row , sh>::operator =( Op );
 
 			this->Allocate( Op.Amount(), aem::mFit );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Memory().Store( Op, Op.Amount() );
 
 			return *this;
 		}
@@ -497,7 +497,7 @@ namespace bch {
 			if ( WriteSize )
 				dtfptb::OldPutSize( mng::Amount(), OFlow );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
 		void NewWriteToFlow(
 			flw::oflow__ &OFlow,
@@ -506,42 +506,42 @@ namespace bch {
 			if ( WriteSize )
 				dtfptb::NewPutSize( mng::Amount(), OFlow );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount(), OFlow );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
 		void OldReadFromFlow(
 			flw::iflow__ &IFlow,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			if ( Amount == 0 )
 				Amount = dtfptb::OldGetSize( IFlow );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Allocate( Amount );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount() );
 
 		}
 		void NewReadFromFlow(
 			flw::iflow__ &IFlow,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			if ( Amount == 0 )
 				Amount = dtfptb::NewGetSize( IFlow );
 
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Allocate( Amount );
-			_bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Amount() );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Allocate( Amount );
+			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount() );
 
 		}
 		//f Adjust the extent to amount.
 		void Adjust( void )
 		{
-			if ( _bunch<type, tym::E_MEMORYt_( type, row ), mng, row, sh >::Force( mng::Amount() ) )
-				tym::E_MEMORYt_( type, row )::Memory().Allocate( mng::Amount() );
+			if ( _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Force( mng::Amount() ) )
+				tys::E_STORAGEt_( type, row )::Memory().Allocate( mng::Amount() );
 		}
 	};
 
 	class dummy_size_handler
 	{
 	public:
-		static mdr::size__ SizeOf( void * )
+		static sdr::size__ SizeOf( void * )
 		{
 			ERRc();
 			return 0;	// To avoid a warning.
@@ -570,20 +570,20 @@ namespace bch {
 	#define E_BUNCHt_( Type, r )	E_BUNCHxt_( Type, r, bch::dummy_size_handler )
 	#define E_BUNCHt( Type, r )		E_BUNCHxt( Type, r, bch::dummy_size_handler )
 
-	#define E_BUNCHx( Type, s )		E_BUNCHxt( Type, mdr::row__, s )
-	#define E_BUNCHx_( Type, s )	E_BUNCHxt_( Type, mdr::row__, s )
+	#define E_BUNCHx( Type, s )		E_BUNCHxt( Type, sdr::row__, s )
+	#define E_BUNCHx_( Type, s )	E_BUNCHxt_( Type, sdr::row__, s )
 
-	#define E_BUNCH( Type )		E_BUNCHt( Type, mdr::row__ )
-	#define E_BUNCH_( Type )	E_BUNCHt_( Type, mdr::row__ )
+	#define E_BUNCH( Type )		E_BUNCHt( Type, sdr::row__ )
+	#define E_BUNCH_( Type )	E_BUNCHt_( Type, sdr::row__ )
 
-#ifndef FLM__COMPILATION
-	typedef tym::memory_file_manager___ bunch_file_manager___;
+#ifndef FLS__COMPILATION
+	typedef tys::storage_file_manager___ bunch_file_manager___;
 
-	template <typename bunch> uym::state__ Plug(
+	template <typename bunch> uys::state__ Plug(
 		bunch &Bunch,
 		bunch_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::Plug( Bunch, FileManager );
+		uys::state__ State = tys::Plug( Bunch, FileManager );
 
 		Bunch.SetStepValue( 0 );	// Pas de préallocation.
 
@@ -593,23 +593,23 @@ namespace bch {
 	}
 #endif
 
-	typedef E_BUNCH_( mdr::row__ ) relations_;
+	typedef E_BUNCH_( sdr::row__ ) relations_;
 	E_AUTO( relations )
 
 	void _GetRelations(
-		const uym::untyped_memory_ &Sorted,
-		const uym::untyped_memory_ &Unsorted,
-		mdr::size__ Size,
-		mdr::row_t__ Limit,
-		mdr::datum__ *Buffer,
-		E_BUNCH_( mdr::row__ ) &Relations );
+		const uys::untyped_storage_ &Sorted,
+		const uys::untyped_storage_ &Unsorted,
+		sdr::size__ Size,
+		sdr::row_t__ Limit,
+		sdr::datum__ *Buffer,
+		E_BUNCH_( sdr::row__ ) &Relations );
 
 	template <typename t> inline void GetRelations(
 		const bch::E_BUNCH_( t ) &Sorted,
 		const bch::E_BUNCH_( t ) &Unsorted,
-		bch::E_BUNCH_( mdr::row__ ) &Relations )
+		bch::E_BUNCH_( sdr::row__ ) &Relations )
 	{
-		mdr::datum__ Buffer[sizeof( t )];
+		sdr::datum__ Buffer[sizeof( t )];
 #ifdef BCH_DBG
 		if ( Sorted.Amount() != Unsorted.Amount() )
 			ERRu();
@@ -640,8 +640,8 @@ namespace bch {
 
 	#define E_P_BUNCHt( Type, r )		p_bunch< Type, r >
 
-	#define E_P_BUNCH( Type )		E_P_BUNCHt( Type, mdr::row__ )
-	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, mdr::row__ )
+	#define E_P_BUNCH( Type )		E_P_BUNCHt( Type, sdr::row__ )
+	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, sdr::row__ )
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
 	template <class t, typename r, typename m, typename s> inline bso::sign__ Compare(
@@ -653,7 +653,7 @@ namespace bch {
 		bso::sign__ Result = bso::Compare( S1.Amount() - *BeginS1, S2.Amount() - *BeginS2 );
 
 		if ( Result == 0 )
-			Result = tym::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - *BeginS1 );
+			Result = tys::Compare( S1, S2, BeginS1, BeginS2, S1.Amount() - *BeginS1 );
 
 		return Result;
 	}
@@ -665,9 +665,9 @@ namespace bch {
 		const E_BUNCHxt_( t, r, s ) &S2,
 		r BeginS1,
 		r BeginS2,
-		mdr::size__ Amount )
+		sdr::size__ Amount )
 	{
-		return tym::Compare( S1, S2, BeginS1, BeginS2, Amount );
+		return tys::Compare( S1, S2, BeginS1, BeginS2, Amount );
 	}
 
 
@@ -687,23 +687,23 @@ namespace bch {
 
 	//c A set of maximum 'size' static objects of type 'type'. Use 'SET__( type, size )' rather then directly this class.
 	template <typename type, int size, typename row, typename aem, typename sh> class _bunch__
-	: public _bunch< type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >
+	: public _bunch< type, tys::E_STORAGEt__( type, size, row ), aem, row, sh >
 	{
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::s {} S_;
+		: public _bunch<type, tys::E_STORAGEt__( type, size, row ), aem, row, sh >::s {} S_;
 		_bunch__( void ) 
-		: _bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >( S_ ) {}
+		: _bunch<type, tys::E_STORAGEt__( type, size, row ), aem, row, sh >( S_ ) {}
 		_bunch__ &operator =( const _bunch__ &S )
 		{
-			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
+			_bunch<type, tys::E_STORAGEt__( type, size, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
 
 			return *this;
 		}
 		void Init( void )
 		{
-			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row, sh >::Init();
-//			_bunch<type, tym::E_MEMORYt__( type, size, row ), aem, row >::SetStepValue( 0 );
+			_bunch<type, tys::E_STORAGEt__( type, size, row ), aem, row, sh >::Init();
+//			_bunch<type, tys::E_STORAGEt__( type, size, row ), aem, row >::SetStepValue( 0 );
 		}
 	};
 
@@ -715,27 +715,27 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_BUNCHt__( c, i, r )	bunch__<c, i, r>
 
-	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , mdr::row__ )
+	#define E_BUNCH__( c, i )		E_BUNCHt__( c, i , sdr::row__ )
 
 	//c A set of static objects of type 'type'. Use 'BUNCH___( type )' rather then directly this class.
 	template <typename type, typename row, typename aem, typename sh> class _bunch___
-	: public _bunch< type, tym::E_MEMORYt___( type, row ), aem, row, sh >
+	: public _bunch< type, tys::E_STORAGEt___( type, row ), aem, row, sh >
 	{
 	public:
 		struct s
-		: public _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::s {} S_;
+		: public _bunch<type, tys::E_STORAGEt___( type, row ), aem, row, sh >::s {} S_;
 		_bunch___( void ) 
-		: _bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >( S_ ) {}
+		: _bunch<type, tys::E_STORAGEt___( type, row ), aem, row, sh >( S_ ) {}
 		_bunch___ &operator =( const _bunch___ &S )
 		{
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
+			_bunch<type, tys::E_STORAGEt___( type, row ), aem, row, sh >::StoreAndAdjust( S, S.Amount_ );
 	
 			return *this;
 		}
 		void Init( void )
 		{
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::Init();
-			_bunch<type, tym::E_MEMORYt___( type, row ), aem, row, sh >::SetStepValue( 0 );
+			_bunch<type, tys::E_STORAGEt___( type, row ), aem, row, sh >::Init();
+			_bunch<type, tys::E_STORAGEt___( type, row ), aem, row, sh >::SetStepValue( 0 );
 		}
 	};
 
@@ -747,7 +747,7 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_BUNCHt___( c, r )	bunch___<c, r>
 
-	#define E_BUNCH___( c )		E_BUNCHt___( c, mdr::row__ )
+	#define E_BUNCH___( c )		E_BUNCHt___( c, sdr::row__ )
 
 
 
@@ -759,7 +759,7 @@ namespace bch {
 	//m A set of maximum 'i' statical objects of type 'c'. Use this rather then 'set__set<c,i>'.
 	#define E_P_BUNCHt__( c, i, r )	p_bunch__<c, i, r>
 
-	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , mdr::row__ )
+	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , sdr::row__ )
 
 
 

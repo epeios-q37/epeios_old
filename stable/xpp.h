@@ -240,12 +240,12 @@ namespace xpp {
 			FileNames.reset( P );
 			Contents.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Names.plug( MM );
-			Coords.plug( MM );
-			FileNames.plug( MM );
-			Contents.plug( MM );
+			Names.plug( AS );
+			Coords.plug( AS );
+			FileNames.plug( AS );
+			Contents.plug( AS );
 		}
 		_repository_ &operator =( const _repository_ &R )
 		{
@@ -609,7 +609,7 @@ namespace xpp {
 		_repository _Repository;
 		_variables _Variables;
 		str::string _Data;
-		mdr::size__ _Position;	// Position du premier caractère non lu dans le '_Data'.
+		sdr::size__ _Position;	// Position du premier caractère non lu dans le '_Data'.
 		_xparser_stack _Parsers;
 		_extended_parser___ *_CurrentParser;
 		void _DeleteParsers( void );
@@ -630,9 +630,9 @@ namespace xpp {
 			return *_CurrentParser;
 		}
 	protected:
-		virtual mdr::size__ FDRRead(
-			mdr::size__ Maximum,
-			mdr::datum__ *Buffer );
+		virtual sdr::size__ FDRRead(
+			sdr::size__ Maximum,
+			sdr::datum__ *Buffer );
 		virtual void FDRDismiss( void )
 		{}
 	public:

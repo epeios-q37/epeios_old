@@ -58,8 +58,8 @@ public:
 using namespace que;
 
 void que::links_::Initialize(
-	mdr::row_t__ Begin,
-	mdr::row_t__ End )
+	sdr::row_t__ Begin,
+	sdr::row_t__ End )
 {
 	que::link__ L;
 
@@ -71,8 +71,8 @@ void que::links_::Initialize(
 
 void que::Dump_(
 		const E_QUEUE_ &Queue,
-		E_QSTACK_( mdr::row__ ) &Stack,
-		mdr::row__ Begin,
+		E_QSTACK_( sdr::row__ ) &Stack,
+		sdr::row__ Begin,
 		direction Direction )
 {
 	if ( Direction == que::dAscending )
