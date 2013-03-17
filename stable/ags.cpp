@@ -102,8 +102,10 @@ void ags::aggregated_storage_::DisplayStructure( txf::text_oflow__ &Flow ) const
 
 		Row += _GetFragmentSize( Row );
 
-		Flow << txf::pad << txf::commit;
+		Flow << txf::tab << txf::commit;
 	}
+
+	Flow << txf::nl;
 }
 
 

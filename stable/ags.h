@@ -157,12 +157,30 @@ namespace ags {
 		}
 	};
 
+}
+
+#  define AGS__PART_ONE_HANDLED
+# endif
+
+# ifdef AGS__HANDLE_PART_TWO
+#  ifndef AGS__PART_ONE_HANDLED
+#   error
+#  endif
+#  ifdef AGS__PART_TWO_HANDLED
+#   error
+# endif
+
+# include "uys.h"
+
+namespace ags {
+
 	/*
 	NOTA :
-	- Par 'FragmentSize', on entend : 
-		- pour les fragments occupés (used), la taille disponible pour les données, et non pas la taille totale occupée par le fragement,
+	- Par 'Size', on entend : 
+		- pour les fragments occupés (used), la taille disponible pour les données, et non pas la taille totale occupée par le fragment,
 		- pour les fragments libres (free), la taille totale du fragment.
-	- Un 'descriptor__' pointe sur le début des données. Les métadonnées sot situés juste avant.
+	- Un 'descriptor__' pointe sur le début des données. Les métadonnées sot situés juste avant. Seul les fragment occupés ('used') ont un descritpeur.
+	- Une 'Value' est une donnée brute, sans ajustement, telle que stockée.
 	*/		
 
 
@@ -242,7 +260,7 @@ namespace ags {
 # define AGS_EMBEDDED_VALUE_MAX		( (bso::ubyte__)( ~ags::f_All >> ags::fp_SizeBegin ) )
 # define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
 # define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
-# define AGS_FULL_HEADER_SIZE_MAX	( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
+# define AGS_XHEADER_SIZE_MAX		( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
 
 	using sdr::size__;
 
@@ -293,7 +311,7 @@ namespace ags {
 		return ( ( *Header & ~f_All ) >> fp_SizeBegin );
 	}
 
-	inline size__ GetRawShortSize( header__ Header )
+	inline size__ GetShortValue( header__ Header )
 	{
 		if ( !IsSizeShort( Header ) )
 			ERRc();
@@ -303,7 +321,40 @@ namespace ags {
 
 	inline size__ GetShortSize( header__ Header )
 	{
-		return GetRawShortSize( Header ) + 1;
+		return GetShortValue( Header ) + 1;
+	}
+
+	inline size__ ConvertValueToFreeFragmentLongSize( size__ Value )
+	{
+		if ( Value < 1 )
+			ERRc();
+
+		return Value;
+	}
+
+	inline size__ ConvertValueToUsedFragmentLongSize( size__ Value )
+	{
+		return Value + AGS_SHORT_SIZE_MAX + 1;
+	}
+
+	inline size__ ConvertValueToLongSize(
+		size__ Value,
+		status__ Status )
+	{
+		switch ( Status ) {
+		case sFree:
+			return ConvertValueToFreeFragmentLongSize( Value );
+			break;
+		case sUsed:
+			return ConvertValueToUsedFragmentLongSize( Value );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		return 0;	// Pour éviter un 'Warning'.
+
 	}
 
 	inline void Display(
@@ -382,12 +433,12 @@ namespace ags {
 
 	inline void MarkSizeAsShort( header__ &Header )
 	{
-		*Header &= ~fSizeType;
+		*Header |= fSizeType;
 	}
 
 	inline void MarkSizeAsLong( header__ &Header )
 	{
-		*Header |= fSizeType;
+		*Header &= ~fSizeType;
 	}
 
 	inline bso::bool__ CanValueBeEmbedded( size__ Value )
@@ -430,7 +481,7 @@ namespace ags {
 		return false;
 	}
 
-	inline size__ AdjustFreeFragmentLongSize( size__ Size )
+	inline size__ ConvertFreeFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsFreeFragmentSizeShortSuitable( Size ) )
 			ERRc();
@@ -438,24 +489,59 @@ namespace ags {
 		return Size;
 	}
 
-	inline size__ AdjustUsedFragmentLongSize( size__ Size )
+	inline size__ ConvertUsedFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsUsedFragmentSizeShortSuitable( Size ) )
 			ERRc();
 
-		return Size - AGS_SHORT_SIZE_MAX;
+		return Size - AGS_SHORT_SIZE_MAX - 1;
 	}
 
-	inline size__ AdjustLongSize(
+	inline size__ ConvertLongSizeToValue(
 		size__ Size,
 		status__ Status )
 	{
 		switch ( Status ) {
 		case sFree:
-			return AdjustFreeFragmentLongSize( Size );
+			return ConvertFreeFragmentLongSizeToValue( Size );
 			break;
 		case sUsed:
-			return AdjustUsedFragmentLongSize( Size );
+			return ConvertUsedFragmentLongSizeToValue( Size );
+			break;
+		default:
+			ERRc();
+			break;
+		}
+
+		return 0;	// Pour éviter un 'warning'.
+	}
+
+	inline size__ ConvertFreeFragmentShortSizeToValue( size__ Size )
+	{
+		if ( !IsFreeFragmentSizeShortSuitable( Size ) )
+			ERRc();
+
+		return 0;
+	}
+
+	inline size__ ConvertUsedFragmentShortSizeToValue( size__ Size )
+	{
+		if ( !IsUsedFragmentSizeShortSuitable( Size ) )
+			ERRc();
+
+		return Size - 1;
+	}
+
+	inline size__ ConvertShortSizeToValue(
+		size__ Size,
+		status__ Status )
+	{
+		switch ( Status ) {
+		case sFree:
+			return ConvertFreeFragmentShortSizeToValue( Size );
+			break;
+		case sUsed:
+			return ConvertUsedFragmentShortSizeToValue( Size );
 			break;
 		default:
 			ERRc();
@@ -496,7 +582,7 @@ namespace ags {
 			_Size = Size;
 
 			if ( !IsSizeShortSuitable( Size, Status ) )
-				_XSize = sdr::Convert( AdjustLongSize( Size, Status ) );
+				_XSize = sdr::Convert( ConvertLongSizeToValue( Size, Status ) );
 
 			_Status = Status;
 		}
@@ -556,7 +642,7 @@ namespace ags {
 
 			if ( IsShortSuitable() ) {
 				MarkSizeAsShort( _Header );
-				SetEmbeddedValue( _Header, xsize__::Size() - 1 );
+				SetEmbeddedValue( _Header, ConvertShortSizeToValue( xsize__::Size(), Status ) );
 			} else
 				MarkSizeAsLong( _Header );
 		}
@@ -606,6 +692,7 @@ namespace ags {
 		return Buffer + Counter + 1;
 	}
 
+	// Caratéristiques d'un fragement libre ('free').
 	struct tracker__
 	{
 	public:
@@ -645,24 +732,31 @@ namespace ags {
 		}
 	};
 
-	typedef sdr::datum__ meta_data__[AGS_FULL_HEADER_SIZE_MAX];
-}
+	// Récupère les méta-données placés dont 'Pointer' pointe sur le dernier octet.
+	// Retourne un pointeur sur le début des meta-données.
+	// NOTA : Le ponteur retourné ainsi que le contenu de 'Header' sont à ignorer lorsque'Pointer' pointe juste aprés un fragment libre ('free').
+	inline const sdr::datum__ *GetPriorMetaData(
+		const sdr::datum__ *Pointer,
+		status__ Status,
+		header__ &Header,
+		size__ &Size )
+	{
+		if ( *Pointer & fSizeType ) {
+			Header = (header__)*Pointer;
+			Size = GetShortSize( Header );
+			if ( ags::Status( Header ) != Status )
+				ERRc();
+		} else {
+			const sdr::datum__ *LongSizePointer = FindLongSizeBegin( Pointer );
+			Size = ConvertValueToLongSize( sdr::Convert( LongSizePointer ), Status );
+			Header = *--LongSizePointer;
 
+			if ( ( Status == sUsed ) && ( ags::Status( Header ) != sUsed ) )
+				ERRc();
+		}
 
-#  define AGS__PART_ONE_HANDLED
-# endif
-
-# ifdef AGS__HANDLE_PART_TWO
-#  ifndef AGS__PART_ONE_HANDLED
-#   error
-#  endif
-#  ifdef AGS__PART_TWO_HANDLED
-#   error
-# endif
-
-# include "uys.h"
-
-namespace ags {
+		return Pointer;
+	}
 
 	class aggregated_storage_
 	{
@@ -685,13 +779,17 @@ namespace ags {
 		{
 			Storage.Store( Data, Size, Position );
 		}
-		sdr::row_t__ _GetPriorMetaData(	// Retourne la position du début des méta-données.
-			sdr::row_t__ Row,	// Si pointe sur le début d'un fragment (cas d'un fragment libre), est probablement sans signification.
+		// Récupère les méta-données placés juste avant 'Row'.
+		// Retourne la position du début des meta-données.
+		// NOTA : la position retournée ainsi que le contenu de 'Header' sont à ignorer lorsque 'Row' pointe juste aprés un fragment libre ('free').
+		sdr::row_t__ _GetPriorMetaData(
+			sdr::row_t__ Row,
+			status__ Status,
 			header__ &Header,
 			size__ &Size ) const
 		{
-			sdr::datum__ Buffer[AGS_FULL_HEADER_SIZE_MAX];
-			size__ Amount = ( Row < AGS_FULL_HEADER_SIZE_MAX ? Row : AGS_FULL_HEADER_SIZE_MAX );
+			sdr::datum__ Buffer[AGS_XHEADER_SIZE_MAX];
+			size__ Amount = ( Row < AGS_XHEADER_SIZE_MAX ? Row : AGS_XHEADER_SIZE_MAX );
 			sdr::datum__ *Pointer = &Buffer[Amount]-1;
 
 			if ( Amount == 0 )
@@ -699,25 +797,16 @@ namespace ags {
 
 			_Read( Row - Amount, Amount, Buffer );
 
-			if ( *Pointer & fSizeType ) {
-				Header = (header__)*Pointer;
-				Size = GetShortSize( Header );
-				Row--;
-			} else {
-				const sdr::datum__ *SizePointer = FindLongSizeBegin( Pointer );
-				Size = sdr::Convert( SizePointer );
-				Header = *--SizePointer;
-				 Row -= Pointer - SizePointer + 1;
-			}
-
-			return Row;
+			return Row - ( Pointer - GetPriorMetaData( Pointer, Status, Header, Size ) + 1 );
 		}
-		size__ _GetPriorSize( sdr::row_t__ Row ) const
+		size__ _GetPriorSize(
+			sdr::row_t__ Row,
+			status__ Status ) const
 		{
 			size__ Size;
 			header__ Header;
 
-			_GetPriorMetaData( Row, Header, Size );
+			_GetPriorMetaData( Row, Status, Header, Size );
 
 			return Size;
 		}
@@ -776,7 +865,7 @@ namespace ags {
 		size__ _GetTailFreeSize( void ) const
 		{
 			if ( _IsTailFragmentFree() )
-				return _GetPriorSize( _Size() );
+				return _GetPriorSize( _Size(), sFree );
 			else
 				return 0;
 		}
@@ -789,6 +878,7 @@ namespace ags {
 		}
 		size__ _GetLongSize(
 			sdr::row_t__ Row,
+			status__ Status,
 			sdr::size__ &SizeLength ) const
 		{
 			sdr::dsize__ DSize;
@@ -796,13 +886,13 @@ namespace ags {
 
 			_Read( Row, AGS_LONG_SIZE_SIZE_MAX > Limit ? Limit : AGS_LONG_SIZE_SIZE_MAX, (sdr::datum__ *)&DSize );
 
-			return sdr::Convert( DSize, SizeLength );
+			return ConvertValueToLongSize( sdr::Convert( DSize, SizeLength ), Status );
 		}
 		void _GetMetaData(
 			sdr::row_t__ Row,
 			header__ &Header,
 			size__ &Size,
-			size__ &FullHeaderLength ) const
+			size__ &XHeaderLength ) const
 		{
 			_Get( Row, Header );
 			size__ SizeLength = 0;
@@ -810,9 +900,9 @@ namespace ags {
 			if ( IsSizeShort( Header ) )
 				Size = GetShortSize( Header );
 			else
-				Size = _GetLongSize( Row + AGS_HEADER_SIZE, SizeLength );
+				Size = _GetLongSize( Row + AGS_HEADER_SIZE, Status( Header), SizeLength );
 
-			FullHeaderLength = SizeLength + AGS_HEADER_SIZE;
+			XHeaderLength = SizeLength + AGS_HEADER_SIZE;
 		}
 		void _GetMetaData(
 			sdr::row_t__ Row,
@@ -827,15 +917,15 @@ namespace ags {
 		{
 			header__ Header;
 			size__ Size = 0;
-			size__ FullHeaderLength = 0;
+			size__ XHeaderLength = 0;
 
-			_GetMetaData( Row, Header, Size, FullHeaderLength );
+			_GetMetaData( Row, Header, Size, XHeaderLength );
 
-			return Size + 1 + ( IsUsed( Header ) ? FullHeaderLength : 0 );
+			return Size + ( IsUsed( Header ) ? XHeaderLength : 0 );
 		}
 		size__ _GetSize( descriptor__ Descriptor ) const
 		{
-			return _GetPriorSize( *Descriptor );
+			return _GetPriorSize( *Descriptor, sUsed );
 		}
 		bso::bool__ _IsLast( sdr::row_t__ Row ) const
 		{
@@ -849,7 +939,7 @@ namespace ags {
 		}
 		descriptor__ _WriteHeadMetaData(
 			sdr::row_t__ Row,
-			const xheader__ XHeader )
+			const xheader__ &XHeader )
 		{
 			_WriteHeader( Row, XHeader.Header() );
 
@@ -993,7 +1083,7 @@ namespace ags {
 		{
 			header__ Header;
 			size__ Size;
-			sdr::row_t__ Row = _GetPriorMetaData( *Descriptor, Header, Size );
+			sdr::row_t__ Row = _GetPriorMetaData( *Descriptor, sUsed, Header, Size );
 			sdr::row_t__ Next = *Descriptor + Size;
 
 			if ( !_IsLast( Row ) ) {
@@ -1012,7 +1102,7 @@ namespace ags {
 			}
 
 			if ( ( Row != 0 ) && IsPredecessorFree( Header ) ) {
-				size__ PredecessorSize = _GetPriorSize( Row );
+				size__ PredecessorSize = _GetPriorSize( Row, sFree );
 				Size += PredecessorSize;
 				Row -= PredecessorSize;
 

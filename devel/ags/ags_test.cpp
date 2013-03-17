@@ -40,7 +40,19 @@ using cio::CErr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	ags::E_ASTORAGE Storage;
+	ags::descriptor__ D;
 ERRBegin
+	Storage.Init();
+	Storage.DisplayStructure( COut );
+	Storage.Allocate( 1 );
+	Storage.DisplayStructure( COut );
+	D = Storage.Allocate( 1 );
+	Storage.DisplayStructure( COut );
+	Storage.Allocate( 1 );
+	Storage.DisplayStructure( COut );
+	Storage.Free( D );
+	Storage.DisplayStructure( COut );
 ERRErr
 ERREnd
 ERREpilog
@@ -66,7 +78,7 @@ ERRFBegin
 		COut << txf::commit;
 		CErr << "\nBad arguments.\n";
 		COut << "Usage: " << AGSTutor.Name << " [/i]\n\n";
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 	}
 
 ERRFErr
