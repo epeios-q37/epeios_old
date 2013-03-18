@@ -558,7 +558,7 @@ namespace ags {
 		if ( !CanValueBeEmbedded( Value ) )
 			ERRc();
 
-		Header = ( *Header & f_All ) | ( (bso::ubyte__)Value >> fp_SizeBegin );
+		Header = ( *Header & f_All ) | ( (bso::ubyte__)Value << fp_SizeBegin );
 	}
 
 	typedef sdr::xsize__ _xsize__;
@@ -679,17 +679,21 @@ namespace ags {
 
 	inline const sdr::datum__ *FindLongSizeBegin( const sdr::datum__ *Buffer )
 	{
-		bso::ubyte__ Counter = AGS_LONG_SIZE_SIZE_MAX;
+		bso::ubyte__ Counter = AGS_LONG_SIZE_SIZE_MAX + 1;
 
-		if ( Buffer[--Counter] & fSizeType )
+		if ( *Buffer & fSizeType )
 			ERRc();
 
-		while ( Counter && ( Buffer[--Counter] & fSizeType ) );
+		Buffer--;
+		Counter--;
+
+		while ( Counter-- && ( *Buffer & fSizeType ) )
+			Buffer--;
 
 		if ( Counter == 0 )
 			ERRc();
 
-		return Buffer + Counter + 1;
+		return Buffer + 1;
 	}
 
 	// Caratéristiques d'un fragement libre ('free').
@@ -733,9 +737,9 @@ namespace ags {
 	};
 
 	// Récupère les méta-données placés dont 'Pointer' pointe sur le dernier octet.
-	// Retourne un pointeur sur le début des meta-données.
-	// NOTA : Le ponteur retourné ainsi que le contenu de 'Header' sont à ignorer lorsque'Pointer' pointe juste aprés un fragment libre ('free').
-	inline const sdr::datum__ *GetPriorMetaData(
+	// Retourne la taille du 'xheader'.
+	// NOTA : La valuer retournée ainsi que le contenu de 'Header' sont à ignorer lorsque'Pointer' pointe juste aprés un fragment libre ('free').
+	inline size__ GetPriorMetaData(
 		const sdr::datum__ *Pointer,
 		status__ Status,
 		header__ &Header,
@@ -746,6 +750,7 @@ namespace ags {
 			Size = GetShortSize( Header );
 			if ( ags::Status( Header ) != Status )
 				ERRc();
+			return AGS_HEADER_SIZE;
 		} else {
 			const sdr::datum__ *LongSizePointer = FindLongSizeBegin( Pointer );
 			Size = ConvertValueToLongSize( sdr::Convert( LongSizePointer ), Status );
@@ -753,9 +758,9 @@ namespace ags {
 
 			if ( ( Status == sUsed ) && ( ags::Status( Header ) != sUsed ) )
 				ERRc();
-		}
 
-		return Pointer;
+			return Pointer - LongSizePointer + 1;
+		}
 	}
 
 	class aggregated_storage_
@@ -780,9 +785,9 @@ namespace ags {
 			Storage.Store( Data, Size, Position );
 		}
 		// Récupère les méta-données placés juste avant 'Row'.
-		// Retourne la position du début des meta-données.
-		// NOTA : la position retournée ainsi que le contenu de 'Header' sont à ignorer lorsque 'Row' pointe juste aprés un fragment libre ('free').
-		sdr::row_t__ _GetPriorMetaData(
+		// Retourne la aille du 'xheader'
+		// NOTA : la valeur retournée ainsi que le contenu de 'Header' sont à ignorer lorsque 'Row' pointe juste aprés un fragment libre ('free').
+		size__ _GetPriorMetaData(
 			sdr::row_t__ Row,
 			status__ Status,
 			header__ &Header,
@@ -797,7 +802,7 @@ namespace ags {
 
 			_Read( Row - Amount, Amount, Buffer );
 
-			return Row - ( Pointer - GetPriorMetaData( Pointer, Status, Header, Size ) + 1 );
+			return GetPriorMetaData( Pointer, Status, Header, Size );
 		}
 		size__ _GetPriorSize(
 			sdr::row_t__ Row,
@@ -822,7 +827,7 @@ namespace ags {
 		{
 			_Write( &*Header, Row, AGS_HEADER_SIZE );
 		}
-		status__ _TailFragmentStatus( void )
+		status__ _TailFragmentStatus( void ) const
 		{
 			if ( _Size() == 0 )
 				return s_Undefined;
@@ -831,20 +836,15 @@ namespace ags {
 
 				_Get( 0, Header );
 
-				return Status( Header );
+				return PredecessorStatus( Header );
 			}
 		}
 		bso::bool__ _IsTailFragmentFree( void ) const
 		{
 			if ( _Size() == 0 )
 				return false;
-			else {
-				header__ Header;
-
-				_Get( 0, Header );
-
-				return IsFree( Header );
-			}
+			else
+				return _TailFragmentStatus() == sFree;
 		}
 		void _UpdatePredecessorStatus(
 			sdr::row_t__ Row,
@@ -964,11 +964,10 @@ namespace ags {
 				ERRc();
 				break;
 			case 1:
-			case 2:
 				break;
 			default:
 				_Write( (const sdr::datum__ *)"\x0", Row + XHeader.Size() - XHeader.DSizeBufferLength() - 1, 1 );
-			case 3:
+			case 2:
 				_Write( XHeader.DSizeBuffer(), Row + XHeader.Size() - XHeader.DSizeBufferLength(), XHeader.DSizeBufferLength() );
 				break;
 			}
@@ -996,7 +995,7 @@ namespace ags {
 		void _SetAsFreeFragment(
 			sdr::row_t__ Row,
 			sdr::size__ Size,
-			status__ PredecessorStatus )
+			status__ PredecessorStatus )	// Si 'Row' != 0, alors ce paramètre n'est pas significatif.
 		{
 			xsize__ XSize;
 
@@ -1059,7 +1058,7 @@ namespace ags {
 
 			XSize.Init( Size, sUsed );
 
-			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize, All ) ) != NONE )
+			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize, All ) ) == NONE )
 				if ( Available >= Size ) {
 					Row = _GetTailFreeFragment();
 					All = Available == Size;
@@ -1072,8 +1071,10 @@ namespace ags {
 			}
 
 			if ( All )
-				if ( ( Row == NONE ) || _IsLast( Row ) )
+				if ( _IsLast( Row ) )
 					_UpdateFirstFragmentPredecessorStatus( sUsed );
+				else if ( Row == 0 )
+					_UpdateFirstFragmentPredecessorStatus( _TailFragmentStatus() );
 				else
 					_UpdatePredecessorStatus( Row + XSize.FragmentSize(), sUsed );
 
@@ -1083,8 +1084,8 @@ namespace ags {
 		{
 			header__ Header;
 			size__ Size;
-			sdr::row_t__ Row = _GetPriorMetaData( *Descriptor, sUsed, Header, Size );
-			sdr::row_t__ Next = *Descriptor + Size;
+			sdr::size__ XHeaderLength = _GetPriorMetaData( *Descriptor, sUsed, Header, Size );
+			sdr::row_t__ Row = *Descriptor - XHeaderLength;
 
 			if ( !_IsLast( Row ) ) {
 				sdr::row_t__ SuccessorRow = *Descriptor + Size;
@@ -1110,11 +1111,9 @@ namespace ags {
 					S_.Free.Init();
 			}
 
-			_SetAsFreeFragment( Row, Size, ( Row == 0
-											 ? sFree
-											 : _IsTailFragmentFree() 
-											   ? sFree
-											   : sUsed ) );
+			Size += XHeaderLength;
+
+			_SetAsFreeFragment( Row, Size, ( Row == 0 ? _TailFragmentStatus() : sFree ) );
 
 			if ( _IsLast( Row ) )
 				_UpdateFirstFragmentPredecessorStatus( sFree );
@@ -1157,7 +1156,7 @@ namespace ags {
 			Storage.reset( P );
 			S_.Free.reset( P );
 		}
-		aggregated_storage_ operator =( const aggregated_storage_ &AS )
+		aggregated_storage_ &operator =( const aggregated_storage_ &AS )
 		{
 			Storage = AS.Storage;
 			S_.Free = AS.S_.Free;
@@ -1188,7 +1187,7 @@ namespace ags {
 
 				Storage.Allocate( _Size() + Size );
 
-				if ( _GetTailFreeSize() != 0 ) {
+				if ( ( Row != 0 ) && ( _GetTailFreeSize() != 0 ) ) {
 					Row = _GetTailFreeFragment();
 					Size += _GetTailFreeSize();
 				}

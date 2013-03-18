@@ -37,22 +37,33 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
+#define DS	Storage.DisplayStructure( COut );COut << txf::commit
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	ags::E_ASTORAGE Storage;
-	ags::descriptor__ D;
+	ags::descriptor__ D1, D2, D3, D4, D5;
 ERRBegin
 	Storage.Init();
-	Storage.DisplayStructure( COut );
-	Storage.Allocate( 1 );
-	Storage.DisplayStructure( COut );
-	D = Storage.Allocate( 1 );
-	Storage.DisplayStructure( COut );
-	Storage.Allocate( 1 );
-	Storage.DisplayStructure( COut );
-	Storage.Free( D );
-	Storage.DisplayStructure( COut );
+	DS;
+
+	D1 = Storage.Allocate( 2 );
+	DS;
+	D2 = Storage.Allocate( 2000 );
+	DS;
+	D3 = Storage.Allocate( 3000 );
+	DS;
+	D4 = Storage.Allocate( 4000 );
+	DS;
+	D5 = Storage.Allocate( 5000 );
+	DS;
+	Storage.Free( D2 );
+	DS;
+	Storage.Free( D4 );
+	DS;
+	Storage.Free( D3 );
+	DS;
 ERRErr
 ERREnd
 ERREpilog

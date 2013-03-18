@@ -278,11 +278,13 @@ namespace uys {
 			S_.Size = _Driver.UnderlyingSize();
 
 		}
-		untyped_storage_ &operator =( const untyped_storage_ & ) const
+		untyped_storage_ &operator =( const untyped_storage_ &US )
 		{
-			ERRc();	// Parce que cette opération n'a pas de sens.
+			_Allocate( US.GetSize() );
 
-			return *(untyped_storage_ *)NULL;
+			Store( US, US.GetSize(), 0, 0 );
+
+			return *this;
 		}
 		//f Initialization.
 		void Init( void )

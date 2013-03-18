@@ -180,7 +180,21 @@ ERREpilog
 /* End bug tracking code */
 
 
+void Display( const ctn::E_MCONTAINER_( str::string_ ) &C )
+{
+	ctn::E_CMITEM( str::string_ ) S;
+	sdr::row__ Row = C.First();
 
+	S.Init( C );
+
+	while ( Row != NONE ) {
+		cio::COut << S( Row ) << txf::pad;
+
+		Row = C.Next( Row );
+	}
+
+	cio::COut << txf::nl << txf::commit;
+}
 
 void EssaiBasic( void )
 {
@@ -206,15 +220,21 @@ ERRBegin
 	C( 1 ) = "hello";
 #else
 	C.Append( str::string( "coucou" ) );
+	Display( C );
 	AS.DisplayStructure( cout );
 	cout << txf::nl << txf::commit;
 //	MM.DisplayStructure( cout );
 
 	C.Insert( str::string( "hello" ), 0 );
+	Display( C );
+	AS.DisplayStructure( cout );
+	cout << txf::nl << txf::commit;
 //	MM.DisplayStructure( cout );
 
 	C(0).Insert( "toto", 3 );
 	C.Flush();
+	AS.DisplayStructure( cout );
+	cout << txf::nl << txf::commit;
 //	MM.DisplayStructure( cout );
 #endif
 
@@ -913,7 +933,7 @@ ERRBegin
 	ID = fls::GetId();
 	F.Init( ID, "b.tmp");
 	F.Manual();
-	Mm.plug( F );
+//	Mm.plug( F );
 	Mm.Init();
 	Mm.Preallocate( 10000000 );
 	GC.plug( Mm );
@@ -935,7 +955,7 @@ ERRBegin
 
 //	Mm.DisplayStructure( cio::cout );
 
-	cout << "--------------" << txf::nl;
+	cout << "--------------" << txf::nl << txf::commit;
 
 	for ( M = 'A'; M <= LM; M++ )
 	{
@@ -944,6 +964,8 @@ ERRBegin
 		cout << txf::nl;
 
 	}
+
+	cout << txf::commit;
 
 //	Mm.DisplayStructure( cio::cout );
 
@@ -980,6 +1002,8 @@ ERRBegin
 	E(1)= str::string( "bte" );
 	cout << E(0) << txf::tab;
 	cout << E(1) << txf::nl;
+
+	cout << txf::commit;
 ERRErr
 ERREnd
 	if ( ID != FLS_UNDEFINED_ID )
@@ -1011,6 +1035,8 @@ ERRBegin
 	E(1)= str::string( "bte" );
 	cout << E(0) << txf::tab;
 	cout << E(1) << txf::nl;
+
+	cout << txf::commit;
 ERRErr
 ERREnd
 	if ( ID != FLS_UNDEFINED_ID )
@@ -1097,17 +1123,19 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
+#if 0
 		EssaiBasic();
-//		EssaiConteneurDansConteneur();
-//		EssaiSimpleMono();
-//		EssaiSimpleMulti();
+		EssaiConteneurDansConteneur();
+		EssaiSimpleMono();
+		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
-//		Essai( argc, argv );
-//		cout << "********************************************************" << txf::nl;
-////		EssaiDirect( argc, argv );
-//		cout << "********************************************************" << txf::nl;
-//		EssaiBogue( argc, argv);
-//		EssaiCopie( argc, argv );
+		Essai( argc, argv );
+#endif
+		cout << "********************************************************" << txf::nl;
+		EssaiDirect( argc, argv );
+		cout << "********************************************************" << txf::nl;
+		EssaiBogue( argc, argv);
+		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiPersistence( argc, argv );
 #else
