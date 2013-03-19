@@ -265,6 +265,9 @@ ERRBegin
 	I1.Init( Liste );
 	I2.Init( Liste );
 
+	Liste.Dynamics.AStorage.DisplayStructure( cout );
+	cout << txf::nl << txf::commit;
+
 	while ( Swap )
 	{
 		Swap = false;
@@ -289,6 +292,10 @@ ERRBegin
 				I1() = S;
 				
 				I2.Flush();
+
+				Liste.Dynamics.AStorage.DisplayStructure( cout );
+				cout << txf::nl << txf::commit;
+
 
 //				Liste.Dynamique.Multimemoire()->AfficherStructure();
 			}
@@ -378,7 +385,7 @@ ERRBegin
 
 	ECS.Flush();
 
-	cout << txf::nl;
+	cout << txf::nl << txf::commit;
 ERRErr
 ERREnd
 ERREpilog
@@ -445,6 +452,8 @@ ERRBegin
 	ECS(9)= Str;
 	Str = "couco";
 	ECS(10).Init();
+	AS.DisplayStructure( cout );
+	cout << txf::commit;
 	ECS(10)= Str;
 	Str = "coucou";
 	ECS(11).Init();
@@ -596,7 +605,7 @@ ERRBegin
 	ID = fls::GetId();
 	F.Init( ID, "a.tmp" );
 //	F.Manuel();
-	Mm.plug( F );
+//	Mm.plug( F );
 	Mm.Init();
 	Mm.Preallocate( 10000000 );
 	CM.plug( Mm );
@@ -657,6 +666,8 @@ ERRBegin
 		ECM() = Cm;
 
 //		Mm.DisplayStructure( cio::cout );
+
+		cout << txf::commit;
 	}
 
 	cout << "--------------" << txf::nl;
@@ -933,7 +944,7 @@ ERRBegin
 	ID = fls::GetId();
 	F.Init( ID, "b.tmp");
 	F.Manual();
-//	Mm.plug( F );
+	Mm.plug( F );
 	Mm.Init();
 	Mm.Preallocate( 10000000 );
 	GC.plug( Mm );
@@ -1129,8 +1140,8 @@ ERRFBegin
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
-		Essai( argc, argv );
 #endif
+		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
 		cout << "********************************************************" << txf::nl;

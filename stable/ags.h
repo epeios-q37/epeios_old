@@ -722,17 +722,9 @@ namespace ags {
 			this->Row = Row;
 			this->Size = Size;
 		}
-		bso::bool__ IsSuitable(
-			size__ Size,
-			bso::bool__ &All ) const
+		bso::bool__ IsSuitable( size__ Size ) const
 		{
-			if ( Size > this->Size )
-				return false;
-			else {
-				All = Size == this->Size;
-
-				return true;
-			}
+			return Size <= this->Size;
 		}
 	};
 
@@ -1023,25 +1015,27 @@ namespace ags {
 		descriptor__ _SetUsedFragmentUsingFreeFragment(
 			sdr::row_t__ Row,
 			const xsize__ &XSize,
-			status__ PredecessorStatus )
+			status__ PredecessorStatus,
+			bso::bool__ &All )
 		{
 			size__ AvailableSize = _GetFragmentSize( Row );
 			descriptor__ Descriptor = _SetFragment( Row, XSize, PredecessorStatus );
+			All = false;
 
-			if ( AvailableSize < XSize.Size() )
+			if ( AvailableSize > XSize.FragmentSize() )
+				_SetAsFreeFragment( Row + XSize.FragmentSize(), AvailableSize - XSize.FragmentSize(), sUsed );
+			else if ( AvailableSize < XSize.FragmentSize() )
 				ERRc();
-
-			_SetAsFreeFragment( Row + XSize.FragmentSize(), AvailableSize - XSize.FragmentSize(), sUsed );
+			else
+				All = true;
 
 			return Descriptor;
 		}
-		sdr::row_t__ _GetUsableFreeFragmentIfAvailable(
-			const xsize__ &XSize,
-			bso::bool__ &All )
+		sdr::row_t__ _GetUsableFreeFragmentIfAvailable( size__ Size )
 		{
 			sdr::row_t__ Row = NONE;
 
-			if ( S_.Free.IsSuitable( XSize.Size(), All ) ) {
+			if ( S_.Free.IsSuitable( Size ) ) {
 				Row = S_.Free.Row;
 				S_.Free.Init();
 			}
@@ -1054,19 +1048,18 @@ namespace ags {
 			sdr::row_t__ Row = NONE;
 			descriptor__ Descriptor = NONE;
 			bso::bool__ All = false;
-			size__ Available = _GetTailFreeSize();
 
 			XSize.Init( Size, sUsed );
 
-			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize, All ) ) == NONE )
-				if ( Available >= Size ) {
+			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize.FragmentSize() ) ) == NONE )
+				if ( _GetTailFreeSize() >= XSize.FragmentSize() )
 					Row = _GetTailFreeFragment();
-					All = Available == Size;
-				}
 
 			if ( Row != NONE ) {
-				Descriptor = _SetUsedFragmentUsingFreeFragment( Row, XSize, sUsed );
+				Descriptor = _SetUsedFragmentUsingFreeFragment( Row, XSize, ( Row == 0 ? _TailFragmentStatus() : sUsed ), All );
 			} else { 
+				if ( ( Row = _GetTailFreeFragment() ) == NONE )
+					Row = _Size();
 				Descriptor = _AllocateAndSetUsedFragmentAtTail( XSize, sUsed, All );
 			}
 

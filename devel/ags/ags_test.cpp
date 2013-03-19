@@ -58,11 +58,9 @@ ERRBegin
 	DS;
 	D5 = Storage.Allocate( 5000 );
 	DS;
-	Storage.Free( D2 );
+	D3 = Storage.Reallocate( D3, 4000 );
 	DS;
-	Storage.Free( D4 );
-	DS;
-	Storage.Free( D3 );
+	D2 = Storage.Reallocate( D2, 2500 );
 	DS;
 ERRErr
 ERREnd
