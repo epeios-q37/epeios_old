@@ -619,7 +619,7 @@ namespace bch {
 
 
 
-
+# if 0
 	/*c A portable bunch of static object of type 'type'. Use 'E_PBUNCH_( type )' rather then directly this class. */
 	template <class type, typename row, typename sh = dummy_size_handler> class p_bunch_
 	: public _bunch_<type, row, aem::p_amount_extent_manager_< row >, sh >
@@ -642,6 +642,7 @@ namespace bch {
 
 	#define E_P_BUNCH( Type )		E_P_BUNCHt( Type, sdr::row__ )
 	#define E_P_BUNCH_( Type )	E_P_BUNCHt_( Type, sdr::row__ )
+# endif
 
 	//f Return 'S1' - 'S2' which respectively begins at 'BeginS1' et 'Begins2'.
 	template <class t, typename r, typename m, typename s> inline bso::sign__ Compare(
@@ -750,7 +751,7 @@ namespace bch {
 	#define E_BUNCH___( c )		E_BUNCHt___( c, sdr::row__ )
 
 
-
+# if 0
 	template <typename type, int size, typename row, typename sh = dummy_size_handler> class p_bunch__
 	: public _bunch__< type, size, row, aem::p_amount_extent_manager__<size, row>, sh >
 	{};
@@ -760,7 +761,7 @@ namespace bch {
 	#define E_P_BUNCHt__( c, i, r )	p_bunch__<c, i, r>
 
 	#define E_P_BUNCH__( c, i )		E_P_BUNCHt__( c, i , sdr::row__ )
-
+#endif
 
 
 }

@@ -362,6 +362,7 @@ namespace aem {
 		{}
 	};
 
+# if 0
 	//c A portable amount/extent manager.
 	template <typename row> class p_amount_extent_manager_
 	: public core_amount_extent_manager_<row, sdr::p_size__>
@@ -374,7 +375,7 @@ namespace aem {
 		: core_amount_extent_manager_<row, sdr::p_size__>( S )
 		{}
 	};
-
+# endif
 
 	//c Core amount/extent manager for fixed size set of object. Internal use only.
 	template <int extent, typename row, typename size> class core_amount_extent_manager__
@@ -512,6 +513,7 @@ namespace aem {
 		{}
 	};
 
+# if 0
 	//c Core amount/extent manager for fixed size set of object.
 	template <int extent, typename row> class p_amount_extent_manager__
 	: public core_amount_extent_manager__<extent, row, sdr::p_size__>
@@ -524,6 +526,7 @@ namespace aem {
 		: core_amount_extent_manager__<extent, row, sdr::p_size__>( S )
 		{}
 	};
+# endif
 
 	//c A amount/extent manager.
 	template <typename row> class amount_extent_manager___
@@ -538,6 +541,7 @@ namespace aem {
 		{}
 	};
 
+# if 0
 	//c A portable amount/extent manager.
 	template <typename row> class p_amount_extent_manager___
 	: public p_amount_extent_manager_<row>
@@ -550,7 +554,7 @@ namespace aem {
 		: p_amount_extent_manager_<row>( S )
 		{}
 	};
-
+# endif
 
 }
 

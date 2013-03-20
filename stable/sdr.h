@@ -74,18 +74,21 @@ namespace sdr {
 	typedef bso::size__	row_t__;
 	E_TMIMIC__( row_t__, row__ );
 
+# if 0
 	typedef bso::p_size__	p_row_t__;
 	E_TMIMIC__( p_row_t__, p_row__ );
-
+# endif
 	#define SDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
 
 	//t The size of a storage.
 	using bso::size__;
 	#define SDR_SIZE_MAX	BSO_SIZE_MAX
 
+# if 0
 	//t The portable version of a 'size__'.
 	using bso::p_size__;
 	#define SDR_P_SIZE_MAX	BSO_P_SIZE_MAX
+# endif
 
 	//t The type of the datum in a storage.
 	typedef bso::raw__	datum__;

@@ -73,9 +73,10 @@ namespace bso {
 	//t Boolean.
 	typedef bool bool__;
 
+# if 0
 	//t A portable boolean;
 	typedef bool__ p_bool__;
-
+# endif
 
 	//d Maximal value of a 'sbyte__'.
 	#define BSO_SBYTE_MAX		SCHAR_MAX
@@ -87,8 +88,10 @@ namespace bso {
 	//t Signed byte.
 	typedef signed char	sbyte__;
 
+# if 0
 	//t Portable signed byte.
 	typedef sbyte__ p_sbyte__;
+# endif
 
 
 	//d Maximal value of a 'ubyte__'.
@@ -101,9 +104,12 @@ namespace bso {
 	//t Unsigned byte.
 	typedef unsigned char ubyte__;
 
+# if 0
 	//t Portable unsigned byte.
 	typedef ubyte__ p_ubyte__;
+# endif
 
+# if 0
 	// Portable short. Internal use only.
 	template <typename t> class p_short__
 	{
@@ -132,7 +138,7 @@ namespace bso {
 			return Op_ != P.Op_;
 		}
 	};
-
+# endif
 
 
 	//d Maximal value of a 'sshort__'.
@@ -145,6 +151,7 @@ namespace bso {
 	// Signed short.
 	typedef signed short sshort__;
 
+#if 0
 	//c Portable signed short.
 	class p_sshort__
 	: public p_short__<sshort__>
@@ -154,6 +161,7 @@ namespace bso {
 		: p_short__<sshort__>( Op )
 		{}
 	};
+# endif
 
 	//d Maximal value of a 'ushort__'.
 	#define BSO_USHORT_MAX	USHRT_MAX
@@ -165,6 +173,7 @@ namespace bso {
 	//t Unsigned short
 	typedef unsigned short ushort__;
 
+# if 0
 	//c Portable unsigned short.
 	class p_ushort__
 	: public p_short__<ushort__>
@@ -174,7 +183,9 @@ namespace bso {
 		: p_short__<ushort__>( Op )
 		{}
 	};
+# endif
 
+# if 0
 	// Portable 32 bits integer. Internal use only.
 	template <typename t> class p_32_bits__
 	{
@@ -205,8 +216,9 @@ namespace bso {
 			return Op_ != P.Op_;
 		}
 	};
+# endif
 
-
+# if 0
 	// Portable 64 bits integer. Internal use only.
 	template <typename t> class p_64_bits__
 	{
@@ -242,6 +254,7 @@ namespace bso {
 			return Op_ != P.Op_;
 		}
 	};
+# endif
 
 	//d Maximal value of a 'slong__'.
 	#define BSO_SLONG_MAX	LONG_MAX
@@ -253,6 +266,7 @@ namespace bso {
 	//t Signed long.
 	typedef signed long slong__;
 
+# if 0
 	//c Portable signed long.
 	class p_slong__
 	: public p_32_bits__<slong__>
@@ -262,6 +276,7 @@ namespace bso {
 		: p_32_bits__<slong__>( Op )
 		{}
 	};
+# endif
 
 	//d Maximal value of a 'sllong__'.
 	#define BSO_SLLONG_MAX	LLONG_MAX
@@ -273,6 +288,7 @@ namespace bso {
 	//t Signed long.
 	typedef signed long long sllong__;
 
+# if 0
 	//c Portable signed long long.
 	class p_sllong__
 	: public p_64_bits__<sllong__>
@@ -282,6 +298,7 @@ namespace bso {
 		: p_64_bits__<sllong__>( Op )
 		{}
 	};
+# endif
 
 	//d Maximal value of a 'ulong__'.
 	#define BSO_ULONG_MAX	ULONG_MAX
@@ -293,6 +310,7 @@ namespace bso {
 	//t Unsigned long.
 	typedef unsigned long ulong__;
 
+# if 0
 	//c Portable unsigned long.
 	class p_ulong__
 	: public p_32_bits__<ulong__>
@@ -302,6 +320,7 @@ namespace bso {
 		: p_32_bits__<ulong__>( Op )
 		{}
 	};
+# endif
 
 	//d Maximal value of a 'ullong__'.
 	#define BSO_ULLONG_MAX	ULLONG_MAX
@@ -313,6 +332,7 @@ namespace bso {
 	//t Unsigned long.
 	typedef unsigned long long ullong__;
 
+# if 0
 	//c Portable unsigned long long.
 	class p_ullong__
 	: public p_64_bits__<ullong__>
@@ -322,13 +342,15 @@ namespace bso {
 		: p_64_bits__<ullong__>( Op )
 		{}
 	};
+# endif
 
 #  define BSO_SIZE_MAX	((size_t)-1)
 
 	//t Size of a memory .
 	typedef size_t size__;
 
-# ifdef CPE__32BITS
+# if 0
+#  ifdef CPE__32BITS
 	class p_size__
 	: public p_32_bits__<size__>
 	{
@@ -337,7 +359,7 @@ namespace bso {
 		: p_32_bits__<size__>( Op )
 		{}
 	};
-# elif defined ( CPE__64BITS )
+#  elif defined ( CPE__64BITS )
 	class p_size__
 	: public p_64_bits__<size__>
 	{
@@ -346,8 +368,9 @@ namespace bso {
 		: p_64_bits__<size__>( Op )
 		{}
 	};
-# else
-#  error "No biteness defined !"
+#  else
+#   error "No biteness defined !"
+#  endif
 # endif
 
 	//t Short-sized float.
@@ -366,8 +389,10 @@ namespace bso {
 	//t Character
 	typedef char char__;
 
+# if 0
 	//t A portable character.
 	typedef char__ p_char__;
+# endif
 
 	//c A sign ( -(1) +(1) 0 ).
 	class sign__
@@ -398,8 +423,10 @@ namespace bso {
 			return 1;
 	}
 
+# if 0
 	//t A portable sign.
 	typedef sign__ p_sign__;
+# endif
 
 	typedef void *pointer__;
 

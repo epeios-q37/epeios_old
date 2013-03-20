@@ -60,14 +60,14 @@ public:
 using namespace bch;
 
 void bch::_GetRelations(
-	const uym::untyped_memory_ &Sorted,
-	const uym::untyped_memory_ &Unsorted,
-	mdr::size__ Size,
-	mdr::row_t__ Limit,
-	mdr::datum__ *Buffer,
-	E_BUNCH_( mdr::row__ ) &Relations )
+	const uys::untyped_storage_ &Sorted,
+	const uys::untyped_storage_ &Unsorted,
+	sdr::size__ Size,
+	sdr::row_t__ Limit,
+	sdr::datum__ *Buffer,
+	E_BUNCH_( sdr::row__ ) &Relations )
 {
-	mdr::row_t__ Row = 0;
+	sdr::row_t__ Row = 0;
 
 	while ( Row < Limit ) {
 		Sorted.Recall( Row, Size, Buffer );
