@@ -95,7 +95,7 @@ namespace ags {
 	class aggregated_storage_;
 
 	class aggregated_storage_driver__
-	: public sdr::E_STORAGE_DRIVER__
+	: public sdr::E_SDRIVER__
 	{
 	private:
 		descriptor__ &_Descriptor;
@@ -127,13 +127,13 @@ namespace ags {
 			} else
 				_AStorage = NULL;
 
-			E_STORAGE_DRIVER__::reset( P );
+			E_SDRIVER__::reset( P );
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
 		aggregated_storage_driver__( descriptor__ &Descriptor )
 		: _Descriptor( Descriptor ),
-		  E_STORAGE_DRIVER__()
+		  E_SDRIVER__()
 		{
 			reset( false );
 		}
@@ -143,7 +143,7 @@ namespace ags {
 			reset();
 
 			_AStorage = &AStorage;
-			E_STORAGE_DRIVER__::Init();
+			E_SDRIVER__::Init();
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
@@ -257,7 +257,8 @@ namespace ags {
 	};
 
 # define AGS_HEADER_SIZE			sizeof( ags::header__ )
-# define AGS_EMBEDDED_VALUE_MAX		( (bso::ubyte__)( ~ags::f_All >> ags::fp_SizeBegin ) )
+# define AGS__HEADER_SIZE			1	// Lorsque cette value change, permet de détecter le code qu'il faut modifier.
+# define AGS_EMBEDDED_VALUE_MAX		( (bso::ubyte__)~ags::f_All >> ags::fp_SizeBegin )
 # define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
 # define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
 # define AGS_XHEADER_SIZE_MAX		( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
@@ -579,6 +580,8 @@ namespace ags {
 			size__ Size,
 			status__ Status )
 		{
+			reset();
+
 			_Size = Size;
 
 			if ( !IsSizeShortSuitable( Size, Status ) )
@@ -588,6 +591,8 @@ namespace ags {
 		}
 		void Init( const xsize__ &XSize )
 		{
+			reset();
+
 			*this = XSize;
 		}
 		size__ FragmentSize( void ) const
@@ -684,11 +689,10 @@ namespace ags {
 		if ( *Buffer & fSizeType )
 			ERRc();
 
-		Buffer--;
-		Counter--;
-
-		while ( Counter-- && ( *Buffer & fSizeType ) )
+		do {
 			Buffer--;
+			Counter--;
+		} while ( Counter && ( *Buffer & fSizeType ) );
 
 		if ( Counter == 0 )
 			ERRc();
@@ -728,15 +732,22 @@ namespace ags {
 		}
 	};
 
-	// Récupère les méta-données placés dont 'Pointer' pointe sur le dernier octet.
+	// Récupère les méta-données dont 'Pointer' pointe sur le dernier octet.
 	// Retourne la taille du 'xheader'.
-	// NOTA : La valuer retournée ainsi que le contenu de 'Header' sont à ignorer lorsque'Pointer' pointe juste aprés un fragment libre ('free').
+	// NOTA : La valeur retournée ainsi que le contenu de 'Header' sont à ignorer lorsque 'Pointer' pointe sur le dernier octet d'un fragment libre ('free').
 	inline size__ GetPriorMetaData(
 		const sdr::datum__ *Pointer,
 		status__ Status,
 		header__ &Header,
 		size__ &Size )
 	{
+# if AGS__HEADER_SIZE != 1
+/*
+NOTA : Le code de cette fonction part du principe que la taille d'un 'header__' est de 1 octet.
+Si ce n'est plus le cas, alors il faut modifier cette fonction.
+*/
+#  error 
+# endif
 		if ( *Pointer & fSizeType ) {
 			Header = (header__)*Pointer;
 			Size = GetShortSize( Header );
@@ -786,8 +797,8 @@ namespace ags {
 			size__ &Size ) const
 		{
 			sdr::datum__ Buffer[AGS_XHEADER_SIZE_MAX];
-			size__ Amount = ( Row < AGS_XHEADER_SIZE_MAX ? Row : AGS_XHEADER_SIZE_MAX );
-			sdr::datum__ *Pointer = &Buffer[Amount]-1;
+			size__ Amount = ( Row < sizeof( Buffer ) ? Row : sizeof( Buffer ) );
+			sdr::datum__ *Pointer = &Buffer[Amount-1];
 
 			if ( Amount == 0 )
 				ERRc();
@@ -840,7 +851,7 @@ namespace ags {
 		}
 		void _UpdatePredecessorStatus(
 			sdr::row_t__ Row,
-			status__ Status )	// Le statut du prédecesseur du premier fragment reflète en fait le statut du dernier fragment.
+			status__ Status )	// Le statut du prédecesseur du premier fragment reflète le statut du dernier fragment.
 		{
 			header__ Header;
 
@@ -850,7 +861,7 @@ namespace ags {
 
 			_Set( Row, Header );
 		}
-		void _UpdateFirstFragmentPredecessorStatus( status__ Status )	// Le statut du prédecesseur du premier fragment reflète en fait le statut du dernier fragment.
+		void _UpdateFirstFragmentPredecessorStatus( status__ Status )	// Le statut du prédecesseur du premier fragment reflète le statut du dernier fragment.
 		{
 			_UpdatePredecessorStatus( 0, Status );
 		}
@@ -876,7 +887,7 @@ namespace ags {
 			sdr::dsize__ DSize;
 			size__ Limit = _Size() - Row;
 
-			_Read( Row, AGS_LONG_SIZE_SIZE_MAX > Limit ? Limit : AGS_LONG_SIZE_SIZE_MAX, (sdr::datum__ *)&DSize );
+			_Read( Row, sizeof( DSize ) > Limit ? Limit : sizeof( DSize ), (sdr::datum__ *)&DSize );
 
 			return ConvertValueToLongSize( sdr::Convert( DSize, SizeLength ), Status );
 		}
@@ -903,7 +914,7 @@ namespace ags {
 		{
 			size__ Dummy = 0;
 
-			return _GetMetaData( Row, Header, Size, Dummy );
+			_GetMetaData( Row, Header, Size, Dummy );
 		}
 		size__ _GetFragmentSize( sdr::row_t__ Row ) const
 		{
@@ -925,7 +936,7 @@ namespace ags {
 		}
 		void _WriteHeader(
 			sdr::row_t__ Row,
-			const header__ Header )
+			header__ Header )
 		{
 			_Write( &*Header, Row, AGS_HEADER_SIZE );
 		}
@@ -948,19 +959,21 @@ namespace ags {
 			sdr::row_t__ Row,
 			const xheader__ &XHeader )
 		{
-			if ( XHeader.IsShortSuitable() )
+			if ( XHeader.Status() != sFree )
 				ERRc();
 
-			switch ( XHeader.Size() ) {
+			switch ( XHeader.FragmentSize() ) {
 			case 0:
 				ERRc();
 				break;
 			case 1:
+				// Dans ce cas, compte tenu de la taille du fragment, le 'tail meta data' est constitué du 'header' du 'head meta data'.
 				break;
 			default:
-				_Write( (const sdr::datum__ *)"\x0", Row + XHeader.Size() - XHeader.DSizeBufferLength() - 1, 1 );
+				// On écrit '0' poue que le marqueur précédent le début du 'long size' soit positionné.
+				_Write( (const sdr::datum__ *)"\x0", Row + XHeader.FragmentSize() - XHeader.DSizeBufferLength() - 1, 1 );
 			case 2:
-				_Write( XHeader.DSizeBuffer(), Row + XHeader.Size() - XHeader.DSizeBufferLength(), XHeader.DSizeBufferLength() );
+				_Write( XHeader.DSizeBuffer(), Row + XHeader.FragmentSize() - XHeader.DSizeBufferLength(), XHeader.DSizeBufferLength() );
 				break;
 			}
 		}
@@ -1001,11 +1014,11 @@ namespace ags {
 			bso::bool__ &UsingTail )
 		{
 			size__ TailAvailableSize = _GetTailFreeSize();
-			sdr::row_t__ Row = _Size() - TailAvailableSize;
+			sdr::row_t__ Row = _Size() - TailAvailableSize;	// On qtocke dans une variable, car '_Size()' est modifié par 'Allocate(...)'.
 
 			UsingTail = TailAvailableSize != 0;
 
-			if ( TailAvailableSize >= XSize.Size() )
+			if ( TailAvailableSize >= XSize.FragmentSize() )
 				ERRc();
 
 			Storage.Allocate( _Size() - TailAvailableSize + XSize.FragmentSize() );
@@ -1066,9 +1079,7 @@ namespace ags {
 			if ( All )
 				if ( _IsLast( Row ) )
 					_UpdateFirstFragmentPredecessorStatus( sUsed );
-				else if ( Row == 0 )
-					_UpdateFirstFragmentPredecessorStatus( _TailFragmentStatus() );
-				else
+				else if ( Row != 0 )
 					_UpdatePredecessorStatus( Row + XSize.FragmentSize(), sUsed );
 
 			return Descriptor;
@@ -1080,8 +1091,10 @@ namespace ags {
 			sdr::size__ XHeaderLength = _GetPriorMetaData( *Descriptor, sUsed, Header, Size );
 			sdr::row_t__ Row = *Descriptor - XHeaderLength;
 
+			Size += XHeaderLength;
+
 			if ( !_IsLast( Row ) ) {
-				sdr::row_t__ SuccessorRow = *Descriptor + Size;
+				sdr::row_t__ SuccessorRow = Row + Size;
 				header__ SuccessorHeader;
 				size__ SuccessorSize = 0;
 
@@ -1097,16 +1110,15 @@ namespace ags {
 
 			if ( ( Row != 0 ) && IsPredecessorFree( Header ) ) {
 				size__ PredecessorSize = _GetPriorSize( Row, sFree );
+
 				Size += PredecessorSize;
 				Row -= PredecessorSize;
 
-				if ( S_.Free.Row == ( Row - PredecessorSize ) )
+				if ( S_.Free.Row == Row )
 					S_.Free.Init();
 			}
 
-			Size += XHeaderLength;
-
-			_SetAsFreeFragment( Row, Size, ( Row == 0 ? _TailFragmentStatus() : sFree ) );
+			_SetAsFreeFragment( Row, Size, ( Row == 0 ? _TailFragmentStatus() : sUsed ) );
 
 			if ( _IsLast( Row ) )
 				_UpdateFirstFragmentPredecessorStatus( sFree );
@@ -1156,7 +1168,7 @@ namespace ags {
 
 			return *this;
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &MD )
 		{
 			Storage.plug( MD );
 		}

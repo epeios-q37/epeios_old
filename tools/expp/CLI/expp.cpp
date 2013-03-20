@@ -203,7 +203,8 @@ static void PrintHeader_( void )
 {
 	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	COut << COPYRIGHT << txf::nl;
-	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << txf::nl;
+	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << " (" << cpe::GetDescription() << ')' << txf::nl;
+	;
 }
 
 static void AnalyzeOptions_(
@@ -211,7 +212,7 @@ static void AnalyzeOptions_(
 	parameters &Parameters )
 {
 ERRProlog
-	mdr::row__ P;
+	sdr::row__ P;
 	clnarg::option_list Options;
 	clnarg::id__ Option;
 	const bso::char__ *Unknown = NULL;
@@ -259,7 +260,7 @@ static void AnalyzeFreeArguments_(
 {
 ERRProlog
 	clnarg::arguments Free;
-	mdr::row__ P;
+	sdr::row__ P;
 ERRBegin
 	Free.Init();
 

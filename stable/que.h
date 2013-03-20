@@ -241,7 +241,7 @@ namespace que {
 		{
 			Links.reset( P );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			Links.plug( SD );
 		}
@@ -656,7 +656,7 @@ namespace que {
 		{
 			Queue.plug( AS );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			Queue.plug( SD );
 		}

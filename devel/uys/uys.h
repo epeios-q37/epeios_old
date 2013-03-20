@@ -86,7 +86,7 @@ namespace uys {
 	{
 	private:
 		// Le pilote.
-		sdr::E_STORAGE_DRIVER__ *_Driver;
+		sdr::E_SDRIVER__ *_Driver;
 		// Indique si le pilote a été défini de manière interne ou non.
 		bso::bool__ _Internal;
 		// Uniquement pour la 'conventional_storage__'.
@@ -125,7 +125,7 @@ namespace uys {
 		{
 			reset( true );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &Driver )
+		void plug( sdr::E_SDRIVER__ &Driver )
 		{
 			reset();
 
@@ -145,7 +145,7 @@ namespace uys {
 				}
 			}
 		}
-		sdr::E_STORAGE_DRIVER__ *Driver( bso::bool__ Ignore = false ) const
+		sdr::E_SDRIVER__ *Driver( bso::bool__ Ignore = false ) const
 		{
 	#ifdef UYS_DBG
 			if ( !Ignore && !_Driver )
@@ -263,7 +263,7 @@ namespace uys {
 		{
 			reset();
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &Driver  )
+		void plug( sdr::E_SDRIVER__ &Driver  )
 		{
 			reset();
 
@@ -374,7 +374,7 @@ namespace uys {
 			sdr::row_t__ Begin,
 			sdr::row_t__ End ) const;
 		//f Return the used storage driver. 'Ignore' is only for 'UYS_DBG' mode and for the 'MMG' library.
-		sdr::E_STORAGE_DRIVER__ *Driver( bso::bool__ Ignore = false )
+		sdr::E_SDRIVER__ *Driver( bso::bool__ Ignore = false )
 		{
 			return _Driver.Driver( Ignore );
 		}

@@ -81,7 +81,7 @@ namespace stk {
 		{
 			structure::reset( P );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			structure::plug( SD );
 		}

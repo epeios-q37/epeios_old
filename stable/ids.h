@@ -93,7 +93,7 @@ namespace ids {
 			Released.reset( P );
 			S_.FirstUnused = 0;
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			Released.plug( SD );
 		}

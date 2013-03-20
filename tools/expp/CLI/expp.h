@@ -31,7 +31,7 @@
 
 # define NAME				"expp"
 # define VERSION			"0.4.2"
-# define COPYRIGHT_YEARS	"2007-2012"
+# define COPYRIGHT_YEARS	"2007-2013"
 # define APP_URL			EPSMSC_APP_URL( NAME )
 # define COPYRIGHT			EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 # define CVS_DETAILS		("$Id$\b " + 5)

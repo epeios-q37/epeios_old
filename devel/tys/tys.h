@@ -245,7 +245,7 @@ namespace tys {
 		{
 			_storage_< t, uys::untyped_storage_, r >::plug( AS );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			_storage_< t, uys::untyped_storage_, r >::plug( SD );
 		}

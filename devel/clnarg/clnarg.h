@@ -60,13 +60,13 @@ extern class ttr_tutor &CLNARGTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "bso.h"
-#include "bch.h"
-#include "ctn.h"
-#include "str.h"
-#include "lcl.h"
+# include "err.h"
+# include "flw.h"
+# include "bso.h"
+# include "bch.h"
+# include "ctn.h"
+# include "str.h"
+# include "lcl.h"
 # include "cio.h"
 
 #include <stdarg.h>
@@ -293,10 +293,10 @@ namespace clnarg {
 			Commands.reset( P );
 			Options.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Commands.plug( M );
-			Options.plug( M );
+			Commands.plug(AS );
+			Options.plug( AS );
 		}
 		description_ &operator =( const description_ &D )
 		{

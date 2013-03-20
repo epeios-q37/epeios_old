@@ -62,7 +62,7 @@ extern class ttr_tutor &SDRTutor;
 # include "bso.h"
 # include "tol.h"
 
-#define SDR_INTERNAL_STORAGE_DRIVER *(sdr::E_STORAGE_DRIVER__ *)NULL
+# define SDR_INTERNAL_SDRIVER *(sdr::E_SDRIVER__ *)NULL
 
 # define NONE ( (sdr::row_t__) -1 )
 
@@ -207,7 +207,7 @@ namespace sdr {
 		}
 	};
 
-	#define E_STORAGE_DRIVER__	storage_driver__
+	#define E_SDRIVER__	storage_driver__
 }
 
 /*$END$*/

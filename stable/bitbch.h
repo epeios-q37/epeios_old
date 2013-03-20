@@ -312,7 +312,7 @@ namespace bitbch {
 			Table.reset( P );
 			amount_extent_manager_<r>::reset( P );
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			Table.plug( SD );
 		}

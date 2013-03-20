@@ -28,7 +28,8 @@ copt =
 #copt += -DCPE_MT
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
-mods = cio clnarg epsmsc err fil flw fnm mmi str tol ttr uym xml xpp lcl rgstry cdgb64
+mods = cio clnarg epsmsc err fil flw fnm str tol ttr
+mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags
 mods += sclmisc scllocale sclerror sclrgstry scltool 
 mods += locale registry
 

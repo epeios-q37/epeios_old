@@ -604,8 +604,8 @@ ERRProlog
 ERRBegin
 	ID = fls::GetId();
 	F.Init( ID, "a.tmp" );
-//	F.Manuel();
-//	Mm.plug( F );
+	F.Manual();
+	Mm.plug( F );
 	Mm.Init();
 	Mm.Preallocate( 10000000 );
 	CM.plug( Mm );
@@ -740,8 +740,8 @@ ERRBegin
 
 	CM.Init();
 
-	if ( !ctn::Plug( CM, FileManager ) ) {
-
+	switch ( ctn::Plug( CM, FileManager ) ) {
+	case uys::sAbsent:
 		cout << "***** CREATION *****" << txf::nl << txf::commit;
 
 
@@ -786,8 +786,13 @@ ERRBegin
 			ECM(M - 'A').Init();
 			ECM() = Cm;
 		}
-	} else {
+		break;
+	case uys::sExists:
 		cout << "***** RECUPERATION *****" << txf::nl << txf::commit;
+		break;
+	default:
+		ERRc();
+		break;
 	}
 
 	CM.Dynamics.AStorage.DisplayStructure( cout );
@@ -1000,7 +1005,7 @@ ERRProlog
 ERRBegin
 	ID = fls::GetId();
 	F.Init( ID, "coucou.tmp" );
-//	M.plug( F );
+	M.plug( F );
 	M.Init();
 	C.plug( M );
 	C.Init();
@@ -1071,10 +1076,10 @@ ERRBegin
 	M.plug( F );
 	M.Init();
 
-//	CS.plug( M );
+	CS.plug( M );
 	CS.Init();
 
-//	CC.plug( M );
+	CC.plug( M );
 	CC.Init();
 
 //	ECS.Init( CS );
@@ -1134,13 +1139,12 @@ ERRFBegin
 	case 1:
 		Generic( argc, argv );
 #if 1
-#if 0
+#if 1
 		EssaiBasic();
 		EssaiConteneurDansConteneur();
 		EssaiSimpleMono();
 		EssaiSimpleMulti();
 		PetitEssai( argc, argv );
-#endif
 		Essai( argc, argv );
 		cout << "********************************************************" << txf::nl;
 		EssaiDirect( argc, argv );
@@ -1148,6 +1152,7 @@ ERRFBegin
 		EssaiBogue( argc, argv);
 		EssaiCopie( argc, argv );
 		cout << "********************************************************" << txf::nl;
+#endif
 		EssaiPersistence( argc, argv );
 #else
 		BugTracking();

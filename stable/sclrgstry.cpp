@@ -262,7 +262,7 @@ template <typename t> static bso::bool__ GetUnsignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	mdr::row__ Error = NONE;
+	sdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 
@@ -290,7 +290,7 @@ template <typename t> static bso::bool__ GetSignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	mdr::row__ Error = NONE;
+	sdr::row__ Error = NONE;
 ERRBegin
 	RawValue.Init();
 

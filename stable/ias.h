@@ -74,7 +74,7 @@ namespace ias {
 	class indexed_aggregated_storage_;
 
 	class _indexed_aggregated_storage_driver__
-	: public sdr::E_STORAGE_DRIVER__
+	: public sdr::E_SDRIVER__
 	{
 	private:
 		index__ _Index;
@@ -112,7 +112,7 @@ namespace ias {
 		{}
 		void reset( bool P = true )
 		{
-			E_STORAGE_DRIVER__::reset( P );
+			E_SDRIVER__::reset( P );
 
 			_Index = NONE;
 			_AStorage = NULL;
@@ -120,7 +120,7 @@ namespace ias {
 		//f Initialize with 'Multimemory' multimemory.
 		void Init( void )
 		{
-			E_STORAGE_DRIVER__::Init();
+			E_SDRIVER__::Init();
 
 			_Index = NONE;
 		}

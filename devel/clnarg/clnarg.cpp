@@ -275,11 +275,11 @@ enum type {
 	tNone
 };
 
-template <typename t> static mdr::row__ Search_(
+template <typename t> static sdr::row__ Search_(
 	id__ Id,
 	const bch::E_BUNCH_( t ) &Bunch )
 {
-	mdr::row__ P = Bunch.First();
+	sdr::row__ P = Bunch.First();
 
 	while( ( P != NONE ) && ( Bunch( P ).Id != Id ) )
 		P = Bunch.Next( P );
@@ -291,7 +291,7 @@ template <typename t> static id__ Search_(
 	char C,
 	const bch::E_BUNCH_( t ) &Bunch )
 {
-	mdr::row__ P = Bunch.First();
+	sdr::row__ P = Bunch.First();
 
 	while( ( P != NONE ) && ( Bunch( P ).Short != C ) )
 		P = Bunch.Next( P );
@@ -306,7 +306,7 @@ template <typename t> static id__ Search_(
 	const char *String,
 	const bch::E_BUNCH_( t ) &Bunch )
 {
-	mdr::row__ P = Bunch.First();
+	sdr::row__ P = Bunch.First();
 
 	while( ( P != NONE ) && ( strcmp( Bunch( P ).Long, String ) ) )
 		P = Bunch.Next( P );
@@ -364,7 +364,7 @@ static bso::bool__ Exists_(
 	id__ Id,
 	const option_list_ &Options )
 {
-	mdr::row__ P = Options.First();
+	sdr::row__ P = Options.First();
 
 	while( ( P != NONE ) && ( Options( P ) != Id ) )
 		P = Options.Next( P );
@@ -460,7 +460,7 @@ bso::bool__ clnarg::analyzer___::GetArgument_(
 	id__ Option,
 	argument_ &Argument )
 {
-	mdr::row__ P = Search_( Option, Description_->Options );
+	sdr::row__ P = Search_( Option, Description_->Options );
 	bso::bool__ Cont = true;
 
 	switch( Analyze_( ArgV_[i], Flag_ ) ) {
@@ -599,7 +599,7 @@ static const char *GetLabel_(
 	const char *Separator,
 	buffer__ &Buffer )
 {
-	mdr::row__ P = Items.First();
+	sdr::row__ P = Items.First();
 	
 	while( ( P != NONE ) && ( Items( P ).Id != Id ) )
 		P = Items.Next( P );

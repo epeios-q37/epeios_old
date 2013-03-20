@@ -611,7 +611,7 @@ namespace fls {
 
 	//c The standard storage driver which handle a file as storage.
 	class file_storage_driver___
-	: public sdr::E_STORAGE_DRIVER__,
+	: public sdr::E_SDRIVER__,
 	  public file_storage___
 	{
 	protected:
@@ -641,13 +641,13 @@ namespace fls {
 		}
 	public:
 		file_storage_driver___( void )
-		: E_STORAGE_DRIVER__(),
+		: E_SDRIVER__(),
 		  file_storage___()
 		{}
 		void reset( bool P = true )
 		{
 			file_storage___::reset( P );
-			E_STORAGE_DRIVER__::reset( P );
+			E_SDRIVER__::reset( P );
 		}
 		//f Return the mode.
 		fil::mode__ Mode( void ) const
@@ -667,7 +667,7 @@ namespace fls {
 			fls::creation Creation = fls::cFirstUse )
 		{
 			file_storage___::Init( ID, FileName, Mode, Creation );
-			E_STORAGE_DRIVER__::Init();
+			E_SDRIVER__::Init();
 		}
 	};
 
