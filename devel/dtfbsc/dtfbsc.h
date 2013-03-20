@@ -1,12 +1,12 @@
 /*
-	Header for the 'dtfbsc' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Header for the 'dtfbsc' library by Claude SIMON (csimon at zeusw dot org)
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -31,7 +31,7 @@ $_RAW_$
 
 #define	DTFBSC_VERSION	"$Revision$"
 
-#define DTFBSC_OWNER		"Claude SIMON (http://zeusw.org/intl/contact.html)"
+#define DTFBSC_OWNER		"Claude SIMON"
 
 #include "ttr.h"
 
@@ -44,7 +44,7 @@ extern class ttr_tutor &DTFBSCTutor;
 /* Begin of automatic documentation generation part. */
 
 //V $Revision$
-//C Claude SIMON (http://zeusw.org/intl/contact.html)
+//C Claude SIMON (csimon at zeusw dot org)
 //R $Date$
 
 /* End of automatic documentation generation part. */
@@ -55,7 +55,7 @@ extern class ttr_tutor &DTFBSCTutor;
 				  /*******************************************/
 
 /* Addendum to the automatic documentation generation part. */
-//D Data transFert BaSiC 
+//D Data TransFert BaSiC 
 /* End addendum to automatic documentation generation part. */
 
 /*$BEGIN$*/
@@ -70,39 +70,39 @@ extern class ttr_tutor &DTFBSCTutor;
 #include "bso.h"
 
 namespace dtfbsc {
-	using bso::ubyte__;
-	using bso::sbyte__;
-	using bso::ushort__;
-	using bso::sshort__;
-	using bso::ulong__;
-	using bso::slong__;
+	using bso::u8__;
+	using bso::s8__;
+	using bso::u16__;
+	using bso::s16__;
+	using bso::u32__;
+	using bso::s32__;
 
 	//f Put 'UByte' in 'Flow'.
-	inline void PutUByte(
-		ubyte__ UByte,
+	inline void PutU8(
+		u8__ U8,
 		flw::oflow__ &Flow )
 	{
-		Flow.Put( *(flw::datum__ *)&UByte );
+		Flow.Put( *(flw::datum__ *)&U8 );
 	}
 
 	//f Return unsigned byte in 'Flow'.
-	inline ubyte__ GetUByte( flw::iflow__ &Flow )
+	inline u8__ GetU8( flw::iflow__ &Flow )
 	{
-		return (unsigned char)Flow.Get();
+		return (u8__)Flow.Get();
 	}
 
 	//f Put 'SByte' in 'Flow'.
-	inline void PutSByte(
-		sbyte__ SByte,
+	inline void PutS8(
+		s8__ S8,
 		flw::oflow__ &Flow )
 	{
-		Flow.Put( *(flw::datum__ *)&SByte );
+		Flow.Put( *(flw::datum__ *)&S8 );
 	}
 
 	//f Return unsigned byte in 'Flow'.
-	inline sbyte__ GetSByte( flw::iflow__ &Flow )
+	inline s8__ GetS8( flw::iflow__ &Flow )
 	{
-		return (signed char)Flow.Get();
+		return (s8__)Flow.Get();
 	}
 
 }

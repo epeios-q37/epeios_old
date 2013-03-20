@@ -1858,14 +1858,14 @@ namespace rgstry {
 
 	E_AUTO( multi_level_registry )
 
-	inline str::_guint__ _GetUnsigned(
+	inline str::nuint__ _GetUnsigned(
 		const str::string_ &RawValue,
-		str::_guint__ Default,
+		str::nuint__ Default,
 		bso::bool__ *Error,
-		str::_guint__ Min,
-		str::_guint__ Max )
+		str::nuint__ Min,
+		str::nuint__ Max )
 	{
-		str::_guint__ Value = Default;
+		str::nuint__ Value = Default;
 		sdr::row__ LocalError = NONE;
 
 		Value = str::_GenericUnsignedConversion( RawValue, 0, &LocalError, str::bAuto, Max );
@@ -1883,13 +1883,13 @@ namespace rgstry {
 		return Value;
 	}
 
-	template <typename registry, typename path> inline str::_guint__ _GetUnsigned(
+	template <typename registry, typename path> inline str::nuint__ _GetUnsigned(
 		const registry &Registry,
 		const path &Path,
-		str::_guint__ Default,
+		str::nuint__ Default,
 		bso::bool__ *Error,
-		str::_guint__ Min,
-		str::_guint__ Max )
+		str::nuint__ Min,
+		str::nuint__ Max )
 	{
 		str::_guint__ Value = Default;
 	ERRProlog
@@ -1917,15 +1917,15 @@ namespace rgstry {
 		return Value;
 	}
 
-	template <typename registry, typename path> inline str::_gsint__ _GetSigned(
+	template <typename registry, typename path> inline str::nsint__ _GetSigned(
 		const registry &Registry,
 		const path &Path,
-		str::_gsint__ Default,
+		str::nsint__ Default,
 		bso::bool__ *Error,
-		str::_gsint__ Min,
-		str::_gsint__ Max )
+		str::nsint__ Min,
+		str::nsint__ Max )
 	{
-		str::_gsint__ Value = Default;
+		str::nsint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
 		sdr::row__ GenericError = NONE;
@@ -1968,12 +1968,12 @@ namespace rgstry {
 		return (type)_GetUnsigned( Registry, Path, Default, Error, Min, Max );\
 	}
 
-#ifdef CPE__64_BITS_TYPES_ALLOWED
-	_M( ULL, bso::ullong__, BSO_ULLONG_MIN, BSO_ULLONG_MAX )
+#ifdef BSO__64BITS_ENABLED
+	_M( ULL, bso::u64__, BSO_U64_MIN, BSO_U64_MAX )
 #endif
-	_M( UL, bso::ulong__, BSO_ULONG_MIN, BSO_ULONG_MAX )
-	_M( US, bso::ushort__, BSO_USHORT_MIN, BSO_USHORT_MAX )
-	_M( UB, bso::ubyte__, BSO_UBYTE_MIN, BSO_UBYTE_MAX )
+	_M( UL, bso::u32__, BSO_U32_MIN, BSO_U32_MAX )
+	_M( US, bso::u16__, BSO_U16_MIN, BSO_U16_MAX )
+	_M( UB, bso::u8__, BSO_U8_MIN, BSO_U8_MAX )
 
 # undef _M
 
@@ -1998,12 +1998,12 @@ namespace rgstry {
 		return (type)_GetSigned( Registry, Path, Default, Error, Min, Max );\
 	}
 
-#ifdef CPE__64_BITS_TYPES_ALLOWED
-	_M( SLL, bso::ullong__, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
+#ifdef BSO__64BITS_ENABLED
+	_M( SLL, bso::s64__, BSO_S64_MIN, BSO_S64_MAX )
 #endif
-	_M( SL, bso::slong__, BSO_SLONG_MIN, BSO_SLONG_MAX )
-	_M( SS, bso::sshort__, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
-	_M( SB, bso::sbyte__, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
+	_M( SL, bso::s32__, BSO_S32_MIN, BSO_S32_MAX )
+	_M( SS, bso::s16__, BSO_S16_MIN, BSO_S16_MAX )
+	_M( SB, bso::s8__, BSO_S8_MIN, BSO_S8_MAX )
 
 
 # undef _M

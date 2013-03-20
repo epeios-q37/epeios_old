@@ -67,17 +67,17 @@ extern class ttr_tutor &DTFPTBTutor;
 namespace dtfptb {
 	using namespace dtfbsc;
 
-	template <typename short__> inline void _FixedPutShort(
-		short__ Short,
+	template <typename i16__> inline void _FixedPutI16(
+		i16__ I16,
 		flw::oflow__ &Flow )
 	{
-		dtfbsc::PutUByte( Short & 0xff, Flow );
-		dtfbsc::PutUByte( Short >> 8, Flow );
+		dtfbsc::PutU8( I16 & 0xff, Flow );
+		dtfbsc::PutU8( I16 >> 8, Flow );
 	}
 
-	template <typename short__> inline short__ _FixedGetShort( flw::iflow__ &Flow )
+	template <typename i16__> inline i16__ _FixedGetI16( flw::iflow__ &Flow )
 	{
-		flw::datum__ Object[sizeof( short__ )];
+		flw::datum__ Object[sizeof( i16__ )];
 
 		Flow.Read( sizeof( Object ), Object );
 
@@ -85,126 +85,126 @@ namespace dtfptb {
 	}
 
 	//f Put 'SShort' into 'Flow'.
-	inline void FixedPutSShort(
-		sshort__ SShort,
+	inline void FixedPutS16(
+		s16__ S16,
 		flw::oflow__ &Flow )
 	{
-		_FixedPutShort( SShort, Flow );
+		_FixedPutI16( S16, Flow );
 	}
 
 	//f Return the signed short stored in 'Flow'.
-	inline sshort__ FixedGetSShort( flw::iflow__ &Flow )
+	inline s16__ FixedGetS16( flw::iflow__ &Flow )
 	{
-		return _FixedGetShort<sshort__>( Flow );
+		return _FixedGetI16<s16__>( Flow );
 	}
 
 	//f Put 'UShort' into 'Flow'.
-	inline void FixedPutUShort(
-		ushort__ UShort,
+	inline void FixedPutU16(
+		u16__ U16,
 		flw::oflow__ &Flow )
 	{
-		_FixedPutShort( UShort, Flow );
+		_FixedPutI16( U16, Flow );
 	}
 
 	//f Return the unsigned short stored in 'Flow'.
-	inline ushort__ FixedGetUShort( flw::iflow__ &Flow )
+	inline u16__ FixedGetU16( flw::iflow__ &Flow )
 	{
-		return _FixedGetShort<ushort__>( Flow );
+		return _FixedGetI16<u16__>( Flow );
 	}
 
 
-	template <typename long__> inline void _FixedPutLong(
-		long__ Long,
+	template <typename i32__> inline void _FixedPutI32(
+		i32__ I32,
 		flw::oflow__ &Flow )
 	{
-		dtfbsc::PutUByte( (dtfbsc::ubyte__)( Long & 0xff ), Flow );
-		dtfbsc::PutUByte( (dtfbsc::ubyte__)( ( Long >> 8 ) & 0xff ), Flow );
-		dtfbsc::PutUByte( (dtfbsc::ubyte__)( ( Long >> 16 ) & 0xff ), Flow );
-		dtfbsc::PutUByte( (dtfbsc::ubyte__)( Long >> 24 ), Flow );
+		dtfbsc::PutU8( (dtfbsc::u8__)( I32 & 0xff ), Flow );
+		dtfbsc::PutU8( (dtfbsc::u8__)( ( I32 >> 8 ) & 0xff ), Flow );
+		dtfbsc::PutU8( (dtfbsc::u8__)( ( I32 >> 16 ) & 0xff ), Flow );
+		dtfbsc::PutU8( (dtfbsc::u8__)( I32 >> 24 ), Flow );
 	}
 
-	template <typename long__> long__ _FixedGetLong( flw::iflow__ &Flow )
+	template <typename i32__> i32__ _FixedGetI32( flw::iflow__ &Flow )
 	{
-		flw::datum__ Object[sizeof( long__ )];
+		flw::datum__ Object[sizeof( i32__ )];
 
 		Flow.Read( sizeof( Object ), Object );
 
-		return (long__)( Object[0] | ( Object[1] << 8 ) | ( Object[2] << 16 ) | ( Object[3] << 24 ) );
+		return (i32__)( Object[0] | ( Object[1] << 8 ) | ( Object[2] << 16 ) | ( Object[3] << 24 ) );
 	}
 
 	//f Put 'SLong' into 'Flow'.
-	inline void FixedPutSLong(
-		slong__ SLong,
+	inline void FixedPutS32(
+		s32__ S32,
 		flw::oflow__ &Flow )
 	{
-		_FixedPutLong( SLong, Flow );
+		_FixedPutI32( S32, Flow );
 	}
 
 	//f Return the signed long stored in 'Flow'.
-	inline slong__ FixedGetSLong( flw::iflow__ &Flow )
+	inline s32__ FixedGetSEZ( flw::iflow__ &Flow )
 	{
-		return _FixedGetLong<slong__>( Flow );
+		return _FixedGetI32<s32__>( Flow );
 	}
 
 	//f Put 'ULong' into 'Flow'.
-	inline void FixedPutULong(
-		ulong__ ULong,
+	inline void FixedPutU32(
+		u32__ U32,
 		flw::oflow__ &Flow )
 	{
-		_FixedPutLong( ULong, Flow );
+		_FixedPutI32( U32, Flow );
 	}
 
 	//f Return the unsigned long stored in 'Flow'.
-	inline ulong__ FixedGetULong( flw::iflow__ &Flow )
+	inline u32__ FixedGetUEZ( flw::iflow__ &Flow )
 	{
-		return _FixedGetLong<ulong__>( Flow );
+		return _FixedGetI32<u32__>( Flow );
 	}
 
-	void FittedPutULong(
-		bso::ulong__ ULong,
+	void FittedPutU32(
+		bso::u32__ U32,
 		flw::oflow__ &Flow );
 
-	bso::ulong__ FittedGetULong( flw::iflow__ &Flow );
+	bso::u32__ FittedGetU32( flw::iflow__ &Flow );
 
-	inline void FittedPutSLong(
-		bso::slong__ SLong,
+	inline void FittedPutS32(
+		bso::s32__ S32,
 		flw::oflow__ &Flow )
 	{
-		FittedPutULong( (bso::ulong__ )SLong, Flow );
+		FittedPutU32( (bso::u32__ )S32, Flow );
 	}
 
-	inline bso::slong__ FittedGetSLong( flw::iflow__ &Flow )
+	inline bso::s32__ FittedGetS32( flw::iflow__ &Flow )
 	{
-		return (bso::slong__)FittedGetULong( Flow );
+		return (bso::s32__)FittedGetU32( Flow );
 	}
 
-	inline void FittedPutUShort(
-		bso::ushort__ &UShort,
+	inline void FittedPutU16(
+		bso::u16__ &U16,
 		flw::oflow__ &Flow )
 	{
-		FittedPutULong( UShort, Flow );
+		FittedPutU32( U16, Flow );
 	}
 
-	inline bso::ushort__ FittedGetUShort( flw::iflow__ &Flow )
+	inline bso::u16__ FittedGetU16( flw::iflow__ &Flow )
 	{
-		bso::ulong__ ULong = FittedGetULong( Flow );
+		bso::u32__ U32 = FittedGetU32( Flow );
 
-		if ( ULong > BSO_USHORT_MAX )
+		if ( U32 > BSO_U16_MAX )
 			ERRc();
 
-		return (bso::ushort__)ULong;
+		return (bso::u16__)U32;
 	}
 
 	inline void FittedPutSHort(
-		bso::sshort__ SShort,
+		bso::s16__ S16,
 		flw::oflow__ &Flow )
 	{
-		FittedPutULong( (bso::ushort__ )SShort, Flow );
+		FittedPutU32( (bso::u16__ )S16, Flow );
 	}
 
-	inline bso::sshort__ FittedGetShort( flw::iflow__ &Flow )
+	inline bso::s16__ FittedGet16( flw::iflow__ &Flow )
 	{
-		return (bso::sshort__)FittedGetUShort( Flow );
+		return (bso::s16__)FittedGetU16( Flow );
 	}
 
 	typedef bso::raw__ size_buffer__[10];
@@ -213,7 +213,7 @@ namespace dtfptb {
 	#define DTFPTB_L2	65535
 	#define DTFPTB_L3	16777215
 
-	inline bso::ubyte__ OldGetSizeLength( bso::ulong__ Size )
+	inline bso::u8__ OldGetSizeLength( bso::u32__ Size )
 	{
 		if ( Size >= ( DTFPTB_L3 + DTFPTB_L2 + DTFPTB_L1 ) )
 			return 10;
@@ -227,8 +227,8 @@ namespace dtfptb {
 
 	namespace {
 		inline bso::bool__ Fits_(
-			bso::ulong__ Size,
-			bso::ubyte__ Level )
+			bso::u32__ Size,
+			bso::u8__ Level )
 		{
 			return ( Size < ( 1UL << ( Level * 7 ) ) );
 		}
@@ -236,13 +236,13 @@ namespace dtfptb {
 
 #	define DTFPTB__TEST( l )	if ( Test_( Size, l ) ) return l;
 
-	inline bso::ubyte__ NewGetSizeLength( bso::ulong__ Size )
+	inline bso::u8__ NewGetSizeLength( bso::u32__ Size )
 	{
-		bso::ubyte__ Counter = 1;
+		bso::u8__ Counter = 1;
 
 		while ( !Fits_( Size, Counter ) ) {
 #	ifdef DTFPTB_DBG
-			if ( Counter >= BSO_UBYTE_MAX )
+			if ( Counter >= BSO_U8_MAX )
 				ERRc();
 #endif
 			Counter++;
@@ -252,34 +252,34 @@ namespace dtfptb {
 	}
 
 	void OldPutSize(
-		bso::ulong__ Size,
+		bso::u32__ Size,
 		size_buffer__ &Buffer );
 /*
 	inline void NewPutSize(
-		bso::ulong__ Size,
+		bso::u32__ Size,
 		size_buffer__ &Buffer );
 */
 	void OldPutSize(
-		bso::ulong__ Size,
+		bso::u32__ Size,
 		flw::oflow__ &Flow );
 	
 	inline void NewPutSize(
-		bso::ulong__ Size,
+		bso::u32__ Size,
 		flw::oflow__ &Flow )
 	{
-		FittedPutULong( Size, Flow );
+		FittedPutU32( Size, Flow );
 	}
 
 	
-	bso::ulong__ OldGetSize( flw::iflow__ &Flow );
+	bso::u32__ OldGetSize( flw::iflow__ &Flow );
 
-	inline bso::ulong__ NewGetSize( flw::iflow__ &Flow )
+	inline bso::u32__ NewGetSize( flw::iflow__ &Flow )
 	{
-		return FittedGetULong( Flow );
+		return FittedGetU32( Flow );
 	}
 
-	bso::ulong__ OldGetSize( const size_buffer__ &Buffer );
-//	bso::ulong__ NewGetSize( const size_buffer__ &Buffer );
+	bso::u32__ OldGetSize( const size_buffer__ &Buffer );
+//	bso::u32__ NewGetSize( const size_buffer__ &Buffer );
 
 }
 

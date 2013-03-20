@@ -560,7 +560,7 @@ namespace xml {
 	{
 	private:
 		void _CloseAllTags( void );
-		void _WriteTabs( bso::ulong__ Amount ) const;
+		void _WriteTabs( bso::nuint__ Amount ) const;
 	public:
 		struct s {
 			stk::E_MCSTACK_( name_ )::s Tags;

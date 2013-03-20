@@ -102,7 +102,7 @@ namespace sdr {
 	// 'Dynamic size' : taile de taille variable.
 	typedef sdr::datum__ dsize__[SDR__DSIZE_SIZE_MAX];
 
-	typedef bso::ubyte__ length__;
+	typedef bso::u8__ length__;
 # define SDRM__LENGTH_MAX BSO_UBYTE_MAX
 
 	typedef struct _xsize__ {

@@ -674,8 +674,8 @@ namespace fls {
 	#define E_FILE_STORAGE_DRIVER___	file_storage_driver___
 
 	void ReleaseInactiveFiles_(
-		bso::ulong__ Delay,	// in s.
-		bso::ulong__ MaxAmount = BSO_ULONG_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
+		bso::nuint__ Delay,	// in s.
+		bso::nuint__ MaxAmount = BSO_NUINT_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
 }
 
 /*$END$*/

@@ -79,7 +79,7 @@ namespace bitbch {
 	using sdr::row_t__;
 
 	// Type du receptacle de bits.
-	typedef bso::ubyte__		receptacle__;
+	typedef bso::u8__		receptacle__;
 
 	template <int t> class receptacles__
 	{
@@ -137,9 +137,9 @@ namespace bitbch {
 			return *Position / BITBCH__RECEPTACLE_SIZE_IN_BITS;
 		}
 		// retourne l'indice correspondant à 'Position'
-		static bso::ubyte__ Masque_( r Position )
+		static bso::u8__ Masque_( r Position )
 		{
-			return (bso::ubyte__)( 1 << Offset_( Position ) );
+			return (bso::u8__)( 1 << Offset_( Position ) );
 		}
 		// retourne le masque correspondant à 'Position'
 	public:

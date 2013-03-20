@@ -565,7 +565,7 @@ namespace tol {
 	}
 #endif
 
-# define TOL_TICK_DIFF_OVERFLOW	BSO_ULONG_MAX
+# define TOL_TICK_DIFF_OVERFLOW	BSO_U32_MAX
 
 // Horloge de précision. N'est utile que pour comparer 2 
 # ifdef TOL__WIN
@@ -582,20 +582,20 @@ namespace tol {
 		return Counter;
 	}
 
-	inline bso::ulong__ _Diff(
+	inline bso::u32__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::ulong__ Coeff)
+		bso::u32__ Coeff)
 	{
 		if ( Op1->QuadPart < Op2->QuadPart )
 			ERRc();
 
 		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
 
-		if ( Diff > BSO_ULONG_MAX )
+		if ( Diff > BSO_U32_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
-		return (bso::ulong__)Diff;
+		return (bso::u32__)Diff;
 	}
 
 	inline time_t _Time( void )
@@ -659,21 +659,21 @@ namespace tol {
 #  error "Unhandled platform !"
 # endif
 
-	inline bso::ulong__ SecDiff( 
+	inline bso::u32__ SecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1 );
 	}
 
-	inline bso::ulong__ MilliSecDiff( 
+	inline bso::u32__ MilliSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1000 );
 	}
 
-	inline bso::ulong__ NanoSecDiff( 
+	inline bso::u32__ NanoSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
@@ -715,7 +715,7 @@ namespace tol {
 	class timer__
 	{
 	private:
-		bso::ulong__ _Delay;
+		bso::nuint__ _Delay;
 		tick__ _Start;
 	public:
 		void reset( bso::bool__ = true )
@@ -730,7 +730,7 @@ namespace tol {
 		{
 			reset( );
 		}
-		void Init( bso::ulong__ Delay )
+		void Init( bso::nuint__ Delay )
 		{
 			_Start = Tick();
 			_Delay = Delay;

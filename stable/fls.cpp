@@ -370,8 +370,8 @@ ERREpilog
 
 
 void fls::ReleaseInactiveFiles_(
-	bso::ulong__ Delay,
-	bso::ulong__ MaxAmount )
+	bso::nuitn__ Delay,
+	bso::nuint__ MaxAmount )
 {
 	Lock_();
 

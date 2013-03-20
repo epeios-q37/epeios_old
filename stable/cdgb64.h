@@ -88,7 +88,7 @@ namespace cdgb64 {
 		Result[3] = Encode_( Data[2] >> 2 );
 	}
 
-#	define CDGB64__PROCESSED	BSO_UBYTE_MAX
+#	define CDGB64__PROCESSED	BSO_U8_MAX
 
 	typedef fdr::oflow_driver___<> _oflow_driver___;
 
@@ -97,7 +97,7 @@ namespace cdgb64 {
 	{
 	private:
 		fdr::datum__ _Cache[3];
-		bso::ubyte__ _Amount;
+		bso::u8__ _Amount;
 		flw::oflow__ *_Flow;	
 	protected:
 		virtual fdr::size__ FDRWrite(
@@ -118,7 +118,7 @@ namespace cdgb64 {
 
 				memcpy( _Cache + _Amount, Buffer, Amount );
 
-				_Amount += (bso::ubyte__)Amount;
+				_Amount += (bso::u8__)Amount;
 				Maximum -= Amount;
 				Buffer += Amount;
 
@@ -161,7 +161,7 @@ namespace cdgb64 {
 #endif
 				memcpy( _Cache, Buffer, Maximum );
 
-				_Amount = (bso::ubyte__)Maximum;
+				_Amount = (bso::u8__)Maximum;
 				Amount += Maximum;
 			}
 
@@ -337,7 +337,7 @@ namespace cdgb64 {
 	private:
 		flw::iflow__ *_Flow;
 		fdr::datum__ _Cache[4];
-		bso::ubyte__ _Size;
+		bso::u8__ _Size;
 	protected:
 		virtual fdr::size__ FDRRead(
 			fdr::size__ Maximum,

@@ -133,8 +133,8 @@ namespace sclrgstry {
 		type DefaultValue,\
 		type Limit = limit );
 
-# ifdef CPE__64_BITS_TYPES_ALLOWED
-	SCLRGSTRY__UN( bso::ullong__, ULLong, BSO_ULLONG_MAX )
+# ifdef BSO__64BITS_ENABLED
+	SCLRGSTRY__UN( bso::u64__, U64, BSO_U64_MAX )
 # endif
 	SCLRGSTRY__UN( bso::ulong__, ULong, BSO_ULONG_MAX )
 	SCLRGSTRY__UN( bso::ushort__, UShort, BSO_USHORT_MAX )

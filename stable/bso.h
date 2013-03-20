@@ -66,6 +66,16 @@ extern class ttr_tutor &BSOTutor;
 #include "err.h"
 #include "cpe.h"
 
+# ifdef CPE__64BITS
+#  ifndef BSO_DISABLE_64BITS
+#   define BSO__64BITS_ENABLED
+#  endif
+# endif
+
+# ifdef BSO_ENABLE_64BITS
+#  define BSO__64BITS_ENABLED
+# endif
+
 namespace bso {
 	//t Basic data, without any basically signification.
 	typedef unsigned char raw__;
@@ -79,14 +89,14 @@ namespace bso {
 # endif
 
 	//d Maximal value of a 'sbyte__'.
-	#define BSO_SBYTE_MAX		SCHAR_MAX
+	#define BSO_S8_MAX		SCHAR_MAX
 	//d Minimal value of a 'sbyte__'.
-	#define BSO_SBYTE_MIN		SCHAR_MIN
+	#define BSO_S8_MIN		SCHAR_MIN
 	//d Size, in bit, of a 'sbyte__'.
-	#define BSO_NB_BITS_SBYTE	8
+	#define BSO_NB_BITS_S8	8
 
 	//t Signed byte.
-	typedef signed char	sbyte__;
+	typedef signed char	s8__;
 
 # if 0
 	//t Portable signed byte.
@@ -95,14 +105,14 @@ namespace bso {
 
 
 	//d Maximal value of a 'ubyte__'.
-	#define BSO_UBYTE_MAX	UCHAR_MAX
+	#define BSO_U8_MAX	UCHAR_MAX
 	//d Minimal value of a 'ubyte__'.
-	#define BSO_UBYTE_MIN	0
+	#define BSO_U8_MIN	0
 	//d Size, in bit, of a 'ubyte__'.
-	#define BSO_NB_BITS_UBYTE	8
+	#define BSO_NB_BITS_U8	8
 
 	//t Unsigned byte.
-	typedef unsigned char ubyte__;
+	typedef unsigned char u8__;
 
 # if 0
 	//t Portable unsigned byte.
@@ -142,14 +152,14 @@ namespace bso {
 
 
 	//d Maximal value of a 'sshort__'.
-	#define BSO_SSHORT_MAX	SHRT_MAX
+	#define BSO_S16_MAX	SHRT_MAX
 	//d Minimal value of a 'sshort__'.
-	#define BSO_SSHORT_MIN	SHRT_MIN
+	#define BSO_S16_MIN	SHRT_MIN
 	//d Size, in bit, of a 'sshort__'.
-	#define BSO_NB_BITS_SSHORT	16
+	#define BSO_NB_BITS_S16	16
 
 	// Signed short.
-	typedef signed short sshort__;
+	typedef signed short s16__;
 
 #if 0
 	//c Portable signed short.
@@ -164,14 +174,14 @@ namespace bso {
 # endif
 
 	//d Maximal value of a 'ushort__'.
-	#define BSO_USHORT_MAX	USHRT_MAX
+	#define BSO_U16_MAX	USHRT_MAX
 	//d Minimal value of a 'ushort__'.
-	#define BSO_USHORT_MIN	0
+	#define BSO_U16_MIN	0
 	//d Size, in bit, of a 'ushort__'.
-	#define BSO_NB_BITS_USHORT	16
+	#define BSO_NB_BITS_U16	16
 
 	//t Unsigned short
-	typedef unsigned short ushort__;
+	typedef unsigned short u16__;
 
 # if 0
 	//c Portable unsigned short.
@@ -257,14 +267,14 @@ namespace bso {
 # endif
 
 	//d Maximal value of a 'slong__'.
-	#define BSO_SLONG_MAX	LONG_MAX
+	#define BSO_S32_MAX	LONG_MAX
 	//d Minimal value of a 'slong__'.
-	#define BSO_SLONG_MIN   LONG_MIN
+	#define BSO_S32_MIN   LONG_MIN
 	//d Size, in bit, of a 'slong__'.
-	#define BSO_NB_BITS_SLONG	32
+	#define BSO_NB_BITS_S32	32
 
 	//t Signed long.
-	typedef signed long slong__;
+	typedef signed long s32__;
 
 # if 0
 	//c Portable signed long.
@@ -278,15 +288,17 @@ namespace bso {
 	};
 # endif
 
+# ifdef CPE__64
 	//d Maximal value of a 'sllong__'.
-	#define BSO_SLLONG_MAX	LLONG_MAX
+	#define BSO_S64_MAX	LLONG_MAX
 	//d Minimal value of a 'sllong__'.
-	#define BSO_SLLONG_MIN   LLONG_MIN
+	#define BSO_S64_MIN   LLONG_MIN
 	//d Size, in bit, of a 'slong__'.
-	#define BSO_NB_BITS_SLLONG	64
+	#define BSO_NB_BITS_S64	64
 
 	//t Signed long.
-	typedef signed long long sllong__;
+	typedef signed long long s64__;
+# endif
 
 # if 0
 	//c Portable signed long long.
@@ -301,14 +313,14 @@ namespace bso {
 # endif
 
 	//d Maximal value of a 'ulong__'.
-	#define BSO_ULONG_MAX	ULONG_MAX
+	#define BSO_U32_MAX	ULONG_MAX
 	//d Minimal value of a 'ulong__'.
-	#define BSO_ULONG_MIN   0
+	#define BSO_U32_MIN   0
 	//d Size, in bit, of a 'ulong__'.
-	#define BSO_NB_BITS_ULONG	32
+	#define BSO_NB_BITS_U32	32
 
 	//t Unsigned long.
-	typedef unsigned long ulong__;
+	typedef unsigned long u32__;
 
 # if 0
 	//c Portable unsigned long.
@@ -322,15 +334,17 @@ namespace bso {
 	};
 # endif
 
+# ifdef CPE__64
 	//d Maximal value of a 'ullong__'.
-	#define BSO_ULLONG_MAX	ULLONG_MAX
+	#define BSO_U64_MAX	ULLONG_MAX
 	//d Minimal value of a 'ullong__'.
-	#define BSO_ULLONG_MIN   0
+	#define BSO_U64_MIN   0
 	//d Size, in bit, of a 'ullong__'.
-	#define BSO_NB_BITS_ULLONG	64
+	#define BSO_NB_BITS_U64	64
 
 	//t Unsigned long.
-	typedef unsigned long long ullong__;
+	typedef unsigned long long u64__;
+# endif 
 
 # if 0
 	//c Portable unsigned long long.
@@ -344,7 +358,15 @@ namespace bso {
 	};
 # endif
 
-#  define BSO_SIZE_MAX	((size_t)-1)
+# define BSO_SIZE_MAX	((size_t)-1)
+
+# if CPE__64BITS
+#  define BSO_SIZE_SIZE	8
+# elif defined (CPE__32BITS )
+#  define BSO_SIZE_SIZE	4
+# else
+#  error "Undefined bitness !"
+# endif
 
 	//t Size of a memory .
 	typedef size_t size__;
@@ -398,13 +420,13 @@ namespace bso {
 	class sign__
 	{
 	private:
-		sbyte__ Sign_;
+		s8__ Sign_;
 	public:
 		sign__( signed long int Sign = 0 )
 		{
-			Sign_ = (sbyte__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
+			Sign_ = (s8__)( Sign ? ( Sign > 0 ? 1 : -1 ) : 0 );
 		}
-		operator sbyte__( void )
+		operator s8__( void )
 		{
 			return Sign_;
 		}
@@ -430,6 +452,10 @@ namespace bso {
 
 	typedef void *pointer__;
 
+# if BSO_SIZE_SIZE > 8
+#  error "Change below !"
+# endif
+
 	//d Maximum size of an ASCII converted pointer.
 	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	25
 
@@ -454,33 +480,48 @@ namespace bso {
 		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
 	};
 
-#ifdef CPE__64BITS
-	typedef ullong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
-#else
-	typedef ulong__ _guint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+// 'natural unsigned integer'
+# ifdef CPE__64BITS
+	typedef u64__ nuint__;
+#  define BSO_NUINT_MAX	BSO_U64_MAX
+#  define BSO_NUINT_MIN	BSO_U64_MIN
+# elif defined CPE__32BITS
+	typedef u32__ nuint__;
+#  define BSO_NUINT_MAX	BSO_U32_MAX
+#  define BSO_NUINT_MIN	BSO_U32_MIN
+# else
+#  error "Unknown bitness !"
 #endif
 
+// 'biggest unsigned integer'
+# ifdef BSO__64BITS_ALLOWED
+	typedef u64__ _buint__;
+# else
+	typedef u32__ _buint__;
+# endif
+
+# ifdef BSO__64BITS_ENABLED
 	inline const char *Convert(
-		ullong__ Value,
+		u64__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%llu", Value );
 
 		return Buffer.Datum;
 	}
-
-#	ifndef CPE__MT
+#  ifndef CPE__MT
 	inline const char *Convert( ullong__ Value )
 	{
 		static integer_buffer__ Buffer;
 
 		return Convert( Value, Buffer );
 	}
-#	endif
+#  endif
+# endif
 
 
 	inline const char *Convert(
-		bso::ulong__ Value,
+		bso::u32__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%lu", Value );
@@ -490,7 +531,7 @@ namespace bso {
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::ulong__ Value )
+	inline const char *Convert( bso::u32__ Value )
 	{
 		static integer_buffer__ Buffer;
 
@@ -500,42 +541,57 @@ namespace bso {
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		bso::ushort__ Value,
+		bso::u16__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (_guint__)Value, Buffer );
+		return Convert( (nuint__)Value, Buffer );
 	}
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::ushort__ Value )
+	inline const char *Convert( bso::u16__ Value )
 	{
-		return Convert( (bso::ulong__)Value );
+		return Convert( (nuint__)Value );
 	}
 #endif
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		bso::ubyte__ Value,
+		bso::u8__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (_guint__)Value, Buffer );
+		return Convert( (nuint__)Value, Buffer );
 	}
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::ubyte__ Value )
+	inline const char *Convert( bso::u8__ Value )
 	{
-		return Convert( (bso::ulong__)Value );
+		return Convert( (nuint__)Value );
 	}
 #endif
 
-#ifdef CPE__64BITS
-	typedef sllong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
-#else
-	typedef slong__ _gsint__;	// Generic unsigned integer; can contain the biggest unsigned integer.
+// 'natural signed integer'
+# ifdef CPE__64BITS
+	typedef s64__ nsint__;
+#  define BSO_NSINT_MAX	BSO_S64_MAX
+#  define BSO_NSINT_MIN	BSO_S64_MIN
+# elif defined CPE__32BITS
+	typedef s32__ nsint__;
+#  define BSO_NSINT_MAX	BSO_S32_MAX
+#  define BSO_NSINT_MIN	BSO_S32_MIN
+# else
+#  error "Unknown bitness !"
 #endif
 
+// 'biggest signed integer'
+# ifdef BSO__64BITS_ALLOWED
+	typedef s64__ _bsint__;
+# else
+	typedef s32__ _bsint__;
+# endif
+
+# ifdef BSO__64BITS_ALLOWED 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
 		sllong__ Value,
@@ -546,19 +602,20 @@ namespace bso {
 		return Buffer.Datum;
 	}
 
-#	ifndef CPE__MT
+# ifndef CPE__MT
 	inline const char *Convert( sllong__ Value )
 	{
 		static integer_buffer__ Buffer;
 
 		return Convert( Value, Buffer );
 	}
-#	endif
+# endif
+# endif
 
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		slong__ Value,
+		s32__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%li", Value );
@@ -568,7 +625,7 @@ namespace bso {
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::slong__ Value )
+	inline const char *Convert( bso::s32__ Value )
 	{
 		static integer_buffer__ Buffer;
 
@@ -578,33 +635,33 @@ namespace bso {
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		bso::sshort__ Value,
+		bso::s16__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (_gsint__)Value, Buffer );
+		return Convert( (nsint__)Value, Buffer );
 	}
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::sshort__ Value )
+	inline const char *Convert( bso::s16__ Value )
 	{
-		return Convert( (bso::slong__)Value );
+		return Convert( (nsint__)Value );
 	}
 #endif
 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		bso::sbyte__ Value,
+		bso::s8__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (_gsint__)Value, Buffer );
+		return Convert( (nsint__)Value, Buffer );
 	}
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::sbyte__ Value )
+	inline const char *Convert( bso::s8__ Value )
 	{
-		return Convert( (bso::slong__)Value );
+		return Convert( (nsint__)Value );
 	}
 #endif
 
@@ -666,20 +723,19 @@ namespace bso {
 	}
 #endif
 
-# ifdef CPE__32BITS
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )
 	{
-		return Convert( (ullong__)Value, Buffer );
+		return Convert( (nuint__)Value, Buffer );
 	}
+
 #  ifndef CPE__MT
 	inline const char *Convert( size__ Value )
 	{
-		return Convert( (ullong__)Value );
+		return Convert( (nuint__)Value );
 	}
 #  endif
-# endif
 
 
 }

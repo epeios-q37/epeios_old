@@ -71,7 +71,7 @@ extern class ttr_tutor &XTFTutor;
 
 namespace xtf {
 	//t type of position in a text (line or column).
-	typedef bso::ulong__ location__;
+	typedef bso::nuint__ location__;
 
 	struct coord__ {
 		location__ Line;
@@ -101,7 +101,7 @@ namespace xtf {
 		}
 	};
 
-	typedef bso::ubyte__ _amount__;
+	typedef bso::u8__ _amount__;
 
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow__

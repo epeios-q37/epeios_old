@@ -92,7 +92,7 @@ static inline int toxupper_( int C )
 	return toupper( GetAccentFree_( C ) );
 }
 
-static bso::ubyte__ Convert_( bso::char__ C )
+static bso::u8__ Convert_( bso::char__ C )
 {
 	if ( isdigit( C ) )
 		return C - '0';
@@ -285,7 +285,7 @@ void string_::Replace(
 
 bso::bool__ string_::Replace(
 	char Tag,
-	bso::ulong__ Position,
+	bso::u32__ Position,
 	const str::string_ &Value )
 {
 	sdr::row__ Row = First();
@@ -347,18 +347,18 @@ sdr::row__ string_::Search(
 		return Start;
 }
 
-_guint__ str::_GenericUnsignedConversion(
+nuint__ str::_GenericUnsignedConversion(
 	const str::string_ &String,
 	sdr::row__ Begin,
 	sdr::row__ *ErrP,
 	base__ BaseFlag,
-	_guint__ Limit )
+	nuint__ Limit )
 {
-	_guint__ Result = 0;
+	nuint__ Result = 0;
 	sdr::row__ &P = Begin;
-	bso::ubyte__ C;
-	bso::ubyte__ Base;
-	_guint__ OtherLimit = 0;
+	bso::u8__ C;
+	bso::u8__ Base;
+	nuint__ OtherLimit = 0;
 
 	if ( BaseFlag == bAuto )
 		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == STR_HEXADECIMAL_MARKER ) ) {
@@ -403,13 +403,13 @@ _guint__ str::_GenericUnsignedConversion(
 	return Result;
 }
 
-_gsint__ str::_GenericSignedConversion(
+nsint__ str::_GenericSignedConversion(
 	const class string_ &String,
 	sdr::row__ Begin,
 	sdr::row__ *ErrP,
 	base__ Base,
-	_gsint__ PositiveLimit,
-	_gsint__ NegativeLimit )
+	nsint__ PositiveLimit,
+	nsint__ NegativeLimit )
 {
 	if ( PositiveLimit < 0 )
 		ERRu();
@@ -419,7 +419,7 @@ _gsint__ str::_GenericSignedConversion(
 			*ErrP = *Begin + 1;
 			return 0;
 		} else 
-			return -(_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
+			return -(nsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
 	else if ( String.Get( Begin ) == '+' )
 		if ( String.Next( Begin ) == NONE ) {
 			if ( ErrP != NULL )
@@ -428,9 +428,9 @@ _gsint__ str::_GenericSignedConversion(
 				ERRc();
 			return 0;
 		} else 
-			return (_gsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
+			return (nsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
 	else 
-		return (_gsint__)_GenericUnsignedConversion( String, Begin, ErrP, Base, PositiveLimit );
+		return (nsint__)_GenericUnsignedConversion( String, Begin, ErrP, Base, PositiveLimit );
 }
 
 
@@ -452,7 +452,7 @@ bso::lfloat__ string_::ToLF(
 				P = Next( P );
 			}
 
-		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_ULONG_MAX / 10 ) ) ) {
+		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_U32_MAX / 10 ) ) ) {
 			Result = Result * 10 + C - '0';
 			P = Next( P );
 		}
@@ -546,7 +546,7 @@ void str::ReplaceTags(
 {
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Value;
-	bso::ubyte__ Indice = 1;
+	bso::u8__ Indice = 1;
 	sdr::row__ Row = NONE, SearchRow = NONE;
 	str::string Tag;
 	bso::integer_buffer__ Buffer;
@@ -601,13 +601,13 @@ ERREpilog
 
 void str::ReplaceTag(
 	str::string_ &String,
-	bso::ubyte__ Indice,
+	bso::u8__ Indice,
 	const str::string_ &Value,
 	const char TagMarker )
 {
 ERRProlog
 	strings Values;
-	bso::ubyte__ Counter = 1;
+	bso::u8__ Counter = 1;
 	bso::integer_buffer__ Buffer;
 	str::string Tag;
 ERRBegin

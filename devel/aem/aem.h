@@ -81,10 +81,10 @@ namespace aem {
 	};
 
 	//t Type of a step value.
-	typedef bso::ubyte__ step_value__;
+	typedef bso::u8__ step_value__;
 
 	//t Type of a step size.
-	typedef bso::ushort__ step_size__;
+	typedef bso::u16__ step_size__;
 
 	//c Core amount/extent manager. Internal use.
 	template <typename row, typename size> class core_amount_extent_manager_

@@ -1578,9 +1578,9 @@ ERREpilog
 
 #define LIMIT 9
 
-static bso::ubyte__ GetTagAmount_( const str::string_ &String )
+static bso::u8__ GetTagAmount_( const str::string_ &String )
 {
-	bso::ubyte__ Amount = 0;
+	bso::u8__ Amount = 0;
 
 	sdr::row__ Row = String.First();
 
@@ -1604,7 +1604,7 @@ static bso::ubyte__ GetTagAmount_( const str::string_ &String )
 }
 
 static void HandleTag_(
-	bso::ubyte__ Indice,
+	bso::u8__ Indice,
 	const char *Source,
 	str::string_ &Target )
 {

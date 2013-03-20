@@ -55,6 +55,8 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+using namespace bso;
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 class bsopersonnalization
@@ -66,10 +68,13 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 
-		if ( sizeof( bso::size__ ) != 4 )
+		if ( sizeof( size__ ) != 4 )
 			ERRc(); //If this error occurs, then the definition of 'p_size__' must be modified.
 
-		if ( sizeof( bso::size__ ) != sizeof( int ) )
+		if ( sizeof( size__ ) != sizeof( int ) )
+			ERRc();
+
+		if ( sizeof( size__ ) != BSO_SIZE_SIZE )
 			ERRc();
 	}
 	~bsopersonnalization( void )

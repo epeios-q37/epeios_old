@@ -72,8 +72,8 @@ namespace str {
 
 	namespace {
 		using bch::bunch_;
-		using bso::_guint__;
-		using bso::_gsint__;
+		using bso::nuint__;
+		using bso::nsint__;
 	}
 
 	enum base__ {
@@ -87,20 +87,20 @@ namespace str {
 #define STR_BUFFER___	tol::E_FPOINTER___( bso::char__ )
 
 
-	_guint__ _GenericUnsignedConversion(
+	nuint__ _GenericUnsignedConversion(
 		const class string_ &String,
 		sdr::row__ Begin,
 		sdr::row__ *ErrP,
 		base__ Base,
-		_guint__ Limit );
+		nuint__ Limit );
 
-	_gsint__ _GenericSignedConversion(
+	nsint__ _GenericSignedConversion(
 		const class string_ &String,
 		sdr::row__ Begin,
 		sdr::row__ *ErrP,
 		base__ Base,
-		_gsint__ PositiveLimit,
-		_gsint__ NegativeLimit );
+		nsint__ PositiveLimit,
+		nsint__ NegativeLimit );
 
 	class _string_size_handler {
 	public:
@@ -220,7 +220,7 @@ namespace str {
 		// Remplace la 'Position'ième occurence de 'Tag' par 'Value'. Retourne 'true' si succés, 'false' sinon.
 		bso::bool__ Replace(
 			char Tag,
-			bso::ulong__ Position,
+			bso::u32__ Position,
 			const string_ &Value );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
 		sdr::row__ Search(
@@ -292,14 +292,16 @@ namespace str {
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
-		STR_UN( ULL, bso::ullong__, BSO_ULLONG_MAX )
-		STR_SN( SLL, bso::sllong__, BSO_SLLONG_MAX, BSO_SLLONG_MIN )
-		STR_UN( UL, bso::ulong__, BSO_ULONG_MAX )
-		STR_SN( SL, bso::slong__, BSO_SLONG_MAX, BSO_SLONG_MIN )
-		STR_UN( US, bso::ushort__, BSO_USHORT_MAX )
-		STR_SN( SS, bso::sshort__, BSO_SSHORT_MAX, BSO_SSHORT_MIN )
-		STR_UN( UB, bso::ubyte__, BSO_UBYTE_MAX )
-		STR_SN( SB, bso::sbyte__, BSO_SBYTE_MAX, BSO_SBYTE_MIN )
+# ifdef CPE__64BITS
+		STR_UN( ULL, bso::u64__, BSO_U64_MAX )
+		STR_SN( SLL, bso::s64__, BSO_S64_MAX, BSO_S64_MIN )
+# endif
+		STR_UN( UL, bso::u32__, BSO_U32_MAX )
+		STR_SN( SL, bso::s32__, BSO_S32_MAX, BSO_S32_MIN )
+		STR_UN( US, bso::u16__, BSO_U16_MAX )
+		STR_SN( SS, bso::s16__, BSO_S16_MAX, BSO_S16_MIN )
+		STR_UN( UB, bso::u8__, BSO_U8_MAX )
+		STR_SN( SB, bso::s8__, BSO_S8_MAX, BSO_S8_MIN )
 		bso::lfloat__ ToLF(
 			sdr::row__ *ErrP,
 			sdr::row__ Begin ) const;
@@ -544,7 +546,7 @@ namespace str {
 
 	void ReplaceTag(
 		str::string_ &String,
-		bso::ubyte__ Indice,
+		bso::u8__ Indice,
 		const str::string_ &Value,
 		char TagMarker );
 

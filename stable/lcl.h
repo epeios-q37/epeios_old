@@ -79,7 +79,7 @@ namespace lcl {
 
 	E_ROW( row__ );
 
-	typedef bso::ubyte__ _level__;
+	typedef bso::u8__ _level__;
 
 	typedef stk::E_BSTACKt_( _level__, row__ ) _levels_;
 	E_AUTO( _levels );
@@ -95,7 +95,7 @@ namespace lcl {
 			_level__ Level,
 			const str::string_ &Value )
 		{
-			if ( Level == BSO_UBYTE_MAX )
+			if ( Level == BSO_U8_MAX )
 				ERRl();
 
 			if ( Levels.Push( Level ) != Values.Push( Value ) )

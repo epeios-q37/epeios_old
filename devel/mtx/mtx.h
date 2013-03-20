@@ -134,7 +134,7 @@ extern class ttr_tutor &MTXTutor;
 #define MTX_INVALID_HANDLER		MTX__INVALID_HANDLER	// Pour les utilisateurs.
 
 
-#define MTX__COUNTER_OVERFLOW_VALUE	BSO_SSHORT_MIN
+#define MTX__COUNTER_OVERFLOW_VALUE	BSO_S16_MIN
 
 namespace mtx {
 

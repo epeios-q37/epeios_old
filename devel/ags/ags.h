@@ -258,7 +258,7 @@ namespace ags {
 
 # define AGS_HEADER_SIZE			sizeof( ags::header__ )
 # define AGS__HEADER_SIZE			1	// Lorsque cette value change, permet de détecter le code qu'il faut modifier.
-# define AGS_EMBEDDED_VALUE_MAX		( (bso::ubyte__)~ags::f_All >> ags::fp_SizeBegin )
+# define AGS_EMBEDDED_VALUE_MAX		( (bso::u8__)~ags::f_All >> ags::fp_SizeBegin )
 # define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
 # define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
 # define AGS_XHEADER_SIZE_MAX		( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
@@ -559,7 +559,7 @@ namespace ags {
 		if ( !CanValueBeEmbedded( Value ) )
 			ERRc();
 
-		Header = ( *Header & f_All ) | ( (bso::ubyte__)Value << fp_SizeBegin );
+		Header = ( *Header & f_All ) | ( (bso::u8__)Value << fp_SizeBegin );
 	}
 
 	typedef sdr::xsize__ _xsize__;
@@ -684,7 +684,7 @@ namespace ags {
 
 	inline const sdr::datum__ *FindLongSizeBegin( const sdr::datum__ *Buffer )
 	{
-		bso::ubyte__ Counter = AGS_LONG_SIZE_SIZE_MAX + 1;
+		bso::u8__ Counter = AGS_LONG_SIZE_SIZE_MAX + 1;
 
 		if ( *Buffer & fSizeType )
 			ERRc();
