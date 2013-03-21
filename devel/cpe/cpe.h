@@ -63,13 +63,15 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-# undef CPE__WIN		// Environnement Windows.
+# undef CPE__MSVC		// Environnement Microsoft Visual C++.
 # undef CPE__MAC		// Environnement MAC.
 # undef CPE__CYGWIN		// Environnement CYGWIN.
 # undef CPE__MINGW		// Environnement MINGW.
 # undef CPE__LINUX		// Environnement Linux
 # undef CPE__ANDROID	// Environnement Android.
-# undef CPE__POSIX		// Environemment POSIX.
+
+# undef CPE__WIN		// Windows système base API
+# undef CPE__POSIX		// Posix système base API.
 
 # undef CPE__VC		// Compilateur VC++
 # undef CPE__VC6	// Compilateur VC++ V6
@@ -105,6 +107,7 @@ extern class ttr_tutor &CPETutor;
 # endif
 
 # ifdef _MSC_VER
+#  define CPE__MSVC
 #  define CPE__WIN
 #  define CPE__VC
 #  ifdef _WIN64
@@ -153,7 +156,7 @@ extern class ttr_tutor &CPETutor;
 #  endif	
 # elif defined( __linux__ )
 #  define CPE__LINUX
-#  define CPE__POSIX
+#  define CPE__POSIX_API
 # endif
 # ifdef __ANDROID__
 #  define CPE__ANDROID
@@ -177,7 +180,7 @@ extern class ttr_tutor &CPETutor;
 
 #ifdef CPE_LIBRARY
 #	define CPE__LIBRARY
-#elif defined( CPE__WIN )
+#elif defined( CPE__MSVC )
 #	if defined( _USRDLL ) || defined( _WINDLL )
 #		define CPE__LIBRARY
 #	endif
@@ -221,6 +224,9 @@ extern class ttr_tutor &CPETutor;
 #  endif
 #  ifdef __ARM_EABI__
 #   define CPE__ARM
+#  endif
+#  ifdef __x86_64__
+#   define CPE__X86
 #  endif
 # endif
 

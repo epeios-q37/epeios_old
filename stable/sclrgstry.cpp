@@ -337,13 +337,13 @@ ERREpilog
 	}
 
 
-#ifdef CPE__64_BITS_TYPES_ALLOWED
-UN( ULLong, bso::ullong__ )
+#ifdef BSO__64BITS_ENABLED
+UN( U64, bso::u64__ )
 #endif
 
-UN( ULong, bso::ulong__ )
-UN( UShort, bso::ushort__ )
-UN( UByte, bso::ubyte__ )
+UN( U32, bso::u32__ )
+UN( U16, bso::u16__ )
+UN( U8, bso::u8__ )
 
 #define SN( name, type )\
 	type sclrgstry::GetMandatory##name(\
@@ -373,12 +373,12 @@ UN( UByte, bso::ubyte__ )
 		return Value;\
 	}
 
-# ifdef CPE__64_BITS_TYPES_ALLOWED
-	SN( SLLong, bso::sllong__ )
+#ifdef BSO__64BITS_ENABLED
+	SN( S64, bso::s64__ )
 #endif
-	SN( SLong, bso::slong__ )
-	SN( SShort, bso::sshort__ )
-	SN( SByte, bso::sbyte__ )
+	SN( S32, bso::s32__ )
+	SN( S16, bso::s16__ )
+	SN( S8, bso::s8__ )
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

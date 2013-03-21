@@ -68,12 +68,12 @@ extern class ttr_tutor &BSOTutor;
 
 # ifdef CPE__64BITS
 #  ifndef BSO_DISABLE_64BITS
-#   define BSO__64BITS_ENABLED
+#   define BSO_64BITS_ENABLED
 #  endif
 # endif
 
 # ifdef BSO_ENABLE_64BITS
-#  define BSO__64BITS_ENABLED
+#  define BSO_64BITS_ENABLED
 # endif
 
 namespace bso {
@@ -288,7 +288,7 @@ namespace bso {
 	};
 # endif
 
-# ifdef CPE__64
+# ifdef BSO_64BITS_ENABLED
 	//d Maximal value of a 'sllong__'.
 	#define BSO_S64_MAX	LLONG_MAX
 	//d Minimal value of a 'sllong__'.
@@ -334,7 +334,7 @@ namespace bso {
 	};
 # endif
 
-# ifdef CPE__64
+# ifdef BSO_64BITS_ENABLED
 	//d Maximal value of a 'ullong__'.
 	#define BSO_U64_MAX	ULLONG_MAX
 	//d Minimal value of a 'ullong__'.
@@ -360,7 +360,7 @@ namespace bso {
 
 # define BSO_SIZE_MAX	((size_t)-1)
 
-# if CPE__64BITS
+# ifdef CPE__64BITS
 #  define BSO_SIZE_SIZE	8
 # elif defined (CPE__32BITS )
 #  define BSO_SIZE_SIZE	4
@@ -494,13 +494,13 @@ namespace bso {
 #endif
 
 // 'biggest unsigned integer'
-# ifdef BSO__64BITS_ALLOWED
+# ifdef BSO_64BITS_ENABLED
 	typedef u64__ _buint__;
 # else
 	typedef u32__ _buint__;
 # endif
 
-# ifdef BSO__64BITS_ENABLED
+# ifdef BSO_64BITS_ENABLED
 	inline const char *Convert(
 		u64__ Value,
 		integer_buffer__ &Buffer )
@@ -510,7 +510,7 @@ namespace bso {
 		return Buffer.Datum;
 	}
 #  ifndef CPE__MT
-	inline const char *Convert( ullong__ Value )
+	inline const char *Convert( u64__ Value )
 	{
 		static integer_buffer__ Buffer;
 
@@ -585,16 +585,16 @@ namespace bso {
 #endif
 
 // 'biggest signed integer'
-# ifdef BSO__64BITS_ALLOWED
+# ifdef BSO_64BITS_ENABLED
 	typedef s64__ _bsint__;
 # else
 	typedef s32__ _bsint__;
 # endif
 
-# ifdef BSO__64BITS_ALLOWED 
+# ifdef BSO_64BITS_ENABLED 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
-		sllong__ Value,
+		s64__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%lli", Value );
@@ -603,7 +603,7 @@ namespace bso {
 	}
 
 # ifndef CPE__MT
-	inline const char *Convert( sllong__ Value )
+	inline const char *Convert( s64__ Value )
 	{
 		static integer_buffer__ Buffer;
 
@@ -723,6 +723,7 @@ namespace bso {
 	}
 #endif
 
+# ifndef CPE__64BITS	// Sinon conflit !
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )
@@ -736,6 +737,7 @@ namespace bso {
 		return Convert( (nuint__)Value );
 	}
 #  endif
+# endif
 
 
 }

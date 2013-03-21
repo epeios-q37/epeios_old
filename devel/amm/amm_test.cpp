@@ -42,38 +42,38 @@ using cio::CErr;
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
-	mdr::size__ Size = 0;
-	mdr::xsize__ XSize;
+	sdr::size__ Size = 0;
+	sdr::xsize__ XSize;
 	tol::timer__ Timer;
-	bso::ubyte__ Length = 0;
+	bso::u8__ Length = 0;
 ERRBegin
 	Timer.Init( 100 );
 	Timer.Launch();
 
 	do {
-		if ( Size >= ( MDR_SIZE_MAX - DELTA ) ) 
-			Size = MDR_SIZE_MAX;
+		if ( Size >= ( SDR_SIZE_MAX - DELTA ) ) 
+			Size = SDR_SIZE_MAX;
 		else
 			Size += DELTA;
 
 
-		XSize = mdr::Convert( Size );
+		XSize = sdr::Convert( Size );
 
 		if( Timer.IsElapsed() ) {
-			cio::COut << Size << txf::pad << (bso::ulong__)XSize.Length << txf::rfl << txf::commit;
+			cio::COut << Size << txf::pad << (bso::u32__)XSize.BufferSize() << txf::rfl << txf::commit;
 			Timer.Launch();
 		}
 
-		if ( mdr::Convert( XSize.Size() ) != Size )
+		if ( sdr::Convert( XSize.DSizeBuffer() ) != Size )
 			ERRc();
 
-		if ( Length != XSize.Length ) {
-			cio::COut << Size << txf::pad << (bso::ulong__)( Length = XSize.Length ) << txf::nl << txf::commit;
+		if ( Length != XSize.BufferSize() ) {
+			cio::COut << Size << txf::pad << (bso::u32__)( Length = XSize.BufferSize() ) << txf::nl << txf::commit;
 			Timer.Launch();
 		}
 
 
-	} while ( Size < MDR_SIZE_MAX );
+	} while ( Size < SDR_SIZE_MAX );
 
 ERRErr
 ERREnd

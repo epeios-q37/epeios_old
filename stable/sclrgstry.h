@@ -133,12 +133,12 @@ namespace sclrgstry {
 		type DefaultValue,\
 		type Limit = limit );
 
-# ifdef CPE__64_BITS_TYPES_ALLOWED
-	SCLRGSTRY__UN( bso::ullong__, ULLong, BSO_ULLONG_MAX )
+# ifdef BSO__64BITS_ENABLED
+	SCLRGSTRY__UN( bso::u64__, U64, BSO_U64_MAX )
 # endif
-	SCLRGSTRY__UN( bso::ulong__, ULong, BSO_ULONG_MAX )
-	SCLRGSTRY__UN( bso::ushort__, UShort, BSO_USHORT_MAX )
-	SCLRGSTRY__UN( bso::ubyte__, UByte, BSO_UBYTE_MAX )
+	SCLRGSTRY__UN( bso::u32__, U32, BSO_U32_MAX )
+	SCLRGSTRY__UN( bso::u16__, U16, BSO_U16_MAX )
+	SCLRGSTRY__UN( bso::u8__, U8, BSO_U8_MAX )
 
 # define SCLRGSTRY__SN( type, name, min, max )\
 	type GetMandatory##name(\
@@ -151,12 +151,12 @@ namespace sclrgstry {
 		type Min = min,\
 		type Max = max );
 
-# ifdef CPE__64_BITS_TYPES_ALLOWED
-	SCLRGSTRY__SN( bso::sllong__, SLLong, BSO_SLLONG_MIN, BSO_SLLONG_MAX )
+# ifdef BSO__64BITS_ENABLED
+	SCLRGSTRY__SN( bso::s64__, S64, BSO_S64, BSO_S64_MAX )
 #endif
-	SCLRGSTRY__SN( bso::slong__, SLong, BSO_SLONG_MIN, BSO_SLONG_MAX )
-	SCLRGSTRY__SN( bso::sshort__, SShort, BSO_SSHORT_MIN, BSO_SSHORT_MAX )
-	SCLRGSTRY__SN( bso::sbyte__, SByte, BSO_SBYTE_MIN, BSO_SBYTE_MAX )
+	SCLRGSTRY__SN( bso::s32__, S32, BSO_S32_MIN, BSO_S32_MAX )
+	SCLRGSTRY__SN( bso::s16__, S16, BSO_S16_MIN, BSO_S16_MAX )
+	SCLRGSTRY__SN( bso::s8__, S8, BSO_S8_MIN, BSO_S8_MAX )
 
 // To define function retrieving mandatory registry value.
 # define SCLRGSTRY_MV( name, entry )\

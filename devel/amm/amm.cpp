@@ -60,6 +60,8 @@ using namespace amm;
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
+
+# if 0
 inline void aggregated_memory_driver__::_Free( void )
 {
 	if ( _Descriptor != MMM_UNDEFINED_DESCRIPTOR )
@@ -97,7 +99,7 @@ inline void multimemory_driver__::MDRStore(
 
 }
 
-
+#endif
 
 class ammpersonnalization
 : public ammtutor

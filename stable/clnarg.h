@@ -96,11 +96,11 @@ namespace clnarg {
 	typedef char buffer__[CLNARG__BUFFER_SIZE+1];	// +1 pour '\0'.
 
 	//t An option/argument id.
-	typedef bso::ubyte__ id__;
+	typedef bso::u8__ id__;
 	// if modified, modify below.
 
 	//d Value the get an id when no value.
-	#define CLNARG_NONE			BSO_SBYTE_MAX
+	#define CLNARG_NONE			BSO_S8_MAX
 	#define CLNARG_ID_MAX		( CLNARG_NONE - 1 )
 
 	//d Value of no short option/command.
@@ -390,7 +390,7 @@ namespace clnarg {
 		int ArgC_;
 		const description_ *Description_;
 		char Flag_;
-		bso::ubyte__ ArgCount_;
+		bso::u8__ ArgCount_;
 		bso::bool__ GetArgument_( 
 			int &i,
 			id__ Option,

@@ -1891,7 +1891,7 @@ namespace rgstry {
 		str::nuint__ Min,
 		str::nuint__ Max )
 	{
-		str::_guint__ Value = Default;
+		str::nuint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
 		sdr::row__ PathError = NONE;

@@ -83,8 +83,8 @@ static const char *Size_( void )
 
 static const char *Enviroment_( void )
 {
-#if defined( CPE__WIN )
-	return "Win";
+#if defined( CPE__MSVC )
+	return "MSVC";
 #elif defined( CPE__MAC )
 	return "MacOS";
 #elif defined( CPE__CYGWIN )
@@ -95,8 +95,6 @@ static const char *Enviroment_( void )
 	return "Linux";
 #elif defined( CPE__ANDROID )
 	return "Android";
-#elif defined( CPE__POSIX )
-	return "POSIX";
 #else
 	return "Unknown";
 #endif

@@ -290,7 +290,7 @@ static sdr::size__ GetId_(
 	_flow___ &Flow,
 	str::string_ &Id )
 {
-	bso::ulong__ Size = 0;
+	bso::size__ Size = 0;
 
 	while ( !Flow.EndOfFlow() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' || Flow.View() == '-' ) ) {
 		Id.Append( Flow.Get() );
@@ -1138,7 +1138,7 @@ void xml::writer_::_CloseAllTags( void )
 		PopTag();
 }
 
-void xml::writer_::_WriteTabs( bso::ulong__ Amount ) const
+void xml::writer_::_WriteTabs( bso::size__ Amount ) const
 {
 	while ( Amount-- )
 		*S_.Flow << txf::tab;

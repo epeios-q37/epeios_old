@@ -60,18 +60,18 @@ extern class ttr_tutor &TXFTutor;
 
 /*$BEGIN$*/
 
-#include <ctype.h>
-#include <limits.h>
+# include <ctype.h>
+# include <limits.h>
 
-#include "err.h"
-#include "flw.h"
-#include "tol.h"
+# include "err.h"
+# include "flw.h"
+# include "tol.h"
 
-#ifndef TXF_64_BITS_FORBIDDEN
-#	if defined( CPE__64_BITS_TYPES_ALLOWED ) || defined(TXF_64_BITS_TYPES_ALLOWED )
-#		define TXF__64_BITS_TYPES_ALLOWED
-#	endif
-#endif
+# ifndef TXF_DISABLE_64BITS
+#  if defined( CPE__64BITS )
+#   define TXF__64BITS_ENABLED
+#  endif
+# endif
 
 namespace txf {
 	using flw::size__;
@@ -127,7 +127,7 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64_BITS_TYPES_ALLOWED
+#ifdef TXF__64BITS_ENABLED
 		text_iflow__ &operator >>( unsigned long long &E )
 		{
 			datum__ C[9];
@@ -176,7 +176,7 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64_BITS_TYPES_ALLOWED
+#ifdef TXF__64BITS_ENABLED
 		text_iflow__ &operator >>( signed long long &E )
 		{
 			unsigned long long L;
@@ -323,7 +323,7 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64_BITS_TYPES_ALLOWED
+#ifdef TXF__64BITS_ENABLED
 		text_oflow__ &operator <<( unsigned long long E )
 		{
 			char C[21];
@@ -357,7 +357,7 @@ namespace txf {
 		{
 			return operator <<( (unsigned long) E );
 		}
-#ifdef TXF__64_BITS_TYPES_ALLOWED
+#ifdef TXF__64BITS_ENABLED
 		text_oflow__ &operator <<( signed long long E )
 		{
 			char C[22];

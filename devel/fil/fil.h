@@ -100,7 +100,7 @@ namespace lcl {
 # ifdef FIL__WIN
 #  ifdef FIL__32
 #   ifdef CPE__MINGW
-#    define FIL__STATS	__stat32
+#    define FIL__STATS	_stat32
 #    define FIL__STATF	_stat32
 #    define FIL__FSTAT	_fstat32
 #   else

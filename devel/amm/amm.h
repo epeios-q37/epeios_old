@@ -62,37 +62,38 @@ extern class ttr_tutor &AMMTutor;
 
 # include "err.h"
 # include "flw.h"
-# include "mdr.h"
+# include "sdr.h"
+# include "ias.h"
 // # include "uym.h"	// déporté, parce 'amm.h' est inclus par 'uym.h'.
 
 namespace amm {
 
-	E_TMIMIC__( mdr::row_t__, descriptor__ );
+	E_TMIMIC__( sdr::row_t__, descriptor__ );
 
 	class aggregated_memory_driver__
-	: public mdr::E_MEMORY_DRIVER__
+	: public sdr::E_SDRIVER__
 	{
 	private:
 		descriptor__ &_Descriptor;
 		// memoire à laquelle il a été affecté
-		class multimemory_ *Multimemoire_;
+		class ags::E_ASTORAGE_ *Multimemoire_;
 		void _Free();
 	protected:
-		virtual void MDRAllocate( mdr::size__ Size );
+		virtual void SDRAllocate( sdr::size__ Size );
 		// Fonction déportée.
-		virtual mdr::size__ MDRUnderlyingSize( void );
+		virtual sdr::size__ SDRUnderlyingSize( void );
 		// fonction déportée
 		// lit à partir de 'Position' et place dans 'Tampon' 'Nombre' octets;
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer );
+		virtual void SDRRecall(
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer );
 		// fonction déportée
 		// écrit 'Nombre' octets à la position 'Position'
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position );
+		virtual void SDRStore(
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position );
 	public:
 		void reset( bool P = true )
 		{
@@ -102,24 +103,24 @@ namespace amm {
 			} else
 				Multimemoire_ = NULL;
 
-			E_MEMORY_DRIVER__::reset( P );
+			E_SDRIVER__::reset( P );
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
 		aggregated_memory_driver__( descriptor__ &Descriptor )
 		: _Descriptor( Descriptor ),
-		  E_MEMORY_DRIVER__()
+		  E_SDRIVER__()
 		{
 			reset( false );
 		}
 		E_VDTOR( aggregated_memory_driver__ )
 		//f Initialization with the 'Multimemory' multimemory.
-		void Init( multimemory_ &Multimemory )
+		void Init( ags::E_ASTORAGE_ &AS )
 		{
 			reset();
 
-			Multimemoire_ = &Multimemory;
-			E_MEMORY_DRIVER__::Init();
+			Multimemoire_ = &AS;
+			E_SDRIVER__::Init();
 
 			// On ne touche ni à '_Descriptor', ni à '_Addendum' car ils sont gèrés extèrieurement (ce sont des références).
 		}
@@ -129,14 +130,16 @@ namespace amm {
 			return _Descriptor;
 		}
 		//f Return the used multimemory.
-		multimemory_ *Multimemory( void ) const
+/*		multimemory_ *Multimemory( void ) const
 		{
 			return Multimemoire_;
 		}
+*/
 	};
 }
 
-# include "uym.h"
+# if 0
+# include "uys.h"
 
 namespace amm {
 
@@ -210,9 +213,9 @@ namespace amm {
 # define AMM_LONG_SIZE_SIZE_MAX		sizeof( mdr::dsize__ )
 # define AMM_FULL_HEADER_SIZE_MAX	( AMM_HEADER_SIZE + AMM_LONG_SIZE_SIZE_MAX )
 
-	using mdr::size__;
+	using sdr::size__;
 
-	typedef mdr::datum__ header__;
+	typedef sdr::datum__ header__;
 
 	inline bso::bool__ IsUsed( header__ Header )
 	{
@@ -1008,6 +1011,7 @@ namespace amm {
 		}
 	};
 }
+#endif
 
 /*$END$*/
 				  /********************************************/

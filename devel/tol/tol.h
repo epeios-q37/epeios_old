@@ -619,15 +619,15 @@ namespace tol {
 		return TP;
 	}
 
-	inline bso::ulong__ _Diff(
+	inline bso::u32__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::ulong__ Coeff)
+		bso::u32__ Coeff)
 	{
 		tick__ Intermediate;
-		bso::ulong__ Result = 0;
+		bso::u32__ Result = 0;
 		bso::bool__ CarryFlag = Op1->tv_nsec < Op2->tv_nsec;
-		bso::ulong__ Frac = 0;
+		bso::u32__ Frac = 0;
 
 		if ( Op1->tv_sec >= Op2->tv_sec )
 			if( Op1->tv_sec == Op2->tv_sec )
@@ -638,14 +638,14 @@ namespace tol {
 
 		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
 
-		if ( Op1->tv_sec > ( BSO_ULONG_MAX / Coeff ) )
+		if ( Op1->tv_sec > ( BSO_U32_MAX / Coeff ) )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		Result = Op1->tv_sec * Coeff;
 
 		Frac = Intermediate->tv_nsec / ( 1000000 / Coeff );
 
-		if ( ( Result + Frac  ) > BSO_ULONG_MAX )
+		if ( ( Result + Frac  ) > BSO_U32_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		return Result + Frac;

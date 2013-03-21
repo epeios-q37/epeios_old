@@ -37,12 +37,47 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
+#define DELTA	1000
+
 void Generic( int argc, char *argv[] )
 {
 ERRProlog
+	sdr::size__ Size = 0;
+	sdr::xsize__ XSize;
+	tol::timer__ Timer;
+	bso::nuint__ Length = 0;
 ERRBegin
+	Timer.Init( 100 );
+	Timer.Launch();
+
+	do {
+		if ( Size >= ( SDR_SIZE_MAX - DELTA ) ) 
+			Size = SDR_SIZE_MAX;
+		else
+			Size += DELTA;
+
+
+		XSize = sdr::Convert( Size );
+
+		if( Timer.IsElapsed() ) {
+			cio::COut << Size << txf::pad << (bso::nuint__)XSize.BufferSize() << txf::rfl << txf::commit;
+			Timer.Launch();
+		}
+
+		if ( sdr::Convert( XSize.DSizeBuffer() ) != Size )
+			ERRc();
+
+		if ( Length != XSize.BufferSize() ) {
+			cio::COut << Size << txf::pad << ( Length = XSize.BufferSize() ) << txf::nl << txf::commit;
+			Timer.Launch();
+		}
+
+
+	} while ( Size < SDR_SIZE_MAX );
+
 ERRErr
 ERREnd
+	cio::COut << txf::commit;
 ERREpilog
 }
 
@@ -66,7 +101,7 @@ ERRFBegin
 		COut << txf::commit;
 		CErr << "\nBad arguments.\n";
 		COut << "Usage: " << SDRTutor.Name << " [/i]\n\n";
-		ERRi();
+		ERRExit( EXIT_FAILURE );
 	}
 
 ERRFErr
