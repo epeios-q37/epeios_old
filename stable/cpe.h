@@ -156,7 +156,7 @@ extern class ttr_tutor &CPETutor;
 #  endif	
 # elif defined( __linux__ )
 #  define CPE__LINUX
-#  define CPE__POSIX_API
+#  define CPE__POSIX
 # endif
 # ifdef __ANDROID__
 #  define CPE__ANDROID
@@ -227,6 +227,9 @@ extern class ttr_tutor &CPETutor;
 #  endif
 #  ifdef __x86_64__
 #   define CPE__X86
+#   define CPE__64BITS
+#  else
+#   define CPE__32BITS
 #  endif
 # endif
 

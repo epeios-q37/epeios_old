@@ -86,7 +86,7 @@ namespace lcl {
 # elif defined( CPE__WIN )
 #  define FIL__WIN
 # else
-#  error "Undefined platform !."
+#  error "Undefined platform !"
 # endif
 
 # ifdef CPE__32BITS
@@ -100,9 +100,13 @@ namespace lcl {
 # ifdef FIL__WIN
 #  ifdef FIL__32
 #   ifdef CPE__MINGW
-#    define FIL__STATS	_stat32
-#    define FIL__STATF	_stat32
-#    define FIL__FSTAT	_fstat32
+#    ifdef MSYS
+#     define FIL__STATS	_stat
+#    else
+#     define FIL__STATS	_stat
+#    endif
+#    define FIL__STATF	_stat
+#    define FIL__FSTAT	_fstat
 #   else
 #    define FIL__STATS	_stat32
 #    define FIL__STATF	_stat32

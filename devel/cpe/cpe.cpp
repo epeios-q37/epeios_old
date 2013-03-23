@@ -92,7 +92,7 @@ static const char *Enviroment_( void )
 #elif defined( CPE__MINGW )
 	return "MinGW";
 #elif defined( CPE__LINUX )
-	return "Linux";
+	return "GNU/Linux";
 #elif defined( CPE__ANDROID )
 	return "Android";
 #else
