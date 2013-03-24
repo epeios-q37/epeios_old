@@ -29,67 +29,12 @@ copt =
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 mods = cio clnarg epsmsc err fil flw fnm str tol ttr
-mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags
+mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags cpe
 mods += sclmisc scllocale sclerror sclrgstry scltool 
 mods += locale registry
 
 # Don't modify line below.
 os := $(shell uname -o 2>/dev/null || uname -s)
-
-
-##################################
-# Specific to Cygwin environment #
-##################################
-
-ifeq ("$(os)","Cygwin")
-
-	libs =
-
-endif
-
-##################################
-
-
-##########################################
-# Specific for the GNU/Linux environment #
-##########################################
-
-ifeq ("$(os)","GNU/Linux")
-
-	libs = 
-
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-
-endif
-
-##########################################
-
-
-#################################
-# Specific to MinGW environment #
-#################################
-
-ifeq ("$(os)","Msys")
-
-	libs =
-
-endif
-
-##################################
-
-
-##########################
-# For Mac OS environment #
-##########################
-
-ifeq ("$(os)","Darwin")
-
-	libs =
-
-endif
-
-##########################
 
 
 ##############################
@@ -105,28 +50,94 @@ co += -O
 # To use with gprof
 #co += -pg
 
-# To force 32 bits target (incompatible with below options).
-co += -m32
-lo += -m32
-
-# To force 64 bits target (incompatible with above options).
-#co += -m64
-#lo += -m64
-
-
-###############################
 ###############################
 
-##### Don't modify below ######
 
-###############################
-###############################
-
-##################################
-# Specific to Cygwin environment #
-##################################
+##########################
+# For Cygwin environment #
+##########################
 
 ifeq ("$(os)","Cygwin")
+
+	libs =
+
+# By default, vanilla Cygwin compiler ('g++') is used.
+# Resulting application uses the Cygwin POSIX Layer.
+# Only 32 bits application can be made.
+# For 64 bits and/or application using
+# directly the MS CRT, see below.
+
+# The MinGW compiler under Cygwin. 
+# To build 64 bits application.
+# Uses directly the MS CRT.
+	#cc = x86_64-w64-mingw32-g++
+
+# THe MinGW compiler under Cygwin.
+# For 32 bits application using directly the MS CRT.
+# DOES NOT WORK ! You have to use compiler
+# under MinGW (MSYS) enviroment.
+	#cc = i686-w64-mingw32-g++
+
+endif
+
+##########################
+
+
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","GNU/Linux")
+
+	libs = 
+
+# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+
+endif
+
+#############################
+
+
+#########################
+# For MinGW environment #
+#########################
+
+ifeq ("$(os)","Msys")
+
+	libs =
+
+endif
+
+#########################
+
+
+##########################
+# For Mac OS environment #
+##########################
+
+ifeq ("$(os)","Darwin")
+
+	libs =
+
+endif
+
+##########################
+
+
+###################################
+###################################
+##### DON'T MODIFY BELOW !!! ######
+###################################
+###################################
+
+##########################
+# For Cygwin environment #
+##########################
+
+ifeq ("$(os)","Cygwin")
+
+	co += -DCYGWIN
 
 endif
 
@@ -139,6 +150,8 @@ endif
 
 ifeq ("$(os)","GNU/Linux")
 
+	co += -DGNULINUX
+
 endif
 
 ##########################################
@@ -149,6 +162,8 @@ endif
 ##################################
 
 ifeq ("$(os)","Msys")
+
+	co += -DMSYS
 
 endif
 
@@ -161,6 +176,8 @@ endif
 
 ifeq ("$(os)","Darwin")
 
+	co += -DDARWIN
+
 endif
 
 #########################
@@ -170,16 +187,27 @@ endif
 # Common to all GNU environment. #
 ##################################
 
+##################################
+
 ifndef EPEIOS_SRC
 	src += ../epeios
 else
 	src += $(EPEIOS_SRC)
 endif
 
+ifndef cc
+	cc = g++
+endif
+
+ifdef bitness
+	co += -m$(bitness)
+	lo += -m$(bitness)
+endif
+
 lo += -o $(name)
 co := -c $(co)
 ox = o
-cc = g++ 
+
 larg = $(lo) $(objs)
 ds = :
 
