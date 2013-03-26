@@ -677,7 +677,7 @@ namespace tol {
 
 		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
 
-		if ( Op1->tv_sec > ( BSO_NUTIN_MAX / Coeff ) )
+		if ( Op1->tv_sec > ( BSO_NUINT_MAX / Coeff ) )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		Result = Op1->tv_sec * Coeff;
