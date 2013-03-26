@@ -60,7 +60,6 @@ extern class ttr_tutor &FLWTutor;
 
 /*$BEGIN$*/
 
-#include <string.h>
 #include "bso.h"
 #include "cpe.h"
 #include "fdr.h"

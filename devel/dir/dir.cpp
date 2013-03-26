@@ -57,6 +57,38 @@ public:
 
 using namespace dir;
 
+state__ dir::HandleError( void )
+{
+	switch ( errno ) {
+	case EEXIST:
+		return sExists;
+		break;
+#ifdef DIR__POSIX
+	case EPERM:
+	case EACCES:
+	case EROFS:
+	case ELOOP:
+	case ENAMETOOLONG:
+#endif
+		return sInadequatePath;
+		break;
+	case ENOENT:
+#ifdef DIR__POSIX
+	case ENOTDIR:
+		return sBadPath;
+		break;
+	case EFAULT:
+		ERRc();
+		break;
+#endif
+	default:
+		ERRs();
+		break;
+	}
+
+	return s_Undefined;	// Pour éviter un 'warning'.
+}
+
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

@@ -32,6 +32,8 @@
 
 #include "err.h"
 #include "cio.h"
+#include "ctn.h"
+#include "str.h"
 
 using cio::CIn;
 using cio::COut;
@@ -62,10 +64,72 @@ ERRBegin
 	DS;
 	D2 = Storage.Reallocate( D2, 2500 );
 	DS;
+	Storage.Free( D2 );
+	DS;
+	Storage.Free( D4 );
+	DS;
 ERRErr
 ERREnd
 ERREpilog
 }
+
+typedef ctn::E_MCONTAINER_( str::string_ ) strings_;
+E_AUTO( strings );
+
+sdr::row__ Locate(
+	const str::string_ &Name,
+	const strings_ &Strings )
+{
+	ctn::E_CMITEM( str::string_ ) String;
+	sdr::row__ Row = Strings.First();
+
+	String.Init( Strings );
+
+	while ( ( Row!= NONE ) && ( String( Row ) != Name ) )
+		Row = Strings.Next( Row );
+
+	if ( Row == NONE )
+		ERRc();
+
+	return Row;
+}
+
+
+void Essai( void )
+{
+ERRProlog
+	ags::E_ASTORAGE Storage;
+	strings Strings1, Strings2;
+ERRBegin
+	Storage.Init();
+	Strings1.plug( Storage );
+	Strings2.plug( Storage );
+
+	Strings1.Init();
+	Strings2.Init();
+
+	Strings1.Append( str::string( "toto" ) );
+	DS;
+	Strings2.Append( str::string( "toto" ) );
+	DS;
+
+	Strings1.Append( str::string( "tata" ) );
+	DS;
+	Strings2.Append( str::string( "tata" ) );
+	DS;
+
+	Strings1.Append( str::string( "titi" ) );
+	DS;
+	Strings2.Append( str::string( "titi" ) );
+	DS;
+
+	Strings1.Remove( Locate( str::string( "toto" ), Strings1 ) );
+	DS;
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 int main( int argc, char *argv[] )
 {
@@ -75,7 +139,8 @@ ERRFBegin
 
 	switch( argc ) {
 	case 1:
-		Generic( argc, argv );
+//		Generic( argc, argv );
+		Essai();
 		break;
 	case 2:
 		if ( !strcmp( argv[1], "/i" ) )

@@ -62,7 +62,6 @@ extern class ttr_tutor &FNMTutor;
 
 //D FileName. Handle file names.
 
-#include <string.h>
 #include "cpe.h"
 #include "tol.h"
 

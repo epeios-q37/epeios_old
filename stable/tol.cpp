@@ -65,6 +65,11 @@ using namespace tol;
 	MAIS, lorsque lancé dans une console 'Cygwin' (1.17.10), le résultat est incorrect (différence d'une heure, peut-être lié à l'heure d'hiver/d'été).
 */
 
+#ifdef TOL__MAC
+	uint64_t tol::_Numer = 0;
+	uint32_t tol::_Denom = 0;
+#endif
+
 #ifdef TOL__WIN		
 LARGE_INTEGER	tol::_TickFrequence;
 #else
@@ -168,6 +173,17 @@ public:
 #ifdef TOL__WIN		
 		if ( QueryPerformanceFrequency( &tol::_TickFrequence ) == 0 )
 			ERRs();
+#elif defined( TOL__MAC )
+		mach_timebase_info_data_t    TimebaseInfo;
+
+		mach_timebase_info(&TimebaseInfo);
+
+		if ( ( BSO_NUINT_MAX / 1000000 ) < TimebaseInfo.numer )
+			ERRl();
+
+		_Num = TimebaseInfo.numer * 1000000;
+		_Denum = TimebaseInfo.denom;
+# error
 #endif
 	}
 	~tolpersonnalization( void )

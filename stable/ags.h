@@ -1079,7 +1079,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			if ( All )
 				if ( _IsLast( Row ) )
 					_UpdateFirstFragmentPredecessorStatus( sUsed );
-				else if ( Row != 0 )
+				else
 					_UpdatePredecessorStatus( Row + XSize.FragmentSize(), sUsed );
 
 			return Descriptor;

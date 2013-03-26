@@ -61,7 +61,6 @@ extern class ttr_tutor &TOLTutor;
 /*$BEGIN$*/
 //D TOoL
 
-# include <string.h>
 # include <stddef.h>
 # include <time.h>
 # include <signal.h>
@@ -69,8 +68,12 @@ extern class ttr_tutor &TOLTutor;
 
 # include "cpe.h"
 
-# if defined( CPE__POSIX )
-#  define TOL__POSIX
+# ifdef CPE__POSIX
+#  ifdef CPE__MAC
+#   define TOL__MAC
+# else
+#   define TOL__POSIX
+# endif
 # elif defined( CPE__WIN )
 #  define TOL__WIN
 #  include "Windows.h"
@@ -79,13 +82,15 @@ extern class ttr_tutor &TOLTutor;
 # endif
 
 
-#ifdef TOL__WIN
-#	include <sys/utime.h>
-#elif defined( TOL__POSIX )
-#	include <utime.h>
-#else
-#	error
-#endif
+# ifdef TOL__WIN
+#  include <sys/utime.h>
+# elif defined( TOL__MAC )
+#  include <mach/mach_time.h>
+# elif defined( TOL__POSIX )
+#  include <utime.h>
+# else
+#  error
+# endif
 
 #if defined( CPE__VC ) || defined( CPE__GCC )
 #	include <sys/timeb.h>
@@ -565,7 +570,7 @@ namespace tol {
 	}
 #endif
 
-# define TOL_TICK_DIFF_OVERFLOW	BSO_U32_MAX
+# define TOL_TICK_DIFF_OVERFLOW	BSO_NUINT_MAX
 
 // Horloge de précision. N'est utile que pour comparer 2 
 # ifdef TOL__WIN
@@ -582,20 +587,20 @@ namespace tol {
 		return Counter;
 	}
 
-	inline bso::u32__ _Diff(
+	inline bso::nuint__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::u32__ Coeff)
+		bso::nuint__ Coeff)
 	{
 		if ( Op1->QuadPart < Op2->QuadPart )
 			ERRc();
 
 		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
 
-		if ( Diff > BSO_U32_MAX )
+		if ( Diff > BSO_NUINT_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
-		return (bso::u32__)Diff;
+		return (bso::nuint__)Diff;
 	}
 
 	inline time_t _Time( void )
@@ -605,6 +610,40 @@ namespace tol {
 		::ftime( &T );
 
 		return T.time;
+	}
+
+# elif  defined( TOL__MAC )
+	E_TRMIMIC__( uint64_t, tick__ );
+	extern uint64_t _Numer;
+	extern uint32_t _Denom;
+
+	inline tick__ Tick( void )
+	{
+		return mach_absolute_time();
+	}
+
+	inline bso::nuint__ _Diff(
+		tick__ Op1,
+		tick__ Op2,
+		bso::nuint__ Coeff)
+	{
+		if ( *Op1 < *Op2 )
+			ERRc();
+
+		bso::nuint__ Elapsed = *Op2 - *Op1;	// Si pas de 'warning', à priori 'nuint__' est assez grand.
+
+		if ( ( BSO_NUINT_MAX / _Numer ) < Elapsed )
+			ERRl();
+
+		if ( ( BSO_NUINT_MAX / Coeff ) < _Denom )
+			ERRl();
+
+		return Elapsed * _Numer / ( _Denom * Coeff );
+	}
+
+	inline time_t _Time( void )
+	{
+		return time( NULL );
 	}
 # elif defined( TOL__POSIX )
 	E_TRMIMIC__( timespec, tick__ );
@@ -619,15 +658,15 @@ namespace tol {
 		return TP;
 	}
 
-	inline bso::u32__ _Diff(
+	inline bso::nuint__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::u32__ Coeff)
+		bso::nuint__ Coeff)
 	{
 		tick__ Intermediate;
-		bso::u32__ Result = 0;
+		bso::nuint__ Result = 0;
 		bso::bool__ CarryFlag = Op1->tv_nsec < Op2->tv_nsec;
-		bso::u32__ Frac = 0;
+		bso::nuint__ Frac = 0;
 
 		if ( Op1->tv_sec >= Op2->tv_sec )
 			if( Op1->tv_sec == Op2->tv_sec )
@@ -638,14 +677,14 @@ namespace tol {
 
 		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
 
-		if ( Op1->tv_sec > ( BSO_U32_MAX / Coeff ) )
+		if ( Op1->tv_sec > ( BSO_NUTIN_MAX / Coeff ) )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		Result = Op1->tv_sec * Coeff;
 
 		Frac = Intermediate->tv_nsec / ( 1000000 / Coeff );
 
-		if ( ( Result + Frac  ) > BSO_U32_MAX )
+		if ( ( Result + Frac  ) > BSO_NUINT_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		return Result + Frac;
@@ -659,21 +698,21 @@ namespace tol {
 #  error "Unhandled platform !"
 # endif
 
-	inline bso::u32__ SecDiff( 
+	inline bso::nuint__ SecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1 );
 	}
 
-	inline bso::u32__ MilliSecDiff( 
+	inline bso::nuint__ MilliSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1000 );
 	}
 
-	inline bso::u32__ NanoSecDiff( 
+	inline bso::nuint__ NanoSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{

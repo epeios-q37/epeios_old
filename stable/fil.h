@@ -89,44 +89,14 @@ namespace lcl {
 #  error "Undefined platform !"
 # endif
 
-# ifdef CPE__32BITS
-#  define FIL__32
-# elif defined CPE__64BITS
-#  define FIL__64
-# else
-#  error
-# endif
-
 # ifdef FIL__WIN
-#  ifdef FIL__32
-#   ifdef CPE__MINGW
-#    ifdef MSYS
-#     define FIL__STATS	_stat
-#    else
-#     define FIL__STATS	_stat
-#    endif
+#    define FIL__STATS	_stat
 #    define FIL__STATF	_stat
 #    define FIL__FSTAT	_fstat
-#   else
-#    define FIL__STATS	_stat32
-#    define FIL__STATF	_stat32
-#    define FIL__FSTAT	_fstat32
-#   endif
-#  endif
-#  ifdef FIL__64
-#   ifdef CPE__MINGW
-#    define FIL__STATS	__stat64
-#    define FIL__STATF	_stat64
-#    define FIL__FSTAT	_fstat64
-#   else
-#    define FIL__STATS	_stat64
-#    define FIL__STATF	_stat64
-#    define FIL__FSTAT	_fstat64
-#   endif
-#  endif
 # endif
 
 # ifdef FIL__POSIX
+#  include <utime.h>
 #  define FIL__STATS	stat
 #  define FIL__STATF	stat
 #  define FIL__FSTAT	fstat

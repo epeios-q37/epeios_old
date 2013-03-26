@@ -101,7 +101,7 @@ namespace dir {
 		sOK,
 		sExists,		// Le répertoire existe déjà.
 		sBadPath,		// Le chemin fournit n'est pas correct.
-		sIncorrectPath,	// Un élment du chemin n'existe pas ou n'est pas un répertoire adapté (fichier, mauvais droits, ...).
+		sInadequatePath,	// Un élment du chemin n'existe pas ou n'est pas un répertoire adapté (fichier, mauvais droits, ...).
 		s_amount,
 		s_Undefined
 	};
@@ -109,7 +109,7 @@ namespace dir {
 	typedef tol::E_FPOINTER___(bso::char__) buffer___;
 #	define DIR_BUFFER___ dir::buffer___
 
-
+	state__ HandleError( void );
 
 	inline const char *GetSelfPath( DIR_BUFFER___ &Buffer )
 	{
@@ -163,32 +163,8 @@ namespace dir {
 			return sOK;
 			break;
 		case -1:
-			switch ( errno ) {
-			case EEXIST:
-				return sExists;
-				break;
-			case ENOENT:
-#ifdef DIR__POSIX
-			case EPERM:
-			case EACCES:
-			case ENOTDIR:
-			case EROFS:
-			case ELOOP:
-#endif
-				return sIncorrectPath;
-				break;
-#ifdef DIR__POSIX
-			case ENAMETOOLONG:
-				return sBadPath;
-				break;
-			case EFAULT:
-				ERRu();
-				break;
-#endif
-			default:
-				ERRs();
-				break;
-			}
+			return HandleError();
+			break;
 		default:
 			ERRs();
 			break;
@@ -199,7 +175,6 @@ namespace dir {
 
 	inline state__ DropDir( const char *Path )
 	{
-#pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
 #ifdef DIR__WIN
 		switch ( _rmdir( Path ) ) {
 #elif defined( DIR__POSIX )
@@ -211,32 +186,8 @@ namespace dir {
 			return sOK;
 			break;
 		case -1:
-			switch ( errno ) {
-			case EEXIST:
-				return sExists;
-				break;
-			case ENOENT:
-#ifdef DIR__POSIX
-			case EPERM:
-			case EACCES:
-			case ENOTDIR:
-			case EROFS:
-			case ELOOP:
-#endif
-				return sIncorrectPath;
-				break;
-#ifdef DIR__POSIX
-			case ENAMETOOLONG:
-				return sBadPath;
-				break;
-			case EFAULT:
-				ERRu();
-				break;
-#endif
-			default:
-				ERRs();
-				break;
-			}
+			return HandleError();
+			break;
 		default:
 			ERRs();
 			break;
@@ -247,7 +198,6 @@ namespace dir {
 
 	inline state__ ChangeDir( const char *Path )
 	{
-#pragma message ( __LOC__ "Gestion des valeurs de retours à revoir !" )
 #ifdef DIR__WIN
 		switch ( _chdir( Path ) ) {
 #elif defined( DIR__POSIX )
@@ -259,32 +209,8 @@ namespace dir {
 			return sOK;
 			break;
 		case -1:
-			switch ( errno ) {
-			case EEXIST:
-				return sExists;
-				break;
-			case ENOENT:
-#ifdef DIR__POSIX
-			case EPERM:
-			case EACCES:
-			case ENOTDIR:
-			case EROFS:
-			case ELOOP:
-#endif
-				return sIncorrectPath;
-				break;
-#ifdef DIR__POSIX
-			case ENAMETOOLONG:
-				return sBadPath;
-				break;
-			case EFAULT:
-				ERRu();
-				break;
-#endif
-			default:
-				ERRs();
-				break;
-			}
+			return HandleError();
+			break;
 		default:
 			ERRs();
 			break;
