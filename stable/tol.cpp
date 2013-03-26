@@ -178,11 +178,11 @@ public:
 
 		mach_timebase_info(&TimebaseInfo);
 
-		if ( ( BSO_NUINT_MAX / 1000000 ) < TimebaseInfo.numer )
+		if ( ( BSO_NUINT_MAX / 1000000 ) < (bso::nuint__)TimebaseInfo.numer )
 			ERRl();
 
-		tol::_Num = TimebaseInfo.numer * 1000000;
-		tol::_Denum = TimebaseInfo.denom;
+		tol::_Numer = TimebaseInfo.numer * 1000000;
+		tol::_Denom = TimebaseInfo.denom;
 #endif
 	}
 	~tolpersonnalization( void )
