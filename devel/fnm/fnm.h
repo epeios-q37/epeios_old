@@ -62,8 +62,9 @@ extern class ttr_tutor &FNMTutor;
 
 //D FileName. Handle file names.
 
-#include "cpe.h"
-#include "tol.h"
+# include "cpe.h"
+# include "tol.h"
+# include "strng.h"
 
 #if defined( CPE__POSIX )
 #	define FNM__POSIX

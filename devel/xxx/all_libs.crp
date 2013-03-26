@@ -285,6 +285,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STacK
 &str		&epeios		&2000-\
 	&STRing
+&strng		&epeios	&\
+	&STRiNG
 &tagdtc		&epeios		&2000-2001, \
 	&TAG DeTeCtor
 &tagexp		&epeios		&2000-2001, \

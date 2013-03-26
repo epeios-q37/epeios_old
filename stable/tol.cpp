@@ -181,9 +181,8 @@ public:
 		if ( ( BSO_NUINT_MAX / 1000000 ) < TimebaseInfo.numer )
 			ERRl();
 
-		_Num = TimebaseInfo.numer * 1000000;
-		_Denum = TimebaseInfo.denom;
-# error
+		tol::_Num = TimebaseInfo.numer * 1000000;
+		tol::_Denum = TimebaseInfo.denom;
 #endif
 	}
 	~tolpersonnalization( void )
