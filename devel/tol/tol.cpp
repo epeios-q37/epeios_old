@@ -146,7 +146,7 @@ static inline void signal_( int s )
 
 static inline void ExitOnSignal_( void )
 {
-#if defined( TOL__POSIX )
+#if defined( TOL__MAC ) || defined( TOL__POSIX )
 	signal( SIGHUP, signal_ );
 #elif defined( TOL__WIN )
 	signal( SIGBREAK, signal_ );
@@ -178,12 +178,13 @@ public:
 
 		mach_timebase_info(&TimebaseInfo);
 
+#if 0
+		// Test toujours faux, dû au type de 'TimebaseInfo.numer'
 		if ( ( BSO_NUINT_MAX / 1000000 ) < TimebaseInfo.numer )
 			ERRl();
-
-		_Num = TimebaseInfo.numer * 1000000;
-		_Denum = TimebaseInfo.denom;
-# error
+#endif
+		tol::_Numer = TimebaseInfo.numer * 1000000;
+		tol::_Denom = TimebaseInfo.denom;
 #endif
 	}
 	~tolpersonnalization( void )

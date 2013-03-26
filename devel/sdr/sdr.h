@@ -61,6 +61,7 @@ extern class ttr_tutor &SDRTutor;
 # include "err.h"
 # include "bso.h"
 # include "tol.h"
+# include "strng.h"
 
 # define SDR_INTERNAL_SDRIVER *(sdr::E_SDRIVER__ *)NULL
 

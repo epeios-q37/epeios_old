@@ -1,13 +1,13 @@
 /*
-	'ttr' library by Claude SIMON (http://zeusw.org/intl/contact.html)
+	'ttr' library by Claude SIMON (csimon at zeusw dot org)
 	Requires the 'ttr' header file ('ttr.h').
-	Copyright (C) $COPYRIGHT_DATES$Claude SIMON (http://zeusw.org/intl/contact.html).
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
 $_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -94,7 +94,7 @@ void ttr_tutor::Advertise( txf::text_oflow__ &Flow )	// Should be modified.
 			Name, Version, Date, Owner );
 	else {
 		sprintf( Format, "%s%i%s", "%-7s r%-7.",
-			                  	   strlen( Version ) - 15,
+			(bso::u8__)strlen( Version ) - 15,
 							  	   "s %.10s (c) %s" );
 		sprintf( Adv_, Format,
 			Name, Version + 13, Date + 7, Owner );
