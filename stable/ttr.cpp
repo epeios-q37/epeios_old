@@ -94,7 +94,7 @@ void ttr_tutor::Advertise( txf::text_oflow__ &Flow )	// Should be modified.
 			Name, Version, Date, Owner );
 	else {
 		sprintf( Format, "%s%i%s", "%-7s r%-7.",
-			                  	   strlen( Version ) - 15,
+			(bso::u8__)strlen( Version ) - 15,
 							  	   "s %.10s (c) %s" );
 		sprintf( Adv_, Format,
 			Name, Version + 13, Date + 7, Owner );
