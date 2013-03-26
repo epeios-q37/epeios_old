@@ -55,7 +55,7 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include <string.h>
+#include "strng.h"
 
 using namespace cpe;
 
