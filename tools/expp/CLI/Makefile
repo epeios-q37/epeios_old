@@ -50,8 +50,6 @@ co += -O
 # To use with gprof
 #co += -pg
 
-lo += -static
-
 ###############################
 
 
@@ -143,6 +141,8 @@ endif
 ifeq ("$(os)","Cygwin")
 
 	co += -DCYGWIN
+
+	lo += -static
 
 endif
 
