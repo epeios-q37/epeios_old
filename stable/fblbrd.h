@@ -106,10 +106,10 @@ namespace fblbrd {
 
 			return *this;
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Name.plug( M );
-			Casts.plug( M );
+			Name.plug( AS );
+			Casts.plug( AS );
 		}
 		//f Initialization. The name ans casts are added one per one.
 		void Init( void )
@@ -155,9 +155,9 @@ namespace fblbrd {
 		{
 			E_CONTAINER_( description_ )::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_CONTAINER_( description_ )::plug( M );
+			E_CONTAINER_( description_ )::plug( AS );
 		}
 		descriptions_ &operator =( const descriptions_ &D )
 		{
@@ -171,13 +171,13 @@ namespace fblbrd {
 			E_CONTAINER_( description_ )::Init();
 		}
 		//f Adding 'Description'. Return the position where added.
-		mdr::row__ Add( const description_ &Description )
+		sdr::row__ Add( const description_ &Description )
 		{
 			return E_CONTAINER_( description_ )::Append( Description );
 		}
 		/*f See 'descriptions_::Add()' for the descriptions of the parameters.
 		return the position where request description added. */
-		mdr::row__ Add(
+		sdr::row__ Add(
 			const char *Name,
 			const cast *Casts )
 		{
@@ -188,7 +188,7 @@ namespace fblbrd {
 			return Add( Description );
 		}
 		/*f Return the position of the description 'Description'. */
-		mdr::row__ Position( const description_ &Description ) const;
+		sdr::row__ Position( const description_ &Description ) const;
 	};
 
 	E_AUTO( descriptions )

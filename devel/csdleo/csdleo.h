@@ -87,7 +87,7 @@ namespace csdleo {
 	{
 	public:
 		const char *Version;	// Toujours en première position.
-		bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		bso::u32__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
 		void reset( bso::bool__ = true )
 		{
 			Version = NULL;

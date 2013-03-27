@@ -117,7 +117,7 @@ ERREpilog
 
 void fblbkd::untyped_module::_Clean( void )
 {
-	mdr::row__ Row = Indexes.First();
+	sdr::row__ Row = Indexes.First();
 
 	while ( Row != NONE ) {
 		FBLBKDDelete( Indexes( Row ) );
@@ -206,7 +206,7 @@ ERREpilog
 		}
 		else
 		{
-			mdr::row__ P = Descriptions.First();
+			sdr::row__ P = Descriptions.First();
 			command__ C = FBLBKD_INVALID_COMMAND;
 
 			LogFunctions.Log( "", "MASTER", str::string( "MASTER_COMMAND(GetCommandCommand)" ), false );
@@ -242,7 +242,7 @@ static void GetTypesIDAndPrefixAndName_(
 {
 ERRProlog
 	xitem16 XItem;
-	mdr::row__ P;
+	sdr::row__ P;
 	type__ Type;
 ERRBegin
 	xitems16_ &XItems = Requete.XItems16Out();
@@ -281,7 +281,7 @@ static void WriteCommandsIDAndName_(
 ERRProlog
 	item16 Item;
 	ctn::E_CITEM( description_ ) Description;
-	mdr::row__ P;
+	sdr::row__ P;
 	command__ Command;
 ERRBegin
 	items16_ &Items = Requete.Items16Out();
@@ -549,7 +549,7 @@ static void FillCommands_(
 {
 ERRProlog
 	id16__ Command;
-	mdr::row__ Position = CommandsDetails.First();
+	sdr::row__ Position = CommandsDetails.First();
 	ctn::E_CITEM( command_detail_ ) CommandDetail;
 	description Description;
 ERRBegin
@@ -783,7 +783,7 @@ void fblbkd::master_module::Init( fblbkd::backend_ &Backend )
 
 type__ fblbkd::backend::Type( const str::string_ &Name ) const
 {
-	mdr::row__ C = Modules.First();
+	sdr::row__ C = Modules.First();
 
 	while ( ( C != NONE ) && ( str::string( Modules(C)->Name() ) != Name )  )
 		C = Modules.Next( C );

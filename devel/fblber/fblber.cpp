@@ -70,7 +70,7 @@ void fblber::embed_request_functions___::_GetAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 
 	Row = Casts.First();
 

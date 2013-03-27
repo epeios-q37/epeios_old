@@ -112,7 +112,7 @@ namespace fblbkd {
 	typedef lcl::strings_	messages_;
 	E_AUTO( messages )
 
-	typedef mdr::row__ index__;
+	typedef sdr::row__ index__;
 	typedef fbltyp::id16_t__	command__;
 
 	typedef fbltyp::id16_t__	type_t__;
@@ -287,7 +287,7 @@ namespace fblbkd {
 		//f Delete the object of index 'Index'.
 		void Delete( index__ Index )
 		{
-			mdr::row__ Row = Indexes.Search( Index );
+			sdr::row__ Row = Indexes.Search( Index );
 
 			if ( Row == NONE )
 				ERRu();
@@ -350,7 +350,7 @@ namespace fblbkd {
 		//f Return the command which has 'Description' as description, or 'FBLBKD_INVALID_COMMAND' if non-existant.
 		command__ Command( const fblbrd::description_ &Description ) const
 		{
-			mdr::row__ P = Descriptions.Position( Description );
+			sdr::row__ P = Descriptions.Position( Description );
 
 			if ( P == NONE )
 				P = FBLBKD_INVALID_COMMAND;
@@ -359,19 +359,19 @@ namespace fblbkd {
 
 			return (command__)*P;
 		}
-		mdr::row__ Add(
+		sdr::row__ Add(
 			const char *Name,
 			const cast *Casts,
 			const void *UP )
 		{
-			mdr::row__ P = Descriptions.Add( Name, Casts );
+			sdr::row__ P = Descriptions.Add( Name, Casts );
 			
 			if ( UPs.Append( UP ) != P )
 				ERRc();
 				
 			return P;
 		}			
-		mdr::row__ Add(
+		sdr::row__ Add(
 			const char *Name,
 			const void *UP,
 			... )
@@ -456,7 +456,7 @@ namespace fblbkd {
 		}
 	protected:
 		virtual void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 #ifdef FBLBKD_DBG
@@ -532,7 +532,7 @@ namespace fblbkd {
 			return *this;
 		}
 	protected:
-		virtual void LSTAllocate( mdr::size__ Size )
+		virtual void LSTAllocate( sdr::size__ Size )
 		{
 			Element_.Commit();
 			Objets.Allocate( Size, aem::mFit );
@@ -666,26 +666,26 @@ namespace fblbkd {
 
 	//t To by-pass a visual C++ bug.
 	typedef lst::E_LISTtx( object__, object_t__ ) _list;
-	typedef tym::E_MEMORYt( link__, object__ ) _memory;
+	typedef tys::E_STORAGEt( link__, object__ ) _storage;
 
 	// Classe de gestion des liens entre module et objets.
 	class links
-	: private _memory,
+	: private _storage,
 	  public _list
 	{
 	protected:
 		void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
-			_memory::Allocate( Size );
+			_storage::Allocate( Size );
 		}
 	public:
 		// Initialisation.
 		void Init( void )
 		{
 			_list::Init();
-			_memory::Init();
+			_storage::Init();
 		}
 		object__ New(
 			type__ IdType,
@@ -702,7 +702,7 @@ namespace fblbkd {
 			Lien.Type = IdType;
 			Lien.Index = Index;
 
-			_memory::Store( Lien, P );
+			_storage::Store( Lien, P );
 
 			return P;
 		}
@@ -712,13 +712,13 @@ namespace fblbkd {
 		}
 		type__ Type( object__ IdObjet ) const
 		{
-			return _memory::Get( IdObjet ).Type;
+			return _storage::Get( IdObjet ).Type;
 		}
 		index__ Index( object__ IdObjet ) const
 		{
-			return _memory::Get( IdObjet ).Index;
+			return _storage::Get( IdObjet ).Index;
 		}
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return _list::Amount();
 		}
@@ -890,14 +890,14 @@ namespace fblbkd {
 		/*f Add a request description with name 'Name', function pointer 'FP'
 		and a list of casts 'Casts'. The list must contain 2 'cEnd', the first
 		at the end of the parameters casts,	and 1 of the end of returned values casts. */
-		mdr::row__ Add(
+		sdr::row__ Add(
 			const char *Name,
 			function__ FP,
 			const cast *Casts )
 		{
 			return Master_.Add( Name, Casts, (void *)FP );
 		}
-		mdr::row__ Add(
+		sdr::row__ Add(
 			const char *Name,
 			function__ FP,
 			cast Cast,	// Added to avoid confusion with function above.

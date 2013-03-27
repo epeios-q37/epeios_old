@@ -214,7 +214,7 @@ namespace {
 		mtx::mutex_handler__ Exclusion;
 		bso::bool__ Continue;
 		void *UP;
-		bso::ulong__ Amount;
+		bso::u32__ Amount;
 		routine__ Routine;
 	} Common;
 	
@@ -296,7 +296,7 @@ namespace {
 			
 			mtx::Lock( Common.Data );	// To ensure that nobody else is accessing data.
 			
-			if ( Common.Amount == BSO_USHORT_MAX )
+			if ( Common.Amount == BSO_U32_MAX )
 				ERRl();
 				
 			Common.Amount++;// One more thread available.

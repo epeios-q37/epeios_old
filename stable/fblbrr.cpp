@@ -72,10 +72,10 @@ static parameter___ Create_(
 	CC( Object, object__)
 	CC( Boolean, boolean__ )
 	CC( Booleans, booleans )
-	CC( SLong, slong__ )
-	CC( SLongs, slongs )
-	CC( ULong, ulong__ )
-	CC( ULongs, ulongs )
+	CC( S32, s32__ )
+	CC( S32s, s32s )
+	CC( U32, u32__ )
+	CC( U32s, u32s )
 	CC( Id8, id8__ )
 	CC( Ids8, ids8 )
 	CC( XIds8, xids8 )
@@ -125,10 +125,10 @@ static parameter___ _CreateAndGet(
 	CCAG( Object, object__)
 	CCAG( Boolean, boolean__ )
 	CCAG( Booleans, booleans )
-	CCAG( SLong, slong__ )
-	CCAG( SLongs, slongs )
-	CCAG( ULong, ulong__ )
-	CCAG( ULongs, ulongs )
+	CCAG( S32, s32__ )
+	CCAG( S32s, s32s )
+	CCAG( U32, u32__ )
+	CCAG( U32s, u32s )
 	CCAG( Id8, id8__ )
 	CCAG( Ids8, ids8 )
 	CCAG( XIds8, xids8 )
@@ -172,10 +172,10 @@ static void Delete_( const parameter___ &Parameter )
 	CD( Object, object__)
 	CD( Boolean, boolean__ )
 	CD( Booleans, booleans )
-	CD( SLong, slong__ )
-	CD( SLongs, slongs )
-	CD( ULong, ulong__ )
-	CD( ULongs, ulongs )
+	CD( S32, s32__ )
+	CD( S32s, s32s )
+	CD( U32, u32__ )
+	CD( U32s, u32s )
 	CD( Id8, id8__ )
 	CD( Ids8, ids8 )
 	CD( XIds8, xids8 )
@@ -211,7 +211,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	mdr::row__ Row = NONE;
+	sdr::row__ Row = NONE;
 
 	Row = Casts.First();
 
@@ -245,7 +245,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 
 void fblbrr::remote_request_functions___::_DeleteAll( void )
 {
-	mdr::row__ Row = _Parameters.First();
+	sdr::row__ Row = _Parameters.First();
 
 	if ( Row == NONE )
 		return;
@@ -288,10 +288,10 @@ static void Push_(
 	CP( Object, object__)
 	CP( Boolean, boolean__ )
 	CP( Booleans, booleans )
-	CP( SLong, slong__ )
-	CP( SLongs, slongs )
-	CP( ULong, ulong__ )
-	CP( ULongs, ulongs )
+	CP( S32, s32__ )
+	CP( S32s, s32s )
+	CP( U32, u32__ )
+	CP( U32s, u32s )
 	CP( Id8, id8__ )
 	CP( Ids8, ids8 )
 	CP( XIds8, xids8 )
@@ -332,7 +332,7 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 		ERRu();
 #endif
 
-	mdr::row__ Row = Casts.First();
+	sdr::row__ Row = Casts.First();
 
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {

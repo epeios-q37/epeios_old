@@ -141,7 +141,7 @@ namespace dtfptb {
 	}
 
 	//f Return the signed long stored in 'Flow'.
-	inline s32__ FixedGetSEZ( flw::iflow__ &Flow )
+	inline s32__ FixedGetS32( flw::iflow__ &Flow )
 	{
 		return _FixedGetI32<s32__>( Flow );
 	}
@@ -155,7 +155,7 @@ namespace dtfptb {
 	}
 
 	//f Return the unsigned long stored in 'Flow'.
-	inline u32__ FixedGetUEZ( flw::iflow__ &Flow )
+	inline u32__ FixedGetU32( flw::iflow__ &Flow )
 	{
 		return _FixedGetI32<u32__>( Flow );
 	}

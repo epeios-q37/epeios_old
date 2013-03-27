@@ -71,13 +71,13 @@ extern class ttr_tutor &FBLBRQTutor;
 #  undef GetObject
 # endif
 
-# define FBLBRQ_INVALID_COMMAND		((unsigned long)BSO_USHORT_MAX)
+# define FBLBRQ_INVALID_COMMAND		((unsigned long)BSO_U16_MAX)
 # define FBLBRQ_COMMAND_MAX			( FBLBRQ_INVALID_COMMAND - 1UL )
 
-# define FBLBRQ_INVALID_TYPE			((unsigned long)BSO_USHORT_MAX)
+# define FBLBRQ_INVALID_TYPE			((unsigned long)BSO_U16_MAX)
 # define FBLBRQ_TYPE_MAX				( FBLBRQ_INVALID_TYPE - 1UL )
 
-# define FBLBRQ_INVALID_OBJECT		((unsigned long)BSO_USHORT_MAX)
+# define FBLBRQ_INVALID_OBJECT		((unsigned long)BSO_U16_MAX)
 # define FBLBRQ_OBJECT_MAX			( FBLBRQ_INVALID_OBJECT - 1UL )
 
 namespace fblbrq {
@@ -99,10 +99,10 @@ namespace fblbrq {
 	{
 	protected:
 		virtual const void *FBLBRQGet(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast ) = 0;
 		virtual void *FBLBRQPut(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast ) = 0;
 		virtual void FBLBRQPop(
 			flw::iflow__ &Flow,
@@ -128,13 +128,13 @@ namespace fblbrq {
 			// Standardisation.
 		}
 		const void *Get(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return FBLBRQGet( Row, Cast );
 		}
 		void *Put(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return FBLBRQPut( Row, Cast );
@@ -160,7 +160,7 @@ namespace fblbrq {
 		functions__ *_Functions;
 		casts Casts_;
 		// Position in the Description_;
-		mdr::row__ Position_;
+		sdr::row__ Position_;
 		// At true if all the answer be sent.
 		bso::bool__ Closed_;
 		// Cast buffer.
@@ -179,13 +179,13 @@ namespace fblbrq {
 			return *_Functions;
 		}
 		const void *_Get(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return _F().Get( Row, Cast );
 		}
 		const void *_Put(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return _F().Put( Row, Cast );
@@ -274,10 +274,10 @@ namespace fblbrq {
 		FBLBRQ_M( Object, object__)
 		FBLBRQ_M( Boolean, boolean__ )
 		FBLBRQ_M( Booleans, booleans_ )
-		FBLBRQ_M( SLong, slong__ )
-		FBLBRQ_M( SLongs, slongs_ )
-		FBLBRQ_M( ULong, ulong__ )
-		FBLBRQ_M( ULongs, ulongs_ )
+		FBLBRQ_M( S32, s32__ )
+		FBLBRQ_M( S32s, s32s_ )
+		FBLBRQ_M( U32, u32__ )
+		FBLBRQ_M( U32s, u32s_ )
 		FBLBRQ_M( Id8, id8__ )
 		FBLBRQ_M( Ids8, ids8_ )
 		FBLBRQ_M( XIds8, xids8_ )

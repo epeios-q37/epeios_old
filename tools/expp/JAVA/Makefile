@@ -34,11 +34,11 @@ copt += -DCPE_ST
 
 # epeios/core
 mods += cdgb64 ctn err cio
-mods += fil flf flw fnm lcl mmi
+mods += fil flf flw fnm lcl
 mods += rgstry str tht
-mods += tol ttr uym xml xpp
+mods += tol ttr xml xpp
 
-#
+# Don't modify line below.
 os := $(shell uname -o 2>/dev/null || uname -s)
 
 ifndef EPEIOS_SRC

@@ -104,7 +104,7 @@ extern class ttr_tutor &SCKTutor;
 #endif
 
 //d Value to give to the 'TimeOut' parameter to indicate waiting forever.
-#define SCK_INFINITE	BSO_USHORT_MAX
+#define SCK_INFINITE	BSO_U16_MAX
 
 //d Returned value to indicate that the connection no longer exists.
 #define SCK_DISCONNECTED	-1
@@ -137,7 +137,7 @@ namespace sck {
 
 	typedef int error__;
 
-	typedef bso::ushort__	duration__;
+	typedef bso::u16__	duration__;
 
 	/* NOTA: Les deux déclarations ci-dessous ont été mise en place pour simplifier
 	l'usage des sockets sous Windows. En effet, ce dernier, et lui seul, ne réalise

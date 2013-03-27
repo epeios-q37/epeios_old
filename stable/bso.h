@@ -723,7 +723,7 @@ namespace bso {
 	}
 #endif
 
-# ifndef CPE__64BITS	// Sinon conflit !
+# if !defined( CPE__64BITS	) && !defined( CPE__MAC ) // Sinon conflit !
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )

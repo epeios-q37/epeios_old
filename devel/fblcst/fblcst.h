@@ -70,37 +70,37 @@ namespace fblcst {
 	enum cast {
 		//i End of request or end of parameters list.
 		cEnd = 0,
-		//i Object ('bso::ushort__')'.
+		//i Object ('bso::u16__')'.
 		cObject,
 		//i Boolean ('bso::bool__')
 		cBoolean,
 		//i Booleans ('bitbch::bit_bunch_')
 		cBooleans,
-		//i Portable signed long (bso::slong__ ).
-		cSLong,
-		//i Portable signed longs (SET_( bso::slong__ ) ).
-		cSLongs,
-		//i Portable unsigned long (bso::ulong__ ).
-		cULong,
-		//i Portable unsigned longs (SET_( bso::ulong__ ) ).
-		cULongs,
-		//i 8 bits identifier ( 'bso::ubyte__' ).
+		//i Portable signed long (bso::s32__ ).
+		cS32,
+		//i Portable signed longs (SET_( bso::s32__ ) ).
+		cS32s,
+		//i Portable unsigned long (bso::u32__ ).
+		cU32,
+		//i Portable unsigned longs (SET_( bso::u32__ ) ).
+		cU32s,
+		//i 8 bits identifier ( 'bso::u8__' ).
 		cId8,
-		//i Array of 8 bits identifiers ( 'SET_( bso::ubyte__ )' )
+		//i Array of 8 bits identifiers ( 'SET_( bso::u8__ )' )
 		cIds8,
-		//i Array of array of 8 bits identifiers ( 'XMCONTAINER_( SET_( bso::ubyte__ ) )' )
+		//i Array of array of 8 bits identifiers ( 'XMCONTAINER_( SET_( bso::u8__ ) )' )
 		cXIds8,
-		//i 16 bits identifier ( 'bso::ushort__' ).
+		//i 16 bits identifier ( 'bso::u16__' ).
 		cId16,
-		//i Array of 16 bits identifiers ( 'SET_( bso::ushort__ )' )
+		//i Array of 16 bits identifiers ( 'SET_( bso::u16__ )' )
 		cIds16,
-		//i Array of array of 16 bits identifiers ( 'XMCONTAINER_( SET_( bso::ushort_ ) )' )
+		//i Array of array of 16 bits identifiers ( 'XMCONTAINER_( SET_( bso::u16_ ) )' )
 		cXIds16,
-		//i 32 bits identifier ('bso::ulong__').
+		//i 32 bits identifier ('bso::u32__').
 		cId32,
-		//i Array of 32 bits identifiers ( 'SET_( bso::ulong__ )' )
+		//i Array of 32 bits identifiers ( 'SET_( bso::u32__ )' )
 		cIds32,
-		//i Array of array of 32 bits identifiers ( 'XMCONTAINER_( SET_( bso::ulong__ ) )' )
+		//i Array of array of 32 bits identifiers ( 'XMCONTAINER_( SET_( bso::u32__ ) )' )
 		cXIds32,
 		//i Character ('bso::char__' ).
 		cChar,
@@ -117,22 +117,22 @@ namespace fblcst {
 		cBinary,
 		//i Array of binaries ( 'XMCONTAINER_( SET_( bso::raw__ ) )' ).
 		cBinaries,
-		//i An array of 8 bits items ( 'XMCONTAINER_( { bso::ubyte__, str::string_ } )' ).
+		//i An array of 8 bits items ( 'XMCONTAINER_( { bso::u8__, str::string_ } )' ).
 		cItems8,
-		//i An array of 16 bits items ( 'XMCONTAINER_( { bso::ushort__, str::string_ } )' ).
+		//i An array of 16 bits items ( 'XMCONTAINER_( { bso::u16__, str::string_ } )' ).
 		cItems16,
-		//i An array of 32 bits items ( 'XMCONTAINER_( { bso::ulong__, str::string_ } )' ).
+		//i An array of 32 bits items ( 'XMCONTAINER_( { bso::u32__, str::string_ } )' ).
 		cItems32,
-		//i An array of 8 bits extended items ( 'XMCONTAINER_( { bso::ubyte__, XMCONTAINER_( str::string_ ) } )' ).
+		//i An array of 8 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
 		cXItems8,
-		//i An array of 16 bits extended items ( 'XMCONTAINER_( { bso::ubyte__, XMCONTAINER_( str::string_ ) } )' ).
+		//i An array of 16 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
 		cXItems16,
-		//i An array of 32 bits extended items ( 'XMCONTAINER_( { bso::ubyte__, XMCONTAINER_( str::string_ ) } )' ).
+		//i An array of 32 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
 		cXItems32,
 		// The following casts are used for some special commands.
-		//i Array of command descriptions ( 'XCONTAINER_( { str::string_, SET_( bso::ubyte__ ) } )' ).
+		//i Array of command descriptions ( 'XCONTAINER_( { str::string_, SET_( bso::u8__ ) } )' ).
 		cCommandsDetails,
-		//i Array of object types and identifiers. ( 'SET_( { bso::ushort__, bso::ushort__ } )' ).
+		//i Array of object types and identifiers. ( 'SET_( { bso::u16__, bso::u16__ } )' ).
 		cObjectsReferences,
 		//i Amount of casts.
 		c_amount,

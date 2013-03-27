@@ -69,9 +69,9 @@ extern class ttr_tutor &FBLTYPTutor;
 #	undef GetObject
 #endif
 
-#define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_ULONG_MAX)
+#define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_U32_MAX)
 #define FBLTYP_UNDEFINED_ID16	((fbltyp::id16__)BSO_USHORT_MAX)
-#define FBLTYP_UNDEFINED_ID8	((fbltyp::id8__)BSO_UBYTE_MAX)
+#define FBLTYP_UNDEFINED_ID8	((fbltyp::id8__)BSO_U8_MAX)
 
 #define FBLTYP_ITEM( id, name )\
 	typedef fbltyp::item_<id>	name##_;\
@@ -130,8 +130,8 @@ extern class ttr_tutor &FBLTYPTutor;
 # define FBLTYP_MIMIC_XIDS16( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::ids16, fbltyp::xids16, sname, bname, xname )
 # define FBLTYP_MIMIC_XIDS32( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::ids32, fbltyp::xids32, sname, bname, xname )
 
-# define FBLTYP_MIMIC_ULONG( sname ) FBLTYP_MIMIC( fbltyp::ulong, sname )
-# define FBLTYP_MIMIC_ULONGS( sname, bname ) FBLTYP_MIMICS( fbltyp::ulong, fbltyp::ulongs, sname, bname )
+# define FBLTYP_MIMIC_U32( sname ) FBLTYP_MIMIC( fbltyp::u32, sname )
+# define FBLTYP_MIMIC_U32S( sname, bname ) FBLTYP_MIMICS( fbltyp::u32, fbltyp::u32s, sname, bname )
 
 
 namespace fbltyp {
@@ -156,13 +156,13 @@ namespace fbltyp {
 		{
 			Value.reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Value.plug( MD );
+			Value.plug( SD );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Value.plug( M );
+			Value.plug( AS );
 		}
 		item_ &operator =( const item_ &I )
 		{
@@ -217,9 +217,9 @@ namespace fbltyp {
 		{
 			Values.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Values.plug( M );
+			Values.plug( AS );
 		}
 		extended_item_ &operator =( const extended_item_ &I )
 		{
@@ -267,10 +267,10 @@ namespace fbltyp {
 			Name.reset( P );
 			Casts.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Name.plug( M );
-			Casts.plug( M );
+			Name.plug( AS );
+			Casts.plug( AS );
 		}
 		detail_ &operator =( const detail_ &CI )
 		{
@@ -291,41 +291,41 @@ namespace fbltyp {
 
 	struct object_reference__
 	{
-		bso::ushort__ Type;
-		bso::ushort__ Identifier;
+		bso::u16__ Type;
+		bso::u16__ Identifier;
 	};
 
-	typedef bso::ushort__	object_t__;
+	typedef bso::u16__	object_t__;
 	E_TMIMIC__( object_t__, object__ );
 
 	typedef bso::bool__ boolean_t__;
 	typedef boolean_t__	boolean__;
-	typedef bitbch::bit_bunch_<mdr::row__>	booleans_t_;
+	typedef bitbch::bit_bunch_<sdr::row__>	booleans_t_;
 	E_TMIMIC( booleans_t, booleans );
 
-	typedef bso::slong__ slong__;
-	typedef bch::E_BUNCH_( slong__ ) slongs_t_;
-	E_TMIMIC( slongs_t, slongs );
+	using bso::s32__;
+	typedef bch::E_BUNCH_( s32__ ) s32s_t_;
+	E_TMIMIC( s32s_t, s32s );
 
-	typedef bso::ulong__	ulong__;
-	typedef bch::E_BUNCH_( ulong__ ) ulongs_t_;
-	E_TMIMIC( ulongs_t, ulongs );
+	using bso::u32__;
+	typedef bch::E_BUNCH_( u32__ ) u32s_t_;
+	E_TMIMIC( u32s_t, u32s );
 
-	typedef bso::ubyte__ id8_t__;
+	typedef bso::u8__ id8_t__;
 	typedef id8_t__ id8__;
 	typedef bch::E_BUNCH_( id8__ ) ids8_t_;
 	E_TMIMIC( ids8_t, ids8 );
 	typedef ctn::E_MCONTAINER_( ids8_ ) xids8_t_;
 	E_TMIMIC( xids8_t, xids8 );
 
-	typedef bso::ushort__ id16_t__;
+	typedef bso::u16__ id16_t__;
 	typedef id16_t__ id16__;
 	typedef bch::E_BUNCH_( id16__ ) ids16_t_;
 	E_TMIMIC( ids16_t, ids16 );
 	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
 	E_TMIMIC( xids16_t, xids16 );
 
-	typedef bso::ulong__ id32_t__;
+	typedef bso::u32__ id32_t__;
 	typedef id32_t__ id32__;
 	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
 	E_TMIMIC( ids32_t, ids32 );
@@ -359,8 +359,8 @@ namespace fbltyp {
 	FBLTYP_XITEM( id32__, xitem32 )
 	FBLTYP_XITEMS( xitem32, xitems32 )
 	/* Both below declaration are not part of the protocol. */
-	typedef fbltyp::detail_<id8__, mdr::row__>	command_detail_	;
-	typedef fbltyp::detail<id8__, mdr::row__>	command_detail;
+	typedef fbltyp::detail_<id8__, sdr::row__>	command_detail_	;
+	typedef fbltyp::detail<id8__, sdr::row__>	command_detail;
 	/**/
 	typedef ctn::E_CONTAINER_( command_detail_ ) commands_details_;
 	typedef ctn::E_CONTAINER( command_detail_ ) commands_details;
@@ -475,65 +475,65 @@ namespace fbltyp {
 
 	FBLTYP_D( Booleans, booleans )
 
-	//f Put 'Slong' into 'Flow'.
-	inline void PutSLong(
-		slong__ SLong,
+	//f Put 's32' into 'Flow'.
+	inline void PutS32(
+		s32__ S32,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::FittedPutSLong( SLong, OFlow );
+		dtfptb::FittedPutS32( S32, OFlow );
 	}
 
-	//f Get 'SLong' from 'IFlow'.
-	inline void GetSLong(
+	//f Get 's32' from 'IFlow'.
+	inline void GetS32(
 		flw::iflow__ &IFlow,
-		slong__ &SLong )
+		s32__ &S32 )
 	{
-		SLong = dtfptb::FittedGetSLong( IFlow );
+		S32 = dtfptb::FittedGetS32( IFlow );
 	}
 	
-	FBLTYP_S( SLong, slong__ )
+	FBLTYP_S( S32, s32__ )
 
-	//f Put 'Slongs' into 'Flow'.
-	void PutSLongs(
-		const slongs_ &SLongs,
+	//f Put 'S32s' into 'Flow'.
+	void PutS32s(
+		const s32s_ &S32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'SLongs' from 'IFlow'.
-	void GetSLongs(
+	//f Get 'S32s' from 'IFlow'.
+	void GetS32s(
 		flw::iflow__ &IFlow,
-		slongs_ &SLongs );
+		s32s_ &S32s );
 
-	FBLTYP_D( SLongs, slongs )
+	FBLTYP_D( S32s, s32s )
 
-	//f Put 'Ulong' into 'Flow'.
-	inline void PutULong(
-		ulong__ ULong,
+	//f Put 'U32' into 'Flow'.
+	inline void PutU32(
+		u32__ U32,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::FittedPutULong( ULong, OFlow );
+		dtfptb::FittedPutU32( U32, OFlow );
 	}
 
-	//f Get 'ULong' from 'IFlow'.
-	inline void GetULong(
+	//f Get 'U32' from 'IFlow'.
+	inline void GetU32(
 		flw::iflow__ &IFlow,
-		ulong__ &ULong )
+		u32__ &U32 )
 	{
-		ULong = dtfptb::FittedGetULong( IFlow );
+		U32 = dtfptb::FittedGetU32( IFlow );
 	}
 	
-	FBLTYP_S( ULong, ulong__ )
+	FBLTYP_S( U32, u32__ )
 
-	//f Put 'Ulongs' into 'Flow'.
-	void PutULongs(
-		const ulongs_ &ULongs,
+	//f Put 'U32s' into 'Flow'.
+	void PutU32s(
+		const u32s_ &U32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'ULongs' from 'IFlow'.
-	void GetULongs(
+	//f Get 'U32s' from 'IFlow'.
+	void GetU32s(
 		flw::iflow__ &IFlow,
-		ulongs_ &ULongs );
+		u32s_ &U32s );
 
-	FBLTYP_D( ULongs, ulongs )
+	FBLTYP_D( U32s, u32s )
 
 	//f Put 'Id8' into 'OFlow'.
 	inline void PutId8(

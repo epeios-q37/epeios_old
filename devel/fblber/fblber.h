@@ -73,13 +73,13 @@ namespace fblber {
 	{
 	protected:
 		virtual const void *FBLBRQGet(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return Repository_( Row );
 		}
 		virtual void *FBLBRQPut(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cast__ Cast )
 		{
 			return Repository_( Row );

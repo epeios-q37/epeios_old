@@ -99,7 +99,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 static void Terminate_( void )
 {
-	mdr::row__ Row = Steerings_.First();
+	sdr::row__ Row = Steerings_.First();
 	csdleo::user_functions__ *Steering = NULL;
 
 	while ( Row != NONE ) {

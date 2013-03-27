@@ -58,13 +58,13 @@ public:
 using namespace fbltyp;
 
 static inline void PutSize_(
-	bso::ulong__ Size,
+	bso::u32__ Size,
 	flw::oflow__ &Flow )
 {
 	dtfptb::NewPutSize( Size, Flow );
 }
 
-static inline bso::ulong__ GetSize_( flw::iflow__ &Flow )
+static inline bso::u32__ GetSize_( flw::iflow__ &Flow )
 {
 	return dtfptb::NewGetSize( Flow);
 }
@@ -74,7 +74,7 @@ namespace {
 		const s &S,
 		flw::oflow__ &OFlow )
 	{
-		mdr::row__ P = S.First();
+		sdr::row__ P = S.First();
 
 		PutSize_( S.Amount(), OFlow );
 
@@ -89,7 +89,7 @@ namespace {
 		s &S )
 	{
 		i I;
-		bso::ulong__ Size = GetSize_( IFlow );
+		bso::u32__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			flw::Get( IFlow, I );
@@ -105,31 +105,31 @@ void fbltyp::PutIds8(
 	PutSet_( Ids8, OFlow );
 }
 
-void fbltyp::PutSLongs(
-	const slongs_ &SLongs,
+void fbltyp::PutS32s(
+	const s32s_ &S32s,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( SLongs, OFlow );
+	PutSet_( S32s, OFlow );
 }
 
-void fbltyp::GetSLongs(
+void fbltyp::GetS32s(
 	flw::iflow__ &IFlow,
-	slongs_ &SLongs )
+	s32s_ &S32s )
 {
-	GetSet_<slongs_, slong__>( IFlow, SLongs );
+	GetSet_<s32s_, s32__>( IFlow, S32s );
 }
-void fbltyp::PutULongs(
-	const ulongs_ &ULongs,
+void fbltyp::PutU32s(
+	const u32s_ &U32s,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( ULongs, OFlow );
+	PutSet_( U32s, OFlow );
 }
 
-void fbltyp::GetULongs(
+void fbltyp::GetU32s(
 	flw::iflow__ &IFlow,
-	ulongs_ &ULongs )
+	u32s_ &U32s )
 {
-	GetSet_<ulongs_, ulong__>( IFlow, ULongs );
+	GetSet_<u32s_, u32__>( IFlow, U32s );
 }
 void fbltyp::GetIds8(
 	flw::iflow__ &IFlow,
@@ -268,7 +268,7 @@ namespace {
 		flw::oflow__ &OFlow )
 	{
 		i Item;
-		mdr::row__ P = C.First();
+		sdr::row__ P = C.First();
 
 		Item.Init( C );
 
@@ -315,7 +315,7 @@ namespace {
 		c &C )
 	{
 		i Item;
-		bso::ulong__ Size = GetSize_( IFlow );
+		bso::u32__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			Item.Init();
