@@ -50,6 +50,8 @@ co += -O
 # To use with gprof
 #co += -pg
 
+lo += -static
+
 ###############################
 
 
@@ -74,8 +76,6 @@ ifeq ("$(os)","Cygwin")
 
 # THe MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
-# DOES NOT WORK ! You have to use compiler
-# under MinGW (MSYS) enviroment.
 	#cc = i686-w64-mingw32-g++
 
 endif
@@ -119,6 +119,11 @@ endif
 ifeq ("$(os)","Darwin")
 
 	libs =
+
+# By décommenting below line, you can compile
+# for 32 bits architectrures instead of
+# the default 64 bits one.
+	#bitness = 32
 
 endif
 
