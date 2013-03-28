@@ -217,7 +217,7 @@ namespace ias {
 			sdr::size__ Amount = NouvelleCapacite - CapaciteCourante;
 			sdr::size__ HandledAmount = 0;
 
-			memset( Buffer, *AGS_UNDEFINED_DESCRIPTOR, sizeof( descriptor__ ) * ( ( Amount  > IAS_BUFFER_SIZE ? IAS_BUFFER_SIZE : Amount ) ) );
+			memset( Buffer, -1, sizeof( descriptor__ ) * ( ( Amount  > IAS_BUFFER_SIZE ? IAS_BUFFER_SIZE : Amount ) ) );
 
 			while ( Amount != HandledAmount ) {
 				Descriptors.Store( Buffer, ( ( Amount - HandledAmount ) > IAS_BUFFER_SIZE ? IAS_BUFFER_SIZE : ( Amount - HandledAmount ) ), CapaciteCourante + HandledAmount );

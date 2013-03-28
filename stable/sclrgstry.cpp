@@ -341,7 +341,7 @@ ERREpilog
 UN( U64, bso::u64__ )
 #endif
 
-UN( U32, bso::u32__ )
+UN( U32, bso::u_32__ )
 UN( U16, bso::u16__ )
 UN( U8, bso::u8__ )
 

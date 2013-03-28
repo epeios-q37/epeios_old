@@ -44,9 +44,7 @@ cio::cout___ COut;
 
 using xml::writer_;
 
-#define NAME			"getbkdapi"
-#define VERSION			"0.2.4"
-#define COPYRIGHT_YEARS	"2001-2006; 2009-2011"
+# if 0
 #define DESCRIPTION		"Get the API from an Epeios-driven backend."
 #define INFO			EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME		EPSMSC_AUTHOR_NAME
@@ -56,6 +54,15 @@ using xml::writer_;
 #define CVS_DETAILS		("$Id$\b " + 5)
 #define COPYRIGHT_OWNER	AUTHOR_NAME " (" AUTHOR_CONTACT ")"
 #define URL				"http://zeusw.org/"
+# endif
+
+# define NAME			"getbkdapi"
+# define VERSION			"0.2.4"
+# define COPYRIGHT_YEARS	"2001-2006;2009-2011;2013"
+# define APP_URL			EPSMSC_APP_URL( NAME )
+# define COPYRIGHT			EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
+# define CVS_DETAILS		("$Id$\b " + 5)
+
 /* Beginning of the part which handles command line arguments. */
 
 enum command {

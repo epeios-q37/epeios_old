@@ -68,11 +68,11 @@ extern class ttr_tutor &FLSTutor;
 # include "iop.h"
 # include "fil.h"
 
-# if defined( CPE__WIN ) || defined ( CPE__MINGW ) || defined ( CPE__CYGWIN )
+# if defined( CPE_MSVC ) || defined ( CPE_MINGW ) || defined ( CPE_CYGWIN )
 #  define FLS_DEFAULT_MAX_FILE_AMOUNT	1000
-# elif defined ( CPE__LINUX )
+# elif defined ( CPE_LINUX )
 #  define FLS_DEFAULT_MAX_FILE_AMOUNT	800	// Linux, par défaut, ne peut ouvrir que 1024 descripteurs (socket comprises).
-# elif defined ( CPE__MAC )
+# elif defined ( CPE_MAC )
 #  define FLS_DEFAULT_MAX_FILE_AMOUNT	200	// Mac, par défaut, ne peut ouvrir que 256 descripteurs (socket comprises).
 # else
 #  error "Unimplemented target !"
@@ -674,8 +674,8 @@ namespace fls {
 	#define E_FILE_STORAGE_DRIVER___	file_storage_driver___
 
 	void ReleaseInactiveFiles_(
-		bso::nuint__ Delay,	// in s.
-		bso::nuint__ MaxAmount = BSO_NUINT_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
+		bso::uint__ Delay,	// in s.
+		bso::uint__ MaxAmount = BSO_UINT_MAX ); // Releases up to 'MaxAmount' files not accessed since 'Delay' ms. Thread-safe.
 }
 
 /*$END$*/

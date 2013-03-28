@@ -427,7 +427,7 @@ namespace xpp {
 		str::string _CypherKey;
 		bso::bool__ _IgnorePreprocessingInstruction;
 		bso::bool__ _AttributeDefinitionInProgress;
-		bso::nuint__ _CDataNesting;
+		bso::uint__ _CDataNesting;
 		status__ _HandleDefineDirective( _extended_parser___ *&Parser );
 		status__ _InitWithFile(
 			const str::string_ &FileName,

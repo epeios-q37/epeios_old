@@ -72,8 +72,8 @@ namespace str {
 
 	namespace {
 		using bch::bunch_;
-		using bso::nuint__;
-		using bso::nsint__;
+		using bso::uint__;
+		using bso::sint__;
 	}
 
 	enum base__ {
@@ -87,20 +87,20 @@ namespace str {
 #define STR_BUFFER___	tol::E_FPOINTER___( bso::char__ )
 
 
-	nuint__ _GenericUnsignedConversion(
+	uint__ _GenericUnsignedConversion(
 		const class string_ &String,
 		sdr::row__ Begin,
 		sdr::row__ *ErrP,
 		base__ Base,
-		nuint__ Limit );
+		uint__ Limit );
 
-	nsint__ _GenericSignedConversion(
+	sint__ _GenericSignedConversion(
 		const class string_ &String,
 		sdr::row__ Begin,
 		sdr::row__ *ErrP,
 		base__ Base,
-		nsint__ PositiveLimit,
-		nsint__ NegativeLimit );
+		sint__ PositiveLimit,
+		sint__ NegativeLimit );
 
 	class _string_size_handler {
 	public:
@@ -220,7 +220,7 @@ namespace str {
 		// Remplace la 'Position'ième occurence de 'Tag' par 'Value'. Retourne 'true' si succés, 'false' sinon.
 		bso::bool__ Replace(
 			char Tag,
-			bso::u32__ Position,
+			bso::uint__ Position,
 			const string_ &Value );
 		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
 		sdr::row__ Search(
@@ -292,11 +292,11 @@ namespace str {
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
-# ifdef CPE__64BITS
+# ifdef CPE_64BITS
 		STR_UN( ULL, bso::u64__, BSO_U64_MAX )
 		STR_SN( SLL, bso::s64__, BSO_S64_MAX, BSO_S64_MIN )
 # endif
-		STR_UN( UL, bso::u32__, BSO_U32_MAX )
+		STR_UN( UL, bso::u_32__, BSO_U_32_MAX )
 		STR_SN( SL, bso::s32__, BSO_S32_MAX, BSO_S32_MIN )
 		STR_UN( US, bso::u16__, BSO_U16_MAX )
 		STR_SN( SS, bso::s16__, BSO_S16_MAX, BSO_S16_MIN )
@@ -311,9 +311,9 @@ namespace str {
 		}
 		void *ToPointer( sdr::row__ *ErrP = NULL )
 		{
-# ifdef CPE__64BITS
+# ifdef CPE_64BITS
 			return (void *)ToULL( ErrP, str::b16 );
-# elif defined ( CPE__32BITS )
+# elif defined ( CPE_32BITS )
 			return (void *)ToUL( ErrP, str::b16 );
 # else
 #  error "Unnknown bitness !"

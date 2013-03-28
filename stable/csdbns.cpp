@@ -135,7 +135,7 @@ ERRBegin
 		FD_SET( Socket_, &fds );
 
 		TimeOutStruct.tv_sec = TimeOut / 1000;
-		TimeOutStruct.tv_usec = ( (bso::ulong__)TimeOut % 1000UL ) * 1000;
+		TimeOutStruct.tv_usec = ( (bso::u32__)TimeOut % 1000UL ) * 1000;
 
 		Reponse = select( (int)( Socket_ + 1 ), &fds, 0, 0, TimeOut != SCK_INFINITE ? &TimeOutStruct : NULL );
 

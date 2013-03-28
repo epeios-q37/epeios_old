@@ -57,7 +57,7 @@ public:
 
 #include "txf.h"
 
-using namespace mdr;
+using namespace sdr;
 
 #if 1
 void btr::_nodes_manager_::Release(
@@ -257,7 +257,7 @@ mbs__position abb_arbre_binaire_::LireDeFlot( flo_entree_portable_ &Flot )
 
 static void AfficherBlancs_(
 	txf::text_oflow__ &Flot,
-	bso::ulong__ Nombre )
+	bso::u32__ Nombre )
 {
 	do {
 		Flot.Put( '.' );
@@ -269,7 +269,7 @@ void btr::_nodes_manager_::PrintStructure(
 	row_t__ Racine,
 	txf::text_oflow__ &Flot ) const
 {
-	bso::ulong__ Niveau = 0;
+	bso::u32__ Niveau = 0;
 	bso::bool__ Left = false, Right = false;
 	row_t__ Courant = Racine;
 

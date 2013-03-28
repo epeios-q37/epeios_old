@@ -83,7 +83,7 @@ namespace csdlec {
 	private:
 		data_ &_Read;
 		data_ &_Write;
-		mdr::row__ _Row;
+		sdr::row__ _Row;
 	protected:
 		virtual fdr::size__ FDRRead(
 			fdr::size__ Maximum,
@@ -95,7 +95,7 @@ namespace csdlec {
 			if ( _Row == NONE )
 				ERRu();
 
-			if ( ( _Read.Amount() - *_Row ) < (mdr::size__)Maximum )
+			if ( ( _Read.Amount() - *_Row ) < (sdr::size__)Maximum )
 				Maximum = _Read.Amount() - *_Row;
 
 			_Read.Recall( _Row, Maximum, Buffer );

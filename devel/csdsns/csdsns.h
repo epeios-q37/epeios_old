@@ -94,7 +94,7 @@ namespace csdsns {
 			log__ Log,
 			id__ Id,
 			void *UP,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{}
 	public:
 		void reset( bso::bool__  = true )
@@ -117,7 +117,7 @@ namespace csdsns {
 			log__ Log,
 			id__ Id,
 			_user_pointer__ UP,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			CSDSNSLog( Log, Id, UP, Amount );
 		}
@@ -176,9 +176,9 @@ ERREpilog
 			S_.Log.Functions = NULL;
 
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			UPs.plug( MM );
+			UPs.plug( AS );
 		}
 		core_ &operator =( const core_ &C )
 		{
@@ -199,9 +199,9 @@ ERREpilog
 		{
 			mtx::Lock( S_.Mutex );
 
-			mdr::row__ Row = UPs.New();
+			sdr::row__ Row = UPs.New();
 
-			if ( *Row >= BSO_USHORT_MAX )
+			if ( *Row >= BSO_U16_MAX )
 				ERRl();
 
 			mtx::Unlock( S_.Mutex );

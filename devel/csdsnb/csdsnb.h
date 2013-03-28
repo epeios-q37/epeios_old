@@ -64,24 +64,24 @@ extern class ttr_tutor &CSDSNBTutor;
 #	include "flw.h"
 #	include "dtfptb.h"
 
-#	define CSDSNB_PING	BSO_ULONG_MAX
+#	define CSDSNB_PING	BSO_U32_MAX
 #	define CSDSNB_CLOSE	( CSDSNB_PING - 1 )
 #	define CSDSNB_UNDEFINED	( CSDSNB_CLOSE - 1 )
 #	define CSDSNB_RESERVED	CSDSNB_UNDEFINED
 
 namespace csdsnb {
-	typedef bso::ulong__ id__;
+	typedef bso::u32__ id__;
 
 	inline void PutId(
 		id__ Id,
 		flw::oflow__ &Flow )
 	{
-		dtfptb::FittedPutULong( Id, Flow );
+		dtfptb::FittedPutU32( Id, Flow );
 	}
 
 	inline id__ GetId( flw::iflow__ &Flow )
 	{
-		return dtfptb::FittedGetULong( Flow );
+		return dtfptb::FittedGetU32( Flow );
 	}
 }
 

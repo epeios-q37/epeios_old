@@ -73,10 +73,10 @@ void fblfrb::backend_remote_access_base___::In(
 	CIN( Object, object__)
 	CIN( Boolean, boolean__ )
 	CIN( Booleans, booleans_ )
-	CIN( SLong, slong__ )
-	CIN( SLongs, slongs_ )
-	CIN( ULong, ulong__ )
-	CIN( ULongs, ulongs_ )
+	CIN( S32, s32__ )
+	CIN( S32s, s32s_ )
+	CIN( U32, u32__ )
+	CIN( U32s, u32s_ )
 	CIN( Id8, id8__ )
 	CIN( Ids8, ids8_ )
 	CIN( XIds8, xids8_ )
@@ -130,10 +130,10 @@ void Pop_(
 	COUT( Object, object__)
 	COUT( Boolean, boolean__ )
 	COUT( Booleans, booleans_ )
-	COUT( SLong, slong__ )
-	COUT( SLongs, slongs_ )
-	COUT( ULong, ulong__ )
-	COUT( ULongs, ulongs_ )
+	COUT( S32, s32__ )
+	COUT( S32s, s32s_ )
+	COUT( U32, u32__ )
+	COUT( U32s, u32s_ )
 	COUT( Id8, id8__ )
 	COUT( Ids8, ids8_ )
 	COUT( Id16, id16__ )
@@ -166,7 +166,7 @@ void Pop_(
 
 void fblfrb::backend_remote_access_base___::PostProcess( flw::ioflow__ &Flow )
 {
-	mdr::row__ Row = Data.First();
+	sdr::row__ Row = Data.First();
 	datum__ Datum;
 
 	while ( Row != NONE ) {

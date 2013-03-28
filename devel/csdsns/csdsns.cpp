@@ -79,7 +79,7 @@ const char *csdsns::GetLogLabel( log__ Log )
 
 void csdsns::_functions___::_Clean( void )
 {
-	mdr::row__ Row = _Core.UPs.First();
+	sdr::row__ Row = _Core.UPs.First();
 
 	while ( Row != NONE ) {
 		_Functions->PostProcess( _Core.UPs( Row ) );

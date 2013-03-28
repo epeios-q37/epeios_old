@@ -351,13 +351,13 @@ static status__ RetrieveTree_(
 	flw::oflow__ &Flow  )
 {
 	status__ Status = s_Undefined;
-	bso::nuint__ Nesting = 0;
+	bso::uint__ Nesting = 0;
 
 	while ( Status == s_Undefined ) {
 		switch ( Parser.Parse( xml::tfStartTag | xml::tfEndTag | xml::tfValue ) ) {
 		case xml::tStartTag:
 			Dump_( Parser.DumpData(), Flow );
-			if ( Nesting == BSO_NUINT_MAX )
+			if ( Nesting == BSO_UINT_MAX )
 				ERRc();
 			Nesting++;
 			break;
@@ -1044,7 +1044,7 @@ static void StripHeadingSpaces_( str::string_ &Data )
 		Data.Remove( Data.First() );
 }
 
-#define CDATA_NESTING_MAX	BSO_NUINT_MAX	
+#define CDATA_NESTING_MAX	BSO_UINT_MAX	
 
 status__ xpp::_extended_parser___::Handle(
 	_extended_parser___ *&Parser,

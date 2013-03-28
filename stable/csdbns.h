@@ -86,7 +86,7 @@ namespace csdbns {
 	using namespace csdsuf;
 
 	//t The type of a port.
-	typedef bso::ushort__	port__;
+	typedef bso::u16__	port__;
 
 	//c User functions with socket.
 	class socket_user_functions__ {

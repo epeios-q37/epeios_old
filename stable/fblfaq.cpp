@@ -69,7 +69,7 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CMITEM( command_item_ ) Item;
-		epeios::row__ P =NONE;
+		sdr::row__ P =NONE;
 		command Command;
 	ERRBegin
 		Item.Init( Items );
@@ -111,7 +111,7 @@ namespace {
 		const type_item_ &Item,
 		type_ &Type )
 	{
-		epeios::row__ P = NONE;
+		sdr::row__ P = NONE;
 		ctn::E_CMITEM( str::string_ ) Value;
 
 		Value.Init( Item.Values );
@@ -145,7 +145,7 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CITEM( xitem16_ ) Item;
-		epeios::row__ P = NONE;
+		sdr::row__ P = NONE;
 		type Type;
 	ERRBegin
 		Item.Init( Items );

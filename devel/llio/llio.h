@@ -66,15 +66,15 @@ extern class ttr_tutor &LLIOTutor;
 # undef LLIO__USE_PLLIO
 # undef LLIO__USE_WLLIO
 
-#ifdef CPE__VC
+#ifdef CPE_VC
 # define LLLIO__USE_WLLIO
-#elif defined( CPE__LINUX )
+#elif defined( CPE_LINUX )
 # define LLLIO__USE_PLLIO
-#elif defined( CPE__CYGWIN )
+#elif defined( CPE_CYGWIN )
 # define LLLIO__USE_PLLIO
-#elif defined( CPE__MAC )
+#elif defined( CPE_MAC )
 # define LLLIO__USE_PLLIO
-#elif defined( CPE__MINGW )
+#elif defined( CPE_MINGW )
 # define LLLIO__USE_MLLIO
 #else
 # error "Undefined platform !"

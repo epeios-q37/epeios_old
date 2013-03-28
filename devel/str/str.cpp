@@ -285,7 +285,7 @@ void string_::Replace(
 
 bso::bool__ string_::Replace(
 	char Tag,
-	bso::u32__ Position,
+	bso::uint__ Position,
 	const str::string_ &Value )
 {
 	sdr::row__ Row = First();
@@ -347,18 +347,18 @@ sdr::row__ string_::Search(
 		return Start;
 }
 
-nuint__ str::_GenericUnsignedConversion(
+uint__ str::_GenericUnsignedConversion(
 	const str::string_ &String,
 	sdr::row__ Begin,
 	sdr::row__ *ErrP,
 	base__ BaseFlag,
-	nuint__ Limit )
+	uint__ Limit )
 {
-	nuint__ Result = 0;
+	uint__ Result = 0;
 	sdr::row__ &P = Begin;
 	bso::u8__ C;
 	bso::u8__ Base;
-	nuint__ OtherLimit = 0;
+	uint__ OtherLimit = 0;
 
 	if ( BaseFlag == bAuto )
 		if ( ( ( String.Amount() != 0 ) ) && ( String.Get( P ) == STR_HEXADECIMAL_MARKER ) ) {
@@ -403,13 +403,13 @@ nuint__ str::_GenericUnsignedConversion(
 	return Result;
 }
 
-nsint__ str::_GenericSignedConversion(
+sint__ str::_GenericSignedConversion(
 	const class string_ &String,
 	sdr::row__ Begin,
 	sdr::row__ *ErrP,
 	base__ Base,
-	nsint__ PositiveLimit,
-	nsint__ NegativeLimit )
+	sint__ PositiveLimit,
+	sint__ NegativeLimit )
 {
 	if ( PositiveLimit < 0 )
 		ERRu();
@@ -419,7 +419,7 @@ nsint__ str::_GenericSignedConversion(
 			*ErrP = *Begin + 1;
 			return 0;
 		} else 
-			return -(nsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
+			return -(sint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
 	else if ( String.Get( Begin ) == '+' )
 		if ( String.Next( Begin ) == NONE ) {
 			if ( ErrP != NULL )
@@ -428,9 +428,9 @@ nsint__ str::_GenericSignedConversion(
 				ERRc();
 			return 0;
 		} else 
-			return (nsint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
+			return (sint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
 	else 
-		return (nsint__)_GenericUnsignedConversion( String, Begin, ErrP, Base, PositiveLimit );
+		return (sint__)_GenericUnsignedConversion( String, Begin, ErrP, Base, PositiveLimit );
 }
 
 
@@ -452,7 +452,7 @@ bso::lfloat__ string_::ToLF(
 				P = Next( P );
 			}
 
-		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_U32_MAX / 10 ) ) ) {
+		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_LFLOAT_MAX / 10 ) ) ) {
 			Result = Result * 10 + C - '0';
 			P = Next( P );
 		}

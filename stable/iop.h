@@ -70,20 +70,20 @@ extern class ttr_tutor &IOPTutor;
 #	define IOP__BUFFER_SIZE	1024
 #endif
 
-#ifdef IOP_USE_STANDARD_IO
+#ifdef E_USE_STANDARD_IO
 #	define IOP__USE_STANDARD_IO
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__LINUX )
+#elif defined( CPE_LINUX )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__MAC )
+#elif defined( CPE_MAC )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__CYGWIN )
+#elif defined( CPE_CYGWIN )
 #	define IOP__USE_LOWLEVEL_IO
-#elif defined( CPE__MINGW )
+#elif defined( CPE_MINGW )
 #	define IOP__USE_LOWLEVEL_IO
 #else
-#	error "Undefined platform ! Define one or use 'IOP_USE_STANDARD_IO'"
+#	error "Undefined platform ! Define one or use 'E_USE_STANDARD_IO'"
 #endif
 
 #ifdef IOP__USE_STANDARD_IO

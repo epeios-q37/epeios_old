@@ -148,29 +148,29 @@ namespace dtfptb {
 
 	//f Put 'ULong' into 'Flow'.
 	inline void FixedPutU32(
-		u32__ U32,
+		u_32__ U32,
 		flw::oflow__ &Flow )
 	{
 		_FixedPutI32( U32, Flow );
 	}
 
 	//f Return the unsigned long stored in 'Flow'.
-	inline u32__ FixedGetU32( flw::iflow__ &Flow )
+	inline u_32__ FixedGetU32( flw::iflow__ &Flow )
 	{
-		return _FixedGetI32<u32__>( Flow );
+		return _FixedGetI32<u_32__>( Flow );
 	}
 
 	void FittedPutU32(
-		bso::u32__ U32,
+		bso::u_32__ U32,
 		flw::oflow__ &Flow );
 
-	bso::u32__ FittedGetU32( flw::iflow__ &Flow );
+	bso::u_32__ FittedGetU32( flw::iflow__ &Flow );
 
 	inline void FittedPutS32(
 		bso::s32__ S32,
 		flw::oflow__ &Flow )
 	{
-		FittedPutU32( (bso::u32__ )S32, Flow );
+		FittedPutU32( (bso::u_32__ )S32, Flow );
 	}
 
 	inline bso::s32__ FittedGetS32( flw::iflow__ &Flow )
@@ -187,7 +187,7 @@ namespace dtfptb {
 
 	inline bso::u16__ FittedGetU16( flw::iflow__ &Flow )
 	{
-		bso::u32__ U32 = FittedGetU32( Flow );
+		bso::u_32__ U32 = FittedGetU32( Flow );
 
 		if ( U32 > BSO_U16_MAX )
 			ERRc();
@@ -213,7 +213,7 @@ namespace dtfptb {
 	#define DTFPTB_L2	65535
 	#define DTFPTB_L3	16777215
 
-	inline bso::u8__ OldGetSizeLength( bso::u32__ Size )
+	inline bso::u8__ OldGetSizeLength( bso::u_32__ Size )
 	{
 		if ( Size >= ( DTFPTB_L3 + DTFPTB_L2 + DTFPTB_L1 ) )
 			return 10;
@@ -227,7 +227,7 @@ namespace dtfptb {
 
 	namespace {
 		inline bso::bool__ Fits_(
-			bso::u32__ Size,
+			bso::u_32__ Size,
 			bso::u8__ Level )
 		{
 			return ( Size < ( 1UL << ( Level * 7 ) ) );
@@ -236,7 +236,7 @@ namespace dtfptb {
 
 #	define DTFPTB__TEST( l )	if ( Test_( Size, l ) ) return l;
 
-	inline bso::u8__ NewGetSizeLength( bso::u32__ Size )
+	inline bso::u8__ NewGetSizeLength( bso::u_32__ Size )
 	{
 		bso::u8__ Counter = 1;
 
@@ -252,7 +252,7 @@ namespace dtfptb {
 	}
 
 	void OldPutSize(
-		bso::u32__ Size,
+		bso::u_32__ Size,
 		size_buffer__ &Buffer );
 /*
 	inline void NewPutSize(
@@ -260,25 +260,25 @@ namespace dtfptb {
 		size_buffer__ &Buffer );
 */
 	void OldPutSize(
-		bso::u32__ Size,
+		bso::u_32__ Size,
 		flw::oflow__ &Flow );
 	
 	inline void NewPutSize(
-		bso::u32__ Size,
+		bso::u_32__ Size,
 		flw::oflow__ &Flow )
 	{
 		FittedPutU32( Size, Flow );
 	}
 
 	
-	bso::u32__ OldGetSize( flw::iflow__ &Flow );
+	bso::u_32__ OldGetSize( flw::iflow__ &Flow );
 
-	inline bso::u32__ NewGetSize( flw::iflow__ &Flow )
+	inline bso::u_32__ NewGetSize( flw::iflow__ &Flow )
 	{
 		return FittedGetU32( Flow );
 	}
 
-	bso::u32__ OldGetSize( const size_buffer__ &Buffer );
+	bso::u_32__ OldGetSize( const size_buffer__ &Buffer );
 //	bso::u32__ NewGetSize( const size_buffer__ &Buffer );
 
 }

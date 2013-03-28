@@ -68,13 +68,13 @@ extern class ttr_tutor &TOLTutor;
 
 # include "cpe.h"
 
-# ifdef CPE__POSIX
-#  ifdef CPE__MAC
+# ifdef CPE_POSIX
+#  ifdef CPE_MAC
 #   define TOL__MAC
 # else
 #   define TOL__POSIX
 # endif
-# elif defined( CPE__WIN )
+# elif defined( CPE_WIN )
 #  define TOL__WIN
 #  include "Windows.h"
 # else
@@ -92,7 +92,7 @@ extern class ttr_tutor &TOLTutor;
 #  error
 # endif
 
-#if defined( CPE__VC ) || defined( CPE__GCC )
+#if defined( CPE_VC ) || defined( CPE_GCC )
 #	include <sys/timeb.h>
 #else
 #	error "Unknown compiler"
@@ -570,7 +570,12 @@ namespace tol {
 	}
 #endif
 
-# define TOL_TICK_DIFF_OVERFLOW	BSO_NUINT_MAX
+	typedef bso::uint__ diff__;
+# define TOL_DIFF_MAX			BSO_UINT_MAX
+# define TOL_TICK_DIFF_OVERFLOW	TOL_DIFF_MAX
+
+	typedef bso::u_32__ coeff__;
+# define TOL_COEFF_MAX	BSO_U32_MAX
 
 // Horloge de précision. N'est utile que pour comparer 2 
 # ifdef TOL__WIN
@@ -587,20 +592,20 @@ namespace tol {
 		return Counter;
 	}
 
-	inline bso::nuint__ _Diff(
+	inline diff__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::nuint__ Coeff)
+		coeff__ Coeff)
 	{
 		if ( Op1->QuadPart < Op2->QuadPart )
 			ERRc();
 
 		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
 
-		if ( Diff > BSO_NUINT_MAX )
+		if ( Diff > TOL_DIFF_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
-		return (bso::nuint__)Diff;
+		return (diff__)Diff;
 	}
 
 	inline time_t _Time( void )
@@ -658,15 +663,15 @@ namespace tol {
 		return TP;
 	}
 
-	inline bso::nuint__ _Diff(
+	inline diff__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::nuint__ Coeff)
+		coeff__ Coeff)
 	{
 		tick__ Intermediate;
-		bso::nuint__ Result = 0;
+		bso::uint__ Result = 0;
 		bso::bool__ CarryFlag = Op1->tv_nsec < Op2->tv_nsec;
-		bso::nuint__ Frac = 0;
+		bso::uint__ Frac = 0;
 
 		if ( Op1->tv_sec >= Op2->tv_sec )
 			if( Op1->tv_sec == Op2->tv_sec )
@@ -677,14 +682,14 @@ namespace tol {
 
 		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
 
-		if ( Op1->tv_sec > ( BSO_NUINT_MAX / Coeff ) )
+		if ( Op1->tv_sec > ( BSO_UINT_MAX / Coeff ) )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		Result = Op1->tv_sec * Coeff;
 
 		Frac = Intermediate->tv_nsec / ( 1000000 / Coeff );
 
-		if ( ( Result + Frac  ) > BSO_NUINT_MAX )
+		if ( ( Result + Frac  ) > BSO_UINT_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
 
 		return Result + Frac;
@@ -698,21 +703,21 @@ namespace tol {
 #  error "Unhandled platform !"
 # endif
 
-	inline bso::nuint__ SecDiff( 
+	inline diff__ SecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1 );
 	}
 
-	inline bso::nuint__ MilliSecDiff( 
+	inline diff__ MilliSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1000 );
 	}
 
-	inline bso::nuint__ NanoSecDiff( 
+	inline diff__ NanoSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
@@ -751,10 +756,12 @@ namespace tol {
 		srand( Seed );
 	}
 
+	typedef bso::uint__ delay__;
+
 	class timer__
 	{
 	private:
-		bso::nuint__ _Delay;
+		delay__ _Delay;
 		tick__ _Start;
 	public:
 		void reset( bso::bool__ = true )
@@ -769,7 +776,7 @@ namespace tol {
 		{
 			reset( );
 		}
-		void Init( bso::nuint__ Delay )
+		void Init( delay__ Delay )
 		{
 			_Start = Tick();
 			_Delay = Delay;

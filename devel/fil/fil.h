@@ -81,9 +81,9 @@ namespace lcl {
 	class meaning_;
 }
 
-# if defined( CPE__POSIX )
+# if defined( CPE_POSIX )
 #  define FIL__POSIX
-# elif defined( CPE__WIN )
+# elif defined( CPE_WIN )
 #  define FIL__WIN
 # else
 #  error "Undefined platform !"

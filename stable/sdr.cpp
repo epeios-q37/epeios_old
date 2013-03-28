@@ -57,50 +57,6 @@ public:
 
 using namespace sdr;
 
-xsize__ sdr::Convert( size__ Size )
-{
-	xsize__ XSize;
-	length__ Position = SDR__DSIZE_SIZE_MAX - 1;
-
-	XSize._Size[Position] = Size & 0x7f;
-	Size >>= 7;
-
-	while ( Size != 0 ) {
-		if ( Position-- == 0 )
-			ERRc();
-
-		XSize._Size[Position] = ( Size & 0x7f ) | 0x80; 
-		Size >>= 7;
-	}
-
-	XSize._Length = SDR__DSIZE_SIZE_MAX - Position;
-
-	return XSize;
-}
-
-#define LIMIT ( SDR_SIZE_MAX >> 7 )
-
-size__ sdr::Convert(
-	const sdr::datum__ *DSize,
-	sdr::size__ &Length )
-{
-	length__ Position = 0;
-	size__ Size = 0;
-
-	do {
-		if ( Size > LIMIT )
-			ERRc();
-
-		Size = ( Size << 7 ) + ( DSize[Position] & 0x7f );
-	} while ( DSize[Position++] & 0x80 );
-
-	if ( &Length != NULL )
-		Length = Position;
-
-	return Size;
-}
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

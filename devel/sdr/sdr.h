@@ -94,48 +94,6 @@ namespace sdr {
 	//t The type of the datum in a storage.
 	typedef bso::raw__	datum__;
 
-// Prédéclarations.
-	struct _xsize__;
-	typedef _xsize__ xsize__;
-
-	xsize__ Convert( size__ Size );
-
-	// 'Dynamic size' : taile de taille variable.
-	typedef sdr::datum__ dsize__[SDR__DSIZE_SIZE_MAX];
-
-	typedef bso::u8__ length__;
-# define SDRM__LENGTH_MAX BSO_UBYTE_MAX
-
-	typedef struct _xsize__ {
-	private:
-		dsize__ _Size;
-		length__ _Length;
-	public:
-		const sdr::datum__ *DSizeBuffer( void ) const
-		{
-			if ( _Length == 0 )
-				ERRc();
-
-			return _Size + SDR__DSIZE_SIZE_MAX - _Length;
-		}
-		length__ BufferSize( void ) const
-		{
-			return _Length;
-		}
-		void reset( bso::bool__ = true )
-		{
-			memset( _Size, 0, sizeof( _Size ) );
-			_Length = 0;
-		}
-		E_CVDTOR( _xsize__ );
-		friend xsize__ sdr::Convert( sdr::size__ Size );
-	} xsize__;
-
-	size__ Convert(
-		const sdr::datum__ *DSize,
-		sdr::size__ &Length = *(sdr::size__ *)NULL );
-
-
 	//c Abstract storage driver. Use 'E_STORAGE_DRIVER__' instead directly this class.
 	class storage_driver__
 	{

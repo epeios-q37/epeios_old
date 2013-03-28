@@ -168,7 +168,7 @@ static void AnalyzeFreeArguments_(
 {
 ERRProlog
 	clnarg::arguments Free;
-	mdr::row__ P;
+	sdr::row__ P;
 ERRBegin
 	Free.Init();
 
@@ -347,7 +347,7 @@ protected:
 		csdsns::log__ Log,
 		csdsns::id__ Id,
 		void *UP,
-		mdr::size__ Amount )
+		sdr::size__ Amount )
 	{
 		tol::buffer__ Buffer;
 

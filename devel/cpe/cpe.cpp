@@ -61,9 +61,9 @@ using namespace cpe;
 
 static const char *Processor_( void )
 {
-#ifdef CPE__X86
+#ifdef CPE_X86
 	return "x86";
-#elif defined( ARM )
+#elif defined( CPE_ARM )
 	return "ARM";
 #else
 # error
@@ -72,9 +72,9 @@ static const char *Processor_( void )
 
 static const char *Size_( void )
 {
-#ifdef CPE__32BITS
+#ifdef CPE_32BITS
 	return "32";
-#elif defined( CPE__64BITS )
+#elif defined( CPE_64BITS )
 	return "64";
 #else
 # error
@@ -83,17 +83,17 @@ static const char *Size_( void )
 
 static const char *Enviroment_( void )
 {
-#if defined( CPE__MSVC )
+#if defined( CPE_MSVC )
 	return "MSVC";
-#elif defined( CPE__MAC )
+#elif defined( CPE_MAC )
 	return "MacOS";
-#elif defined( CPE__CYGWIN )
+#elif defined( CPE_CYGWIN )
 	return "Cygwin";
-#elif defined( CPE__MINGW )
+#elif defined( CPE_MINGW )
 	return "MinGW";
-#elif defined( CPE__LINUX )
+#elif defined( CPE_LINUX )
 	return "GNU/Linux";
-#elif defined( CPE__ANDROID )
+#elif defined( CPE_ANDROID )
 	return "Android";
 #else
 	return "Unknown";

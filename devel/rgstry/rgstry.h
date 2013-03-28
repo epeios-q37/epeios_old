@@ -1858,14 +1858,14 @@ namespace rgstry {
 
 	E_AUTO( multi_level_registry )
 
-	inline str::nuint__ _GetUnsigned(
+	inline str::uint__ _GetUnsigned(
 		const str::string_ &RawValue,
-		str::nuint__ Default,
+		str::uint__ Default,
 		bso::bool__ *Error,
-		str::nuint__ Min,
-		str::nuint__ Max )
+		str::uint__ Min,
+		str::uint__ Max )
 	{
-		str::nuint__ Value = Default;
+		str::uint__ Value = Default;
 		sdr::row__ LocalError = NONE;
 
 		Value = str::_GenericUnsignedConversion( RawValue, 0, &LocalError, str::bAuto, Max );
@@ -1883,15 +1883,15 @@ namespace rgstry {
 		return Value;
 	}
 
-	template <typename registry, typename path> inline str::nuint__ _GetUnsigned(
+	template <typename registry, typename path> inline str::uint__ _GetUnsigned(
 		const registry &Registry,
 		const path &Path,
-		str::nuint__ Default,
+		str::uint__ Default,
 		bso::bool__ *Error,
-		str::nuint__ Min,
-		str::nuint__ Max )
+		str::uint__ Min,
+		str::uint__ Max )
 	{
-		str::nuint__ Value = Default;
+		str::uint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
 		sdr::row__ PathError = NONE;
@@ -1917,15 +1917,15 @@ namespace rgstry {
 		return Value;
 	}
 
-	template <typename registry, typename path> inline str::nsint__ _GetSigned(
+	template <typename registry, typename path> inline str::sint__ _GetSigned(
 		const registry &Registry,
 		const path &Path,
-		str::nsint__ Default,
+		str::sint__ Default,
 		bso::bool__ *Error,
-		str::nsint__ Min,
-		str::nsint__ Max )
+		str::sint__ Min,
+		str::sint__ Max )
 	{
-		str::nsint__ Value = Default;
+		str::sint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
 		sdr::row__ GenericError = NONE;
@@ -1971,7 +1971,7 @@ namespace rgstry {
 #ifdef BSO__64BITS_ENABLED
 	_M( ULL, bso::u64__, BSO_U64_MIN, BSO_U64_MAX )
 #endif
-	_M( UL, bso::u32__, BSO_U32_MIN, BSO_U32_MAX )
+	_M( UL, bso::u_32__, BSO_U_32_MIN, BSO_U_32_MAX )
 	_M( US, bso::u16__, BSO_U16_MIN, BSO_U16_MAX )
 	_M( UB, bso::u8__, BSO_U8_MIN, BSO_U8_MAX )
 

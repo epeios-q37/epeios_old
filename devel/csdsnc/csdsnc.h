@@ -68,7 +68,7 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "csdsnb.h"
 #include "bso.h"
 #include "cpe.h"
-#include "mmm.h"
+#include "ags.h"
 
 #ifdef CPE__MT
 #	define CSDSNC__MT
@@ -144,12 +144,12 @@ namespace csdsnc {
 		virtual void CSDSNCLog(
 			log__ Log,
 			const void *Flow,
-			mdr::size__ Amount ) = 0;
+			sdr::size__ Amount ) = 0;
 	public:
 		void Log(
 			log__ Log,
 			const void *Flow,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{
 			CSDSNCLog( Log ,Flow, Amount );
 		}
@@ -183,7 +183,7 @@ ERREpilog
 				mutex__ Mutex;
 			} Log;
 			struct ping__ {
-				bso::ulong__ Delay;	// Délai maximum d'inactivité.
+				bso::u32__ Delay;	// Délai maximum d'inactivité.
 				mutex__ Mutex;	// Pour signaler et attendre la terminaison du 'thread' dédié au 'ping'.
 			} Ping;
 			flows_::s Flows;
@@ -225,13 +225,13 @@ ERREpilog
 			S_.Ping.Delay = 0;
 			S_.Ping.Mutex = CSDSNC_NO_MUTEX;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Flows.plug( MD );
+			Flows.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Flows.plug( MM );
+			Flows.plug( AS );
 		}
 		core_ &operator =( const core_ &C )
 		{
@@ -242,7 +242,7 @@ ERREpilog
 		bso::bool__ Init( 
 			const char *HostService,
 			log_functions__ &LogFunctions,
-			bso::ulong__ PingDelay )
+			bso::u32__ PingDelay )
 		{
 			reset();
 

@@ -67,8 +67,8 @@ extern class ttr_tutor &TXFTutor;
 # include "flw.h"
 # include "tol.h"
 
-# ifndef TXF_DISABLE_64BITS
-#  if defined( CPE__64BITS )
+# ifndef E_DISABLE_64BITS
+#  if defined( CPE_64BITS )
 #   define TXF__64BITS_ENABLED
 #  endif
 # endif
@@ -425,9 +425,9 @@ namespace txf {
 	// Place une fin de ligne sur le txft.
 	TXF_DFS( nl )
 	{
-#if defined( CPE__WIN ) || defined( CPE__CYGWIN ) || defined( CPE__MINGW )
+#if defined( CPE_MSVC ) || defined( CPE_CYGWIN ) || defined( CPE_MINGW )
 		return Flow << "\r\n";
-#elif defined( CPE__LINUX ) || defined( CPE__MAC )
+#elif defined( CPE_LINUX ) || defined( CPE_MAC )
 		return Flow << '\n';
 #else
 #	error "Unknow target !"

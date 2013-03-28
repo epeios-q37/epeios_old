@@ -63,183 +63,181 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
-# undef CPE__MSVC		// Environnement Microsoft Visual C++.
-# undef CPE__MAC		// Environnement MAC.
-# undef CPE__CYGWIN		// Environnement CYGWIN.
-# undef CPE__MINGW		// Environnement MINGW.
-# undef CPE__LINUX		// Environnement Linux
-# undef CPE__ANDROID	// Environnement Android.
+# undef CPE_MSVC	// Environnement Microsoft Visual C++.
+# undef CPE_MAC		// Environnement MAC.
+# undef CPE_CYGWIN	// Environnement CYGWIN.
+# undef CPE_MINGW	// Environnement MINGW.
+# undef CPE_LINUX	// Environnement Linux
+# undef CPE_ANDROID	// Environnement Android.
 
-# undef CPE__WIN		// Windows système base API
-# undef CPE__POSIX		// Posix système base API.
+# undef CPE_WIN		// Windows système base API
+# undef CPE_POSIX	// Posix système base API.
 
-# undef CPE__VC		// Compilateur VC++
-# undef CPE__VC6	// Compilateur VC++ V6
-# undef CPE__VC8	// Compilateur VC++ V8 (2005)
-# undef CPE__VC9	// Compilateur VC++ V9 (2008)
-# undef CPE__GCC	// Compilateur GNU C++.
-# undef CPE__GCC3	// Compilateur GNU C++ V3.x
+# undef CPE_VC		// Compilateur VC++
+# undef CPE_VC6		// Compilateur VC++ V6
+# undef CPE_VC8		// Compilateur VC++ V8 (2005)
+# undef CPE_VC9		// Compilateur VC++ V9 (2008)
 
-# undef CPE__MT			// Cible multitâche.
-# undef CPE__CONSOLE	// Cible console.
-# undef CPE__LIBRARY	// Cible bibliothèque (DLL, .so, ...)
+# undef CPE_GCC		// Compilateur GNU C++.
+# undef CPE_GCC3	// Compilateur GNU C++ V3.x
 
-# undef CPE__JAVA		// Cible composant java en code natif.
-# undef CPE__GECKO		// Cible composant Gecko.
+# undef CPE_MT			// Cible multitâche.
+# undef CPE_CONSOLE		// Cible console.
+# undef CPE_LIBRARY		// Cible bibliothèque (DLL, .so, ...)
 
-# undef CPE__X86		// Processeur Intel et compatible.
-# undef CPE__ARM		// Processeur ARM.
+# undef CPE_JAVA	// Cible composant java en code natif.
+# undef CPE_GECKO	// Cible composant Gecko.
 
-# undef CPE__32BITS		// Processeur 32 bits.
-# undef CPE__64BITS		// Processeur 64 bits.
+# undef CPE_X86		// Processeur Intel et compatible.
+# undef CPE_ARM		// Processeur ARM.
 
-# ifdef CPE_GECKO
-#  define CPE__GECKO
+# undef CPE_32BITS	// Processeur 32 bits.
+# undef CPE_64BITS	// Processeur 64 bits.
+
+# ifdef E_GECKO
+#  define CPE_GECKO
+#  define CPE_LIBRARY
 # endif
 
-#ifdef CPE__GECKO
-#  define CPE__LIBRARY
-# endif
-
-# ifdef CPE_JAVA
-#  define CPE__JAVA
-#  define CPE__LIBRARY
+# ifdef E_JAVA
+#  define CPE_JAVA
+#  define CPE_LIBRARY
 # endif
 
 # ifdef _MSC_VER
-#  define CPE__MSVC
-#  define CPE__WIN
-#  define CPE__VC
+#  define CPE_MSVC
+#  define CPE_WIN
+#  define CPE_VC
 #  ifdef _WIN64
-#   define CPE__64BITS
+#   define CPE_64BITS
 #  elif defined( _WIN32 )
-#   define CPE__32BITS
+#   define CPE_32BITS
 #  else
 #   error "Unknown bitness".
 #  endif	
 #  ifdef _MT
-#   ifndef CPE_ST
-#    define CPE__MT
+#   ifndef E_ST
+#    define CPE_MT
 #   endif
-#  elif defined( CPE_MT )
-#   error "'CPE_MT' is defined, but compiler options does not allow multitasking features."
+#  elif defined( E_MT )
+#   error "'E_MT' is defined, but compiler options does not allow multitasking features."
 #  endif
 # endif
 
-#ifdef __APPLE__
-# define CPE__MAC
-# define CPE__GCC
-# define CPE__POSIX
-#endif
-
-#ifdef __GNUC__
-# define CPE__GCC
-# ifdef __CYGWIN__
-#  define CPE__CYGWIN
-#  define CPE__POSIX
-#  ifdef __CYGWIN64__
-#   define CPE__64BITS
-#  elif defined( __CYGWIN32__ )
-#   define CPE__32BITS
-#  else
-#   error "Unknown bitness".
-#  endif	
-# elif defined( __MINGW32__ )
-#  define CPE__MINGW
-#  define CPE__WIN
-#  ifdef _WIN64
-#   define CPE__64BITS
-#  elif defined( _WIN32 )
-#   define CPE__32BITS
-#  else
-#   error "Unknown bitness".
-#  endif	
-# elif defined( __linux__ )
-#  define CPE__LINUX
-#  define CPE__POSIX
+# ifdef __APPLE__
+#  define CPE_MAC
+#  define CPE_GCC
+#  define CPE_POSIX
 # endif
-# ifdef __ANDROID__
-#  define CPE__ANDROID
-#  if ( __SIZEOF_POINTER__ == 4 )
-#   define CPE__32BITS
-#  else
-#   error "New biteness : patching required !"
+
+# ifdef __GNUC__
+#  define CPE_GCC
+#  ifdef __CYGWIN__
+#   define CPE_CYGWIN
+#   define CPE_POSIX
+#   ifdef __CYGWIN64__
+#    define CPE_64BITS
+#   elif defined( __CYGWIN32__ )
+#    define CPE_32BITS
+#   else
+#    error "Unknown bitness".
+#   endif	
+#  elif defined( __MINGW32__ )
+#   define CPE_MINGW
+#   define CPE_WIN
+#   ifdef _WIN64
+#    define CPE_64BITS
+#   elif defined( _WIN32 )
+#    define CPE_32BITS
+#   else
+#    error "Unknown bitness".
+#   endif	
+#  elif defined( __linux__ )
+#   define CPE_LINUX
+#   define CPE_POSIX
+#  endif
+#  ifdef __ANDROID__
+#   define CPE_ANDROID
+#   if ( __SIZEOF_POINTER__ == 4 )
+#    define CPE_32BITS
+#   else
+#    error "New biteness : patching required !"
+#  endif
+#  endif
 # endif
+
+# ifndef CPE_MT
+#  ifdef E_MT 
+#   define CPE_MT
+#  endif
 # endif
-#endif
 
-#ifndef CPE__MT
-#	ifdef CPE_MT 
-#		define CPE__MT
-#	endif
-#endif
+# ifndef E_USE_NO_WORKAROUNDS
+#  define CPE_USE_WORKAROUNDS
+# endif	
 
-#ifndef CPE_USE_NO_WORKAROUNDS
-#	define CPE__USE_WORKAROUNDS
-#endif	
+# ifdef E_LIBRARY
+#  define CPE_LIBRARY
+# elif defined( CPE_MSVC )
+#  if defined( _USRDLL ) || defined( _WINDLL )
+#   define CPE_LIBRARY
+#  endif
+# endif
 
-#ifdef CPE_LIBRARY
-#	define CPE__LIBRARY
-#elif defined( CPE__MSVC )
-#	if defined( _USRDLL ) || defined( _WINDLL )
-#		define CPE__LIBRARY
-#	endif
-#endif
+# ifdef E_GUI
+#  define CPE_GUI
+# elif !defined( CPE_LIBRARY )
+#  define CPE_CONSOLE
+# endif
 
-#if defined( wxUSE_GUI ) || defined( CPE_GUI )
-#	define CPE__GUI
-#elif !defined( CPE__LIBRARY )
-#	define CPE__CONSOLE
-#endif
+# ifndef E_DISABLE_WARNINNG_SUPPRESSION
+#  define CPE_WARNING_SUPPRESSION_ENABLED
+# endif
 
-#ifndef CPE_DISABLE_WARNINNG_SUPPRESSION
-#	define CPE__WARNING_SUPPRESSION_ENABLED
-#endif
-
-# ifdef CPE__VC
-#  ifdef CPE__WARNING_SUPPRESSION_ENABLED
+# ifdef CPE_VC
+#  ifdef CPE_WARNING_SUPPRESSION_ENABLED
 #   pragma warning( disable: 4786 )	// 'The identifier string exceeded the maximum allowable length and was truncated.'.
 #  endif
 #  if _MSC_VER == 1200
-#   define CPE__VC6
+#   define CPE_VC6
 #  elif _MSC_VER == 1400
-#   define CPE__VC8
+#   define CPE_VC8
 #  elif _MSC_VER == 1500
-#   define CPE__VC9
+#   define CPE_VC9
 #  endif
 #  ifdef _M_IX86
-#   define CPE__X86
+#   define CPE_X86
 #  endif
 #  ifdef _M_X64
-#   define CPE__X86
+#   define CPE_X86
 #  endif
 # endif
 
-# ifdef CPE__GCC
+# ifdef CPE_GCC
 #  if __GNUC__ == 3
-#   define CPE__GCC3
+#   define CPE_GCC3
 #  endif
 #  ifdef __i386__
-#   define CPE__X86
+#   define CPE_X86
 #  endif
 #  ifdef __ARM_EABI__
-#   define CPE__ARM
+#   define CPE_ARM
 #  endif
 #  ifdef __x86_64__
-#   define CPE__X86
-#   define CPE__64BITS
+#   define CPE_X86
+#   define CPE_64BITS
 #  else
-#   define CPE__32BITS
+#   define CPE_32BITS
 #  endif
 # endif
 
-# ifdef CPE__JAVA
-#  ifdef CPE__CYGWIN
+# ifdef CPE_JAVA
+#  ifdef CPE_CYGWIN
 #   error "JNI doesn't work with 'Cygwin' genuine compiler. Use 'MinGW' compiler instead."
+#  endif
 # endif
-#endif
 
-# if !defined( CPE__X86 ) && !defined( CPE__ARM )
+# if !defined( CPE_X86 ) && !defined( CPE_ARM )
 #  error "Unable to guess the processor !"
 # endif
 

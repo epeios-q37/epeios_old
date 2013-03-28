@@ -70,7 +70,7 @@ extern class ttr_tutor &FBLTYPTutor;
 #endif
 
 #define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_U32_MAX)
-#define FBLTYP_UNDEFINED_ID16	((fbltyp::id16__)BSO_USHORT_MAX)
+#define FBLTYP_UNDEFINED_ID16	((fbltyp::id16__)BSO_U16_MAX)
 #define FBLTYP_UNDEFINED_ID8	((fbltyp::id8__)BSO_U8_MAX)
 
 #define FBLTYP_ITEM( id, name )\

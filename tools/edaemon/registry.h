@@ -56,9 +56,9 @@ namespace registry {
 		return sclrgstry::GetMandatoryValue( ModuleFileName, FileName );
 	}
 
-	inline bso::ushort__ GetRawModuleService( void )
+	inline bso::u16__ GetRawModuleService( void )
 	{
-		return sclrgstry::GetMandatoryUShort( ModuleService );
+		return sclrgstry::GetMandatoryU16( ModuleService );
 	}
 
 	inline const str::string_ &GetRawModuleServiceType( str::string_ &Type )

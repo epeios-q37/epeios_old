@@ -256,10 +256,10 @@ namespace fblfrd {
 			Message.reset( P );
 			URL.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Message.plug( MM );
-			URL.plug( MM );
+			Message.plug( AS );
+			URL.plug( AS );
 		}
 		incompatibility_informations_ &operator =( const incompatibility_informations_ &II )
 		{
@@ -438,10 +438,10 @@ namespace fblfrd {
 		FBLFRD_M( Object, object__)
 		FBLFRD_M( Boolean, boolean__ )
 		FBLFRD_M( Booleans, booleans_ )
-		FBLFRD_M( SLong, slong__ )
-		FBLFRD_M( SLongs, slongs_ )
-		FBLFRD_M( ULong, ulong__ )
-		FBLFRD_M( ULongs, ulongs_ )
+		FBLFRD_M( S32, s32__ )
+		FBLFRD_M( S32, s32s_ )
+		FBLFRD_M( U32, u32__ )
+		FBLFRD_M( U32s, u32s_ )
 		FBLFRD_M( Id8, id8__ )
 		FBLFRD_M( Ids8, ids8_ )
 		FBLFRD_M( XIds8, xids8_ )

@@ -65,7 +65,7 @@ using namespace dtfptb;
 
 
 void dtfptb::OldPutSize(
-	bso::u32__ Size,
+	bso::u_32__ Size,
 	size_buffer__ &Buffer )
 {
 	bso::raw__ *Pointer = Buffer;
@@ -102,8 +102,8 @@ void dtfptb::OldPutSize(
 }
 
 
-static inline bso::u32__ Put_(
-	bso::u32__ Value,
+static inline bso::u_32__ Put_(
+	bso::u_32__ Value,
 	flw::oflow__ &Flow )
 {
 	bso::raw__ Buffer = Value & 0x7F;
@@ -119,7 +119,7 @@ static inline bso::u32__ Put_(
 }
 
 void dtfptb::FittedPutU32(
-	bso::u32__ U32,
+	bso::u_32__ U32,
 	flw::oflow__ &Flow )
 {
 	while ( ( U32 = Put_( U32, Flow ) ) != 0 );
@@ -161,7 +161,7 @@ void dtfptb::PutSize(
 }
 #else
 void dtfptb::OldPutSize(
-	bso::u32__ Size,
+	bso::u_32__ Size,
 	flw::oflow__ &Flow )
 {
 	size_buffer__ Buffer;
@@ -173,9 +173,9 @@ void dtfptb::OldPutSize(
 
 #endif
 
-bso::u32__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
+bso::u_32__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
 {
-	bso::u32__ Size = (bso::u8__)IFlow.Get();
+	bso::u_32__ Size = (bso::u8__)IFlow.Get();
 
 	if ( Size == M1 )
 	{
@@ -203,9 +203,9 @@ bso::u32__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
 	return Size;
 }
 
-bso::u32__ dtfptb::FittedGetU32( flw::iflow__ &IFlow )
+bso::u_32__ dtfptb::FittedGetU32( flw::iflow__ &IFlow )
 {
-	bso::u32__ Value = 0;
+	bso::u_32__ Value = 0;
 	flw::datum__ Datum = IFlow.Get();
 	bso::u8__ Counter = 1;
 
@@ -227,9 +227,9 @@ bso::u32__ dtfptb::FittedGetU32( flw::iflow__ &IFlow )
 	return Value;
 }
 
-bso::u32__ dtfptb::OldGetSize( const size_buffer__ &Buffer )
+bso::u_32__ dtfptb::OldGetSize( const size_buffer__ &Buffer )
 {
-	bso::u32__ Size = Buffer[0];
+	bso::u_32__ Size = Buffer[0];
 
 	if ( Size == M1 )
 	{

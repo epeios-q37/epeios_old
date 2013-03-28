@@ -260,10 +260,12 @@ namespace ags {
 # define AGS__HEADER_SIZE			1	// Lorsque cette value change, permet de détecter le code qu'il faut modifier.
 # define AGS_EMBEDDED_VALUE_MAX		( (bso::u8__)~ags::f_All >> ags::fp_SizeBegin )
 # define AGS_SHORT_SIZE_MAX			( AGS_EMBEDDED_VALUE_MAX + 1 )
-# define AGS_LONG_SIZE_SIZE_MAX		sizeof( sdr::dsize__ )
+# define AGS_LONG_SIZE_SIZE_MAX		sizeof( bso::dint__ )
 # define AGS_XHEADER_SIZE_MAX		( AGS_HEADER_SIZE + AGS_LONG_SIZE_SIZE_MAX )
 
 	using sdr::size__;
+
+	typedef bso::int__ value__;
 
 	E_TMIMIC__( sdr::datum__, header__ );
 
@@ -307,12 +309,12 @@ namespace ags {
 		return IsPredecessorUsed( Header ) ? sUsed : sFree;
 	}
 
-	inline size__ GetEmbeddedValue( header__ Header )
+	inline value__ GetEmbeddedValue( header__ Header )
 	{
 		return ( ( *Header & ~f_All ) >> fp_SizeBegin );
 	}
 
-	inline size__ GetShortValue( header__ Header )
+	inline value__ GetShortValue( header__ Header )
 	{
 		if ( !IsSizeShort( Header ) )
 			ERRc();
@@ -325,7 +327,7 @@ namespace ags {
 		return GetShortValue( Header ) + 1;
 	}
 
-	inline size__ ConvertValueToFreeFragmentLongSize( size__ Value )
+	inline size__ ConvertValueToFreeFragmentLongSize( value__ Value )
 	{
 		if ( Value < 1 )
 			ERRc();
@@ -333,13 +335,13 @@ namespace ags {
 		return Value;
 	}
 
-	inline size__ ConvertValueToUsedFragmentLongSize( size__ Value )
+	inline size__ ConvertValueToUsedFragmentLongSize( value__ Value )
 	{
 		return Value + AGS_SHORT_SIZE_MAX + 1;
 	}
 
 	inline size__ ConvertValueToLongSize(
-		size__ Value,
+		value__ Value,
 		status__ Status )
 	{
 		switch ( Status ) {
@@ -442,7 +444,7 @@ namespace ags {
 		*Header &= ~fSizeType;
 	}
 
-	inline bso::bool__ CanValueBeEmbedded( size__ Value )
+	inline bso::bool__ CanValueBeEmbedded( value__ Value )
 	{
 		return Value <= AGS_EMBEDDED_VALUE_MAX;
 	}
@@ -482,7 +484,7 @@ namespace ags {
 		return false;
 	}
 
-	inline size__ ConvertFreeFragmentLongSizeToValue( size__ Size )
+	inline value__ ConvertFreeFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsFreeFragmentSizeShortSuitable( Size ) )
 			ERRc();
@@ -490,7 +492,7 @@ namespace ags {
 		return Size;
 	}
 
-	inline size__ ConvertUsedFragmentLongSizeToValue( size__ Size )
+	inline value__ ConvertUsedFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsUsedFragmentSizeShortSuitable( Size ) )
 			ERRc();
@@ -498,7 +500,7 @@ namespace ags {
 		return Size - AGS_SHORT_SIZE_MAX - 1;
 	}
 
-	inline size__ ConvertLongSizeToValue(
+	inline value__ ConvertLongSizeToValue(
 		size__ Size,
 		status__ Status )
 	{
@@ -517,7 +519,7 @@ namespace ags {
 		return 0;	// Pour éviter un 'warning'.
 	}
 
-	inline size__ ConvertFreeFragmentShortSizeToValue( size__ Size )
+	inline value__ ConvertFreeFragmentShortSizeToValue( size__ Size )
 	{
 		if ( !IsFreeFragmentSizeShortSuitable( Size ) )
 			ERRc();
@@ -525,7 +527,7 @@ namespace ags {
 		return 0;
 	}
 
-	inline size__ ConvertUsedFragmentShortSizeToValue( size__ Size )
+	inline value__ ConvertUsedFragmentShortSizeToValue( size__ Size )
 	{
 		if ( !IsUsedFragmentSizeShortSuitable( Size ) )
 			ERRc();
@@ -533,7 +535,7 @@ namespace ags {
 		return Size - 1;
 	}
 
-	inline size__ ConvertShortSizeToValue(
+	inline value__ ConvertShortSizeToValue(
 		size__ Size,
 		status__ Status )
 	{
@@ -554,7 +556,7 @@ namespace ags {
 
 	inline void SetEmbeddedValue(
 		header__ &Header,
-		size__ Value )
+		value__ Value )
 	{
 		if ( !CanValueBeEmbedded( Value ) )
 			ERRc();
@@ -562,11 +564,9 @@ namespace ags {
 		Header = ( *Header & f_All ) | ( (bso::u8__)Value << fp_SizeBegin );
 	}
 
-	typedef sdr::xsize__ _xsize__;
-
 	class xsize__ {
 	private:
-		_xsize__ _XSize;
+		bso::xint__ _XSize;
 		size__ _Size;
 		status__ _Status;
 	public:
@@ -585,7 +585,7 @@ namespace ags {
 			_Size = Size;
 
 			if ( !IsSizeShortSuitable( Size, Status ) )
-				_XSize = sdr::Convert( ConvertLongSizeToValue( Size, Status ) );
+				_XSize = bso::ConvertToDInt( ConvertLongSizeToValue( Size, Status ) );
 
 			_Status = Status;
 		}
@@ -756,7 +756,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			return AGS_HEADER_SIZE;
 		} else {
 			const sdr::datum__ *LongSizePointer = FindLongSizeBegin( Pointer );
-			Size = ConvertValueToLongSize( sdr::Convert( LongSizePointer ), Status );
+			Size = ConvertValueToLongSize( bso::ConvertToInt( LongSizePointer ), Status );
 			Header = *--LongSizePointer;
 
 			if ( ( Status == sUsed ) && ( ags::Status( Header ) != sUsed ) )
@@ -884,12 +884,12 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			status__ Status,
 			sdr::size__ &SizeLength ) const
 		{
-			sdr::dsize__ DSize;
+			bso::dint__ DSize;
 			size__ Limit = _Size() - Row;
 
 			_Read( Row, sizeof( DSize ) > Limit ? Limit : sizeof( DSize ), (sdr::datum__ *)&DSize );
 
-			return ConvertValueToLongSize( sdr::Convert( DSize, SizeLength ), Status );
+			return ConvertValueToLongSize( bso::ConvertToInt( DSize, SizeLength ), Status );
 		}
 		void _GetMetaData(
 			sdr::row_t__ Row,

@@ -71,7 +71,7 @@ extern class ttr_tutor &XTFTutor;
 
 namespace xtf {
 	//t type of position in a text (line or column).
-	typedef bso::nuint__ location__;
+	typedef bso::uint__ location__;
 
 	struct coord__ {
 		location__ Line;

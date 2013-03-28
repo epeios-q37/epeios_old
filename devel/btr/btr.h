@@ -67,13 +67,13 @@ extern class ttr_tutor &BTRTutor;
 #if 1
 
 namespace btr {
-	typedef bso::ubyte__ level__;
+	typedef bso::u8__ level__;
 
 	//c Node. Internal use.
 	class _node__
 	{
 	public:
-		mdr::row_t__
+		sdr::row_t__
 			// Parent of the node.
 			Parent,
 			// Left children.
@@ -98,16 +98,16 @@ namespace btr {
 	{
 	private:
 		void _Swap(
-			mdr::row_t__ &R1,
-			mdr::row_t__ &R2 )
+			sdr::row_t__ &R1,
+			sdr::row_t__ &R2 )
 		{
-			mdr::row_t__ R = R1;
+			sdr::row_t__ R = R1;
 			R1 = R2;
 			R2 = R;
 		}
 		void _ChangeLeft(
-			mdr::row_t__ Node,
-			mdr::row_t__ NewLeft )
+			sdr::row_t__ Node,
+			sdr::row_t__ NewLeft )
 		{
 			_node__ N = Get( Node );
 
@@ -116,8 +116,8 @@ namespace btr {
 			Store( N, Node );
 		}
 		void _ChangeRight(
-			mdr::row_t__ Node,
-			mdr::row_t__ NewRight )
+			sdr::row_t__ Node,
+			sdr::row_t__ NewRight )
 		{
 			_node__ N = Get( Node );
 
@@ -127,8 +127,8 @@ namespace btr {
 		}
 		// Fait pointer le fils du parent de 'OldChild', s'il existe, sur 'NewChild'.
 		void _ChangeParentChild(
-			mdr::row_t__ &OldChild,
-			mdr::row_t__ &NewChild )
+			sdr::row_t__ &OldChild,
+			sdr::row_t__ &NewChild )
 		{
 			if ( IsLeft( OldChild ) )
 				_ChangeLeft( Parent( OldChild ), NewChild );
@@ -136,8 +136,8 @@ namespace btr {
 				_ChangeRight( Parent( OldChild ), NewChild );
 		}
 		void _ChangeParent(
-			mdr::row_t__ Node,
-			mdr::row_t__ NewParent )
+			sdr::row_t__ Node,
+			sdr::row_t__ NewParent )
 		{
 			_node__ N = Get( Node );
 
@@ -147,7 +147,7 @@ namespace btr {
 		}
 		void _ChangeChildrenParent(
 			const _node__ &Node,
-			mdr::row_t__ NewParent )
+			sdr::row_t__ NewParent )
 		{
 			if ( Node.Left != NONE )
 				_ChangeParent( Node.Left, NewParent );
@@ -172,13 +172,13 @@ namespace btr {
 			_nodes_::Init();
 		}
 		void Prepare(
-			mdr::row_t__ Start,
-			mdr::row_t__ End );
+			sdr::row_t__ Start,
+			sdr::row_t__ End );
 		void Release(
-			mdr::row_t__ Start,
-			mdr::row_t__ End );
+			sdr::row_t__ Start,
+			sdr::row_t__ End );
 		//f Release father of 'Node'.
-		void ReleaseParent( mdr::row_t__ Node )
+		void ReleaseParent( sdr::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -186,7 +186,7 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Release left child of 'Node'.
-		void ReleaseLeft( mdr::row_t__ Node )
+		void ReleaseLeft( sdr::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -194,7 +194,7 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Release right child of 'Node'.
-		void ReleaseRight( mdr::row_t__ Node )
+		void ReleaseRight( sdr::row_t__ Node )
 		{
 			_node__ Buffer = _nodes_::Get( Node );
 
@@ -202,38 +202,38 @@ namespace btr {
 			_nodes_::Store( Buffer, Node );
 		}
 		//f Return true if 'Node' has a father.
-		bso::bool__ HasParent( mdr::row_t__ Node ) const
+		bso::bool__ HasParent( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Parent != NONE;
 		}
 		//f Return true if 'Node' has left chid.
-		bso::bool__ HasLeft( mdr::row_t__ Node ) const
+		bso::bool__ HasLeft( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Left != NONE;
 		}
 		//f Return true if 'Node' has right chid.
-		bso::bool__ HasRight( mdr::row_t__ Node ) const
+		bso::bool__ HasRight( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Right != NONE;
 		}
 		//f Return father of 'Node', or 'NONE' if nonde.
-		mdr::row_t__ Parent( mdr::row_t__ Node ) const
+		sdr::row_t__ Parent( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Parent;
 		}
 		//f Return left child of 'Node', or 'NONE' if nonde.
-		mdr::row_t__ Left( mdr::row_t__ Node ) const
+		sdr::row_t__ Left( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Left;
 		}
 		//f Return right child of 'Node', or 'NONE' if nonde.
-		mdr::row_t__ Right( mdr::row_t__ Node ) const
+		sdr::row_t__ Right( sdr::row_t__ Node ) const
 		{
 			return _nodes_::Get( Node ).Right;
 		}
 		void BecomeOverridingLeft(
-			mdr::row_t__ Left,
-			mdr::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
+			sdr::row_t__ Left,
+			sdr::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
 
@@ -245,8 +245,8 @@ namespace btr {
 		}
 		//f 'Right' becomes left child of 'Parent'.
 		void BecomeOverridingRight(
-			mdr::row_t__ Right,
-			mdr::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
+			sdr::row_t__ Right,
+			sdr::row_t__ Parent )	// Force l'action sans tenir compte de l'affectation des noeuds affectés.
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
 
@@ -259,8 +259,8 @@ namespace btr {
 
 		//f 'Left' becomes left child of 'Parent'.
 		void BecomeLeft(
-			mdr::row_t__ Left,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Left,
+			sdr::row_t__ Parent )
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
 #ifdef BTR_DBG
@@ -279,8 +279,8 @@ namespace btr {
 		}
 		//f 'Right' becomes left child of 'Parent'.
 		void BecomeRight(
-			mdr::row_t__ Right,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Right,
+			sdr::row_t__ Parent )
 		{
 			_node__ GParent = _nodes_::Get( Parent ), GRight = _nodes_::Get( Right );
 
@@ -300,12 +300,12 @@ namespace btr {
 /*		row_t__ TrouverAieulMaleAvecRight(
 			row_t__ Depart,
 			row_t__ Racine ) const;
-*/		mdr::row_t__ ForceParent(
-			mdr::row_t__ Node,
-			mdr::row_t__  Parent )
+*/		sdr::row_t__ ForceParent(
+			sdr::row_t__ Node,
+			sdr::row_t__  Parent )
 		{
 			_node__ Lien = _nodes_::Get( Node );
-			mdr::row_t__ AncienParent = Lien.Parent;
+			sdr::row_t__ AncienParent = Lien.Parent;
 
 			Lien.Parent = Parent;
 
@@ -314,49 +314,49 @@ namespace btr {
 			return AncienParent;
 		}
 		//f Return true if 'Node' is a left child.
-		bso::bool__ IsLeft( mdr::row_t__ Node ) const
+		bso::bool__ IsLeft( sdr::row_t__ Node ) const
 		{
 			return HasParent( Node ) && Left( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is a right.
-		bso::bool__ IsRight( mdr::row_t__ Node ) const
+		bso::bool__ IsRight( sdr::row_t__ Node ) const
 		{
 			return HasParent( Node ) && Right( Parent( Node ) ) == Node;
 		}
 		//f Return true if 'Node' is child.
-		bso::bool__ IsChild( mdr::row_t__ Node ) const
+		bso::bool__ IsChild( sdr::row_t__ Node ) const
 		{
 			return HasParent( Node );
 		}
 		//f Return true if 'Node' is parent.
-		bso::bool__ IsParent( mdr::row_t__ Node ) const
+		bso::bool__ IsParent( sdr::row_t__ Node ) const
 		{
 			return HasLeft( Node ) || HasRight( Node );
 		}
 		// Retourne le premier noeud sans fils gauche à partir de 'Node' en descendant par les fils gauche.
-		mdr::row_t__ SearchMostLeftNode(
-			mdr::row_t__ Node,
+		sdr::row_t__ SearchMostLeftNode(
+			sdr::row_t__ Node,
 			level__ &Level ) const;
 		// Retourne le premier noeud sans noeid gauche à partir de 'Node' en descendant par les noeuds gauche.
-		mdr::row_t__ SearchMostRightNode(
-			mdr::row_t__ Node,
+		sdr::row_t__ SearchMostRightNode(
+			sdr::row_t__ Node,
 			level__ &Level ) const;
 		void PrintStructure(
-			mdr::row_t__ Racine,
+			sdr::row_t__ Racine,
 			txf::text_oflow__ &Flot ) const;
 		//f Return true if 'Node' has a child.
-		bso::bool__ HasChildren( mdr::row_t__ Node ) const
+		bso::bool__ HasChildren( sdr::row_t__ Node ) const
 		{
 			return HasRight( Node ) || HasLeft( Node );
 		}
-		bso::bool__ HasBothChildren( mdr::row_t__ Node ) const
+		bso::bool__ HasBothChildren( sdr::row_t__ Node ) const
 		{
 			return HasRight( Node ) && HasLeft( Node );
 		}
 		// Echange 'Node1' avec 'Node2', c'est-à-dire qu'il echangent leur parent, et fils gauche et droit respectif.
 		void SwapNodes(
-			mdr::row_t__ RN1,
-			mdr::row_t__ RN2 )
+			sdr::row_t__ RN1,
+			sdr::row_t__ RN2 )
 		{
 			_node__ N1 = Get( RN1 ), N2 = Get( RN2 );
 
@@ -371,8 +371,8 @@ namespace btr {
 		}
 		// Echange l'abre de racine 'Node1' avec l'abre de racine 'Node2'.
 		void SwapTrees(
-			mdr::row_t__ RN1,
-			mdr::row_t__ RN2 )
+			sdr::row_t__ RN1,
+			sdr::row_t__ RN2 )
 		{
 			_node__ N1 = Get( RN1 ), N2 = Get( RN2 );
 
@@ -385,9 +385,9 @@ namespace btr {
 			Store( N2, RN2 );
 		}
 		// Retourne le parent du premier noeud qui est fils en remontant.
-		mdr::row_t__ ParentOfFirstLeftNode( mdr::row_t__ Node ) const;
+		sdr::row_t__ ParentOfFirstLeftNode( sdr::row_t__ Node ) const;
 		// Retourne le père du premier noeud qui est fille en remontant.
-		mdr::row_t__ ParentOfFirstRightNode( mdr::row_t__ Node ) const;
+		sdr::row_t__ ParentOfFirstRightNode( sdr::row_t__ Node ) const;
 	};
 
 
@@ -401,87 +401,87 @@ namespace btr {
 	{
 	private:
 		void Prepare_(
-			mdr::row_t__ Start,
-			mdr::row_t__ End )
+			sdr::row_t__ Start,
+			sdr::row_t__ End )
 		{
 			Nodes.Prepare( Start, End );
 		}
 		void Release_(
-			mdr::row_t__ Start,
-			mdr::row_t__ End )
+			sdr::row_t__ Start,
+			sdr::row_t__ End )
 		{
 			Nodes.Release( Start, End );
 		}
-		void ReleaseParent_( mdr::row_t__ Node )
+		void ReleaseParent_( sdr::row_t__ Node )
 		{
 			Nodes.ReleaseParent( Node );
 		}
-		void ReleaseLeft_( mdr::row_t__ Node )
+		void ReleaseLeft_( sdr::row_t__ Node )
 		{
 			Nodes.ReleaseLeft( Node );
 		}
-		void ReleaseRight_( mdr::row_t__ Node )
+		void ReleaseRight_( sdr::row_t__ Node )
 		{
 			Nodes.ReleaseRight( Node );
 		}
-		bso::bool__ HasParent_( mdr::row_t__ Node ) const
+		bso::bool__ HasParent_( sdr::row_t__ Node ) const
 		{
 			return Nodes.HasParent( Node );
 		}
-		bso::bool__ HasLeft_( mdr::row_t__ Node ) const
+		bso::bool__ HasLeft_( sdr::row_t__ Node ) const
 		{
 			return Nodes.HasLeft( Node );
 		}
-		bso::bool__ HasRight_( mdr::row_t__ Node ) const
+		bso::bool__ HasRight_( sdr::row_t__ Node ) const
 		{
 			return Nodes.HasRight( Node );
 		}
-		mdr::row_t__ Parent_( mdr::row_t__ Node ) const
+		sdr::row_t__ Parent_( sdr::row_t__ Node ) const
 		{
 			return Nodes.Parent( Node );
 		}
-		mdr::row_t__ Left_( mdr::row_t__ Node ) const
+		sdr::row_t__ Left_( sdr::row_t__ Node ) const
 		{
 			return Nodes.Left( Node );
 		}
-		mdr::row_t__ Right_( mdr::row_t__ Node ) const
+		sdr::row_t__ Right_( sdr::row_t__ Node ) const
 		{
 			return Nodes.Right( Node );
 		}
 		void BecomeLeft_(
-			mdr::row_t__ Left,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Left,
+			sdr::row_t__ Parent )
 		{
 			Nodes.BecomeLeft( Left, Parent );
 		}
 		void BecomeRight_(
-			mdr::row_t__ Right,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Right,
+			sdr::row_t__ Parent )
 		{
 			Nodes.BecomeRight( Right, Parent );
 		}
 		void BecomeOverridingLeft_(
-			mdr::row_t__ Left,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Left,
+			sdr::row_t__ Parent )
 		{
 			Nodes.BecomeOverridingLeft( Left, Parent );
 		}
 		void BecomeOverridingRight_(
-			mdr::row_t__ Right,
-			mdr::row_t__ Parent )
+			sdr::row_t__ Right,
+			sdr::row_t__ Parent )
 		{
 			Nodes.BecomeOverridingRight( Right, Parent );
 		}
 /*
-		mdr::row_t__ TrouverAieulMaleAvecRight_(
-			mdr::row_t__ Depart,
-			mdr::row_t__ Racine ) const
+		sdr::row_t__ TrouverAieulMaleAvecRight_(
+			sdr::row_t__ Depart,
+			sdr::row_t__ Racine ) const
 		{
 			return Nodes.TrouverAieulMaleAvecRight( Depart, Racine );
 		}
-*/		mdr::row_t__ ForceParent_(
-			mdr::row_t__ Node,
-			mdr::row_t__  Parent )
+*/		sdr::row_t__ ForceParent_(
+			sdr::row_t__ Node,
+			sdr::row_t__  Parent )
 		{
 			return Nodes.ForceParent( Node, Parent );
 		}
@@ -499,13 +499,13 @@ namespace btr {
 		{
 			Nodes.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Nodes.plug( M );
+			Nodes.plug( AS );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &M )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Nodes.plug( M );
+			Nodes.plug( SD );
 		}
 		// Operateur d'affectation.
 		binary_tree_ &operator =( const binary_tree_ &O )
@@ -537,12 +537,12 @@ namespace btr {
 			return Row;
 		}
 		//f Extent of the tree.
-		mdr::size__ Extent( void ) const
+		sdr::size__ Extent( void ) const
 		{
 			return Nodes.Extent();
 		}
 		//f Amount of node in the tree.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Nodes.Amount();
 		}
@@ -713,7 +713,7 @@ namespace btr {
 		//f Cut 'Node'. 'Node' becomes a root.
 		void Cut( r Node )
 		{
-			mdr::row_t__ Parent = Parent_( *Node );
+			sdr::row_t__ Parent = Parent_( *Node );
 
 			if ( HasLeft_( Parent ) && ( Left_( Parent ) == *Node ) )
 				ReleaseLeft_( Parent );
@@ -824,12 +824,12 @@ namespace btr {
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Size > Nodes.Amount() )
 			{
-				mdr::size__ PrecCapacite = Nodes.Amount();
+				sdr::size__ PrecCapacite = Nodes.Amount();
 
 				Nodes.Allocate( Size, Mode );
 				Prepare_( PrecCapacite, Size - 1 );
@@ -927,7 +927,7 @@ namespace btr {
 
 	typedef bch::bunch_file_manager___ binary_tree_file_manager___;
 
-	template <typename tree> uym::state__ Plug(
+	template <typename tree> uys::state__ Plug(
 		tree &Tree,
 		binary_tree_file_manager___ &FileManager )
 	{
@@ -938,8 +938,8 @@ namespace btr {
 	#define E_BTREEt_( r )	binary_tree_< r >
 	#define E_BTREEt( r )	binary_tree< r >
 
-	#define E_BTREE_	E_BTREEt_( mdr::row__ )
-	#define E_BTREE		E_BTREEt( mdr::row__ )
+	#define E_BTREE_	E_BTREEt_( sdr::row__ )
+	#define E_BTREE		E_BTREEt( sdr::row__ )
 }
 
 
@@ -969,17 +969,17 @@ namespace btr {
 	// Prédéclaration.
 	template <typename r_t, typename nodes> class _nodes_manager_;
 
-	typedef bch::E_BUNCH_( btr::_node__<mdr::row_t__> ) _nodes_;
+	typedef bch::E_BUNCH_( btr::_node__<sdr::row_t__> ) _nodes_;
 
 	void Release(
-		_nodes_manager_<mdr::row_t__, _nodes_> &Nodes,
-		mdr::row_t__ Start,
-		mdr::row_t__ End );
+		_nodes_manager_<sdr::row_t__, _nodes_> &Nodes,
+		sdr::row_t__ Start,
+		sdr::row_t__ End );
 
 	void Prepare(
-		_nodes_manager_<mdr::row_t__, _nodes_> &Nodes,
-		mdr::row_t__ Start,
-		mdr::row_t__ End );
+		_nodes_manager_<sdr::row_t__, _nodes_> &Nodes,
+		sdr::row_t__ Start,
+		sdr::row_t__ End );
 
 
 	template <typename r_t, typename nodes> class _nodes_manager_
@@ -1250,7 +1250,7 @@ namespace btr {
 		{
 			Nodes.plug( M );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &M )
+		void plug( sdr::E_MEMORY_DRIVER__ &M )
 		{
 			Nodes.plug( M );
 		}
@@ -1275,12 +1275,12 @@ namespace btr {
 			Nodes.Init();
 		}
 		//f Extent of the tree.
-		mdr::size__ Extent( void ) const
+		sdr::size__ Extent( void ) const
 		{
 			return Nodes.Extent();
 		}
 		//f Amount of node in the tree.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Nodes.Amount();
 		}
@@ -1447,12 +1447,12 @@ namespace btr {
 		}
 		//f Allocate enough room to handle 'Size' node.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode Mode = aem::m_Default )
 		{
 			if ( Size > Nodes.Amount() )
 			{
-				mdr::size__ PrecCapacite = Nodes.Amount();
+				sdr::size__ PrecCapacite = Nodes.Amount();
 
 				Nodes.Allocate( Size, Mode );
 				Prepare_( PrecCapacite, Size - 1 );
@@ -1616,17 +1616,17 @@ namespace btr {
 
 	E_AUTO2( binary_tree )
 
-	#define E_BTREEt_( r )	binary_tree_<r,mdr::row_t__>
-	#define E_BTREEt( r )	binary_tree<r,mdr::row_t__>
+	#define E_BTREEt_( r )	binary_tree_<r,sdr::row_t__>
+	#define E_BTREEt( r )	binary_tree<r,sdr::row_t__>
 
-	#define E_BTREE_	E_BTREEt_( mdr::row__ )
-	#define E_BTREE		E_BTREEt( mdr::row__ )
+	#define E_BTREE_	E_BTREEt_( sdr::row__ )
+	#define E_BTREE		E_BTREEt( sdr::row__ )
 
-	#define E_PBTREEt_( r )	binary_tree_<r,mdr::p_row_t__>
-	#define E_PBTREEt( r )	binary_tree<r,mdr::p_row_t__>
+	#define E_PBTREEt_( r )	binary_tree_<r,sdr::p_row_t__>
+	#define E_PBTREEt( r )	binary_tree<r,sdr::p_row_t__>
 
-	#define E_PBTREE_		E_PBTREEt_( mdr::p_row__ )
-	#define E_PBTREE		E_PBTREEt( mdr::p_row__ )
+	#define E_PBTREE_		E_PBTREEt_( sdr::p_row__ )
+	#define E_PBTREE		E_PBTREEt( sdr::p_row__ )
 }
 #endif
 

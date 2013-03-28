@@ -76,7 +76,7 @@ namespace fblfaq {
 	FBLTYP_ITEM( fblfrd::id16__, command_item )
 	FBLTYP_ITEMS( command_item, commands_items )
 
-	typedef bso::ushort__	type_id__;
+	typedef bso::u16__	type_id__;
 
 	typedef fblfrd::xitem16		type_item;
 	typedef fblfrd::xitem16_	type_item_;
@@ -105,10 +105,10 @@ namespace fblfaq {
 	 		Identification.reset( P );
 			Parameters.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Identification .plug( M );
-			Parameters.plug( M );
+			Identification .plug( AS );
+			Parameters.plug( AS );
 		}
 		command_ &operator =( const command_ &BC )
 		{
@@ -128,8 +128,8 @@ namespace fblfaq {
 	E_AUTO( command )
 
 	//t Broker commands.
-	typedef ctn::E_XCONTAINER_( command_ ) commands_;
-	typedef ctn::E_XCONTAINER( command_ ) commands;
+	typedef ctn::E_CONTAINER_( command_ ) commands_;
+	typedef ctn::E_CONTAINER( command_ ) commands;
 
 	//c A broker object type.
 	class type_
@@ -162,11 +162,11 @@ namespace fblfaq {
 			Name.reset( P );
 			Commands.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Name.plug( M );
-			Prefix.plug( M );
-			Commands.plug( M );
+			Name.plug( AS );
+			Prefix.plug( AS );
+			Commands.plug( AS );
 		}
 		type_ &operator =( const type_ &BT )
 		{
@@ -202,8 +202,8 @@ namespace fblfaq {
 	E_AUTO( type )
 
 	//t Broker types.
-	typedef ctn::E_XCONTAINER_( type_ ) types_;
-	typedef ctn::E_XCONTAINER( type_ ) types;
+	typedef ctn::E_CONTAINER_( type_ ) types_;
+	typedef ctn::E_CONTAINER( type_ ) types;
 
 	//f Fill 'Types' with contents of 'Backend'.
 	void GetDescription(

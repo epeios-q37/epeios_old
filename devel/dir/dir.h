@@ -68,9 +68,9 @@ extern class ttr_tutor &DIRTutor;
 
 #include <limits.h>
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define DIR__POSIX
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define DIR__WIN
 #else
 #	error "Unknown target !"

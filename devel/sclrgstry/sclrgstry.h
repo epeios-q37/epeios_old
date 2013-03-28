@@ -136,7 +136,7 @@ namespace sclrgstry {
 # ifdef BSO__64BITS_ENABLED
 	SCLRGSTRY__UN( bso::u64__, U64, BSO_U64_MAX )
 # endif
-	SCLRGSTRY__UN( bso::u32__, U32, BSO_U32_MAX )
+	SCLRGSTRY__UN( bso::u_32__, U32, BSO_U_32_MAX )
 	SCLRGSTRY__UN( bso::u16__, U16, BSO_U16_MAX )
 	SCLRGSTRY__UN( bso::u8__, U8, BSO_U8_MAX )
 

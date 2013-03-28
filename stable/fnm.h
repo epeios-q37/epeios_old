@@ -66,9 +66,9 @@ extern class ttr_tutor &FNMTutor;
 # include "tol.h"
 # include "strng.h"
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define FNM__POSIX
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define FNM__WIN
 #else
 #	error "Unknown target !"
