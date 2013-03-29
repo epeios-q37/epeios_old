@@ -643,7 +643,7 @@ namespace tol {
 		if ( ( TOL_DIFF_MAX / Coeff ) < _Denom )
 			ERRl();
 
-		return ( Elapsed * _Numer / _Denom  ) * ( 1000000 / Coeff );
+		return ( Elapsed * _Numer / _Denom  ) / ( 1000000 / Coeff );
 	}
 
 	inline time_t _Time( void )
