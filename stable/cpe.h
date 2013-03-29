@@ -63,12 +63,25 @@ extern class ttr_tutor &CPETutor;
 //#include "err.h"
 //#include "flo.h"
 
+
 # undef CPE_MSVC	// Environnement Microsoft Visual C++.
+# define CPE_MSVC_LABEL		"MSVC"
+
 # undef CPE_MAC		// Environnement MAC.
+# define CPE_MAC_LABEL		"MacOS"
+
 # undef CPE_CYGWIN	// Environnement CYGWIN.
+# define CPE_CYGWIN_LABEL	"Cygwin"
+
 # undef CPE_MINGW	// Environnement MINGW.
+# define CPE_MINGW_LABEL	"MinGW"
+
 # undef CPE_LINUX	// Environnement Linux
+# define CPE_LINUX_LABEL	"Linux"
+
 # undef CPE_ANDROID	// Environnement Android.
+# define CPE_ANDROID_LABEL	"Android"
+
 
 # undef CPE_WIN		// Windows système base API
 # undef CPE_POSIX	// Posix système base API.
@@ -88,11 +101,20 @@ extern class ttr_tutor &CPETutor;
 # undef CPE_JAVA	// Cible composant java en code natif.
 # undef CPE_GECKO	// Cible composant Gecko.
 
+
 # undef CPE_X86		// Processeur Intel et compatible.
+# define CPE_X86_LABEL	"x86"
+
 # undef CPE_ARM		// Processeur ARM.
+# define CPE_ARM_LABEL "ARM"
+
 
 # undef CPE_32BITS	// Processeur 32 bits.
+# define CPE_32BITS_LABEL	"32"
+
 # undef CPE_64BITS	// Processeur 64 bits.
+# define CPE_64BITS_LABEL	"64"
+
 
 # ifdef E_GECKO
 #  define CPE_GECKO
@@ -112,8 +134,6 @@ extern class ttr_tutor &CPETutor;
 #   define CPE_64BITS
 #  elif defined( _WIN32 )
 #   define CPE_32BITS
-#  else
-#   error "Unknown bitness".
 #  endif	
 #  ifdef _MT
 #   ifndef E_ST
@@ -139,8 +159,6 @@ extern class ttr_tutor &CPETutor;
 #    define CPE_64BITS
 #   elif defined( __CYGWIN32__ )
 #    define CPE_32BITS
-#   else
-#    error "Unknown bitness".
 #   endif	
 #  elif defined( __MINGW32__ )
 #   define CPE_MINGW
@@ -149,8 +167,6 @@ extern class ttr_tutor &CPETutor;
 #    define CPE_64BITS
 #   elif defined( _WIN32 )
 #    define CPE_32BITS
-#   else
-#    error "Unknown bitness".
 #   endif	
 #  elif defined( __linux__ )
 #   define CPE_LINUX
@@ -160,8 +176,6 @@ extern class ttr_tutor &CPETutor;
 #   define CPE_ANDROID
 #   if ( __SIZEOF_POINTER__ == 4 )
 #    define CPE_32BITS
-#   else
-#    error "New biteness : patching required !"
 #  endif
 #  endif
 # endif
@@ -237,9 +251,38 @@ extern class ttr_tutor &CPETutor;
 #  endif
 # endif
 
-# if !defined( CPE_X86 ) && !defined( CPE_ARM )
-#  error "Unable to guess the processor !"
+# if defined( CPE_MSVC )
+#  define CPE_ENVIROMENT_LABEL	CPE_MSVC_LABEL
+# elif defined( CPE_MAC )
+#  define CPE_ENVIROMENT_LABEL	CPE_MAC_LABEL
+# elif defined( CPE_CYGWIN )
+#  define CPE_ENVIROMENT_LABEL	CPE_CYGWIN_LABEL
+# elif defined( CPE_MINGW )
+#  define CPE_ENVIROMENT_LABEL	CPE_MINGW_LABEL
+# elif defined( CPE_LINUX )
+#  define CPE_ENVIROMENT_LABEL	CPE_LINUX_LABEL
+# elif defined( CPE_ANDROID )
+#  define CPE_ENVIROMENT_LABEL	CPE_ANDROID_LABEL
+# else
+#  error "Undefined enviroment !"
 # endif
+
+# if defined( CPE_X86 )
+#  define CPE_PROCESSOR_LABEL	CPE_X86_LABEL
+# elif defined( CPE_ARM )
+#  define CPE_PROCESSOR_LABEL	CPE_ARM_LABEL
+# else
+#  error "Undefined processor !"
+# endif
+
+# if defined( CPE_32BITS )
+#  define CPE_BITNESS_LABEL	CPE_32BITS_LABEL
+# elif defined( CPE_64BITS )
+#  define CPE_BITNESS_LABEL	CPE_64BITS_LABEL
+# else
+#  error "Undefined bitness !"
+# endif
+
 
 namespace cpe {
 

@@ -440,7 +440,7 @@ namespace fblfrd {
 		FBLFRD_M( Booleans, booleans_ )
 		FBLFRD_M( S32, s32__ )
 		FBLFRD_M( S32, s32s_ )
-		FBLFRD_M( U32, u32__ )
+		FBLFRD_M( U32, u_32__ )
 		FBLFRD_M( U32s, u32s_ )
 		FBLFRD_M( Id8, id8__ )
 		FBLFRD_M( Ids8, ids8_ )

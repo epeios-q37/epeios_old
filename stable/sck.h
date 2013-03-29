@@ -66,9 +66,9 @@ extern class ttr_tutor &SCKTutor;
 #include "flw.h"
 #include "tol.h"
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define SCK__POSIX
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define SCK__WIN
 #else
 #	error "Uknown target !"

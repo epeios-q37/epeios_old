@@ -70,7 +70,13 @@ extern class ttr_tutor &CSDLEOTutor;
 # define CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME		CSDLEORetrieveSteering
 # define CSDLEO_RELEASE_STEERING_FUNCTION_NAME		CSDLEOReleaseSteering
 
-# define CSDLEO_SHARED_DATA_VERSION	"2"
+/*
+NOTA : version de la classe 'shared_data__', à mettre à jour à chaque fois que cette dernière est modifiée.
+*/
+
+# define CSDLEO_SHARED_DATA_VERSION_NUMBER	"3"
+
+# define CSDLEO_SHARED_DATA_VERSION	CSDLEO_SHARED_DATA_VERSION_NUMBER "-" CPE_BITNESS_LABEL
 
 namespace csdleo {
 	using namespace csdsuf;
@@ -83,11 +89,12 @@ namespace csdleo {
 	};
 
 #pragma pack( push, 1)
+	// NOTA : Si modifié, modifier 'CSDLEO_SHARED_DATA_VERSION' !
 	class data_control__
 	{
 	public:
 		const char *Version;	// Toujours en première position.
-		bso::u32__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		bso::uint__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
 		void reset( bso::bool__ = true )
 		{
 			Version = NULL;
@@ -105,6 +112,7 @@ namespace csdleo {
 		}
 	};
 
+	// NOTA : Si modifié, modifier 'CSDLEO_SHARED_DATA_VERSION' !
 	class data__ {
 	public:
 		mode__ Mode;
@@ -142,6 +150,7 @@ namespace csdleo {
 		}
 	};
 
+	// NOTA : Si modifié, modifier 'CSDLEO_SHARED_DATA_VERSION' !
 	class shared_data__
 	: public data_control__,
 	  public data__

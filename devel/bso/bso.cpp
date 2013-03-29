@@ -57,10 +57,11 @@ public:
 
 using namespace bso;
 
-xint__ bso::_ConvertToDInt( int__ UInt )
+const xint__ &bso::_ConvertToDInt(
+	int__ UInt,
+	xint__ &XInt )
 {
-	xint__ XInt;
-	length__ Position = BSO__DINT_SIZE_MAX - 1;
+	length__ Position = BSO_DINT_SIZE_MAX - 1;
 
 	XInt._Int[Position] = UInt & 0x7f;
 	UInt >>= 7;
@@ -73,7 +74,7 @@ xint__ bso::_ConvertToDInt( int__ UInt )
 		UInt >>= 7;
 	}
 
-	XInt._Length = BSO__DINT_SIZE_MAX - Position;
+	XInt._Length = BSO_DINT_SIZE_MAX - Position;
 
 	return XInt;
 }

@@ -74,7 +74,7 @@ namespace dtfbsc {
 	using bso::s8__;
 	using bso::u16__;
 	using bso::s16__;
-	using bso::u_32__;
+	using bso::u32__;
 	using bso::s32__;
 
 # ifdef BSO_64BITS_ENABLED

@@ -101,7 +101,7 @@ namespace csducl {
 			csdlec::library_data__ &LibraryData,	// Utilisé uniquement si le backend est une bibliothèque.
 			csdsnc::log_functions__ &Log,
 			type__ Type,
-			bso::u32__ PingDelay );	// Délai maximum d'inactivité entre deux 'ping'.
+			bso::uint__ PingDelay );	// Délai maximum d'inactivité entre deux 'ping'.
 		type__ GetType( void ) const
 		{
 			return _Type;

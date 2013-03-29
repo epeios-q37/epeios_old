@@ -307,8 +307,8 @@ namespace fbltyp {
 	typedef bch::E_BUNCH_( s32__ ) s32s_t_;
 	E_TMIMIC( s32s_t, s32s );
 
-	using bso::u32__;
-	typedef bch::E_BUNCH_( u32__ ) u32s_t_;
+	using bso::u_32__;
+	typedef bch::E_BUNCH_( u_32__ ) u32s_t_;
 	E_TMIMIC( u32s_t, u32s );
 
 	typedef bso::u8__ id8_t__;
@@ -325,7 +325,7 @@ namespace fbltyp {
 	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
 	E_TMIMIC( xids16_t, xids16 );
 
-	typedef bso::u32__ id32_t__;
+	typedef bso::u_32__ id32_t__;
 	typedef id32_t__ id32__;
 	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
 	E_TMIMIC( ids32_t, ids32 );
@@ -507,7 +507,7 @@ namespace fbltyp {
 
 	//f Put 'U32' into 'Flow'.
 	inline void PutU32(
-		u32__ U32,
+		u_32__ U32,
 		flw::oflow__ &OFlow )
 	{
 		dtfptb::FittedPutU32( U32, OFlow );
@@ -516,12 +516,12 @@ namespace fbltyp {
 	//f Get 'U32' from 'IFlow'.
 	inline void GetU32(
 		flw::iflow__ &IFlow,
-		u32__ &U32 )
+		u_32__ &U32 )
 	{
 		U32 = dtfptb::FittedGetU32( IFlow );
 	}
 	
-	FBLTYP_S( U32, u32__ )
+	FBLTYP_S( U32, u_32__ )
 
 	//f Put 'U32s' into 'Flow'.
 	void PutU32s(

@@ -199,12 +199,22 @@ ERREnd
 ERREpilog
 }
 
+
+#include "tht.h"
+
 static void PrintHeader_( void )
 {
 	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	COut << COPYRIGHT << txf::nl;
 	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << " (" << cpe::GetDescription() << ')' << txf::nl;
-	;
+	tol::tick__ Begin = tol::Tick();
+
+	tht::Wait( 2 );
+
+	tol::tick__ End = tol::Tick();
+
+	COut << tol::SecDiff( End, Begin ) << txf::pad << tol::MilliSecDiff( End, Begin ) << txf::pad << tol::NanoSecDiff( End, Begin ) << txf::nl;
+
 }
 
 static void AnalyzeOptions_(

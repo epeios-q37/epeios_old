@@ -142,14 +142,14 @@ namespace bso {
 
 
 	//d Maximal value of a 'ulong__'.
-	#define BSO_U_32_MAX	ULONG_MAX
+	#define BSO_U32_MAX	ULONG_MAX
 	//d Minimal value of a 'ulong__'.
-	#define BSO_U_32_MIN   0
+	#define BSO_U32_MIN   0
 	//d Size, in bit, of a 'ulong__'.
-	#define BSO_U_32_SIZE	4
+	#define BSO_U32_SIZE	4
 
 	//t Unsigned long.
-	typedef unsigned long u_32__;
+	typedef unsigned long u32__;
 
 
 # ifdef BSO_64BITS_ENABLED
@@ -244,10 +244,10 @@ namespace bso {
 #  define BSO_UINT_MIN		BSO_U64_MIN
 #  define BSO_UINT_SIZE		BSO_U64_SIZE
 # elif defined CPE_32BITS
-	typedef u_32__ uint__;
-#  define BSO_UINT_MAX		BSO_U_32_MAX
-#  define BSO_UINT_MIN		BSO_U_32_MIN
-#  define BSO_UINT_SIZE		BSO_U_32_SIZE
+	typedef u32__ uint__;
+#  define BSO_UINT_MAX		BSO_U32_MAX
+#  define BSO_UINT_MIN		BSO_U32_MIN
+#  define BSO_UINT_SIZE		BSO_U32_SIZE
 # else
 #  error "Unknown bitness !"
 #endif
@@ -274,7 +274,7 @@ namespace bso {
 
 
 	inline const char *Convert(
-		bso::u_32__ Value,
+		bso::u32__ Value,
 		integer_buffer__ &Buffer )
 	{
 		sprintf( Buffer.Datum, "%lu", Value );
@@ -284,7 +284,7 @@ namespace bso {
 
 #ifndef CPE__MT
 	//f Return 'Value' as string. Valid only until next call of a 'Convert(..)' function.
-	inline const char *Convert( bso::u_32__ Value )
+	inline const char *Convert( bso::u32__ Value )
 	{
 		static integer_buffer__ Buffer;
 
@@ -535,14 +535,16 @@ namespace bso {
 # endif
 
 
-# define BSO__DINT_SIZE_MAX ( ( ( 8 * sizeof( bso::int__ ) ) / 7 ) + 1 )
+# define BSO_DINT_SIZE_MAX ( ( ( 8 * sizeof( bso::int__ ) ) / 7 ) + 1 )
 
-	typedef raw__ dint__[BSO__DINT_SIZE_MAX];
+	typedef raw__ dint__[BSO_DINT_SIZE_MAX];
 
 	typedef bso::u8__ length__;
 # define SDRM__LENGTH_MAX BSO_UBYTE_MAX
 
-	struct xint__ _ConvertToDInt( int__ Int );	//Avec '_', pour éviter des problèmes d'ambiguïté ('int__' <=> 'uint__').
+	const struct xint__ &_ConvertToDInt(
+		int__ Int,
+		struct xint__ &XInt );	//Avec '_', pour éviter des problèmes d'ambiguïté ('int__' <=> 'uint__').
 
 	struct xint__ {
 	private:
@@ -554,7 +556,7 @@ namespace bso {
 			if ( _Length == 0 )
 				ERRc();
 
-			return _Int + BSO__DINT_SIZE_MAX - _Length;
+			return _Int + BSO_DINT_SIZE_MAX - _Length;
 		}
 		length__ BufferSize( void ) const
 		{
@@ -573,17 +575,23 @@ namespace bso {
 		{
 			reset();
 		}
-		friend xint__ _ConvertToDInt( int__ Int );
+		friend const struct xint__ &_ConvertToDInt(
+			int__ Int,
+			struct xint__ &XInt );
 	};
 
-	inline xint__ ConvertToDInt( uint__ UInt )
+	inline const xint__ &ConvertToDInt(
+		uint__ UInt,
+		xint__ &XInt )
 	{
-		return _ConvertToDInt( UInt );
+		return _ConvertToDInt( UInt, XInt );
 	}
 
-	inline xint__ ConvertToDInt( sint__ SInt )
+	inline const xint__ &ConvertToDInt(
+		sint__ SInt,
+		xint__ &XInt )
 	{
-		return _ConvertToDInt( ( SInt < 0 ? 1 : 0 ) | ( SInt << ( BSO_INT_SIZE * 8 - 1 ) ) );
+		return _ConvertToDInt( ( SInt < 0 ? 1 : 0 ) | ( SInt << ( BSO_INT_SIZE * 8 - 1 ) ), XInt );
 	}
 
 	int__ ConvertToInt(

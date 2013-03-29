@@ -58,13 +58,13 @@ public:
 using namespace fbltyp;
 
 static inline void PutSize_(
-	bso::u32__ Size,
+	bso::u_32__ Size,
 	flw::oflow__ &Flow )
 {
 	dtfptb::NewPutSize( Size, Flow );
 }
 
-static inline bso::u32__ GetSize_( flw::iflow__ &Flow )
+static inline bso::u_32__ GetSize_( flw::iflow__ &Flow )
 {
 	return dtfptb::NewGetSize( Flow);
 }
@@ -89,7 +89,7 @@ namespace {
 		s &S )
 	{
 		i I;
-		bso::u32__ Size = GetSize_( IFlow );
+		bso::size__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			flw::Get( IFlow, I );
@@ -129,7 +129,7 @@ void fbltyp::GetU32s(
 	flw::iflow__ &IFlow,
 	u32s_ &U32s )
 {
-	GetSet_<u32s_, u32__>( IFlow, U32s );
+	GetSet_<u32s_, u_32__>( IFlow, U32s );
 }
 void fbltyp::GetIds8(
 	flw::iflow__ &IFlow,
@@ -315,7 +315,7 @@ namespace {
 		c &C )
 	{
 		i Item;
-		bso::u32__ Size = GetSize_( IFlow );
+		bso::size__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
 			Item.Init();

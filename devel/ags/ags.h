@@ -585,7 +585,7 @@ namespace ags {
 			_Size = Size;
 
 			if ( !IsSizeShortSuitable( Size, Status ) )
-				_XSize = bso::ConvertToDInt( ConvertLongSizeToValue( Size, Status ) );
+				bso::ConvertToDInt( ConvertLongSizeToValue( Size, Status ), _XSize );
 
 			_Status = Status;
 		}

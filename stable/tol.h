@@ -574,7 +574,7 @@ namespace tol {
 # define TOL_DIFF_MAX			BSO_UINT_MAX
 # define TOL_TICK_DIFF_OVERFLOW	TOL_DIFF_MAX
 
-	typedef bso::u_32__ coeff__;
+	typedef bso::u32__ coeff__;
 # define TOL_COEFF_MAX	BSO_U32_MAX
 
 // Horloge de précision. N'est utile que pour comparer 2 
@@ -627,20 +627,20 @@ namespace tol {
 		return mach_absolute_time();
 	}
 
-	inline bso::nuint__ _Diff(
+	inline diff__ _Diff(
 		tick__ Op1,
 		tick__ Op2,
-		bso::nuint__ Coeff)
+		coeff__ Coeff)
 	{
 		if ( *Op1 < *Op2 )
 			ERRc();
 
-		bso::nuint__ Elapsed = *Op2 - *Op1;	// Si pas de 'warning', à priori 'nuint__' est assez grand.
+		diff__ Elapsed = *Op2 - *Op1;	// Si pas de 'warning', à priori 'nuint__' est assez grand.
 
-		if ( ( BSO_NUINT_MAX / _Numer ) < Elapsed )
+		if ( ( TOL_DIFF_MAX / _Numer ) < Elapsed )
 			ERRl();
 
-		if ( ( BSO_NUINT_MAX / Coeff ) < _Denom )
+		if ( ( TOL_DIFF_MAX / Coeff ) < _Denom )
 			ERRl();
 
 		return Elapsed * _Numer / ( _Denom * Coeff );

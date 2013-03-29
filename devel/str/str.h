@@ -296,7 +296,7 @@ namespace str {
 		STR_UN( ULL, bso::u64__, BSO_U64_MAX )
 		STR_SN( SLL, bso::s64__, BSO_S64_MAX, BSO_S64_MIN )
 # endif
-		STR_UN( UL, bso::u_32__, BSO_U_32_MAX )
+		STR_UN( UL, bso::u32__, BSO_U32_MAX )
 		STR_SN( SL, bso::s32__, BSO_S32_MAX, BSO_S32_MIN )
 		STR_UN( US, bso::u16__, BSO_U16_MAX )
 		STR_SN( SS, bso::s16__, BSO_S16_MAX, BSO_S16_MIN )

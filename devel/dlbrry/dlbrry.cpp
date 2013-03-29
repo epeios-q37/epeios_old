@@ -57,9 +57,9 @@ public:
 
 using namespace dlbrry;
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define TARGET_POSIX
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define TARGET_WIN
 #else
 #	error "Unknown target !"

@@ -64,9 +64,9 @@ extern class ttr_tutor &CSDBNCTutor;
 #include "flw.h"
 #include "sck.h"
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define CSDBNC__POSIX
-#elif defined( CPE__WIN )
+#elif defined( CPE_WIN )
 #	define CSDBNC__WIN
 #else
 #	error "Unknown target !"

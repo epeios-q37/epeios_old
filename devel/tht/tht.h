@@ -62,9 +62,9 @@ extern class ttr_tutor &THTTutor;
 
 #include "err.h"
 
-#if defined( CPE__POSIX )
+#if defined( CPE_POSIX )
 #	define THT__POSIX
-#elif defined ( CPE__WIN )
+#elif defined ( CPE_WIN )
 #	define THT__WIN
 #else
 #	error "Unknown target !"

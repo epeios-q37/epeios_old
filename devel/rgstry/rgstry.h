@@ -1969,11 +1969,11 @@ namespace rgstry {
 	}
 
 #ifdef BSO__64BITS_ENABLED
-	_M( ULL, bso::u64__, BSO_U64_MIN, BSO_U64_MAX )
+	_M( U64, bso::u64__, BSO_U64_MIN, BSO_U64_MAX )
 #endif
-	_M( UL, bso::u_32__, BSO_U_32_MIN, BSO_U_32_MAX )
-	_M( US, bso::u16__, BSO_U16_MIN, BSO_U16_MAX )
-	_M( UB, bso::u8__, BSO_U8_MIN, BSO_U8_MAX )
+	_M( U32, bso::u32__, BSO_U32_MIN, BSO_U32_MAX )
+	_M( U16, bso::u16__, BSO_U16_MIN, BSO_U16_MAX )
+	_M( U8, bso::u8__, BSO_U8_MIN, BSO_U8_MAX )
 
 # undef _M
 
@@ -1999,10 +1999,10 @@ namespace rgstry {
 	}
 
 #ifdef BSO__64BITS_ENABLED
-	_M( SLL, bso::s64__, BSO_S64_MIN, BSO_S64_MAX )
+	_M( S64, bso::s64__, BSO_S64_MIN, BSO_S64_MAX )
 #endif
-	_M( SL, bso::s32__, BSO_S32_MIN, BSO_S32_MAX )
-	_M( SS, bso::s16__, BSO_S16_MIN, BSO_S16_MAX )
+	_M( S32, bso::s32__, BSO_S32_MIN, BSO_S32_MAX )
+	_M( S16, bso::s16__, BSO_S16_MIN, BSO_S16_MAX )
 	_M( SB, bso::s8__, BSO_S8_MIN, BSO_S8_MAX )
 
 

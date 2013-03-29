@@ -65,11 +65,11 @@ extern class ttr_tutor &STRNGTutor;
 /* Cette bibliothèque vise à remplacer <string.h>, car l'inclusion directe de cette dernière
 pose problème avec la bibliothèque 'FLS' sous MacOS. */
 
-# ifdef CPE__MAC
+# ifdef CPE_MAC
 namespace strng {
 # endif
 # include <string.h>
-# ifdef CPE__MAC
+# ifdef CPE_MAC
 }
 using strng::memcpy;
 using strng::strlen;

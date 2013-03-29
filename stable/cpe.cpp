@@ -61,44 +61,17 @@ using namespace cpe;
 
 static const char *Processor_( void )
 {
-#ifdef CPE_X86
-	return "x86";
-#elif defined( CPE_ARM )
-	return "ARM";
-#else
-# error
-#endif
+	return CPE_PROCESSOR_LABEL;
 }
 
-static const char *Size_( void )
+static const char *Bitness_( void )
 {
-#ifdef CPE_32BITS
-	return "32";
-#elif defined( CPE_64BITS )
-	return "64";
-#else
-# error
-#endif
+	return CPE_BITNESS_LABEL;
 }
 
 static const char *Enviroment_( void )
 {
-#if defined( CPE_MSVC )
-	return "MSVC";
-#elif defined( CPE_MAC )
-	return "MacOS";
-#elif defined( CPE_CYGWIN )
-	return "Cygwin";
-#elif defined( CPE_MINGW )
-	return "MinGW";
-#elif defined( CPE_LINUX )
-	return "GNU/Linux";
-#elif defined( CPE_ANDROID )
-	return "Android";
-#else
-	return "Unknown";
-#endif
-
+	return CPE_ENVIROMENT_LABEL;
 }
 
 const char *cpe::GetDescription( void )
@@ -110,7 +83,7 @@ const char *cpe::GetDescription( void )
 	strcat( Buffer, "_" );
 	strcat( Buffer, Processor_() );
 	strcat( Buffer, "-" );
-	strcat( Buffer, Size_() );
+	strcat( Buffer, Bitness_() );
 
 	return Buffer;
 }
