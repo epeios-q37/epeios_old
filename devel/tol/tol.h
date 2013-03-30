@@ -635,15 +635,12 @@ namespace tol {
 		if ( *Op1 < *Op2 )
 			ERRc();
 
-		diff__ Elapsed = *Op2 - *Op1;	// Si pas de 'warning', à priori 'nuint__' est assez grand.
+		uint64_t Elapsed = *Op1 - *Op2;
 
 		if ( ( TOL_DIFF_MAX / _Numer ) < Elapsed )
 			ERRl();
 
-		if ( ( TOL_DIFF_MAX / Coeff ) < _Denom )
-			ERRl();
-
-		return Elapsed * _Numer / ( _Denom * Coeff );
+		return ( Elapsed * _Numer / _Denom  ) / ( 1000000000 / Coeff );
 	}
 
 	inline time_t _Time( void )
@@ -678,7 +675,7 @@ namespace tol {
 				if ( Op1->tv_nsec > Op2->tv_nsec )
 			ERRc();
 
-		Intermediate->tv_nsec = ( CarryFlag ? 1000000 : 0 ) + Op1->tv_nsec - Op2->tv_nsec;
+		Intermediate->tv_nsec = ( ( CarryFlag ? 1000000000 : 0 ) + Op1->tv_nsec ) - Op2->tv_nsec;
 
 		Intermediate->tv_sec = Op1->tv_sec - Op2->tv_sec - (CarryFlag ? 1 : 0 );
 
@@ -687,7 +684,7 @@ namespace tol {
 
 		Result = Op1->tv_sec * Coeff;
 
-		Frac = Intermediate->tv_nsec / ( 1000000 / Coeff );
+		Frac = Intermediate->tv_nsec / ( 1000000000 / Coeff );
 
 		if ( ( Result + Frac  ) > BSO_UINT_MAX )
 			return TOL_TICK_DIFF_OVERFLOW;
@@ -717,11 +714,18 @@ namespace tol {
 		return _Diff( Op1, Op2, 1000 );
 	}
 
-	inline diff__ NanoSecDiff( 
+	inline diff__ MicroSecDiff( 
 		tick__ Op1,
 		tick__ Op2 )
 	{
 		return _Diff( Op1, Op2, 1000000 );
+	}
+
+	inline diff__ NanoSecDiff( 
+		tick__ Op1,
+		tick__ Op2 )
+	{
+		return _Diff( Op1, Op2, 1000000000 );
 	}
 
 	inline time_t EpochTime( bso::bool__ Discrimination )	// Mettre 'Discrimination' à 'true' pour être sûr que deux

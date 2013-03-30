@@ -213,7 +213,7 @@ static void PrintHeader_( void )
 
 	tol::tick__ End = tol::Tick();
 
-	COut << tol::SecDiff( End, Begin ) << txf::pad << tol::MilliSecDiff( End, Begin ) << txf::pad << tol::NanoSecDiff( End, Begin ) << txf::nl;
+	COut << tol::SecDiff( End, Begin ) << txf::pad << tol::MilliSecDiff( End, Begin ) << txf::pad << tol::MicroSecDiff( End, Begin ) << txf::pad << tol::NanoSecDiff( End, Begin ) << txf::nl;
 
 }
 
