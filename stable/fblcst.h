@@ -76,14 +76,14 @@ namespace fblcst {
 		cBoolean,
 		//i Booleans ('bitbch::bit_bunch_')
 		cBooleans,
-		//i Portable signed long (bso::s32__ ).
-		cS32,
-		//i Portable signed longs (SET_( bso::s32__ ) ).
-		cS32s,
+		//i Portable int (bso::sint__ ).
+		cSInt,
+		//i Portable ints (SET_( bso::sint__ ) ).
+		cSInts,
 		//i Portable unsigned long (bso::u32__ ).
-		cU32,
+		cUInt,
 		//i Portable unsigned longs (SET_( bso::u32__ ) ).
-		cU32s,
+		cUInts,
 		//i 8 bits identifier ( 'bso::u8__' ).
 		cId8,
 		//i Array of 8 bits identifiers ( 'SET_( bso::u8__ )' )

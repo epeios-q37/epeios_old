@@ -118,15 +118,6 @@ static inline bso::u32__ Put_(
 	return Value;
 }
 
-void dtfptb::FittedPutU32(
-	bso::u32__ U32,
-	flw::oflow__ &Flow )
-{
-	while ( ( U32 = Put_( U32, Flow ) ) != 0 );
-}
-
-
-
 #if 0	// Version originale.
 void dtfptb::PutSize(
 	bso::ulong__ Size,
@@ -203,30 +194,6 @@ bso::u32__ dtfptb::OldGetSize( flw::iflow__ &IFlow )
 	return Size;
 }
 
-bso::u32__ dtfptb::FittedGetU32( flw::iflow__ &IFlow )
-{
-	bso::u32__ Value = 0;
-	flw::datum__ Datum = IFlow.Get();
-	bso::u8__ Counter = 1;
-
-	Value = Datum & 0x7f;
-
-	while ( Datum & 0X80 ) {
-		Datum = IFlow.Get();
-
-#ifdef DTFPTB_DBG
-		if ( Counter >= 5 )
-			ERRF();
-#endif
-
-		Value |= ( Datum & 0X7f ) << ( 7 * Counter );
-
-		Counter++;
-	}
-
-	return Value;
-}
-
 bso::u32__ dtfptb::OldGetSize( const size_buffer__ &Buffer )
 {
 	bso::u32__ Size = Buffer[0];
@@ -271,7 +238,77 @@ static void _PutInt(
 	Flow.Write( XInt.DSizeBuffer(), XInt.BufferSize() );
 }
 
-bso::uint__ dtfptb::GetUInt(
+#define M( s )	Flow.Put( (bso::u8__)( Int >> ( s * 8 ) ) )
+
+void dtfptb::_FPutInt(
+	bso::int__ Int,
+	_length__ Length,
+	flw::oflow__ Flow )
+{
+	switch ( Length ) {
+	case 8:
+#ifdef CPE_64BITS
+		M( 7 );
+		M( 6 );
+		M( 5 );
+		M( 4 );
+#else
+		ERRl();
+		break;
+#endif
+	case 4:
+		M( 3 );
+		M( 2 );
+	case 2:
+		M( 1 );
+	case 0:
+		M( 0 );
+		break;
+	default:
+		ERRc();
+		break;
+	}
+}
+#undef M
+
+#define M( s )	Int += Flow.Get() << s * 8
+
+bso::int__ dtfptb::_FGetInt(
+	flw::iflow__ &Flow,
+	_length__ Length,
+	bso::int__ &Int )
+{
+	Int = 0;
+
+	switch( Length ) {
+	case 8:
+#ifdef CPE_64BITS
+		M( 7 );
+		M( 6 );
+		M( 5 );
+		M( 4 );
+#else
+		ERRl();
+		break;
+#endif
+	case 4:
+		M( 3 );
+		M( 2 );
+	case 2:
+		M( 1 );
+	case 1:
+		M( 0 );
+	default:
+		ERRc();
+		break;
+	}
+
+	return Int;
+}
+
+#undef M
+
+bso::uint__ dtfptb::_VGetUInt(
 	flw::iflow__ &Flow,
 	bso::uint__ Max )
 {
@@ -284,16 +321,7 @@ bso::uint__ dtfptb::GetUInt(
 	return Value;
 }
 
-void dtfptb::PutUInt(
-	bso::uint__ UInt,
-	flw::oflow__ &Flow )
-{
-	bso::xint__ XInt;
-
-	_PutInt( bso::ConvertToDInt( UInt, XInt ), Flow );
-}
-
-bso::sint__ dtfptb::GetSInt(
+bso::sint__ dtfptb::_VGetSInt(
 	flw::iflow__ &Flow,
 	bso::sint__ Min,
 	bso::sint__ Max )
@@ -310,7 +338,16 @@ bso::sint__ dtfptb::GetSInt(
 	return Value;
 }
 
-void dtfptb::PutSInt(
+void dtfptb::_VPutUInt(
+	bso::uint__ UInt,
+	flw::oflow__ &Flow )
+{
+	bso::xint__ XInt;
+
+	_PutInt( bso::ConvertToDInt( UInt, XInt ), Flow );
+}
+
+void dtfptb::_VPutSInt(
 	bso::sint__ SInt,
 	flw::oflow__ &Flow )
 {
@@ -319,17 +356,6 @@ void dtfptb::PutSInt(
 	_PutInt( bso::ConvertToDInt( SInt, XInt ), Flow );
 }
 
-/*
-bso::ulong__ dtfptb::NewGetSize( const size_buffer__ &Buffer )
-{
-	size_buffer__ SizeBuffer;
-	flx::buffer_iflow___ Flow;
-
-	Flow.Init( SizeBuffer, sizeof( SizeBuffer ) );
-
-	return NewGetSize( Flow );
-}
-*/
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

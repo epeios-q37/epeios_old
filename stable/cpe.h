@@ -109,10 +109,10 @@ extern class ttr_tutor &CPETutor;
 # define CPE_ARM_LABEL "ARM"
 
 
-# undef CPE_32BITS	// Processeur 32 bits.
+# undef CPE_32BITS	// Architecture 32 bits.
 # define CPE_32BITS_LABEL	"32"
 
-# undef CPE_64BITS	// Processeur 64 bits.
+# undef CPE_64BITS	// Architecture 64 bits.
 # define CPE_64BITS_LABEL	"64"
 
 
@@ -276,11 +276,11 @@ extern class ttr_tutor &CPETutor;
 # endif
 
 # if defined( CPE_32BITS )
-#  define CPE_BITNESS_LABEL	CPE_32BITS_LABEL
+#  define CPE_ARCH_BITNESS_LABEL	CPE_32BITS_LABEL
 # elif defined( CPE_64BITS )
-#  define CPE_BITNESS_LABEL	CPE_64BITS_LABEL
+#  define CPE_ARCH_BITNESS_LABEL	CPE_64BITS_LABEL
 # else
-#  error "Undefined bitness !"
+#  error "Undefined architecture bitness !"
 # endif
 
 

@@ -303,13 +303,13 @@ namespace fbltyp {
 	typedef bitbch::bit_bunch_<sdr::row__>	booleans_t_;
 	E_TMIMIC( booleans_t, booleans );
 
-	using bso::s32__;
-	typedef bch::E_BUNCH_( s32__ ) s32s_t_;
-	E_TMIMIC( s32s_t, s32s );
+	using bso::sint__;
+	typedef bch::E_BUNCH_( sint__ ) sints_t_;
+	E_TMIMIC( sints_t, sints );
 
-	using bso::u_32__;
-	typedef bch::E_BUNCH_( u_32__ ) u32s_t_;
-	E_TMIMIC( u32s_t, u32s );
+	using bso::uint__;
+	typedef bch::E_BUNCH_( uint__ ) uints_t_;
+	E_TMIMIC( uints_t, uints );
 
 	typedef bso::u8__ id8_t__;
 	typedef id8_t__ id8__;
@@ -325,7 +325,7 @@ namespace fbltyp {
 	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
 	E_TMIMIC( xids16_t, xids16 );
 
-	typedef bso::u_32__ id32_t__;
+	typedef bso::u32__ id32_t__;
 	typedef id32_t__ id32__;
 	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
 	E_TMIMIC( ids32_t, ids32 );
@@ -476,64 +476,64 @@ namespace fbltyp {
 	FBLTYP_D( Booleans, booleans )
 
 	//f Put 's32' into 'Flow'.
-	inline void PutS32(
-		s32__ S32,
+	inline void PutSInt(
+		sint__ Int,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::FittedPutS32( S32, OFlow );
+		dtfptb::VPut( Int, OFlow );
 	}
 
 	//f Get 's32' from 'IFlow'.
-	inline void GetS32(
+	inline sint__ GetSInt(
 		flw::iflow__ &IFlow,
-		s32__ &S32 )
+		sint__ &Int )
 	{
-		S32 = dtfptb::FittedGetS32( IFlow );
+		return dtfptb::VGet( IFlow, Int );
 	}
 	
-	FBLTYP_S( S32, s32__ )
+	FBLTYP_S( SInt, sint__ )
 
 	//f Put 'S32s' into 'Flow'.
-	void PutS32s(
-		const s32s_ &S32s,
+	void PutSInts(
+		const sints_ &Ints,
 		flw::oflow__ &OFlow );
 
 	//f Get 'S32s' from 'IFlow'.
-	void GetS32s(
+	void GetSInts(
 		flw::iflow__ &IFlow,
-		s32s_ &S32s );
+		sints_ &SInts );
 
-	FBLTYP_D( S32s, s32s )
+	FBLTYP_D( SInts, sints )
 
 	//f Put 'U32' into 'Flow'.
-	inline void PutU32(
-		u_32__ U32,
+	inline void PutUInt(
+		uint__ Int,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::FittedPutU32( U32, OFlow );
+		dtfptb::VPut( Int, OFlow );
 	}
 
 	//f Get 'U32' from 'IFlow'.
-	inline void GetU32(
+	inline uint__ GetUInt(
 		flw::iflow__ &IFlow,
-		u_32__ &U32 )
+		uint__ &Int )
 	{
-		U32 = dtfptb::FittedGetU32( IFlow );
+		return dtfptb::VGet( IFlow, Int );
 	}
 	
-	FBLTYP_S( U32, u_32__ )
+	FBLTYP_S( UInt, uint__ )
 
 	//f Put 'U32s' into 'Flow'.
-	void PutU32s(
-		const u32s_ &U32s,
+	void PutUInts(
+		const uints_ &UInts,
 		flw::oflow__ &OFlow );
 
 	//f Get 'U32s' from 'IFlow'.
-	void GetU32s(
+	void GetUInts(
 		flw::iflow__ &IFlow,
-		u32s_ &U32s );
+		uints_ &UInts );
 
-	FBLTYP_D( U32s, u32s )
+	FBLTYP_D( UInts, uints )
 
 	//f Put 'Id8' into 'OFlow'.
 	inline void PutId8(

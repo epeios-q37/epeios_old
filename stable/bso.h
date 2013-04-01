@@ -68,16 +68,6 @@ extern class ttr_tutor &BSOTutor;
 # include "cpe.h"
 # include "strng.h"
 
-# ifdef CPE_64BITS
-#  ifndef E_DISABLE_64BITS
-#   define BSO_64BITS_ENABLED
-#  endif
-# endif
-
-# ifdef E_ENABLE_64BITS
-#  define BSO_64BITS_ENABLED
-# endif
-
 namespace bso {
 	//t Basic data, without any basically signification.
 	typedef unsigned char raw__;
@@ -91,7 +81,7 @@ namespace bso {
 	//d Minimal value of a 'sbyte__'.
 	#define BSO_S8_MIN		SCHAR_MIN
 	//d Size, in bit, of a 'sbyte__'.
-	#define BSO_S8_SIZE		1
+//	#define BSO_S8_SIZE		1
 
 	//t Signed byte.
 	typedef signed char	s8__;
@@ -102,7 +92,7 @@ namespace bso {
 	//d Minimal value of a 'ubyte__'.
 	#define BSO_U8_MIN		0
 	//d Size, in bit, of a 'ubyte__'.
-	#define BSO_U8_SIZE		1
+//	#define BSO_U8_SIZE		1
 
 	//t Unsigned byte.
 	typedef unsigned char u8__;
@@ -113,7 +103,7 @@ namespace bso {
 	//d Minimal value of a 'sshort__'.
 	#define BSO_S16_MIN		SHRT_MIN
 	//d Size, in bit, of a 'sshort__'.
-	#define BSO_S16_SIZE	2
+//	#define BSO_S16_SIZE	2
 
 	// Signed short.
 	typedef signed short s16__;
@@ -124,7 +114,7 @@ namespace bso {
 	//d Minimal value of a 'ushort__'.
 	#define BSO_U16_MIN		0
 	//d Size, in bit, of a 'ushort__'.
-	#define BSO_U16_SIZE	2
+//	#define BSO_U16_SIZE	2
 
 	//t Unsigned short
 	typedef unsigned short u16__;
@@ -135,7 +125,7 @@ namespace bso {
 	//d Minimal value of a 'slong__'.
 	#define BSO_S32_MIN		LONG_MIN
 	//d Size, in bit, of a 'slong__'.
-	#define BSO_S32_SIZE	4
+//	#define BSO_S32_SIZE	4
 
 	//t Signed long.
 	typedef signed long s32__;
@@ -146,45 +136,40 @@ namespace bso {
 	//d Minimal value of a 'ulong__'.
 	#define BSO_U32_MIN   0
 	//d Size, in bit, of a 'ulong__'.
-	#define BSO_U32_SIZE	4
+//	#define BSO_U32_SIZE	4
 
 	//t Unsigned long.
 	typedef unsigned long u32__;
 
 
-# ifdef BSO_64BITS_ENABLED
 	//d Maximal value of a 'sllong__'.
 	#define BSO_S64_MAX		LLONG_MAX
 	//d Minimal value of a 'sllong__'.
 	#define BSO_S64_MIN		LLONG_MIN
 	//d Size, in bit, of a 'slong__'.
-	#define BSO_S64_SIZE	8
+//	#define BSO_S64_SIZE	8
 
 	//t Signed long.
 	typedef signed long long s64__;
-# endif
 
-# ifdef BSO_64BITS_ENABLED
 	//d Maximal value of a 'ullong__'.
 	#define BSO_U64_MAX		ULLONG_MAX
 	//d Minimal value of a 'ullong__'.
 	#define BSO_U64_MIN		0
 	//d Size, in bit, of a 'ullong__'.
-	#define BSO_U64_SIZE	8
+//	#define BSO_U64_SIZE	8
 
 	//t Unsigned long.
 	typedef unsigned long long u64__;
-# endif 
-
 
 # define BSO_SIZE_MAX	((size_t)-1)
 
 # ifdef CPE_64BITS
-#  define BSO_SIZE_SIZE	8
+//#  define BSO_SIZE_SIZE	8
 # elif defined (CPE_32BITS )
-#  define BSO_SIZE_SIZE	4
+//#  define BSO_SIZE_SIZE	4
 # else
-#  error "Undefined bitness !"
+#  error "Undefined architecture bitness !"
 # endif
 
 	//t Size of a memory .
@@ -209,15 +194,11 @@ namespace bso {
 
 	typedef void *pointer__;
 
-# if BSO_SIZE_SIZE > 8
-#  error "Change below !"
-# endif
-
-	//d Maximum size of an ASCII converted pointer.
-	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	25
+	// Taille maximale nécessaire pour stocker la valeur d'un pointeur en binaire dans une chaine de caractère.
+	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	( sizeof( pointer__ ) * 8 )
 
 	struct pointer_buffer__ {
-		char Datum[BSO_ASCII_CONVERTED_POINTER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
+		char Datum[BSO_ASCII_CONVERTED_POINTER_MAX_SIZE];	// '+1' pour stocker le caractère 'NULL' final.
 	};
 
 	inline const char *Convert(
@@ -230,11 +211,11 @@ namespace bso {
 	}
 
 
-	//d Maximum size of an ASCII converted signed/unsigned 64 bits integer.
-	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	22
+	// Taille maximale nécessaire pour stocker la valeur d'un entirer en décimal dans une chaine de caractère (+ le signe).
+	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	( 1 + ( sizeof( pointer__ ) * 8 ) )
 
 	struct integer_buffer__ {
-		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' to store the terminal 'NUL' character.
+		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' pour stocker le caractère 'NULL' final.
 	};
 
 // 'natural unsigned integer'
@@ -242,18 +223,16 @@ namespace bso {
 	typedef u64__ uint__;
 #  define BSO_UINT_MAX		BSO_U64_MAX
 #  define BSO_UINT_MIN		BSO_U64_MIN
-#  define BSO_UINT_SIZE		BSO_U64_SIZE
+//#  define BSO_UINT_SIZE		BSO_U64_SIZE
 # elif defined CPE_32BITS
 	typedef u32__ uint__;
 #  define BSO_UINT_MAX		BSO_U32_MAX
 #  define BSO_UINT_MIN		BSO_U32_MIN
-#  define BSO_UINT_SIZE		BSO_U32_SIZE
+//#  define BSO_UINT_SIZE		BSO_U32_SIZE
 # else
 #  error "Unknown bitness !"
 #endif
 
-
-# ifdef BSO_64BITS_ENABLED
 	inline const char *Convert(
 		u64__ Value,
 		integer_buffer__ &Buffer )
@@ -270,8 +249,6 @@ namespace bso {
 		return Convert( Value, Buffer );
 	}
 #  endif
-# endif
-
 
 	inline const char *Convert(
 		bso::u32__ Value,
@@ -329,31 +306,21 @@ namespace bso {
 	typedef s64__ sint__;
 #  define BSO_SINT_MAX		BSO_S64_MAX
 #  define BSO_SINT_MIN		BSO_S64_MIN
-#  define BSO_SINT_SIZE		BSO_S64_SIZE
+//#  define BSO_SINT_SIZE		BSO_S64_SIZE
 # elif defined CPE_32BITS
 	typedef s32__ sint__;
 #  define BSO_SINT_MAX		BSO_S32_MAX
 #  define BSO_SINT_MIN		BSO_S32_MIN
-#  define BSO_SINT_SIZE		BSO_S32_SIZE
+//#  define BSO_SINT_SIZE		BSO_S32_SIZE
 # else
 #  error "Unknown bitness !"
 #endif
 
-// 'biggest signed integer'
-# ifdef BSO_64BITS_ENABLED
-	typedef s64__ _bsint__;
-# else
-	typedef s32__ _bsint__;
-# endif
-
-# if BSO_SINT_SIZE != BSO_UINT_SIZE
-#  error "'sint__' and 'uint__' should be the same size !"
-# endif
 	// Entier générique, comme facilité.
 	typedef uint__ int__;
 # define BSO_INT_MAX		BSO_UINT_MAX
 # define BSO_INT_MIN		BSO_UINT_MIN
-# define BSO_INT_SIZE		BSO_UINT_SIZE
+//# define BSO_INT_SIZE		BSO_UINT_SIZE
 
 	//c A sign ( -(1) +(1) 0 ).
 	class sign__
@@ -384,9 +351,6 @@ namespace bso {
 			return 1;
 	}
 
-
-
-# ifdef BSO_64BITS_ENABLED 
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
 		s64__ Value,
@@ -404,7 +368,6 @@ namespace bso {
 
 		return Convert( Value, Buffer );
 	}
-# endif
 # endif
 
 
@@ -464,7 +427,7 @@ namespace bso {
 	#define BSO_ASCII_CONVERTED_FLOAT_MAX_SIZE	40
 
 	struct float_buffer__ {
-		char Datum[BSO_ASCII_CONVERTED_FLOAT_MAX_SIZE+1];	// '+1' to store terminal NUL character.
+		char Datum[BSO_ASCII_CONVERTED_FLOAT_MAX_SIZE+1];	// '+1' pour stocker le caractère 'NULL' final.
 	};
 	//f Return 'Value' as string in 'String'.
 	inline const char *Convert(
@@ -518,7 +481,7 @@ namespace bso {
 	}
 #endif
 
-# if !defined( CPE_64BITS	) && !defined( CPE_MAC ) // Sinon conflit !
+# if !defined( CPE_64BITS ) && !defined( CPE_MAC ) // Sinon conflit !
 	inline const char *Convert(
 		size__ Value,
 		integer_buffer__ &Buffer )
@@ -591,7 +554,7 @@ namespace bso {
 		sint__ SInt,
 		xint__ &XInt )
 	{
-		return _ConvertToDInt( ( SInt < 0 ? 1 : 0 ) | ( SInt << ( BSO_INT_SIZE * 8 - 1 ) ), XInt );
+		return _ConvertToDInt( ( SInt < 0 ? 1 : 0 ) | ( SInt << ( sizeof( SInt ) * 8 - 1 ) ), XInt );
 	}
 
 	int__ ConvertToInt(
@@ -612,7 +575,7 @@ namespace bso {
 		int__ Int = ConvertToInt( DInt, Length );
 		sign__ Sign = ( Int & 1 ? -1 : 1 );
 
-		Int >>= BSO_INT_SIZE * 8 - 1;
+		Int >>= sizeof( Int ) * 8 - 1;
 
 		switch ( Sign ) {
 		case 1:

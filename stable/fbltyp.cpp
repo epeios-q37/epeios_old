@@ -58,15 +58,17 @@ public:
 using namespace fbltyp;
 
 static inline void PutSize_(
-	bso::u_32__ Size,
+	bso::size__ Size,
 	flw::oflow__ &Flow )
 {
-	dtfptb::NewPutSize( Size, Flow );
+	dtfptb::VPut( (bso::int__)Size, Flow );
 }
 
-static inline bso::u_32__ GetSize_( flw::iflow__ &Flow )
+static inline bso::size__ GetSize_( flw::iflow__ &Flow )
 {
-	return dtfptb::NewGetSize( Flow);
+	bso::int__ Size;
+
+	return dtfptb::VGet( Flow, Size );
 }
 
 namespace {
@@ -105,31 +107,31 @@ void fbltyp::PutIds8(
 	PutSet_( Ids8, OFlow );
 }
 
-void fbltyp::PutS32s(
-	const s32s_ &S32s,
+void fbltyp::PutSInts(
+	const sints_ &SInts,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( S32s, OFlow );
+	PutSet_( SInts, OFlow );
 }
 
-void fbltyp::GetS32s(
+void fbltyp::GetSInts(
 	flw::iflow__ &IFlow,
-	s32s_ &S32s )
+	sints_ &SInts )
 {
-	GetSet_<s32s_, s32__>( IFlow, S32s );
+	GetSet_<sints_, sint__>( IFlow, SInts );
 }
-void fbltyp::PutU32s(
-	const u32s_ &U32s,
+void fbltyp::PutUInts(
+	const uints_ &UInts,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( U32s, OFlow );
+	PutSet_( UInts, OFlow );
 }
 
-void fbltyp::GetU32s(
+void fbltyp::GetUInts(
 	flw::iflow__ &IFlow,
-	u32s_ &U32s )
+	uints_ &UInts )
 {
-	GetSet_<u32s_, u_32__>( IFlow, U32s );
+	GetSet_<uints_, uint__>( IFlow, UInts );
 }
 void fbltyp::GetIds8(
 	flw::iflow__ &IFlow,

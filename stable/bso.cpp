@@ -113,10 +113,13 @@ public:
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 
-		if ( sizeof( size__ ) != BSO_SIZE_SIZE )
+		if ( sizeof( size__ ) != sizeof( int__ ) )
 			ERRc();
 
 		if ( sizeof( sint__ ) != sizeof( uint__ ) )
+			ERRc();
+
+		if ( sizeof( int__ ) != sizeof( uint__ ) )
 			ERRc();
 	}
 	~bsopersonnalization( void )

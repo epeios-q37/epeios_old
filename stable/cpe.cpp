@@ -64,9 +64,9 @@ static const char *Processor_( void )
 	return CPE_PROCESSOR_LABEL;
 }
 
-static const char *Bitness_( void )
+static const char *ArchitectureBitness_( void )
 {
-	return CPE_BITNESS_LABEL;
+	return CPE_ARCH_BITNESS_LABEL;
 }
 
 static const char *Enviroment_( void )
@@ -83,7 +83,7 @@ const char *cpe::GetDescription( void )
 	strcat( Buffer, "_" );
 	strcat( Buffer, Processor_() );
 	strcat( Buffer, "-" );
-	strcat( Buffer, Bitness_() );
+	strcat( Buffer, ArchitectureBitness_() );
 
 	return Buffer;
 }
