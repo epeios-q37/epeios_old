@@ -71,18 +71,22 @@ namespace strng {
 # include <string.h>
 # ifdef CPE_MAC
 }
+
+using strng::memcmp;
 using strng::memcpy;
-using strng::strlen;
-using strng::ssize_t;
-using strng::memset;
-using strng::strcpy;
 using strng::memmove;
-using strng::strrchr;
-using strng::strcmp;
+using strng::memset;
+
+using strng::ssize_t;
+
 using strng::strcat;
 using strng::strchr;
+using strng::strcmp;
+using strng::strcpy;
+using strng::strerror;
+using strng::strlen;
 using strng::strpbrk;
-using strng::memcmp;
+using strng::strrchr;
 # endif
 
 
