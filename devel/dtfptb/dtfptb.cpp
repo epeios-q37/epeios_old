@@ -271,7 +271,7 @@ void dtfptb::_FPutInt(
 }
 #undef M
 
-#define M( s )	Int += Flow.Get() << s * 8
+#define M( s )	Int += (bso::int__) ( Flow.Get() ) << ( s * 8 )
 
 bso::int__ dtfptb::_FGetInt(
 	flw::iflow__ &Flow,

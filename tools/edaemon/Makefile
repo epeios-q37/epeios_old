@@ -82,11 +82,13 @@ ifeq ("$(os)","Cygwin")
 # The MinGW compiler under Cygwin. 
 # To build 64 bits application.
 # Uses directly the MS CRT.
-	cc = x86_64-w64-mingw32-g++
+	#cc = x86_64-w64-mingw32-g++
+	#libs += -lws2_32
 
 # THe MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
 	#cc = i686-w64-mingw32-g++
+	#libs += -lws2_32
 
 endif
 
