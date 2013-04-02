@@ -527,7 +527,8 @@ namespace bso {
 		}
 		void reset( bso::bool__ = true )
 		{
-			memset( _Int, 0, sizeof( _Int ) );
+			// Pour éviter l'inclusion de "strng.h", qui pose problème.
+			// memset( _Int, 0, sizeof( _Int ) );
 			_Length = 0;
 		}
 		xint__( void )
