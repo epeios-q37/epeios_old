@@ -275,10 +275,9 @@ void dtfptb::_FPutInt(
 
 bso::int__ dtfptb::_FGetInt(
 	flw::iflow__ &Flow,
-	_length__ Length,
-	bso::int__ &Int )
+	_length__ Length )
 {
-	Int = 0;
+	bso::int__ Int = 0;
 
 	switch( Length ) {
 	case 8:

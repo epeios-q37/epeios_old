@@ -105,11 +105,22 @@ namespace dtfptb {
 		_length__ Length,
 		flw::oflow__ Flow );
 
+	bso::int__ _FGetInt(
+		flw::iflow__ &Flow,
+		_length__ Length );
+
 	template <typename i> inline void FPut(
 		i Int,
 		flw::oflow__ &Flow )
 	{
 		_FPutInt( Int, sizeof( Int ), Flow );
+	}
+
+	template <typename i> inline i FGet(
+		flw::iflow__ &Flow,
+		i &Int )
+	{
+		return Int = (i)_FGetInt( Flow, sizeof( Int ) );
 	}
 
 # if !defined( CPE_64BITS ) && !defined( CPE_MAC )	// Sinon ambigüité !
@@ -119,26 +130,12 @@ namespace dtfptb {
 	{
 		_FPutInt( Size, sizeof( Size ), Flow );
 	}
-# endif
 
-	bso::int__ _FGetInt(
-		flw::iflow__ &Flow,
-		_length__ Length,
-		bso::int__ &Int );
-
-	template <typename i> inline void FGet(
-		flw::iflow__ &Flow,
-		i &Int )
-	{
-		_FGetInt( Flow, sizeof( Int ), Int );
-	}
-
-# if !defined( CPE_64BITS ) && !defined( CPE_MAC )	// Sinon ambigüité !
-	inline void FGet(
+	inline bso::size__ FGet(
 		flw::iflow__ &Flow,
 		bso::size__ &Size )
 	{
-		_FGetInt( Flow, sizeof( Size ), *(bso::int__ *)&Size );
+		return Size = _FGetInt( Flow, sizeof( Size ) );
 	}
 # endif
 
