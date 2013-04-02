@@ -60,61 +60,57 @@ extern class ttr_tutor &MTKTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "cpe.h"
-#include "errno.h"
-#include "tht.h"
+# include "err.h"
+# include "cpe.h"
+# include "errno.h"
+# include "tht.h"
 
-#if defined( CPE__POSIX )
-#	define MTK__POSIX
-#elif defined( CPE__WIN )
-#	define MTK__WIN
-#else
-#	error "Unknown target !"
-#endif
+# if defined( CPE_POSIX )
+#  define MTK__POSIX
+# elif defined( CPE_WIN )
+#  define MTK__WIN
+# else
+#  error "Unknown enviroment !"
+# endif
 
-#ifdef MTK_THREADS_REMAIN
-#	define MTK__THREADS_REMAIN
-#endif
+ #ifdef MTK_THREADS_REMAIN
+#  define MTK__THREADS_REMAIN
+# endif
 
 
-#ifdef MTK__WIN
-#	include <process.h>
-#	include <windows.h>
-#elif defined( MTK__POSIX )
-#	ifdef CPE__BEOS
-#		include <be/kernel/OS.h>
-#	else
-#		include <pthread.h>
-#	endif
-#	include <unistd.h>
-#	include <stdlib.h>
-#	include <signal.h>
-#else
-#	error
-#endif
+# ifdef MTK__WIN
+#  include <process.h>
+#  include <windows.h>
+# elif defined( MTK__POSIX )
+#  include <pthread.h>
+#  include <unistd.h>
+#  include <stdlib.h>
+#  include <signal.h>
+# else
+#  error
+# endif
 
-#ifndef CPE__MT
-#	error "Multitasking required, but compilation options don't allow this."
-#endif
+# ifndef CPE_MT
+#  error "Multitasking required, but compilation options don't allow this."
+# endif
 
 typedef void (* mtk__routine)(void *);
 
-#ifdef MTK_KILL
-#	ifdef MTK_KEEP
-#		error "Both 'MTK_KILL' and 'MTK_KEEP' cannot be defined together."
+# ifdef E_KILL_THREADS
+#  ifdef E_KEEP_THREADS
+#   error "Both 'E_KILL_THREADS' and 'E_KEEP_THREADS' cannot be defined together."
 #	else
-#		define MTK__KILL
-#	endif
-#elif defined( MTK_KEEP )
-#	define MTK__KEEP
-#else
-#	ifdef MTK__T_LINUX
-#		define MTK__KEEP
-#	else
-#		define MTK__KILL
-#	endif
-#endif
+#    define MTK__KILL
+#  endif
+# elif defined( E_KEEP_THREADS )
+#  define MTK__KEEP
+# else
+#  ifdef CPE_LINUX
+#   define MTK__KEEP
+#  else
+#   define MTK__KILL
+#  endif
+# endif
 
 namespace mtk {
 	typedef void (* routine__)(void *);

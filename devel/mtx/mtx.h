@@ -60,81 +60,81 @@ extern class ttr_tutor &MTXTutor;
 
 /*$BEGIN$*/
 
-#include "bso.h"
-#include "cpe.h"
-#include "tht.h"
-#include "tol.h"
+# include "bso.h"
+# include "cpe.h"
+# include "tht.h"
+# include "tol.h"
 
-#ifdef MTX_DEFAULT_DELAY
-#	define MTX__DEFAULT_DELAY	MTX_DEFAULT_DELAY
-#else
-#	define MTX__DEFAULT_DELAY	1
-#endif
+# ifdef E_MUTEXES_DEFAULT_DELAY
+#  define MTX__DEFAULT_DELAY	E_MUTEXES_DEFAULT_DELAY
+# else
+#  define MTX__DEFAULT_DELAY	1
+# endif
 
-#if !defined( MTX_NO_ATOMIC_OPERATIONS )
-#	define MTX__USE_ATOMIC_OPERATIONS
-#endif
+# if !defined( E_MUTEXES_NO_ATOMIC_OPERATIONS )
+#  define MTX__USE_ATOMIC_OPERATIONS
+# endif
 
-#ifdef MTX__USE_ATOMIC_OPERATIONS
-#	if defined( CPE__WIN )
-#		if defined (CPE__CYGWIN )
-#			define MTX__USE_PTHREAD_MUTEX
-#		else
-#			define MTX__USE_WIN_ATOMIC_OPERATIONS
-#		endif
-#	elif defined (CPE__LINUX )
-#		if ( MTX__USE_ATOMIC_LIB )
-#			define MTX__USE_LINUX_ATOMIC_OPERATIONS
-#		else
-#			define MTX__USE_PTHREAD_MUTEX
-#		endif
-#	elif defined (CPE__MAC )
-#		define MTX__USE_MAC_ATOMIC_OPERATIONS
-#	else
-#		error "No atomic operations available for this compiling enviroment"
-#	endif
-#else
-#	define MTX__NO_ATOMIC_OPERATIONS
-#endif
+# ifdef MTX__USE_ATOMIC_OPERATIONS
+#  if defined( CPE_WIN )
+#   define MTX__USE_WIN_ATOMIC_OPERATIONS
+#  elif defined( CPE_POSIX )
+#   if defined ( CPE_LINUX )
+#    if ( MTX__USE_ATOMIC_LIB )
+#     define MTX__USE_LINUX_ATOMIC_OPERATIONS
+#    else
+#     define MTX__USE_PTHREAD_MUTEX
+#    endif
+#   elif defined (CPE_MAC )
+#    define MTX__USE_MAC_ATOMIC_OPERATIONS
+#   else
+#    define MTX__USE_PTHREAD_MUTEX
+#   endif
+#  else
+#   error
+#  endif
+# else
+#  define MTX__NO_ATOMIC_OPERATIONS
+# endif
 
-#ifndef MTX__USE_ATOMIC_OPERATIONS
-#	ifndef MTX_SUPPRESS_NO_ATOMIC_OPERATIONS_WARNING
-#		ifdef CPE__VC
-#			pragma message( "BE CAREFUL : Mutexes do not use atomic operations !" )
-#		elif defined( CPE__GCC )
-#			warning "BE CAREFUL : Mutexes do not use atomic operations !"
-#		endif
-#	endif
-#endif
+# ifndef MTX__USE_ATOMIC_OPERATIONS
+#  ifndef MTX_SUPPRESS_NO_ATOMIC_OPERATIONS_WARNING
+#   ifdef CPE_VC
+#    pragma message( "BE CAREFUL : Mutexes do not use atomic operations !" )
+#   elif defined( CPE_GCC )
+#    pragma message( "BE CAREFUL : Mutexes do not use atomic operations !"
+#   endif
+#  endif
+# endif
 
-#ifdef MTX__USE_LINUX_ATOMIC_OPERATIONS
-#	include "asm/atomic.h"
-#endif
+# ifdef MTX__USE_LINUX_ATOMIC_OPERATIONS
+#  include "asm/atomic.h"
+# endif
 
-#ifdef MTX__USE_MAC_ATOMIC_OPERATIONS
-#	include <libkern/OSAtomic.h>
-#endif
+# ifdef MTX__USE_MAC_ATOMIC_OPERATIONS
+#  include <libkern/OSAtomic.h>
+# endif
 
-#ifdef MTX__USE_PTHREAD_MUTEX
-#	include <pthread.h>
-#endif
+# ifdef MTX__USE_PTHREAD_MUTEX
+#  include <pthread.h>
+# endif
 
-#ifndef CPE__MT
-#	error "This library only useful in multitasking context, in which you are not."
-#endif
+# ifndef CPE_MT
+#  error "This library only useful in multitasking context, in which you are not."
+# endif
 
-#ifndef MTX_NO_CONTROL
-#	ifdef MTX_DBG
-#		define MTX__CONTROL
-#	endif
-#endif
+# ifndef MTX_NO_CONTROL
+#  ifdef MTX_DBG
+#   define MTX__CONTROL
+#  endif
+# endif
 
 //d A invalid mutex handler.
-#define MTX__INVALID_HANDLER	NULL	// Utilisation interne.
-#define MTX_INVALID_HANDLER		MTX__INVALID_HANDLER	// Pour les utilisateurs.
+# define MTX__INVALID_HANDLER	NULL	// Utilisation interne.
+# define MTX_INVALID_HANDLER		MTX__INVALID_HANDLER	// Pour les utilisateurs.
 
 
-#define MTX__COUNTER_OVERFLOW_VALUE	BSO_S16_MIN
+# define MTX__COUNTER_OVERFLOW_VALUE	BSO_S16_MIN
 
 namespace mtx {
 
@@ -159,7 +159,7 @@ namespace mtx {
 	typedef int32_t	counter__;
 #elif defined ( MTX__USE_PTHREAD_MUTEX )
 	struct counter__ {
-		volatile bso::sshort__ Value;
+		volatile bso::s16__ Value;
 		pthread_mutexattr_t MutexAttr;
 		pthread_mutex_t Mutex;
 	};

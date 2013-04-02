@@ -60,7 +60,7 @@ static inline void Save_(
 	sdr::row__ Row,
 	flw::oflow__ &Flow )
 {
-	dtfptb::FixedPutU32( *Row, Flow );
+	dtfptb::FPut( *Row, Flow );
 }
 
 static void Save_(
@@ -102,7 +102,7 @@ static inline void Load_(
 	flw::iflow__ &Flow,
 	sdr::row__ &Row )
 {
-	Row = dtfptb::FixedGetU32( Flow );
+	dtfptb::FGet( Flow, *Row );
 }
 	
 static void Load_(

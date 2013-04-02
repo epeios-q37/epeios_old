@@ -499,12 +499,12 @@ namespace bch {
 
 			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
-		void NewWriteToFlow(
+		void WriteToFlow(
 			flw::oflow__ &OFlow,
 			bso::bool__ WriteSize ) const
 		{
 			if ( WriteSize )
-				dtfptb::NewPutSize( mng::Amount(), OFlow );
+				dtfptb::VPut( mng::Amount(), OFlow );
 
 			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::WriteToFlow( 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount(), OFlow );
 		}
@@ -519,12 +519,12 @@ namespace bch {
 			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount() );
 
 		}
-		void NewReadFromFlow(
+		void ReadFromFlow(
 			flw::iflow__ &IFlow,
 			sdr::size__ Amount )
 		{
 			if ( Amount == 0 )
-				Amount = dtfptb::NewGetSize( IFlow );
+				dtfptb::VGet( IFlow, Amount );
 
 			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Allocate( Amount );
 			_bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::ReadFromFlow( IFlow, 0, _bunch<type, tys::E_STORAGEt_( type, row ), mng, row, sh >::Amount() );

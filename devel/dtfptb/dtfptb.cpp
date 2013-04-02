@@ -368,6 +368,10 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+
+		// Pour des raisons de simplifications, on 'cast' parfois autoritairement un 'bso::size__' en 'bso::int__'.
+		if ( sizeof( bso::size__ ) != sizeof( bso::int__ ) )
+			ERRc();
 	}
 	~dtfptbpersonnalization( void )
 	{

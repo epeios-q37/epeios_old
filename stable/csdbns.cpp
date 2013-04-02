@@ -57,13 +57,13 @@ public:
 
 using namespace csdbns;
 
-#ifdef CPE__MT
+#ifdef CPE_MT
 #include "mtx.h"
 #include "mtk.h"
 #include "lstbch.h"
 #endif
 
-#ifdef CPE__CONSOLE
+#ifdef CPE_CONSOLE
 #	include "cio.h"
 #endif
 
@@ -85,7 +85,7 @@ bso::bool__ csdbns::listener___::Init(
 	nom.sin_addr.s_addr=INADDR_ANY;
 	nom.sin_family=AF_INET;
 
-#if defined( CPE__LINUX ) || defined( CPE__CYGWIN )
+#if defined( CPE_LINUX ) || defined( CPE_CYGWIN )
 	int Val = ~0;
 
 	if ( setsockopt( Socket_, SOL_SOCKET, SO_REUSEADDR, &Val, sizeof( Val ) ) != 
@@ -145,7 +145,7 @@ ERRBegin
 		{
 			if ( ( Socket = accept( Socket_, (sockaddr *)&SockAddr, &SockAddrSize ) ) == SCK_INVALID_SOCKET ) {
 				error__ Error = sck::Error();
-//#ifdef CPE__CONSOLE
+//#ifdef CPE_CONSOLE
 #if 0
 				ERRProlog
 					cio::cerr___ cerr;
@@ -229,7 +229,7 @@ ERREpilog
 	return Continue;
 }
 
-#ifdef CPE__MT
+#ifdef CPE_MT
 
 struct socket_data__
 {
@@ -420,7 +420,7 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
-#ifdef CPE__MT
+#ifdef CPE_MT
 		Repository_.reset( false );
 		Repository_.Init();
 		Mutex_ = mtx::Create( mtx::mProtecting );
@@ -430,7 +430,7 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
-#ifdef CPE__MT
+#ifdef CPE_MT
 		Clean_();
 
 		if ( Mutex_ != MTX_INVALID_HANDLER )

@@ -317,6 +317,18 @@ namespace txf {
 
 			return *this;
 		}
+		text_oflow__ &operator <<( signed char C )
+		{
+			Ecrire_( (datum__)C );
+
+			return *this;
+		}
+		text_oflow__ &operator <<( unsigned char C )
+		{
+			Ecrire_( (datum__)C );
+
+			return *this;
+		}
 		text_oflow__ &operator <<( const char *C )
 		{
 			Ecrire_( (const datum__ *)C, strlen( C ) );

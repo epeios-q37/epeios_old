@@ -25,131 +25,208 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+copt += -DE_MT
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 copt += -DCSD_NO_SERVICE_HANDLING # Will no more be necessary when 'eService' will be in function.
 
 # epeios/core
 mods = cdgb64 cio clnarg dlbrry dtfptb epsmsc err
-mods += fil flw fnm lcl lst mmi mtk
-mods += rgstry sck str tht tol ttr uym xml
+mods += fil flw fnm lcl lst mtk ags uys ias bso
+mods += rgstry sck str tht tol ttr xml
 mods += xpp
 
 # epeios/csd
 mods += csdbns csdlec csdsns
 
 # epeios/scl
-mods += scllocale sclrgstry sclmisc scltool
+mods += scllocale sclrgstry sclmisc scltool sclerror
 
 # edaemon
 mods += locale registry
 
+# Don't modify line below.
 os := $(shell uname -o 2>/dev/null || uname -s)
 
-src =
 
-ifndef EPEIOS_SRC
-	src += epeios
-else
-	src += $(EPEIOS_SRC)
-endif
+##############################
+# Common to all environment. #
+##############################
 
-##################################
-# Specific to Cygwin environment #
-##################################
+# Generates debugging data.
+#co += -g
+
+# General optimization.
+co += -O
+
+# To use with gprof
+#co += -pg
+
+###############################
+
+
+##########################
+# For Cygwin environment #
+##########################
 
 ifeq ("$(os)","Cygwin")
-	env = gnu
-	
-	co +=
-	
-	lo +=
-	
+
 	libs =
-	
+
+# By default, vanilla Cygwin compiler ('g++') is used.
+# Resulting application uses the Cygwin POSIX Layer.
+# Only 32 bits application can be made.
+# For 64 bits and/or application using
+# directly the MS CRT, see below.
+
+# The MinGW compiler under Cygwin. 
+# To build 64 bits application.
+# Uses directly the MS CRT.
+	cc = x86_64-w64-mingw32-g++
+
+# THe MinGW compiler under Cygwin.
+# For 32 bits application using directly the MS CRT.
+	#cc = i686-w64-mingw32-g++
+
 endif
+
+##########################
+
+
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","GNU/Linux")
+
+	libs = 
+
+# For sound (i.e. MIDI)-related functions.
+	#libs += -lasound
+
+endif
+
+#############################
+
+
+#########################
+# For MinGW environment #
+#########################
+
+ifeq ("$(os)","Msys")
+
+	libs =
+
+endif
+
+#########################
+
+
+##########################
+# For Mac OS environment #
+##########################
+
+ifeq ("$(os)","Darwin")
+
+	libs =
+
+# By décommenting below line, you can compile
+# for 32 bits architectrures instead of
+# the default 64 bits one.
+	#bitness = 32
+
+endif
+
+##########################
+
+
+###################################
+###################################
+##### DON'T MODIFY BELOW !!! ######
+###################################
+###################################
+
+##########################
+# For Cygwin environment #
+##########################
+
+ifeq ("$(os)","Cygwin")
+
+	co += -DCYGWIN
+
+	lo += -static
+
+endif
+
+##################################
+
 
 ##########################################
 # Specific for the GNU/Linux environment #
 ##########################################
 
 ifeq ("$(os)","GNU/Linux")
-	env = gnu
-	
-	co +=
-	
-	lo +=
-	
-	libs = 
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-	# For pthread-related functions.
-	#libs += -lpthread
-	
+
+	co += -DGNULINUX
+
 endif
 
-##################################################
-# Specific for the Linux environment (N900/N810) #
-##################################################
+##########################################
 
-ifeq ("$(os)","Linux")
-	env = gnu
-	
-	co +=
-	
-	lo +=
-	
-	libs = 
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-	# For pthread-related functions.
-	#libs += -lpthread
-	
+
+##################################
+# Specific to MinGW environment #
+##################################
+
+ifeq ("$(os)","Msys")
+
+	co += -DMSYS
+
 endif
+
+##################################
+
 
 #########################
 # For Mac OS environment #
 #########################
 
 ifeq ("$(os)","Darwin")
-	env = gnu
-	
-	lo +=
-	
-	libs =
-	
+
+	co += -DDARWIN
+
 endif
+
+#########################
+
 
 ##################################
 # Common to all GNU environment. #
 ##################################
 
-ifeq ("$(env)","gnu")
-	lo = -o $(name)
+##################################
 
-	# Generates debugging data.
-	co += -g
-
-	# General optimization.
-	#co += -O
-
-	# To use with gprof
-	#co += -pg
-	
+ifndef EPEIOS_SRC
+	src += ../epeios
+else
+	src += $(EPEIOS_SRC)
 endif
 
-######################
-# Don't modify below #
-######################
-
-ifeq ("$(env)","gnu")
-	co := -c $(co)
-	ox = o
-	cc = g++ 
-	larg = $(lo) $(objs)
-	ds = :
+ifndef cc
+	cc = g++
 endif
+
+ifdef bitness
+	co += -m$(bitness)
+	lo += -m$(bitness)
+endif
+
+lo += -o $(name)
+co := -c $(co)
+ox = o
+
+larg = $(lo) $(objs)
+ds = :
 
 vpath %.cpp $(subst $(ds),:,$(src))
 

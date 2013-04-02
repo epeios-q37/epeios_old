@@ -112,6 +112,13 @@ namespace dtfptb {
 		_FPutInt( Int, sizeof( Int ), Flow );
 	}
 
+	inline void FPut(
+		bso::size__ Size,
+		flw::oflow__ &Flow )
+	{
+		_FPutInt( Size, sizeof( Size ), Flow );
+	}
+
 	bso::int__ _FGetInt(
 		flw::iflow__ &Flow,
 		_length__ Length,
@@ -121,7 +128,14 @@ namespace dtfptb {
 		flw::iflow__ &Flow,
 		i &Int )
 	{
-		_FGetInt( IFlow, sizeof( Int ), Int );
+		_FGetInt( Flow, sizeof( Int ), Int );
+	}
+
+	inline void FGet(
+		flw::iflow__ &Flow,
+		bso::size__ &Size )
+	{
+		_FGetInt( Flow, sizeof( Size ), *(bso::int__ *)&Size );
 	}
 
 	bso::uint__ _VGetUInt(
@@ -165,6 +179,21 @@ namespace dtfptb {
 		flw::oflow__ &Flow )\
 	{\
 		_VPutSInt( Int, Flow );\
+	}
+
+
+	inline bso::size__ VGet(
+		flw::iflow__ &Flow,
+		bso::size__ Size )
+	{
+		return Size = _VGetUInt( Flow, BSO_SIZE_MAX );
+	}
+
+	inline void VPut(
+		bso::size__ Size,
+		flw::oflow__ &Flow )
+	{
+		_VPutUInt( Size, Flow );
 	}
 
 # ifdef CPE_64BITS

@@ -155,7 +155,7 @@ ERRProlog
 ERRBegin
 	TS.R = Routine;
 	TS.UP = UP;
-	TS.MH = mtx::Create( mtx::mFree );
+	TS.MH = mtx::Create( mtx::mSynchronizing );
 	
 	mtx::Lock( TS.MH );	// Unlocked by 'ThreadFunction'.
 
@@ -163,10 +163,10 @@ ERRBegin
 	case 0:
 		break;
 	case EAGAIN:
-		ERRS( sPThreadCreateEAGAIN );
+		ERRs();
 		break;
 	default:
-		ERRS( sPThreadCreateEOther );
+		ERRs();
 		break;
 	}
 
