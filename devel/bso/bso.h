@@ -66,7 +66,6 @@ extern class ttr_tutor &BSOTutor;
 
 # include "err.h"
 # include "cpe.h"
-# include "strng.h"
 
 namespace bso {
 	//t Basic data, without any basically signification.
