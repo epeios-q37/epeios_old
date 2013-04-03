@@ -190,10 +190,10 @@ namespace fls {
 					return fil::sFailure;
 					break;
 				case err::hThrowException:
-					ERRd();
+					ERRDvc();
 					break;
 				default:
-					ERRc();
+					ERRCcp();
 					break;
 				}
 			}
@@ -346,7 +346,7 @@ namespace fls {
 						if ( !Temoin_.Manuel )
 							ReleaseFile();
 
-						ERRm();
+						ERRDvc();
 					} else
 						if ( !Temoin_.Manuel )
 							ReleaseFile();
@@ -378,9 +378,9 @@ namespace fls {
 																		*/
 							Amount = Nombre;
 						else
-							ERRc();
+							ERRCcp();
 					else
-						ERRd();
+						ERRDvc();
 					
 				Nombre -= Amount;
 				Tampon = (char *)Tampon + Amount;
@@ -470,7 +470,7 @@ namespace fls {
 				reset();
 
 				if ( ( Nom_ = (char *)malloc( strlen( NomFichier ) + 1 ) ) == NULL )
-					ERRa();
+					ERRAlc();
 
 				strcpy( Nom_, NomFichier );
 
@@ -486,10 +486,10 @@ namespace fls {
 				reset();
 
 				if ( ( Nom_ = (char *)malloc( L_tmpnam ) ) == NULL )
-					ERRa();
+					ERRAlc();
 
 				if ( tmpnam( Nom_ ) == NULL )
-					ERRs();
+					ERRSys();
 
 				Temoin_.Interne = true;
 
@@ -504,9 +504,9 @@ namespace fls {
 				if ( Mode == fil::mReadWrite )
 					Open_( false );
 				else
-					ERRc();
+					ERRCcp();
 			else if ( Creation != fls::cFirstUse )
-				ERRc();
+				ERRCcp();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
 		void ReleaseFile( bso::bool__ ReportClosing = true )
@@ -563,7 +563,7 @@ namespace fls {
 
 			if ( ( Nom_ != NULL ) && fil::FileExists( Nom_ ) )
 				if ( remove( Nom_ ) != 0 )
-					ERRd();
+					ERRDvc();
 
 			TailleFichier_ = 0;
 		}

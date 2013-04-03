@@ -92,6 +92,7 @@ ERRBegin
 		break;
 	case mSourceFileArgumentDescription:
 	case mDestFileArgumentDescription:
+		Meaning->SetValue( Label( Message ) );
 		break;
 	case mProcessingError:
 		Meaning->SetValue( Label( Message ) );

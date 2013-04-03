@@ -543,7 +543,7 @@ namespace bch {
 	public:
 		static sdr::size__ SizeOf( void * )
 		{
-			ERRc();
+			ERRCcp();
 			return 0;	// To avoid a warning.
 		}
 	};

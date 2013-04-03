@@ -66,8 +66,8 @@ extern class ttr_tutor &CIOTutor;
 # include "cpe.h"
 # include "flx.h"
 
-# ifndef CIO_NO_AUTOMATIC_INITIALIZATION	// Utilise dans le cadre d'un service Windows.
-# ifndef CPE__LIBRARY
+# ifndef E_NO_CIO_AUTOMATIC_INITIALIZATION	// Utilise dans le cadre d'un service Windows.
+# ifndef CPE_LIBRARY
 #  define CIO__AUTOMATIC_INITIALIZATION 	// Si modifié, modifier 'WINTOL' en conséquence !
 #  endif
 # endif

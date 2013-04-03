@@ -82,7 +82,7 @@ namespace iof {
 		{
 #ifdef IOF_DBG
 			if ( Buffer == NULL )
-				ERRc();
+				ERRCcp();
 #endif
 			return _output__::Write( Buffer, Maximum );
 		}
@@ -171,7 +171,7 @@ namespace iof {
 		{
 	#ifdef IOF_DBG
 			if( Buffer == NULL )
-				ERRc();
+				ERRCcp();
 	#endif
 			if ( !OnEOF() )
 				return _input__::Read( Maximum, Buffer );

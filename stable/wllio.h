@@ -86,7 +86,7 @@ namespace wllio {
 		{
 #ifdef WLLIO_DBG
 			if ( _D == WLLIO_UNDEFINED_DESCRIPTOR )
-				ERRc();
+				ERRCcp();
 #endif
 		}
 		unsigned int _Patch( size__ Amount )
@@ -113,7 +113,7 @@ namespace wllio {
 			_Test();
 
 			if ( _lseeki64( _D, Offset, SEEK_SET ) != Offset )
-				ERRd();
+				ERRDvc();
 		}
 /*		long Size( void )
 		{
@@ -171,9 +171,9 @@ namespace wllio {
 			int Result;
 
 			if ( ( Result = _read( _D, Buffer, _Patch( Amount ) ) ) == -1 )
-				ERRd();
+				ERRDvc();
 			else if ( Result < 0 )
-				ERRs();
+				ERRSys();
 
 			return Result;
 		}
@@ -198,7 +198,7 @@ namespace wllio {
 					if ( _D == _fileno( stdin ) )	// Si 'stdin'.
 						return false;
 					else
-						ERRd();
+						ERRDvc();
 					return true;	// To avoid a warning.
 					break;
 				}
@@ -232,9 +232,9 @@ namespace wllio {
 			int Result;
 
 			if ( ( Result = _write( _D, Buffer, _Patch( Amount ) ) ) == -1 )
-				ERRd();
+				ERRDvc();
 			else if ( Result < 0 )
-				ERRs();
+				ERRSys();
 
 			return Result;
 		}
@@ -243,7 +243,7 @@ namespace wllio {
 			if ( _D != WLLIO_UNDEFINED_DESCRIPTOR )
 				if ( !IsSTDOUT() && !IsSTDERR() )	// '_commit' n'est pas utilisable sur 'stdout' et 'stderr' (et accessoirement sur 'stdin').
 					if ( _commit( _D ) != 0 )
-						ERRd();
+						ERRDvc();
 		}
 	};
 

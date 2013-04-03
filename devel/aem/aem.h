@@ -177,7 +177,7 @@ namespace aem {
 				return true;
 			} else if ( Size < Extent_() ) {
 				if ( S_.Amount > Size )
-					ERRu();
+					ERRCcp();
 
 				if ( !OnlyGrowing_() ) {
 					S_.Misc = Size | ( S_.Misc & 0xff );
@@ -247,7 +247,7 @@ namespace aem {
 		void SetStepValue( step_value__ StepValue )
 		{
 			if ( StepValue >= 128 )
-				ERRc();
+				ERRCcp();
 
 			S_.Misc = ( S_.Misc & 0xffffff40 | StepValue );
 

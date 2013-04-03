@@ -172,7 +172,7 @@ public:
 		ExitOnSignal_();
 #ifdef TOL__WIN		
 		if ( QueryPerformanceFrequency( &tol::_TickFrequence ) == 0 )
-			ERRs();
+			ERRSys();
 #elif defined( TOL__MAC )
 		mach_timebase_info_data_t    TimebaseInfo;
 

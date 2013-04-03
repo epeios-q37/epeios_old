@@ -139,14 +139,14 @@ const char *err::Message(
 	case err::tFlow:
 		strcat( Buffer, "FLW" );
 		break;
-	case err::tProhibition:
-		strcat( Buffer, "PRH" );
+	case err::tForbidden:
+		strcat( Buffer, "FBD" );
 		break;
 	case err::tLimitation:
 		strcat( Buffer, "LMT" );
 		break;
-	case err::tMemory:
-		strcat( Buffer, "MMR" );
+	case err::tStorage:
+		strcat( Buffer, "STG" );
 		break;
 	case err::tVacant:
 		strcat( Buffer, "VCT" );
@@ -195,13 +195,13 @@ void err_::Handler(
 		ThreadID_ = mtk::GetTID();
 	}
 #endif
-	if ( Fichier && !ERRError() )
+	if ( Fichier && !ERRHit() )
 	{
 		this->Type = Type;
 		this->File = Fichier;
 		this->Line = Ligne;
-	} else if ( !ERRError() )
-		ERRc();
+	} else if ( !ERRHit() )
+		ERRCcp();
 
 #if 0
 	this->Error = true;

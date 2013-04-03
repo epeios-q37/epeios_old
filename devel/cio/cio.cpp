@@ -69,7 +69,7 @@ static iof::io_oflow_driver___ _COutDriver;
 static iof::io_oflow_driver___ _CErrDriver;
 static iof::io_iflow_driver___ _CInDriver;
 
-#if defined( CPE__MS )
+#if defined( CPE_WIN )
 #	include <io.h>
 #	include <fcntl.h>
 #endif
@@ -94,7 +94,7 @@ void cio::Initialize( target__ Target )
 {
 	switch ( Target ) {
 	case tConsole:
-#if defined( CPE__MS )
+#if defined( CPE_WIN )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
 			ERRd();
 

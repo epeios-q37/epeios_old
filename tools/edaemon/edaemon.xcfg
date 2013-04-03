@@ -6,7 +6,7 @@
     <Definitions>
      <Module>
         <Service Type="Switched">2000</Service>
-        <FileName>h:\bin\esketchcgi</FileName>
+        <FileName>h:\bin\esketchbkd</FileName>
      </Module>
     </Definitions>
   </Configuration>

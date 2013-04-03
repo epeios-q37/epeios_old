@@ -59,7 +59,7 @@ using namespace csdles;
 
 static bch::E_BUNCH( csdleo::user_functions__ *) Steerings_;
 
-#ifdef CPE__WIN
+#ifdef CPE_WIN
 # define FUNCTION_SPEC __declspec(dllexport)
 #else
 #define FUNCTION_SPEC
@@ -71,7 +71,7 @@ DEF( CSDLEO_RETRIEVE_STEERING_FUNCTION_NAME, csdleo::retrieve_steering );
 DEF( CSDLEO_RELEASE_STEERING_FUNCTION_NAME, csdleo::release_steering );
 
 #if 0
-#ifdef CPE__WIN
+#ifdef CPE_WIN
 
 #include <windows.h>
 

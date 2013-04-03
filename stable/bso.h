@@ -516,7 +516,7 @@ namespace bso {
 		const raw__ *DSizeBuffer( void ) const
 		{
 			if ( _Length == 0 )
-				ERRc();
+				ERRCcp();
 
 			return _Int + BSO_DINT_SIZE_MAX - _Length;
 		}
@@ -582,13 +582,13 @@ namespace bso {
 			return Int;
 			break;
 		case 0:
-			ERRc();
+			ERRCcp();
 			break;
 		case -1:
 			return -(sint__)Int;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 

@@ -78,13 +78,13 @@ enum option {
 
 #define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
-struct parameters {
+struct parameters___ {
 	STRING_PARAM___( Namespace );
 	STRING_PARAM___(  Source );
 	STRING_PARAM___( Destination );
 	bso::bool__ NoIndent;
 	command__ Command;
-	parameters( void )
+	parameters___( void )
 	{
 		NoIndent = false;
 		Command = c_Undefined;
@@ -186,13 +186,17 @@ ERRBegin
 
 	COut << txf::pad << "<src> :" << txf::nl;
 	COut << txf::tab;
+	Meaning.Init();
+	locale::GetSourceFileArgumentDescriptionMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetTranslation( locale::Label( locale::mSourceFileArgumentDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "<dst> :" << txf::nl;
 	COut << txf::tab;
+	Meaning.Init();
+	locale::GetDestFileArgumentDescriptionMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetTranslation( locale::Label( locale::mDestFileArgumentDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -207,19 +211,11 @@ static void PrintHeader_( void )
 	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	COut << COPYRIGHT << txf::nl;
 	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << " (" << cpe::GetDescription() << ')' << txf::nl;
-	tol::tick__ Begin = tol::Tick();
-
-	tht::Wait( 2 );
-
-	tol::tick__ End = tol::Tick();
-
-	COut << tol::SecDiff( End, Begin ) << txf::pad << tol::MilliSecDiff( End, Begin ) << txf::pad << tol::MicroSecDiff( End, Begin ) << txf::pad << tol::NanoSecDiff( End, Begin ) << txf::nl;
-
 }
 
 static void AnalyzeOptions_(
 	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters )
+	parameters___ &Parameters )
 {
 ERRProlog
 	sdr::row__ P;
@@ -266,7 +262,7 @@ ERREpilog
 
 static void AnalyzeFreeArguments_(
 	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters )
+	parameters___ &Parameters )
 {
 ERRProlog
 	clnarg::arguments Free;
@@ -300,7 +296,7 @@ ERREpilog
 static void AnalyzeArgs_(
 	int argc,
 	const char *argv[],
-	parameters &Parameters )
+	parameters___ &Parameters )
 {
 ERRProlog
 	clnarg::description Description;
@@ -470,6 +466,8 @@ ERRBegin
 
 		locale::GetEncryptionErrorMeaning( Context, Meaning );
 
+		sclerror::SetMeaning( Meaning );
+
 		ERRExit( EXIT_FAILURE );
 	}
 ERRErr
@@ -479,7 +477,7 @@ ERREnd
 ERREpilog
 }
 
-static void Go_( const parameters &Parameters )
+static void Go_( const parameters___ &Parameters )
 {
 ERRProlog
 ERRBegin
@@ -505,7 +503,7 @@ void scltool::Main(
 	const char *argv[] )
 {
 ERRProlog
-	parameters Parameters;
+	parameters___ Parameters;
 ERRBegin
 	AnalyzeArgs_( argc, argv, Parameters );
 

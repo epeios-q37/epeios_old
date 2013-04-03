@@ -119,7 +119,7 @@ public:
 	agspersonnalization( void )
 	{
 		if ( sizeof( header__ ) != AGS__HEADER_SIZE )
-			ERRc();
+			ERRCcp();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

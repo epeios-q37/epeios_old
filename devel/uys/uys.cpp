@@ -175,7 +175,7 @@ row_t__ untyped_storage_::Search(
 	row_t__ Fin ) const
 {
 	if ( Taille > BUFFER_SIZE )
-		ERRl();
+		ERRLmt();
 
 	datum__ Tampon[BUFFER_SIZE];
 	bool Trouve = false;
@@ -344,7 +344,7 @@ public:
 	uyspersonnalization( void )
 	{
 		if ( UYS_STATE_AMOUNT != s_amount )
-			ERRc();
+			ERRCcp();
 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

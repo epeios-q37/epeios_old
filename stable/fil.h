@@ -162,7 +162,7 @@ namespace fil {
 
 		switch ( errno ) {
 		case EBADF:
-			ERRs();	// Normalement, cette erreur ne peut arriver, compte tenu de la focntion utilisée.
+			ERRSys();	// Normalement, cette erreur ne peut arriver, compte tenu de la fonction utilisée.
 			break;
 		case ENOENT:
 			break;
@@ -173,18 +173,18 @@ namespace fil {
 			break;
 #endif
 		case EFAULT:
-			ERRc();
+			ERRCcp();
 			break;
 		case EACCES:
 			break;
 		case ENOMEM:
-			ERRs();
+			ERRSys();
 			break;
 		case ENAMETOOLONG:
-			ERRc();
+			ERRSys();
 			break;
 		default:
-			ERRs();
+			ERRSys();
 			break;
 		}
 
@@ -196,7 +196,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRDvc();
 
 		return Stat.st_mtime;
 	}
@@ -206,7 +206,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__FSTAT( Descriptor, &Stat ) != 0 )
-			ERRu();
+			ERRDvc();
 
 		return Stat.st_size;
 	}
@@ -216,7 +216,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRDvc();
 
 		return Stat.st_size;
 	}
@@ -226,7 +226,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRDvc();
 
 		return Stat.st_mode & S_IFDIR;
 	}
@@ -236,7 +236,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRu();
+			ERRDvc();
 
 		return Stat.st_mode & S_IFREG;
 	}
@@ -250,15 +250,15 @@ namespace fil {
 		HANDLE Handle = CreateFileA( FileName, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 
 		if ( Handle ==  INVALID_HANDLE_VALUE )
-			ERRc();
+			ERRCcp();
 		
 		GetSystemTime( &st );
 
 		if ( !SystemTimeToFileTime( &st, &ft ) )
-			ERRc();
+			ERRCcp();
 
 		if ( !SetFileTime( Handle, (LPFILETIME) NULL, (LPFILETIME) NULL, &ft ) )
-			ERRc();
+			ERRCcp();
 # else
 		/*
 		NOTA : Le code ci-dessous fonctionne AUSSI sous Windows, mais SEULEMENT lorsque lancé à partir d'une console DOS,

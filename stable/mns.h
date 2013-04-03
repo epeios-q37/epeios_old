@@ -75,7 +75,7 @@ namespace mns {
 		void Test_( void )
 		{
 			if ( Tampon_ == NULL )
-				ERRc();
+				ERRCcp();
 		}
 # endif
 	protected:
@@ -110,7 +110,7 @@ namespace mns {
 				sdr::datum__ *Tampon = (sdr::datum__ *)realloc( Tampon_, Size );
 
 				if ( ( Tampon == NULL ) && ( Size != 0 ) )
-					ERRa();
+					ERRAlc();
 
 				Tampon_ = Tampon;
 				_Size = Size;

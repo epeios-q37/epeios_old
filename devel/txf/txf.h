@@ -87,7 +87,7 @@ namespace txf {
 		{
 #ifdef TXF_DBG
 			if ( _Flow == NULL )
-				ERRc();
+				ERRCcp();
 #endif
 			return *_Flow;
 		}
@@ -152,10 +152,10 @@ namespace txf {
 			size__ Pos;
 
 			if ( ( Pos = Lire_( 9, C ) ) > 8 )
-				ERRc();
+				ERRCcp();
 
 			if ( !isxdigit( C[0] ) )
-				ERRc();
+				ERRCcp();
 
 			C[Pos] = 0;
 
@@ -170,7 +170,7 @@ namespace txf {
 			operator >>( L );
 
 			if ( L > USHRT_MAX )
-				ERRc();
+				ERRCcp();
 
 			E = (unsigned short)L;
 
@@ -206,17 +206,17 @@ namespace txf {
 			datum__ C = Get();
 
 			if ( ( C != '+' ) && ( C != '-' ) )
-				ERRc();
+				ERRCcp();
 
 			operator >>( L );
 
 			if ( C == '+' )
 				if ( L > LONG_MAX )
-					ERRc();
+					ERRCcp();
 				else E = (signed long)L;
 			else
 				if ( L > ((unsigned long)-(LONG_MIN + 1 ) + 1UL ) )
-					ERRc();
+					ERRCcp();
 				else
 					E = -(signed long)L;
 
@@ -229,7 +229,7 @@ namespace txf {
 			operator >>( L );
 
 			if ( ( L > SHRT_MAX ) || ( L < SHRT_MIN ) )
-				ERRc();
+				ERRCcp();
 
 			E = (signed short)L;
 
@@ -264,7 +264,7 @@ namespace txf {
 		{
 #ifdef TXF_DBG
 			if ( _Flow == NULL )
-				ERRc();
+				ERRCcp();
 #endif
 			return *_Flow;
 		}

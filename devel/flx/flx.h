@@ -107,7 +107,7 @@ namespace flx {
 		//v Is called if there is asked for more data as availble.
 		virtual void FLXUnavailable( void )
 		{
-			ERRF();
+			ERRFlw();
 		}
 		virtual fdr::size__ FDRRead(
 			fdr::size__ Maximum,
@@ -601,14 +601,14 @@ namespace flx {
 			fdr::size__ Maximum )
 		{
 			if ( _Driver == NULL )
-				ERRc();
+				ERRCcp();
 
 			return _Driver->Write( Buffer, Maximum );
 		}
 		virtual void FDRCommit()
 		{
 			if ( _Driver == NULL )
-				ERRc();
+				ERRCcp();
 
 			return _Driver->Commit();
 		}
@@ -653,14 +653,14 @@ namespace flx {
 			bso::bool__ Dummy = false;
 
 			if ( _Driver == NULL )
-				ERRc();
+				ERRCcp();
 
 			return _Driver->Read( Maximum, Buffer, true, Dummy );
 		}
 		virtual void FDRDismiss( void )
 		{
 			if ( _Driver == NULL )
-				ERRc();
+				ERRCcp();
 
 			_Driver->Dismiss();
 		}

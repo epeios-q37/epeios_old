@@ -92,18 +92,18 @@ namespace err {
 	};
 
 	enum type {
-		tAllocation,	// (ERRa) Erreur lors de l'allocation de RAM.
-		tDevice,		// (ERRd) Erreur signalant un problème avec un périphérique.
-		tSystem,		// (ERRs) Erreur du système.
-		tUser,			// (ERRu) Erreur de l'utilisateur.
-		tBackend,		// (ERRb) Erreur 'backend'.
-		tVacant,		// (ERRv) Appel à une fonctionnalité absente (à priori non encore implémentée).	
-		tLimitation,	// (ERRl) Erreur signalant un dépassement d'une limite inhérente à un fonctionnalité.
-		tMemory,		// (ERRm) Erreur lors du traitement d'une fonction mémoire (tout type).
-		tConception,	// (ERRc) Erreur de conception ; une situation algorithmiquement impossible est survenue.
-		tProhibition,	// (ERRp) Erreur du à l'appel d'une fonctionnalité non autorisée.
-		tExternal,		// (ERRx) Un erreur du à un acteur extérieur s'est prduite.
-		tFlow,			// (ERRf) Une errreur a été détectée lors du traitement d'un flux (pendant du 'tMemory').
+		tAllocation,	// (ERRAlc) Erreur lors de l'allocation de RAM.
+		tDevice,		// (ERRDvc) Erreur signalant un problème avec un périphérique.
+		tSystem,		// (ERRSys) Erreur du système.
+		tUser,			// (ERRUsr) Erreur de l'utilisateur.
+		tBackend,		// (ERRBkd) Erreur 'backend'.
+		tVacant,		// (ERRVct) Appel à une fonctionnalité absente (à priori non encore implémentée).	
+		tLimitation,	// (ERRLmt) Erreur signalant un dépassement d'une limite inhérente à un fonctionnalité.
+		tStorage,		// (ERRStg) Erreur lors du traitement d'une fonction de stockage (tout type).
+		tConception,	// (ERRCcp) Erreur de conception ; une situation algorithmiquement impossible est survenue.
+		tForbidden,		// (ERRFbd) Erreur du à l'appel d'une fonctionnalité non autorisée.
+		tExternal,		// (ERRExt) Un erreur du à un acteur extérieur s'est produite.
+		tFlow,			// (ERRFlw) Une errreur a été détectée lors du traitement d'un flux (pendant du 'tStorage').
 		t_amount,
 		t_None,			// Signale l'absence d'erreur.
 		t_Free,			// (ERRFree) Pas une erreur au sens propre. Permet de profiter du mécanisme de gestion d'erreur.
@@ -163,39 +163,39 @@ namespace err {
 # define ERRCommon( T )	err::ERR.Handler( __FILE__, __LINE__, T )
 
 //m Throw an allocation error (only RAM).
-# define ERRa()	ERRCommon( err::tAllocation )
+# define ERRAlc()	ERRCommon( err::tAllocation )
 
 //m Throw a device error.
-# define ERRd()	ERRCommon( err::tDevice )
+# define ERRDvc()	ERRCommon( err::tDevice )
 
 //m Throw a system error.
-# define ERRs()	ERRCommon( err::tSystem )
+# define ERRSys()	ERRCommon( err::tSystem )
 
 //m Throw an user error.
-# define ERRu()	ERRCommon( err::tUser )
+# define ERRUsr()	ERRCommon( err::tUser )
 
 //m Throw a backend error.
-# define ERRb()	ERRCommon( err::tBackend )
+# define ERRBkd()	ERRCommon( err::tBackend )
 
 //m Throw en conception error.
-# define ERRc()	ERRCommon( err::tConception )
+# define ERRCcp()	ERRCommon( err::tConception )
 
 //m Throw a format error.
-# define ERRF()	ERRCommon( err::tFlow )	//	A renommer ultèrieurement en 'ERRF', en attendant d'avoir détecté les 'ERRf' qui était des erreurs de formats.
+# define ERRFlw()	ERRCommon( err::tFlow )	//	A renommer ultèrieurement en 'ERRF', en attendant d'avoir détecté les 'ERRf' qui était des erreurs de formats.
 
 //m Throw a prohibited function call error.
-# define ERRp()	ERRCommon( err::phb )
+# define ERRFbd()	ERRCommon( err::tForbidden )
 
 //m Throw a limit exceed ferror.
-# define ERRl()	ERRCommon( err::tLimitation )
+# define ERRLmt()	ERRCommon( err::tLimitation )
 
 //m Throw a memory error.
-# define ERRm()	ERRCommon( err::tMemory )
+# define ERRStg()	ERRCommon( err::tStorage )
 
 //m Throw a memory error.
-# define ERRx()	ERRCommon( err::tExternal )
+# define ERRExt()	ERRCommon( err::tExternal )
 
-# define ERRv()	ERRCommon( err::tVacant )
+# define ERRVct()	ERRCommon( err::tVacant )
 
 # define ERRRst()	{ err::Unlock(); }
 
@@ -253,7 +253,7 @@ namespace err {
 
 # endif
 
-# define ERRTestEpilog	if ( ERRError() && !ERRNoError && err::Concerned() )\
+# define ERRTestEpilog	if ( ERRHit() && !ERRNoError && err::Concerned() )\
 							if ( ERRType == err::t_Return )\
 								ERRRst()
 
@@ -293,20 +293,22 @@ namespace err {
 	}
 # endif
 
-# define ERRError()	( ERRType != err::t_None )
+# define ERRFailure()	( ERRType < err::t_amount )
+
+# define ERRHit()	( ERRType != err::t_None )
 
 
 // quitte le logiciel an retournant la valeur 'v'.
 # define ERRExit( v )	{ err::ERR.ExitValue = v; ERRCommon( err::t_Exit ); }
 
 // Similaire à un simple 'return', mais dans une section surveillé ('ERRBegin'...'ERRErr'; un simple 'return' poserait problème dans une telle section).
-# define	ERRReturn		ERRCommon( err::t_Return )
+# define ERRReturn		ERRCommon( err::t_Return )
 
 // Interruption de l'action en cours. Utilisé avec un gestionnaire d'interface évennementielle, pour revenir rapîdement à la boucle d'attente.
-# define	ERRAbort()		ERRCommon( err::t_Abort )
+# define ERRAbort()		ERRCommon( err::t_Abort )
 
 // Pour profiter du mécanisme de gestion d'erreur, sans qu'il n'y ai réellement une erreur dans le sens de cette bibliothèque.
-# define ERRFree()			ERRCommon( err::t_Free )
+# define ERRFree()		ERRCommon( err::t_Free )
 
 # define ERRExitValue	err::ERR.ExitValue
 }

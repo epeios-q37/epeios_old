@@ -587,7 +587,7 @@ namespace tol {
 		LARGE_INTEGER Counter;
 
 		if ( QueryPerformanceCounter( &Counter ) == 0 )
-			ERRs();
+			ERRSys();
 
 		return Counter;
 	}
@@ -598,7 +598,7 @@ namespace tol {
 		coeff__ Coeff)
 	{
 		if ( Op1->QuadPart < Op2->QuadPart )
-			ERRc();
+			ERRCcp();
 
 		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
 
@@ -804,13 +804,13 @@ namespace tol {
 		return 0;	// Pour éviter un 'warning'.
 # else
 		if ( LConv->decimal_point == NULL )
-			ERRs();
+			ERRSys();
 
 		if ( LConv->decimal_point[0] == 0 )
-			ERRs();
+			ERRSys();
 
 		if ( LConv->decimal_point[1] != 0 )
-			ERRs();
+			ERRSys();
 
 		return *LConv->decimal_point;
 #endif
@@ -982,7 +982,7 @@ namespace tol {
 		{
 #ifdef TOL_DBG
 			if ( P_ != NULL )
-				ERRc();
+				ERRCcp();
 #endif
 
 			P_ = P;

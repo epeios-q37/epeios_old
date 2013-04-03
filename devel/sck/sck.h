@@ -176,7 +176,7 @@ namespace sck {
 	//f Create a socket. Only used in some particular multitasking program.
 	inline socket__ CreateSocket( err::handling__ ErrorHandling = err::h_Default )
 	{
-	#ifdef CPE__BEOS
+	#ifdef CPE_BEOS
 		socket__ Desc = socket( AF_INET, SOCK_STREAM, 0 );
 	#else
 		socket__ Desc = socket( PF_INET, SOCK_STREAM, 0 );
@@ -223,7 +223,7 @@ namespace sck {
 	}
 
 
-#ifndef CPE__BEOS
+#ifndef CPE_BEOS
 	/*f The socket 'Socket' becomes blocking or not, depend on the value of 'Value'.
 	Not currently available under Be OS. */
 	inline void Blocking(
