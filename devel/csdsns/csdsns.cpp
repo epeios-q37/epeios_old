@@ -71,7 +71,7 @@ const char *csdsns::GetLogLabel( log__ Log )
 		CASE( TestAndGet );
 		CASE( Delete );
 	default:
-		ERRu();
+		ERRCcp();
 		return NULL;	// Pour éviter un 'warning'.
 		break;
 	}

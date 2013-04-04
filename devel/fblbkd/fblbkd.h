@@ -200,7 +200,7 @@ namespace fblbkd {
 
 
 	typedef void (* function__ )(
-		class backend &Backend,
+		class backend___ &Backend,
 		class untyped_module &Module,
 		index__ Index,
 		command__ Command,
@@ -217,24 +217,24 @@ namespace fblbkd {
 		// Libelle du type de l'objet, du module.
 		const char *Name_;
 		// L'interface auquel le module est rattaché.
-		class backend *Backend_;
+		class backend___ *Backend_;
 		void _Clean( void );	// Permet l'effacement correct de chaque objet utilisateur.
 	protected:
 		//v To get the index of a new object.
 		virtual index__ FBLBKDNew( void )
 		{
-			ERRb();
+			ERRCcp();
 			return 0;	// Pour éviter un warning.
 		}
 		//v To delete the object with index 'Index'.
 		virtual void FBLBKDDelete( index__ Index )
 		{
-			ERRb();
+			ERRCcp();
 		}
 		//v To get a pointer of the object of index 'Index'.
 		virtual void *FBLBKDObject( index__ Index )
 		{
-			ERRb();
+			ERRCcp();
 			return NULL;	// Pour éviter un 'warning'
 		}
 #if 0
@@ -290,7 +290,7 @@ namespace fblbkd {
 			sdr::row__ Row = Indexes.Search( Index );
 
 			if ( Row == NONE )
-				ERRu();
+				ERRCcp();
 
 			Indexes.Remove( Index );
 
@@ -343,7 +343,7 @@ namespace fblbkd {
 			Handle_( Index, Requete, UP, LogFunctions );
 		}
 		//f Return the backend attached to this module.
-		backend *Backend( void )
+		backend___ *Backend( void )
 		{
 			return Backend_;
 		}
@@ -355,7 +355,7 @@ namespace fblbkd {
 			if ( P == NONE )
 				P = FBLBKD_INVALID_COMMAND;
 			else if ( *P > FBLBKD_COMMAND_MAX )
-				ERRl();
+				ERRLmt();
 
 			return (command__)*P;
 		}
@@ -367,7 +367,7 @@ namespace fblbkd {
 			sdr::row__ P = Descriptions.Add( Name, Casts );
 			
 			if ( UPs.Append( UP ) != P )
-				ERRc();
+				ERRCcp();
 				
 			return P;
 		}			
@@ -378,7 +378,7 @@ namespace fblbkd {
 		{
 			return Add( Name, (cast *)(&UP + 1), UP );
 		}
-		friend class backend;
+		friend class backend___;
 		friend class master_module;
 	};
 
@@ -400,7 +400,7 @@ namespace fblbkd {
 			flw::Get( Requete.Input(), C );
 
 			if ( C > Descriptions.Amount() )
-				ERRu();
+				ERRCcp();
 
 			Description.Init( Descriptions );
 
@@ -461,7 +461,7 @@ namespace fblbkd {
 		{
 #ifdef FBLBKD_DBG
 			if ( Mode != aem::m_Default )
-				ERRu();
+				ERRCcp();
 #endif
 			Objets.Allocate( Size, aem::mFit );
 		}
@@ -471,12 +471,12 @@ namespace fblbkd {
 			t *Pointeur = NULL;
 
 			if ( ( S = new st ) == NULL )
-				ERRm();
+				ERRAlc();
 
 			if ( ( Pointeur = new t( *S ) ) == NULL )
 			{
 				delete S;
-				ERRm();
+				ERRAlc();
 			}
 
 			Pointeur->reset( false );
@@ -500,7 +500,7 @@ namespace fblbkd {
 		virtual void *FBLBKDObject( index__ Index )
 		{
 			if ( *Index >= Objets.Amount() )
-				ERRu();
+				ERRCcp();
 
 			return (void *)( Objets( Index )->OBJECT() );
 		}
@@ -551,7 +551,7 @@ namespace fblbkd {
 		virtual void *FBLBKDObject( index__ Index )
 		{
 			if ( *Index >= Objets.Amount() )
-				ERRu();
+				ERRCcp();
 
 			return (void *)Element_( Index ).OBJECT();
 		}
@@ -653,7 +653,7 @@ namespace fblbkd {
 		messages RawMessages;
 #endif
 		// Initialisation avec rattachement à l'interface 'Backend'.
-		void Init( backend &Backend );
+		void Init( backend___ &Backend );
 	};
 
 	struct link__
@@ -697,7 +697,7 @@ namespace fblbkd {
 			P = _list::New();
 
 			if ( *P > FBLBKD_TYPE_MAX )
-				ERRl();
+				ERRLmt();
 
 			Lien.Type = IdType;
 			Lien.Index = Index;
@@ -726,7 +726,7 @@ namespace fblbkd {
 
 
 	//c A backend, which handles objects od different type and request to this object.
-	class backend
+	class backend___
 	{
 	private:
 		bso::bool__ _CompatibilityTested;
@@ -738,7 +738,7 @@ namespace fblbkd {
 		const lcl::locale_ *_Locale;
 		const char *_BackendLabel;
 		// Informations à propos du 'backend'.
-		const char *_BackendInformations;
+		STR_BUFFER___ _BackendInformations;
 		// Retourne le module correspondant à 'IdType'.
 		untyped_module &Module_( type__ IdType ) const
 		{
@@ -780,12 +780,11 @@ namespace fblbkd {
 		bch::E_BUNCH( untyped_module * ) Modules;
 		//o The relation between modules an index.
 		links Links;
-		backend( void )
+		backend___( void )
 		{
 			_CompatibilityTested = false;
 			_Mode = fblbur::m_Undefined;
 			_BackendLabel = NULL;
-			_BackendInformations = NULL;
 			_ClientOrigin = NULL;
 			_APIVersion = NULL;
 		}
@@ -796,8 +795,11 @@ namespace fblbkd {
 			const char *ClientOrigin,	// NON dupliqué.
 			const char *BackendLabel,
 			const lcl::locale_ &Locale,	// N'est pas dupliqué !
-			const char *BackendInformations )	// NON dupliqué.
+			const char *BackendInformations )
 		{
+		ERRProlog
+			str::string ExtendedBackendInformations;
+		ERRBegin
 			Master_.Init( *this );
 
 			Modules.Init();
@@ -808,16 +810,23 @@ namespace fblbkd {
 
 			_BackendLabel = BackendLabel;
 
-			_BackendInformations = BackendInformations;
+			ExtendedBackendInformations.Init( BackendInformations );
+			ExtendedBackendInformations.Append( " (Build : " __DATE__ " " __TIME__ " " ); 
+			ExtendedBackendInformations.Append( cpe::GetDescription() );
+			ExtendedBackendInformations.Append( ')' );
+			ExtendedBackendInformations.Convert( _BackendInformations );
+
 			_ClientOrigin = ClientOrigin;
 			_APIVersion = APIVersion;
 
 			_Locale = &Locale;
 
 			str::string( FBLBKD__DEFAULT_LANGUAGE ).Convert( _Language );
-
-//			return _TestCompatibility( Flow, APIVersion, MessageLabel, URLLabel );
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
+
 		//f Add 'Module' to the interface.
 		void Add( untyped_module &Module )
 		{
@@ -869,7 +878,7 @@ namespace fblbkd {
 		object__ New( type__ Type )
 		{
 			if ( (unsigned long)Links.Amount() >= (unsigned long)FBLBKD_TYPE_MAX )
-				ERRl();
+				ERRLmt();
 
 			return Links.New( Type, Module_( Type ).New() );
 		}
@@ -949,9 +958,6 @@ namespace fblbkd {
 			return _Language;
 		}
 	};
-
-	typedef backend backend_;
-
 }
 
 //d A ram module of an object of type 't'.

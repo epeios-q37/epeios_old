@@ -131,13 +131,13 @@ ERRFBegin
 	atexit( ExitFunction_ );
 
 	if ( Data == NULL )
-		ERRu();
+		ERRCcp();
 
 	if ( strcmp( Data->Version, CSDLEO_SHARED_DATA_VERSION ) )
-		ERRu();
+		ERRCcp();
 
 	if ( Data->Control != Data->ControlComputing() )
-		ERRc();
+		ERRCcp();
 
 	Steering = csdles::CSDLESRetrieveSteering( Data );
 

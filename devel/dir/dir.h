@@ -166,7 +166,7 @@ namespace dir {
 			return HandleError();
 			break;
 		default:
-			ERRs();
+			ERRSys();
 			break;
 		}
 
@@ -189,7 +189,7 @@ namespace dir {
 			return HandleError();
 			break;
 		default:
-			ERRs();
+			ERRSys();
 			break;
 		}
 
@@ -212,7 +212,7 @@ namespace dir {
 			return HandleError();
 			break;
 		default:
-			ERRs();
+			ERRSys();
 			break;
 		}
 
@@ -240,7 +240,7 @@ namespace dir {
 		char SearchString[MAX_PATH+1] = "";
 
 		if ( ( strlen( Directory ) + 4 ) > MAX_PATH )
-			ERRl();
+			ERRLmt();
 
 		strcpy( SearchString, Directory );
 
@@ -286,7 +286,7 @@ namespace dir {
 	{
 #ifdef DIR_DBG
 		if ( Handle == DIR_INVALID_HANDLE )
-			ERRu();
+			ERRCcp();
 #endif
 #ifdef DIR__WIN
 		static WIN32_FIND_DATAA File;
@@ -322,11 +322,11 @@ namespace dir {
 	{
 #ifdef DIR_DBG
 		if ( Handle == DIR_INVALID_HANDLE )
-			ERRu();
+			ERRCcp();
 #endif
 #ifdef DIR__WIN
 		if ( !FindClose( Handle ) )
-			ERRs();
+			ERRSys();
 
 		Handle = INVALID_HANDLE_VALUE;
 #endif

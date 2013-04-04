@@ -182,7 +182,7 @@ ERREpilog
 		}
 		core_ &operator =( const core_ &C )
 		{
-			ERRu();
+			ERRCcp();
 
 			return *this;
 		}
@@ -202,7 +202,7 @@ ERREpilog
 			sdr::row__ Row = UPs.New();
 
 			if ( *Row >= BSO_U16_MAX )
-				ERRl();
+				ERRLmt();
 
 			mtx::Unlock( S_.Mutex );
 
@@ -216,7 +216,7 @@ ERREpilog
 		{
 #ifdef CSDSNS_DBG
 			if ( Id == CSDSNB_UNDEFINED )
-				ERRu();
+				ERRCcp();
 #endif
 			mtx::Lock( S_.Mutex );
 			UPs.Store( UP, Id );
@@ -300,7 +300,7 @@ ERREpilog
 		{
 #ifdef CSDSNS_DBG
 			if ( UP != NULL )
-				ERRc();
+				ERRCcp();
 #endif
 			id__ Id = CSDSNB_UNDEFINED;
 			action__ Action = aContinue;
@@ -336,7 +336,7 @@ ERREpilog
 					_Core.Delete( Id );
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 
@@ -345,7 +345,7 @@ ERREpilog
 		virtual void CSDSUFPostProcess( void *UP )
 		{
 			if ( UP != NULL )
-				ERRc();
+				ERRCcp();
 		}
 		virtual void CSDSUFExit( void )
 		{

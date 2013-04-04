@@ -285,7 +285,7 @@ namespace lstbch {
 			bso::bool__ Is = _BunchFileManager.IsPersistent();
 
 			if ( Is != _ListFileManager.IsPersistent() )
-				ERRc();
+				ERRCcp();
 
 			return Is;
 		}

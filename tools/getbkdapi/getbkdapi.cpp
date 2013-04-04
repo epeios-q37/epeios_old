@@ -192,7 +192,7 @@ ERRBegin
 
 		switch( Option = Options( P ) ) {
 		default:
-			ERRc();
+			ERRCcp();
 		}
 
 		P = Options.Next( P );
@@ -278,7 +278,7 @@ ERRBegin
 	case CLNARG_NONE:
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 	}
 
 	AnalyzeOptions( Analyzer, Parameters );
@@ -309,7 +309,7 @@ static inline const char *GetTypeName(
 
 	switch ( Cast ) {
 	case fblcst::cEnd:
-		ERRc();
+		ERRCcp();
 		break;
 	case fblcst::cObject:
 		TypeName = "object";
@@ -426,7 +426,7 @@ static inline const char *GetTypeName(
 		CastType = ctContainer;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -464,7 +464,7 @@ ERRBegin
 		Writer.PutAttribute( "Type", "Container" );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -749,7 +749,7 @@ ERRBegin
 		CSDMode = csdleo::mEmbedded;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -778,14 +778,15 @@ ERRBegin
 
 	BackendAccess.Disconnect();
 ERRErr
-	if ( 
-	Meaning.Init();
+	if ( ERRFailure() ) { 
+		Meaning.Init();
 
-	locale::GetUnableToCommunicateWithBackendErrorMeaning( Meaning );
+		locale::GetUnableToCommunicateWithBackendErrorMeaning( Meaning );
 
-	sclerror::SetMeaning( Meaning );
+		sclerror::SetMeaning( Meaning );
 
-	ERRExit( EXIT_FAILURE );
+		ERRExit( EXIT_FAILURE );
+	}
 ERREnd
 ERREpilog
 }
@@ -916,11 +917,12 @@ ERRProlog
 ERRBegin
 	Writer.Init( Flow, xml::oIndent, xml::e_Default );
 	
-	Flow << "<!-- Don't modify !" << txf::nl << "This document was generated using " NAME " V" VERSION " (" APP_URL ") ";
+	Flow << "<!--                    DON'T MODIFY !!! !" << txf::nl;
+	Flow << txf::pad << "This document was generated the " << tol::DateAndTime( Buffer ) << txf::nl;
+	Flow << txf::pad << "using " NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
 	Flow << txf::pad << "Build : "__DATE__ " " __TIME__ << " (" << cpe::GetDescription() << ')' << txf::nl;
-	Flow << "on " << tol::DateAndTime( Buffer ) << ". -->" << txf::nl;
-	Flow << "<!-- CVS feature : $Id$ -->" << txf::nl;
-	
+	Flow << "-->" << txf::nl;
+
 	Writer.PushTag( "API" );
 	Writer.PutAttribute( "target", TargetLabel );
 
@@ -953,7 +955,7 @@ ERRBegin
 		P = Types.Next( P );
 		
 	if ( P == NONE )
-		ERRb();
+		ERRBkd();
 ERRErr
 ERREnd
 ERREpilog

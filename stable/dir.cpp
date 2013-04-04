@@ -82,7 +82,7 @@ state__ dir::HandleError( void )
 		break;
 #endif
 	default:
-		ERRs();
+		ERRSys();
 		break;
 	}
 

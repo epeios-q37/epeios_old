@@ -80,6 +80,7 @@ namespace lcl {
 	E_ROW( row__ );
 
 	typedef bso::u8__ _level__;
+# define LCL_LEVEL_MAX	BSO_U8_MAX
 
 	typedef stk::E_BSTACKt_( _level__, row__ ) _levels_;
 	E_AUTO( _levels );
@@ -95,11 +96,11 @@ namespace lcl {
 			_level__ Level,
 			const str::string_ &Value )
 		{
-			if ( Level == BSO_U8_MAX )
-				ERRl();
+			if ( Level == LCL_LEVEL_MAX )
+				ERRLmt();
 
 			if ( Levels.Push( Level ) != Values.Push( Value ) )
-				ERRc();
+				ERRCcp();
 		}
 	public:
 		struct s {
@@ -137,7 +138,7 @@ namespace lcl {
 		void SetValue( const str::string_ &Value )
 		{
 			if ( !Levels.IsEmpty() )
-				ERRc();
+				ERRCcp();
 
 			_Push( 0, Value );
 		}
@@ -148,7 +149,7 @@ namespace lcl {
 		void AddTag( const str::string_ &Value )
 		{
 			if ( Levels.IsEmpty() )
-				ERRc();
+				ERRCcp();
 
 			_Push( 1, Value );
 		}

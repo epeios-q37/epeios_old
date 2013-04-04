@@ -126,7 +126,7 @@ namespace csducl {
 				return _LibraryFlow;
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 
@@ -186,7 +186,7 @@ namespace csducl {
 				_LibraryFlow.Init( Core._LibraryAccess );
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 

@@ -81,7 +81,7 @@ namespace dlbrry {
 			if ( P ) {
 				if ( _LibraryHandler != DLBRRY_UNDEFINED ) {
 					if ( !_UnloadLibrary() )
-						ERRs();
+						ERRSys();
 				}
 			}
 
@@ -105,7 +105,7 @@ namespace dlbrry {
 				return true;
 
 			if ( ERRHandling != err::hUserDefined )
-				ERRs();
+				ERRSys();
 
 			return false;
 		}
@@ -121,7 +121,7 @@ namespace dlbrry {
 		dynamic_library___ &Library )
 	{
 		if ( !Library.IsInitialized() )
-			ERRc();
+			ERRCcp();
 
 		return (function)Library.GetFunction( FunctionName );
 	}

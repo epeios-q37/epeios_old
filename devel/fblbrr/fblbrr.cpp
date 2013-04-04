@@ -101,7 +101,7 @@ static parameter___ Create_(
 	CC( CommandsDetails, commands_details )
 	CC( ObjectsReferences, objects_references )
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -154,7 +154,7 @@ static parameter___ _CreateAndGet(
 	CCAG( CommandsDetails, commands_details )
 	CCAG( ObjectsReferences, objects_references )
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -201,7 +201,7 @@ static void Delete_( const parameter___ &Parameter )
 	CD( CommandsDetails, commands_details )
 	CD( ObjectsReferences, objects_references )
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 }
@@ -219,25 +219,25 @@ void fblbrr::remote_request_functions___::_CreateAll(
 		    && ( Casts( Row ) != cEnd ) ) {
 
 		if ( Flow.Get() != Casts( Row ) )
-			ERRb();
+			ERRCcp();
 
 		if ( _Parameters.Append( _CreateAndGet( Flow, (cast)Casts( Row ) ) ) != Row )
-			ERRc();
+			ERRCcp();
 
 		Row = Casts.Next( Row );
 	}
 
 	if ( Row == NONE )
-		ERRc();
+		ERRCcp();
 
 	if ( _Parameters.Append( parameter___( cEnd ) ) != Row )
-		ERRc();
+		ERRCcp();
 
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
 		if ( _Parameters.Append( Create_( Flow, (cast)Casts( Row ) ) ) != Row )
-			ERRc();
+			ERRCcp();
 
 		Row = Casts.Next( Row );
 	}
@@ -258,7 +258,7 @@ void fblbrr::remote_request_functions___::_DeleteAll( void )
 	}
 
 	if ( Row == NONE )
-		ERRc();
+		ERRCcp();
 
 	Row =  _Parameters.Next( Row );
 
@@ -282,7 +282,7 @@ static void Push_(
 	cast__ Cast )
 {
 	if ( Parameter.Cast != Cast )
-		ERRb();
+		ERRCcp();
 
 	switch ( Parameter.Cast ) {
 	CP( Object, object__)
@@ -317,7 +317,7 @@ static void Push_(
 	CP( CommandsDetails, commands_details )
 	CP( ObjectsReferences, objects_references )
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 }
@@ -337,12 +337,12 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {
 		if ( _Parameters( Row ).Cast != Casts( Row ) )
-			ERRb();
+			ERRCcp();
 		Row = Casts.Next( Row );
 	}
 
 	if ( Row == NONE )
-		ERRc();
+		ERRCcp();
 
 	Row = Casts.Next( Row );
 

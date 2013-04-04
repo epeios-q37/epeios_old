@@ -372,7 +372,7 @@ namespace fbltyp {
 		t *P = new t;
 
 		if ( P == NULL )
-			ERRa();
+			ERRAlc();
 
 		return P;
 	}

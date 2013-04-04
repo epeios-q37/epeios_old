@@ -173,7 +173,7 @@ namespace fblbrq {
 		{
 # ifdef FBLBRQ_DBG
 			if ( _Functions == NULL )
-				ERRu();
+				ERRCcp();
 # endif
 
 			return *_Functions;
@@ -210,7 +210,7 @@ namespace fblbrq {
 				Position_ = Casts_.Next( Position_ );
 
 			if ( Casts_.Get( Position_ ) != Cast )
-				ERRu();
+				ERRCcp();
 		}
 		void TestInput_( cast Cast )
 		{
@@ -321,7 +321,7 @@ namespace fblbrq {
 				_Push( *Channel_, Casts_ );
 
 				if ( Casts_.Last() != Position_  )
-					ERRu();
+					ERRCcp();
 			}
 
 			fbltyp::PutId8( cEnd, *Channel_ );
@@ -340,10 +340,10 @@ namespace fblbrq {
 			flw::Put( (flw::datum__)Reply, *Channel_ );
 
 			if ( Reply == fblovl::rOK )
-					ERRu();
+					ERRCcp();
 
 			if ( ( Message == NULL ) || ( Message[0] == 0 ) )
-				ERRu();
+				ERRCcp();
 
 			flw::PutString( Message, *Channel_ );
 			Channel_->Put( 0 );

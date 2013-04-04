@@ -73,7 +73,7 @@ const char *csdsnc::GetLogLabel( log__ Log )
 		CASE( Retrieval );
 		CASE( Release );
 	default:
-		ERRu();
+		ERRCcp();
 		return NULL;	// Pour éviter un 'warning'.
 		break;
 	}
@@ -89,7 +89,7 @@ static void Ping_(
 			Flow.Commit();
 
 			if ( Flow.Get() != 0 )
-				ERRF();
+				ERRFlw();
 
 			Flow.Dismiss();
 		}
@@ -142,7 +142,7 @@ void csdsnc::core_::_KeepAlive( time_t Delay )
 	mtk::Launch( ::KeepAlive_, this );
 #else
 	if ( Delay != 0 )
-		ERRu();
+		ERRCcp();
 #endif
 }
 

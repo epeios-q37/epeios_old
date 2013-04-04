@@ -131,7 +131,7 @@ namespace ids {
 				ID = (*S_.FirstUnused)++;
 
 				if ( S_.FirstUnused == 0 )
-					ERRl();
+					ERRLmt();
 
 				Released = false;
 			}
@@ -154,7 +154,7 @@ namespace ids {
 			} else {
 #ifdef IDS_DBG
 				if ( !IsAvailable_( ID ) )
-					ERRu();
+					ERRCcp();
 #endif
 				Released.Remove( Released.Search( ID ) );
 
@@ -166,7 +166,7 @@ namespace ids {
 		{
 #ifdef IDS_DBG
 			if ( IsAvailable_( ID ) )
-				ERRu();
+				ERRCcp();
 #endif
 			Released.Push( ID );
 		}

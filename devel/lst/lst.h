@@ -383,7 +383,7 @@ namespace lst {
 			reset();
 
 			if ( ( _FileName = malloc( strlen( FileName ) + 1 ) ) == NULL )
-				ERRa();
+				ERRAlc();
 
 			strcpy( _FileName, FileName );
 
@@ -444,11 +444,11 @@ namespace lst {
 		void Drop( void )
 		{
 			if ( ( _Store == NULL ) || ( _FileName == NULL ) )
-				ERRu();
+				ERRCcp();
 
 			if ( fil::FileExists( _FileName ) )
 				if ( remove( _FileName ) != 0 )
-					ERRu();
+					ERRDvc();
 		}
 		const char *FileName( void ) const
 		{
@@ -457,7 +457,7 @@ namespace lst {
 		void Set( lst::store_ &Store )
 		{
 			if ( _Store != NULL )
-				ERRu();
+				ERRCcp();
 
 			_Store = &Store;
 		}
@@ -472,7 +472,7 @@ namespace lst {
 		{
 			if ( fil::FileExists( _FileName ) )
 				if ( ErrorHandling == err::hThrowException )
-					ERRc();
+					ERRCcp();
 				else
 					return false;
 

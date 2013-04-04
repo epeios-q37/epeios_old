@@ -119,7 +119,7 @@ template <class ostream> static void Put_(
 			OStream.Put( C = (flw::datum__)String.Get( P++ ) );
 
 			if ( C == 0 )
-				ERRu();
+				ERRCcp();
 #else
 			OStream.Put( (flw::datum__)String.Get( P++ ) );
 #endif
@@ -206,14 +206,14 @@ ERRProlog
 ERRBegin
 #ifdef STR_DBG
 	if ( *Position > Amount() && ( Position != 0 ) )
-		ERRu();
+		ERRCcp();
 #endif
 
 	if ( Quantity > ( Amount() - *Position ) )
 		Quantity = Amount() - *Position;
 
 	if ( ( Buffer = (char *)malloc( Quantity + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	if ( Quantity != 0 )
 		Recall( Position, Quantity, Buffer );
@@ -292,7 +292,7 @@ bso::bool__ string_::Replace(
 
 #ifdef STR_DBG
 	if ( Position == 0 )
-		ERRu();
+		ERRCcp();
 #endif
 
 	while ( ( Position-- ) && ( Row != NONE ) ) {
@@ -368,7 +368,7 @@ uint__ str::_GenericUnsignedConversion(
 			BaseFlag = b10;
 
 	if ( BaseFlag > 255 )
-		ERRu();
+		ERRCcp();
 
 	Base = (int)BaseFlag;
 
@@ -398,7 +398,7 @@ uint__ str::_GenericUnsignedConversion(
 		if ( ErrP )
 			*ErrP = P;
 		else
-			ERRu();
+			ERRCcp();
 
 	return Result;
 }
@@ -412,7 +412,7 @@ sint__ str::_GenericSignedConversion(
 	sint__ NegativeLimit )
 {
 	if ( PositiveLimit < 0 )
-		ERRu();
+		ERRCcp();
 
 	if ( String.Get( Begin ) == '-' )
 		if ( String.Next( Begin ) == NONE ) {
@@ -425,7 +425,7 @@ sint__ str::_GenericSignedConversion(
 			if ( ErrP != NULL )
 				*ErrP = *Begin + 1;
 			else
-				ERRc();
+				ERRCcp();
 			return 0;
 		} else 
 			return (sint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
@@ -473,7 +473,7 @@ bso::lfloat__ string_::ToLF(
 		if ( ErrP )
 			*ErrP = P;
 		else
-			ERRu();
+			ERRCcp();
 
 	if ( Negate )
 		return -Result;
@@ -552,7 +552,7 @@ ERRProlog
 	bso::integer_buffer__ Buffer;
 ERRBegin
 	if ( Values.Amount() > 9 )
-		ERRl();
+		ERRLmt();
 
 	Replace0Tag_( String, Values, TagMarker );
 
@@ -612,7 +612,7 @@ ERRProlog
 	str::string Tag;
 ERRBegin
 	if ( ( Indice == 0 ) || ( Indice > 9 ) )
-		ERRu();
+		ERRCcp();
 
 	Values.Init();
 

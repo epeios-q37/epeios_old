@@ -97,7 +97,7 @@ namespace fblfub {
 				_Remote.PreProcess();
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 		}
@@ -114,7 +114,7 @@ namespace fblfub {
 				_Remote.In( Cast, Pointer, Flow );
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 		}
@@ -131,7 +131,7 @@ namespace fblfub {
 				_Remote.Out( Flow, Cast, Pointer );
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 		}
@@ -145,7 +145,7 @@ namespace fblfub {
 				_Remote.PostProcess( Flow );
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 		}
@@ -177,7 +177,7 @@ namespace fblfub {
 				_Remote.Init();
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 

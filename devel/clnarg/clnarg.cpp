@@ -82,7 +82,7 @@ const char *clnarg::GetLabel( message__ Message )
 		CASE( UnexpectedOptionError );
 		CASE( WrongNumberOfArgumentsError );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -121,7 +121,7 @@ void clnarg::GetMeaning(
 		Meaning->AddTag( va_arg( Args, const char *) );
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -442,7 +442,7 @@ const char *clnarg::analyzer___::GetOptions( option_list_ &Options ) const
 			End = true;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 
@@ -494,7 +494,7 @@ bso::bool__ clnarg::analyzer___::GetArgument_(
 		Cont = false;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -556,7 +556,7 @@ void clnarg::analyzer___::GetArguments( arguments_ &Arguments )
 			End = true;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 
@@ -585,7 +585,7 @@ static const char *GetLabel_(
 		strcat( Buffer, "--" );
 		
 		if (  strlen( Buffer ) + strlen( Item.Long ) > sizeof( Buffer ) )
-			ERRl();
+			ERRLmt();
 		
 		strcat( Buffer, Item.Long );
 	}
@@ -605,7 +605,7 @@ static const char *GetLabel_(
 		P = Items.Next( P );
 		
 	if ( P == NONE )
-		ERRu();
+		ERRCcp();
 		
 	return  GetLabel_( Items( P ), Id, Separator, Buffer );
 }
@@ -638,7 +638,7 @@ static void HandleView_(
 		Flow << txf::nl << txf::pad << txf::tab;
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 }

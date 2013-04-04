@@ -191,7 +191,7 @@ ERRProlog
 ERRBegin
 #ifdef MTK__WIN
 	if ( _beginthread( Routine, 4096, UP ) == (unsigned long)-1 )
-		ERRs();
+		ERRSys();
 #elif defined( MTK__POSIX )
 	LaunchThread_( Routine, UP );
 #else
@@ -214,7 +214,7 @@ namespace {
 		mtx::mutex_handler__ Exclusion;
 		bso::bool__ Continue;
 		void *UP;
-		bso::u32__ Amount;
+		bso::uint__ Amount;
 		routine__ Routine;
 	} Common;
 	
@@ -296,8 +296,8 @@ namespace {
 			
 			mtx::Lock( Common.Data );	// To ensure that nobody else is accessing data.
 			
-			if ( Common.Amount == BSO_U32_MAX )
-				ERRl();
+			if ( Common.Amount == BSO_UINT_MAX )
+				ERRLmt();
 				
 			Common.Amount++;// One more thread available.
 			

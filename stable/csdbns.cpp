@@ -95,12 +95,12 @@ bso::bool__ csdbns::listener___::Init(
 
 	if( bind( Socket_, (struct sockaddr*)(&nom), sizeof(sockaddr_in) ) )
 		if ( ErrorHandling == err::hThrowException )
-			ERRs();
+			ERRSys();
 		else
 			return false;
 
 	if ( listen( Socket_, Amount ) )
-		ERRs();
+		ERRSys();
 		
 	return true;
 }
@@ -140,7 +140,7 @@ ERRBegin
 		Reponse = select( (int)( Socket_ + 1 ), &fds, 0, 0, TimeOut != SCK_INFINITE ? &TimeOutStruct : NULL );
 
 		if ( Reponse == SCK_SOCKET_ERROR )
-			ERRs();
+			ERRSys();
 		else if ( Reponse > 0 )
 		{
 			if ( ( Socket = accept( Socket_, (sockaddr *)&SockAddr, &SockAddrSize ) ) == SCK_INVALID_SOCKET ) {
@@ -157,7 +157,7 @@ ERRBegin
 				ERREpilog
 #endif
 				if ( ( Error != SCK_EWOULDBLOCK ) && ( Error != SCK_EAGAIN ) )
-					ERRs();
+					ERRSys();
 			}
 
 			IP = inet_ntoa( SockAddr.sin_addr );
@@ -169,7 +169,7 @@ ERRErr
 		ERRRst();
 		Boucler = true;
 	} else if ( ErrorHandling != err::hUserDefined )
-		ERRu();
+		ERRCcp();
 ERREnd
 ERREpilog
 	}
@@ -205,12 +205,12 @@ ERRBegin
 
 		switch( Action ) {
 		case aContinue:
-			ERRc();
+			ERRCcp();
 			break;
 		case aStop:
 			break;
 		default:
-			ERRu();
+			ERRCcp();
 			break;
 		}
 
@@ -330,7 +330,7 @@ ERRFProlog
 	tol::E_FPOINTER___( char ) Buffer;
 ERRFBegin
 	if ( ( Buffer = malloc( strlen( Data.IP ) + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	strcpy( Buffer, Data.IP );
 	mtx::Unlock( Data.Mutex );

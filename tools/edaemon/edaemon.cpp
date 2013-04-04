@@ -225,7 +225,7 @@ ERRBegin
 	case CLNARG_NONE:
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 	}
 
 	AnalyzeOptions_( Analyzer, Parameters );
@@ -352,7 +352,7 @@ protected:
 		tol::buffer__ Buffer;
 
 		if ( _Flow == NULL )
-			ERRc();
+			ERRCcp();
 
 		*_Flow << '[' << tol::DateAndTime( Buffer ) << "] " << csdsns::GetLogLabel( Log ) << ' ' << Id << '/' << Amount << txf::nl << txf::commit;
 	}
@@ -403,7 +403,7 @@ ERRBegin
 			break;
 		default:
 			if ( LogFileName != NULL )
-			ERRc();
+			ERRCcp();
 			break;
 		}
 
@@ -444,7 +444,7 @@ ERRBegin
 	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false, (void *)BackendFileName );
 
 	if ( ( Core = new csdlec::library_embedded_client_core__ ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	if ( !Core->Init( BackendFileName, LibraryData, err::hUserDefined ) ) {
 		Meaning.Init();
@@ -461,7 +461,7 @@ ERRBegin
 		UseSwitchingConnections_( Core->GetSteering(), LogFileName, LogFileHandling, BackendFileName, Port );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr

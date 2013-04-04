@@ -93,7 +93,7 @@ namespace ids {
 			Released.reset( P );
 			S_.FirstUnused = 0;
 		}
-		void plug( sdr::E_STORAGE_DRIVER__ &SD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
 			Released.plug( SD );
 		}
@@ -131,7 +131,7 @@ namespace ids {
 				ID = (*S_.FirstUnused)++;
 
 				if ( S_.FirstUnused == 0 )
-					ERRl();
+					ERRLmt();
 
 				Released = false;
 			}
@@ -154,7 +154,7 @@ namespace ids {
 			} else {
 #ifdef IDS_DBG
 				if ( !IsAvailable_( ID ) )
-					ERRu();
+					ERRCcp();
 #endif
 				Released.Remove( Released.Search( ID ) );
 
@@ -166,7 +166,7 @@ namespace ids {
 		{
 #ifdef IDS_DBG
 			if ( IsAvailable_( ID ) )
-				ERRu();
+				ERRCcp();
 #endif
 			Released.Push( ID );
 		}

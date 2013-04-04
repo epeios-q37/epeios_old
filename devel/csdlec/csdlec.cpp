@@ -75,7 +75,7 @@ bso::bool__ csdlec::library_embedded_client_core__::Init(
 			reset();	// Sinon le bibliothèque n'est pas déchargée correctement à la fermeture de l'application.
 
 	if ( ERRHandling != err::hUserDefined )
-		ERRs();
+		ERRSys();
 
 	return false;
 }
@@ -91,7 +91,7 @@ bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::s
 		return false;
 
 	if ( _Steering != NULL )
-		ERRc();
+		ERRCcp();
 
 	if ( ( _Steering = RetrieveSteering( Data ) ) == NULL )
 		return false;
@@ -109,7 +109,7 @@ bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( void )
 		return false;
 
 	if ( _Steering == NULL )
-		ERRc();
+		ERRCcp();
 
 	ReleaseSteering( _Steering );
 

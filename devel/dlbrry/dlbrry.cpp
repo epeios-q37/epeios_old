@@ -76,7 +76,7 @@ using namespace dlbrry;
 bso::bool__ dlbrry::dynamic_library___::_LoadLibrary( const char *LibraryName )
 {
 	if ( _LibraryHandler != NULL )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
@@ -94,7 +94,7 @@ bso::bool__ dlbrry::dynamic_library___::_LoadLibrary( const char *LibraryName )
 bso::bool__ dlbrry::dynamic_library___::_UnloadLibrary( void  )
 {
 	if ( _LibraryHandler == NULL )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	if ( !FreeLibrary( (HMODULE)_LibraryHandler) )
@@ -126,7 +126,7 @@ void * dlbrry::dynamic_library___::GetFunction( const char *FunctionName )
 	void *Function = NULL;
 
 	if ( !IsInitialized() )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	Function = FCAST GetProcAddress( (HMODULE)_LibraryHandler, FunctionName );

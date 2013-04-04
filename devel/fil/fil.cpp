@@ -130,7 +130,7 @@ static inline iop::descriptor__ Open_(
 		Flags |= _O_RDONLY;
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -140,7 +140,7 @@ static inline iop::descriptor__ Open_(
 static void Close_( iop::descriptor__ D )
 {
 	if ( _close( D ) != 0 )
-		ERRd();
+		ERRDvc();
 }
 
 #	elif defined( FIL__POSIX )
@@ -213,7 +213,7 @@ ERRBegin
 	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
 
 	if ( !Success && ( ErrorHandling == err::hThrowException ) )
-		ERRd();
+		ERRDvc();
 ERRErr
 ERREnd
 	if ( Descriptor != IOP_UNDEFINED_DESCRIPTOR )
@@ -228,7 +228,7 @@ const char* fil::GetBackupFileName(
 {
 
 	if ( ( Buffer = (char *)malloc( strlen( FileName ) + sizeof( FIL__BACKUP_FILE_EXTENSION  ) + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	sprintf( Buffer, "%s%s", FileName, FIL__BACKUP_FILE_EXTENSION );
 
@@ -247,7 +247,7 @@ const char *fil::GetLabel( backup_status__ Status )
 	CASE( UnableToDuplicate );
 	CASE( UnableToSuppress );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -273,7 +273,7 @@ ERRBegin
 		Meaning.AddTag( GetBackupFileName( FileName, Buffer ) );
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -355,7 +355,7 @@ ERRBegin
 				Status = bsUnableToRename;
 		}
 		else
-			ERRu();
+			ERRCcp();
 	}
 
 	Status = bsOK;
@@ -363,7 +363,7 @@ ERRErr
 ERREnd
 	if ( Status != bsOK )
 		if ( ErrorHandling == err::hThrowException )
-			ERRd();
+			ERRDvc();
 ERREpilog
 	return Status;
 }
@@ -382,7 +382,7 @@ const char *fil::GetLabel( recover_status__ Status )
 	CASE( UnableToRename );
 	CASE( UnableToSuppress );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -407,7 +407,7 @@ ERRBegin
 		Meaning.AddTag(  FileName );
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -444,7 +444,7 @@ ERRErr
 ERREnd
 	if ( Status != rsOK )
 		if ( ErrorHandling == err::hThrowException )
-			ERRd();
+			ERRDvc();
 ERREpilog
 	return Status;
 }

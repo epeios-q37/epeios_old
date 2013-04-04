@@ -64,7 +64,7 @@ const char *csdbnc::Host(
 	char *P;
 
 	if ( strlen( HostService ) >= CSDBNC_ADDRESS_SIZE_MAX )
-		ERRl();
+		ERRLmt();
 
 	strcpy( Buffer, HostService );
 
@@ -134,12 +134,12 @@ socket__ csdbnc::Connect(
 				Desc = SCK_INVALID_SOCKET;
 
 		if ( ( Desc == SCK_INVALID_SOCKET ) && ( ErrorHandling == err::hThrowException ) )
-			ERRs();
+			ERRSys();
 	} else {
 		Desc = SCK_INVALID_SOCKET;
 
 		if ( ErrorHandling == err::hThrowException )
-			ERRc();
+			ERRCcp();
 	}
 
 	return Desc;

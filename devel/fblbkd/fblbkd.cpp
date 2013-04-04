@@ -90,7 +90,7 @@ static const char *GetLabel_( message__ MessageId )
 	CASE( BadLanguage );
 	CASE( BackendError );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -226,13 +226,13 @@ ERREpilog
 		}
 	}
 	else
-		ERRb();
+		ERRCcp();
 }
 
 
 // Donne la liste des identificateurs et des libellés de types
 static void GetTypesIDAndPrefixAndName_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -315,7 +315,7 @@ ERREpilog
 
 
 static void GetCommandsIDAndName_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -352,7 +352,7 @@ static void WriteParameters_(
 
 
 static void GetParameters_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__,
@@ -369,7 +369,7 @@ static void GetParameters_(
 }
 
 static void About_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -386,7 +386,7 @@ static void About_(
 
 // Throw an user error (ERRu), for testing purpose.
 static void ThrowUError_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -394,14 +394,14 @@ static void ThrowUError_(
 	bso::bool__ &,
 	void * )
 {
-	ERRu();
+	ERRCcp();
 
 	Requete.Complete();
 }
 
 // Throw an itentional error (ERRi), for testing purpose.
 static void ThrowIError_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -415,7 +415,7 @@ static void ThrowIError_(
 }
 
 static void TestNotification_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -435,7 +435,7 @@ ERREpilog
 
 // Retourne un nouvel objet.
 static void GetNewObject_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -451,10 +451,10 @@ ERRBegin
 	T = Request.Id16In();
 
 	if ( *T >= Backend.Modules.Amount() )
-		ERRb();
+		ERRCcp();
 
 	if ( T == FBLBKD_INVALID_TYPE )
-		ERRb();
+		ERRCcp();
 
 	O = Backend.New( (type__)*T );
 
@@ -471,7 +471,7 @@ ERREpilog
 
 // Retourne l'identificateur correspondant à un type donné.
 static void GetType_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -523,7 +523,7 @@ static void GetRawMessages_(
 
 // Supprime un objet.
 static void RemoveObject_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -542,7 +542,7 @@ static void RemoveObject_(
 }
 
 static void FillCommands_(
-	backend_ &Backend,
+	backend___ &Backend,
 	type__ Type,
 	const commands_details_ &CommandsDetails,
 	ids16_ &Commands )
@@ -563,7 +563,7 @@ ERRBegin
 		Description.Casts = CommandDetail( Position ).Casts;
 
 		if ( ( Command = Backend.Command( Type, Description ) ) == FBLBKD_INVALID_COMMAND )
-			ERRb();
+			ERRCcp();
 
 		Commands.Append( Command );
 
@@ -578,7 +578,7 @@ ERREpilog
 
 // Retourne l'identificateur de type et les identificateurs de commande demandé.
 static void GetTypeAndCommands_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -592,7 +592,7 @@ static void GetTypeAndCommands_(
 	ids16_ &Commands = Requete.Ids16Out();
 
 	if ( ( Type = Backend.Type( Name ) ) == FBLBKD_INVALID_TYPE )
-		ERRb();
+		ERRCcp();
 
 	Commands.Init();
 
@@ -604,7 +604,7 @@ static void GetTypeAndCommands_(
 
 // Retourne l'identificateur d'une commande donnée pour un type donné.
 static void GetCommand_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -643,7 +643,7 @@ ERREpilog
 
 // Retourne l'identificateur des commandes demandées pour un type donné.
 static void GetCommands_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -663,7 +663,7 @@ static void GetCommands_(
 
 // Deconnection
 static void Disconnect_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -676,7 +676,7 @@ static void Disconnect_(
 
 // Return the current language.
 static void GetLanguage_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -691,7 +691,7 @@ static void GetLanguage_(
 
 // Set the current language;
 static void SetLanguage_(
-	backend_ &Backend,
+	backend___ &Backend,
 	untyped_module &Module,
 	index__,
 	command__ Command,
@@ -718,7 +718,7 @@ ERREpilog
 #define ADD( I )	Backend.Add( fblcmd::CommandsNames[fblcmd::c##I], ::I##_, fblcmd::CommandsParameters[fblcmd::c##I] )
 
 // Initialisation avec rattachement à l'interface 'Frontend'.
-void fblbkd::master_module::Init( fblbkd::backend_ &Backend )
+void fblbkd::master_module::Init( fblbkd::backend___ &Backend )
 {
 	untyped_module::Init( NULL, NULL );
 	Backend_ = &Backend;
@@ -781,7 +781,7 @@ void fblbkd::master_module::Init( fblbkd::backend_ &Backend )
 #endif
 }
 
-type__ fblbkd::backend::Type( const str::string_ &Name ) const
+type__ fblbkd::backend___::Type( const str::string_ &Name ) const
 {
 	sdr::row__ C = Modules.First();
 
@@ -791,12 +791,12 @@ type__ fblbkd::backend::Type( const str::string_ &Name ) const
 	if ( C == NONE )
 		C = FBLBKD_INVALID_TYPE;
 	else if ( *C > FBLBKD_INVALID_TYPE )
-		ERRl();
+		ERRLmt();
 
 	return (type_t__)*C;
 }
 
-bso::bool__ fblbkd::backend_::_TestCompatibility(
+bso::bool__ fblbkd::backend___::_TestCompatibility(
 	flw::ioflow__ &Flow,
 	const char *APIVersion,
 	const char *MessageLabel,
@@ -812,21 +812,21 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( !flw::GetString( Flow, Language, sizeof( Language ) ) )
-		ERRF();
+		ERRFlw();
 
 	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
-		ERRF();
+		ERRFlw();
 
 	if ( !flw::GetString( Flow, RemoteBackendLabel, sizeof( RemoteBackendLabel ) ) )
-		ERRF();
+		ERRFlw();
 
 	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
-		ERRF();
+		ERRFlw();
 
 	Flow.Dismiss();
 
 	if ( RemoteBackendLabel[0] && strcmp( RemoteBackendLabel, _BackendLabel ) )
-		ERRl();	// Pas encore traité.
+		ERRVct();	// Pas encore traité.
 
 	if ( strcmp( RemoteProtocolVersion, FBLOVL_PROTOCOL_VERSION )
 		 || ( RemoteAPIVersion[0] && strcmp( RemoteAPIVersion, APIVersion ) ) ) {
@@ -852,7 +852,7 @@ ERREpilog
 	return Success;
 }
 
-bso::bool__ fblbkd::backend_::_TestCompatibility( flw::ioflow__ &Flow )
+bso::bool__ fblbkd::backend___::_TestCompatibility( flw::ioflow__ &Flow )
 {
 	bso::bool__ Success = false;
 ERRProlog
@@ -873,7 +873,7 @@ ERREpilog
 }
 
 
-bso::bool__ backend_::_HandleRequest(
+bso::bool__ backend___::_HandleRequest(
 	flw::ioflow__ &FrontendFlow,
 	void *PU,
 	log_functions__ &LogFunctions )
@@ -892,7 +892,7 @@ ERRBegin
 	flw::Get( Request.Input(), O );
 
 	if ( ( !Links.Exists( O ) ) && ( O != FBLBKD_MASTER_OBJECT ) )
-		ERRb();
+		ERRCcp();
 
 	if ( O != FBLBKD_MASTER_OBJECT ) {
 		Module_( O ).Handle( Index_( O ), Request, PU, LogFunctions );

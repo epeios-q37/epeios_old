@@ -134,10 +134,10 @@ namespace txf {
 			size__ Pos;
 
 			if ( ( Pos = Lire_( 9, C ) ) > 8 )
-				ERRc();
+				ERRCcp();
 
 			if ( !isxdigit( C[0] ) )
-				ERRc();
+				ERRCcp();
 
 			C[Pos] = 0;
 
@@ -183,17 +183,17 @@ namespace txf {
 			datum__ C = Get();
 
 			if ( ( C != '+' ) && ( C != '-' ) )
-				ERRc();
+				ERRCcp();
 
 			operator >>( L );
 
 			if ( C == '+' )
 				if ( L > LLONG_MAX )
-					ERRc();
+					ERRCcp();
 				else E = (signed long long)L;
 			else
 				if ( L > ((unsigned long long)-(LLONG_MIN + 1 ) + 1UL ) )
-					ERRc();
+					ERRCcp();
 				else
 					E = -(signed long long)L;
 

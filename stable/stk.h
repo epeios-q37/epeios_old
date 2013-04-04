@@ -139,7 +139,7 @@ namespace stk {
 		{
 #ifdef STK_DBG
 			if ( structure::Amount() == 0 )
-				ERRl();
+				ERRCcp();
 #endif
 			structure::Recall( structure::Last(), Item );
 		}

@@ -325,7 +325,7 @@ namespace clnarg {
 			command__ Command;
 
 			if ( Id > CLNARG_ID_MAX )
-				ERRl();
+				ERRLmt();
 			
 			Command.Short = Short;
 			Command.Long = Long;
@@ -347,7 +347,7 @@ namespace clnarg {
 			option__ Option;
 
 			if ( Id > CLNARG_ID_MAX )
-				ERRl();
+				ERRLmt();
 
 			Option.Long = Long;
 			Option.Short = Short;

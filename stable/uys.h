@@ -675,7 +675,7 @@ namespace uys {
 		void Allocate( sdr::size__ Size )
 		{
 			if ( Size >= size )
-				ERRl();
+				ERRLmt();
 		}
 	};
 

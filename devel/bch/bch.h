@@ -324,7 +324,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( Amount > this->Amount() )
-				ERRu();
+				ERRCcp();
 #endif
 			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
@@ -333,7 +333,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( !this->Exists( Row ) )
-				ERRu();
+				ERRCcp();
 #endif
 			Truncate ( mng::Amount() - *Row );
 		}

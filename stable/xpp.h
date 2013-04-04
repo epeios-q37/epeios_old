@@ -287,13 +287,13 @@ namespace xpp {
 			_rrow__ Row = Names.Append( Name );
 
 			if ( Row != Coords.Append( Coord ) )
-				ERRc();
+				ERRCcp();
 
 			if ( Row != FileNames.Append( FileName ) )
-				ERRc();
+				ERRCcp();
 
 			if ( Row != Contents.Append( Content ) )
-				ERRc();
+				ERRCcp();
 
 			return AlreadyExists;
 		}
@@ -366,7 +366,7 @@ namespace xpp {
 			if ( Row == NONE ) {
 				Row = Names.Append( Name );
 				if ( Row != Values.Append( Value ) )
-					ERRc();
+					ERRCcp();
 			} else {
 				Values( Row ) = Value;
 				Values.Flush();
@@ -399,7 +399,7 @@ namespace xpp {
 			_vrow__ Row = _Locate( Name );
 
 			if ( Row == NONE )
-				ERRu();
+				ERRCcp();
 
 			ValuesItem.Init( Values );
 
@@ -551,7 +551,7 @@ namespace xpp {
 		_extended_parser___ *Parser = new _extended_parser___( Repository, Variables, Directives );
 
 		if ( Parser == NULL )
-			ERRa();
+			ERRAlc();
 
 		return Parser;
 	}
@@ -617,7 +617,7 @@ namespace xpp {
 		{
 #ifdef XPP_DBG
 			if ( _CurrentParser == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_CurrentParser;
 		}
@@ -625,7 +625,7 @@ namespace xpp {
 		{
 #ifdef XPP_DBG
 			if ( _CurrentParser == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_CurrentParser;
 		}
@@ -682,7 +682,7 @@ namespace xpp {
 			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
 			_Parsers.Init();
 			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
-				ERRc();
+				ERRCcp();
 			_Status = sOK;
 
 		}

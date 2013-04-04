@@ -309,7 +309,8 @@ namespace fblfrd {
 			const char *Message )
 		{
 			if ( _ReportingFunctions == NULL )
-				ERRc();
+
+				ERRCcp();
 
 			_ReportingFunctions->Report( Reply, Message );
 		}
@@ -325,7 +326,7 @@ namespace fblfrd {
 			command__ DefaultCommand;
 
 			if ( !TestBackendCasts_() )
-				ERRb();
+				ERRBkd();
 
 			DefaultCommand = GetBackendDefaultCommand_();
 
@@ -344,7 +345,7 @@ namespace fblfrd {
 		void _Handle( void )
 		{
 			if ( Handle() != fblovl::rOK )
-				ERRu();
+				ERRCcp();
 		}
 		fblovl::reply__ _Send( void )
 		{
@@ -354,10 +355,10 @@ namespace fblfrd {
 
 			if ( ( Reply = (fblovl::reply__)Channel_->Get() ) != fblovl::rOK ) {
 				if ( Reply >= fblovl::r_amount )
-					ERRb();
+					ERRBkd();
 
 				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
-					ERRl();
+					ERRLmt();
 
 				_ReportError( Reply, Message_ );
 			}
@@ -367,7 +368,7 @@ namespace fblfrd {
 		void _SendAndTest( void )
 		{
 			if ( _Send() != fblovl::rOK )
-				ERRb();
+				ERRBkd();
 		}
 		bso::bool__ _TestCompatibility(
 			const char *Language,
@@ -479,7 +480,7 @@ namespace fblfrd {
 				_PostProcess( *Channel_ );
 
 			if ( Channel_->Get() != fblcst::cEnd )
-				ERRb();
+				ERRBkd();
 
 			Channel_->Dismiss();
 

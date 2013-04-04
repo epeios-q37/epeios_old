@@ -207,7 +207,7 @@ void lcl::locale_::GetLanguages(
 	_GetCorrespondingLabels( Labels, Wordings );
 
 	if ( PathErrorRow != NONE )
-		ERRc();
+		ERRCcp();
 }
 
 void lcl::meaning_::AddTag( const meaning_ &Meaning )
@@ -273,7 +273,7 @@ ERRBegin
 				Translation.Append( Buffer );
 			else {
 				if ( Levels.Push( Level ) != Values.Push( Buffer ) )
-					ERRc();
+					ERRCcp();
 			}
 
 			Tags.Init();

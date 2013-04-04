@@ -89,7 +89,7 @@ fnm::type__ fnm::Type( const char *Nom )
 
 #ifdef FNM_DBG
 		if ( Nom == NULL )
-			ERRu();
+			ERRCcp();
 #endif
 
 	if ( *Nom == '\0' )
@@ -141,7 +141,7 @@ ERRBegin
 		TailleExt = strlen( Ext );
 
 	if ( ( P = calloc( TailleRep + TailleNom + TailleExt + 2, sizeof( char ) ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	if ( ( TailleNom == 0 ) && ( TailleExt == 0 ) ) {
 		P.reset();
@@ -200,7 +200,7 @@ ERRBegin
 		P.reset();
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -286,7 +286,7 @@ const char *fnm::GetFileNameRoot(
 	Repere = GetFileName( Nom );
 
 	if ( ( P = malloc( strlen( Repere ) + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	strcpy( P, Repere );
 
@@ -304,11 +304,11 @@ const char *fnm::CorrectLocation(
 
 #ifdef FNM_DBG
 		if ( Location == NULL )
-			ERRu();
+			ERRCcp();
 #endif
 
 	if ( ( P = (char *)malloc( strlen( Location ) + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	strcpy( P, Location );
 
@@ -330,14 +330,14 @@ const char *fnm::GetLocation(
 
 	if ( L != 0 ) {
 		if ( ( P = (char *)malloc( L + 1 ) ) == NULL )
-			ERRa();
+			ERRAlc();
 
 		memcpy( P, Name, L );
 
 		P[L] = 0;
 	} else {
 		if ( ( P = (char *)malloc( 1 ) ) == NULL )
-			ERRa();
+			ERRAlc();
 
 		P[0] = 0;
 	}

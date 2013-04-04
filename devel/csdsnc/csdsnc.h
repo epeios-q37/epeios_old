@@ -235,7 +235,7 @@ ERREpilog
 		}
 		core_ &operator =( const core_ &C )
 		{
-			ERRu();
+			ERRCcp();
 
 			return *this;
 		}
@@ -247,7 +247,7 @@ ERREpilog
 			reset();
 
 			if ( ( S_.HostService = (char *)malloc( strlen( HostService ) + 1 ) ) == NULL )
-				ERRa();
+				ERRAlc();
 
 			strcpy( S_.HostService, HostService );
 
@@ -291,7 +291,7 @@ ERREpilog
 				Flow = new _flow___;
 
 				if ( Flow == NULL )
-					ERRa();
+					ERRAlc();
 
 				if ( ( Socket = csdbnc::Connect( S_.HostService, ErrorHandling ) ) == SCK_INVALID_SOCKET ) {
 					delete Flow;
@@ -358,7 +358,7 @@ ERREpilog
 		{
 #ifdef CSDSNC_DBG
 			if ( _Flow == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 
 			_Flow->Commit();
@@ -366,7 +366,7 @@ ERREpilog
 			if ( _Id == CSDSNB_UNDEFINED )
 				_Id = GetId( *_Flow );
 			else if ( _Flow->Get() != 0 )
-				ERRF();
+				ERRFlw();
 		}
 	protected:
 		virtual fdr::size__ FDRWrite(

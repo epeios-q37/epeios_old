@@ -76,7 +76,7 @@ using namespace dlbrry;
 bso::bool__ dlbrry::dynamic_library___::_LoadLibrary( const char *LibraryName )
 {
 	if ( _LibraryHandler != NULL )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	if ( ( _LibraryHandler = LoadLibrary( LibraryName ) ) == NULL )
@@ -94,7 +94,7 @@ bso::bool__ dlbrry::dynamic_library___::_LoadLibrary( const char *LibraryName )
 bso::bool__ dlbrry::dynamic_library___::_UnloadLibrary( void  )
 {
 	if ( _LibraryHandler == NULL )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	if ( !FreeLibrary( (HMODULE)_LibraryHandler) )
@@ -112,6 +112,7 @@ bso::bool__ dlbrry::dynamic_library___::_UnloadLibrary( void  )
 	return true;
 }
 
+// 'MinGW' généère une erreur lorsque '(void *)' est absent, mais pas 'MSVC4'. On suppose donc que la conversion en 'void *' ne pose pas de problème.
 #ifdef CPE_WIN
 # ifdef CPE_MINGW
 #  define FCAST	(void *)
@@ -125,7 +126,7 @@ void * dlbrry::dynamic_library___::GetFunction( const char *FunctionName )
 	void *Function = NULL;
 
 	if ( !IsInitialized() )
-		ERRc();
+		ERRCcp();
 
 #ifdef TARGET_WIN
 	Function = FCAST GetProcAddress( (HMODULE)_LibraryHandler, FunctionName );

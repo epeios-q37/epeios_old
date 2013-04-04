@@ -85,7 +85,7 @@ const char *xml::GetLabel( status__ Status )
 	CASE( EmptyTagName );
 	CASE( MismatchedTag );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -131,7 +131,7 @@ static status__ SkipSpaces_( _flow___ &Flow )
 static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
 	if ( Flow.Get() != '?' )
-		ERRc();
+		ERRCcp();
 
 	while ( !Flow.EndOfFlow() && ( Flow.Get() != '>' ) );
 
@@ -176,7 +176,7 @@ static status__ GetComment_(
 	bso::bool__ Continue = true;
 
 	if ( Flow.Get() != '-' )
-		ERRc();
+		ERRCcp();
 
 	if ( ( Status = Test_( Flow, '-' ) ) != sOK )
 		return Status;
@@ -222,7 +222,7 @@ static status__ GetCData_(
 	bso::bool__ Continue = true;
 
 	if ( Flow.Get() != '[' )
-		ERRc();
+		ERRCcp();
 
 	if ( ( Status = Test_( Flow, "CDATA[" ) ) != sOK )
 		return Status;
@@ -271,7 +271,7 @@ static status__ GetCommentOrCData_(
 	bso::bool__ Continue = true;
 
 	if ( Flow.Get() != '!' )
-		ERRc();
+		ERRCcp();
 
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
@@ -650,7 +650,7 @@ ERRBegin
 				_Context = cTagExpected;
 				break;
 			default:
-				ERRc();
+				ERRCcp();
 				break;
 			}
 			break;
@@ -723,7 +723,7 @@ ERRBegin
 						RETURN( sUnexpectedCharacter );
 
 					if ( _Tags.IsEmpty() )
-						ERRc();
+						ERRCcp();
 
 					_TagName.Init();
 
@@ -787,7 +787,7 @@ ERRBegin
 					_Context = cValueExpected;
 				break;
 			default:
-				ERRc();
+				ERRCcp();
 			}
 			break;
 		case cAttribute:
@@ -799,7 +799,7 @@ ERRBegin
 				HANDLE( GetAttribute_( _Flow, _EntitiesHandling, _AttributeName, _Value ) );
 
 				if ( _Tags.IsEmpty() )
-					ERRc();
+					ERRCcp();
 
 				_TagName.Init();
 
@@ -831,7 +831,7 @@ ERRBegin
 						_Flow.Get();
 
 						if ( _Tags.IsEmpty() )
-							ERRc();
+							ERRCcp();
 
 						_TagName.Init();
 
@@ -900,7 +900,7 @@ ERRBegin
 					_Context = cValueExpected;
 				break;
 			default:
-				ERRc();
+				ERRCcp();
 				break;
 			}
 			break;
@@ -960,7 +960,7 @@ ERRBegin
 					Continue = false;
 				break;
 			default:
-				ERRc();
+				ERRCcp();
 				break;
 			}
 			break;
@@ -977,7 +977,7 @@ ERRBegin
 						_TagName.Init();
 
 						if ( _Tags.IsEmpty() )
-							ERRc();
+							ERRCcp();
 						else
 							_Tags.Top( _TagName );
 
@@ -995,12 +995,12 @@ ERRBegin
 				_Context = cTagExpected;
 			break;
 			default:
-				ERRc();
+				ERRCcp();
 				break;
 			}
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
@@ -1067,7 +1067,7 @@ ERRBegin
 			Stop = true;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
@@ -1159,7 +1159,7 @@ ERRBegin
 		TransformedValue = Value;
 		break;
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 	
@@ -1188,7 +1188,7 @@ ERRBegin
 	TransformUsingEntities( Value, S_.SpecialCharHandling == schKeep, TransformedValue );
 
 	if ( !S_.TagNameInProgress )
-		ERRu();
+		ERRCcp();
 
 	*S_.Flow << ' ' << Name << "=\"" << TransformedValue << '"';
 ERRErr
@@ -1203,7 +1203,7 @@ ERRProlog
 	name Name;
 ERRBegin
 	if ( Tags.IsEmpty() )
-		ERRu();
+		ERRCcp();
 
 	Name.Init();
 

@@ -226,7 +226,7 @@ static bso::raw__ *_GetInt(
 		Counter++;
 
 	if ( Counter >= BSO_DINT_SIZE_MAX )
-		ERRF();
+		ERRFlw();
 
 	return DInt;
 }
@@ -253,7 +253,7 @@ void dtfptb::_FPutInt(
 		M( 5 );
 		M( 4 );
 #else
-		ERRl();
+		ERRVct();
 		break;
 #endif
 	case 4:
@@ -265,7 +265,7 @@ void dtfptb::_FPutInt(
 		M( 0 );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 }
@@ -287,7 +287,7 @@ bso::int__ dtfptb::_FGetInt(
 		M( 5 );
 		M( 4 );
 #else
-		ERRl();
+		ERRVct();
 		break;
 #endif
 	case 4:
@@ -298,7 +298,7 @@ bso::int__ dtfptb::_FGetInt(
 	case 1:
 		M( 0 );
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -315,7 +315,7 @@ bso::uint__ dtfptb::_VGetUInt(
 	bso::uint__ Value = bso::ConvertToUInt( _GetInt( Flow, DInt ) );
 
 	if ( Value > Max )
-		ERRc();
+		ERRCcp();
 
 	return Value;
 }
@@ -329,10 +329,10 @@ bso::sint__ dtfptb::_VGetSInt(
 	bso::sint__ Value = bso::ConvertToSInt( _GetInt( Flow, DInt ) );
 
 	if ( Value < Min )
-		ERRc();
+		ERRCcp();
 
 	if ( Value > Max )
-		ERRc();
+		ERRCcp();
 
 	return Value;
 }
@@ -370,7 +370,7 @@ public:
 
 		// Pour des raisons de simplifications, on 'cast' parfois autoritairement un 'bso::size__' en 'bso::int__'.
 		if ( sizeof( bso::size__ ) != sizeof( bso::int__ ) )
-			ERRc();
+			ERRCcp();
 	}
 	~dtfptbpersonnalization( void )
 	{

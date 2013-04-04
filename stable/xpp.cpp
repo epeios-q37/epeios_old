@@ -131,7 +131,7 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( MissingKeyOrFormatAttribute );
 	CASE( CDataNestingForbidden );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -240,7 +240,7 @@ static inline bso::bool__ BelongsToNamespace___(
 	const str::string_ &NamespaceWithSeparator )
 {
 	if ( Name.Amount() == 0 )
-		ERRc();
+		ERRCcp();
 
 	if ( Name.Amount() < NamespaceWithSeparator.Amount() )
 		return false;
@@ -299,7 +299,7 @@ static status__ AwaitingToken_(
 
 	switch ( Token = Parser.Parse( xml::tfAllButUseless ) ) {
 		case xml::t_Processed:
-			ERRc();
+			ERRCcp();
 			break;
 		case xml::t_Error:
 			return Convert_( Parser.Status() );
@@ -358,7 +358,7 @@ static status__ RetrieveTree_(
 		case xml::tStartTag:
 			Dump_( Parser.DumpData(), Flow );
 			if ( Nesting == BSO_UINT_MAX )
-				ERRc();
+				ERRCcp();
 			Nesting++;
 			break;
 		case xml::tValue:
@@ -371,7 +371,7 @@ static status__ RetrieveTree_(
 			Dump_( Parser.DumpData(), Flow );
 			switch ( Nesting ) {
 			case 0:
-				ERRc();
+				ERRCcp();
 				break;
 			case 1:
 				Status = AwaitingToken_( Parser, xml::tEndTag, sTooManyTags );
@@ -385,10 +385,10 @@ static status__ RetrieveTree_(
 			return Convert_( Parser.Status() );
 			break;
 		case xml::t_Processed:
-			ERRc();
+			ERRCcp();
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
@@ -585,7 +585,7 @@ ERRBegin
 		// 'Status' initialisé par 'etExpandTypeAndValue_(...)'.
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -839,7 +839,7 @@ ERRBegin
 		// 'Status' initialisé par 'etCypherModeAndValue_(...)'.
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -862,7 +862,7 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 
 	switch ( Directive ) {
 	case dNone:
-		ERRc();
+		ERRCcp();
 		break;
 	case dUnknown:
 		return sUnknownDirective;
@@ -871,10 +871,10 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 		return _HandleDefineDirective( Parser );
 		break;
 	case dBloc:
-		ERRc();	// Traité en amont.
+		ERRCcp();	// Traité en amont.
 		break;
 	case dCData:
-		ERRc();	// Traité en amont.
+		ERRCcp();	// Traité en amont.
 		break;
 	case dExpand:
 		return _HandleExpandDirective( Parser );
@@ -889,11 +889,11 @@ status__ xpp::_extended_parser___::_HandlePreprocessorDirective(
 		return _HandleCypherDirective( Parser );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
-	ERRc();
+	ERRCcp();
 
 	return s_Undefined;	// Pour éviter un 'warning'.
 
@@ -1079,7 +1079,7 @@ status__ xpp::_extended_parser___::Handle(
 
 			if ( Directive == dCData ) {
 				if ( _CDataNesting == CDATA_NESTING_MAX )
-					ERRl();
+					ERRLmt();
 
 				if ( _CDataNesting == 0 )
 					Continue = true;
@@ -1131,7 +1131,7 @@ status__ xpp::_extended_parser___::Handle(
 					Status = sUnexpectedAttribute;
 					break;
 				default:
-					ERRc();
+					ERRCcp();
 					break;
 				}
 			} else
@@ -1148,7 +1148,7 @@ status__ xpp::_extended_parser___::Handle(
 					// L'attribut n'est pas répercuté sur le flux de sortie.
 					break;
 				default:
-					ERRc();
+					ERRCcp();
 					break;
 				}
 			}
@@ -1176,7 +1176,7 @@ status__ xpp::_extended_parser___::Handle(
 					Status = sOK;
 				break;
 			default:
-				ERRc();
+				ERRCcp();
 				break;
 			}
 			break;
@@ -1190,7 +1190,7 @@ status__ xpp::_extended_parser___::Handle(
 				case dCData:
 					switch( _CDataNesting ) {
 					case 0:
-						ERRc();
+						ERRCcp();
 						break;
 					case 1:
 						Continue = true;
@@ -1211,7 +1211,7 @@ status__ xpp::_extended_parser___::Handle(
 						Status = sOK;
 					break;
 				default:
-					ERRc();
+					ERRCcp();
 					break;
 				}
 			break;
@@ -1243,7 +1243,7 @@ status__ xpp::_extended_parser___::Handle(
 			Status = Convert_( _Parser.Status() );
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 
@@ -1290,7 +1290,7 @@ sdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 		while ( _Status == s_Pending ) {
 #ifdef XPP_DBG
 			if ( Parser != NULL )
-				ERRc();
+				ERRCcp();
 #endif
 			if ( _Parsers.Amount() != 0 ) {
 				delete _CurrentParser;
@@ -1375,7 +1375,7 @@ ERRBegin
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
@@ -1481,7 +1481,7 @@ ERRBegin
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
@@ -1557,7 +1557,7 @@ ERRBegin
 			ERRReturn;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 	}
