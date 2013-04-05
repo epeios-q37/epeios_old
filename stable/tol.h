@@ -598,7 +598,7 @@ namespace tol {
 		coeff__ Coeff)
 	{
 		if ( Op1->QuadPart < Op2->QuadPart )
-			ERRCcp();
+			ERRPrm();
 
 		LONGLONG Diff = ( Coeff * ( Op1->QuadPart - Op2->QuadPart ) ) / _TickFrequence.QuadPart;
 
@@ -982,7 +982,7 @@ namespace tol {
 		{
 #ifdef TOL_DBG
 			if ( P_ != NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 
 			P_ = P;

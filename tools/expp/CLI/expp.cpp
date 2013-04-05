@@ -249,7 +249,7 @@ ERRBegin
 			Parameters.NoIndent = true;
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 		}
 
 		P = Options.Next( P );
@@ -338,7 +338,7 @@ ERRBegin
 		Parameters.Command = cProcess;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 	}
 
 	AnalyzeOptions_( Analyzer, Parameters );
@@ -489,7 +489,7 @@ ERRBegin
 		Encrypt_( Parameters.Source, Parameters.Destination, Parameters.Namespace, !Parameters.NoIndent );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 }
 

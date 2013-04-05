@@ -66,7 +66,7 @@ static inline void PutSize_(
 
 static inline bso::size__ GetSize_( flw::iflow__ &Flow )
 {
-	bso::int__ Size;
+	bso::size__ Size;
 
 	return dtfptb::VGet( Flow, Size );
 }

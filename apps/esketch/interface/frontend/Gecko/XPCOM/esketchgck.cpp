@@ -40,7 +40,7 @@ xulfui::steering_callback__ *sclgecko::SCLGECKOCreateSteering(
 ERRProlog
 ERRBegin
 	if ( ( Callback = new binding::binding_callback__ ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	Callback->Init( LauncherIdentification, sclrgstry::GetRegistry(), sclrgstry::GetRoot(), Locale, Language );
 ERRErr

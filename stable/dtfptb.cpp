@@ -222,7 +222,7 @@ static bso::raw__ *_GetInt(
 {
 	bso::u8__ Counter = 0;
 
-	while ( ( Counter < BSO_DINT_SIZE_MAX ) && ( ( DInt[Counter] = Flow.Get() ) & 0x7f ) )
+	while ( ( Counter < BSO_DINT_SIZE_MAX ) && ( ( DInt[Counter] = Flow.Get() ) & 0x80 ) )
 		Counter++;
 
 	if ( Counter >= BSO_DINT_SIZE_MAX )

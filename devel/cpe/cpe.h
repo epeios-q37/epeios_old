@@ -101,19 +101,20 @@ extern class ttr_tutor &CPETutor;
 # undef CPE_JAVA	// Cible composant java en code natif.
 # undef CPE_GECKO	// Cible composant Gecko.
 
+# undef CPE_INT		// Contient la taille (en bits) d'un entier naturel.
 
-# undef CPE_X86		// Processeur Intel et compatible.
-# define CPE_X86_LABEL	"x86"
+# undef CPE_INT64	// Taille naturelle d'un entier est de 64 bits.
+# undef CPE_INT32	// Taille naturelle d'un entier est de 32 bits.
+
+
+# undef CPE_IA32		// Processeur Intel 32 bits et compatibles.
+# define CPE_IA32_LABEL	"IA-32"
+
+# undef CPE_X64		// Processeur AMD 64 bits et compatibles.
+# define CPE_X64_LABEL	"x64"
 
 # undef CPE_ARM		// Processeur ARM.
 # define CPE_ARM_LABEL "ARM"
-
-
-# undef CPE_32BITS	// Architecture 32 bits.
-# define CPE_32BITS_LABEL	"32"
-
-# undef CPE_64BITS	// Architecture 64 bits.
-# define CPE_64BITS_LABEL	"64"
 
 
 # ifdef E_GECKO
@@ -130,11 +131,13 @@ extern class ttr_tutor &CPETutor;
 #  define CPE_MSVC
 #  define CPE_WIN
 #  define CPE_VC
-#  ifdef _WIN64
-#   define CPE_64BITS
-#  elif defined( _WIN32 )
-#   define CPE_32BITS
-#  endif	
+#  ifdef _M_IX86
+#   ifdef _M_X64
+#    define CPE_X64
+#   else
+#    define CPE_IA32
+#   endif
+#  endif
 #  ifdef _MT
 #   ifndef E_ST
 #    define CPE_MT
@@ -155,28 +158,15 @@ extern class ttr_tutor &CPETutor;
 #  ifdef __CYGWIN__
 #   define CPE_CYGWIN
 #   define CPE_POSIX
-#   ifdef __CYGWIN64__
-#    define CPE_64BITS
-#   elif defined( __CYGWIN32__ )
-#    define CPE_32BITS
-#   endif	
 #  elif defined( __MINGW32__ )
 #   define CPE_MINGW
 #   define CPE_WIN
-#   ifdef _WIN64
-#    define CPE_64BITS
-#   elif defined( _WIN32 )
-#    define CPE_32BITS
-#   endif	
 #  elif defined( __linux__ )
 #   define CPE_LINUX
 #   define CPE_POSIX
 #  endif
 #  ifdef __ANDROID__
 #   define CPE_ANDROID
-#   if ( __SIZEOF_POINTER__ == 4 )
-#    define CPE_32BITS
-#  endif
 #  endif
 # endif
 
@@ -219,12 +209,6 @@ extern class ttr_tutor &CPETutor;
 #  elif _MSC_VER == 1500
 #   define CPE_VC9
 #  endif
-#  ifdef _M_IX86
-#   define CPE_X86
-#  endif
-#  ifdef _M_X64
-#   define CPE_X86
-#  endif
 # endif
 
 # ifdef CPE_GCC
@@ -232,16 +216,14 @@ extern class ttr_tutor &CPETutor;
 #   define CPE_GCC3
 #  endif
 #  ifdef __i386__
-#   define CPE_X86
+#   ifdef __x86_64__
+#    define CPE_X64
+#   else
+#    define CPE_IA32
+#   endif
 #  endif
 #  ifdef __ARM_EABI__
 #   define CPE_ARM
-#  endif
-#  ifdef __x86_64__
-#   define CPE_X86
-#   define CPE_64BITS
-#  else
-#   define CPE_32BITS
 #  endif
 # endif
 
@@ -250,6 +232,53 @@ extern class ttr_tutor &CPETutor;
 #   error "JNI doesn't work with 'Cygwin' genuine compiler. Use 'MinGW' compiler instead."
 #  endif
 # endif
+
+
+# ifdef CPE_IA32
+#  ifdef CPE_INT
+#  error "'CPE_INT' should not be already defined"
+#  endif
+#  define CPE_INT	32
+# endif
+
+# ifdef CPE_X64
+#  ifdef CPE_INT
+#  error "'CPE_INT' should not be already defined"
+#  endif
+#  define CPE_INT	64
+# endif
+
+# ifdef CPE_ARM
+#  ifdef CPE_INT
+#  error "'CPE_INT' should not be already defined"
+#  endif
+#  define CPE_INT	32
+# endif
+
+# ifndef CPE_INT
+#  error "Missing 'CPE_INT' definition
+# endif
+
+# ifdef E_INT32
+#  undef CPE_INT
+#  define CPE_INT	32
+# endif
+ 
+# ifdef E_INT64
+#  undef CPE_INT
+#  define CPE_INT	64
+# endif
+
+# if CPE_INT == 32
+#  define CPE_INT32
+# elif ( CPE_INT == 64 )
+#  define CPE_INT64
+# elif defiend( CPE_INT )
+#  error "Wrong value for 'CPE_INT'."
+# else
+#  error "'CPE_INT' not defined"
+# endif
+ 
 
 # if defined( CPE_MSVC )
 #  define CPE_ENVIROMENT_LABEL	CPE_MSVC_LABEL
@@ -267,20 +296,14 @@ extern class ttr_tutor &CPETutor;
 #  error "Undefined enviroment !"
 # endif
 
-# if defined( CPE_X86 )
-#  define CPE_PROCESSOR_LABEL	CPE_X86_LABEL
+# if defined( CPE_IA32 )
+#  define CPE_ARCHITECTURE_LABEL	CPE_IA32_LABEL
+# elif if defined( CPE_IA32 )
+#  define CPE_ARCHITECTURE_LABEL	CPE_X64_LABEL
 # elif defined( CPE_ARM )
-#  define CPE_PROCESSOR_LABEL	CPE_ARM_LABEL
+#  define CPE_ARCHITECTURE_LABEL	CPE_ARM_LABEL
 # else
-#  error "Undefined processor !"
-# endif
-
-# if defined( CPE_32BITS )
-#  define CPE_ARCH_BITNESS_LABEL	CPE_32BITS_LABEL
-# elif defined( CPE_64BITS )
-#  define CPE_ARCH_BITNESS_LABEL	CPE_64BITS_LABEL
-# else
-#  error "Undefined architecture bitness !"
+#  error "Undefined architecture !"
 # endif
 
 

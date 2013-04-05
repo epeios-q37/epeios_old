@@ -92,18 +92,16 @@ namespace err {
 	};
 
 	enum type {
-		tAllocation,	// (ERRAlc) Erreur lors de l'allocation de RAM.
-		tDevice,		// (ERRDvc) Erreur signalant un problème avec un périphérique.
-		tSystem,		// (ERRSys) Erreur du système.
-		tUser,			// (ERRUsr) Erreur de l'utilisateur.
-		tBackend,		// (ERRBkd) Erreur 'backend'.
+		tAllocation,	// (ERRAlc) Echec d'une allocation de RAM.
+		tSystem,		// (ERRSys) Dysfonctionnemnt du système (échec d'une opération qui n'aurait pas dû échouer, ou valeur incohérente retournée par une fonction ).
 		tVacant,		// (ERRVct) Appel à une fonctionnalité absente (à priori non encore implémentée).	
-		tLimitation,	// (ERRLmt) Erreur signalant un dépassement d'une limite inhérente à un fonctionnalité.
-		tStorage,		// (ERRStg) Erreur lors du traitement d'une fonction de stockage (tout type).
-		tConception,	// (ERRCcp) Erreur de conception ; une situation algorithmiquement impossible est survenue.
-		tForbidden,		// (ERRFbd) Erreur du à l'appel d'une fonctionnalité non autorisée.
-		tExternal,		// (ERRExt) Un erreur du à un acteur extérieur s'est produite.
-		tFlow,			// (ERRFlw) Une errreur a été détectée lors du traitement d'un flux (pendant du 'tStorage').
+		tLimitation,	// (ERRLmt) Dépassement d'une limite.
+		tData,			// (ERRDta) Incohérence dans le nombre ou le contenu d'un ensemble de données.
+		tFramework,		// (ERRFwk) Incohérence dans l'utilsation faite du 'framework'.
+		tParameters,	// (ERRPrm) Incohérence dans les paramètres passées à une méthode/fonction du 'framework'.
+		tForbidden,		// (ERRFbd) Appel d'une fonctionnalité non autorisée.
+		tLibrary,		// (ERRLbr) Une fonction d'une bibliothèque système a retournée une erreur.
+		tChecker,		// (ERRChk) Un test de contrôle a échoué.
 		t_amount,
 		t_None,			// Signale l'absence d'erreur.
 		t_Free,			// (ERRFree) Pas une erreur au sens propre. Permet de profiter du mécanisme de gestion d'erreur.
@@ -162,40 +160,18 @@ namespace err {
 
 # define ERRCommon( T )	err::ERR.Handler( __FILE__, __LINE__, T )
 
-//m Throw an allocation error (only RAM).
 # define ERRAlc()	ERRCommon( err::tAllocation )
-
-//m Throw a device error.
-# define ERRDvc()	ERRCommon( err::tDevice )
-
-//m Throw a system error.
 # define ERRSys()	ERRCommon( err::tSystem )
-
-//m Throw an user error.
-# define ERRUsr()	ERRCommon( err::tUser )
-
-//m Throw a backend error.
-# define ERRBkd()	ERRCommon( err::tBackend )
-
-//m Throw en conception error.
-# define ERRCcp()	ERRCommon( err::tConception )
-
-//m Throw a format error.
-# define ERRFlw()	ERRCommon( err::tFlow )	//	A renommer ultèrieurement en 'ERRF', en attendant d'avoir détecté les 'ERRf' qui était des erreurs de formats.
-
-//m Throw a prohibited function call error.
-# define ERRFbd()	ERRCommon( err::tForbidden )
-
-//m Throw a limit exceed ferror.
-# define ERRLmt()	ERRCommon( err::tLimitation )
-
-//m Throw a memory error.
-# define ERRStg()	ERRCommon( err::tStorage )
-
-//m Throw a memory error.
-# define ERRExt()	ERRCommon( err::tExternal )
-
 # define ERRVct()	ERRCommon( err::tVacant )
+# define ERRLmt()	ERRCommon( err::tLimitation )
+# define ERRDta()	ERRCommon( err::tData )
+# define ERRFwk()	ERRCommon( err::tFramework )
+# define ERRPrm()	ERRCommon( err::tParameters )
+# define ERRFbd()	ERRCommon( err::tForbidden )
+# define ERRLbr()	ERRCommon( err::tLibrary )
+# define ERRChk()	ERRCommon( err::tChecker )
+
+
 
 # define ERRRst()	{ err::Unlock(); }
 

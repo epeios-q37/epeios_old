@@ -106,7 +106,7 @@ namespace xulfbs {
 		trunk &Trunk( void ) const
 		{
 			if ( _Trunk == NULL )
-				ERRc();
+				ERRCcp();
 
 			return *_Trunk;
 		}
@@ -143,49 +143,49 @@ namespace xulfbs {
 	private:
 		void NSXPCMGetValue(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Value )
 		{
 			XULFBSGetValue( Pattern, Index, Value );
 		}
 		void NSXPCMGetLabel(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Label )
 		{
 			XULFBSGetLabel( Pattern, Index, Label );
 		}
 		void NSXPCMGetComment(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Comment )
 		{
 			XULFBSGetComment( Pattern, Index, Comment );
 		}
-		bso::ulong__ NSXPCMGetMatchingCount( const str::string_ &Pattern )
+		bso::uint__ NSXPCMGetMatchingCount( const str::string_ &Pattern )
 		{
 			return XULFBSGetMatchingCount( Pattern );
 		}
 	protected:
 		virtual void XULFBSGetValue(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Value ) = 0;
 		virtual void XULFBSGetLabel(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Label )
 		{
 			GetValue( Pattern, Index, Label );
 		}
 		virtual void XULFBSGetComment(
 			const str::string_ &Pattern,
-			bso::ulong__ Index,
+			bso::uint__ Index,
 			str::string_ &Comment )
 		{
-			ERRu();
+			ERRCcp();
 		}
-		virtual bso::ulong__ XULFBSGetMatchingCount( const str::string_ &Pattern ) = 0;
+		virtual bso::uint__ XULFBSGetMatchingCount( const str::string_ &Pattern ) = 0;
 		virtual void XULFBSOnTextEntered( nsIDOMElement *Element ) = 0;
 		virtual void XULFBSOnTextReverted( nsIDOMElement *Element ) = 0;
 	public:
@@ -210,7 +210,7 @@ namespace xulfbs {
 		autocomplete_textbox_callback__ &_C( void )
 		{
 			if ( _Callback == NULL )
-				ERRc();
+				ERRCcp();
 
 			return *_Callback;
 		}

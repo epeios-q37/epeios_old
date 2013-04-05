@@ -186,7 +186,7 @@ namespace dtfptb {
 # if !defined( CPE_64BITS ) && !defined( CPE_MAC )	// Sinon ambigüité !
 	inline bso::size__ VGet(
 		flw::iflow__ &Flow,
-		bso::size__ Size )
+		bso::size__ &Size )
 	{
 		return Size = _VGetUInt( Flow, BSO_SIZE_MAX );
 	}

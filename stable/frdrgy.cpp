@@ -183,20 +183,20 @@ ERREpilog
 	return Success;
 }
 
-bso::bool__ frdrgy::GetProfileIntegerValue(
+bso::bool__ frdrgy::GetProfileUIntValue(
 	const char *Path,
 	const _registry_ &Registry,
-	bso::ulong__ &Id )
+	bso::uint__ &Id )
 {
 	bso::bool__ Success = false;
 ERRProlog
 	str::string Value;
-	mdr::row__ Error = NONE;
+	sdr::row__ Error = NONE;
 ERRBegin
 	Value.Init();
 
 	if ( GetProfileValue( Path, Registry, Value ) ) {
-		Id = Value.ToUL( &Error );
+		Id = Value.ToUInt( &Error );
 
 		Success = Error == NONE;
 	}

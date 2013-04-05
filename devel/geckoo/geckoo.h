@@ -63,17 +63,19 @@ extern class ttr_tutor &GECKOOTutor;
 # include "err.h"
 # include "flw.h"
 # include "cio.h"
+# include "cpe.h"
 
 # include "nsxpcm.h"
 
-# define GECKOO_OVERLAPPING_VERSION	"5"
+# define GECKOO_OVERLAPPING_VERSION_NUMBER
+# define GECKOO_OVERLAPPING_VERSION	GECKOO_OVERLAPPING_VERSION_NUMBER "-" CPE_ARCH_BITNESS_LABEL
 
 # define GECKOO_CREATE_STEERING_FUNCTION_NAME		GECKOOCreateSteering
 # define GECKOO_RETRIEVE_STEERING_FUNCTION_NAME		GECKOORetrieveSteering
 # define GECKOO_DELETE_STEERING_FUNCTION_NAME		GECKOODeleteSteering
 
 namespace geckoo {
-	typedef mdr::row__ id__;
+	typedef sdr::row__ id__;
 
 	class pseudo_event_callback__
 	{
@@ -139,7 +141,7 @@ namespace geckoo {
 	{
 	public:
 		static const char *Version;	// Toujours en première position.
-		static bso::ulong__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
+		static bso::uint__ Control;	// Une valeur relative au contenu de la structure, à des fins de test primaire de compatibilité.
 		const char *LauncherIdentification;
 		const char *Language;
 		const char *Path;	// Chemin d la bibliothèque.

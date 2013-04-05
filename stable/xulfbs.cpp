@@ -76,12 +76,12 @@ void xulfbs::_Report(
 	else {	// L'erreur a été détectée dans un contexte où les informations ka concernant ne sont pas disponibles, d'où traitement ici.
 		switch (  ERRType ) {
 		case err::t_Exit:
-			ERRc();
+			ERRCcp();
 			break;
 		case err::t_Abort:
 			break;
 		case err::t_Return:
-			ERRc();
+			ERRCcp();
 			break;
 		default:
 			_RetrieveErrAndReport( Trunk );

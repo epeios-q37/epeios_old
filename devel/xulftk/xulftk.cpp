@@ -184,7 +184,7 @@ ERREpilog
 void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
-		ERRc();
+		ERRCcp();
 
 	_Trunk->UI().LogAndPrompt( Message );
 
@@ -194,7 +194,7 @@ void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_
 void xulftk::reporting_functions__::FRDKRNReportFrontendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
-		ERRc();
+		ERRCcp();
 
 	_Trunk->UI().Alert( Message );
 
@@ -228,7 +228,7 @@ ERRBegin
 		ERRAbort();
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -272,7 +272,7 @@ static bso::bool__ IsValid_(
 	const str::string_ &Value,
 	bso::bool__ AlpahaNumericOnly )	// A 'true' si la valeur doit être alpha-numérique, comme un libellé d'attribut, par example.
 {
-	mdr::row__ Row = Value.First();
+	sdr::row__ Row = Value.First();
 
 	if ( Value.Amount() == 0 )
 		return false;
@@ -353,7 +353,7 @@ ERRBegin
 	case dOut:
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -418,13 +418,13 @@ ERRBegin
 		Flow = GetVolatileFlow_<bag, flow>( Bag );
 		break;
 	case at_Undefined:
-			Translation.Init();
-			UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetType", Language, Translation ) );
+		Translation.Init();
+		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_MissingOrBadAnnexTargetType", Language, Translation ) );
 
-			ERRReturn;
+		ERRReturn;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -589,7 +589,7 @@ ERRBegin
 	case frdkrn::bxtNone:
 		break;
 	case frdkrn::bxtPredefined:
-		ERRv();
+		ERRCcp();
 		break;
 	case frdkrn::bxtDaemon:
 		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
@@ -601,7 +601,7 @@ ERRBegin
 		Type = frdkrn::bxtNone;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 

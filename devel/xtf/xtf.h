@@ -184,7 +184,7 @@ namespace xtf {
 					NewCharAdjust_();
 				}
 			} else
-				ERRCcp();
+				ERRFwk();
 
 			return C;
 		}

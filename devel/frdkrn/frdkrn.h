@@ -120,7 +120,7 @@ namespace frdkrn {
 		virtual void CSDSNCLog(
 			csdsnc::log__ Log,
 			const void *Flow,
-			mdr::size__ Amount )
+			sdr::size__ Amount )
 		{}
 	};
 
@@ -245,7 +245,7 @@ namespace frdkrn {
 		void _CloseConnection( void )
 		{
 			if ( !IsConnected() )
-				ERRu();
+				ERRCcp();
 
 			FRDKRNDisconnection();
 
@@ -286,7 +286,7 @@ namespace frdkrn {
 			str::string Translation;
 		ERRBegin
 			if( _ReportingFunctions == NULL )
-				ERRc();
+				ERRCcp();
 
 			Translation.Init();
 
@@ -345,7 +345,7 @@ namespace frdkrn {
 		fblfrd::backend_access___ &BackendAccess( void )
 		{
 			if ( !_Backend.IsConnected() )
-				ERRc();
+				ERRCcp();
 
 			return _Backend.BackendAccess();
 		}
@@ -364,7 +364,7 @@ namespace frdkrn {
 		const char *Language( void ) const
 		{
 			if ( _Language == NULL )
-				ERRc();
+				ERRCcp();
 
 			return _Language;
 		}
@@ -500,17 +500,17 @@ namespace frdkrn {
 
 	inline fblfrd::id32__ _ExtractId32( const str::string_ &Value )
 	{
-		return Value.ToUL();
+		return Value.ToU32();
 	}
 
 	inline fblfrd::id16__ _ExtractId16( const str::string_ &Value )
 	{
-		return Value.ToUS();
+		return Value.ToU16();
 	}
 
 	inline fblfrd::id8__ _ExtractId8( const str::string_ &Value )
 	{
-		return Value.ToUB();
+		return Value.ToU8();
 	}
 
 	void GetPredefinedProjects(

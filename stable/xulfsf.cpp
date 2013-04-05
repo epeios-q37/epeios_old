@@ -86,7 +86,7 @@ ERRBegin
 		Trunk().UI().SessionForm().SetBackendType( Type );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -220,18 +220,18 @@ ERRBegin
 		break;
 	case frdkrn::apmFull:
 		if ( !Registry.GetValue( frdrgy::AuthenticationPassword, Password ) )
-			ERRu();
+			ERRCcp();
 	case frdkrn::apmPartial:
 		if ( !Registry.GetValue( frdrgy::AuthenticationLogin, Login ) )
-			ERRu();
+			ERRCcp();
 	case frdkrn::apmEmpty:
 		break;
 	case frdkrn::apm_Undefined:
-		ERRl();
+		ERRLmt();
 		// Affichage d'un message d'erreur normalement.
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -335,7 +335,7 @@ ERRBegin
 		Widgets.mnlBackendType.SetSelectedItem( Widgets.mniEmbeddedBackend );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 

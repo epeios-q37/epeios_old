@@ -76,7 +76,7 @@ const char *xulfkl::GetLabel( xulfkl::message__ MessageId )
 	CASE( SelectProjectFile );
 	CASE( ExitConfirmation );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 
@@ -93,7 +93,7 @@ public:
 	xulfklpersonnalization( void )
 	{
 		if ( XULFKL_M_AMOUNT != m_amount )
-			ERRc();
+			ERRCcp();
 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

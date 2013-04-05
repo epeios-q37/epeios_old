@@ -101,7 +101,7 @@ namespace sdr {
 		// Alloue 'Size' octet.
 		virtual void SDRAllocate( size__ Size )
 		{
-			ERRCcp();
+			ERRFwk();
 			// For read-only storage.
 		}
 		/* Si la mémoire repose sur une mémoire persistante (un fichier, par exemple), retourne la taille de cette mémoire,
@@ -121,7 +121,7 @@ namespace sdr {
 			size__ Amount,
 			row_t__ Position )
 		{
-			ERRCcp();
+			ERRFwk();
 			// For read-only storage.
 		}
 	public:

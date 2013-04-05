@@ -502,7 +502,7 @@ namespace xml {
 		case e_None:
 			return NULL;
 			break;
-		default:ERRCcp();
+		default:ERRPrm();
 			break;
 		}
 		return NULL;	// Pour éviter un 'Warning'.
@@ -628,7 +628,7 @@ namespace xml {
 				case oCompact:
 					break;
 				default:
-					ERRCcp();
+					ERRPrm();
 					break;
 			}
 		}

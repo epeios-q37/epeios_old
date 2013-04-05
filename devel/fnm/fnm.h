@@ -125,7 +125,7 @@ namespace fnm
 
 #ifdef FNM_DBG
 		if ( Name == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		if ( ( ( Repere = strrchr( Name, '/' ) ) == NULL )

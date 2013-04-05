@@ -75,7 +75,7 @@ namespace mns {
 		void Test_( void )
 		{
 			if ( Tampon_ == NULL )
-				ERRCcp();
+				ERRFwk();
 		}
 # endif
 	protected:

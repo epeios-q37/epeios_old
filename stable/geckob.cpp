@@ -62,9 +62,9 @@ using namespace geckob;
 static mtx::mutex_handler__ Mutex_ = MTX_INVALID_HANDLER;
 static geckoo::steering_callback__ *LoneSteering_ = NULL;
 
-#ifdef CPE__WIN
+#ifdef CPE_WIN
 # define FUNCTION_SPEC __declspec(dllexport)
-#elif defined ( CPE__POSIX )
+#elif defined ( CPE_POSIX )
 # define FUNCTION_SPEC
 #else
 # error
@@ -106,13 +106,13 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 geckoo::steering_callback__ *GECKOOCreateSteering( geckoo::shared_data__ *Data )
 {
 	if ( Data == NULL )
-		ERRu();
+		ERRCcp();
 
 	if ( strcmp( Data->Version, GECKOO_OVERLAPPING_VERSION ) )
-		ERRu();
+		ERRCcp();
 
 	if ( Data->Control != Data->ControlComputing() )
-		ERRc();
+		ERRCcp();
 
 	return geckob::GECKOBCreateSteering( Data );
 }
@@ -122,13 +122,13 @@ geckoo::steering_callback__ *GECKOORetrieveSteering( void )
 	geckoo::steering_callback__ *Steering = NULL;
 
 	if ( !mtx::IsLocked( Mutex_ ) )
-		ERRc();
+		ERRCcp();
 
 	if ( !mtx::IsOwner( Mutex_ ) )
-		ERRc();
+		ERRCcp();
 
 	if ( LoneSteering_ == NULL )
-		ERRc();
+		ERRCcp();
 
 	Steering = LoneSteering_;
 
@@ -151,7 +151,7 @@ void geckob::SetSteering( geckoo::steering_callback__ &Steering )
 	mtx::Lock( Mutex_ );
 
 	if ( LoneSteering_ != NULL )
-		ERRc();
+		ERRCcp();
 
 	LoneSteering_ = &Steering;
 }

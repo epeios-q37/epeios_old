@@ -206,7 +206,7 @@ ERRProlog
 ERRBegin
 #ifdef STR_DBG
 	if ( *Position > Amount() && ( Position != 0 ) )
-		ERRCcp();
+		ERRPrm();
 #endif
 
 	if ( Quantity > ( Amount() - *Position ) )
@@ -292,7 +292,7 @@ bso::bool__ string_::Replace(
 
 #ifdef STR_DBG
 	if ( Position == 0 )
-		ERRCcp();
+		ERRPrm();
 #endif
 
 	while ( ( Position-- ) && ( Row != NONE ) ) {
@@ -368,7 +368,7 @@ uint__ str::_GenericUnsignedConversion(
 			BaseFlag = b10;
 
 	if ( BaseFlag > 255 )
-		ERRCcp();
+		ERRPrm();
 
 	Base = (int)BaseFlag;
 
@@ -398,7 +398,7 @@ uint__ str::_GenericUnsignedConversion(
 		if ( ErrP )
 			*ErrP = P;
 		else
-			ERRCcp();
+			ERRDta();
 
 	return Result;
 }
@@ -412,7 +412,7 @@ sint__ str::_GenericSignedConversion(
 	sint__ NegativeLimit )
 {
 	if ( PositiveLimit < 0 )
-		ERRCcp();
+		ERRPrm();
 
 	if ( String.Get( Begin ) == '-' )
 		if ( String.Next( Begin ) == NONE ) {
@@ -425,7 +425,7 @@ sint__ str::_GenericSignedConversion(
 			if ( ErrP != NULL )
 				*ErrP = *Begin + 1;
 			else
-				ERRCcp();
+				ERRDta();
 			return 0;
 		} else 
 			return (sint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, PositiveLimit );
@@ -473,7 +473,7 @@ bso::lfloat__ string_::ToLF(
 		if ( ErrP )
 			*ErrP = P;
 		else
-			ERRCcp();
+			ERRDta();
 
 	if ( Negate )
 		return -Result;
@@ -612,7 +612,7 @@ ERRProlog
 	str::string Tag;
 ERRBegin
 	if ( ( Indice == 0 ) || ( Indice > 9 ) )
-		ERRCcp();
+		ERRPrm();
 
 	Values.Init();
 

@@ -130,8 +130,8 @@ extern class ttr_tutor &FBLTYPTutor;
 # define FBLTYP_MIMIC_XIDS16( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::ids16, fbltyp::xids16, sname, bname, xname )
 # define FBLTYP_MIMIC_XIDS32( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::ids32, fbltyp::xids32, sname, bname, xname )
 
-# define FBLTYP_MIMIC_U32( sname ) FBLTYP_MIMIC( fbltyp::u32, sname )
-# define FBLTYP_MIMIC_U32S( sname, bname ) FBLTYP_MIMICS( fbltyp::u32, fbltyp::u32s, sname, bname )
+# define FBLTYP_MIMIC_UINT( sname ) FBLTYP_MIMIC( fbltyp::uint, sname )
+# define FBLTYP_MIMIC_UINTS( sname, bname ) FBLTYP_MIMICS( fbltyp::uint, fbltyp::uints, sname, bname )
 
 
 namespace fbltyp {

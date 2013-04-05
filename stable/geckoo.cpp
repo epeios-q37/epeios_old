@@ -58,7 +58,7 @@ public:
 using namespace geckoo;
 
 const char *geckoo::shared_data__::Version = GECKOO_OVERLAPPING_VERSION;
-bso::ulong__ geckoo::shared_data__::Control = shared_data__::ControlComputing();
+bso::uint__ geckoo::shared_data__::Control = shared_data__::ControlComputing();
 
 void geckoo::AddPseudoEventHandler(
 	nsIDOMNode *Node,

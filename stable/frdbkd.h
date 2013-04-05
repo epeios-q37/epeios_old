@@ -107,7 +107,7 @@ namespace frdbkd {
 				Mode = fblfub::mRemote;
 				break;
 			default:
-				ERRu();
+				ERRCcp();
 				break;
 			}
 

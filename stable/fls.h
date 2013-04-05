@@ -190,10 +190,10 @@ namespace fls {
 					return fil::sFailure;
 					break;
 				case err::hThrowException:
-					ERRDvc();
+					ERRLbr();
 					break;
 				default:
-					ERRCcp();
+					ERRPrm();
 					break;
 				}
 			}
@@ -346,7 +346,7 @@ namespace fls {
 						if ( !Temoin_.Manuel )
 							ReleaseFile();
 
-						ERRDvc();
+						ERRLbr();
 					} else
 						if ( !Temoin_.Manuel )
 							ReleaseFile();
@@ -371,16 +371,16 @@ namespace fls {
 					
 				if ( Amount <= 0 )
 					if ( Amount == 0 )
-						if ( ( Position + Nombre ) <= TailleFichier_ )	/* Lors d'une allocation, la nouvelle taille est notée, mais le taille du fichier n'est pas modifiée
+						if ( ( Position + Nombre ) <= TailleFichier_ )	/* Lors d'une allocation, la nouvelle taille est notée, mais la taille du fichier n'est pas modifiée
 																		   (gain de temps). Or, certaines bibliothèques ('MMM', par exemple) lisent un emplacement alloué
 																		   avant d'avoir écrit dedans, on considère donc que la quantité, si correcte par rapport à la taille allouée,
 																		   de données demandée est disponible, peu importe le contenu.
 																		*/
 							Amount = Nombre;
 						else
-							ERRCcp();
+							ERRPrm();
 					else
-						ERRDvc();
+						ERRFwk();
 					
 				Nombre -= Amount;
 				Tampon = (char *)Tampon + Amount;
@@ -504,9 +504,9 @@ namespace fls {
 				if ( Mode == fil::mReadWrite )
 					Open_( false );
 				else
-					ERRCcp();
+					ERRPrm();
 			else if ( Creation != fls::cFirstUse )
-				ERRCcp();
+				ERRPrm();
 		}
 			// initialise l'objet avec le nom 'NomFichier'; si NULL, création d'un nom
 		void ReleaseFile( bso::bool__ ReportClosing = true )
@@ -563,7 +563,7 @@ namespace fls {
 
 			if ( ( Nom_ != NULL ) && fil::FileExists( Nom_ ) )
 				if ( remove( Nom_ ) != 0 )
-					ERRDvc();
+					ERRLbr();
 
 			TailleFichier_ = 0;
 		}

@@ -117,7 +117,7 @@ namespace xulfui {
 		{
 #ifdef XULFUI_DBG
 			if ( _Main == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_Main;
 		}
@@ -125,7 +125,7 @@ namespace xulfui {
 		{
 #ifdef XULFUI_DBG
 			if ( _SessionForm == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_SessionForm;
 		}
@@ -133,7 +133,7 @@ namespace xulfui {
 		{
 #ifdef XULFUI_DBG
 			if ( _SessionForm == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_SessionView;
 		}
@@ -141,22 +141,22 @@ namespace xulfui {
 		{
 #ifdef XULFUI_DBG
 			if ( _DebugDialog == NULL )
-				ERRu();
+				ERRCcp();
 #endif
 			return *_DebugDialog;
 		}
 		void CreateDebugDialog( void )
 		{
 			if ( _DebugDialog != NULL )
-				ERRc();
+				ERRCcp();
 
 			if ( ( _DebugDialog = new xulfdg::debug_dialog__ ) == NULL )
-				ERRa();
+				ERRAlc();
 		}
 		void DeleteDebugDialog( void )
 		{
 			if ( _DebugDialog == NULL )
-				ERRc();
+				ERRCcp();
 
 			delete _DebugDialog;
 
@@ -265,7 +265,7 @@ namespace xulfui {
 		void _SubInit( xulfbs::autocomplete_textbox_callback__ &Callback )
 		{
 			if ( HasAttribute( "autocompletesearch" ) )
-				ERRu();
+				ERRCcp();
 
 			SetAttribute( "autocompletesearch", GECKOF_AUTOCOMPLETE_COMPONENT_NAME );
 			

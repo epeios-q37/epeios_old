@@ -1909,7 +1909,7 @@ namespace rgstry {
 			if ( Error != NULL )
 				*Error = true;
 			else
-				ERRu();
+				ERRCcp();
 		}
 	ERRErr
 	ERREnd
@@ -1968,6 +1968,7 @@ namespace rgstry {
 		return (type)_GetUnsigned( Registry, Path, Default, Error, Min, Max );\
 	}
 
+	_M( UInt, bso::uint__, BSO_UINT_MIN, BSO_UINT_MAX )
 #ifdef BSO__64BITS_ENABLED
 	_M( U64, bso::u64__, BSO_U64_MIN, BSO_U64_MAX )
 #endif
@@ -1998,6 +1999,7 @@ namespace rgstry {
 		return (type)_GetSigned( Registry, Path, Default, Error, Min, Max );\
 	}
 
+	_M( Int, bso::sint__, BSO_SINT_MIN, BSO_SINT_MAX )
 #ifdef BSO__64BITS_ENABLED
 	_M( S64, bso::s64__, BSO_S64_MIN, BSO_S64_MAX )
 #endif

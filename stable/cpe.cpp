@@ -59,19 +59,14 @@ public:
 
 using namespace cpe;
 
-static const char *Processor_( void )
-{
-	return CPE_PROCESSOR_LABEL;
-}
-
-static const char *ArchitectureBitness_( void )
-{
-	return CPE_ARCH_BITNESS_LABEL;
-}
-
 static const char *Enviroment_( void )
 {
 	return CPE_ENVIROMENT_LABEL;
+}
+
+static const char *Architecture_( void )
+{
+	return CPE_ARCHITECTURE_LABEL;
 }
 
 const char *cpe::GetDescription( void )
@@ -81,9 +76,7 @@ const char *cpe::GetDescription( void )
 
 	strcat( Buffer, Enviroment_() );
 	strcat( Buffer, "_" );
-	strcat( Buffer, Processor_() );
-	strcat( Buffer, "-" );
-	strcat( Buffer, ArchitectureBitness_() );
+	strcat( Buffer, Architecture_() );
 
 	return Buffer;
 }

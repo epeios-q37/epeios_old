@@ -173,7 +173,7 @@ namespace fil {
 			break;
 #endif
 		case EFAULT:
-			ERRCcp();
+			ERRLbr();
 			break;
 		case EACCES:
 			break;
@@ -196,7 +196,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRDvc();
+			ERRLbr();
 
 		return Stat.st_mtime;
 	}
@@ -206,7 +206,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__FSTAT( Descriptor, &Stat ) != 0 )
-			ERRDvc();
+			ERRLbr();
 
 		return Stat.st_size;
 	}
@@ -216,7 +216,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRDvc();
+			ERRLbr();
 
 		return Stat.st_size;
 	}
@@ -226,7 +226,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRDvc();
+			ERRLbr();
 
 		return Stat.st_mode & S_IFDIR;
 	}
@@ -236,7 +236,7 @@ namespace fil {
 		struct FIL__STATS Stat;
 
 		if ( FIL__STATF( FileName, &Stat ) != 0 )
-			ERRDvc();
+			ERRLbr();
 
 		return Stat.st_mode & S_IFREG;
 	}
@@ -250,15 +250,15 @@ namespace fil {
 		HANDLE Handle = CreateFileA( FileName, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 
 		if ( Handle ==  INVALID_HANDLE_VALUE )
-			ERRCcp();
+			ERRLbr();
 		
 		GetSystemTime( &st );
 
 		if ( !SystemTimeToFileTime( &st, &ft ) )
-			ERRCcp();
+			ERRSys();
 
 		if ( !SetFileTime( Handle, (LPFILETIME) NULL, (LPFILETIME) NULL, &ft ) )
-			ERRCcp();
+			ERRLbr();
 # else
 		/*
 		NOTA : Le code ci-dessous fonctionne AUSSI sous Windows, mais SEULEMENT lorsque lancé à partir d'une console DOS,

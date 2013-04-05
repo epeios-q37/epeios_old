@@ -68,7 +68,7 @@ const xint__ &bso::_ConvertToDInt(
 
 	while ( UInt != 0 ) {
 		if ( Position-- == 0 )
-			ERRCcp();
+			ERRDta();
 
 		XInt._Int[Position] = ( UInt & 0x7f ) | 0x80; 
 		UInt >>= 7;
@@ -90,7 +90,7 @@ int__ bso::ConvertToInt(
 
 	do {
 		if ( Int > LIMIT )
-			ERRCcp();
+			ERRDta();
 
 		Int = ( Int << 7 ) + ( DInt[Position] & 0x7f );
 	} while ( DInt[Position++] & 0x80 );
@@ -114,13 +114,13 @@ public:
 		to be realized at the launching of the application  */
 
 		if ( sizeof( size__ ) != sizeof( int__ ) )
-			ERRCcp();
+			ERRChk();
 
 		if ( sizeof( sint__ ) != sizeof( uint__ ) )
-			ERRCcp();
+			ERRChk();
 
 		if ( sizeof( int__ ) != sizeof( uint__ ) )
-			ERRCcp();
+			ERRChk();
 	}
 	~bsopersonnalization( void )
 	{

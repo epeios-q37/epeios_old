@@ -203,7 +203,7 @@ namespace ags {
 			Flow << 'U';
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 	}
@@ -317,7 +317,7 @@ namespace ags {
 	inline value__ GetShortValue( header__ Header )
 	{
 		if ( !IsSizeShort( Header ) )
-			ERRCcp();
+			ERRPrm();
 
 		return GetEmbeddedValue( Header );
 	}
@@ -330,7 +330,7 @@ namespace ags {
 	inline size__ ConvertValueToFreeFragmentLongSize( value__ Value )
 	{
 		if ( Value < 1 )
-			ERRCcp();
+			ERRPrm();
 
 		return Value;
 	}
@@ -352,7 +352,7 @@ namespace ags {
 			return ConvertValueToUsedFragmentLongSize( Value );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -371,7 +371,7 @@ namespace ags {
 		else if ( IsSizeShort( Header ) )
 			Flow << 'S';
 		else
-			ERRCcp();
+			ERRPrm();
 
 		Flow << '(';
 
@@ -402,7 +402,7 @@ namespace ags {
 			MarkAsUsed( Header );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 	}
@@ -429,7 +429,7 @@ namespace ags {
 			MarkPredecessorAsUsed( Header );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 	}
@@ -452,7 +452,7 @@ namespace ags {
 	inline bso::bool__ IsFreeFragmentSizeShortSuitable( size__ Size )
 	{
 		if ( Size == 0 )
-			ERRCcp();
+			ERRPrm();
 
 		return Size == 1;
 	}
@@ -460,7 +460,7 @@ namespace ags {
 	inline bso::bool__ IsUsedFragmentSizeShortSuitable( size__ Size )
 	{
 		if ( Size == 0 )
-			ERRCcp();
+			ERRPrm();
 
 		return Size <= AGS_SHORT_SIZE_MAX;
 	}
@@ -477,7 +477,7 @@ namespace ags {
 			return IsUsedFragmentSizeShortSuitable( Size );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -487,7 +487,7 @@ namespace ags {
 	inline value__ ConvertFreeFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsFreeFragmentSizeShortSuitable( Size ) )
-			ERRCcp();
+			ERRPrm();
 
 		return Size;
 	}
@@ -495,7 +495,7 @@ namespace ags {
 	inline value__ ConvertUsedFragmentLongSizeToValue( size__ Size )
 	{
 		if ( IsUsedFragmentSizeShortSuitable( Size ) )
-			ERRCcp();
+			ERRPrm();
 
 		return Size - AGS_SHORT_SIZE_MAX - 1;
 	}
@@ -512,7 +512,7 @@ namespace ags {
 			return ConvertUsedFragmentLongSizeToValue( Size );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -522,7 +522,7 @@ namespace ags {
 	inline value__ ConvertFreeFragmentShortSizeToValue( size__ Size )
 	{
 		if ( !IsFreeFragmentSizeShortSuitable( Size ) )
-			ERRCcp();
+			ERRPrm();
 
 		return 0;
 	}
@@ -530,7 +530,7 @@ namespace ags {
 	inline value__ ConvertUsedFragmentShortSizeToValue( size__ Size )
 	{
 		if ( !IsUsedFragmentSizeShortSuitable( Size ) )
-			ERRCcp();
+			ERRPrm();
 
 		return Size - 1;
 	}
@@ -547,7 +547,7 @@ namespace ags {
 			return ConvertUsedFragmentShortSizeToValue( Size );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -559,7 +559,7 @@ namespace ags {
 		value__ Value )
 	{
 		if ( !CanValueBeEmbedded( Value ) )
-			ERRCcp();
+			ERRPrm();
 
 		Header = ( *Header & f_All ) | ( (bso::u8__)Value << fp_SizeBegin );
 	}
@@ -605,7 +605,7 @@ namespace ags {
 				return _XSize.BufferSize() + AGS_HEADER_SIZE + _Size;
 				break;
 			default:
-				ERRCcp();
+				ERRPrm();
 				break;
 			}
 
@@ -687,7 +687,7 @@ namespace ags {
 		bso::u8__ Counter = AGS_LONG_SIZE_SIZE_MAX + 1;
 
 		if ( *Buffer & fSizeType )
-			ERRCcp();
+			ERRPrm();
 
 		do {
 			Buffer--;
@@ -695,7 +695,7 @@ namespace ags {
 		} while ( Counter && ( *Buffer & fSizeType ) );
 
 		if ( Counter == 0 )
-			ERRCcp();
+			ERRDta();
 
 		return Buffer + 1;
 	}
@@ -721,7 +721,7 @@ namespace ags {
 			size__ Size )
 		{
 			if ( ( Row ==  NONE ) || ( Size == 0 ) )
-				ERRCcp();
+				ERRPrm();
 
 			this->Row = Row;
 			this->Size = Size;
@@ -752,7 +752,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			Header = (header__)*Pointer;
 			Size = GetShortSize( Header );
 			if ( ags::Status( Header ) != Status )
-				ERRCcp();
+				ERRPrm();
 			return AGS_HEADER_SIZE;
 		} else {
 			const sdr::datum__ *LongSizePointer = FindLongSizeBegin( Pointer );
@@ -760,7 +760,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			Header = *--LongSizePointer;
 
 			if ( ( Status == sUsed ) && ( ags::Status( Header ) != sUsed ) )
-				ERRCcp();
+				ERRPrm();
 
 			return Pointer - LongSizePointer + 1;
 		}
@@ -801,7 +801,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			sdr::datum__ *Pointer = &Buffer[Amount-1];
 
 			if ( Amount == 0 )
-				ERRCcp();
+				ERRPrm();
 
 			_Read( Row - Amount, Amount, Buffer );
 
@@ -960,11 +960,11 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			const xheader__ &XHeader )
 		{
 			if ( XHeader.Status() != sFree )
-				ERRCcp();
+				ERRPrm();
 
 			switch ( XHeader.FragmentSize() ) {
 			case 0:
-				ERRCcp();
+				ERRPrm();
 				break;
 			case 1:
 				// Dans ce cas, compte tenu de la taille du fragment, le 'tail meta data' est constitué du 'header' du 'head meta data'.
@@ -1019,7 +1019,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			UsingTail = TailAvailableSize != 0;
 
 			if ( TailAvailableSize >= XSize.FragmentSize() )
-				ERRCcp();
+				ERRPrm();
 
 			Storage.Allocate( _Size() - TailAvailableSize + XSize.FragmentSize() );
 
@@ -1038,7 +1038,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 			if ( AvailableSize > XSize.FragmentSize() )
 				_SetAsFreeFragment( Row + XSize.FragmentSize(), AvailableSize - XSize.FragmentSize(), sUsed );
 			else if ( AvailableSize < XSize.FragmentSize() )
-				ERRCcp();
+				ERRPrm();
 			else
 				All = true;
 
@@ -1184,7 +1184,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 		void Preallocate( sdr::size__ Size )
 		{
 			if ( _Size() > Size )
-				ERRCcp();
+				ERRPrm();
 			else if ( _Size() != Size ) {
 				sdr::row_t__ Row = _Size();
 

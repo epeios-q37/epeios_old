@@ -101,7 +101,7 @@ namespace ui_main {
 		trunk::trunk___ &Trunk( void )
 		{
 			if ( _Trunk == NULL )
-				ERRc();
+				ERRCcp();
 
 			return *_Trunk;
 		}

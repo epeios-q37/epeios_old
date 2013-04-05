@@ -344,7 +344,7 @@ public:
 	uyspersonnalization( void )
 	{
 		if ( UYS_STATE_AMOUNT != s_amount )
-			ERRCcp();
+			ERRChk();
 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */

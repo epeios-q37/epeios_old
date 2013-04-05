@@ -444,11 +444,11 @@ namespace lst {
 		void Drop( void )
 		{
 			if ( ( _Store == NULL ) || ( _FileName == NULL ) )
-				ERRCcp();
+				ERRFwk();
 
 			if ( fil::FileExists( _FileName ) )
 				if ( remove( _FileName ) != 0 )
-					ERRDvc();
+					ERRLbr();
 		}
 		const char *FileName( void ) const
 		{
@@ -457,7 +457,7 @@ namespace lst {
 		void Set( lst::store_ &Store )
 		{
 			if ( _Store != NULL )
-				ERRCcp();
+				ERRFwk();
 
 			_Store = &Store;
 		}
@@ -472,7 +472,7 @@ namespace lst {
 		{
 			if ( fil::FileExists( _FileName ) )
 				if ( ErrorHandling == err::hThrowException )
-					ERRCcp();
+					ERRFwk();
 				else
 					return false;
 

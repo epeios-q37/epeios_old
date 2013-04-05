@@ -179,7 +179,7 @@ inline static void SetElementAttributeFromRegistry_(
 	const rgstry::values_ &AttributeNames )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Name;
-	mdr::row__ Row = AttributeNames.First();
+	sdr::row__ Row = AttributeNames.First();
 
 	Name.Init( AttributeNames );
 
@@ -219,7 +219,7 @@ inline static void SetElementsAttributesFromRegistry_(
 	const rgstry::values_ &ElementIds )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
-	mdr::row__ Row = ElementIds.First();
+	sdr::row__ Row = ElementIds.First();
 
 	Id.Init( ElementIds );
 

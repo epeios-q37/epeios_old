@@ -82,7 +82,7 @@ namespace ias {
 	protected:
 		virtual void SDRAllocate( sdr::size__ Capacity )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		virtual sdr::size__ SDRUnderlyingSize( void )
 		{
@@ -101,7 +101,7 @@ namespace ias {
 			sdr::size__ Amount,
 			sdr::row_t__ Position )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 	public:
 		_indexed_aggregated_storage_driver__( const indexed_aggregated_storage_ *&AStorage )
@@ -319,7 +319,7 @@ namespace ias {
 		}
 		indexed_aggregated_storage_ &operator =( const indexed_aggregated_storage_ &IAS )
 		{
-			ERRCcp();
+			ERRFwk();
 
 			return *this;
 		}
@@ -366,7 +366,7 @@ namespace ias {
 			if ( Index == NONE )
 				Index = Descriptors.New();
 			else if ( !Descriptors.Exists( Index ) )
-				ERRCcp();
+				ERRPrm();
 
 			Descriptors.Store( D, Index );
 
@@ -485,7 +485,7 @@ namespace ias {
 			fil::mode__ ModeBuffer = _Descriptors.Mode( Mode );
 
 			if ( ModeBuffer != _AStorage.Mode( Mode ) )
-				ERRCcp();
+				ERRPrm();
 
 			return ModeBuffer;
 		}
@@ -494,7 +494,7 @@ namespace ias {
 			fil::mode__ Mode = _Descriptors.Mode();
 
 			if ( Mode != _AStorage.Mode() )
-				ERRCcp();
+				ERRPrm();
 
 			return Mode;
 		}
@@ -537,7 +537,7 @@ namespace ias {
 		{
 #ifdef IAS_DBG
 			if ( _Descriptors.IsPersistent() != _AStorage.IsPersistent() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return _Descriptors.IsPersistent();
 		}
@@ -559,7 +559,7 @@ namespace ias {
 			bso::bool__ Exists = _Descriptors.Exists();
 
 			if ( Exists != _AStorage.Exists() )
-				ERRCcp();
+				ERRFwk();
 
 			return Exists;
 		}

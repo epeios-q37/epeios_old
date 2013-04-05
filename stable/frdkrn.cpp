@@ -81,7 +81,7 @@ const char *frdkrn::GetLabel( recap__ Recap )
 		CASE( BackendError );
 		CASE( UnableToOpenFile );
 		default:
-			ERRu();
+			ERRCcp();
 			break;
 	}
 
@@ -124,7 +124,7 @@ ERRBegin
 			Meaning.AddTag( ErrorSet.Misc );
 			break;
 		default:
-			ERRc();
+			ERRCcp();
 			break;
 		}
 
@@ -148,9 +148,9 @@ project_type__ frdkrn::GetProjectType(
 	else if ( Label == PROJECT_TYPE_USER )
 		return ptUser;
 	else if ( ErrHandling = err::hThrowException )
-		ERRc();
+		ERRCcp();
 	else if ( ErrHandling != err::hUserDefined )
-		ERRc();
+		ERRCcp();
 
 	return pt_Undefined;
 }
@@ -209,7 +209,7 @@ static const char *GetBackendExtendedTypeLabel_( backend_extended_type__ Type )
 		return BACKEND_EXTENDED_TYPE_EMBEDDED;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -281,7 +281,7 @@ ERRProlog
 	str::string Translation;
 ERRBegin
 	if ( _Kernel == NULL )
-		ERRc();
+		ERRCcp();
 
 	Meaning.Init();
 	Meaning.SetValue( fblovl::GetLabel( Reply ) );
@@ -297,9 +297,9 @@ ERREpilog
 }
 
 
-static inline bso::ulong__ GetBackendPingDelay_( rgstry::multi_level_registry_ &Registry )
+static inline bso::uint__ GetBackendPingDelay_( rgstry::multi_level_registry_ &Registry )
 {
-	return rgstry::GetUL( Registry, frdrgy::BackendPingDelay, 0 );
+	return rgstry::GetUInt( Registry, frdrgy::BackendPingDelay, 0 );
 }
 
 recap__ frdkrn::kernel___::_Connect(
@@ -433,7 +433,7 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	case bxt_Undefined:
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -464,7 +464,7 @@ ERRBegin
 		Recap = rNoOrBadBackendDefinition;
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -475,7 +475,7 @@ ERREpilog
 
 static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 {
-	mdr::row__ Row = Id.First();
+	sdr::row__ Row = Id.First();
 
 	if ( Id.Amount() == 0 )
 		return false;
@@ -592,7 +592,7 @@ ERRBegin
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		ERRc();
+		ERRCcp();
 		break;
 	default:
 		Recap = rSetupParsingError;
@@ -835,7 +835,7 @@ static void GetPredefinedProjects_(
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
-	mdr::row__ Row = Ids.First();
+	sdr::row__ Row = Ids.First();
 
 	Id.Init( Ids );
 
@@ -907,7 +907,7 @@ static void GetPredefinedBackends_(
 	xml::writer_ &Writer )
 {
 	ctn::E_CMITEM( rgstry::value_ ) Id;
-	mdr::row__ Row = Ids.First();
+	sdr::row__ Row = Ids.First();
 
 	Id.Init( Ids );
 
@@ -952,7 +952,7 @@ public:
 	frdkrnpersonnalization( void )
 	{
 		if ( FRDKRN__R_AMOUNT != r_amount )
-			ERRc();	// 
+			ERRCcp();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

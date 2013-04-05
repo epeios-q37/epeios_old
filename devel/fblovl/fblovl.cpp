@@ -71,7 +71,7 @@ const char *fblovl::GetLabel( reply__ Reply )
 	CASE( SoftwareError );
 	CASE( RequestError );
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 

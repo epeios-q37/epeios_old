@@ -121,38 +121,32 @@ const char *err::Message(
 	case err::tAllocation:
 		strcat( Buffer, "ALC" );
 		break;
-	case err::tDevice:
-		strcat( Buffer, "DVC" );
-		break;
 	case err::tSystem:
 		strcat( Buffer, "SYS" );
-		break;
-	case err::tUser:
-		strcat( Buffer, "USR" );
-		break;
-	case err::tBackend:
-		strcat( Buffer, "BKD" );
-		break;
-	case err::tConception:
-		strcat( Buffer, "CCP" );
-		break;
-	case err::tFlow:
-		strcat( Buffer, "FLW" );
-		break;
-	case err::tForbidden:
-		strcat( Buffer, "FBD" );
-		break;
-	case err::tLimitation:
-		strcat( Buffer, "LMT" );
-		break;
-	case err::tStorage:
-		strcat( Buffer, "STG" );
 		break;
 	case err::tVacant:
 		strcat( Buffer, "VCT" );
 		break;
-	case err::tExternal:
-		strcat( Buffer, "EXT" );
+	case err::tLimitation:
+		strcat( Buffer, "LMT" );
+		break;
+	case err::tData:
+		strcat( Buffer, "DTA" );
+		break;
+	case err::tFramework:
+		strcat( Buffer, "FWK" );
+		break;
+	case err::tParameters:
+		strcat( Buffer, "PRM" );
+		break;
+	case err::tForbidden:
+		strcat( Buffer, "FBD" );
+		break;
+	case err::tLibrary:
+		strcat( Buffer, "LBR" );
+		break;
+	case err::tChecker:
+		strcat( Buffer, "CHK" );
 		break;
 	case t_Free:
 		strcat( Buffer, "Free" );
@@ -201,7 +195,7 @@ void err_::Handler(
 		this->File = Fichier;
 		this->Line = Ligne;
 	} else if ( !ERRHit() )
-		ERRCcp();
+		ERRPrm();
 
 #if 0
 	this->Error = true;
@@ -211,7 +205,7 @@ void err_::Handler(
 is not concerned by the 'ITN' error. Concenrs the whole software, and
 not the 'ERR' library, thus the using of 'XXX_DBG' and not 'ERR_DBG'. */
 #ifdef XXX_DBG
-	if ( Type < err::t_amount )
+	if ( ERRFailure() )
 		this->Type = ( this->Type == Type ? Type : this->Type );	// Silly, but is only goal is to allow the insertion of a breakpoint.
 	else
 		this->Type = ( this->Type == Type ? Type : this->Type );	// Silly too, because same goal.

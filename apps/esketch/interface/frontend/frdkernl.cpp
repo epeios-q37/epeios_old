@@ -40,7 +40,7 @@ static const char *frdkernl::GetLabel( frdkernl::message__ Message )
 	switch ( Message ) {
 	CASE( NotImplementedYet );
 	default:
-		ERRu();
+		ERRCcp();
 		break;
 	}
 

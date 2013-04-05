@@ -110,7 +110,7 @@ protected:
 		} else if ( ERRType != err::t_Free )\
 			ErrorTranslation = err::Message( ERRBuffer );\
 \
-		if ( ERRError() )\
+		if ( ERRHit() )\
 	 		ERRRst();\
 \
 		nsxpcm::Transform( ErrorTranslation, JSErrorMessage );\
@@ -185,7 +185,7 @@ RB
 	_LanguageBuffer.Init();
 
 	if ( ( _LanguageBuffer =  malloc( strlen( Language ) + 1 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	strcpy( _LanguageBuffer, Language );
 
@@ -198,10 +198,10 @@ RB
 	GetComponent_( ComponentId, RawLibraryName );
 
 	if ( !mtx::Lock( Mutex_ ) )
-		ERRc();
+		ERRCcp();
 
 	if ( CurrentSteering_ != NULL )
-		ERRc();
+		ERRCcp();
 
 	CorrectedLibraryName.Init();
 
@@ -285,10 +285,10 @@ RP
 	str::string Id;
 RB
 	if ( !mtx::IsLocked( Mutex_ ) )
-		ERRu();
+		ERRCcp();
 
 	if ( CurrentSteering_ == NULL )
-		ERRu();
+		ERRCcp();
 
 	Id.Init();
 
@@ -313,10 +313,10 @@ NS_IMETHODIMP egeckocom___::Stop(
 RP
 RB
 	if ( !mtx::IsLocked( Mutex_ ) )
-		ERRu();
+		ERRCcp();
 
 	if ( CurrentSteering_ == NULL )
-		ERRu();
+		ERRCcp();
 
 	CurrentSteering_->PostRegistration();
 

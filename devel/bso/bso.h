@@ -163,12 +163,14 @@ namespace bso {
 
 # define BSO_SIZE_MAX	((size_t)-1)
 
-# ifdef CPE_64BITS
+# if 0
+# ifdef CPE_INT64
 //#  define BSO_SIZE_SIZE	8
 # elif defined (CPE_32BITS )
 //#  define BSO_SIZE_SIZE	4
 # else
 #  error "Undefined architecture bitness !"
+# endif
 # endif
 
 	//t Size of a memory .
@@ -218,18 +220,18 @@ namespace bso {
 	};
 
 // 'natural unsigned integer'
-# ifdef CPE_64BITS
+# ifdef CPE_INT64
 	typedef u64__ uint__;
 #  define BSO_UINT_MAX		BSO_U64_MAX
 #  define BSO_UINT_MIN		BSO_U64_MIN
 //#  define BSO_UINT_SIZE		BSO_U64_SIZE
-# elif defined CPE_32BITS
+# elif defined CPE_INT32
 	typedef u32__ uint__;
 #  define BSO_UINT_MAX		BSO_U32_MAX
 #  define BSO_UINT_MIN		BSO_U32_MIN
 //#  define BSO_UINT_SIZE		BSO_U32_SIZE
 # else
-#  error "Unknown bitness !"
+#  error "Unknown integer natural size !"
 #endif
 
 	inline const char *Convert(
@@ -301,18 +303,18 @@ namespace bso {
 #endif
 
 // 'natural signed integer'
-# ifdef CPE_64BITS
+# ifdef CPE_INT64
 	typedef s64__ sint__;
 #  define BSO_SINT_MAX		BSO_S64_MAX
 #  define BSO_SINT_MIN		BSO_S64_MIN
 //#  define BSO_SINT_SIZE		BSO_S64_SIZE
-# elif defined CPE_32BITS
+# elif defined CPE_INT32
 	typedef s32__ sint__;
 #  define BSO_SINT_MAX		BSO_S32_MAX
 #  define BSO_SINT_MIN		BSO_S32_MIN
 //#  define BSO_SINT_SIZE		BSO_S32_SIZE
 # else
-#  error "Unknown bitness !"
+#  error "Unknown integer natural size !"
 #endif
 
 	// Entier générique, comme facilité.
@@ -515,8 +517,10 @@ namespace bso {
 	public:
 		const raw__ *DSizeBuffer( void ) const
 		{
+# ifdef BSO_DBG
 			if ( _Length == 0 )
-				ERRCcp();
+				ERRFwk();
+# endif
 
 			return _Int + BSO_DINT_SIZE_MAX - _Length;
 		}
@@ -582,13 +586,13 @@ namespace bso {
 			return Int;
 			break;
 		case 0:
-			ERRCcp();
+			ERRFwk();
 			break;
 		case -1:
 			return -(sint__)Int;
 			break;
 		default:
-			ERRCcp();
+			ERRFwk();
 			break;
 		}
 

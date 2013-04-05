@@ -123,7 +123,7 @@ namespace frdrgy {
 	: public _registry_
 	{
 	private:
-		mdr::size__ _DumpRegistry(
+		sdr::size__ _DumpRegistry(
 			rgstry::level__ Level,
 			bso::bool__ RootToo,
 			xml::outfit__ Outfit,
@@ -132,7 +132,7 @@ namespace frdrgy {
 		{
 			return _registry_::Dump( Level, RootToo, Outfit, Encoding, TFlow );
 		}
-		mdr::size__ _DumpRegistry(
+		sdr::size__ _DumpRegistry(
 			rgstry::level__ Level,
 			bso::bool__ RootToo,
 			xml::writer_ &Writer ) const
@@ -157,9 +157,9 @@ namespace frdrgy {
 
 			S_.Project = S_.Setup = RGSTRY_UNDEFINED_LEVEL;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			_registry_::plug( MM );
+			_registry_::plug( AS );
 		}
 		registry_ &operator =( const registry_ &R )
 		{
@@ -260,20 +260,20 @@ namespace frdrgy {
 		const _registry_ &Registry,
 		str::string_ &Value );
 
-	bso::bool__ GetProfileIntegerValue(
+	bso::bool__ GetProfileUIntValue(
 		const char *Path,
 		const _registry_ &Registry,
-		bso::ulong__ &Id );
+		bso::uint__ &Id );
 
 	void SetProfileValue(
 		const char *Path,
 		_registry_ &Registry,
 		const str::string_ &Value );
 
-	inline void SetProfileIntegerValue(
+	inline void SetProfileUIntValue(
 		const char *Path,
 		_registry_ &Registry,
-		bso::ulong__ Id )
+		bso::uint__ Id )
 	{
 		bso::integer_buffer__ Buffer;
 

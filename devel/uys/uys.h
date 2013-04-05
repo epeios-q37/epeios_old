@@ -95,7 +95,7 @@ namespace uys {
 		{
 #ifdef UYS_DBG
 			if ( _Driver == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 		}
 	public:
@@ -149,7 +149,7 @@ namespace uys {
 		{
 	#ifdef UYS_DBG
 			if ( !Ignore && !_Driver )
-				ERRCcp();
+				ERRPrm();
 	#endif
 			return _Driver;
 		}
@@ -209,10 +209,10 @@ namespace uys {
 #ifdef UYS_DBG
 			if ( Position >= S_.Size )
 				if ( Amount > 0 )
-					ERRCcp();
+					ERRPrm();
 
 			if ( ( Position + Amount ) > S_.Size )
-				ERRCcp();
+				ERRPrm();
 #endif
 		}
 		void _Recall(
@@ -405,7 +405,7 @@ namespace uys {
 			return true;
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -415,7 +415,7 @@ namespace uys {
 	inline bso::bool__ Exists( state__ State )
 	{
 		if ( IsError( State ) )
-			ERRCcp();
+			ERRPrm();
 
 #if UYS_STATE_AMOUNT != 3
 #	error "'state__' changed !"
@@ -428,10 +428,10 @@ namespace uys {
 			return false;
 			break;
 		case sInconsistent:
-			ERRCcp();
+			ERRFwk();
 			break;
 		default:
-			ERRCcp();
+			ERRFwk();
 			break;
 		}
 

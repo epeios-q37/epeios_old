@@ -231,7 +231,7 @@ namespace str {
 			char C,
 			sdr::row__ Start = 0 ) const;
 		// NOTA : Les méthodes 'ToNumber'(...)' facilitent la mise en oeuvre de 'template's.
-#define STR_UN( name, type, limit )\
+#define STR_UNR( name, type, limit )\
 	type To##name(\
 			sdr::row__ Begin,\
 			sdr::row__ *ErrP,\
@@ -246,7 +246,9 @@ namespace str {
 			type Limit = limit ) const\
 		{\
 			return To##name( 0, ErrP, Base, Limit );\
-		}\
+		}
+#define STR_UN( name, type, limit )\
+		STR_UNR( name, type, limit )\
 		void ToNumber(\
 			type &Number,\
 			sdr::row__ *Error = NULL ) const\
@@ -260,7 +262,7 @@ namespace str {
 		{\
 			Number = To##name( Error, bAuto, Limit );\
 		}
-#define STR_SN( name, type, positive_limit, negative_limit )\
+#define STR_SNR( name, type, positive_limit, negative_limit )\
 	type To##name(\
 			sdr::row__ Begin,\
 			sdr::row__ *ErrP,\
@@ -277,7 +279,9 @@ namespace str {
 			type NegativeLimit = negative_limit ) const\
 		{\
 			return To##name( 0, ErrP, Base, PositiveLimit, NegativeLimit );\
-		}\
+		}
+#define STR_SN( name, type, positive_limit, negative_limit )\
+		STR_SNR( name, type, positive_limit, negative_limit )\
 		void ToNumber(\
 			type &Number,\
 			sdr::row__ *Error = NULL ) const\
@@ -292,16 +296,18 @@ namespace str {
 		{\
 			Number = To##name( Error, bAuto, PositiveLimit, NegativeLimit );\
 		}
-# ifdef CPE_64BITS
-		STR_UN( ULL, bso::u64__, BSO_U64_MAX )
-		STR_SN( SLL, bso::s64__, BSO_S64_MAX, BSO_S64_MIN )
+		STR_UNR( UInt, bso::uint__, BSO_UINT_MAX )
+		STR_SNR( SInt, bso::sint__, BSO_SINT_MAX, BSO_SINT_MIN )
+# ifdef CPE_INT64
+		STR_UN( U64, bso::u64__, BSO_U64_MAX )
+		STR_SN( S64, bso::s64__, BSO_S64_MAX, BSO_S64_MIN )
 # endif
-		STR_UN( UL, bso::u32__, BSO_U32_MAX )
-		STR_SN( SL, bso::s32__, BSO_S32_MAX, BSO_S32_MIN )
-		STR_UN( US, bso::u16__, BSO_U16_MAX )
-		STR_SN( SS, bso::s16__, BSO_S16_MAX, BSO_S16_MIN )
-		STR_UN( UB, bso::u8__, BSO_U8_MAX )
-		STR_SN( SB, bso::s8__, BSO_S8_MAX, BSO_S8_MIN )
+		STR_UN( U32, bso::u32__, BSO_U32_MAX )
+		STR_SN( S32, bso::s32__, BSO_S32_MAX, BSO_S32_MIN )
+		STR_UN( U16, bso::u16__, BSO_U16_MAX )
+		STR_SN( S16, bso::s16__, BSO_S16_MAX, BSO_S16_MIN )
+		STR_UN( U8, bso::u8__, BSO_U8_MAX )
+		STR_SN( S8, bso::s8__, BSO_S8_MAX, BSO_S8_MIN )
 		bso::lfloat__ ToLF(
 			sdr::row__ *ErrP,
 			sdr::row__ Begin ) const;
@@ -311,12 +317,12 @@ namespace str {
 		}
 		void *ToPointer( sdr::row__ *ErrP = NULL )
 		{
-# ifdef CPE_64BITS
-			return (void *)ToULL( ErrP, str::b16 );
-# elif defined ( CPE_32BITS )
-			return (void *)ToUL( ErrP, str::b16 );
+# ifdef CPE_INT64
+			return (void *)ToU64( ErrP, str::b16 );
+# elif defined ( CPE_INT32 )
+			return (void *)ToU32( ErrP, str::b16 );
 # else
-#  error "Unnknown bitness !"
+#  error "Unknown integer natural size !"
 # endif
 		}
 		void ToNumber(

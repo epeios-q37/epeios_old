@@ -60,7 +60,7 @@ const char *locale::Label( message__ Message )
 	CASE( ProcessingError );
 	CASE( EncryptionError );
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 
@@ -111,7 +111,7 @@ ERRBegin
 		Meaning->AddTag( MeaningBuffer );
 		break;
 	default:
-		ERRc();
+		ERRCcp();
 		break;
 	}
 ERRErr
@@ -124,7 +124,7 @@ static struct locale_cdtor {
 	locale_cdtor( void )
 	{
 		if ( LOCALE__MESSAGE_AMOUNT != m_amount )
-			ERRc();
+			ERRCcp();
 	}
 	~locale_cdtor( void )
 	{
