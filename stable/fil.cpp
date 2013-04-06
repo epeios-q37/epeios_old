@@ -88,7 +88,7 @@ static inline iop::descriptor__ Open_(
 		strcat( Flags, "r" );
 		break;
 	default:
-		ERRu();
+		ERRPrm();
 		break;
 	}
 
@@ -100,7 +100,7 @@ static inline iop::descriptor__ Open_(
 static void Close_( iop::descriptor__ D )
 {
 	if ( fclose( D ) != 0 )
-		ERRd();
+		ERRLbr();
 }
 
 #elif defined( IOP__USE_LOWLEVEL_IO )
@@ -130,7 +130,7 @@ static inline iop::descriptor__ Open_(
 		Flags |= _O_RDONLY;
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -140,7 +140,7 @@ static inline iop::descriptor__ Open_(
 static void Close_( iop::descriptor__ D )
 {
 	if ( _close( D ) != 0 )
-		ERRDvc();
+		ERRLbr();
 }
 
 #	elif defined( FIL__POSIX )
@@ -168,7 +168,7 @@ static inline iop::descriptor__ Open_(
 		Flags |= O_RDONLY;
 		break;
 	default:
-		ERRu();
+		ERRPrm();
 		break;
 	}
 
@@ -178,7 +178,7 @@ static inline iop::descriptor__ Open_(
 static void Close_( iop::descriptor__ D )
 {
 	if ( close( D ) != 0 )
-		ERRd();
+		ERRLbr();
 }
 
 #	else
@@ -213,7 +213,7 @@ ERRBegin
 	Success = ( Descriptor != IOP_UNDEFINED_DESCRIPTOR );
 
 	if ( !Success && ( ErrorHandling == err::hThrowException ) )
-		ERRDvc();
+		ERRLbr();
 ERRErr
 ERREnd
 	if ( Descriptor != IOP_UNDEFINED_DESCRIPTOR )
@@ -247,7 +247,7 @@ const char *fil::GetLabel( backup_status__ Status )
 	CASE( UnableToDuplicate );
 	CASE( UnableToSuppress );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -273,7 +273,7 @@ ERRBegin
 		Meaning.AddTag( GetBackupFileName( FileName, Buffer ) );
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 ERRErr
@@ -355,7 +355,7 @@ ERRBegin
 				Status = bsUnableToRename;
 		}
 		else
-			ERRCcp();
+			ERRPrm();
 	}
 
 	Status = bsOK;
@@ -363,7 +363,7 @@ ERRErr
 ERREnd
 	if ( Status != bsOK )
 		if ( ErrorHandling == err::hThrowException )
-			ERRDvc();
+			ERRFwk();
 ERREpilog
 	return Status;
 }
@@ -382,7 +382,7 @@ const char *fil::GetLabel( recover_status__ Status )
 	CASE( UnableToRename );
 	CASE( UnableToSuppress );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -407,7 +407,7 @@ ERRBegin
 		Meaning.AddTag(  FileName );
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 ERRErr
@@ -444,7 +444,7 @@ ERRErr
 ERREnd
 	if ( Status != rsOK )
 		if ( ErrorHandling == err::hThrowException )
-			ERRDvc();
+			ERRFwk();
 ERREpilog
 	return Status;
 }

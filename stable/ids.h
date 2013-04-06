@@ -166,7 +166,7 @@ namespace ids {
 		{
 #ifdef IDS_DBG
 			if ( IsAvailable_( ID ) )
-				ERRCcp();
+				ERRPrm();
 #endif
 			Released.Push( ID );
 		}

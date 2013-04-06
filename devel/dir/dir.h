@@ -123,12 +123,12 @@ namespace dir {
 		uint32_t Size = sizeof( Path );
 		switch ( _NSGetExecutablePath( Path, &Size ) ) {
 		case -1 :	// La taille de 'Path' est insuffisante.
-			ERRl();
+			ERRLmt();
 			break;
 		case 0:	// Succés.
 			break;
 		default:
-			ERRs();
+			ERRSys();
 			break;
 		}
 
@@ -139,10 +139,10 @@ namespace dir {
 		// Valeur d"erreur retournée par 'GetModuleFileName(..)'.
 		// Valeur d'erreur retrounée par 'readlink(...)', mais '0' est normalement une impossibilité.
 		if ( Size <= 0 )
-			ERRs();
+			ERRSys();
 
 		if ( Size == sizeof( Path ) )
-			ERRl();
+			ERRLmt();
 
 		Path[Size] = 0;	//'readlink(...) ne rajoute pas le '\0' final.
 # endif
@@ -286,7 +286,7 @@ namespace dir {
 	{
 #ifdef DIR_DBG
 		if ( Handle == DIR_INVALID_HANDLE )
-			ERRCcp();
+			ERRPrm();
 #endif
 #ifdef DIR__WIN
 		static WIN32_FIND_DATAA File;
@@ -322,11 +322,11 @@ namespace dir {
 	{
 #ifdef DIR_DBG
 		if ( Handle == DIR_INVALID_HANDLE )
-			ERRCcp();
+			ERRPrm();
 #endif
 #ifdef DIR__WIN
 		if ( !FindClose( Handle ) )
-			ERRSys();
+			ERRLbr();
 
 		Handle = INVALID_HANDLE_VALUE;
 #endif
@@ -335,7 +335,7 @@ namespace dir {
     DIR *&rep = Handle;
     
     if ( closedir(rep) )
-		ERRs();
+		ERRLbr();
 
 	Handle = NULL;
 #endif

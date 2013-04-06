@@ -133,12 +133,12 @@ namespace lstctn {
 		// To avoid the use of herited 'Append' methods.
 		void Append( void ) const
 		{
-			ERRu();
+			ERRFbd();
 		}
 		// To avoid the use of herited 'Remove' methods.
 		void Remove( void ) const
 		{
-			ERRu();
+			ERRFbd();
 		}
 		// Pour éviter certains 'castage'.
 		const container &Container( void ) const
@@ -209,7 +209,7 @@ namespace lstctn {
 			fil::mode__ ModeBuffer = _ContainerFileManager.Mode( Mode );
 
 			if ( ModeBuffer != _ListFileManager.Mode( Mode ) )
-				ERRc();
+				ERRFwk();
 
 			return ModeBuffer;
 		}
@@ -218,7 +218,7 @@ namespace lstctn {
 			fil::mode__ Mode = _ContainerFileManager.Mode();
 
 			if ( Mode != _ListFileManager.Mode() )
-				ERRc();
+				ERRFwk();
 
 			return Mode;
 		}
@@ -311,7 +311,7 @@ namespace lstctn {
 			bso::bool__ Is = _ContainerFileManager.IsPersistent();
 
 			if ( Is != _ListFileManager.IsPersistent() )
-				ERRc();
+				ERRFwk();
 
 			return Is;
 		}
@@ -380,7 +380,7 @@ namespace lstctn {
 		// To avoid the use of herited 'Append' methods.
 		void Append( void )
 		{
-			ERRu();
+			ERRFbd();
 		}
 	};
 

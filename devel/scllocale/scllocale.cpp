@@ -108,7 +108,7 @@ ERRBegin
 		sclerror::SetMeaning( ErrorMeaning );
 		ERRExit( EXIT_FAILURE );
 	} else if ( Level != 0 )
-		ERRCcp();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog

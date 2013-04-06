@@ -142,12 +142,12 @@ namespace lstbch {
 		// To avoid the use of herited 'Append' methods.
 		void Append( void ) const
 		{
-			ERRu();
+			ERRFbd();
 		}
 		// To avoid the use of herited 'Remove' methods.
 		void Remove( void ) const
 		{
-			ERRu();
+			ERRFbd();
 		}
 		bunch_<type, row> &Bunch( void )
 		{

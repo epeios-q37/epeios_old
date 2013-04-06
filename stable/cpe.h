@@ -131,12 +131,12 @@ extern class ttr_tutor &CPETutor;
 #  define CPE_MSVC
 #  define CPE_WIN
 #  define CPE_VC
-#  ifdef _M_IX86
-#   ifdef _M_X64
-#    define CPE_X64
-#   else
-#    define CPE_IA32
-#   endif
+#  if defined( _M_IX86 )
+#   define CPE_IA32
+#  elif defined( _M_X64 )
+#   define CPE_X64
+#  else
+#   error "Unable to guess the architecture."
 #  endif
 #  ifdef _MT
 #   ifndef E_ST
@@ -215,12 +215,12 @@ extern class ttr_tutor &CPETutor;
 #  if __GNUC__ == 3
 #   define CPE_GCC3
 #  endif
-#  ifdef __i386__
-#   ifdef __x86_64__
-#    define CPE_X64
-#   else
-#    define CPE_IA32
-#   endif
+#  if defined( __i386__ )
+#   define CPE_IA32
+#  elif defined( __x86_64__ )
+#   define CPE_X64
+#  else
+#   error "Unable to guess architecture."
 #  endif
 #  ifdef __ARM_EABI__
 #   define CPE_ARM
@@ -236,27 +236,27 @@ extern class ttr_tutor &CPETutor;
 
 # ifdef CPE_IA32
 #  ifdef CPE_INT
-#  error "'CPE_INT' should not be already defined"
+#  error "'CPE_INT' should not be already defined."
 #  endif
 #  define CPE_INT	32
 # endif
 
 # ifdef CPE_X64
 #  ifdef CPE_INT
-#  error "'CPE_INT' should not be already defined"
+#  error "'CPE_INT' should not be already defined."
 #  endif
 #  define CPE_INT	64
 # endif
 
 # ifdef CPE_ARM
 #  ifdef CPE_INT
-#  error "'CPE_INT' should not be already defined"
+#  error "'CPE_INT' should not be already defined."
 #  endif
 #  define CPE_INT	32
 # endif
 
 # ifndef CPE_INT
-#  error "Missing 'CPE_INT' definition
+#  error "Missing 'CPE_INT' definition."
 # endif
 
 # ifdef E_INT32
@@ -273,7 +273,7 @@ extern class ttr_tutor &CPETutor;
 #  define CPE_INT32
 # elif ( CPE_INT == 64 )
 #  define CPE_INT64
-# elif defiend( CPE_INT )
+# elif defined( CPE_INT )
 #  error "Wrong value for 'CPE_INT'."
 # else
 #  error "'CPE_INT' not defined"
@@ -298,7 +298,7 @@ extern class ttr_tutor &CPETutor;
 
 # if defined( CPE_IA32 )
 #  define CPE_ARCHITECTURE_LABEL	CPE_IA32_LABEL
-# elif if defined( CPE_IA32 )
+# elif defined( CPE_X64 )
 #  define CPE_ARCHITECTURE_LABEL	CPE_X64_LABEL
 # elif defined( CPE_ARM )
 #  define CPE_ARCHITECTURE_LABEL	CPE_ARM_LABEL

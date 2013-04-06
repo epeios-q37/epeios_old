@@ -84,7 +84,7 @@ static const char *PosixCoreDateAndTime_(
    time_now = localtime(&secs_now);
 
    if ( !strftime( Buffer, sizeof( Buffer ), Format, time_now) )
-	ERRl();
+	ERRLbr();
 
    return Buffer;
 }
@@ -181,7 +181,7 @@ public:
 #if 0
 		// Test toujours faux, dû au type de 'TimebaseInfo.numer'
 		if ( ( BSO_NUINT_MAX / 1000000 ) < TimebaseInfo.numer )
-			ERRl();
+			ERRLmt();
 #endif
 		tol::_Numer = TimebaseInfo.numer;
 		tol::_Denom = TimebaseInfo.denom;

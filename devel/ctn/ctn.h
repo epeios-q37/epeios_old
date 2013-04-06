@@ -164,7 +164,7 @@ namespace ctn {
 		void FlushTest( void ) const
 		{
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 		}
 #endif
 		//f Initialization.
@@ -198,7 +198,7 @@ namespace ctn {
 			{
 #ifdef CTN_DBG
 				if ( &ST == NULL )
-					ERRCcp();
+					ERRFwk();
 #endif
 				if ( ( Size - AncCap ) > 1 )
 					Statics.Store( ST, AncCap, Size - AncCap );
@@ -224,7 +224,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( Size > amount_extent_manager_<r>::Amount() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Allocate( Size, *(st *)NULL, Mode );	// 'NULL' because this parameter is used only when size increased.
 		}
@@ -282,7 +282,7 @@ namespace ctn {
 		{
 	#ifdef CTN_DBG
 			if ( Amount > this->Amount() )
-				ERRCcp();
+				ERRPrm();
 	#endif
 			DecreaseTo( this->Amount() - Amount, Mode );
 		}
@@ -293,7 +293,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !Exists( Row ) )
-				ERRCcp();
+				ERRFwk();
 #endif
 			DecreaseTo( amount_extent_manager_<r>::Amount() - *Row, Mode );
 		}
@@ -315,7 +315,7 @@ namespace ctn {
 		{
 #ifdef BCH_DBG
 			if ( Last < First )
-				ERRCcp();
+				ERRPrm();
 #endif
 			Crop( Last - First + 1, First, Mode );
 		}
@@ -405,7 +405,7 @@ namespace ctn {
 			fil::mode__ Mode = _Statics.Mode();
 
 			if ( Mode != _Dynamics.Mode() )
-				ERRCcp();
+				ERRPrm();
 
 			return Mode;
 		}
@@ -414,7 +414,7 @@ namespace ctn {
 			fil::mode__ ModeBuffer = _Statics.Mode( Mode );
 
 			if ( ModeBuffer != _Dynamics.Mode( ModeBuffer ) )
-				ERRCcp();
+				ERRFwk();
 
 			return ModeBuffer;
 		}
@@ -422,7 +422,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( _Statics.IsPersistent() != _Dynamics.IsPersistent() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return _Statics.IsPersistent();
 		}
@@ -444,7 +444,7 @@ namespace ctn {
 			bso::bool__ Exists = _Statics.Exists();
 
 			if ( Exists != _Dynamics.Exists() )
-				ERRCcp();
+				ERRFwk();
 
 			return Exists;
 		}
@@ -509,7 +509,7 @@ namespace ctn {
 			if ( !Vide_() ) {
 #ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
-					ERRCcp();
+				ERRFwk();
 #endif
 				Conteneur_->Statics.Store( ctn_S_, *Pilote_.Index() );
 			}
@@ -569,14 +569,14 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( Position == NONE )
-				ERRCcp();
+				ERRPrm();
 #endif
 			if ( Pilote_.Index() != *Position )
 			{
 				Vider_();
 	#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
-					ERRCcp();
+					ERRFwk();
 	#endif
 				Conteneur_->Statics.Recall( Position, ctn_S_ );
 				Pilote_.Index( *Position );
@@ -666,14 +666,14 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( Position == NONE )
-				ERRCcp();
+				ERRPrm();
 #endif
 			if ( *Pilote_.Index() != *Position )
 			{
 				Vider_();
 	#ifdef CTN_DBG
 				if ( Conteneur_ == NULL )
-					ERRCcp();
+					ERRFwk();
 	#endif
 				Conteneur_->Statics.Recall( Position, ctn_S_ );
 				Pilote_.Index( *Position );
@@ -741,7 +741,7 @@ namespace ctn {
 		}
 		volatile_mono_item &operator =( const volatile_mono_item &O )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
@@ -754,7 +754,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -762,7 +762,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_volatile__< item_mono_statique__< typename_ t::s >, r >::IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -800,7 +800,7 @@ namespace ctn {
 		}
 		const_mono_item &operator =( const const_mono_item &O )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
@@ -812,7 +812,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_const__< item_mono_statique__< typename_ t::s >, r >::IsEmpty() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -821,7 +821,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_const__< item_mono_statique__< typename_ t::s >, r >::IsEmpty() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -917,7 +917,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Item.Init( *this );
 
@@ -967,7 +967,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			E_CMITEMt( t, r ) E;
 
@@ -1013,7 +1013,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			basic_container_< item_mono_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
 		}
@@ -1098,7 +1098,7 @@ namespace ctn {
 		}
 		volatile_multi_item &operator =( const volatile_multi_item &O )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		//f Return the object at 'Position'.
 		t &operator()( r Position )
@@ -1110,7 +1110,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -1118,7 +1118,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_volatile__< item_multi_statique__<typename_ t::s>, r >::IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -1169,7 +1169,7 @@ namespace ctn {
 		}
 		const_multi_item &operator =( const const_multi_item &O )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		//f Return the object at 'Position'.
 		const t &operator()( r Position )
@@ -1181,7 +1181,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( item_base_const__< item_multi_statique__<typename_ t::s>, r >::IsEmpty() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return Objet_;
 		}
@@ -1266,7 +1266,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Item.Init( *this );
 
@@ -1316,7 +1316,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			E_CITEMt( t, r ) E;
 
@@ -1361,7 +1361,7 @@ namespace ctn {
 		{
 #ifdef CTN_DBG
 			if ( !IsFlushed() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			basic_container_< item_multi_statique__< typename_ t::s >, r >::Remove( Position, Amount, Mode );
 		}

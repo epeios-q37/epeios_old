@@ -83,7 +83,7 @@ void tht::Suspend( unsigned long Delay )
 
 	while ( nanosleep( &T, &T ) )
 		if ( errno != EINTR )
-			ERRs();
+			ERRLbr();
 #else
 #	error
 #endif
@@ -96,7 +96,7 @@ void tht::Defer( void )
 	Sleep( 0 );	// PAs 0, sinon l'usage CPU monte à 100%
 #elif defined( THT__POSIX )
 	if( sched_yield() != 0 )
-		ERRs();
+		ERRLbr();
 #else
 	#error
 #endif

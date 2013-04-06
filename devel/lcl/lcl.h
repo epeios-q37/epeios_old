@@ -100,7 +100,7 @@ namespace lcl {
 				ERRLmt();
 
 			if ( Levels.Push( Level ) != Values.Push( Value ) )
-				ERRCcp();
+				ERRFwk();
 		}
 	public:
 		struct s {
@@ -138,7 +138,7 @@ namespace lcl {
 		void SetValue( const str::string_ &Value )
 		{
 			if ( !Levels.IsEmpty() )
-				ERRCcp();
+				ERRFwk();
 
 			_Push( 0, Value );
 		}
@@ -149,7 +149,7 @@ namespace lcl {
 		void AddTag( const str::string_ &Value )
 		{
 			if ( Levels.IsEmpty() )
-				ERRCcp();
+				ERRFwk();
 
 			_Push( 1, Value );
 		}

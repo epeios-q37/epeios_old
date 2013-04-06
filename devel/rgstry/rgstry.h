@@ -654,12 +654,12 @@ namespace rgstry {
 					_AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
 				else
 					if ( Item.AttributeValue.Amount() != 0 )
-						ERRUsr();
+						ERRFwk();
 
 			} else if ( Item.AttributeName.Amount() != 0 )
 				Row = _AddAttribute( Item.AttributeName, Item.AttributeValue, Row );
 			else
-				ERRUsr();
+				ERRFwk();
 
 			return Row;
 		}
@@ -721,7 +721,7 @@ namespace rgstry {
 
 #ifdef RGSTRY_DBG
 			if ( Nodes( Row ).ParentRow() != NONE )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Nodes( Row ).ParentRow() = ParentRow;
 
@@ -821,7 +821,7 @@ namespace rgstry {
 			const value_ &Value = GetValue( PathString, Row, &Missing, Buffer );
 
 			if ( Missing )
-				ERRCcp();
+				ERRFwk();
 
 			return Value;
 		}
@@ -946,7 +946,7 @@ namespace rgstry {
 
 #ifdef RGSTRY_DBG
 			if ( Row == NONE )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return _GetValue( ResultRow, Buffer );
 		}
@@ -1245,10 +1245,10 @@ namespace rgstry {
 			row__ Root )	// Si == 'NONE' est crée et retourné.
 		{
 			if ( ( &Global.Registry == NULL ) || ( Global.Root == NONE ) )
-				ERRCcp();
+				ERRFwk();
 
 			if ( &Registry == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			Local.Registry = &Registry;
 
@@ -1415,7 +1415,7 @@ namespace rgstry {
 			level__ Level = TimeStamps.Push( 0 );
 
 			if ( Entries.Push( _entry__() ) != Level )
-				ERRCcp();
+				ERRFwk();
 
 			_Touch( Level );
 
@@ -1447,7 +1447,7 @@ namespace rgstry {
 			_entry__ Entry = _GetEntry( Level );
 
 			if ( Entry.Registry != NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return EmbeddedRegistry;
 		}
@@ -1877,7 +1877,7 @@ namespace rgstry {
 			if ( Error != NULL )
 				*Error = true;
 			else
-				ERRUsr();
+				ERRDta();
 		}
 
 		return Value;
@@ -1909,7 +1909,7 @@ namespace rgstry {
 			if ( Error != NULL )
 				*Error = true;
 			else
-				ERRCcp();
+				ERRDta();
 		}
 	ERRErr
 	ERREnd
@@ -1942,7 +1942,7 @@ namespace rgstry {
 			if ( Error != NULL )
 				*Error = true;
 			else
-				ERRu();
+				ERRDta();
 		}
 
 	ERRErr

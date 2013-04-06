@@ -67,12 +67,6 @@ extern class ttr_tutor &TXFTutor;
 # include "flw.h"
 # include "tol.h"
 
-# ifndef E_DISABLE_64BITS
-#  if defined( CPE_64BITS )
-#   define TXF__64BITS_ENABLED
-#  endif
-# endif
-
 namespace txf {
 	using flw::size__;
 	using flw::datum__;
@@ -127,7 +121,6 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64BITS_ENABLED
 		text_iflow__ &operator >>( unsigned long long &E )
 		{
 			datum__ C[9];
@@ -145,7 +138,6 @@ namespace txf {
 
 			return *this;
 		}
-#endif
 		text_iflow__ &operator >>( unsigned long &E )
 		{
 			datum__ C[9];
@@ -176,7 +168,6 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64BITS_ENABLED
 		text_iflow__ &operator >>( signed long long &E )
 		{
 			unsigned long long L;
@@ -199,7 +190,6 @@ namespace txf {
 
 			return *this;
 		}
-#endif
 		text_iflow__ &operator >>( signed long &E )
 		{
 			unsigned long L;
@@ -335,7 +325,6 @@ namespace txf {
 
 			return *this;
 		}
-#ifdef TXF__64BITS_ENABLED
 		text_oflow__ &operator <<( unsigned long long E )
 		{
 			char C[21];
@@ -344,7 +333,6 @@ namespace txf {
 
 			return operator <<( C );
 		}
-#endif
 		text_oflow__ &operator <<( unsigned long E )
 		{
 			char C[11];
@@ -369,7 +357,6 @@ namespace txf {
 		{
 			return operator <<( (unsigned long) E );
 		}
-#ifdef TXF__64BITS_ENABLED
 		text_oflow__ &operator <<( signed long long E )
 		{
 			char C[22];
@@ -378,7 +365,6 @@ namespace txf {
 
 			return operator <<( C );
 		}
-#endif
 		text_oflow__ &operator <<( signed long E )
 		{
 			char C[12];

@@ -89,7 +89,7 @@ fnm::type__ fnm::Type( const char *Nom )
 
 #ifdef FNM_DBG
 		if ( Nom == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 	if ( *Nom == '\0' )
@@ -200,7 +200,7 @@ ERRBegin
 		P.reset();
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
@@ -304,7 +304,7 @@ const char *fnm::CorrectLocation(
 
 #ifdef FNM_DBG
 		if ( Location == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 	if ( ( P = (char *)malloc( strlen( Location ) + 1 ) ) == NULL )

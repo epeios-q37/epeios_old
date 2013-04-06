@@ -119,7 +119,7 @@ template <class ostream> static void Put_(
 			OStream.Put( C = (flw::datum__)String.Get( P++ ) );
 
 			if ( C == 0 )
-				ERRCcp();
+				ERRDta();
 #else
 			OStream.Put( (flw::datum__)String.Get( P++ ) );
 #endif

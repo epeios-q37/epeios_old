@@ -76,7 +76,7 @@ const char *rgstry::GetLabel( status__ Status )
 	CASE( UnableToFindRootPath );
 	CASE( RootPathError );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -93,7 +93,7 @@ ERRProlog
 ERRBegin
 	switch ( Context.Status ) {
 	case sOK:
-		ERRCcp();
+		ERRFwk();
 		break;
 	case sUnableToOpenFile:
 		Meaning.SetValue( GetLabel( Context.Status ) );
@@ -110,12 +110,12 @@ ERRBegin
 		break;
 	case sRootPathError:
 		if ( Context.PathErrorRow != NONE )
-			ERRCcp();
+			ERRFwk();
 	case sUnableToFindRootPath:
 		Meaning.SetValue( GetLabel( Context.Status ) );
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
@@ -195,7 +195,7 @@ row__ rgstry::registry_::_Search(
 			// .../@AttributeName...
 #ifdef RGSTRY_DBG
 			if ( AttributeValue.Amount() != 0 )
-				ERRUsr();
+				ERRFwk();
 #endif
 				ResultRow = _SearchAttribute( AttributeName, Row, Cursor );
 		}
@@ -352,7 +352,7 @@ ERRBegin
 				}
 				break;
 			default:
-				ERRCcp();
+				ERRFwk();
 				break;
 		}
 
@@ -387,7 +387,7 @@ static inline bso::bool__ BuildPath_(
 
 	if ( PathErrorRowBuffer != NONE )
 		if ( PathErrorRow == NULL )
-			ERRCcp();
+			ERRDta();
 		else {
 			*PathErrorRow = PathErrorRowBuffer;
 			return false;
@@ -428,7 +428,7 @@ row__ rgstry::registry_::_Search(
 	if ( PathRow != Path.Last() ) {
 #ifdef RGSTRY_DBG
 		if ( ( ResultRow != NONE ) && ( Buffer( ResultRow ).Nature() == nAttribute ) )
-			ERRCcp();
+			ERRFwk();
 #endif
 		while ( ChildRow != NONE )  {
 			ResultRow = _Search( Path, Path.Next( PathRow ), ChildRow, ResultRows );
@@ -1048,7 +1048,7 @@ ERRBegin
 		break;
 	default:
 		// Puisque l'on passe par le préprocesseur, si une erreur est rencontrée, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
@@ -1563,7 +1563,7 @@ ERRBegin
 	XFlow.Init( FFlow );
 
 	if ( Criterions.Directory.Amount() != 0 )
-		ERRCcp();
+		ERRPrm();
 
 	Status = FillRegistry( XFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
 
@@ -1589,7 +1589,7 @@ static bso::u8__ GetTagAmount_( const str::string_ &String )
 		Row = String.Next( Row );
 
 		if ( Row == NONE )
-			ERRCcp();
+			ERRFwk();
 
 		if ( String( Row ) != RGSTRY__TAG_MARKER_C )
 			if ( Amount == LIMIT )
@@ -1620,7 +1620,7 @@ static void HandleTag_(
 
 				Target.Append( '0' + Indice++ );
 			} else if ( *Source == 0 )
-				ERRCcp();
+				ERRDta();
 
 		} 
 

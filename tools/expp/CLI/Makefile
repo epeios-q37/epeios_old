@@ -74,7 +74,7 @@ ifeq ("$(os)","Cygwin")
 
 # THe MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
-	#cc = i686-w64-mingw32-g++
+	cc = i686-w64-mingw32-g++
 
 endif
 
@@ -157,6 +157,8 @@ ifeq ("$(os)","GNU/Linux")
 
 	co += -DGNULINUX
 
+	lo += -static
+
 endif
 
 ##########################################
@@ -170,6 +172,8 @@ ifeq ("$(os)","Msys")
 
 	co += -DMSYS
 
+	lo += -static
+
 endif
 
 ##################################
@@ -182,6 +186,8 @@ endif
 ifeq ("$(os)","Darwin")
 
 	co += -DDARWIN
+
+	lo += -static
 
 endif
 

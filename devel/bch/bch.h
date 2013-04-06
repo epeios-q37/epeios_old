@@ -242,7 +242,7 @@ namespace bch {
 		}
 		void Set( void )
 		{
-			ERRu();	// Replacé par 'FillWith(...)'.
+			ERRFbd();	// Replacé par 'FillWith(...)'.
 		}
 		//f Append 'Amount' object from 'Buffer'. Return the position where the objects are put.
 		row Append(
@@ -296,7 +296,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( *First > *Last )
-				ERRu();
+				ERRPrm();
 #endif
 			return Append( Bunch, *Last - *First + 1, *First );
 		}
@@ -324,7 +324,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( Amount > this->Amount() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Allouer_( this->Amount() - Amount, aem::m_Default );
 		}
@@ -333,7 +333,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( !this->Exists( Row ) )
-				ERRCcp();
+				ERRFwk();
 #endif
 			Truncate ( mng::Amount() - *Row );
 		}
@@ -353,7 +353,7 @@ namespace bch {
 		{
 #ifdef BCH_DBG
 			if ( *Last < *First )
-				ERRu();
+				ERRPrm();
 #endif
 			Crop( *Last - *First + 1, First );
 		}
@@ -440,7 +440,7 @@ namespace bch {
 		}
 		void SetAndAdjust( void )
 		{
-			ERRu();	// Remplacé par 'FillWithAndAdjust(...)'.
+			ERRFbd();	// Remplacé par 'FillWithAndAdjust(...)'.
 		}
 		//f Return reference to memory.
 		mmr &Memory( void )
@@ -543,7 +543,7 @@ namespace bch {
 	public:
 		static sdr::size__ SizeOf( void * )
 		{
-			ERRCcp();
+			ERRFwk();
 			return 0;	// To avoid a warning.
 		}
 	};
@@ -612,7 +612,7 @@ namespace bch {
 		sdr::datum__ Buffer[sizeof( t )];
 #ifdef BCH_DBG
 		if ( Sorted.Amount() != Unsorted.Amount() )
-			ERRu();
+			ERRFwk();
 #endif
 		_GetRelations( Sorted, Unsorted, sizeof( t ), Sorted.Amount() * sizeof( t ), Buffer, Relations );
 	}

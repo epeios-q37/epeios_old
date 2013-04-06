@@ -266,7 +266,7 @@ namespace fil {
 		*/
 
 		if ( utime( FileName, NULL ) != 0 )
-			ERRc();
+			ERRLbr();
 # endif
 	}
 

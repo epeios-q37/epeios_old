@@ -96,13 +96,13 @@ void cio::Initialize( target__ Target )
 	case tConsole:
 #if defined( CPE_WIN )
 		if ( _setmode( _fileno( stdin ), _O_BINARY ) == -1 )
-			ERRDvc();
+			ERRLbr();
 
 		if ( _setmode( _fileno( stdout ), _O_BINARY ) == -1 )
-			ERRDvc();
+			ERRLbr();
 
 		if ( _setmode( _fileno( stderr ), _O_BINARY ) == -1 )
-			ERRDvc();
+			ERRLbr();
 #endif
 		_COutDriver.Init( COutDescriptor, fdr::ts_Default );
 		_CInDriver.Init( CInDescriptor, fdr::ts_Default );
@@ -120,17 +120,17 @@ void cio::Initialize( target__ Target )
 		break;
 	case tUser:
 		if ( !COutDriver.IsInitialized() )
-			ERRCcp();
+			ERRFwk();
 
 		if ( !CInDriver.IsInitialized() )
-			ERRCcp();
+			ERRFwk();
 
 		if ( !CErrDriver.IsInitialized() )
-			ERRCcp();
+			ERRFwk();
 
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 

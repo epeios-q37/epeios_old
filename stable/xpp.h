@@ -287,13 +287,13 @@ namespace xpp {
 			_rrow__ Row = Names.Append( Name );
 
 			if ( Row != Coords.Append( Coord ) )
-				ERRCcp();
+				ERRFwk();
 
 			if ( Row != FileNames.Append( FileName ) )
-				ERRCcp();
+				ERRFwk();
 
 			if ( Row != Contents.Append( Content ) )
-				ERRCcp();
+				ERRFwk();
 
 			return AlreadyExists;
 		}
@@ -366,7 +366,7 @@ namespace xpp {
 			if ( Row == NONE ) {
 				Row = Names.Append( Name );
 				if ( Row != Values.Append( Value ) )
-					ERRCcp();
+				ERRFwk();
 			} else {
 				Values( Row ) = Value;
 				Values.Flush();
@@ -399,7 +399,7 @@ namespace xpp {
 			_vrow__ Row = _Locate( Name );
 
 			if ( Row == NONE )
-				ERRCcp();
+				ERRFwk();
 
 			ValuesItem.Init( Values );
 
@@ -617,7 +617,7 @@ namespace xpp {
 		{
 #ifdef XPP_DBG
 			if ( _CurrentParser == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_CurrentParser;
 		}
@@ -625,7 +625,7 @@ namespace xpp {
 		{
 #ifdef XPP_DBG
 			if ( _CurrentParser == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_CurrentParser;
 		}
@@ -682,7 +682,7 @@ namespace xpp {
 			_CurrentParser = NewParser( _Repository, _Variables, _Directives );
 			_Parsers.Init();
 			if ( _Parser().Init( XFlow, str::string(), Criterions.Directory, Criterions.CypherKey ) != sOK )
-				ERRCcp();
+				ERRFwk();
 			_Status = sOK;
 
 		}

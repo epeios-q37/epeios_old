@@ -98,10 +98,10 @@ ERRBegin
 
 #ifdef FLW_DBG
 	if ( Wanted < Minimum )
-		ERRCcp();
+		ERRPrm();
 
 	if ( Minimum < 1 )
-		ERRCcp();
+		ERRPrm();
 #endif
 
 	Amount = _LoopingRawRead( Minimum, Buffer, Wanted, Adjust, CacheIsEmpty );
@@ -110,7 +110,7 @@ ERRBegin
 		_Red += Amount;
 
 	if ( _Red > _AmountMax )
-		ERRFlw();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog
@@ -126,33 +126,33 @@ size__ flw::oflow__::_DirectWrite(
 ERRProlog
 ERRBegin
 	if ( ( _Size == 0 ) && ( _Cache != NULL ) )	// There was an error before. See below, in 'ERRErr'.
-		ERRFlw();
+		ERRFwk();
 
 #ifdef FLW_DBG
-		if ( Wanted < 1 )
-			ERRCcp();
+	if ( Wanted < 1 )
+		ERRPrm();
 
-		if ( Wanted < Minimum )
-			ERRCcp();
+	if ( Wanted < Minimum )
+		ERRPrm();
 #endif
 
 	Amount = _LoopingWrite( Buffer, Wanted, Minimum );
 
 	if ( Amount == 0 )
-		ERRFlw();
+		ERRFwk();
 
 #ifdef FLW_DBG
 		if ( Amount > Wanted )
-			ERRCcp();
+			ERRFwk();
 
 		if ( Amount < Minimum )
-			ERRCcp();
+			ERRFwk();
 #endif
 
 	_Written += Amount;
 
 	if ( _Written >= _AmountMax )
-		ERRFlw();
+		ERRFwk();
 ERRErr
 	_Size = _Free = 0;	// Pour éviter toute nouvelle écriture dans le cache. La prochaine tentative génèrera une erreur.
 	Commit();	// N'écrit rien (à priori) ; juste pour déverouiiler.

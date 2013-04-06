@@ -69,7 +69,7 @@ bso::bool__ sclerror::IsErrorPending( void )
 const lcl::meaning_ &sclerror::GetMeaning( void )
 {
 	if ( !IsErrorPending() )
-		ERRCcp();
+		ERRFwk();
 
 	return Meaning_;
 }
@@ -82,10 +82,10 @@ void sclerror::ResetPendingError( void )
 void sclerror::SetMeaning( const lcl::meaning_ &Meaning )
 {
 	if ( IsErrorPending() )
-		ERRCcp();
+		ERRFwk();
 
 	if ( Meaning.Levels.IsEmpty() )
-		ERRCcp();
+		ERRFwk();
 
 	Meaning_ = Meaning;
 }
@@ -108,7 +108,7 @@ ERRBegin
 		scllocale::GetTranslation( GetMeaning(), Language, Translation );
 		TOFlow << Translation;
 	} else if ( ErrHandling != err::hUserDefined )
-		ERRCcp();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog

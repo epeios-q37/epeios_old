@@ -325,7 +325,7 @@ namespace lst {
 			aem::mode__ Mode = aem::m_Default )
 		{
 			if ( Locations.Amount() != 0 )
-				ERRu();
+				ERRFwk();
 
 //			Locations.Init( Size );
 
@@ -553,7 +553,7 @@ namespace lst {
 			if ( Nombre_ == t ) 
 			{
 				if ( ErrorHandling == err::hThrowException )
-					ERRu();
+					ERRFwk();
 			}
 			else
 			{

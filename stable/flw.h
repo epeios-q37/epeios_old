@@ -299,7 +299,7 @@ namespace flw {
 		standalone_iflow__( void )
 		{
 			if ( Dummy != 0 )	
-				ERRCcp();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
+				ERRPrm();	// 'Dummy' n'étant pas utilisé, rien ne sert de modifier sa valeur.
 		}
 	};
 

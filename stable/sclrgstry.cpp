@@ -102,7 +102,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	if ( Root_ != NONE )
-		ERRCcp();
+		ERRFwk();
 
 	XFlow.Init( Flow );
 

@@ -633,12 +633,12 @@ namespace tol {
 		coeff__ Coeff)
 	{
 		if ( *Op1 < *Op2 )
-			ERRc();
+			ERRPrm();
 
 		uint64_t Elapsed = *Op1 - *Op2;
 
 		if ( ( TOL_DIFF_MAX / _Numer ) < Elapsed )
-			ERRl();
+			ERRLmt();
 
 		return ( Elapsed * _Numer / _Denom  ) / ( 1000000000 / Coeff );
 	}
@@ -655,7 +655,7 @@ namespace tol {
 		timespec TP;
 
 		if ( clock_gettime( CLOCK_MONOTONIC, &TP ) != 0 )
-			ERRs();
+			ERRLbr();
 
 		return TP;
 	}
@@ -673,7 +673,7 @@ namespace tol {
 		if ( Op1->tv_sec >= Op2->tv_sec )
 			if( Op1->tv_sec == Op2->tv_sec )
 				if ( Op1->tv_nsec > Op2->tv_nsec )
-			ERRc();
+			ERRPrm();
 
 		Intermediate->tv_nsec = ( ( CarryFlag ? 1000000000 : 0 ) + Op1->tv_nsec ) - Op2->tv_nsec;
 
@@ -799,8 +799,8 @@ namespace tol {
 	{
 		lconv *LConv = localeconv();
 
-# ifdef CPE__ANDROID	// Pas de membre 'decimal_point' défini dans ce cas...
-		ERRl();
+# ifdef CPE_ANDROID	// Pas de membre 'decimal_point' défini dans ce cas...
+		ERRLmt();
 		return 0;	// Pour éviter un 'warning'.
 # else
 		if ( LConv->decimal_point == NULL )
@@ -974,7 +974,7 @@ namespace tol {
 		}
 		_core_pointer___ &operator =( const _core_pointer___ &Pointer )
 		{
-			ERRu();	// Otherwise the same ressource is used twice ; which delete them ?
+			ERRFwk();	// Otherwise the same ressource is used twice ; which delete them ?
 
 			return *this;
 		}
