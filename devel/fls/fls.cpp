@@ -175,7 +175,7 @@ void fls::_Unregister(
 	Lock_();
 
 	if ( List_( Row ).ID != ID )
-		ERRu();
+		ERRPrm();
 
 	List_.Store( Data, Row );
 	List_.Delete( Row );
@@ -370,8 +370,8 @@ ERREpilog
 
 
 void fls::ReleaseInactiveFiles_(
-	bso::nuitn__ Delay,
-	bso::nuint__ MaxAmount )
+	bso::uint__ Delay,
+	bso::uint__ MaxAmount )
 {
 	Lock_();
 

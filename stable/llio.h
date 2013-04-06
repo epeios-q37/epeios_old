@@ -72,7 +72,7 @@ extern class ttr_tutor &LLIOTutor;
 # define LLLIO__USE_PLLIO
 #elif defined( CPE_CYGWIN )
 # define LLLIO__USE_PLLIO
-#elif defined( CPE_MAC )
+#elif defined( CPE_XCODE )
 # define LLLIO__USE_PLLIO
 #elif defined( CPE_MINGW )
 # define LLLIO__USE_MLLIO

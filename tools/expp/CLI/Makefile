@@ -29,7 +29,7 @@ copt =
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 mods = cio clnarg epsmsc err fil flw fnm str tol ttr bso
-mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags cpe tht
+mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags cpe
 mods += sclmisc scllocale sclerror sclrgstry scltool 
 mods += locale registry
 
@@ -74,7 +74,7 @@ ifeq ("$(os)","Cygwin")
 
 # THe MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
-	cc = i686-w64-mingw32-g++
+	#cc = i686-w64-mingw32-g++
 
 endif
 
@@ -187,7 +187,7 @@ ifeq ("$(os)","Darwin")
 
 	co += -DDARWIN
 
-	lo += -static
+	#lo += -static	// Don't work.
 
 endif
 

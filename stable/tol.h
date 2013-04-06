@@ -69,7 +69,7 @@ extern class ttr_tutor &TOLTutor;
 # include "cpe.h"
 
 # ifdef CPE_POSIX
-#  ifdef CPE_MAC
+#  ifdef CPE_XCODE
 #   define TOL__MAC
 # else
 #   define TOL__POSIX

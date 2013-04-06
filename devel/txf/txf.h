@@ -425,7 +425,7 @@ namespace txf {
 	{
 #if defined( CPE_MSVC ) || defined( CPE_CYGWIN ) || defined( CPE_MINGW )
 		return Flow << "\r\n";
-#elif defined( CPE_LINUX ) || defined( CPE_MAC )
+#elif defined( CPE_LINUX ) || defined( CPE_XCODE )
 		return Flow << '\n';
 #else
 #	error "Unknow target !"

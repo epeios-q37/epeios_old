@@ -85,7 +85,7 @@ extern class ttr_tutor &MTXTutor;
 #    else
 #     define MTX__USE_PTHREAD_MUTEX
 #    endif
-#   elif defined (CPE_MAC )
+#   elif defined (CPE_XCODE )
 #    define MTX__USE_MAC_ATOMIC_OPERATIONS
 #   else
 #    define MTX__USE_PTHREAD_MUTEX
@@ -308,7 +308,7 @@ namespace mtx {
 		{
 #ifdef MTX__CONTROL
 			if ( IsReleased() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return _GetSign( Counter ) != MTX__UNLOCKED_MUTEX_COUNTER_SIGN;
 		}
@@ -316,7 +316,7 @@ namespace mtx {
 		{
 #ifdef MTX__CONTROL
 				if ( IsReleased() )
-					ERRCcp();
+					ERRFwk();
 #endif
 			if ( IsLocked() )
 				switch ( Mode ) {
@@ -330,7 +330,7 @@ namespace mtx {
 					return tht::GetTID() == Owner;
 					break;
 				default:
-					ERRCcp();
+					ERRFwk();
 					break;
 				}
 
@@ -350,21 +350,21 @@ namespace mtx {
 		void Unlock( void )
 		{
 			if ( !IsLocked() )
-				ERRCcp();
+				ERRFwk();
 
 			switch ( Mode ) {
 			case mFreeDeprecated:
 				break;
 			case mSynchronizing:
 				if ( IsOwner() )
-					ERRCcp();
+					ERRFwk();
 				break;
 			case mProtecting:
 				if ( !IsOwner() )
-					ERRCcp();
+					ERRFwk();
 				break;
 			default:
-				ERRCcp();
+				ERRFwk();
 				break;
 			}
 
@@ -389,7 +389,7 @@ namespace mtx {
 			case mProtecting:
 				break;
 			default:
-				ERRCcp();
+				ERRFwk();
 				break;
 			}
 
@@ -418,7 +418,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		return Handler->IsLocked();
 	}
@@ -431,7 +431,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		return Handler->TryToLock( &AlreadyLocked );
 	}
@@ -451,7 +451,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		bso::bool__ AlreadyLocked = false;
 
@@ -466,7 +466,7 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		Handler->Unlock();
 	}
@@ -483,10 +483,10 @@ namespace mtx {
 	{
 #ifdef MTX_DBG
 		if ( Handler == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( Handler->IsLocked() && !EvenIfLocked )
-			ERRCcp();
+			ERRPrm();
 #endif
 		delete Handler;
 	}
@@ -522,7 +522,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRCcp();
+				ERRPrm();
 #endif
 			mtx::Lock( Handler_ );
 		}
@@ -531,7 +531,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRCcp();
+				ERRPrm();
 #endif
 			return mtx::Unlock( Handler_ );
 		}
@@ -540,7 +540,7 @@ namespace mtx {
 		{
 #ifdef MTX_DBG
 			if ( Handler_ == MTX__INVALID_HANDLER )
-				ERRCcp();
+				ERRPrm();
 #endif
 			return mtx::TryToLock( Handler_ );
 		}

@@ -67,8 +67,8 @@ extern class ttr_tutor &CPETutor;
 # undef CPE_MSVC	// Environnement Microsoft Visual C++.
 # define CPE_MSVC_LABEL		"MSVC"
 
-# undef CPE_MAC		// Environnement MAC.
-# define CPE_MAC_LABEL		"MacOS"
+# undef CPE_XCODE		// Environnement Xcode (MacOS, iOS).
+# define CPE_XCODE_LABEL	"Xcode"
 
 # undef CPE_CYGWIN	// Environnement CYGWIN.
 # define CPE_CYGWIN_LABEL	"Cygwin"
@@ -148,7 +148,7 @@ extern class ttr_tutor &CPETutor;
 # endif
 
 # ifdef __APPLE__
-#  define CPE_MAC
+#  define CPE_XCODE
 #  define CPE_GCC
 #  define CPE_POSIX
 # endif
@@ -282,8 +282,8 @@ extern class ttr_tutor &CPETutor;
 
 # if defined( CPE_MSVC )
 #  define CPE_ENVIROMENT_LABEL	CPE_MSVC_LABEL
-# elif defined( CPE_MAC )
-#  define CPE_ENVIROMENT_LABEL	CPE_MAC_LABEL
+# elif defined( CPE_XCODE )
+#  define CPE_ENVIROMENT_LABEL	CPE_XCODE_LABEL
 # elif defined( CPE_CYGWIN )
 #  define CPE_ENVIROMENT_LABEL	CPE_CYGWIN_LABEL
 # elif defined( CPE_MINGW )

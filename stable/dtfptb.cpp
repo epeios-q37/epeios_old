@@ -226,7 +226,7 @@ static bso::raw__ *_GetInt(
 		Counter++;
 
 	if ( Counter >= BSO_DINT_SIZE_MAX )
-		ERRFlw();
+		ERRDta();
 
 	return DInt;
 }
@@ -247,7 +247,7 @@ void dtfptb::_FPutInt(
 {
 	switch ( Length ) {
 	case 8:
-#ifdef CPE_64BITS
+#ifdef CPE_INT64
 		M( 7 );
 		M( 6 );
 		M( 5 );
@@ -265,7 +265,7 @@ void dtfptb::_FPutInt(
 		M( 0 );
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 }
@@ -281,7 +281,7 @@ bso::int__ dtfptb::_FGetInt(
 
 	switch( Length ) {
 	case 8:
-#ifdef CPE_64BITS
+#ifdef CPE_INT64
 		M( 7 );
 		M( 6 );
 		M( 5 );
@@ -298,7 +298,7 @@ bso::int__ dtfptb::_FGetInt(
 	case 1:
 		M( 0 );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -315,7 +315,7 @@ bso::uint__ dtfptb::_VGetUInt(
 	bso::uint__ Value = bso::ConvertToUInt( _GetInt( Flow, DInt ) );
 
 	if ( Value > Max )
-		ERRCcp();
+		ERRDta();
 
 	return Value;
 }
@@ -329,10 +329,10 @@ bso::sint__ dtfptb::_VGetSInt(
 	bso::sint__ Value = bso::ConvertToSInt( _GetInt( Flow, DInt ) );
 
 	if ( Value < Min )
-		ERRCcp();
+		ERRDta();
 
 	if ( Value > Max )
-		ERRCcp();
+		ERRDta();
 
 	return Value;
 }
@@ -370,7 +370,7 @@ public:
 
 		// Pour des raisons de simplifications, on 'cast' parfois autoritairement un 'bso::size__' en 'bso::int__'.
 		if ( sizeof( bso::size__ ) != sizeof( bso::int__ ) )
-			ERRCcp();
+			ERRChk();
 	}
 	~dtfptbpersonnalization( void )
 	{
