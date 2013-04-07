@@ -107,8 +107,8 @@ extern class ttr_tutor &CPETutor;
 # undef CPE_INT32	// Taille naturelle d'un entier est de 32 bits.
 
 
-# undef CPE_IA32		// Processeur Intel 32 bits et compatibles.
-# define CPE_IA32_LABEL	"IA-32"
+# undef CPE_X86		// Processeur IA-32 compatibles.
+# define CPE_X86_LABEL	"x86"
 
 # undef CPE_X64		// Processeur AMD 64 bits et compatibles.
 # define CPE_X64_LABEL	"x64"
@@ -132,7 +132,7 @@ extern class ttr_tutor &CPETutor;
 #  define CPE_WIN
 #  define CPE_VC
 #  if defined( _M_IX86 )
-#   define CPE_IA32
+#   define CPE_X86
 #  elif defined( _M_X64 )
 #   define CPE_X64
 #  else
@@ -216,7 +216,7 @@ extern class ttr_tutor &CPETutor;
 #   define CPE_GCC3
 #  endif
 #  if defined( __i386__ )
-#   define CPE_IA32
+#   define CPE_X86
 #  elif defined( __x86_64__ )
 #   define CPE_X64
 #  else
@@ -234,7 +234,7 @@ extern class ttr_tutor &CPETutor;
 # endif
 
 
-# ifdef CPE_IA32
+# ifdef CPE_X86
 #  ifdef CPE_INT
 #  error "'CPE_INT' should not be already defined."
 #  endif
@@ -296,8 +296,8 @@ extern class ttr_tutor &CPETutor;
 #  error "Undefined enviroment !"
 # endif
 
-# if defined( CPE_IA32 )
-#  define CPE_ARCHITECTURE_LABEL	CPE_IA32_LABEL
+# if defined( CPE_X86 )
+#  define CPE_ARCHITECTURE_LABEL	CPE_X86_LABEL
 # elif defined( CPE_X64 )
 #  define CPE_ARCHITECTURE_LABEL	CPE_X64_LABEL
 # elif defined( CPE_ARM )

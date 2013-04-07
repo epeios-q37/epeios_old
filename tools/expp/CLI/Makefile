@@ -42,13 +42,13 @@ os := $(shell uname -o 2>/dev/null || uname -s)
 ##############################
 
 # Generates debugging data.
-#co += -g
+#CXXFLAGS += -g
 
 # General optimization.
-co += -O
+CXXFLAGS += -O
 
 # To use with gprof
-#co += -pg
+#CXXFLAGS += -pg
 
 ###############################
 
@@ -59,22 +59,22 @@ co += -O
 
 ifeq ("$(os)","Cygwin")
 
-	libs =
-
 # By default, vanilla Cygwin compiler ('g++') is used.
 # Resulting application uses the Cygwin POSIX Layer.
-# Only 32 bits application can be made.
+# Currently, only 32 bits application can be made.
 # For 64 bits and/or application using
 # directly the MS CRT, see below.
 
-# The MinGW compiler under Cygwin. 
+# Use of the MinGW compiler under Cygwin. 
 # To build 64 bits application.
 # Uses directly the MS CRT.
-	#cc = x86_64-w64-mingw32-g++
+	#arch=x64
 
-# THe MinGW compiler under Cygwin.
+# The MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
-	#cc = i686-w64-mingw32-g++
+	#arch=x86
+
+	libs =
 
 endif
 
@@ -118,11 +118,6 @@ ifeq ("$(os)","Darwin")
 
 	libs =
 
-# By décommenting below line, you can compile
-# for 32 bits architectrures instead of
-# the default 64 bits one.
-	#bitness = 32
-
 endif
 
 ##########################
@@ -142,8 +137,13 @@ ifeq ("$(os)","Cygwin")
 
 	co += -DCYGWIN
 
-	lo += -static
+	LDFLAGS += -static
 
+	ifeq ("$(arch)","x86")
+		CXX = i686-w64-mingw32-g++
+	else ifeq ("$(arch)","x64")
+		CXX = x86_64-w64-mingw32-g++
+	endif
 endif
 
 ##################################
@@ -157,7 +157,7 @@ ifeq ("$(os)","GNU/Linux")
 
 	co += -DGNULINUX
 
-	lo += -static
+	LDFLAGS += -static
 
 endif
 
@@ -172,7 +172,7 @@ ifeq ("$(os)","Msys")
 
 	co += -DMSYS
 
-	lo += -static
+	LDFLAGS += -static
 
 endif
 
@@ -187,7 +187,7 @@ ifeq ("$(os)","Darwin")
 
 	co += -DDARWIN
 
-	#lo += -static	// Don't work.
+	#LDFLAGS += -static	// Doesn't work.
 
 endif
 
@@ -206,33 +206,20 @@ else
 	src += $(EPEIOS_SRC)
 endif
 
-ifndef cc
-	cc = g++
-endif
-
-ifdef bitness
-	co += -m$(bitness)
-	lo += -m$(bitness)
-endif
-
-lo += -o $(name)
-co := -c $(co)
 ox = o
-
-larg = $(lo) $(objs)
 ds = :
 
 vpath %.cpp $(subst $(ds),:,$(src))
 
 srcd = $(subst $(ds), ,$(src))
 
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT)
+co := -c $(co) $(copt) $(srcd:%=-I%)
+lo += -o $(name) $(objs)
 
 objs = $(name).$(ox) $(mods:=.$(ox)) 
 
-$(name):  $(objs)
-	$(cc) $(larg) $(libs)
+$(name): $(objs)
+	$(CXX) $(LDFLAGS) $(lo) $(libs)
 	
 %.$(ox): %.cpp
-	$(cc) $(co) $<
+	$(CXX) $(CPPFLAGS) $(co) $(CXXFLAGS) $<
