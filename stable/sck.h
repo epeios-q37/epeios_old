@@ -163,7 +163,7 @@ namespace sck {
 			wVersionRequested = MAKEWORD( 1, 1);
 
 			if ( WSAStartup( wVersionRequested, &wsaData ) )
-				ERRDvc();
+				ERRLbr();
 #elif defined( SCK__POSIX )
 			Ready_ = true;
 #else
@@ -272,7 +272,7 @@ namespace sck {
 #ifdef SCK__WIN
 	//	shutdown( Socket, 2 );
 		if ( closesocket( Socket ) == SCK_SOCKET_ERROR )
-			ERRDvc();
+			ERRLbr();
 #elif defined( SCK__POSIX )
 	//	shutdown( Socket, 2 );
 		if ( close( Socket ) == SCK_SOCKET_ERROR )
@@ -314,13 +314,13 @@ namespace sck {
 			fdr::size__ Maximum )
 		{
 			if ( _Error )
-				ERRDvc();
+				ERRFwk();
 
 			if ( ( Maximum = sck::Write( _Socket, Buffer, Maximum, _TimeOut ) ) == SCK_DISCONNECTED ) {
 				_Socket = SCK_INVALID_SOCKET;
 				_Error = true;
 				Maximum = 0;
-				ERRDvc();
+				ERRLbr();
 			} else
 				_Touch();
 

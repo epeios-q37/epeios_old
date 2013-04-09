@@ -93,7 +93,7 @@ namespace csdlec {
 				_Row = _Read.First();
 
 			if ( _Row == NONE )
-				ERRCcp();
+				ERRFwk();
 
 			if ( ( _Read.Amount() - *_Row ) < (sdr::size__)Maximum )
 				Maximum = _Read.Amount() - *_Row;
@@ -341,7 +341,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		csdleo::user_functions__ &GetSteering( void ) const
 		{
 			if ( !IsInitialized() )
-				ERRCcp();
+				ERRFwk();
 
 			return *_Steering;
 		}

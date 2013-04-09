@@ -159,6 +159,14 @@ ifeq ("$(os)","GNU/Linux")
 
 	LDFLAGS += -static
 
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+
 endif
 
 ##########################################
@@ -174,6 +182,14 @@ ifeq ("$(os)","Msys")
 
 	LDFLAGS += -static
 
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+
 endif
 
 ##################################
@@ -188,6 +204,14 @@ ifeq ("$(os)","Darwin")
 	co += -DDARWIN
 
 	#LDFLAGS += -static	// Doesn't work.
+
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
 
 endif
 

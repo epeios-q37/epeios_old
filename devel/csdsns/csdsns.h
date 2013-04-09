@@ -182,7 +182,7 @@ ERREpilog
 		}
 		core_ &operator =( const core_ &C )
 		{
-			ERRCcp();
+			ERRFwk();
 
 			return *this;
 		}
@@ -216,7 +216,7 @@ ERREpilog
 		{
 #ifdef CSDSNS_DBG
 			if ( Id == CSDSNB_UNDEFINED )
-				ERRCcp();
+				ERRPrm();
 #endif
 			mtx::Lock( S_.Mutex );
 			UPs.Store( UP, Id );
@@ -300,7 +300,7 @@ ERREpilog
 		{
 #ifdef CSDSNS_DBG
 			if ( UP != NULL )
-				ERRCcp();
+				ERRPrm();
 #endif
 			id__ Id = CSDSNB_UNDEFINED;
 			action__ Action = aContinue;
@@ -336,7 +336,7 @@ ERREpilog
 					_Core.Delete( Id );
 				break;
 			default:
-				ERRCcp();
+				ERRFwk();
 				break;
 			}
 
@@ -345,7 +345,7 @@ ERREpilog
 		virtual void CSDSUFPostProcess( void *UP )
 		{
 			if ( UP != NULL )
-				ERRCcp();
+				ERRPrm();
 		}
 		virtual void CSDSUFExit( void )
 		{

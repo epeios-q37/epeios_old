@@ -169,7 +169,7 @@ ERRErr
 		ERRRst();
 		Boucler = true;
 	} else if ( ErrorHandling != err::hUserDefined )
-		ERRCcp();
+		ERRPrm();
 ERREnd
 ERREpilog
 	}
@@ -205,12 +205,12 @@ ERRBegin
 
 		switch( Action ) {
 		case aContinue:
-			ERRCcp();
+			ERRFwk();
 			break;
 		case aStop:
 			break;
 		default:
-			ERRCcp();
+			ERRFwk();
 			break;
 		}
 

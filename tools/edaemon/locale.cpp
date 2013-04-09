@@ -53,7 +53,7 @@ const char *locale::Label( message__ Message )
 	CASE( UnableToLoadBackend );
 	CASE( UnableToOpenLogFile );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -81,7 +81,7 @@ const lcl::meaning_ &locale::GetMeaning_(
 		Meaning->AddTag( va_arg( Args, const char * ) );
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -92,7 +92,7 @@ static struct global_cdtor {
 	global_cdtor( void )
 	{
 		if ( GLOBAL__MESSAGE_AMOUNT != m_amount )
-			ERRCcp();
+			ERRChk();
 	}
 	~global_cdtor( void )
 	{

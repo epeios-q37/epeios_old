@@ -252,7 +252,7 @@ namespace csdbns {
 		virtual void CSDBNSPostProcess( void *UP )
 		{
 			if ( UP == NULL )
-				ERRCcp();
+				ERRPrm();
 
 			UserFunctions->PostProcess( ((_flow_data__ *)UP)->UP );
 
@@ -320,7 +320,7 @@ namespace csdbns {
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			_SocketFunctions = &SocketFunctions;
 			
@@ -336,7 +336,7 @@ namespace csdbns {
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			_SocketFunctions = &SocketFunctions;
 
@@ -350,7 +350,7 @@ namespace csdbns {
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			_Functions.UserFunctions = &UserFunctions;
 
@@ -364,7 +364,7 @@ namespace csdbns {
 		{
 #ifdef CSD__HANDLE_SERVICE
 			if ( !_service__::Init() )
-				ERRCcp();
+				ERRFwk();
 #endif
 			_Functions.UserFunctions = &UserFunctions;
 

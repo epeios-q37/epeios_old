@@ -91,7 +91,7 @@ bso::bool__ csdlec::library_embedded_client_core__::_RetrieveSteering( csdleo::s
 		return false;
 
 	if ( _Steering != NULL )
-		ERRCcp();
+		ERRFwk();
 
 	if ( ( _Steering = RetrieveSteering( Data ) ) == NULL )
 		return false;
@@ -109,7 +109,7 @@ bso::bool__ csdlec::library_embedded_client_core__::_ReleaseSteering( void )
 		return false;
 
 	if ( _Steering == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	ReleaseSteering( _Steering );
 

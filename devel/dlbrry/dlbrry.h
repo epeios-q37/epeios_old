@@ -121,7 +121,7 @@ namespace dlbrry {
 		dynamic_library___ &Library )
 	{
 		if ( !Library.IsInitialized() )
-			ERRCcp();
+			ERRFwk();
 
 		return (function)Library.GetFunction( FunctionName );
 	}

@@ -76,7 +76,7 @@ NOTA : version de la classe 'shared_data__', à mettre à jour à chaque fois que c
 
 # define CSDLEO_SHARED_DATA_VERSION_NUMBER	"3"
 
-# define CSDLEO_SHARED_DATA_VERSION	CSDLEO_SHARED_DATA_VERSION_NUMBER "-" CPE_ARCH_BITNESS_LABEL
+# define CSDLEO_SHARED_DATA_VERSION	CSDLEO_SHARED_DATA_VERSION_NUMBER "-" CPE_ARCHITECTURE_LABEL
 
 namespace csdleo {
 	using namespace csdsuf;

@@ -225,7 +225,7 @@ ERRBegin
 	case CLNARG_NONE:
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 	}
 
 	AnalyzeOptions_( Analyzer, Parameters );
@@ -352,7 +352,7 @@ protected:
 		tol::buffer__ Buffer;
 
 		if ( _Flow == NULL )
-			ERRCcp();
+			ERRFwk();
 
 		*_Flow << '[' << tol::DateAndTime( Buffer ) << "] " << csdsns::GetLogLabel( Log ) << ' ' << Id << '/' << Amount << txf::nl << txf::commit;
 	}
@@ -403,7 +403,7 @@ ERRBegin
 			break;
 		default:
 			if ( LogFileName != NULL )
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -461,7 +461,7 @@ ERRBegin
 		UseSwitchingConnections_( Core->GetSteering(), LogFileName, LogFileHandling, BackendFileName, Port );
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
