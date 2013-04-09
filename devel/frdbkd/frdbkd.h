@@ -107,7 +107,7 @@ namespace frdbkd {
 				Mode = fblfub::mRemote;
 				break;
 			default:
-				ERRCcp();
+				ERRFwk();
 				break;
 			}
 
@@ -133,9 +133,9 @@ namespace frdbkd {
 		{
 			_BackendAccess.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
 		}
-		void ThrowError( void )
+		void ThrowERRFwk( void )
 		{
-			_BackendAccess.ThrowUError();
+			_BackendAccess.ThrowERRFwk();
 		}
 	};
 

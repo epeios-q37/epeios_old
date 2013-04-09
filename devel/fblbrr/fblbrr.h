@@ -113,7 +113,7 @@ namespace fblbrr {
 			parameter___ Parameter = _Parameters( Row );
 
 			if ( Parameter.Cast != Cast )
-				ERRCcp();
+				ERRPrm();
 
 			return Parameter.Content;
 		}
@@ -142,7 +142,7 @@ namespace fblbrr {
 			_CreateAll( Flow, Casts );
 
 			if ( Flow.Get() != fblcst::cEnd )
-				ERRCcp();
+				ERRFwk();
 		}
 		virtual void FBLBRQPush(
 			flw::oflow__ &Flow,

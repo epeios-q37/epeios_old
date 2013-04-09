@@ -88,7 +88,7 @@ public:
 
 #define T( f )\
 	if ( ( f ) != NS_OK )\
-		ERRExt()
+		ERRLbr()
 
 #if defined NSXPCM__ENABLE_FORMHISTORY
 #	define ENABLE_FORMHISTORY
@@ -107,7 +107,7 @@ ERRProlog
 	bso::bool__ Locked = false;
 ERRBegin
 	if ( Window == NULL )
-		ERRCcp();
+		ERRPrm();
 
 	mtx::Lock( MasterWindowMutex_ );
 
@@ -130,7 +130,7 @@ ERRProlog
 	bso::bool__ Locked = false;
 ERRBegin
 	if ( Window == NULL )
-		ERRCcp();
+		ERRPrm();
 
 	mtx::Lock( MasterWindowMutex_ );
 
@@ -157,7 +157,7 @@ ERRBegin
 		sdr::row__ Row = MasterWindows_.Search( Window );
 
 		if ( Row == NONE )
-			ERRCcp();
+			ERRFwk();
 
 		MasterWindows_.Remove( Row );
 	}
@@ -201,10 +201,10 @@ ERRBegin
 	Locked = true;
 
 	if ( MasterWindow_ != Window )
-		ERRCcp();
+		ERRPrm();
 
 	if ( MasterWindowCounter_ == 0 )
-		ERRCcp();
+		ERRFwk();
 
 	MasterWindowCounter_--;
 ERRErr
@@ -245,7 +245,7 @@ const char *nsxpcm::GetLabel( text__ Text )
 		CASE( XPRJFilterLabel );
 		CASE( DynamicLibraryFilterLabel );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -264,12 +264,12 @@ void nsxpcm::Transform(
 	char **JString )
 {
     if ( !JString )
-        ERRCcp();
+        ERRPrm();
 	else
 	    *JString = (char*) nsMemory::Clone( String, sizeof(char) * Size );
     
 	if ( !JString )
-		ERRCcp();
+		ERRFwk();
 }
 
 void nsxpcm::Transform(
@@ -630,7 +630,7 @@ static inline PRInt16 ConvertType_( file_picker_type__ Type )
 		return nsIFilePicker::modeGetFolder;
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -747,17 +747,17 @@ ERRBegin
 	Transform( Title, WString );
 
 	if ( ParentWindow == NULL )
-		ERRCcp();
+		ERRPrm();
 	/* 'ParentWindow' doit être fourni et ne peut êtr edéduit de 'MAsterWindow', car,
 	cette fonction bloquant toute action sur 'ParentWindow', si plusieurs sessions,
 	c'est une mauvaise fenêtre (c'est-à-dire une qui n'a pas initié l'ouverture de
 	sélecteur) qui rique d'être bloquée). */
 
 	if ( ( Error = FilePicker->Init( ParentWindow, WString, ConvertType_( Type ) ) ) != NS_OK )
-		ERRExt();
+		ERRLbr();
 
 	if ( ( Error = FilePicker->AppendFilters( ConvertPredefinedFilters_( S_.PredefinedFilters ) ) ) != NS_OK )
-		ERRExt();
+		ERRLbr();
 
 	AddFilters_( Filters, FilePicker );
 
@@ -771,21 +771,21 @@ ERRBegin
 	PRInt16 _retval = 0;
 
 	if ( ( Error = FilePicker->Show( &_retval ) ) != NS_OK )
-		ERRExt();
+		ERRLbr();
 
 	if ( _retval == nsIFilePicker::returnCancel ) {
 		FileSelected = false;
 		ERRReturn;
 	} else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
-		ERRExt();
+		ERRLbr();
 
 	nsILocalFile *File;
 
 	if ( ( Error = FilePicker->GetFile( &File ) ) != NS_OK )
-		ERRExt();
+		ERRLbr();
 
 	if ( ( Error = File->GetPath( WString ) ) != NS_OK )
-		ERRExt();
+		ERRLbr();
 
 	Transform( WString, FileName );
 
@@ -957,7 +957,7 @@ void nsxpcm::Convert(
 	}
 
 	if ( Error != NONE )
-		ERRCcp();
+		ERRDta();
 }
 
 void nsxpcm::Convert(
@@ -977,7 +977,7 @@ void nsxpcm::Convert(
 	}
 
 	if ( Error != NONE )
-		ERRCcp();
+		ERRDta();
 }
 
 void nsxpcm::Convert(
@@ -997,7 +997,7 @@ void nsxpcm::Convert(
 	}
 
 	if ( Error != NONE )
-		ERRCcp();
+		ERRDta();
 }
 
 void nsxpcm::SplitAndConvert(
@@ -1234,7 +1234,7 @@ void GetData_(
 	while ( Amount-- ) {
 #ifdef NSXPCM_DBG
 		if ( Row == NONE )
-			ERRCcp();
+			ERRFwk();
 #endif
 		Data.Append( Item( Row ) );
 
@@ -1366,14 +1366,14 @@ ERREpilog
 void nsxpcm::event_handler__::_Test( bso::bool__ IgnoreInitializationTest )
 {
 	if ( _Control != this )
-		ERRCcp();
+		ERRFwk();
 
 	if ( !IgnoreInitializationTest ) {
 		if ( _EventData._EventListener.get() == NULL )
-			ERRCcp();
+			ERRFwk();
 
 		if ( !_EventData._EventListener->IsInitialized() )
-			ERRCcp();
+			ERRFwk();
 	}
 }
 
@@ -1399,51 +1399,51 @@ void nsxpcm::event_handler__::Add(
 
 	if ( Events & efCommand )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "command" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efInput )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "input" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efChange )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "change" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efClick )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "click" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efDblClick )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "dblclick" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efFocus )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "focus" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efBlur )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "blur" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efSelect )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "select" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efAttributeChange )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "DOMAttrModified" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efKeyPress )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "keypress" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efLoad )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "load" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 
 	if ( Events & efClose )
 		if ( EventTarget->AddEventListener( NS_LITERAL_STRING( "close" ), _EventData._EventListener, false ) != NS_OK )
-			ERRCcp();
+			ERRFwk();
 }
 
 static event__ Convert_(
@@ -1531,7 +1531,7 @@ ERRBegin
 	*/		_OnEvent( _EventData, Event );
 
 	if ( _EventData._EventImbricationLevel-- < -1 )
-		ERRCcp();
+		ERRFwk();
 
 	_EventData._RawEvent = RawEventBuffer;
 	_EventData._MutationEvent = MutationEventBuffer;
@@ -2077,7 +2077,7 @@ ERRBegin
 	Result = Processor->ImportStylesheet( XSLStylesheet );
 
 	if ( Result != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	Parameter.Init( Parameters );
 
@@ -2092,7 +2092,7 @@ ERRBegin
 		Result = Processor->SetParameter( NS_LITERAL_STRING( "" ), Name, Value );
 
 		if ( Result != NS_OK )
-			ERRCcp();
+			ERRLbr();
 
 		Row = Parameters.Next( Row );
 	}
@@ -2101,7 +2101,7 @@ ERRBegin
 	Result = Processor->TransformToFragment( XMLDocument, Owner, &Fragment );
 
 	if ( Result != NS_OK )
-		ERRCcp();
+		ERRLbr();
 ERRErr
 	Fragment = NULL;
 ERREnd
@@ -2122,7 +2122,7 @@ ERRBegin
 	TFlow.Init( SFlow );
 
 	if ( xpp::Process( XFlow, BaseDirectory, xml::oCompact, TFlow ) != xpp::sOK )
-		ERRCcp();
+		ERRDta();
 ERRErr
 ERREnd
 ERREpilog
@@ -2166,17 +2166,17 @@ static bso::bool__ _GetXSLStylesheet(
 #endif
 
 	if ( Result != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	Result = HTTPRequest->Send( NULL );
 
 	if ( Result != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	Result = HTTPRequest->GetResponseXML( &XSLStylesheet );
 
 	if ( Result != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	return true;
 }
@@ -2192,10 +2192,10 @@ ERRProlog
 	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
 ERRBegin
 	if ( !_GetXMLDocument( XMLString, XMLDocument ) )
-		ERRCcp();
+		ERRDta();
 
 	if ( !_GetXMLDocument( XSLString, XSLStylesheet ) )
-		ERRCcp();
+		ERRDta();
 
 	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
 ERRErr
@@ -2216,10 +2216,10 @@ ERRProlog
 	nsIDOMDocument *XMLDocument = NULL, *XSLStylesheet = NULL;
 ERRBegin
 	if ( !_GetXMLDocument( XMLString, XMLDocument ) )
-		ERRCcp();
+		ERRDta();
 
 	if ( !_GetXSLStylesheet( XSLFileName, XSLStylesheet ) )
-		ERRCcp();
+		ERRDta();
 
 	Fragment = XSLTransform( XMLDocument, XSLStylesheet, Owner, Parameters );
 ERRErr
@@ -2253,7 +2253,7 @@ ERRBegin
 	TFlow.Init( SFlow );
 
 	if ( xpp::Process( XFlow, str::string( XSLLocation ), xml::oCompact, TFlow ) != xpp::sOK )
-		ERRCcp();
+		ERRDta();
 ERRErr
 ERREnd
 ERREpilog
@@ -2330,10 +2330,10 @@ void nsxpcm::LaunchURI( const str::string_ &RawURI )
 	Transform( RawURI, TransformedURI );
 
 	if ( ( Result = IOService->NewURI( TransformedURI, NULL, NULL, &URI ) ) != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	if ( ( Result = ExternalProtocolService->LoadURI( URI, NULL ) ) != NS_OK )
-		ERRCcp();
+		ERRLbr();
 }
 
 bso::bool__ nsxpcm::GetDirectory(
@@ -2351,7 +2351,7 @@ ERRBegin
 
 	if ( ( Result = DirectoryServiceProvider->GetFile( Name, &Persistent, &File ) ) != NS_OK )
 		if ( ErrHandling != err::hUserDefined )
-			ERRCcp();
+			ERRFwk();
 		else
 			ERRReturn;
 
@@ -2585,7 +2585,7 @@ void nsxpcm::DuplicateBroadcasterCommand( nsIDOMDocument *Document )
 			Ascending = true;
 			Node = GetParentNode( Node );
 		} else
-			ERRCcp();
+			ERRFwk();
 	}
 }
 
@@ -2612,7 +2612,7 @@ void nsxpcm::PatchCommandBadCommandBehaviorforKeysetListener( nsIDOMDocument *Do
 	Transform( "key", Id );
 
 	if ( Document->GetElementsByTagName( Id, &List ) != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	AddSemiColonCommand_( List );
 }
@@ -2630,7 +2630,7 @@ static nsIDOMWindowInternal *GetWindow_(
 	Transform( TagName, Id );
 
 	if ( Document->GetElementsByTagName( Id, &List ) != NS_OK )
-		ERRCcp();
+		ERRLbr();
 
 	T( List->GetLength( &Length ) );
 
@@ -2651,7 +2651,7 @@ nsIDOMWindowInternal *nsxpcm::GetWindow( nsIDOMDocument *Document )
 	if ( ( Window = GetWindow_( Document, "window" ) ) == NULL )
 		if ( ( Window = GetWindow_( Document, "page" ) ) == NULL )
 			if ( ( Window = GetWindow_( Document, "dialog" ) ) == NULL )
-				ERRExt();
+				ERRFwk();
 
 	return Window;
 }

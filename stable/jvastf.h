@@ -83,20 +83,20 @@ namespace jvastf {
 		JNIEnv *_JEnv( void )
 		{
 			if ( _JNIParam == NULL )
-				ERRc();
+				ERRFwk();
 
 			if ( _JNIParam->Env == NULL )
-				ERRc();
+				ERRFwk();
 
 			return _JNIParam->Env;
 		}
 		jobject _JObject( void )
 		{
 			if ( _JNIParam == NULL )
-				ERRc();
+				ERRFwk();
 
 			if ( _JNIParam->Object == NULL )
-				ERRc();
+				ERRFwk();
 
 			return _JNIParam->Object;
 		}
@@ -133,7 +133,7 @@ namespace jvastf {
 			jobject InputStream = _JObject();
 
 			_JByteArray = _JEnv()->NewByteArray( JVASTF_BUFFER_SIZE );
-			fdr::size__ Amount = _JEnv()->CallIntMethod( InputStream, GetMethodID( _JEnv(),  InputStream, "read", "([BII)I" ), _JByteArray, (jint)0, (jint)( Maximum > JVASTF_BUFFER_SIZE ? JVASTF_BUFFER_SIZE : Maximum ) );
+			jsize Amount = _JEnv()->CallIntMethod( InputStream, GetMethodID( _JEnv(),  InputStream, "read", "([BII)I" ), _JByteArray, (jint)0, (jint)( Maximum > JVASTF_BUFFER_SIZE ? JVASTF_BUFFER_SIZE : Maximum ) );
 
 			if ( Amount == -1 )
 				Amount = 0;
@@ -212,7 +212,7 @@ namespace jvastf {
 
 			_JByteArray = _JEnv()->NewByteArray( JVASTF_BUFFER_SIZE );
 
-			_JEnv()->SetByteArrayRegion( _JByteArray, 0, Amount, (jbyte *)Buffer );
+			_JEnv()->SetByteArrayRegion( _JByteArray, 0, (jsize)Amount, (jbyte *)Buffer );
 
 			_JEnv()->CallVoidMethod( OutputStream, GetMethodID( _JEnv(),  OutputStream, "write", "([BII)V" ), _JByteArray, (jint)0, (jint)Amount );
 

@@ -223,18 +223,18 @@ namespace fblbkd {
 		//v To get the index of a new object.
 		virtual index__ FBLBKDNew( void )
 		{
-			ERRCcp();
+			ERRFwk();
 			return 0;	// Pour éviter un warning.
 		}
 		//v To delete the object with index 'Index'.
 		virtual void FBLBKDDelete( index__ Index )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		//v To get a pointer of the object of index 'Index'.
 		virtual void *FBLBKDObject( index__ Index )
 		{
-			ERRCcp();
+			ERRFwk();
 			return NULL;	// Pour éviter un 'warning'
 		}
 #if 0
@@ -290,7 +290,7 @@ namespace fblbkd {
 			sdr::row__ Row = Indexes.Search( Index );
 
 			if ( Row == NONE )
-				ERRCcp();
+				ERRFwk();
 
 			Indexes.Remove( Index );
 
@@ -367,7 +367,7 @@ namespace fblbkd {
 			sdr::row__ P = Descriptions.Add( Name, Casts );
 			
 			if ( UPs.Append( UP ) != P )
-				ERRCcp();
+				ERRFwk();
 				
 			return P;
 		}			
@@ -400,7 +400,7 @@ namespace fblbkd {
 			flw::Get( Requete.Input(), C );
 
 			if ( C > Descriptions.Amount() )
-				ERRCcp();
+				ERRFwk();
 
 			Description.Init( Descriptions );
 
@@ -461,7 +461,7 @@ namespace fblbkd {
 		{
 #ifdef FBLBKD_DBG
 			if ( Mode != aem::m_Default )
-				ERRCcp();
+				ERRPrm();
 #endif
 			Objets.Allocate( Size, aem::mFit );
 		}
@@ -500,7 +500,7 @@ namespace fblbkd {
 		virtual void *FBLBKDObject( index__ Index )
 		{
 			if ( *Index >= Objets.Amount() )
-				ERRCcp();
+				ERRPrm();
 
 			return (void *)( Objets( Index )->OBJECT() );
 		}

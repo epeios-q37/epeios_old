@@ -66,7 +66,7 @@ ERRProlog
 	const char *Buffer = NULL;
 ERRBegin
 	if ( ( Buffer = Env->GetStringUTFChars( JString, NULL ) ) == NULL )
-		ERRs();
+		ERRLbr();
 
 	String.Append( Buffer );
 ERRErr

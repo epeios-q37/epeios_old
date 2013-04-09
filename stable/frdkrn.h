@@ -245,7 +245,7 @@ namespace frdkrn {
 		void _CloseConnection( void )
 		{
 			if ( !IsConnected() )
-				ERRCcp();
+				ERRFwk();
 
 			FRDKRNDisconnection();
 
@@ -286,7 +286,7 @@ namespace frdkrn {
 			str::string Translation;
 		ERRBegin
 			if( _ReportingFunctions == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			Translation.Init();
 
@@ -345,7 +345,7 @@ namespace frdkrn {
 		fblfrd::backend_access___ &BackendAccess( void )
 		{
 			if ( !_Backend.IsConnected() )
-				ERRCcp();
+				ERRFwk();
 
 			return _Backend.BackendAccess();
 		}
@@ -364,7 +364,7 @@ namespace frdkrn {
 		const char *Language( void ) const
 		{
 			if ( _Language == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return _Language;
 		}
@@ -459,9 +459,9 @@ namespace frdkrn {
 		{
 			_Backend.About( ProtocolVersion, BackendLabel, APIVersion, BackendInformations );
 		}
-		void ThrowError( void )
+		void ThrowERRFwk( void )
 		{
-			_Backend.ThrowError();
+			_Backend.ThrowERRFwk();
 		}
 		status__ CloseProject( void )
 		{

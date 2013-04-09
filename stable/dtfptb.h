@@ -123,7 +123,7 @@ namespace dtfptb {
 		return Int = (i)_FGetInt( Flow, sizeof( Int ) );
 	}
 
-# if !defined( CPE_64BITS ) && !defined( CPE_XCODE )	// Sinon ambigüité !
+# if !defined( CPE_X64 ) && !defined( CPE_XCODE )	// Sinon ambigüité !
 	inline void FPut(
 		bso::size__ Size,
 		flw::oflow__ &Flow )
@@ -183,7 +183,7 @@ namespace dtfptb {
 	}
 
 
-# if !defined( CPE_64BITS ) && !defined( CPE_XCODE )	// Sinon ambigüité !
+# if !defined( CPE_X64 ) && !defined( CPE_XCODE )	// Sinon ambigüité !
 	inline bso::size__ VGet(
 		flw::iflow__ &Flow,
 		bso::size__ &Size )
@@ -199,7 +199,7 @@ namespace dtfptb {
 	}
 # endif
 
-# ifdef CPE_64BITS
+# ifdef CPE_X64
 DTFPTB__M( 64, BSO_U64_MAX, BSO_S64_MIN, BSO_S64_MAX )
 # endif
 DTFPTB__M( 32, BSO_U32_MAX, BSO_S32_MIN, BSO_S32_MAX )

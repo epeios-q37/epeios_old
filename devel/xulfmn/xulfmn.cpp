@@ -138,7 +138,7 @@ ERRBegin
 		Trunk().UI().Main().Widgets.txbUserProjectLocation.GetValue( ProjectLocation );
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 
@@ -178,7 +178,7 @@ ERRBegin
 		Trunk().UI().Main().Widgets.dckProjectType.SetSelectedIndex( 2 );
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr

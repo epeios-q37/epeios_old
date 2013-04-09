@@ -111,7 +111,7 @@ namespace fblbur {
 				_request__::Init( _Remote, Flow );
 				break;
 			default:
-				ERRCcp();
+				ERRPrm();
 				break;
 			}
 		}

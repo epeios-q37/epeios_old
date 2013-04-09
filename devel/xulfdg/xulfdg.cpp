@@ -99,7 +99,7 @@ ERRBegin
 	Trunk = &this->Trunk();	// Trunk() est perdu lors du 'Close()' qui suit.
 
 	Trunk->UI().DebugDialog().Close();
-	Trunk->Kernel().ThrowError();
+	Trunk->Kernel().ThrowERRFwk();
 ERRErr
 ERREnd
 ERREpilog

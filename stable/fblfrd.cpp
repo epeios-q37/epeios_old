@@ -78,12 +78,12 @@ bso::bool__ fblfrd::backend_access___::_TestCompatibility(
 		Success = false;
 
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
-			ERRBkd();
+			ERRDta();
 
 		IncompatibilityInformations.Message.Append( Buffer );
 
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
-			ERRBkd();
+			ERRDta();
 
 		IncompatibilityInformations.URL.Append( Buffer );
 	}
@@ -131,7 +131,7 @@ command__ fblfrd::backend_access___::GetBackendDefaultCommand_()
 	flw::Get( *Channel_, DefaultCommand );
 
 	if ( Channel_->Get() != fblcst::cEnd )
-		ERRBkd();
+		ERRDta();
 
 	Channel_->Dismiss();
 

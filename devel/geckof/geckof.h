@@ -123,7 +123,7 @@ namespace geckof {
 		geckoo::steering_callback__ &GetSteering( void ) const
 		{
 			if ( !IsInitialized() )
-				ERRCcp();
+				ERRFwk();
 
 			return *_Steering;
 		}

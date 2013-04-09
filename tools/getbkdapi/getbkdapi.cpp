@@ -192,7 +192,7 @@ ERRBegin
 
 		switch( Option = Options( P ) ) {
 		default:
-			ERRCcp();
+			ERRFwk();
 		}
 
 		P = Options.Next( P );
@@ -278,7 +278,7 @@ ERRBegin
 	case CLNARG_NONE:
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 	}
 
 	AnalyzeOptions( Analyzer, Parameters );
@@ -309,7 +309,7 @@ static inline const char *GetTypeName(
 
 	switch ( Cast ) {
 	case fblcst::cEnd:
-		ERRCcp();
+		ERRFwk();
 		break;
 	case fblcst::cObject:
 		TypeName = "object";
@@ -426,7 +426,7 @@ static inline const char *GetTypeName(
 		CastType = ctContainer;
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 
@@ -464,7 +464,7 @@ ERRBegin
 		Writer.PutAttribute( "Type", "Container" );
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 
@@ -749,7 +749,7 @@ ERRBegin
 		CSDMode = csdleo::mEmbedded;
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -955,7 +955,7 @@ ERRBegin
 		P = Types.Next( P );
 		
 	if ( P == NONE )
-		ERRBkd();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog

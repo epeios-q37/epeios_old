@@ -102,7 +102,7 @@ void fblfrb::backend_remote_access_base___::In(
 	CIN( CommandsDetails, commands_details_ )
 	CIN( ObjectsReferences, objects_references_ )
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 }
@@ -118,7 +118,7 @@ void fblfrb::backend_remote_access_base___::Out(
 #define COUT( name, type )\
 	case fblcst::c##name:\
 	if ( Flow.Get() != Datum.Cast )\
-		ERRBkd();\
+		ERRDta();\
 	fbltyp::Get##name( Flow, *( fbltyp::type *)Datum.Pointer );\
 	break;
 
@@ -159,7 +159,7 @@ void Pop_(
 	COUT( CommandsDetails, commands_details_ )
 	COUT( ObjectsReferences, objects_references_ )
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 }

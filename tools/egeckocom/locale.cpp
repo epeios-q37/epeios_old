@@ -48,7 +48,7 @@ const char *locale::GetLabel( message__ Message )
 
 	switch( Message ) {
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -59,7 +59,7 @@ static struct global_cdtor {
 	global_cdtor( void )
 	{
 		if ( LOCALE__MESSAGE_AMOUNT != m_amount )
-			ERRCcp();
+			ERRChk();
 	}
 	~global_cdtor( void )
 	{

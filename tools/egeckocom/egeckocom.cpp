@@ -198,10 +198,10 @@ RB
 	GetComponent_( ComponentId, RawLibraryName );
 
 	if ( !mtx::Lock( Mutex_ ) )
-		ERRCcp();
+		ERRFwk();
 
 	if ( CurrentSteering_ != NULL )
-		ERRCcp();
+		ERRFwk();
 
 	CorrectedLibraryName.Init();
 
@@ -285,10 +285,10 @@ RP
 	str::string Id;
 RB
 	if ( !mtx::IsLocked( Mutex_ ) )
-		ERRCcp();
+		ERRFwk();
 
 	if ( CurrentSteering_ == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	Id.Init();
 
@@ -313,10 +313,10 @@ NS_IMETHODIMP egeckocom___::Stop(
 RP
 RB
 	if ( !mtx::IsLocked( Mutex_ ) )
-		ERRCcp();
+		ERRFwk();
 
 	if ( CurrentSteering_ == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	CurrentSteering_->PostRegistration();
 

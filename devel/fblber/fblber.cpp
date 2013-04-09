@@ -78,31 +78,31 @@ void fblber::embed_request_functions___::_GetAll(
 		    && ( Casts( Row ) != cEnd ) ) {
 
 		if ( Flow.Get() != Casts( Row ) )
-			ERRCcp();
+			ERRFwk();
 
 		if ( Repository_.Append( GetPointer_( Flow ) ) != Row )
-			ERRCcp();
+			ERRFwk();
 
 		Row = Casts.Next( Row );
 	}
 
 	if ( Row == NONE )
-		ERRCcp();
+		ERRFwk();
 
 	if ( Flow.Get() != fblcst::cEnd )
-		ERRCcp();
+		ERRFwk();
 
 	if ( Repository_.Append( (void *)NULL ) != Row )
-		ERRCcp();
+		ERRFwk();
 
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
 		if ( Flow.Get() != Casts( Row ) )
-			ERRCcp();
+			ERRFwk();
 
 		if ( Repository_.Append( GetPointer_( Flow ) ) != Row )
-			ERRCcp();
+			ERRFwk();
 
 		Row = Casts.Next( Row );
 	}

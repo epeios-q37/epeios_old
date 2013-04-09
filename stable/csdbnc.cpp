@@ -139,7 +139,7 @@ socket__ csdbnc::Connect(
 		Desc = SCK_INVALID_SOCKET;
 
 		if ( ErrorHandling == err::hThrowException )
-			ERRCcp();
+			ERRFwk();
 	}
 
 	return Desc;

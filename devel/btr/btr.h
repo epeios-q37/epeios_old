@@ -265,10 +265,10 @@ namespace btr {
 			_node__ GParent = _nodes_::Get( Parent ), GLeft = _nodes_::Get( Left );
 #ifdef BTR_DBG
 			if ( GParent.Left != NONE )
-				ERRCcp();
+				ERRFwk();
 
 			if ( ( GLeft.Parent != NONE ) && ( GLeft.Parent != Parent ) )	// Un noeud peut avoir pour fils gauche et droit le même noeud.
-				ERRCcp();
+				ERRFwk();
 #endif
 
 			GParent.Left = Left;
@@ -286,10 +286,10 @@ namespace btr {
 
 #ifdef BTR_DBG
 			if ( GParent.Right != NONE )
-				ERRCcp();
+				ERRFwk();
 
 			if ( ( GRight.Parent != NONE ) && ( GRight.Parent != Parent ) ) // Un noeud peut avoir pour fils gauche et droit le même noeud.
-				ERRCcp();
+				ERRFwk();
 #endif
 			GParent.Right = Right;
 			GRight.Parent = Parent;

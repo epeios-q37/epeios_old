@@ -309,8 +309,7 @@ namespace fblfrd {
 			const char *Message )
 		{
 			if ( _ReportingFunctions == NULL )
-
-				ERRCcp();
+				ERRFwk();
 
 			_ReportingFunctions->Report( Reply, Message );
 		}
@@ -326,7 +325,7 @@ namespace fblfrd {
 			command__ DefaultCommand;
 
 			if ( !TestBackendCasts_() )
-				ERRBkd();
+				ERRFwk();
 
 			DefaultCommand = GetBackendDefaultCommand_();
 
@@ -345,7 +344,7 @@ namespace fblfrd {
 		void _Handle( void )
 		{
 			if ( Handle() != fblovl::rOK )
-				ERRCcp();
+				ERRFwk();
 		}
 		fblovl::reply__ _Send( void )
 		{
@@ -355,7 +354,7 @@ namespace fblfrd {
 
 			if ( ( Reply = (fblovl::reply__)Channel_->Get() ) != fblovl::rOK ) {
 				if ( Reply >= fblovl::r_amount )
-					ERRBkd();
+					ERRFwk();
 
 				if ( ( !flw::GetString( *Channel_, Message_, sizeof( Message_ ) ) ) )
 					ERRLmt();
@@ -368,7 +367,7 @@ namespace fblfrd {
 		void _SendAndTest( void )
 		{
 			if ( _Send() != fblovl::rOK )
-				ERRBkd();
+				ERRFwk();
 		}
 		bso::bool__ _TestCompatibility(
 			const char *Language,
@@ -480,7 +479,7 @@ namespace fblfrd {
 				_PostProcess( *Channel_ );
 
 			if ( Channel_->Get() != fblcst::cEnd )
-				ERRBkd();
+				ERRDta();
 
 			Channel_->Dismiss();
 
@@ -502,18 +501,18 @@ namespace fblfrd {
 			return *Channel_;
 		}
 		//f Throw an user error, for testing purpose.
-		fblovl::reply__ ThrowUError( void )
+		fblovl::reply__ ThrowERRFwk( void )
 		{
-			Internal_( fblcmd::cThrowUError );
+			Internal_( fblcmd::cThrowERRFwk );
 
 			EndOfInParameters();
 
 			return Handle();	// NOTA : Always to 'true'.
 		}
 		//f Throw an intentional error, for testing purpose.
-		fblovl::reply__ ThrowIError( void )
+		fblovl::reply__ ThrowERRFree( void )
 		{
-			Internal_( fblcmd::cThrowIError );
+			Internal_( fblcmd::cThrowERRFree );
 
 			EndOfInParameters();
 

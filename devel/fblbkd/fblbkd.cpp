@@ -90,7 +90,7 @@ static const char *GetLabel_( message__ MessageId )
 	CASE( BadLanguage );
 	CASE( BackendError );
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -226,7 +226,7 @@ ERREpilog
 		}
 	}
 	else
-		ERRCcp();
+		ERRFwk();
 }
 
 
@@ -384,8 +384,8 @@ static void About_(
 	Requete.Complete();
 }
 
-// Throw an user error (ERRu), for testing purpose.
-static void ThrowUError_(
+// Throw an framework error (ERRFwk), for testing purpose.
+static void ThrowERRFwk_(
 	backend___ &Backend,
 	untyped_module &Module,
 	index__,
@@ -394,13 +394,13 @@ static void ThrowUError_(
 	bso::bool__ &,
 	void * )
 {
-	ERRCcp();
+	ERRFwk();
 
 	Requete.Complete();
 }
 
-// Throw an itentional error (ERRi), for testing purpose.
-static void ThrowIError_(
+// Throw an itentional error (ERRFree), for testing purpose.
+static void ThrowERRFree_(
 	backend___ &Backend,
 	untyped_module &Module,
 	index__,
@@ -451,10 +451,10 @@ ERRBegin
 	T = Request.Id16In();
 
 	if ( *T >= Backend.Modules.Amount() )
-		ERRCcp();
+		ERRFwk();
 
 	if ( T == FBLBKD_INVALID_TYPE )
-		ERRCcp();
+		ERRFwk();
 
 	O = Backend.New( (type__)*T );
 
@@ -563,7 +563,7 @@ ERRBegin
 		Description.Casts = CommandDetail( Position ).Casts;
 
 		if ( ( Command = Backend.Command( Type, Description ) ) == FBLBKD_INVALID_COMMAND )
-			ERRCcp();
+			ERRFwk();
 
 		Commands.Append( Command );
 
@@ -592,7 +592,7 @@ static void GetTypeAndCommands_(
 	ids16_ &Commands = Requete.Ids16Out();
 
 	if ( ( Type = Backend.Type( Name ) ) == FBLBKD_INVALID_TYPE )
-		ERRCcp();
+		ERRFwk();
 
 	Commands.Init();
 
@@ -725,11 +725,11 @@ void fblbkd::master_module::Init( fblbkd::backend___ &Backend )
 #if 0
 	RawMessages.Init();
 #endif
-	// Throw an user error (ERRu), for testing purpose.
-	ADD( ThrowUError );
+	// Throw an user error (ERRFwk), for testing purpose.
+	ADD( ThrowERRFwk );
 
 	// Throw a throw error (ERRt), for testing purpose.
-	ADD( ThrowIError );
+	ADD( ThrowERRFree );
 
 	// Test de la notification.
 	ADD( TestNotification );
@@ -812,16 +812,16 @@ ERRProlog
 	STR_BUFFER___ Buffer;
 ERRBegin
 	if ( !flw::GetString( Flow, Language, sizeof( Language ) ) )
-		ERRFlw();
+		ERRDta();
 
 	if ( !flw::GetString( Flow, RemoteProtocolVersion, sizeof( RemoteProtocolVersion ) ) )
-		ERRFlw();
+		ERRDta();
 
 	if ( !flw::GetString( Flow, RemoteBackendLabel, sizeof( RemoteBackendLabel ) ) )
-		ERRFlw();
+		ERRDta();
 
 	if ( !flw::GetString( Flow, RemoteAPIVersion, sizeof( RemoteAPIVersion ) ) )
-		ERRFlw();
+		ERRDta();
 
 	Flow.Dismiss();
 
@@ -892,7 +892,7 @@ ERRBegin
 	flw::Get( Request.Input(), O );
 
 	if ( ( !Links.Exists( O ) ) && ( O != FBLBKD_MASTER_OBJECT ) )
-		ERRCcp();
+		ERRFwk();
 
 	if ( O != FBLBKD_MASTER_OBJECT ) {
 		Module_( O ).Handle( Index_( O ), Request, PU, LogFunctions );

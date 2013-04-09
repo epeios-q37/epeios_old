@@ -78,7 +78,7 @@ bso::bool__ csducl::universal_client_core::Init(
 		Success = _LibraryAccess.Init( Backend, LibraryData, err::hUserDefined );
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 

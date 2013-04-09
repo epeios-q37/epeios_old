@@ -87,7 +87,7 @@ ERRProlog
 	FNM_BUFFER___ Buffer;
 ERRBegin
 	if ( Data == NULL )
-		ERRCcp();
+		ERRPrm();
 
 	if ( !IsInitialized_ && !Data->DryRun )	{
 		cio::COutDriver.Init( *Data->COut, fdr::ts_Default );
@@ -111,7 +111,7 @@ ERRBegin
 		Mode = fblbur::mRemote;
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 

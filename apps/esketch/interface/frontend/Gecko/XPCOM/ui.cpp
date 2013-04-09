@@ -41,7 +41,7 @@ static void _ShowPanel(
 		MainPanel = UI.Main.Widgets.vewSessionView;
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -68,7 +68,7 @@ void ui::ui___::_Update( void )
 		SessionView.Update();
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 

@@ -396,7 +396,7 @@ namespace nsxpcm {
 
 #define T( f )\
 		if ( !_T( f ) )\
-			ERRExt()
+			ERRLbr()
 
 	// 'ContractID' est une chaîne de caratère du genre "@mozilla.org/filepicker;1".
 	template <typename t> inline t *GetService(
@@ -438,7 +438,7 @@ namespace nsxpcm {
 		T( Document->GetElementById( EId, &Element ) );
 
 		if ( Element == NULL )	// Chercher un élément inexistant ne provoque pas d'erreur.
-			ERRCcp();
+			ERRFwk();
 
 		return Element;
 	}
@@ -455,7 +455,7 @@ namespace nsxpcm {
 		T( Document->GetElementById( EId, &Element ) );
 
 		if ( Element == NULL )	// Chercher un élément inexistant ne provoque pas d'erreur.
-			ERRCcp();
+			ERRFwk();
 
 		return Element;
 	}
@@ -466,7 +466,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( GenericElement == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( GenericElement->QueryInterface( element::GetIID(), (void **)&Element ) );
@@ -517,7 +517,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Document == NULL )
-			ERRCcp();
+			ERRFwk();
 #endif
 
 		T( Document->CreateElement( WName, &Element ) );
@@ -583,7 +583,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetNodeName( RawName ) );
@@ -664,7 +664,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->HasAttribute( WName, &Result ) );
@@ -691,7 +691,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->SetAttribute( WName, WValue ) );
@@ -717,7 +717,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->SetAttribute( EName, EValue ) );
@@ -741,7 +741,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->RemoveAttribute( WName ) );
@@ -869,7 +869,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->SetValue( WValue ) );
@@ -885,7 +885,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Element == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		
 		T( Element->SetValue( WValue ) );
@@ -1008,13 +1008,13 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( OldChild == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( NewChild == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		T( Node->ReplaceChild( NewChild, OldChild, &Dummy ) );
 	}
@@ -1027,10 +1027,10 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( Child == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		T( Node->AppendChild( Child, &Dummy ) );
 	}
@@ -1046,13 +1046,13 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( Sibling == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( Parent == NULL )
-			ERRCcp();
+			ERRFwk();
 #endif
 		T( Parent->InsertBefore( Sibling, Node, &Dummy ) );
 	}
@@ -1063,7 +1063,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRFwk();
 #endif
 
 		T( Node->HasAttributes( &Result ) );
@@ -1077,7 +1077,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetFirstChild( &Child ) );
@@ -1091,7 +1091,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetLastChild( &Child ) );
@@ -1105,7 +1105,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetPreviousSibling( &Child ) );
@@ -1119,7 +1119,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetNextSibling( &Child ) );
@@ -1133,7 +1133,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		T( Node->GetParentNode( &Parent ) );
@@ -1149,10 +1149,10 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 
 		if ( Child == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 		T( Node->RemoveChild( Child, &Dummy ) );
 	}
@@ -1161,7 +1161,7 @@ namespace nsxpcm {
 	{
 #ifdef NSXPCM_DBG
 		if ( Node == NULL )
-			ERRCcp();
+			ERRPrm();
 #endif
 
 		while ( GetLastChild( Node ) != NULL )
@@ -1455,14 +1455,14 @@ namespace nsxpcm {
 		void EventStopPropagation( void )
 		{
 			if ( _RawEvent == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			_RawEvent->StopPropagation();
 		}
 		void EventPreventDefault( void )
 		{
 			if ( _RawEvent == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			_RawEvent->PreventDefault();
 		}
@@ -1507,7 +1507,7 @@ namespace nsxpcm {
 			case err::t_Exit:
 				break;
 			case err::t_Return:
-				ERRCcp();
+				ERRFwk();
 				break;
 			case err::t_Abort:
 				_OnErr();
@@ -1545,7 +1545,7 @@ namespace nsxpcm {
 		}
 		virtual void NSXPCMOnEvent(	event__ Event )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		virtual void NSXPCMOnErr( const char *Message ) = 0;	// Appelé lors d'un 'ERR...(...)'.
 																/* ATTENTION : si 'Message' == 'NULL', alors les informations relatives à l'erreur ne sont pas disponibles
@@ -1645,7 +1645,7 @@ namespace nsxpcm {
 		{
 # ifdef NSXPCM_DBG
 			if ( _Supports != NULL )
-				ERRCcp();
+				ERRFwk();
 # endif
 			reset();
 
@@ -2112,7 +2112,7 @@ namespace nsxpcm {
 			T( GetWidget()->GetCurrentItem( &Item ) );
 
 			if ( ( Item == NULL ) && ( ErrorIfInexistant ) )
-				ERRCcp();
+				ERRFwk();
 
 			return Item;
 		}
@@ -2191,7 +2191,7 @@ namespace nsxpcm {
 			T( GetWidget()->GetView( &View ) );
 
 			if ( View == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return View;
 		}
@@ -2202,7 +2202,7 @@ namespace nsxpcm {
 			T( _GetView()->GetSelection( &Selection ) );
 
 			if ( Selection == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return Selection;
 		}
@@ -2234,7 +2234,7 @@ namespace nsxpcm {
 			T( _GetContentView()->GetItemAtIndex( GetCurrentIndex(), &Element ) );
 
 			if ( ( Element == NULL ) && ErrorIfInexistent )
-				ERRCcp();
+				ERRFwk();
 
 			return Element;
 		}
@@ -2623,7 +2623,7 @@ namespace nsxpcm {
 			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 				ParentWindow = MasterWindow;
 			else
-				ERRCcp();
+				ERRFwk();
 
 		T( GetWindowInternal( ParentWindow )->Open( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar" ), WindowBuffer ) );;
 	ERRErr
@@ -2663,10 +2663,10 @@ namespace nsxpcm {
 			if ( ( MasterWindow = RetrieveMasterWindow() ) != NULL )
 				ParentWindow = MasterWindow;
 			else
-				ERRCcp();
+				ERRFwk();
 
 		if ( ParentWindow == NULL )
-			ERRCcp();	// Fonction bloquante, donc on ne peut pas prendre 'MAsterWindow' (risque de bloquer la fenêtre non initiatrice de l'ouverture de la boîte de dialogue).
+			ERRFwk();	// Fonction bloquante, donc on ne peut pas prendre 'MasterWindow' (risque de bloquer la fenêtre non initiatrice de l'ouverture de la boîte de dialogue).
 
 		T( GetWindowInternal( ParentWindow )->OpenDialog( TransformedURL, TransformedName, NS_LITERAL_STRING( "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,modal" ), NULL, WindowBuffer ) );
 	ERRErr
@@ -2943,7 +2943,7 @@ namespace nsxpcm {
 	template <typename type> inline const type &GetWorkingDirectory( type &Directory )
 	{
 		if ( !GetDirectory( NS_OS_CURRENT_WORKING_DIR, Directory, err::hUserDefined ) )
-			ERRExt();
+			ERRSys();
 
 		return Directory;
 	}
@@ -2951,7 +2951,7 @@ namespace nsxpcm {
 	template <typename type> inline const type &GetInstallationDirectory( type &Directory )
 	{
 		if ( !GetDirectory( NS_OS_CURRENT_PROCESS_DIR, Directory, err::hUserDefined ) )
-			ERRExt();
+			ERRSys();
 
 		return Directory;
 	}
@@ -3144,7 +3144,7 @@ namespace nsxpcm {
 		{
 #ifdef NSXPCM_DBG
 			if ( _EventHandler != NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			reset();
 
@@ -3221,7 +3221,7 @@ namespace nsxpcm {
 		tree_view_callback__ &_C( void )
 		{
 			if ( _Callback == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return *_Callback;
 		}
@@ -3275,7 +3275,7 @@ namespace nsxpcm {
 			bso::uint__ Index,
 			str::string_ &Comment )
 		{
-			ERRCcp();
+			ERRFwk();
 		}
 		virtual bso::uint__ NSXPCMGetMatchingCount( const str::string_ &Pattern ) = 0;
 	public:
@@ -3332,7 +3332,7 @@ namespace nsxpcm {
 		autocomplete_textbox_callback__ &_C( void )
 		{
 			if ( _Callback == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return *_Callback;
 		}
@@ -3387,7 +3387,7 @@ namespace nsxpcm {
 			bso::pointer_buffer__ Buffer;
 		ERRBegin
 			if ( HasAttribute( "type" )  )
-				ERRCcp();
+				ERRFwk();
 
 			SetAttribute( "type", "autocomplete" );
 

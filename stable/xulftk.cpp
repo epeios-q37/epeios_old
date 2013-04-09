@@ -184,7 +184,7 @@ ERREpilog
 void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	_Trunk->UI().LogAndPrompt( Message );
 
@@ -194,7 +194,7 @@ void xulftk::reporting_functions__::FRDKRNReportBackendError( const str::string_
 void xulftk::reporting_functions__::FRDKRNReportFrontendError( const str::string_ &Message )
 {
 	if ( _Trunk == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	_Trunk->UI().Alert( Message );
 
@@ -228,7 +228,7 @@ ERRBegin
 		ERRAbort();
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 ERRErr
@@ -353,7 +353,7 @@ ERRBegin
 	case dOut:
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -424,7 +424,7 @@ ERRBegin
 		ERRReturn;
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
@@ -589,7 +589,7 @@ ERRBegin
 	case frdkrn::bxtNone:
 		break;
 	case frdkrn::bxtPredefined:
-		ERRCcp();
+		ERRFwk();
 		break;
 	case frdkrn::bxtDaemon:
 		UI().SessionForm().Widgets.txbDaemonBackend.SetValue( Location );
@@ -601,7 +601,7 @@ ERRBegin
 		Type = frdkrn::bxtNone;
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 

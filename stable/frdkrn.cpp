@@ -81,7 +81,7 @@ const char *frdkrn::GetLabel( recap__ Recap )
 		CASE( BackendError );
 		CASE( UnableToOpenFile );
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 	}
 
@@ -124,7 +124,7 @@ ERRBegin
 			Meaning.AddTag( ErrorSet.Misc );
 			break;
 		default:
-			ERRCcp();
+			ERRPrm();
 			break;
 		}
 
@@ -148,9 +148,9 @@ project_type__ frdkrn::GetProjectType(
 	else if ( Label == PROJECT_TYPE_USER )
 		return ptUser;
 	else if ( ErrHandling = err::hThrowException )
-		ERRCcp();
+		ERRFwk();
 	else if ( ErrHandling != err::hUserDefined )
-		ERRCcp();
+		ERRPrm();
 
 	return pt_Undefined;
 }
@@ -209,7 +209,7 @@ static const char *GetBackendExtendedTypeLabel_( backend_extended_type__ Type )
 		return BACKEND_EXTENDED_TYPE_EMBEDDED;
 		break;
 	default:
-		ERRCcp();
+		ERRPrm();
 		break;
 	}
 
@@ -281,7 +281,7 @@ ERRProlog
 	str::string Translation;
 ERRBegin
 	if ( _Kernel == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	Meaning.Init();
 	Meaning.SetValue( fblovl::GetLabel( Reply ) );
@@ -433,7 +433,7 @@ csducl::type__ frdkrn::GetBackendTypeAndLocation(
 	case bxt_Undefined:
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 
@@ -464,7 +464,7 @@ ERRBegin
 		Recap = rNoOrBadBackendDefinition;
 		break;
 	default:
-		ERRCcp();
+		ERRFwk();
 		break;
 	}
 ERRErr
@@ -592,7 +592,7 @@ ERRBegin
 	case rgstry::sOK:
 		break;
 	case rgstry::sUnableToFindRootPath:
-		ERRCcp();
+		ERRFwk();
 		break;
 	default:
 		Recap = rSetupParsingError;
@@ -952,7 +952,7 @@ public:
 	frdkrnpersonnalization( void )
 	{
 		if ( FRDKRN__R_AMOUNT != r_amount )
-			ERRCcp();	// 
+			ERRChk();	// 
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

@@ -66,8 +66,8 @@ extern class ttr_tutor &JVABSETutor;
 # include "tol.h"
 # include "str.h"
 
-# ifndef CPE_JAVA
-#  error "Use of JNI, but without defining the target as a Java component (define 'CPE_JAVA')."
+# ifndef E_JAVA
+#  error "Use of JNI, but without defining the target as a Java component (define 'E_JAVA')."
 # endif
 
 # ifndef CPE_LIBRARY
@@ -126,7 +126,7 @@ namespace jvabse {
 		jclass Class = Env->GetObjectClass( Object );
 
 		if ( Class == NULL )
-			ERRx();
+			ERRLbr();
 
 		return Class;
 	}
@@ -140,7 +140,7 @@ namespace jvabse {
 		jmethodID MethodID = Env->GetMethodID( Class, Name, Signature );
 
 		if ( MethodID == NULL )
-			ERRc();
+			ERRLbr();
 
 		return MethodID;
 	}
@@ -163,7 +163,7 @@ namespace jvabse {
 		jmethodID MethodID = Env->GetStaticMethodID( Class, Name, Signature );
 
 		if ( MethodID == NULL )
-			ERRc();
+			ERRLbr();
 
 		return MethodID;
 	}
@@ -186,7 +186,7 @@ namespace jvabse {
 		jfieldID FieldID = Env->GetFieldID( Class, Name, Signature );
 
 		if ( FieldID == NULL )
-			ERRc();
+			ERRLbr();
 
 		return FieldID;
 	}
@@ -209,7 +209,7 @@ namespace jvabse {
 		jfieldID FieldID = Env->GetStaticFieldID( Class, Name, Signature );
 
 		if ( FieldID == NULL )
-			ERRc();
+			ERRLbr();
 
 		return FieldID;
 	}
@@ -255,7 +255,7 @@ namespace jvabse {
 		jobject Field = Env->GetObjectField( Object, GetFieldID( Env, Object, Name, Signature ) );
 
 		if ( Field == NULL )
-			ERRc();
+			ERRLbr();
 
 		return Field;
 	}
@@ -269,7 +269,7 @@ namespace jvabse {
 		jobject Object = Env->GetStaticObjectField( Class, GetStaticFieldID( Env, Class, Name, Signature ) );;
 
 		if ( Object == NULL )
-			ERRc();
+			ERRLbr();
 
 		return Object;
 	}
@@ -302,7 +302,7 @@ namespace jvabse {
 		if ( ( Signature == NULL )
 			  || ( Signature[0] == 0 )
 			  ||( Signature[strlen( Signature )-1] != ';' ) )
-			ERRc();
+			ERRPrm();
 
 		Env->SetObjectField( Object, GetFieldID( Env, Object, Name, Signature ), Value );
 	}

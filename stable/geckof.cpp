@@ -67,7 +67,7 @@ bso::bool__ geckof::gecko_wrapper___::_CreateSteering( geckoo::shared_data__ *Da
 		return false;
 
 	if ( _Steering != NULL )
-		ERRCcp();
+		ERRFwk();
 
 	if ( ( _Steering = CreateSteering( Data ) ) == NULL )
 		return false;
@@ -85,7 +85,7 @@ bso::bool__ geckof::gecko_wrapper___::_DeleteSteering( void )
 		return false;
 
 	if ( _Steering == NULL )
-		ERRCcp();
+		ERRFwk();
 
 	DeleteSteering( _Steering );
 

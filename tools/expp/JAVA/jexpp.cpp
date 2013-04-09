@@ -169,7 +169,7 @@ JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_available(
 	jobject Object )
 {
 	Print_( Env, __LOC__ );
-	jint Amount = 0;
+	bso::size__ Amount = 0;
 ERRJProlog
 	flw::iflow__ *Flow = NULL;
 ERRJBegin
@@ -177,11 +177,17 @@ ERRJBegin
 
 	if ( Flow != NULL )
 		Amount = Flow->Available();
+
+	if ( Amount < 0 )
+		ERRFwk();
+	else if ( Amount > ULONG_MAX )
+		Amount = ULONG_MAX;
+
 ERRJErr
 ERRJEnd
 ERRJEpilog
 	Print_( Env, __LOC__ );
-	return Amount;
+	return (jint)Amount;
 }
 
 JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read__(
@@ -223,7 +229,7 @@ ERRJBegin
 	Flow = GetFlow_( Env, Object );
 
 	if ( Flow != NULL ) {
-		Amount = Flow->ReadUpTo( Amount, Buffer );
+		Amount = (jsize)Flow->ReadUpTo( Amount, Buffer );
 
 		if ( Amount == 0 )
 			Amount = -1;
@@ -282,7 +288,7 @@ ERRJBegin
 	Print_( Env, __LOC__ );
 
 	if ( Data == NULL )
-		ERRa();
+		ERRAlc();
 
 	Print_( Env, __LOC__ );
 

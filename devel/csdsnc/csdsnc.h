@@ -235,7 +235,7 @@ ERREpilog
 		}
 		core_ &operator =( const core_ &C )
 		{
-			ERRCcp();
+			ERRFbd();
 
 			return *this;
 		}
@@ -358,7 +358,7 @@ ERREpilog
 		{
 #ifdef CSDSNC_DBG
 			if ( _Flow == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 
 			_Flow->Commit();
@@ -366,7 +366,7 @@ ERREpilog
 			if ( _Id == CSDSNB_UNDEFINED )
 				_Id = GetId( *_Flow );
 			else if ( _Flow->Get() != 0 )
-				ERRFlw();
+				ERRDta();
 		}
 	protected:
 		virtual fdr::size__ FDRWrite(

@@ -121,21 +121,21 @@ namespace {
 		P = Item.Values.First();
 
 		if ( P == NONE) 
-			ERRBkd();
+			ERRFwk();
 
 		Type.Prefix = Value( P );
 
 		P = Item.Values.Next( P );
 
 		if ( P == NONE) 
-			ERRBkd();
+			ERRFwk();
 
 		Type.Name = Value( P );
 
 		P = Item.Values.Next( P );
 
 		if ( P != NONE) 
-			ERRBkd();
+			ERRFwk();
 	}
 
 	void HandleTypes_(

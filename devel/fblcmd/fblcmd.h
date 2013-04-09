@@ -69,8 +69,8 @@ namespace fblcmd {
 	using namespace fblcst;
 
 	enum command {
-		cThrowUError,
-		cThrowIError,
+		cThrowERRFwk,
+		cThrowERRFree,
 		cTestNotification,
 		cGetNewObject,
 		cGetType,

@@ -120,7 +120,7 @@ namespace xulftk {
 		trunk___ &_T( void )
 		{
 			if ( _Trunk == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return *_Trunk;
 		}
@@ -141,36 +141,36 @@ namespace xulftk {
 			const char *BuildInformations,
 			str::string_ &Text )
 		{
-			ERRCcp();	// Si pas surchargé, alors 'xulfmn::about_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	// Si pas surchargé, alors 'xulfmn::about_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKSiteURL( str::string_ &URL )
 		{
-			ERRCcp();	// Si pas surchargé, alors 'xulfmn::web_site_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	// Si pas surchargé, alors 'xulfmn::web_site_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKGoToHome( void ) = 0;
 		virtual void XULFTKDefineSession(
 			const str::string_ &ProjectFileName,
 			const xpp::criterions___ &XMLPreprocessorCriterions )
 		{
-			ERRCcp();	//	Si pas surchargé, alors 'xulfsf::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	//	Si pas surchargé, alors 'xulfsf::open_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKApplySession( void )
 		{
-			ERRCcp();	//	Si pas surchargé, alors 'xulfsf::apply_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	//	Si pas surchargé, alors 'xulfsf::apply_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual void XULFTKCancelSession( void )
 		{
-			ERRCcp();	//	Si pas surchargé, alors 'xulfsf::cancel_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	//	Si pas surchargé, alors 'xulfsf::cancel_eh__::NSXPCMOnEvent()' doit être redéfini.
 		}
 		virtual bso::bool__ XULFTKDropSession( void )	// Retourne 'true' si la session aeffectivement été fermée, 'false' sinon.
 		{
-			ERRCcp();	//	Si pas surchargé, alors 'xulfmn::close_project_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	//	Si pas surchargé, alors 'xulfmn::close_project_eh__::NSXPCMOnEvent()' doit être redéfini.
 
 			return false;	// Pour éviter un 'warning'.
 		}
 		virtual bso::bool__ XULFTKExit( void )
 		{
-			ERRCcp();	//	Si pas surchargé, alors 'xulfmn::exit_eh__::NSXPCMOnEvent()' doit être redéfini.
+			ERRFwk();	//	Si pas surchargé, alors 'xulfmn::exit_eh__::NSXPCMOnEvent()' doit être redéfini.
 
 			return true;	// Pour éviter un 'warning'.
 		}
@@ -254,7 +254,7 @@ namespace xulftk {
 		_user_callback__ &_UF( void )
 		{
 			if ( _UserCallback == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return *_UserCallback;
 		}
@@ -329,7 +329,7 @@ namespace xulftk {
 		{
 #ifdef XULFTK_DBG
 			if ( _Kernel == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_Kernel;
 		}
@@ -337,7 +337,7 @@ namespace xulftk {
 		{
 #ifdef XULFTK_DBG
 			if ( _Kernel == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_Kernel;
 		}
@@ -345,7 +345,7 @@ namespace xulftk {
 		{
 #ifdef XULFTK_DBG
 			if ( _Kernel == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_UI;
 		}
@@ -353,7 +353,7 @@ namespace xulftk {
 		{
 #ifdef XULFTK_DBG
 			if ( _Kernel == NULL )
-				ERRCcp();
+				ERRFwk();
 #endif
 			return *_UI;
 		}
@@ -469,7 +469,7 @@ namespace xulftk {
 		const char *DefaultXSLRootPath( void ) const
 		{
 			if ( _DefaultXSLRootPath == NULL )
-				ERRCcp();
+				ERRFwk();
 
 			return _DefaultXSLRootPath;
 		}
