@@ -93,10 +93,10 @@ namespace idxbtq {
 			E_IBTREEt_( r )::reset( P );
 			E_IQUEUEt_( r )::reset( P );
 		}
-		void plug( mmm::multimemory_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_IBTREEt_( r )::plug( MM );
-			E_IQUEUEt_( r )::plug( MM );
+			E_IBTREEt_( r )::plug( AS );
+			E_IQUEUEt_( r )::plug( AS );
 		}
 		tree_queue_index_ &operator =( const tree_queue_index_ &I )
 		{
@@ -123,7 +123,7 @@ namespace idxbtq {
 		}
 		//f Allocate enough room to contain 'Size' items.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			E_IBTREEt_( r )::Allocate( Size, Mode );
@@ -165,9 +165,9 @@ namespace idxbtq {
 		//f Balances the tree of the index.
 		r Balance(
 			r Root,
-			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
+			sdr::E_SDRIVER__ &SD = SDR_INTERNAL_SDRIVER )
 		{
-			return E_IBTREEt_( r )::Fill( *this, First( Root ), MD );
+			return E_IBTREEt_( r )::Fill( *this, First( Root ), SD );
 		}
 		r Compare( r Root ) const
 		{
@@ -189,7 +189,7 @@ namespace idxbtq {
 		{
 			return E_IQUEUEt_( r )::Previous( Current );
 		}
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return E_IBTREEt_( r )::Amount();
 		}
@@ -286,7 +286,7 @@ namespace idxbtq {
 			const char *QueueFileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
 			reset();
 
@@ -294,38 +294,38 @@ namespace idxbtq {
 
 			_QueueFileManager.Init( QueueFileName, Mode, Persistent, ID );
 		}
-		uym::state__ State( void ) const
+		uys::state__ State( void ) const
 		{
-			uym::state__ State = _TreeFileManager.State();
+			uys::state__ State = _TreeFileManager.State();
 
-			if ( !uym::IsError( State ) )
+			if ( !uys::IsError( State ) )
 				if ( State != _QueueFileManager.State() )
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _TreeFileManager.Bind();
+			uys::state__ State = _TreeFileManager.Bind();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _QueueFileManager.Bind() != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _TreeFileManager.Settle();
+			uys::state__ State = _TreeFileManager.Settle();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
 			if ( _QueueFileManager.Settle() != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			return State;
 
@@ -343,7 +343,7 @@ namespace idxbtq {
 		bso::bool__ IsPersistent( void ) const
 		{
 			if ( ( _TreeFileManager.IsPersistent() ) != _QueueFileManager.IsPersistent() )
-				ERRc();
+				ERRFwk();
 
 			return _TreeFileManager.IsPersistent();
 		}
@@ -352,7 +352,7 @@ namespace idxbtq {
 			bso::bool__ Exists = _TreeFileManager.Exists();
 
 			if ( Exists != _QueueFileManager.Exists() )
-				ERRc();
+				ERRFwk();
 
 			return Exists;
 		}
@@ -392,20 +392,20 @@ namespace idxbtq {
 	};
 
 
-	template <typename index> uym::state__ Plug(
+	template <typename index> uys::state__ Plug(
 		index &Index,
 		index_file_manager___ &FileManager )
 	{
-		uym::state__ State = idxbtr::Plug( Index, FileManager.TreeFileManager() );
+		uys::state__ State = idxbtr::Plug( Index, FileManager.TreeFileManager() );
 
-		if ( uym::IsError( State ) ) {
+		if ( uys::IsError( State ) ) {
 			FileManager.reset();
 			return State;
 		}
 
 		if ( State != idxque::Plug( Index, FileManager.QueueFileManager() ) ) {
 			FileManager.reset();
-			State = uym::sInconsistent;
+			State = uys::sInconsistent;
 		}
 
 		return State;
@@ -418,11 +418,11 @@ namespace idxbtq {
 #define E_INDEXt_( r )	tree_queue_index_<r>
 #define E_INDEXt( r )	tree_queue_index<r>
 
-#define E_INDEX_	E_INDEXt_( mdr::row__ )
-#define E_INDEX		E_INDEXt( mdr::row__ )
+#define E_INDEX_	E_INDEXt_( sdr::row__ )
+#define E_INDEX		E_INDEXt( sdr::row__ )
 
 #define E_ISEEKERt__( r )	index_seeker__<r>
-#define E_ISEEKER__			index_seeker__<mdr::row__>
+#define E_ISEEKER__			index_seeker__<sdr::row__>
 
 /*$END$*/
 				  /********************************************/

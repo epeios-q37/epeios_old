@@ -63,7 +63,7 @@ using namespace ndbsct;
 void ndbsct::static_content_atomized_file_manager___::Init(
 	const str::string_ &BaseFileName,
 	fil::mode__ Mode,
-	flm::id__ ID )
+	fls::id__ ID )
 {
 ERRProlog
 	str::string FileName;

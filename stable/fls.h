@@ -671,7 +671,7 @@ namespace fls {
 		}
 	};
 
-	#define E_FILE_STORAGE_DRIVER___	file_storage_driver___
+	#define E_FILE_SDRIVER___	file_storage_driver___
 
 	void ReleaseInactiveFiles_(
 		bso::uint__ Delay,	// in s.

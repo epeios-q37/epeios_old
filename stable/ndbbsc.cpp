@@ -71,7 +71,7 @@ ERRBegin
 
 		if ( fil::FileExists( FileName.Convert( FileNameBuffer) ) )
 			if ( remove( FileNameBuffer ) != 0 )
-				ERRd();
+				ERRLbr();
 	}
 ERRErr
 ERREnd

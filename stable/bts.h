@@ -83,7 +83,7 @@ namespace bts {
 		t_amount
 	};
 
-	typedef mdr::row_t__	_row__;
+	typedef sdr::row_t__	_row__;
 
 	//c Base binary tree seeker. Internal use.
 	class _binary_tree_seeker__
@@ -189,7 +189,7 @@ namespace bts {
 
 				break;
 			default:
-				ERRc();
+				ERRFwk();
 				break;
 			}
 
@@ -244,7 +244,7 @@ namespace bts {
 	};
 
 	#define E_BTREE_SEEKERt__( r )	binary_tree_seeker__< r >
-	#define E_BTREE_SEEKER__		E_BTREE_SEEKERt__( mdr::row__ )
+	#define E_BTREE_SEEKER__		E_BTREE_SEEKERt__( sdr::row__ )
 }
 
 /*$END$*/

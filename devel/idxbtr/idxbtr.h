@@ -85,7 +85,7 @@ namespace idxbtr {
 		r Equilibrer_(
 			que::E_QUEUEt_( r ) &Index,
 			r Premier,
-			mdr::E_MEMORY_DRIVER__ &Pilote );
+			sdr::E_SDRIVER__ &Pilote );
 		r _Compare(
 			const que::E_QUEUEt_( r ) &Queue,
 			r First ) const;
@@ -114,9 +114,9 @@ namespace idxbtr {
 		{
 			BaseTree.reset( P );
 		}
-		void plug( mmm::multimemory_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			BaseTree.plug( MM );
+			BaseTree.plug( AS );
 		}
 /*
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
@@ -149,7 +149,7 @@ namespace idxbtr {
 			return BaseTree.GetRoot( Row );
 		}
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			BaseTree.Allocate( Size, Mode );
@@ -190,7 +190,7 @@ namespace idxbtr {
 				else
 					return NONE;
 		}
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return BaseTree.Amount();
 		}
@@ -316,7 +316,7 @@ namespace idxbtr {
 		{
 #ifdef IDXBTR_DBG
 			if ( BaseTree.HasParent( Node ) )
-				ERRu();
+				ERRFwk();
 #endif
 		}
 		r GetParent( r Node ) const
@@ -360,13 +360,13 @@ namespace idxbtr {
 		r Fill(
 			que::E_QUEUEt_( r ) &Queue,
 			r Head,
-			mdr::E_MEMORY_DRIVER__ &MD = MDR_INTERNAL_MEMORY_DRIVER )
+			sdr::E_SDRIVER__ &SD = SDR_INTERNAL_SDRIVER )
 		{
 			Init();
 
 			Allocate( Queue.Amount() );
 
-			return Equilibrer_( Queue, Head, MD );
+			return Equilibrer_( Queue, Head, SD );
 		}
 		r Compare(
 			const que::E_QUEUEt_( r ) &Queue,
@@ -381,18 +381,18 @@ namespace idxbtr {
 		{
 			BaseTree.PrintStructure( Root, OStream );
 		}
-		friend mdr::row_t__ Equilibrer_(
-			tree_index_<mdr::row__> &Tree,
+		friend sdr::row_t__ Equilibrer_(
+			tree_index_<sdr::row__> &Tree,
 			que::E_QUEUE_ &File,
-			mdr::row_t__ Premier,
-			mdr::E_MEMORY_DRIVER__ &Pilote );
+			sdr::row_t__ Premier,
+			sdr::E_SDRIVER__ &Pilote );
 	};
 
 	E_AUTO1( tree_index )
 
 	typedef btr::binary_tree_file_manager___ tree_index_file_manager___;
 
-	template <typename index> uym::state__ Plug(
+	template <typename index> uys::state__ Plug(
 		index &Index,
 		tree_index_file_manager___ &FileManager )
 	{
@@ -403,28 +403,28 @@ namespace idxbtr {
 	#define E_IBTREEt( r )	tree_index< r >
 	#define E_IBTREEt_( r )	tree_index_< r >
 
-	#define E_IBTREE	E_IBTREEt( mdr::row__ )
-	#define E_IBTREE_	E_IBTREEt_( mdr::row__ )
+	#define E_IBTREE	E_IBTREEt( sdr::row__ )
+	#define E_IBTREE_	E_IBTREEt_( sdr::row__ )
 
-	mdr::row_t__ Balance_(
+	sdr::row_t__ Balance_(
 		E_IBTREE_ &Tree,
-		mdr::row_t__ Root );
+		sdr::row_t__ Root );
 
-	mdr::row_t__ Equilibrer_(
+	sdr::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
-		mdr::row_t__ Premier,
-		mdr::E_MEMORY_DRIVER__ &Pilote );
+		sdr::row_t__ Premier,
+		sdr::E_SDRIVER__ &Pilote );
 
-	mdr::row_t__ Compare_(
+	sdr::row_t__ Compare_(
 		const E_IBTREE_ &Tree,
 		const que::E_QUEUE_ &File,
-		mdr::row_t__ First );	// Compare 'Tree' avec 'Queue'.
+		sdr::row_t__ First );	// Compare 'Tree' avec 'Queue'.
 
 	template <typename r> inline r tree_index_<r>::Equilibrer_(
 		que::E_QUEUEt_( r ) &Index,
 		r Premier,
-		mdr::E_MEMORY_DRIVER__ &Pilote )
+		sdr::E_SDRIVER__ &Pilote )
 	{
 		return idxbtr::Equilibrer_( *(E_IBTREE_ *)this, *(que::E_QUEUE_ *)&Index, *Premier, Pilote );
 	}
@@ -451,10 +451,10 @@ namespace idxbtr {
 		void _Test( void ) const
 		{
 			if ( Index_== NULL )
-				ERRu();
+				ERRFwk();
 
 			if ( _Current == NONE )
-				ERRu();
+				ERRFwk();
 		}
 #endif
 		r _Handle( r Row )

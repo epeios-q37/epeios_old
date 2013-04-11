@@ -117,7 +117,7 @@ namespace ndbbsc {
 			_queue_::s Queue;
 			_list_::s List;
 			_links_::s Links;
-			bso::ulong__ AmountMax;
+			bso::size__ AmountMax;
 		} &S_;
 		cache_( s &S )
 		: S_( S ),
@@ -135,12 +135,12 @@ namespace ndbbsc {
 
 			S_.AmountMax = 0;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Container.plug( MM );
-			Queue.plug( MM );
-			List.plug( MM );
-			Links.plug( MM );
+			Container.plug( AS );
+			Queue.plug( AS );
+			List.plug( AS );
+			Links.plug( AS );
 		}
 		cache_ &operator =( const cache_ &C )
 		{
@@ -154,8 +154,8 @@ namespace ndbbsc {
 			return *this;
 		}
 		void Init(
-			mdr::size__ Size,
-			bso::ulong__ AmountMax = NDBBSC_CACHE_DEFAULT_AMOUNT_MAX )
+			sdr::size__ Size,
+			bso::size__ AmountMax = NDBBSC_CACHE_DEFAULT_AMOUNT_MAX )
 		{
 			reset();
 
@@ -169,12 +169,12 @@ namespace ndbbsc {
 
 			S_.AmountMax = AmountMax;
 		}
-		void Resize( mdr::size__ Size )
+		void Resize( sdr::size__ Size )
 		{
-			mdr::size__ CurrentSize = List.Amount();
+			sdr::size__ CurrentSize = List.Amount();
 
 			if ( CurrentSize > Size )
-				ERRu();
+				ERRPrm();
 			else if ( CurrentSize < Size ) {
 				List.Allocate( Size );
 
@@ -201,7 +201,7 @@ namespace ndbbsc {
 		{
 #ifdef NDBBSC_DBG
 			if ( _IsMember( Row ) )
-				ERRu();
+				ERRFwk();
 #endif
 			crow__ CacheRow = NONE;
 
@@ -230,7 +230,7 @@ namespace ndbbsc {
 				List.Store( NONE, Row );
 			}
 		}
-		const mdr::size__ Size( void ) const
+		const sdr::size__ Size( void ) const
 		{
 			return List.Amount();
 		}

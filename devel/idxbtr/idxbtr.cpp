@@ -62,17 +62,17 @@ namespace idxbtr {
 	struct desc__
 	{
 		// Racine de l'arbre. N'a pas de fils droit. L'arbre de fils gauche est complet.
-		mdr::row__ Racine;
+		sdr::row__ Racine;
 		// Niveau de l'arbre.
-		mdr::size__ Niveau;
+		sdr::size__ Niveau;
 	};
 
-	mdr::row_t__ Balance_(
+	sdr::row_t__ Balance_(
 		E_IBTREE_ &Tree,
-		mdr::row_t__ Root )
+		sdr::row_t__ Root )
 	{
 	ERRProlog
-		mdr::row__ Current, Head, Temp;
+		sdr::row__ Current, Head, Temp;
 		que::E_QUEUE Queue;	
 	ERRBegin
 		Queue.Init();
@@ -103,16 +103,16 @@ namespace idxbtr {
 
 	/* Equilibre l'arbre, sachant que l'ordre des éléments est donnée par
 	la file 'File' de tête 'Tete' et que l'on doit utiliser la pile 'Pile'. */
-	mdr::row_t__ Equilibrer_(
+	sdr::row_t__ Equilibrer_(
 		E_IBTREE_ &Tree,
 		que::E_QUEUE_ &File,
-		mdr::row_t__ Premier,
-		mdr::E_MEMORY_DRIVER__ &Pilote )
+		sdr::row_t__ Premier,
+		sdr::E_SDRIVER__ &Pilote )
 	{
-		mdr::row_t__ Racine, &Courant = Premier;
+		sdr::row_t__ Racine, &Courant = Premier;
 	ERRProlog
 		stk::E_BSTACK( desc__ ) Pile;
-		mdr::size__ Niveau = 0;
+		sdr::size__ Niveau = 0;
 		desc__ Sommet;
 		bso::bool__ Boucler = true;
 	ERRBegin
@@ -182,12 +182,12 @@ namespace idxbtr {
 	}
 }
 
-mdr::row_t__ idxbtr::Compare_(
+sdr::row_t__ idxbtr::Compare_(
 	const E_IBTREE_ &Tree,
 	const que::E_QUEUE_ &Queue,
-	mdr::row_t__ First )
+	sdr::row_t__ First )
 {
-	mdr::row_t__ &Row = First;
+	sdr::row_t__ &Row = First;
 
 	while ( Row != NONE ) {
 		if ( Queue.Next( Row ) != Tree.Next( Row ) )

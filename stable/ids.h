@@ -154,7 +154,7 @@ namespace ids {
 			} else {
 #ifdef IDS_DBG
 				if ( !IsAvailable_( ID ) )
-					ERRCcp();
+					ERRPrm();
 #endif
 				Released.Remove( Released.Search( ID ) );
 

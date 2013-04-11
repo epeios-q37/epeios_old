@@ -62,7 +62,6 @@ extern class ttr_tutor &DBTTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "epeios.h"
 #include "bch.h"
 #include "lst.h"
 #include "lstbch.h"
@@ -95,7 +94,7 @@ namespace dbt {
 	{
 	protected:
 		void LSTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			Nodes.Allocate( Size, Mode );
@@ -105,7 +104,7 @@ namespace dbt {
 		}
 		//v To synchronize size of this tree with other bunch/container. Do nothing by default.
 		virtual void DBTAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode ) = 0;
 	public:
 		struct s
@@ -114,12 +113,12 @@ namespace dbt {
 		{
 			typename lstbch::E_LBUNCHt_( int__, internal_row__ )::s Internals;
 			typename lstbch::E_LBUNCHt_( ext__, external_row__ )::s Externals;
-			typename bch::E_BUNCHt_( mdr::row_t__, irow__ )::s Nodes; 
+			typename bch::E_BUNCHt_( sdr::row_t__, irow__ )::s Nodes; 
 			typename bitbch::bit_bunch_< irow__ >::s Types;
 		};
 		lstbch::E_LBUNCHt_( int__, internal_row__ ) Internals;
 		lstbch::E_LBUNCHt_( ext__, external_row__ ) Externals;
-		bch::E_BUNCHt_( mdr::row_t__, irow__ ) Nodes;
+		bch::E_BUNCHt_( sdr::row_t__, irow__ ) Nodes;
 		bitbch::bit_bunch_< irow__ > Types;
 		differentiated_binary_tree_( s &S )
 		: E_LISTt_( irow__ )( S ),
@@ -138,14 +137,14 @@ namespace dbt {
 			Nodes.reset( P );
 			Types.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_LISTt_( irow__ )::plug( MM );
-			E_BTREEt_( irow__ )::plug( MM );
-			Internals.plug( MM );
-			Externals.plug( MM );
-			Nodes.plug( MM );
-			Types.plug( MM );
+			E_LISTt_( irow__ )::plug( AS );
+			E_BTREEt_( irow__ )::plug( AS );
+			Internals.plug( AS );
+			Externals.plug( AS );
+			Nodes.plug( AS );
+			Types.plug( AS );
 		}
 		const differentiated_binary_tree_ &operator=( const differentiated_binary_tree_ &T )
 		{
@@ -205,7 +204,7 @@ namespace dbt {
 		{
 #ifdef DBT_DBG
 			if ( !IsInternal( Node ) )
-				ERRu();
+				ERRFwk();
 #endif
 			return Nodes( Node );
 		}
@@ -214,7 +213,7 @@ namespace dbt {
 		{
 #ifdef DBT_DBG
 			if ( !IsExternal( Node ) )
-				ERRu();
+				ERRFwk();
 #endif
 			return Nodes( Node );
 		}
@@ -268,8 +267,8 @@ namespace dbt {
 	#define E_DBTREEt_( internal, external, row )	differentiated_binary_tree_<internal, external, row>
 	#define E_DBTREEt( internal, external, row )	differentiated_binary_tree<internal, external, row>
 
-	#define E_DBTREE_( internal, external )	E_DBTREEt_( internal, external, mdr::row__ )
-	#define E_DBTREE( internal, external )	E_DBTREEt( internal, external, mdr::row__ )
+	#define E_DBTREE_( internal, external )	E_DBTREEt_( internal, external, sdr::row__ )
+	#define E_DBTREE( internal, external )	E_DBTREEt( internal, external, sdr::row__ )
 
 	//c differentiated bianry tree filler.
 	template <typename int__, typename ext__, typename irow__> class differentiated_binary_tree_filler_
@@ -289,13 +288,13 @@ namespace dbt {
 			Tree_ = NULL;
 			E_BTREE_FILLERt_( irow__ )::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			E_BTREE_FILLERt_( irow__ )::plug( MD );
+			E_BTREE_FILLERt_( irow__ )::plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_BTREE_FILLERt_( irow__ )::plug( MM );
+			E_BTREE_FILLERt_( irow__ )::plug( AS );
 		}
 		differentiated_binary_tree_filler_ &operator =( const differentiated_binary_tree_filler_ &DBTF )
 		{
@@ -336,8 +335,8 @@ namespace dbt {
 	#define E_DBTREE_FILLERt_( internal, external, row )	differentiated_binary_tree_filler_<internal, external, row>
 	#define E_DBTREE_FILLERt( internal, external, row )		differentiated_binary_tree_filler<internal, external, row>
 
-	#define E_DBTREE_FILLER_( internal, external )	E_DBTREE_FILLERt_( internal, external, mdr::row__ )
-	#define E_DBTREE_FILLER( internal, external )	E_DBTREE_FILLERt( internal, external, mdr::row__ )
+	#define E_DBTREE_FILLER_( internal, external )	E_DBTREE_FILLERt_( internal, external, sdr::row__ )
+	#define E_DBTREE_FILLER( internal, external )	E_DBTREE_FILLERt( internal, external, sdr::row__ )
 
 
 }

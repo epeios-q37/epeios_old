@@ -85,7 +85,7 @@ namespace txmtbl {
 	};
 
 	//t An amount of cell or of line.
-	typedef mdr::size__	amount__;
+	typedef sdr::size__	amount__;
 
 	//d The default cell separator character.
 	#define TXMTBL_DEFAULT_CELL_SEPARATOR	'\t'
@@ -123,13 +123,13 @@ namespace txmtbl {
 			string_::reset( P );
 			S_.Location = 0;
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			string_::plug( M );
+			string_::plug( AS );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			string_::plug( MD );
+			string_::plug( SD );
 		}
 		cell_ &operator =( const cell_ &C )
 		{
@@ -175,8 +175,8 @@ namespace txmtbl {
 		separator__ Separator = TXMTBL_DEFAULT_CELL_SEPARATOR,
 		escape__ Escape = TXMTBL_DEFAULT_ESCAPE_CHARACTER );
 
-	typedef stk::E_BSTACK_( mdr::row__ ) stack_;
-	typedef stk::E_BSTACK( mdr::row__ ) stack;
+	typedef stk::E_BSTACK_( sdr::row__ ) stack_;
+	typedef stk::E_BSTACK( sdr::row__ ) stack;
 
 	typedef ctn::E_MCONTAINER_( cell_ ) cells_;
 
@@ -202,9 +202,9 @@ namespace txmtbl {
 
 			S_.Location = 0;
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			cells_::plug( M );
+			cells_::plug( AS );
 		}
 		line_ &operator =( const line_ &L )
 		{
@@ -224,24 +224,24 @@ namespace txmtbl {
 		//f Write 'Cell' and 'Location' at 'Position'.
 		void Write(
 			const cell_ &Cell,
-			mdr::row__ Position )
+			sdr::row__ Position )
 		{
 			cells_::Store( Cell, Position );
 			cells_::Flush();
 		}
 		//f Add 'Cell' and 'Location'. Return position where added.
-		mdr::row__ Add( const cell_ &Cell )
+		sdr::row__ Add( const cell_ &Cell )
 		{
-			mdr::row__ P = cells_::New();
+			sdr::row__ P = cells_::New();
 
 			Write( Cell, P );
 
 			return P;
 		}
 		//f Return the position of the first non-empty cell.
-		mdr::row__ FirstNonEmptyCell( void ) const;
+		sdr::row__ FirstNonEmptyCell( void ) const;
 		//f Return the position of the last non-empty cell.
-		mdr::row__ LastNonEmptyCell( void ) const;
+		sdr::row__ LastNonEmptyCell( void ) const;
 		//f Remove all empty cells. Retunr amount of cells removed.
 		amount__ RemoveEmptyCells( void );
 		//f Remove all heading empty cells. Return amount of cells removed.
@@ -251,11 +251,11 @@ namespace txmtbl {
 		//f Remove all empty cells between the first and last non-empty cells. Return amount of cells removed.
 		amount__ RemoveCentralEmptyCells( void );
 		//f Remove all cells from 'Position'. Return amount of cells removed.
-		amount__ RemoveCellsAt( mdr::row__ Position );
+		amount__ RemoveCellsAt( sdr::row__ Position );
 		//f Remove all cells. Return amount of cells removed.
 		amount__ RemoveAllCells( void )
 		{
-			mdr::row__ P = cells_::First();
+			sdr::row__ P = cells_::First();
 
 			if ( P != NONE )
 				return RemoveCellsAt( P );
@@ -333,9 +333,9 @@ namespace txmtbl {
 		{
 			lines_::reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			lines_::plug( M );
+			lines_::plug( AS );
 		}
 		table_ &operator =( const table_ &T )
 		{
@@ -349,9 +349,9 @@ namespace txmtbl {
 			lines_::Init();
 		}
 		//f Add 'Line'. Return position where added.
-		mdr::row__ AddLine(	const line_ &Line )
+		sdr::row__ AddLine(	const line_ &Line )
 		{
-			mdr::row__ P = lines_::New();
+			sdr::row__ P = lines_::New();
 
 			lines_::Store( Line, P );
 			lines_::Flush();
@@ -359,7 +359,7 @@ namespace txmtbl {
 			return P;
 		}
 		//f Remove the line at 'Position'.
-		void RemoveLine( mdr::row__ Position )
+		void RemoveLine( sdr::row__ Position )
 		{
 			lines_::Remove( Position );
 		}
@@ -385,7 +385,7 @@ namespace txmtbl {
 		/*f Return the unique cell in line 'Row' in 'Cell'. Undefined result if there is no
 		or more than one cell. */
 		bso::bool__ GetUniqueCell(
-			mdr::row__ Row,
+			sdr::row__ Row,
 			cell_ &Cell ) const
 		{
 			ctn::E_CITEM( line_ ) Line;
@@ -394,7 +394,7 @@ namespace txmtbl {
 
 			return Line( Row ).GetUniqueCell( Cell );
 		}
-		location__ Location( mdr::row__ Row )
+		location__ Location( sdr::row__ Row )
 		{
 			ctn::E_CITEM( line_ ) Line;
 

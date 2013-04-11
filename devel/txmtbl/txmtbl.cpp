@@ -67,7 +67,7 @@ static inline bso::bool__ HandleEscape_(
 	bso::bool__ Retry = false;
 
 	if ( Flow.EndOfFlow() )
-		ERRF();
+		ERRDta();
 		
 	switch( C = Flow.Get() ) {
 	case 'n':
@@ -101,7 +101,7 @@ static inline bso::bool__ HandleEscape_(
 		break;
 	default:
 		if ( C != Escape )
-			ERRF();
+			ERRDta();
 		break;
 	}
 	
@@ -154,7 +154,7 @@ static inline txmtbl::delimiter GetDelimiter_(
 		return txmtbl::dSeparator;
 	else
 	{
-		ERRc();
+		ERRFwk();
 		return txmtbl::dUnknow;
 	}
 }
@@ -231,7 +231,7 @@ amount__ line_::RemoveEmptyCells( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Cell;
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 	stack Stack;
 ERRBegin
 	Cell.Init( *this );
@@ -256,10 +256,10 @@ ERREpilog
 	return Amount;
 }
 
-mdr::row__ line_::FirstNonEmptyCell( void ) const
+sdr::row__ line_::FirstNonEmptyCell( void ) const
 {
 	ctn::E_CMITEM( cell_ ) Cell;
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	Cell.Init( *this );
 
@@ -269,10 +269,10 @@ mdr::row__ line_::FirstNonEmptyCell( void ) const
 	return Current;
 }
 
-mdr::row__ line_::LastNonEmptyCell( void ) const
+sdr::row__ line_::LastNonEmptyCell( void ) const
 {
 	ctn::E_CMITEM( cell_ ) Cell;
-	mdr::row__ Current = Last();
+	sdr::row__ Current = Last();
 
 	Cell.Init( *this );
 
@@ -286,7 +286,7 @@ amount__ line_::RemoveHeadingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
-	mdr::row__ Current = FirstNonEmptyCell();
+	sdr::row__ Current = FirstNonEmptyCell();
 	stack Stack;
 ERRBegin
 	Stack.Init();
@@ -318,7 +318,7 @@ amount__ line_::RemoveTailingEmptyCells( void )
 {
 	amount__ Amount = 0;
 ERRProlog
-	mdr::row__ Current = LastNonEmptyCell();
+	sdr::row__ Current = LastNonEmptyCell();
 	stack Stack;
 ERRBegin
 
@@ -353,7 +353,7 @@ amount__ line_::RemoveCentralEmptyCells( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CMITEM( cell_ ) Cell;
-	mdr::row__
+	sdr::row__
 		Current = FirstNonEmptyCell(),
 		Last = LastNonEmptyCell();
 	stack Stack;
@@ -387,7 +387,7 @@ ERREpilog
 	return Amount;
 }
 
-amount__ line_::RemoveCellsAt( mdr::row__ Position )
+amount__ line_::RemoveCellsAt( sdr::row__ Position )
 {
 	amount__ Amount = 0;
 ERRProlog
@@ -420,7 +420,7 @@ static inline bool IsCommentary_(
 
 amount__ line_::RemoveComment( bso::char__ Marker )
 {
-	mdr::row__ Position = First();
+	sdr::row__ Position = First();
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( *this );
@@ -438,7 +438,7 @@ txf::text_oflow__ &operator <<(
 	txf::text_oflow__ &Flow,
 	const line_ &Line )
 {
-	mdr::row__ Current;
+	sdr::row__ Current;
 	ctn::E_CMITEM( cell_ ) Cell;
 
 	Cell.Init( Line );
@@ -516,7 +516,7 @@ void table_::Erase_( stack_ &Stack )
 
 void table_::RemoveEmptyCells( void )
 {
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -530,7 +530,7 @@ void table_::RemoveEmptyCells( void )
 
 void table_::RemoveHeadingEmptyCells( void )
 {
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -544,7 +544,7 @@ void table_::RemoveHeadingEmptyCells( void )
 
 void table_::RemoveTailingEmptyCells( void )
 {
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -558,7 +558,7 @@ void table_::RemoveTailingEmptyCells( void )
 
 void table_::RemoveCentralEmptyCells( void )
 {
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -572,7 +572,7 @@ void table_::RemoveCentralEmptyCells( void )
 
 void table_::RemoveComments( bso::char__ Marker )
 {
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 
 	while( Current != NONE )
 	{
@@ -589,7 +589,7 @@ amount__ table_::RemoveEmptyLines( void )
 	amount__ Amount = 0;
 ERRProlog
 	ctn::E_CITEM( line_ ) Line;
-	mdr::row__ Current = First();
+	sdr::row__ Current = First();
 	stack Stack;
 ERRBegin
 	Line.Init( *this );
@@ -620,7 +620,7 @@ txf::text_oflow__ &operator <<(
 	const table_ &Table )
 {
 	ctn::E_CITEM( line_ ) Line;
-	mdr::row__ Current;
+	sdr::row__ Current;
 
 	Line.Init( Table );
 

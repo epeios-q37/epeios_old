@@ -93,13 +93,13 @@ namespace idxque {
 		{
 			E_QUEUEt_( r )::reset( P );
 		}
-		void plug( mmm::multimemory_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_QUEUEt_( r )::plug( MM );
+			E_QUEUEt_( r )::plug( AS );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			E_QUEUEt_( r )::plug( MD );
+			E_QUEUEt_( r )::plug( SD );
 		}
 		queue_index_ &operator =( const queue_index_ &T )
 		{
@@ -140,7 +140,7 @@ namespace idxque {
 
 	typedef que::queue_file_manager___ queue_index_file_manager___;
 
-	template <typename index> uym::state__ Plug(
+	template <typename index> uys::state__ Plug(
 		index &Index,
 		queue_index_file_manager___ &FileManager )
 	{

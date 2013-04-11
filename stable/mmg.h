@@ -63,8 +63,8 @@ extern class ttr_tutor &MMGTutor;
 //D Memory MerGer.
 
 #include "err.h"
-#include "mmm.h"
-#include "flm.h"
+#include "ags.h"
+#include "fls.h"
 
 namespace mmg
 {
@@ -87,45 +87,45 @@ namespace mmg
 
 	struct merger_memory_driver_s__
 	{
-		uym::untyped_memory_::s Memory;
+		uys::untyped_storage::s Memory;
 	};
 
 
 	// Pilote mémoire à usage interne.
 	template <typename st> class merger_memory_driver_
-	: public mdr::E_MEMORY_DRIVER__
+	: public sdr::E_SDRIVER__
 	{
 	private:
 		// Pointeur sur la partie statique de l'objet à sauver.
 		st *Static_;
 	protected:
 		// Alloue 'Capacite' octets.
-		virtual void MDRAllocate( mdr::size__ Capacity )
+		virtual void SDRAllocate( sdr::size__ Capacity )
 		{
 			Memory.Allocate( Capacity + sizeof( st ) );
 		}
-		virtual mdr::size__ MDRUnderlyingSize( void )
+		virtual sdr::size__ SDRUnderlyingSize( void )
 		{
-			mdr::size__ Size = Memory.Size();
+			sdr::size__ Size = Memory.Size();
 
 			if ( Size >= sizeof( st ) )
 				Size -= sizeof( st );
 			else if ( Size != 0 )
-				ERRc();
+				ERRFwk();
 
 			return Size;
 		}
-		virtual void MDRRecall(
-			mdr::row_t__ Position,
-			mdr::size__ Amount,
-			mdr::datum__ *Buffer )
+		virtual void SDRRecall(
+			sdr::row_t__ Position,
+			sdr::size__ Amount,
+			sdr::datum__ *Buffer )
 		{
 			Memory.Recall( Position + sizeof( st ), Amount, Buffer );
 		}
-		virtual void MDRStore(
-			const mdr::datum__ *Buffer,
-			mdr::size__ Amount,
-			mdr::row_t__ Position )
+		virtual void SDRStore(
+			const sdr::datum__ *Buffer,
+			sdr::size__ Amount,
+			sdr::row_t__ Position )
 		{
 			StockerStatique();
 			Memory.Store( Buffer, Amount, Position + sizeof( st ) );
@@ -133,10 +133,10 @@ namespace mmg
 	public:
 		typedef merger_memory_driver_s__ s;
 		s &S_;
-		uym::untyped_memory_ Memory;
+		uys::untyped_storage_ Memory;
 		void reset( bool P = true )
 		{
-			E_MEMORY_DRIVER__::reset( P );
+			E_SDRIVER__::reset( P );
 			Memory.reset( P );
 			Static_ = NULL;
 		}
@@ -150,20 +150,20 @@ namespace mmg
 		{
 			reset();
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Memory.plug( MD );
+			Memory.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MMM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Memory.plug( MMM );
+			Memory.plug( AS );
 		}
 		void Init(
 			st *Static,
 			rule Regle )
 		{
 			Static_ = Static;
-			mdr::E_MEMORY_DRIVER__::Init();
+			sdr::E_SDRIVER__::Init();
 			Memory.Init();
 
 			if ( Regle == mmg::rCreation )
@@ -174,12 +174,12 @@ namespace mmg
 			else if ( Regle == mmg::rRecovery ) {
 				RecupererStatique();
 			} else
-				ERRc();
+				ERRPrm();
 		}
 		void StockerStatique( void )
 		{
 			if ( Static_ /* && ( Mode_== mdr::mReadWrite )*/ )
-				Memory.Store( (mdr::datum__ *)Static_, sizeof( st ), 0 );
+				Memory.Store( (sdr::datum__ *)Static_, sizeof( st ), 0 );
 		}
 		void EcrireDansFlot( flw::oflow__ &Flot ) const
 		{
@@ -191,12 +191,12 @@ namespace mmg
 		}
 		void RecupererStatique( void )
 		{
-			Memory.Recall( 0, sizeof( st ), (mdr::datum__ *)Static_ );
+			Memory.Recall( 0, sizeof( st ), (sdr::datum__ *)Static_ );
 		}
 		void Immortalize( void )
 		{
 			reset( false );
-			plug( *(mdr::E_MEMORY_DRIVER__ *)NULL );
+			plug( *(sdr::E_SDRIVER__ *)NULL );
 		}
 
 	};
@@ -204,7 +204,7 @@ namespace mmg
 	// Pour VC++, qui ne comprend rien sinon.
 	template <class st> struct mmg_s
 	{
-		mmm::multimemory_::s Memoire;
+		ags::aggregated_storage_::s Memoire;
 		// A vrai si le contenu survit à l'objet.
 		st Object;
 		merger_memory_driver_s__ Driver_;
@@ -219,7 +219,7 @@ namespace mmg
 		t Object;
 	public:
 		// La mémoire qui contient la partie dynamique de l'objet.
-		mmm::multimemory_ Memoire;
+		ags::aggregated_storage_ Memoire;
 		// La partie statique de l'objet à persister.
 	/*	struct s
 		: public st
@@ -257,14 +257,14 @@ namespace mmg
 
 		}
 		//f Utilisation de 'Pilote' comme pilote mémoire.
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Driver_.plug( MD );
+			Driver_.plug( SD );
 			Memoire.plug( Driver_ );	// Notamment pour initialiser correctement le 'size'.
 		}
-		void plug( mmm::multimemory_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Driver_.plug( MM );
+			Driver_.plug( AS );
 			Memoire.plug( Driver_ );
 		}
 		//f Initialization with rule 'Rule' and mode 'Mode'.
@@ -328,8 +328,8 @@ namespace mmg
 	: public memory_merger<t, st>
 	{
 	private:
-		flm::file_memory_driver___ PiloteFichier_;
-		flm::id__ _ID;
+		fls::file_storage_driver___ PiloteFichier_;
+		fls::id__ _ID;
 	public:
 		void reset( bool P = true )
 		{
@@ -338,10 +338,10 @@ namespace mmg
 			PiloteFichier_.reset( P );
 
 			if ( P )
-				if ( _ID != FLM_UNDEFINED_ID )
-					flm::ReleaseId( _ID );
+				if ( _ID != FLS_UNDEFINED_ID )
+					fls::ReleaseId( _ID );
 
-			_ID = FLM_UNDEFINED_ID;
+			_ID = FLS_UNDEFINED_ID;
 		}
 		file_merger___( void )
 		: PiloteFichier_()
@@ -366,7 +366,7 @@ namespace mmg
 
 			Test = fil::FileExists( FileName );
 
-			_ID = flm::GetId();
+			_ID = fls::GetId();
 
 			PiloteFichier_.Init( _ID, FileName, FileMode );
 			PiloteFichier_.Persistent();
@@ -394,13 +394,13 @@ namespace mmg
 		{
 			PiloteFichier_.Mode( Mode );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ & )
+		void plug( sdr::E_SDRIVER__ & )
 		{
-			ERRu();
+			ERRFwk();
 		}
 		void State( mmg::state )
 		{
-			ERRu();
+			ERRFwk();
 		}
 	};
 

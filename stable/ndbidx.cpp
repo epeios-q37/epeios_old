@@ -75,7 +75,7 @@ bso::sign__ ndbidx::index_::_Seek(
 	skip_level__ SkipLevel,
 	behavior__ EqualBehavior,
 	rrow__ &Row,
-	bso::ubyte__ &Round,
+	bso::u8__ &Round,
 	ndbctt::cache_ &Cache ) const
 {
 	bso::sign__ Result = 0;
@@ -101,7 +101,7 @@ ERRBegin
 		DatumToCompare.Init();
 
 		if ( !_Retrieve( Row, DatumToCompare, Cache ) )
-			ERRc();
+			ERRFwk();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, SkipLevel ) ) {
 		case 0:
@@ -124,7 +124,7 @@ ERRBegin
 					Row = Seeker.SearchGreater();
 				break;
 			default:
-				ERRu();
+				ERRFwk();
 			}
 			break;
 		case 1:
@@ -134,7 +134,7 @@ ERRBegin
 			Row = Seeker.SearchLesser();
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 
@@ -261,12 +261,12 @@ rrow__ ndbidx::index_::_SearchStrictLesser(
 }
 
 
-bso::ubyte__ ndbidx::index_::Index(
+bso::u8__ ndbidx::index_::Index(
 	rrow__ Row,
 	extremities__ *Extremities,
 	ndbctt::cache_ &Cache )
 {
-	bso::ubyte__ Round = 0;
+	bso::u8__ Round = 0;
 ERRProlog
 	datum DatumToCompare;
 	datum Datum;
@@ -276,7 +276,7 @@ ERRProlog
 //	cio::aware_cout___ cout;
 ERRBegin
 	if ( _Bufferized )
-		ERRu();
+		ERRFwk();
 
 	_CompleteInitialization();
 
@@ -306,7 +306,7 @@ ERRBegin
 		DatumToCompare.Init();
 
 		if ( !_Retrieve( TargetRow, DatumToCompare, Cache ) )
-			ERRc();
+			ERRFwk();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
@@ -317,7 +317,7 @@ ERRBegin
 			TargetRow = NONE;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -331,7 +331,7 @@ ERRBegin
 		DatumToCompare.Init();
 
 		if ( !_Retrieve( TargetRow, DatumToCompare, Cache ) )
-			ERRc();
+			ERRFwk();
 
 		switch ( Result = _SortPointer->Compare( Datum, DatumToCompare, NDBIDX_NO_SKIP ) ) {
 		case 0:
@@ -342,7 +342,7 @@ ERRBegin
 			TargetRow = NONE;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	} 
@@ -367,7 +367,7 @@ ERRBegin
 		else if ( !DIndex.TreeHasGreater( TargetRow ) )
 			S_.Root = DIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		else
-			ERRc();
+			ERRFwk();
 		break;
 	case 1:
 		if ( ( Extremities != NULL ) && ( Extremities->Greatest == TargetRow ) )
@@ -375,7 +375,7 @@ ERRBegin
 		S_.Root = DIndex.BecomeGreater( Row, TargetRow, S_.Root );
 		break;
 	default:
-		ERRc();
+		ERRFwk();
 		break;
 	}
 
@@ -388,7 +388,7 @@ ERRBegin
 
 #ifdef NDBIDX_DBG
 	if ( TargetRow == NONE )
-		ERRc();
+		ERRFwk();
 #endif
 
 ERRErr
@@ -405,7 +405,7 @@ rrow__ ndbidx::index_::LooseSeek(
 	bso::sign__ &Sign ) const
 {
 	rrow__ Row = NONE;
-	bso::ubyte__ Round;
+	bso::u8__ Round;
 
 	_CompleteInitialization();
 
@@ -416,7 +416,7 @@ rrow__ ndbidx::index_::LooseSeek(
 
 #ifdef NDBIDX_DBG
 	if ( Row == NONE )
-		ERRc();
+		ERRFwk();
 #endif
 
 	return Row;
@@ -472,7 +472,7 @@ ERRBegin
 	_CompleteInitialization();
 
 	if ( !_Retrieve( RecordRow, Datum, *(ndbctt::cache_ *)NULL ) )
-		ERRc();
+		ERRFwk();
 
 	Result = _SortPointer->Compare( Datum, Pattern, SkipLevel  );
 ERRErr
@@ -495,7 +495,7 @@ ERRBegin
 	_CompleteInitialization();
 
 	if ( !_Retrieve( RecordRow2, Pattern, *(ndbctt::cache_ *)NULL ) )
-		ERRc();
+		ERRFwk();
 
 	Result = Compare( RecordRow1, Pattern, SkipLevel );
 ERRErr
@@ -511,12 +511,12 @@ static inline void Reindex_(
 	ndbctt::cache_  &Cache,
 	tol::timer__ &Timer,
 	bso::size__ &HandledRecordAmount,
-	bso::ulong__ &BalancingCount,
+	bso::uint__ &BalancingCount,
 	tol::E_DPOINTER___( extremities__ ) &Extremities,
 	bso::bool__ Randomly )
 {
-	mdr::row__ Row = NONE;
-	bso::ubyte__ Round = 0;
+	sdr::row__ Row = NONE;
+	bso::u8__ Round = 0;
 
 	while ( Rows.Amount() ) {
 		if ( Randomly )
@@ -549,17 +549,17 @@ void ndbidx::index_::Reindex( observer_functions__ &Observer )
 {
 ERRProlog
 	const ndbctt::content__ &Content = _Content();
-	mdr::size__ HandledRecordAmount = 0;
+	sdr::size__ HandledRecordAmount = 0;
 	tol::timer__ Timer;
 	ndbidx::index IndexInMemory;
 	ndbidx::index_ *UsedIndex = NULL;
 	ndbbsc::cache  Cache;
 	tol::E_DPOINTER___( extremities__ ) Extremities;
-	bso::ulong__ BalancingCount = 0;
+	bso::uint__ BalancingCount = 0;
 	bch::E_BUNCH( rrow__ ) Rows;
 	rrow__ Row = NONE;
-	bso::ulong__ PanelRecordCounter;
-	bso::ulong__ PanelRecordSize;
+	bso::uint__ PanelRecordCounter;
+	bso::uint__ PanelRecordSize;
 	bso::bool__ Randomly = false;
 ERRBegin
 	_CompleteInitialization();
@@ -634,7 +634,7 @@ void ndbidx::index_atomized_file_manager___::Init(
 	const str::string_ &BaseFileName,
 	bso::bool__ Erase,
 	fil::mode__ Mode,
-	flm::id__ ID )
+	fls::id__ ID )
 {
 ERRProlog
 	str::string TreeFileName;

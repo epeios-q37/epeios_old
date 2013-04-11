@@ -88,16 +88,16 @@ and over which we consider we are in the XX century. */
 
 namespace dte {
 	//t Type of a raw date.
-	typedef bso::ulong__ raw_date__;
+	typedef bso::u32__ raw_date__;
 
 	//t Type for the year.
-	typedef bso::ushort__	year__;
+	typedef bso::u16__	year__;
 
 	//t Type for the month.
-	typedef bso::ubyte__	month__;
+	typedef bso::u8__	month__;
 
 	//t Type of the day.
-	typedef bso::ubyte__ day__;
+	typedef bso::u8__ day__;
 
 
 	struct date_buffer__
@@ -132,7 +132,7 @@ namespace dte {
 			return "YYYYMMDD";
 			break;
 		default:
-			ERRu();
+			ERRPrm();
 			return NULL;	// Pour éviter un warning.
 			break;
 		}
@@ -173,7 +173,7 @@ namespace dte {
 			const char *&Date,
 			format__ Format );
 		// Return the core date.
-		bso::ulong__ _Core( raw_date__ Date ) const
+		bso::u32__ _Core( raw_date__ Date ) const
 		{
 			return ( RawDate_ & DTE_CORE_MASK) >> DTE_CORE_SHIFT;
 		}
@@ -193,12 +193,12 @@ namespace dte {
 			return (day__)( _Core( RawDate ) & 0x1f );
 		}
 		// Return true if 'Date' is a simplified raw date (yyyymmdd).
-		bso::bool__ _IsSimplifiedRawDate( bso::ulong__ Date ) const
+		bso::bool__ _IsSimplifiedRawDate( bso::u32__ Date ) const
 		{
 			return ( Date != DTE_INVALID_DATE ) && ( ( Date & DTE_SIGN_MASK ) == 0 );
 		}
 		// Convert a simplified raw date (yyyymmdd) to raw date.
-		raw_date__ _Convert( bso::ulong__ Date ) const
+		raw_date__ _Convert( bso::u32__ Date ) const
 		{
 			if ( _IsSimplifiedRawDate( Date ) )
 				return _Convert( (day__)( Date % 100 ), (month__)( ( Date % 10000 ) / 100 ), (year__)( Date / 10000 ) );
@@ -210,7 +210,7 @@ namespace dte {
 		{
 			RawDate_ = DTE_INVALID_DATE;
 		}
-		date__( bso::ulong__ Date = DTE_INVALID_DATE )
+		date__( bso::u32__ Date = DTE_INVALID_DATE )
 		{
 			reset( false );
 
@@ -238,7 +238,7 @@ namespace dte {
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Initialization with date 'Date'.
-		void Init( bso::ulong__ Date = DTE_INVALID_DATE )
+		void Init( bso::u32__ Date = DTE_INVALID_DATE )
 		{
 			reset();
 
@@ -311,10 +311,10 @@ namespace dte {
 			RawDate_ = _Convert( Day, Month, Year );
 		}
 		//f Add 'Amount' Month.
-		void AddMonth( bso::ulong__ Amount = 1 )
+		void AddMonth( bso::u32__ Amount = 1 )
 		{
-			bso::ushort__ DeltaYear = (bso::ushort__)( Amount / 12 );
-			bso::sbyte__ DeltaMonth = (bso::ubyte__)( Amount % 12 );
+			bso::u16__ DeltaYear = (bso::u16__)( Amount / 12 );
+			bso::u8__ DeltaMonth = (bso::u8__)( Amount % 12 );
 
 			if ( ( DeltaMonth + Month() ) > 12 ) {
 				DeltaYear++;
@@ -323,10 +323,10 @@ namespace dte {
 
 			RawDate_ = _Convert( this->Day(), (month__)( Month() + DeltaMonth ), (year__)( Year() + DeltaYear ) );
 		}
-		void SubMonth( bso::ulong__ Amount = 1 )
+		void SubMonth( bso::u32__ Amount = 1 )
 		{
-			bso::ushort__ DeltaYear = (bso::ushort__)( Amount / 12 );
-			bso::sbyte__ DeltaMonth = (bso::ubyte__)( Amount % 12 );
+			bso::u16__ DeltaYear = (bso::u16__)( Amount / 12 );
+			bso::u8__ DeltaMonth = (bso::u8__)( Amount % 12 );
 
 			if ( DeltaMonth >= Month() ) {
 				DeltaYear++;

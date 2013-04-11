@@ -98,10 +98,10 @@ namespace ndbtbl {
 			return fil::mReadOnly;
 			break;
 		case m_Undefined:
-			ERRu();
+			ERRPrm();
 			break;
 		default:
-			ERRu();
+			ERRPrm();
 			break;
 		}
 
@@ -113,7 +113,7 @@ namespace ndbtbl {
 	typedef ctn::E_MCONTAINER_( datum_ ) data_;
 	E_AUTO( data );
 
-	typedef bch::E_BUNCH_( mdr::row__ ) rows_;
+	typedef bch::E_BUNCH_( sdr::row__ ) rows_;
 	E_AUTO( rows );
 
 
@@ -127,7 +127,7 @@ namespace ndbtbl {
 		{
 			switch ( Mode ) {
 			case mBulk:
-				ERRc();
+				ERRPrm();
 				break;
 			case mReadWrite:
 				switch ( S_.Mode ) {
@@ -135,10 +135,10 @@ namespace ndbtbl {
 				case mReadWrite:
 					break;
 				case mReadOnly:
-					ERRu();
+					ERRFwk();
 					break;
 				default:
-					ERRc();
+					ERRPrm();
 					break;
 				}
 				break;
@@ -146,18 +146,18 @@ namespace ndbtbl {
 				break;
 				switch ( S_.Mode ) {
 				case mBulk:
-					ERRu();
+					ERRFwk();
 					break;
 				case mReadWrite:
 				case mReadOnly:
 					break;
 				default:
-					ERRc();
+					ERRFwk();
 					break;
 				}
 				break;
 			default:
-				ERRc();
+				ERRPrm();
 				break;
 			}
 		}
@@ -170,10 +170,10 @@ namespace ndbtbl {
 			case mReadWrite:
 				break;
 			case mReadOnly:
-				ERRu();
+				ERRPrm();
 				break;
 			default:
-				ERRu();
+				ERRPrm();
 				break;
 			}
 		}
@@ -187,7 +187,7 @@ namespace ndbtbl {
 			case mReadOnly:
 				break;
 			default:
-				ERRu();
+				ERRPrm();
 				break;
 			}
 		}
@@ -210,7 +210,7 @@ namespace ndbtbl {
 				return false;
 				break;
 			default:
-				ERRu();
+				ERRFwk();
 				return false;	// Pour éviter un warning.
 				break;
 			}
@@ -232,9 +232,9 @@ namespace ndbtbl {
 			S_.Mode = m_Undefined;
 		}
 		E_VDTOR( table_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Content.plug( MM );
+			Content.plug( AS );
 		}
 		table_ &operator =( const table_ &T )
 		{
@@ -255,7 +255,7 @@ namespace ndbtbl {
 			S_.Mode = Mode;
 		}
 		void InitStatic(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			mode__ Mode,
 			content_post_initialization_function__ &PostInitializationFunction )
 		{
@@ -349,18 +349,18 @@ namespace ndbtbl {
 				switch( OldMode ) {
 				case mBulk:
 					if ( !AreAllIndexesSynchronized() )
-						ERRu();
+						ERRFwk();
 					break;
 				case mReadOnly:
 				case mReadWrite:
 					break;
 				default:
-					ERRc();
+					ERRPrm();
 					break;
 				}
 				break;
 			default:
-				ERRu();
+				ERRPrm();
 				break;
 			}
 
@@ -405,11 +405,11 @@ namespace ndbtbl {
 		void _InitStatic(
 			const str::string_ &BaseFileName,
 			mode__ Mode,
-			flm::id__ ID );
+			fls::id__ ID );
 		void _InitDynamic(
 			const str::string_ &BaseFileName,
 			mode__ Mode,
-			flm::id__ ID );
+			fls::id__ ID );
 	public:
 		void reset( bso::bool__ P = true )
 		{
@@ -429,7 +429,7 @@ namespace ndbtbl {
 			type__ Type,
 			const str::string_ &BaseFileName,
 			mode__ Mode,
-			flm::id__ ID )
+			fls::id__ ID )
 		{
 			_Type = Type;
 
@@ -441,11 +441,11 @@ namespace ndbtbl {
 				_InitDynamic( BaseFileName, Mode, ID );
 				break;
 			default:
-				ERRu();
+				ERRPrm();
 				break;
 			}
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
 			switch ( _Type ) {
 			case tStatic:
@@ -455,13 +455,13 @@ namespace ndbtbl {
 				return _Dynamic.Bind();
 				break;
 			default:
-				ERRu();
+				ERRFwk();
 				break;
 			}
 
-			return uym::s_Undefined;	// Pour éviter un 'warning'.
+			return uys::s_Undefined;	// Pour éviter un 'warning'.
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
 			switch ( _Type ) {
 			case tStatic:
@@ -471,11 +471,11 @@ namespace ndbtbl {
 				return _Dynamic.Settle();
 				break;
 			default:
-				ERRu();
+				ERRFwk();
 				break;
 			}
 
-			return uym::s_Undefined;	// Pour éviter un 'warning'.
+			return uys::s_Undefined;	// Pour éviter un 'warning'.
 		}
 		const str::string_ &BaseFileName( type__ Type ) const
 		{
@@ -487,24 +487,24 @@ namespace ndbtbl {
 				return _Dynamic.BaseFileName();
 				break;
 			default:
-				ERRu();
+				ERRPrm();
 				break;
 			}
 
-			ERRc();
+			ERRFwk();
 
 			return _Static.BaseFileName();	// Pour éviter un 'warning'.
 		}
-		friend uym::state__ Plug(
+		friend uys::state__ Plug(
 			table_ &Table,
 			table_atomized_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uys::state__ Plug(
 		table_ &Table,
 		table_atomized_file_manager___ &FileManager )
 	{
-		uym::state__ State = uym::s_Undefined;
+		uys::state__ State = uys::s_Undefined;
 
 		switch ( Table.Type() ) {
 		case tStatic:
@@ -514,7 +514,7 @@ namespace ndbtbl {
 			State = ndbdct::Plug( Table.Content.Dynamic(), FileManager._Dynamic );
 			break;
 		default:
-			ERRu();
+			ERRFwk();
 			break;
 		}
 

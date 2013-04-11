@@ -97,7 +97,7 @@ static DWORD ServiceThread_(LPDWORD param)
 	}
 */
 	if ( Service_ == NULL )
-		ERRu();
+		ERRFwk();
 
 	::Service_->Process();
 
@@ -201,7 +201,7 @@ static void ServiceCtrlHandler_(DWORD controlCode)
 		case SERVICE_CONTROL_SHUTDOWN:
 //			ERRExit( EXIT_SUCCESS );
 			if ( ::Service_ == NULL )
-				ERRu();
+				ERRFwk();
 			::Service_->Shutdown();
 			return;
 
@@ -218,7 +218,7 @@ static void Terminate_(DWORD error)
 	if(hTerminateThread_)	 CloseHandle(hTerminateThread_);
 
 	if ( error != 0 )
-		ERRs();
+		ERRSys();
 }
 // ------------------------------------------------------
 static bso::bool__ AddService_(
@@ -293,7 +293,7 @@ static void ServiceMain_(DWORD argc,LPTSTR *argv)
 	BOOL bSuccess;
 
 	if ( argc < 1 )
-		ERRs();
+		ERRFwk();
     
 	ServiceStatusHandle_ = RegisterServiceCtrlHandler(argv[0],(LPHANDLER_FUNCTION)ServiceCtrlHandler_);
 	if(!ServiceStatusHandle_)
@@ -365,7 +365,7 @@ bso::bool__ wintol::service__::Launch( const char *ServiceName )
 	};
 
 	if ( Service_ != NULL )
-		ERRu();
+		ERRFwk();
 
 	Service_ = this;
  

@@ -102,11 +102,11 @@ raw_date__ dte::date__::_Convert(
 		return DTE_SIGN_MASK | ( Year << 9 | Month << 5 | Day ) << DTE_CORE_SHIFT | ( Year ? 1 << 2 : 0 ) | ( Month ? 1 << 1 : 0 ) | ( Day ? 1 : 0 );
 }
 
-#define LIMIT	( BSO_ULONG_MAX / 10 )
+#define LIMIT	( BSO_U32_MAX / 10 )
 
-bso::ulong__ ExtractItem_( const char *&Date )
+bso::u32__ ExtractItem_( const char *&Date )
 {
-	bso::ulong__ Item = 0;
+	bso::u32__ Item = 0;
 
 	if ( *Date == 0 )
 		return 0;
@@ -125,16 +125,16 @@ bso::ulong__ ExtractItem_( const char *&Date )
 
 static bso::bool__ ExtractItems_(
 	const char *&Date,
-	bso::ulong__ &Item1,
-	bso::ulong__ &Item2,
-	bso::ulong__ &Item3 )
+	bso::u32__ &Item1,
+	bso::u32__ &Item2,
+	bso::u32__ &Item3 )
 {
 	Item1 = 0;
 	Item2 = 0;
 	Item3 = 0;
 
 	if ( Date == NULL )
-		ERRc();
+		ERRFwk();
 
 	if ( *Date == 0 )
 		return false;
@@ -160,17 +160,17 @@ static bso::bool__ ExtractItems_(
 	return true;
 }
 
-static inline bso::bool__ IsSuitableForYear_( bso::ulong__ Item )
+static inline bso::bool__ IsSuitableForYear_( bso::u32__ Item )
 {
 	return true;
 }
 
-static inline bso::bool__ IsSuitableForMonth_( bso::ulong__ Item )
+static inline bso::bool__ IsSuitableForMonth_( bso::u32__ Item )
 {
 	return ( ( Item > 0 ) && ( Item <= 12 ) );
 }
 
-static inline bso::bool__ IsSuitableForDay_( bso::ulong__ Item )
+static inline bso::bool__ IsSuitableForDay_( bso::u32__ Item )
 {
 	return ( ( Item > 0 ) && ( Item <= 31 ) );
 }
@@ -179,9 +179,9 @@ static inline bso::bool__ TestAndSet_(
 	day__ &Day,
 	month__ &Month,
 	year__ &Year,
-	bso::ulong__ DayCandidate,
-	bso::ulong__ MonthCandidate,
-	bso::ulong__ YearCandidate )
+	bso::u32__ DayCandidate,
+	bso::u32__ MonthCandidate,
+	bso::u32__ YearCandidate )
 {
 	if ( IsSuitableForDay_( DayCandidate ) )
 		Day = (day__)DayCandidate;
@@ -209,7 +209,7 @@ raw_date__ dte::date__::_Convert(
 	month__ Month = 0;
 	year__ Year = 0;
 
-	bso::ulong__ Item1, Item2, Item3;
+	bso::u32__ Item1, Item2, Item3;
 
 	Item1 = Item2 = Item3 = 0;
 
@@ -233,7 +233,7 @@ raw_date__ dte::date__::_Convert(
 				return DTE_INVALID_DATE;
 			break;
 		default:
-			ERRu();
+			ERRPrm();
 			break;
 	}
 
@@ -265,7 +265,7 @@ const char *dte::date__::ASCII(
 			sprintf( Buffer.Data, "%i-02i-%02i", (int)Year(), (int)Month(), (int)Day() );
 			break;
 		default:
-			ERRu();
+			ERRPrm();
 			break;
 		}
 

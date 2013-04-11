@@ -193,7 +193,6 @@ namespace lstctn {
 			const char *ContainerStaticsFileName,
 			const char *ContainerDynamicsFileName,
 			const char *ContainerMultimemoryFileName,
-			const char *ContainerMultimemoryFreeFragmentPositionsFileName,
 			const char *ListFileName,
 			fil::mode__ Mode,
 			bso::bool__ Persistent,
@@ -201,7 +200,7 @@ namespace lstctn {
 		{
 			reset();
 
-			_ContainerFileManager.Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, ContainerMultimemoryFreeFragmentPositionsFileName, Mode, Persistent, ID );
+			_ContainerFileManager.Init( ContainerStaticsFileName, ContainerDynamicsFileName, ContainerMultimemoryFileName, Mode, Persistent, ID );
 			_ListFileManager.Init( ListFileName, Mode, Persistent );
 		}
 		fil::mode__ Mode( fil::mode__ Mode )

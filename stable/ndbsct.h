@@ -70,7 +70,7 @@ namespace ndbsct {
 	using ndbbsc::datum_;
 	using ndbbsc::datum;
 
-	typedef tym::E_MEMORY_( ndbbsc::atom__ )	storage_;
+	typedef tys::E_STORAGE_( ndbbsc::atom__ )	storage_;
 
 	typedef lst::E_LISTt_( rrow__ ) _list_;
 
@@ -79,7 +79,7 @@ namespace ndbsct {
 	{
 	protected:
 		virtual void LSTAllocate(
-			mdr::size__ Amount,
+			sdr::size__ Amount,
 			aem::mode__ Mode )
 		{
 			Storage.Allocate( Amount * S_.Size );
@@ -95,7 +95,7 @@ namespace ndbsct {
 		{
 			storage_::s Storage;
 			// Taille de l'élément.
-			mdr::size__ Size;
+			sdr::size__ Size;
 			time_t ModificationEpochTimeStamp;
 		} &S_;
 		static_content_( s &S )
@@ -111,10 +111,10 @@ namespace ndbsct {
 			S_.Size = 0;
 			S_.ModificationEpochTimeStamp = 0;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			_list_::plug( MM );
-			Storage.plug( MM );
+			_list_::plug( AS );
+			Storage.plug( AS );
 		}
 		static_content_ &operator =( const static_content_ &SC )
 		{
@@ -131,7 +131,7 @@ namespace ndbsct {
 
 			return *this;
 		}
-		void Init( mdr::size__ Size )
+		void Init( sdr::size__ Size )
 		{
 			_list_::Init();
 			Storage.Init();
@@ -150,7 +150,7 @@ namespace ndbsct {
 			rrow__ Row )
 		{
 			if ( Datum.Amount() != S_.Size )
-				ERRu();
+				ERRDta();
 
 			Storage.Store( Datum, S_.Size, *Row * S_.Size );
 
@@ -188,10 +188,10 @@ namespace ndbsct {
 		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
 		void RebuildLocations( void )
 		{
-			ERRl();
+			ERRVct();
 		}
 		E_RODISCLOSE_( time_t, ModificationEpochTimeStamp );
-		E_RODISCLOSE_( mdr::size__, Size );
+		E_RODISCLOSE_( sdr::size__, Size );
 	};
 
 	E_AUTO( static_content )
@@ -201,7 +201,7 @@ namespace ndbsct {
 	private:
 		static_content_ *_Content;
 		str::string _BaseFileName;
-		tym::memory_file_manager___ _MemoryFileManager;
+		tys::storage_file_manager___ _MemoryFileManager;
 		lst::list_file_manager___ _ListFileManager;
 		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
@@ -247,26 +247,26 @@ namespace ndbsct {
 		void Init(
 			const str::string_ &BaseFileName,
 			fil::mode__ Mode,
-			flm::id__ ID );
+			fls::id__ ID );
 		void Set( static_content_ &Content )
 		{
 			if ( _Content != NULL )
-				ERRu();
+				ERRPrm();
 
 			_Content = &Content;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _MemoryFileManager.Bind();
+			uys::state__ State = _MemoryFileManager.Bind();
 
 			if ( State != _ListFileManager.Bind( _GetUnderlyingFilesLastModificationTime() ) )
-				return uym::sInconsistent;
+				return uys::sInconsistent;
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _MemoryFileManager.Settle();
+			uys::state__ State = _MemoryFileManager.Settle();
 
 			if ( ( _Content != NULL ) && ( _Content->ModificationEpochTimeStamp() != 0 ) )
 				_ListFileManager.Settle( _GetUnderlyingFilesLastModificationTime() );
@@ -287,23 +287,23 @@ namespace ndbsct {
 			}
 		}
 		E_RODISCLOSE__( str::string_, BaseFileName );
-		friend uym::state__ Plug(
+		friend uys::state__ Plug(
 			static_content_ &Content,
 			static_content_atomized_file_manager___ &FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uys::state__ Plug(
 		static_content_ &Content,
 		static_content_atomized_file_manager___ &FileManager )
 	{
-		uym::state__ State = tym::Plug( Content.Storage, FileManager._MemoryFileManager );
+		uys::state__ State = tys::Plug( Content.Storage, FileManager._MemoryFileManager );
 
-		if ( uym::IsError( State ) ) {
+		if ( uys::IsError( State ) ) {
 			FileManager.reset();
 		} else {
 			if ( State != lst::Plug( Content, FileManager._ListFileManager, Content.Storage.GetSize()/Content.Size(), FileManager._GetUnderlyingFilesLastModificationTime() ) ) {
 				FileManager.reset();
-				return uym::sInconsistent;
+				return uys::sInconsistent;
 			} else 
 				FileManager.Set( Content );
 		}

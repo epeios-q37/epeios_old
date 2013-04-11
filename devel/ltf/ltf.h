@@ -66,7 +66,7 @@ extern class ttr_tutor &LTFTutor;
 #include "txf.h"
 
 namespace ltf {
-	#define LTF__SIZE_MAX	BSO_UBYTE_MAX
+	#define LTF__SIZE_MAX	BSO_U8_MAX
 
 	typedef fdr::oflow_driver___<> _oflow_driver___;
 
@@ -75,10 +75,10 @@ namespace ltf {
 	{
 	private:
 		fdr::datum__ *Data_;
-		bso::ubyte__ Size_;
-		bso::ubyte__ Amount_;
+		bso::u8__ Size_;
+		bso::u8__ Amount_;
 		txf::text_oflow__ *TFlow_;
-		bso::ubyte__ _FreezePosition;
+		bso::u8__ _FreezePosition;
 	protected:
 		virtual fdr::size__ FDRWrite(
 			const fdr::datum__ *Buffer,
@@ -95,7 +95,7 @@ namespace ltf {
 				Amount_ = Size_ + 1;
 			} else {
 				memcpy( Data_ + Amount_, Buffer, Maximum );
-				Amount_ += (bso::ubyte__)Maximum;
+				Amount_ += (bso::u8__)Maximum;
 			}
 
 			if ( Amount_ < Size_ ) {
@@ -129,7 +129,7 @@ namespace ltf {
 			fdr::thread_safety__ ThreadSafety )
 		{
 			if ( Size > LTF__SIZE_MAX )
-				ERRl();
+				ERRLmt();
 
 			TFlow_ = &TFlow;
 
@@ -137,7 +137,7 @@ namespace ltf {
 			
 			Data_ = Data;
 
-			Size_ = (bso::ubyte__)Size;
+			Size_ = (bso::u8__)Size;
 
 			memset( Data_, ' ', Size_ );
 			Data_[Size_] = 0;

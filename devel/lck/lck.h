@@ -68,10 +68,10 @@ extern class ttr_tutor &LCKTutor;
 namespace lck {
 
 	//t Type of an access counter.
-	typedef bso::ubyte__ counter__;	// If changed, change below line too.
+	typedef bso::u8__ counter__;	// If changed, change below line too.
 
 	//d Maximum amount of concurrent read.
-	#define LCK_MAX_CONCURRENT_READ	BSO_UBYTE_MAX
+	#define LCK_MAX_CONCURRENT_READ	BSO_U8_MAX
 	
 	class lock___
 	{
@@ -223,10 +223,10 @@ namespace lck {
 		{
 #ifdef LCK__DBG
 			if ( !_Access.Locked )
-				ERRu();
+				ERRFwk();
 
 			if ( _Access.ReadWrite )
-				ERRu();
+				ERRFwk();
 #endif
 			_Access.Lock.ReadingAchieved();
 
@@ -236,10 +236,10 @@ namespace lck {
 		{
 #ifdef LCK__DBG
 			if ( !_Access.Locked )
-				ERRu();
+				ERRFwk();
 
 			if ( !_Access.ReadWrite )
-				ERRu();
+				ERRFwk();
 #endif
 			_Access.Lock.WritingAchieved();
 
@@ -280,7 +280,7 @@ namespace lck {
 		control___ &operator =( const control___ &C )
 		{
 			// Pour des raisons de standardisation, car cet opérateur n'a pas de sens dans ce contexte.
-			ERRu();
+			ERRFbd();
 
 			return *this;	// Pour éviter un 'warning'.
 		}
@@ -289,7 +289,7 @@ namespace lck {
 #ifdef LCK__DBG
 			_Lock();
 			if ( _Access.Locked )
-				ERRu();
+				ERRFwk();
 			_Unlock();
 #endif
 			_Access.Lock.WaitUntilReadingAllowed();
@@ -320,7 +320,7 @@ namespace lck {
 #ifdef LCK__DBG
 			_Lock();
 			if ( _Access.Locked )
-				ERRu();
+				ERRFwk();
 			_Unlock();
 #endif
 			_Access.Lock.WaitUntilWritingAllowed();
@@ -429,7 +429,7 @@ namespace lck {
 				_Locked = false;
 				return true;
 			} else if ( ErrorIfNotLocked )
-				ERRu();
+				ERRFwk();
 
 			return false;
 		}
@@ -485,7 +485,7 @@ namespace lck {
 				_Locked = false;
 				return true;
 			} else if ( ErrorIfNotLocked )
-				ERRu();
+				ERRFwk();
 
 			return false;
 		}

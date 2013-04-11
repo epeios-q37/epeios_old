@@ -6,7 +6,7 @@ $_RAW_$
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -89,13 +89,13 @@ namespace btf {
 			Tree_ = NULL;
 			E_BSTACKt_( r, row__ )::reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			E_BSTACKt_( r, row__ )::plug( MD );
+			E_BSTACKt_( r, row__ )::plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_BSTACKt_( r, row__ )::plug( MM );
+			E_BSTACKt_( r, row__ )::plug( AS );
 		}
 		binary_tree_filler_ &operator =( const binary_tree_filler_ &BTF )
 		{
@@ -119,7 +119,7 @@ namespace btf {
 		{
 #ifdef BTF_DBG
 			if ( E_BSTACKt_( r, row__ )::Amount() < 2 )
-				ERRu();
+				ERRFwk();
 #endif
 			Tree_->BecomeRight( E_BSTACKt_( r, row__ )::Pop(), Node );
 			Tree_->BecomeLeft( E_BSTACKt_( r, row__ )::Pop(), Node );
@@ -137,7 +137,7 @@ namespace btf {
 			row__ Row = E_BSTACKt_( r, row__ )::First();
 #ifdef BTF_DBG
 			if ( !IsComplete() )
-				ERRu();
+				ERRFwk();
 #endif
 			if ( Row != NONE )
 				return E_BSTACKt_( r, row__ )::Get( Row );
@@ -152,7 +152,7 @@ namespace btf {
 		//f Only for the 'NAVt()' macro from 'TOL' library. Don't use.
 		bso::bool__ Exists( row__ ) const
 		{
-			ERRu();
+			ERRFwk();
 
 			return false;	// Only to avoid a warning.
 		}

@@ -438,7 +438,7 @@ namespace uys {
 		return false;	// Pour éviter un 'warning'.
 	}
 
-	typedef fls::E_FILE_STORAGE_DRIVER___ _file_storage_driver___;
+	typedef fls::E_FILE_SDRIVER___ _file_storage_driver___;
 
 	class untyped_storage_file_manager___
 	: public _file_storage_driver___

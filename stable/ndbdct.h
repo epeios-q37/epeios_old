@@ -60,14 +60,15 @@ extern class ttr_tutor &NDBDCTTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "mdr.h"
-#include "ndbbsc.h"
-#include "lstbch.h"
+# include "err.h"
+# include "sdr.h"
+# include "tys.h"
+# include "ndbbsc.h"
+# include "lstbch.h"
 
 namespace ndbdct {
 
-	using mdr::size__;
+	using sdr::size__;
 
 	using ndbbsc::rrow__;
 	using ndbbsc::datum_;
@@ -77,7 +78,7 @@ namespace ndbdct {
 
 	E_ROW( drow__ );	// 'Datum row'.
 
-	typedef tym::memory_<ndbbsc::atom__, drow__> memory_;
+	typedef tys::storage_<ndbbsc::atom__, drow__> _storage_;
 
 	class storage_
 	{
@@ -91,7 +92,7 @@ namespace ndbdct {
 		{
 #ifdef NDBDCT_DBG
 			if ( Available == 0 )
-				ERRc();
+				ERRPrm();
 #endif
 			if ( Wanted >= Available )
 				Wanted = Available - 1;	// Il faut au moins 1 octet pour stocker la taille.
@@ -112,7 +113,7 @@ namespace ndbdct {
 			Amount = _AmountWritable( Data.Amount() - Offset, Available );
 
 			dtfptb::size_buffer__ SizeBuffer;
-			bso::ubyte__ SizeLength = dtfptb::OldGetSizeLength( Amount );
+			bso::u8__ SizeLength = dtfptb::OldGetSizeLength( Amount );
 
 			dtfptb::OldPutSize( Amount, SizeBuffer );
 
@@ -120,7 +121,7 @@ namespace ndbdct {
 
 			*Row += SizeLength;
 
-			Memory.Store( *(const memory_ *)&Data, Amount, Row, Offset );
+			Memory.Store( *(const _storage_ *)&Data, Amount, Row, Offset );
 
 			*Row += Data.Amount() - Offset;
 
@@ -147,10 +148,10 @@ namespace ndbdct {
 			drow__ Unallocated ) const
 		{
 			dtfptb::size_buffer__ SizeBuffer;
-			bso::ubyte__ PossibleSizeLength = sizeof( SizeBuffer );
+			bso::u8__ PossibleSizeLength = sizeof( SizeBuffer );
 
 			if ( ( *Unallocated - *Row ) < PossibleSizeLength )
-				PossibleSizeLength = (bso::ubyte__)( *Unallocated - *Row );
+				PossibleSizeLength = (bso::u8__)( *Unallocated - *Row );
 
 			Memory.Recall( Row, PossibleSizeLength, (ndbbsc::atom__ *)SizeBuffer );
 
@@ -165,10 +166,10 @@ namespace ndbdct {
 			return Size + dtfptb::OldGetSizeLength( Size );
 		}
 	public:
-		memory_ Memory;
+		_storage_ Memory;
 		struct s
 		{
-			memory_::s Memory;
+			_storage_::s Memory;
 		};
 		storage_( s &S )
 		: Memory( S.Memory )
@@ -177,17 +178,17 @@ namespace ndbdct {
 		{
 			Memory.reset( P );
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Memory.plug( MD );
+			Memory.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Memory.plug( MM );
+			Memory.plug( AS );
 		}
 		storage_ operator =( const storage_ &S )
 		{
-			ERRu();	// Impossible de dupliquer : ne connaît pas sa taille.
+			ERRFwk();	// Impossible de dupliquer : ne connaît pas sa taille.
 
 			return *this;	// Pour éviter un 'warning'.
 		}
@@ -240,7 +241,7 @@ namespace ndbdct {
 		{
 #ifdef NDBDCT_DBG
 			if ( Size == 0 )
-				ERRu();
+				ERRPrm();
 #endif
 			dtfptb::size_buffer__ SizeBuffer;
 
@@ -257,9 +258,9 @@ namespace ndbdct {
 			datum_ &Data,
 			drow__ Unallocated ) const
 		{
-			mdr::size__ Size = _GetComputedSize( Row, Unallocated );
+			sdr::size__ Size = _GetComputedSize( Row, Unallocated );
 
-			Data.Append( *(const tym::memory_<bso::char__, mdr::row__>*)&Memory, Size, *Row + dtfptb::OldGetSizeLength( Size ) );
+			Data.Append( *(const tys::storage_<bso::char__, sdr::row__>*)&Memory, Size, *Row + dtfptb::OldGetSizeLength( Size ) );
 		}
 	};
 
@@ -322,7 +323,7 @@ namespace ndbdct {
 			if ( Available.Row != NONE ) {
 #ifdef NDBDCT_DBG
 				if ( Written != ( Data.Amount() - Offset ) )
-					ERRc();
+					ERRPrm();
 #endif
 				Storage.StoreSize( Available.Row, Available.RawSize );
 				Availables.Push( Available );
@@ -426,11 +427,11 @@ namespace ndbdct {
 			S_.Unallocated = 0;
 			S_.ModificationEpochTimeStamp = 0;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Storage.plug( MM );
-			Availables.plug( MM );
-			Entries.plug( MM );
+			Storage.plug( AS );
+			Availables.plug( AS );
+			Entries.plug( AS );
 		}
 		dynamic_content_ &operator =( const dynamic_content_ &DC )
 		{
@@ -524,12 +525,12 @@ namespace ndbdct {
 		// Reconstruction de la liste des items disponibles dans 'Entries' (sous-objet 'list_').
 		void RebuildLocations( void )
 		{
-			ERRl();
+			ERRVct();
 		}
 		// Reconstruit la liste des portions inoccupés dans 'Storage'.
 		void RebuildAvailables( void )
 		{
-			ERRl();
+			ERRVct();
 		}
 		E_NAVt( Entries., rrow__ )
 		E_RODISCLOSE_( time_t, ModificationEpochTimeStamp );
@@ -543,7 +544,7 @@ namespace ndbdct {
 	private:
 		dynamic_content_ *_Content;
 		str::string _BaseFileName;
-		tym::memory_file_manager___ _StorageFileManager;
+		tys::storage_file_manager___ _StorageFileManager;
 		entries_file_manager___ _EntriesFileManager;
 		fil::mode__ _Mode;
 		time_t _GetUnderlyingFilesLastModificationTime( void ) const
@@ -589,19 +590,19 @@ namespace ndbdct {
 		void Init(
 			const str::string_ &BaseFileName,
 			fil::mode__ Mode,
-			flm::id__ ID );
+			fls::id__ ID );
 		void Set( dynamic_content_ &Content )
 		{
 			if ( _Content != NULL )
-				ERRu();
+				ERRPrm();
 
 			_Content = &Content;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _StorageFileManager.Bind();
+			uys::state__ State = _StorageFileManager.Bind();
 
-			if ( uym::IsError( State ) ) {
+			if ( uys::IsError( State ) ) {
 				_StorageFileManager.Bind();
 				return State;
 			}
@@ -609,24 +610,24 @@ namespace ndbdct {
 			if ( _EntriesFileManager.Bind() != State ) {
 				_StorageFileManager.reset();
 				_EntriesFileManager.reset();
-				return uym::sInconsistent;
+				return uys::sInconsistent;
 			}
 
-			if ( uym::Exists( State ) )
+			if ( uys::Exists( State ) )
 				if ( !_LoadAvailables() ) {
 					_StorageFileManager.reset();
 					_EntriesFileManager.reset();
-					State = uym::sInconsistent;
+					State = uys::sInconsistent;
 				}
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
-			uym::state__ State = _StorageFileManager.Settle();
+			uys::state__ State = _StorageFileManager.Settle();
 
 			if ( _EntriesFileManager.Settle() != State )
-				State = uym::sInconsistent;
+				State = uys::sInconsistent;
 
 			if ( (_Content != NULL ) && ( _BaseFileName.Amount() != 0 ) && ( _Content->ModificationEpochTimeStamp() != 0 ) )
 				_SaveAvailables();
@@ -655,12 +656,12 @@ namespace ndbdct {
 		{
 			return _BaseFileName;
 		}
-		friend uym::state__ Plug(
+		friend uys::state__ Plug(
 			dynamic_content_ &Content,
 			dynamic_content_atomized_file_manager___ &FileManager );
 	};
 
-	uym::state__ Plug(
+	uys::state__ Plug(
 		dynamic_content_ &Content,
 		dynamic_content_atomized_file_manager___ &FileManager );
 }

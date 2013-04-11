@@ -107,7 +107,7 @@ void bitbch::And(
 {
 #ifdef BITBCH_DBG
 	if ( O1.Amount() != O2.Amount() )
-		ERRu();
+		ERRPrm();
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];
@@ -175,7 +175,7 @@ void bitbch::Or(
 {
 #ifdef BITBCH_DBG
 	if ( O1.Amount() != O2.Amount() )
-		ERRu();
+		ERRPrm();
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];
@@ -244,7 +244,7 @@ void bitbch::XOr(
 {
 #ifdef BITBCH_DBG
 	if ( O1.Amount() != O2.Amount() )
-		ERRu();
+		ERRPrm();
 #endif
 
 	receptacle__ Buffer[3 * BUFFER_SIZE];

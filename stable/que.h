@@ -224,7 +224,7 @@ namespace que {
 			link__ L = Links( Item );
 
 			if ( ( L.Previous != NONE ) || ( L.Next != NONE ) )
-				ERRu();
+				ERRFwk();
 		}
 	#endif
 	public:
@@ -452,7 +452,7 @@ namespace que {
 		void Test_( void ) const
 		{
 			if ( ( Tail_ == NONE ) ||( Head_ == NONE ) )
-				ERRu();
+				ERRFwk();
 		}
 	#endif
 	public:
@@ -484,10 +484,10 @@ namespace que {
 			r Item,
 			que::E_QUEUEt_(r) & )
 		{
-	#ifdef QUE_DBG
+# ifdef QUE_DBG
 			if ( ( Head_ != NONE ) || ( Tail_ != NONE ) )
-				ERRu();
-	#endif
+				ERRFwk();
+# endif
 			Head_ = Tail_ = Item;
 
 			Amount_ = 1;
@@ -498,9 +498,9 @@ namespace que {
 			r Node,
 			que::E_QUEUEt_(r) &Queue )
 		{
-	#ifdef QUE_DBG
+# ifdef QUE_DBG
 			Test_();
-	#endif
+# endif
 			Queue.BecomeNext( Item, Node );
 
 			if ( Node == Tail_ )
@@ -594,7 +594,7 @@ namespace que {
 			Test_();
 
 			if ( Node == NONE )
-				ERRu();
+				ERRPrm();
 	#endif
 			return Queue.Next( Node );
 		}
@@ -607,7 +607,7 @@ namespace que {
 			Test_();
 
 			if ( Node == NONE )
-				ERRu();
+				ERRPrm();
 	#endif
 			return Queue.Previous( Node );
 		}

@@ -196,7 +196,7 @@ namespace bso {
 	typedef void *pointer__;
 
 	// Taille maximale nécessaire pour stocker la valeur d'un pointeur en binaire dans une chaine de caractère.
-	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	( sizeof( pointer__ ) * 8 )
+	#define BSO_ASCII_CONVERTED_POINTER_MAX_SIZE	( sizeof( bso::pointer__ ) * 8 )
 
 	struct pointer_buffer__ {
 		char Datum[BSO_ASCII_CONVERTED_POINTER_MAX_SIZE];	// '+1' pour stocker le caractère 'NULL' final.
@@ -213,7 +213,7 @@ namespace bso {
 
 
 	// Taille maximale nécessaire pour stocker la valeur d'un entirer en décimal dans une chaine de caractère (+ le signe).
-	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	( 1 + ( sizeof( pointer__ ) * 8 ) )
+	#define BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE	( 1 + ( sizeof( bso::pointer__ ) * 8 ) )
 
 	struct integer_buffer__ {
 		char Datum[BSO_ASCII_CONVERTED_INTEGER_MAX_SIZE+1];	// '+1' pour stocker le caractère 'NULL' final.

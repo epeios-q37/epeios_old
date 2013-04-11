@@ -65,18 +65,18 @@ using namespace ndbdct;
 #define LIST_FILE_NAME_EXTENSION		".edl"
 
 static inline void Save_(
-	mdr::row__ Row,
+	sdr::row__ Row,
 	flw::oflow__ &Flow )
 {
-	dtfptb::FixedPutULong( *Row, Flow );
+	dtfptb::FPut( *Row, Flow );
 }
 
 static inline void Save_(
 	const available__ &Available,
 	flw::oflow__ &Flow )
 {
-	dtfptb::FixedPutULong( *Available.Row, Flow );
-	dtfptb::FixedPutULong( Available.RawSize, Flow );
+	dtfptb::FPut( *Available.Row, Flow );
+	dtfptb::FPut( Available.RawSize, Flow );
 }
 
 template <typename item> static void Save_(
@@ -140,17 +140,17 @@ void ndbdct::dynamic_content_atomized_file_manager___::_SaveAvailables( void ) c
 
 static inline void Load_(
 	flw::iflow__ &Flow,
-	mdr::row__ &Row )
+	sdr::row__ &Row )
 {
-	Row = dtfptb::FixedGetULong( Flow );
+	dtfptb::FGet( Flow, *Row );
 }
 	
 static inline void Load_(
 	flw::iflow__ &Flow,
 	available__ &Available )
 {
-	Available.Row = dtfptb::FixedGetULong( Flow );
-	Available.RawSize = dtfptb::FixedGetULong( Flow );
+	dtfptb::FGet( Flow, Available.Row );
+	dtfptb::FGet( Flow, Available.RawSize );
 }
 	
 
@@ -251,7 +251,7 @@ bso::bool__ ndbdct::dynamic_content_atomized_file_manager___::_LoadAvailables( v
 void ndbdct::dynamic_content_atomized_file_manager___::Init(
 	const str::string_ &BaseFileName,
 	fil::mode__ Mode,
-	flm::id__ ID )
+	fls::id__ ID )
 {
 ERRProlog
 	str::string ContentFileName;
@@ -320,30 +320,30 @@ ERREnd
 ERREpilog
 }
 
-uym::state__ ndbdct::Plug(
+uys::state__ ndbdct::Plug(
 	dynamic_content_ &Content,
 	dynamic_content_atomized_file_manager___ &FileManager )
 {
-	uym::state__ State = tym::Plug( Content.Storage.Memory, FileManager._StorageFileManager );
+	uys::state__ State = tys::Plug( Content.Storage.Memory, FileManager._StorageFileManager );
 
-	if ( uym::IsError( State ) ) {
+	if ( uys::IsError( State ) ) {
 		FileManager.reset();
 		return State;
 	}
 
 	if ( lstbch::Plug( Content.Entries, FileManager._EntriesFileManager ) != State ) {
 		FileManager.reset();
-		return uym::sInconsistent;
+		return uys::sInconsistent;
 	}
 
 	FileManager.Set( Content );
 
 	Content.S_.Unallocated = FileManager._StorageFileManager.UnderlyingSize();
 
-	if ( uym::Exists( State ) )
+	if ( uys::Exists( State ) )
 		if ( !Test_( FileManager._BaseFileName, AVAILABLES_FILE_NAME_EXTENSION, FileManager._GetUnderlyingFilesLastModificationTime() ) ) {
 			FileManager.reset();
-			State = uym::sInconsistent;
+			State = uys::sInconsistent;
 		}
 
 	return State;

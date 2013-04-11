@@ -74,7 +74,7 @@ namespace ndbidx {
 	using ndbbsc::rrows_;
 	using ndbbsc::rrows;
 
-	typedef bso::ubyte__ skip_level__;
+	typedef bso::u8__ skip_level__;
 
 #define NDBIDX_NO_SKIP	0
 
@@ -101,7 +101,7 @@ namespace ndbidx {
 	struct extremities__
 	{
 		rrow__ Smallest, Greatest;
-		bso::ulong__ Used;
+		bso::uint__ Used;
 		extremities__( void )
 		{
 			Smallest = Greatest = NONE;
@@ -127,15 +127,15 @@ namespace ndbidx {
 	{
 	private:
 		// Durée entre deux appels en ms.
-		bso::ulong__ _Delay;
-		bso::ulong__ _HandledIndexAmount, _TotalIndexAmount;
+		bso::uint__ _Delay;
+		bso::uint__ _HandledIndexAmount, _TotalIndexAmount;
 	protected:
 		virtual void NDBTBLNotify(
-			bso::ulong__ HandledIndexAmount,
-			bso::ulong__ TotalIndexAmount,
-			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount,
-			bso::ulong__ BalancingCount ) = 0;
+			bso::uint__ HandledIndexAmount,
+			bso::uint__ TotalIndexAmount,
+			bso::uint__ HandledRecordAmount,
+			bso::uint__ TotalRecordAmount,
+			bso::uint__ BalancingCount ) = 0;
 	public:
 		void reset( bso::bool__ = true )
 		{
@@ -146,25 +146,25 @@ namespace ndbidx {
 		{
 			reset( false );
 		}
-		void Init( bso::ulong__ Delay = 1000 )	// Délai par défaut : 1 s.
+		void Init( bso::uint__ Delay = 1000 )	// Délai par défaut : 1 s.
 		{
 			reset();
 
 			_Delay = Delay;
 		}
-		void Set( bso::ulong__ TotalIndexAmount )
+		void Set( bso::uint__ TotalIndexAmount )
 		{
 			_TotalIndexAmount = TotalIndexAmount;
 			_HandledIndexAmount = 0;
 		}
-		void IncrementHandledIndexAmount( bso::ulong__ Amount = 1 )
+		void IncrementHandledIndexAmount( bso::uint__ Amount = 1 )
 		{
 			_HandledIndexAmount += Amount;
 		}
 		void Notify(
-			bso::ulong__ HandledRecordAmount,
-			bso::ulong__ TotalRecordAmount,
-			bso::ulong__ BalancingCount )
+			bso::uint__ HandledRecordAmount,
+			bso::uint__ TotalRecordAmount,
+			bso::uint__ BalancingCount )
 		{
 			NDBTBLNotify( _HandledIndexAmount, _TotalIndexAmount, HandledRecordAmount, TotalRecordAmount, BalancingCount );
 		}
@@ -219,7 +219,7 @@ namespace ndbidx {
 			skip_level__ SkipLevel,
 			behavior__ StopIfEqual,
 			rrow__ &Row,
-			bso::ubyte__ &Round,
+			bso::u8__ &Round,
 			ndbctt::cache_ &Cache ) const;
 		const ndbctt::content__ &_Content( void ) const
 		{
@@ -276,9 +276,9 @@ namespace ndbidx {
 			_PostInitializationFunction = NULL;
 		}
 		E_VDTOR( index_ )	// Pour qu'un 'delete' sur cette classe appelle le destructeur de la classe héritante.
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			DIndex.plug( MM );
+			DIndex.plug( AS );
 		}
 		index_ &operator =( const index_ &I )
 		{
@@ -325,16 +325,16 @@ namespace ndbidx {
 			_ModificationEpochTimeStamp = 0;
 		}
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			if ( _Bufferized )
-				ERRu();
+				ERRFwk();
 
 			_CompleteInitialization();
 			DIndex.Allocate( Size, Mode );
 		}
-		bso::ubyte__ Index(
+		bso::u8__ Index(
 			rrow__ Row,
 			extremities__ *Extremities,	// Si à 'true', compare d'abord avec les extrémités. Utilisé pour la réindexation.
 			ndbctt::cache_ &Cache  = *(ndbctt:: cache_ *)NULL );	// Retourne le nombre de noeuds parcourus pour cette indexation.
@@ -344,10 +344,10 @@ namespace ndbidx {
 
 #ifdef NDBIDX_DBG
 			if ( S_.Root == NONE )
-				ERRu();
+				ERRFwk();
 #endif
 			if ( _Bufferized )
-				ERRu();
+				ERRFwk();
 
 			S_.Root = DIndex.Delete( Row, S_.Root );
 
@@ -382,7 +382,7 @@ namespace ndbidx {
 					Row = Previous( Row );
 				break;
 			default:
-				ERRc();
+				ERRFwk();
 				break;
 			}
 
@@ -475,7 +475,7 @@ namespace ndbidx {
 
 			return _Index().Previous( Row );
 		}
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			_CompleteInitialization();
 
@@ -496,7 +496,7 @@ namespace ndbidx {
 		void Balance( void )
 		{
 			if ( _Bufferized )
-				ERRu();
+				ERRFwk();
 
 			_CompleteInitialization();
 
@@ -564,7 +564,7 @@ namespace ndbidx {
 			const str::string_ &BaseFileName,
 			bso::bool__ Erase,
 			fil::mode__ Mode,
-			flm::id__ ID );
+			fls::id__ ID );
 		void Set( index_ &Index )
 		{
 			if ( _Index != NULL )
@@ -572,19 +572,19 @@ namespace ndbidx {
 
 			_Index = &Index;
 		}
-		uym::state__ Bind( void )
+		uys::state__ Bind( void )
 		{
-			uym::state__ State = _FileManager.Bind();
+			uys::state__ State = _FileManager.Bind();
 
-			if ( uym::IsError( State ) )
+			if ( uys::IsError( State ) )
 				return State;
 
-			if ( State == uym::sExists )
+			if ( State == uys::sExists )
 				_Index->SearchRoot();
 
 			return State;
 		}
-		uym::state__ Settle( void )
+		uys::state__ Settle( void )
 		{
 			return _FileManager.Settle();
 		}
@@ -596,18 +596,18 @@ namespace ndbidx {
 		{
 			return _BaseFileName;
 		}
-		friend uym::state__ Plug(
+		friend uys::state__ Plug(
 			index_ &Index,
 			index_atomized_file_manager___	&FileManager );
 	};
 
-	inline uym::state__ Plug(
+	inline uys::state__ Plug(
 		index_ &Index,
 		index_atomized_file_manager___	&FileManager )
 	{
-		uym::state__ State = idxbtq::Plug( Index.DIndex, FileManager._FileManager );
+		uys::state__ State = idxbtq::Plug( Index.DIndex, FileManager._FileManager );
 
-		if ( uym::IsError( State ) ) {
+		if ( uys::IsError( State ) ) {
 			FileManager.reset();
 			return State;
 		}
