@@ -103,7 +103,7 @@ namespace dtfptb {
 	void _FPutInt(
 		bso::int__ Int,
 		_length__ Length,
-		flw::oflow__ Flow );
+		flw::oflow__ &Flow );
 
 	bso::int__ _FGetInt(
 		flw::iflow__ &Flow,
@@ -156,6 +156,22 @@ namespace dtfptb {
 		bso::sint__ SInt,
 		flw::oflow__ &Flow );
 
+# if !defined( CPE_X64 ) && !defined( CPE_XCODE )	// Sinon ambigüité !
+	inline bso::size__ VGet(
+		flw::iflow__ &Flow,
+		bso::size__ &Size )
+	{
+		return Size = _VGetUInt( Flow, BSO_SIZE_MAX );
+	}
+
+	inline void VPut(
+		bso::size__ Size,
+		flw::oflow__ &Flow )
+	{
+		_VPutUInt( Size, Flow );
+	}
+# endif
+
 # define DTFPTB__M( bitness, umax, smin, smax )\
 	inline bso::u##bitness##__ VGet(\
 		flw::iflow__ &Flow,\
@@ -183,22 +199,6 @@ namespace dtfptb {
 	}
 
 
-# if !defined( CPE_X64 ) && !defined( CPE_XCODE )	// Sinon ambigüité !
-	inline bso::size__ VGet(
-		flw::iflow__ &Flow,
-		bso::size__ &Size )
-	{
-		return Size = _VGetUInt( Flow, BSO_SIZE_MAX );
-	}
-
-	inline void VPut(
-		bso::size__ Size,
-		flw::oflow__ &Flow )
-	{
-		_VPutUInt( Size, Flow );
-	}
-# endif
-
 # ifdef CPE_X64
 DTFPTB__M( 64, BSO_U64_MAX, BSO_S64_MIN, BSO_S64_MAX )
 # endif
@@ -218,7 +218,7 @@ DTFPTB__M( 16, BSO_U16_MAX, BSO_S16_MIN, BSO_S16_MAX )
 		flw::iflow__ &Flow,
 		bso::u8__ &Int )
 	{
-		return VGet( Flow, Int );
+		return FGet( Flow, Int );
 	}
 
 

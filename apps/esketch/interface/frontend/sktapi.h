@@ -1,17 +1,18 @@
-/* DON'T MODIFY */
-/* This file was generated using getbkdapi	V0.2.4, and a special XSL file
-($RCSfile$ $Revision$ $Date$ $Author$) */
-// $Id$	(CVS feature).
+/* DON'T MODIFY : computer-generated file ! */
+/*
+	API from : esketchbkd V0.1.0 (Build : Apr 13 2013 15:39:18 MSVC_x86)
+	This file was generated using getbkdapi V0.2.4 (Build Apr 13 2013 15:40:21 (MSVC_x86)),
+	and a XSL file (CVS features : $Id$).
+*/
 
 #ifndef ESKETCH__INC
-#define ESKETCH__INC
+# define ESKETCH__INC
 
+# define ESKETCH_TARGET "esketch"
+# define ESKETCH_API_VERSION "1"
 
-#define ESKETCH_TARGET "esketch"
-#define ESKETCH_API_VERSION "1"
-
-#include "fblfrd.h"
-#include "cpe.h"
+# include "fblfrd.h"
+# include "cpe.h"
 
 namespace esketch {
 
@@ -24,7 +25,6 @@ namespace esketch {
 	public:
 		void reset( bso::bool__ = true )
 		{
-			
 			_Backend = NULL;
 			_ID = FBLFRD_UNDEFINED_OBJECT;
 		}
@@ -82,7 +82,6 @@ namespace esketch {
 	public:
 		void reset( bso::bool__ = true )
 		{
-			
 			_Backend = NULL;
 			_ID = FBLFRD_UNDEFINED_OBJECT;
 		}

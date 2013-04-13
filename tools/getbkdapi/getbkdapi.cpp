@@ -499,7 +499,7 @@ void Generate(
 	fblcst::cast Cast;
 	bso::u8__ ID = 1;
 	
-	if ( ( Cast = (fblcst::cast)Parameters( P ) ) == fblcst::cEnd )
+	if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd )
 		Writer.PushTag( "Out" );
 	else {
 		Writer.PushTag( "In" );
@@ -510,7 +510,7 @@ void Generate(
 	P = Parameters.Next( P );
 		
 	while( P != NONE ) {
-		if ( ( Cast = (fblcst::cast)Parameters( P ) ) == fblcst::cEnd ) {
+		if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd ) {
 			
 			if ( Parameters.Next( P ) != NONE ) {
 				ID = 1;
@@ -570,7 +570,7 @@ void Generate(
 	Writer.PushTag( "Command" );
 	
 	Writer.PutValue( Command.Identification.Value, "Name" );
-	Writer.PutValue( Convert( Command.Identification.ID() ), "ID" );
+	Writer.PutValue( Convert( *Command.Identification.ID() ), "ID" );
 	
 	Generate( Command.Parameters, Writer, Position );
 	

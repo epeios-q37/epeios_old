@@ -69,12 +69,13 @@ extern class ttr_tutor &FBLTYPTutor;
 #	undef GetObject
 #endif
 
-#define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_U32_MAX)
-#define FBLTYP_UNDEFINED_ID16	((fbltyp::id16__)BSO_U16_MAX)
 #define FBLTYP_UNDEFINED_ID8	((fbltyp::id8__)BSO_U8_MAX)
+#define FBLTYP_UNDEFINED_ID16	((fbltyp::id16__)BSO_U16_MAX)
+#define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_U32_MAX)
+#define FBLTYP_UNDEFINED_ID		((fbltyp::id__)BSO_UINT_MAX)
 
 #define FBLTYP_ITEM( id, name )\
-	typedef fbltyp::item_<id>	name##_;\
+	typedef fbltyp::_item_<id>	name##_;\
 	E_AUTO( name )
 
 #define FBLTYP_ITEMS( item, name )\
@@ -82,7 +83,7 @@ extern class ttr_tutor &FBLTYPTutor;
 	E_AUTO( name )
 
 #define FBLTYP_XITEM( id, name )\
-	typedef fbltyp::extended_item_<id>	name##_;\
+	typedef fbltyp::_extended_item_<id>	name##_;\
 	E_AUTO( name )
 
 #define FBLTYP_XITEMS( item, name )\
@@ -121,25 +122,27 @@ extern class ttr_tutor &FBLTYPTutor;
 # define FBLTYP_MIMIC_ID8( sname ) FBLTYP_MIMIC( fbltyp::id8, sname )
 # define FBLTYP_MIMIC_ID16( sname ) FBLTYP_MIMIC( fbltyp::id16, sname )
 # define FBLTYP_MIMIC_ID32( sname ) FBLTYP_MIMIC( fbltyp::id32, sname )
+# define FBLTYP_MIMIC_ID( sname ) FBLTYP_MIMIC( fbltyp::id, sname )
 
 # define FBLTYP_MIMIC_IDS8( sname, bname ) FBLTYP_MIMICS( fbltyp::id8, fbltyp::ids8, sname, bname )
 # define FBLTYP_MIMIC_IDS16( sname, bname ) FBLTYP_MIMICS( fbltyp::id16, fbltyp::ids16, sname, bname )
 # define FBLTYP_MIMIC_IDS32( sname, bname ) FBLTYP_MIMICS( fbltyp::id32, fbltyp::ids32, sname, bname )
+# define FBLTYP_MIMIC_IDS( sname, bname ) FBLTYP_MIMICS( fbltyp::id, fbltyp::ids, sname, bname )
 
 # define FBLTYP_MIMIC_XIDS8( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id8, fbltyp::ids8, fbltyp::xids8, sname, bname, xname )
 # define FBLTYP_MIMIC_XIDS16( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::ids16, fbltyp::xids16, sname, bname, xname )
 # define FBLTYP_MIMIC_XIDS32( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::ids32, fbltyp::xids32, sname, bname, xname )
+# define FBLTYP_MIMIC_XIDS( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id, fbltyp::ids, fbltyp::xids, sname, bname, xname )
 
 # define FBLTYP_MIMIC_UINT( sname ) FBLTYP_MIMIC( fbltyp::uint, sname )
 # define FBLTYP_MIMIC_UINTS( sname, bname ) FBLTYP_MIMICS( fbltyp::uint, fbltyp::uints, sname, bname )
-
 
 namespace fbltyp {
 	//t Value.
 	typedef str::string_ value_;
 	typedef str::string value;
 
-	template <class id> class item_
+	template <class id> class _item_
 	{
 	public:
 		value_ Value;
@@ -148,7 +151,7 @@ namespace fbltyp {
 			value_::s Value;
 			id ID;
 		} &S_;
-		item_( s &S )
+		_item_( s &S )
 		: S_( S ),
 		  Value( S.Value )
 		{}
@@ -164,7 +167,7 @@ namespace fbltyp {
 		{
 			Value.plug( AS );
 		}
-		item_ &operator =( const item_ &I )
+		_item_ &operator =( const _item_ &I )
 		{
 			Value = I.Value;
 			S_.ID = I.S_.ID;
@@ -200,7 +203,7 @@ namespace fbltyp {
 	typedef ctn::E_MCONTAINER_( value_ ) values_;
 	E_AUTO( values )
 
-	template <class id> class extended_item_
+	template <class id> class _extended_item_
 	{
 	public:
 		values_ Values;
@@ -209,7 +212,7 @@ namespace fbltyp {
 			values_::s Values;
 			id ID;
 		} &S_;
-		extended_item_( s &S )
+		_extended_item_( s &S )
 		: S_( S ),
 		  Values( S.Values )
 		{}
@@ -221,7 +224,7 @@ namespace fbltyp {
 		{
 			Values.plug( AS );
 		}
-		extended_item_ &operator =( const extended_item_ &I )
+		_extended_item_ &operator =( const _extended_item_ &I )
 		{
 			Values = I.Values;
 			S_.ID = I.S_.ID;
@@ -312,25 +315,32 @@ namespace fbltyp {
 	E_TMIMIC( uints_t, uints );
 
 	typedef bso::u8__ id8_t__;
-	typedef id8_t__ id8__;
+	E_TMIMIC__(id8_t__, id8__ );
 	typedef bch::E_BUNCH_( id8__ ) ids8_t_;
 	E_TMIMIC( ids8_t, ids8 );
 	typedef ctn::E_MCONTAINER_( ids8_ ) xids8_t_;
 	E_TMIMIC( xids8_t, xids8 );
 
 	typedef bso::u16__ id16_t__;
-	typedef id16_t__ id16__;
+	E_TMIMIC__( id16_t__, id16__ );
 	typedef bch::E_BUNCH_( id16__ ) ids16_t_;
 	E_TMIMIC( ids16_t, ids16 );
 	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
 	E_TMIMIC( xids16_t, xids16 );
 
 	typedef bso::u32__ id32_t__;
-	typedef id32_t__ id32__;
+	E_TMIMIC__( id32_t__, id32__ );
 	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
 	E_TMIMIC( ids32_t, ids32 );
 	typedef ctn::E_MCONTAINER_( ids32_ ) xids32_t_;
 	E_TMIMIC( xids32_t, xids32 );
+
+	typedef bso::uint__ id_t__;
+	E_TMIMIC__( id_t__, id__ );
+	typedef bch::E_BUNCH_( id__ ) ids_t_;
+	E_TMIMIC( ids_t, ids );
+	typedef ctn::E_MCONTAINER_( ids_ ) xids_t_;
+	E_TMIMIC( xids_t, xids );
 
 	typedef bso::char__ char_t__;
 	typedef char_t__	char__;
@@ -352,12 +362,16 @@ namespace fbltyp {
 	FBLTYP_ITEMS( item16, items16 )
 	FBLTYP_ITEM( id32__, item32 )
 	FBLTYP_ITEMS( item32, items32 )
+	FBLTYP_ITEM( id__, item )
+	FBLTYP_ITEMS( item, items )
 	FBLTYP_XITEM( id8__, xitem8 )
 	FBLTYP_XITEMS( xitem8, xitems8 )
 	FBLTYP_XITEM( id16__, xitem16 )
 	FBLTYP_XITEMS( xitem16, xitems16 )
 	FBLTYP_XITEM( id32__, xitem32 )
 	FBLTYP_XITEMS( xitem32, xitems32 )
+	FBLTYP_XITEM( id__, xitem )
+	FBLTYP_XITEMS( xitem, xitems )
 	/* Both below declaration are not part of the protocol. */
 	typedef fbltyp::detail_<id8__, sdr::row__>	command_detail_	;
 	typedef fbltyp::detail<id8__, sdr::row__>	command_detail;
@@ -366,6 +380,64 @@ namespace fbltyp {
 	typedef ctn::E_CONTAINER( command_detail_ ) commands_details;
 	typedef bch::E_BUNCH_( object_reference__ ) objects_references_;
 	typedef bch::E_BUNCH( object_reference__ ) objects_references;
+
+	template <typename type> inline void _StraightPut(
+		type Value,
+		flw::oflow__ &Flow )
+	{
+		dtfptb::VPut( Value, Flow );
+	}
+
+	template <typename type> inline void _StraightGet(
+		flw::iflow__ &Flow,
+		type &Value )
+	{
+		dtfptb::VGet( Flow, Value );
+	}
+
+	template <typename type> inline void _StraightDPut(
+		type Value,
+		flw::oflow__ &Flow )
+	{
+		_StraightPut( *Value, Flow );
+	}
+
+	template <typename type> inline void _StraightDGet(
+		flw::iflow__ &Flow,
+		type &Value )
+	{
+		_StraightGet( Flow, *Value );
+	}
+
+	template <typename type> inline void _AdjustingPut(
+		type Value,
+		flw::oflow__ &Flow )
+	{
+		_StraightPut( (type)( Value + 1 ), Flow );	// 'NONE ('-1') devient 0, donc ne prend qu'un seul octet.
+	}
+
+	template <typename type> inline void _AdjustingGet(
+		flw::iflow__ &Flow,
+		type &Value )
+	{
+		_StraightGet( Flow, Value );
+
+		Value--;	// '0' devient 'NONE' (voir '_AdjustingPut()').
+	}
+
+	template <typename type> inline void _AdjustingDGet(
+		flw::iflow__ &Flow,
+		type &Value )
+	{
+		_AdjustingGet( Flow, *Value );
+	}
+
+	template <typename type> void _AdjustingDPut(
+		type Value,
+		flw::oflow__ &Flow )
+	{
+		_AdjustingPut( *Value, Flow );
+	}
 
 	template <typename t> inline t *_New( void )
 	{
@@ -432,7 +504,7 @@ namespace fbltyp {
 		object__ Object,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Object, OFlow );
+		_StraightDPut( Object, OFlow );
 	}
 
 	//f Return 'Object' from 'IFlow'.
@@ -440,7 +512,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		object__ &Object )
 	{
-		flw::Get( IFlow, Object );
+		_StraightDGet( IFlow, Object );
 	}
 
 	FBLTYP_S( Object, object__ )
@@ -450,7 +522,7 @@ namespace fbltyp {
 		boolean__ Boolean,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Boolean, OFlow );
+		dtfptb::FPut( Boolean, OFlow );
 	}
 
 	//f Return 'Boolean' from 'IFlow'.
@@ -458,7 +530,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		boolean__ &Boolean )
 	{
-		flw::Get( IFlow, Boolean );
+		dtfptb::FGet( IFlow, *(bso::u8__ *)&Boolean );
 	}
 
 	FBLTYP_S( Boolean, boolean__ )
@@ -475,60 +547,60 @@ namespace fbltyp {
 
 	FBLTYP_D( Booleans, booleans )
 
-	//f Put 's32' into 'Flow'.
+	//f Put 'sInt' into 'Flow'.
 	inline void PutSInt(
 		sint__ Int,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::VPut( Int, OFlow );
+		_StraightPut( Int, OFlow );
 	}
 
-	//f Get 's32' from 'IFlow'.
-	inline sint__ GetSInt(
+	//f Get 'sInt' from 'IFlow'.
+	inline void GetSInt(
 		flw::iflow__ &IFlow,
 		sint__ &Int )
 	{
-		return dtfptb::VGet( IFlow, Int );
+		_StraightGet( IFlow, Int );
 	}
 	
 	FBLTYP_S( SInt, sint__ )
 
-	//f Put 'S32s' into 'Flow'.
+	//f Put 'SInts' into 'Flow'.
 	void PutSInts(
 		const sints_ &Ints,
 		flw::oflow__ &OFlow );
 
-	//f Get 'S32s' from 'IFlow'.
+	//f Get 'SInts' from 'IFlow'.
 	void GetSInts(
 		flw::iflow__ &IFlow,
 		sints_ &SInts );
 
 	FBLTYP_D( SInts, sints )
 
-	//f Put 'U32' into 'Flow'.
+	//f Put 'UInt' into 'Flow'.
 	inline void PutUInt(
 		uint__ Int,
 		flw::oflow__ &OFlow )
 	{
-		dtfptb::VPut( Int, OFlow );
+		_StraightPut( Int, OFlow );
 	}
 
-	//f Get 'U32' from 'IFlow'.
-	inline uint__ GetUInt(
+	//f Get 'UInt' from 'IFlow'.
+	inline void GetUInt(
 		flw::iflow__ &IFlow,
 		uint__ &Int )
 	{
-		return dtfptb::VGet( IFlow, Int );
+		_StraightGet( IFlow, Int );
 	}
 	
 	FBLTYP_S( UInt, uint__ )
 
-	//f Put 'U32s' into 'Flow'.
+	//f Put 'UInts' into 'Flow'.
 	void PutUInts(
 		const uints_ &UInts,
 		flw::oflow__ &OFlow );
 
-	//f Get 'U32s' from 'IFlow'.
+	//f Get 'UInts' from 'IFlow'.
 	void GetUInts(
 		flw::iflow__ &IFlow,
 		uints_ &UInts );
@@ -540,7 +612,7 @@ namespace fbltyp {
 		id8__ Id8,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Id8, OFlow );
+		dtfptb::FPut( *Id8, OFlow );
 	}
 
 	//f Return 'Id8' from 'IFlow'.
@@ -548,7 +620,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		id8__ &Id8 )
 	{
-		flw::Get( IFlow, Id8 );
+		dtfptb::FGet( IFlow, *Id8 );
 	}
 	
 	FBLTYP_S( Id8, id8__ )
@@ -582,7 +654,7 @@ namespace fbltyp {
 		id16__ Id16,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Id16, OFlow );
+		_AdjustingDPut( Id16, OFlow );
 	}
 
 	//f Return 'Id16' from 'IFlow'.
@@ -590,7 +662,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		id16__ &Id16 )
 	{
-		flw::Get( IFlow, Id16 );
+		_AdjustingDGet( IFlow, Id16 );
 	}
 	
 	FBLTYP_S( Id16, id16__ )
@@ -619,12 +691,13 @@ namespace fbltyp {
 
 	FBLTYP_D( XIds16, xids16 )
 
+
 	//f Put 'Id32' into 'OFlow'.
 	inline void PutId32(
 		id32__ Id32,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Id32, OFlow );
+		_AdjustingDPut( Id32, OFlow );
 	}
 
 	//f Return 'Id32' from 'IFlow'.
@@ -632,7 +705,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		id32__ &Id32 )
 	{
-		flw::Get( IFlow, Id32 );
+		_AdjustingDGet( IFlow, Id32 );
 	}
 	
 	FBLTYP_S( Id32, id32__ )
@@ -661,12 +734,55 @@ namespace fbltyp {
 
 	FBLTYP_D( XIds32, xids32 )
 
+		
+	//f Put 'Id' into 'OFlow'.
+	inline void PutId(
+		id__ Id,
+		flw::oflow__ &OFlow )
+	{
+		_AdjustingDPut( Id, OFlow );
+	}
+
+	//f Return 'Id' from 'IFlow'.
+	inline void GetId(
+		flw::iflow__ &IFlow,
+		id__ &Id )
+	{
+		_AdjustingDGet( IFlow, Id );
+	}
+	
+	FBLTYP_S( Id, id__ )
+
+	//f Put 'Ids' into 'OFlow'.
+	void PutIds(
+		const ids_ &Ids,
+		flw::oflow__ &OFlow );
+
+	//f Get 'Ids' from 'OFlow'.
+	void GetIds(
+		flw::iflow__ &IFlow,
+		ids_ &Ids );
+
+	FBLTYP_D( Ids, ids )
+
+	//f Put 'XIds' into 'OFlow'.
+	void PutXIds(
+		const xids_ &XIds,
+		flw::oflow__ &OFlow );
+
+	//f Get 'XIds' from 'OFlow'.
+	void GetXIds(
+		flw::iflow__ &IFlow,
+		xids_ &XIds );
+
+	FBLTYP_D( XIds, xids )
+
 	//f Put 'Char' into 'OFlow'.
 	inline void PutChar(
 		char__ Char,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Char, OFlow );
+		dtfptb::FPut( Char, OFlow );
 	}
 
 	//f Return 'Char' from 'IFlow'.
@@ -674,7 +790,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		char__ &Char )
 	{
-		flw::Get( IFlow, Char );
+		dtfptb::FGet( IFlow, Char );
 	}
 
 	FBLTYP_S( Char, char__ )
@@ -726,7 +842,7 @@ namespace fbltyp {
 		byte__ Byte,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( Byte, OFlow );
+		dtfptb::FPut( Byte, OFlow );
 	}
 
 	//f Return 'Byte' from 'IFlow'.
@@ -734,7 +850,7 @@ namespace fbltyp {
 		flw::iflow__ &IFlow,
 		byte__ &Byte )
 	{
-		flw::Get( IFlow, Byte );
+		dtfptb::FGet( IFlow, Byte );
 	}
 	
 	FBLTYP_S( Byte, byte__ )
@@ -811,6 +927,7 @@ namespace fbltyp {
 
 	FBLTYP_D( items16, items16 )
 
+
 	//f Put 'Item32' into 'OFlow'.
 	void PutItem32(
 		const item32_ Item32,
@@ -834,6 +951,32 @@ namespace fbltyp {
 		items32_ &Items32 );
 
 	FBLTYP_D( Items32, items32 )
+
+	
+	//f Put 'Item' into 'OFlow'.
+	void PutItem(
+		const item_ Item,
+		flw::oflow__ &OFlow );
+
+	//f Get 'Item' from 'IFlow'.
+	void GetItem(
+	   flw::iflow__ &IFlow,
+	   item_ &Item );
+
+	FBLTYP_D( Item, items )
+
+	//f Put 'Items' into 'OFlow'.
+	void PutItems(
+		const items_ &Items,
+		flw::oflow__ &OFlow );
+
+	//f Get 'Items' from 'IFlow'.
+	void GetItems(
+		flw::iflow__ &IFlow,
+		items_ &Items );
+
+	FBLTYP_D( Items, items )
+
 
 	//f Put 'XItems8' into 'OFlow'.
 	void PutXItems8(
@@ -859,7 +1002,8 @@ namespace fbltyp {
 
 	FBLTYP_D( XItems16, xitems16 )
 
-	//f Put 'XItems32' into 'OFlow'.
+
+		//f Put 'XItems32' into 'OFlow'.
 	void PutXItems32(
 		const xitems32_ &XItems32,
 		flw::oflow__ &OFlow );
@@ -870,6 +1014,20 @@ namespace fbltyp {
 		xitems32_ &XItems32 );
 
 	FBLTYP_D( XItems32, xitems32 )
+
+	
+		//f Put 'XItems' into 'OFlow'.
+	void PutXItems(
+		const xitems_ &XItems,
+		flw::oflow__ &OFlow );
+
+	//f Get 'XItems' from 'IFlow'.
+	void GetXItems(
+		flw::iflow__ &IFlow,
+		xitems_ &XItems );
+
+	FBLTYP_D( XItems, xitems )
+
 
 	//f Put 'CommandsItems' into 'OFlow'.
 	void PutCommandsDetails(

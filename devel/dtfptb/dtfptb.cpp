@@ -238,12 +238,12 @@ static void _PutInt(
 	Flow.Write( XInt.DSizeBuffer(), XInt.BufferSize() );
 }
 
-#define M( s )	Flow.Put( (bso::u8__)( Int >> ( s * 8 ) ) )
+#define M( s )	Flow.Put( (flw::datum__)( Int >> ( s * 8 ) ) )
 
 void dtfptb::_FPutInt(
 	bso::int__ Int,
 	_length__ Length,
-	flw::oflow__ Flow )
+	flw::oflow__ &Flow )
 {
 	switch ( Length ) {
 	case 8:
@@ -261,7 +261,7 @@ void dtfptb::_FPutInt(
 		M( 2 );
 	case 2:
 		M( 1 );
-	case 0:
+	case 1:
 		M( 0 );
 		break;
 	default:
@@ -271,7 +271,7 @@ void dtfptb::_FPutInt(
 }
 #undef M
 
-#define M( s )	Int += (bso::int__) ( Flow.Get() ) << ( s * 8 )
+#define M( s )	Int += (bso::int__)( Flow.Get() ) << ( s * 8 )
 
 bso::int__ dtfptb::_FGetInt(
 	flw::iflow__ &Flow,
@@ -297,6 +297,7 @@ bso::int__ dtfptb::_FGetInt(
 		M( 1 );
 	case 1:
 		M( 0 );
+		break;
 	default:
 		ERRPrm();
 		break;

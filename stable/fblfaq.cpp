@@ -116,7 +116,7 @@ namespace {
 
 		Value.Init( Item.Values );
 
-		Type.ID( Item.ID() );
+		Type.ID( *Item.ID() );
 
 		P = Item.Values.First();
 

@@ -96,6 +96,7 @@ extern class ttr_tutor &FBLBKDTutor;
 //d This is the value of the index returned for a shared object already created.
 # define FBLBKD_SHARED_OBJECT_INDEX	NONE
 
+# if 0
 //d Value for an undefined Id32.
 # define FBLBKD_UNDEFINED_ID32		FBLTYP_UNDEFINED_ID32
 
@@ -104,6 +105,10 @@ extern class ttr_tutor &FBLBKDTutor;
 
 //d Value for an undefined Id8.
 # define FBLBKD_UNDEFINED_ID8		FBLTYP_UNDEFINED_ID8
+
+//d Value for an undefined Id8.
+# define FBLBKD_UNDEFINED_ID		FBLTYP_UNDEFINED_ID
+# endif
 
 namespace fblbkd {
 	using namespace fblbrq;

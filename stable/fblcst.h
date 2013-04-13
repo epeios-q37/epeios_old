@@ -80,9 +80,9 @@ namespace fblcst {
 		cSInt,
 		//i Portable ints (SET_( bso::sint__ ) ).
 		cSInts,
-		//i Portable unsigned long (bso::u32__ ).
+		//i Portable unsigned long (bso::uint__ ).
 		cUInt,
-		//i Portable unsigned longs (SET_( bso::u32__ ) ).
+		//i Portable unsigned longs (SET_( bso::uint__ ) ).
 		cUInts,
 		//i 8 bits identifier ( 'bso::u8__' ).
 		cId8,
@@ -102,6 +102,12 @@ namespace fblcst {
 		cIds32,
 		//i Array of array of 32 bits identifiers ( 'XMCONTAINER_( SET_( bso::u32__ ) )' )
 		cXIds32,
+		//i Generic identifier ( 'bso::uint__' ).
+		cId,
+		//i Array of generic identifier ( 'SET_( bso::uint__ )' ).
+		cIds,
+		//i Array of array of bits identifiers ( 'XMCONTAINER_( SET_( bso::uint__ ) )' )
+		cXIds,
 		//i Character ('bso::char__' ).
 		cChar,
 		//i String ('str::string_').

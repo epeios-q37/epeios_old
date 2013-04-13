@@ -442,6 +442,8 @@ namespace fblfrd {
 		FBLFRD_M( SInt, sints_ )
 		FBLFRD_M( UInt, uint__ )
 		FBLFRD_M( UInts, uints_ )
+		FBLFRD_M( Id, id__ )
+		FBLFRD_M( Ids, ids_ )
 		FBLFRD_M( Id8, id8__ )
 		FBLFRD_M( Ids8, ids8_ )
 		FBLFRD_M( XIds8, xids8_ )

@@ -71,6 +71,77 @@ static inline bso::size__ GetSize_( flw::iflow__ &Flow )
 	return dtfptb::VGet( Flow, Size );
 }
 
+/*
+
+
+static inline void _Put(
+	const str::string_ &Value,
+	flw::oflow__ &Flow )
+{
+	Put( Value, Flow );
+}
+
+static inline void _Get(
+	flw::iflow__ &Flow,
+	str::string_ &Value )
+{
+	Get( Flow, Value );
+}
+*/
+
+
+static inline void _Put(
+	object_reference__ Value,
+	flw::oflow__ &Flow )
+{
+	Put( Value, Flow );
+}
+
+static inline void _Get(
+	flw::iflow__ &Flow,
+	object_reference__ &Value )
+{
+	Get( Flow, Value );
+}
+
+static inline void _Put(
+	const bso::raw__ Value,
+	flw::oflow__ &Flow )
+{
+	Put( Value, Flow );
+}
+
+static inline void _Get(
+	flw::iflow__ &Flow,
+	bso::raw__ &Value )
+{
+	Get( Flow, Value );
+}
+
+
+# define M( name, type )\
+static inline void _Put(\
+	type##__ Value,\
+	flw::oflow__ &Flow )\
+{\
+	Put##name( Value, Flow );\
+}\
+static inline void _Get(\
+	flw::iflow__ &Flow,\
+	type##__ &Value )\
+{\
+	Get##name( Flow, Value );\
+}
+
+M( SInt, sint );
+M( UInt, uint );
+M( Id8, id8 );
+M( Id16, id16 );
+M( Id32, id32 );
+M( Id, id );
+M( Boolean, boolean );
+M( Object, object );
+
 namespace {
 	template <typename s> inline void PutSet_(
 		const s &S,
@@ -81,7 +152,7 @@ namespace {
 		PutSize_( S.Amount(), OFlow );
 
 		while( P != NONE ) {
-			flw::Put( S( P ), OFlow );
+			_Put( S( P ), OFlow );
 			P = S.Next( P );
 		}
 	}
@@ -94,17 +165,10 @@ namespace {
 		bso::size__ Size = GetSize_( IFlow );
 
 		while( Size-- ) {
-			flw::Get( IFlow, I );
+			_Get( IFlow, I );
 			S.Append( I );
 		}
 	}
-}
-
-void fbltyp::PutIds8(
-	const ids8_ &Ids8,
-	flw::oflow__ &OFlow )
-{
-	PutSet_( Ids8, OFlow );
 }
 
 void fbltyp::PutSInts(
@@ -133,6 +197,14 @@ void fbltyp::GetUInts(
 {
 	GetSet_<uints_, uint__>( IFlow, UInts );
 }
+
+void fbltyp::PutIds8(
+	const ids8_ &Ids8,
+	flw::oflow__ &OFlow )
+{
+	PutSet_( Ids8, OFlow );
+}
+
 void fbltyp::GetIds8(
 	flw::iflow__ &IFlow,
 	ids8_ &Ids8 )
@@ -156,16 +228,16 @@ void fbltyp::GetIds16(
 
 namespace {
 	template <typename t> inline void Put_(
-		const item_<t> &I,
+		const _item_<t> &I,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( I.ID(), OFlow );
+		_Put( I.ID(), OFlow );
 		OFlow << I.Value;
 	}
 
 	template <typename t> inline void Get_(
 		flw::iflow__ &IFlow,
-		item_<t> &I )
+		_item_<t> &I )
 	{
 		flw::Get( IFlow, I.S_.ID );
 		IFlow >> I.Value;
@@ -175,28 +247,28 @@ namespace {
 		const str::string_ &String,
 		flw::oflow__ &OFlow )
 	{
-		PutSet_( String, OFlow );
+		PutString( String, OFlow );
 	}
 
 	inline void Get_(
 		flw::iflow__ &IFlow,
 		string_ &String )
 	{
-		GetSet_<string_, bso::char__>( IFlow, String );
+		GetString( IFlow, String );
 	}
 
 	inline void Put_(
 		const binary_ &Binary,
 		flw::oflow__ &OFlow )
 	{
-		PutSet_( Binary, OFlow );
+		PutBinary( Binary, OFlow );
 	}
 
 	inline void Get_(
 		flw::iflow__ &IFlow,
 		binary_ &Binary )
 	{
-		GetSet_<binary_, bso::raw__>( IFlow, Binary );
+		GetBinary( IFlow, Binary );
 	}
 
 	inline void Put_(
@@ -242,6 +314,20 @@ namespace {
 	}
 
 	inline void Put_(
+		const ids_ &Ids,
+		flw::oflow__ &OFlow )
+	{
+		PutSet_( Ids, OFlow );
+	}
+
+	inline void Get_(
+		flw::iflow__ &IFlow,
+		ids_ &Ids )
+	{
+		GetSet_<ids_, id__>( IFlow, Ids );
+	}
+
+	inline void Put_(
 		const command_detail_ &CD,
 		flw::oflow__ &OFlow )
 	{
@@ -258,7 +344,7 @@ namespace {
 	}
 
 	template <typename t> inline void Put_(
-		const extended_item_<t> &I,
+		const _extended_item_<t> &I,
 		flw::oflow__ &OFlow );
 
 	void Put_(
@@ -297,10 +383,10 @@ namespace {
 	}
 
 	template <typename t> inline void Put_(
-		const extended_item_<t> &I,
+		const _extended_item_<t> &I,
 		flw::oflow__ &OFlow )
 	{
-		flw::Put( I.ID(), OFlow );
+		_Put( I.ID(), OFlow );
 		PutMContainer_<strings_, string_>( I.Values, OFlow );
 	}
 
@@ -310,7 +396,7 @@ namespace {
 
 	template <typename t> inline void Get_(
 		flw::iflow__ &IFlow,
-		extended_item_<t> &I );	// Predeclaration.
+		_extended_item_<t> &I );	// Predeclaration.
 
 	template <typename c, typename i> inline void GetContainer_(
 		flw::iflow__ &IFlow,
@@ -329,7 +415,7 @@ namespace {
 
 	template <typename t> inline void Get_(
 		flw::iflow__ &IFlow,
-		extended_item_<t> &I )
+		_extended_item_<t> &I )
 	{
 		flw::Get( IFlow, I.S_.ID );
 		GetContainer_<strings_, string>( IFlow, I.Values );
@@ -418,6 +504,33 @@ void fbltyp::GetXIds32(
 	xids32_ &XIds32 )
 {
 	GetContainer_<xids32_, ids32>( IFlow, XIds32 );
+}
+
+void fbltyp::PutIds(
+	const ids_ &Ids,
+	flw::oflow__ &OFlow )
+{
+	Put_( Ids, OFlow );
+}
+
+void fbltyp::GetIds(
+	flw::iflow__ &IFlow,
+	ids_ &Ids )
+{
+	Get_( IFlow, Ids );
+}
+void fbltyp::PutXIds(
+	const xids_ &XIds,
+	flw::oflow__ &OFlow )
+{
+	PutMContainer_<xids_, ids_>( XIds, OFlow );
+}
+
+void fbltyp::GetXIds(
+	flw::iflow__ &IFlow,
+	xids_ &XIds )
+{
+	GetContainer_<xids_, ids>( IFlow, XIds );
 }
 
 void fbltyp::PutStrings(
@@ -560,6 +673,35 @@ void fbltyp::GetItems32(
 	GetContainer_<items32_, item32>( IFlow, Items32 );
 }
 
+void fbltyp::PutItem(
+	const item_ Item,
+	flw::oflow__ &OFlow )
+{
+	Put_( Item, OFlow );
+}
+
+void fbltyp::GetItem(
+   flw::iflow__ &IFlow,
+   item_ &Item )
+{
+	Get_( IFlow, Item );
+}
+
+void fbltyp::PutItems(
+	const items_ &Items,
+	flw::oflow__ &OFlow )
+{
+	PutMContainer_<items_, item_>( Items, OFlow );
+}
+
+void fbltyp::GetItems(
+   flw::iflow__ &IFlow,
+   items_ &Items )
+{
+	GetContainer_<items_, item>( IFlow, Items );
+}
+
+
 void fbltyp::PutXItems8(
 	const xitems8_ &XItems8,
 	flw::oflow__ &OFlow )
@@ -600,6 +742,20 @@ void fbltyp::GetXItems32(
    xitems32_ &XItems32 )
 {
 	GetContainer_<xitems32_, xitem32>( IFlow, XItems32 );
+}
+
+void fbltyp::PutXItems(
+	const xitems_ &XItems,
+	flw::oflow__ &OFlow )
+{
+	PutContainer_<xitems_, xitem_>( XItems, OFlow );
+}
+
+void fbltyp::GetXItems(
+   flw::iflow__ &IFlow,
+   xitems_ &XItems )
+{
+	GetContainer_<xitems_, xitem>( IFlow, XItems );
 }
 
 void fbltyp::PutObjectsReferences(

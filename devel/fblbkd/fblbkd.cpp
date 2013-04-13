@@ -363,7 +363,7 @@ static void GetParameters_(
 	type__ Type = Requete.Id16In();
 	id16__ Command = Requete.Id16In();;
 
-	WriteParameters_( Backend.Module( (type__)*Type ).Descriptions, Command, Requete );
+	WriteParameters_( Backend.Module( (type__)*Type ).Descriptions, *Command, Requete );
 
 	Requete.Complete();
 }
@@ -545,7 +545,7 @@ static void FillCommands_(
 	backend___ &Backend,
 	type__ Type,
 	const commands_details_ &CommandsDetails,
-	ids16_ &Commands )
+	ids16_t_ &Commands )
 {
 ERRProlog
 	id16__ Command;
@@ -589,7 +589,7 @@ static void GetTypeAndCommands_(
 	const string_ &Name = Requete.StringIn();
 	const commands_details_ &CommandsDetails = Requete.CommandsDetailsIn();
 	type__ &Type = (type__ &)Requete.Id16Out();
-	ids16_ &Commands = Requete.Ids16Out();
+	ids16_t_ &Commands = Requete.Ids16Out();
 
 	if ( ( Type = Backend.Type( Name ) ) == FBLBKD_INVALID_TYPE )
 		ERRFwk();
@@ -653,7 +653,7 @@ static void GetCommands_(
 {
 	type__ Type = Requete.Id16In();
 	const commands_details_ &CommandsDetails = Requete.CommandsDetailsIn();
-	ids16_ &Commands = Requete.Ids16Out();
+	ids16_t_ &Commands = Requete.Ids16Out();
 
 	FillCommands_( Backend, Type, CommandsDetails, Commands );
 

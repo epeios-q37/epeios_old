@@ -245,7 +245,7 @@ namespace dbt {
 			else if ( IsInternal( Node ) )
 				Internals.Delete( GetInternalRow( Node ) );
 			else
-				ERRc();
+				ERRFwk();
 
 			E_LISTt_( irow__ )::Delete( Node );
 		}

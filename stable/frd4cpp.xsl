@@ -10,28 +10,31 @@ This header file contains then the API to access to the backend to which 'getbkd
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="text"/>
 	<xsl:template match="/">
-		<xsl:text>/* DON'T MODIFY */&nl;</xsl:text>
-		<xsl:text>/* This file was generated using </xsl:text>
+		<xsl:text>/* DON'T MODIFY : computer-generated file ! */&nl;</xsl:text>
+		<xsl:text>/*&nl;&tab;API from : </xsl:text>
+		<xsl:value-of select="/API/Misc/Backend"/>
+		<xsl:text>&nl;&tab;This file was generated using </xsl:text>
 		<xsl:value-of select="/API/Misc/Generator/Name"/>
-		<xsl:text>	V</xsl:text>
+		<xsl:text> V</xsl:text>
 		<xsl:value-of select="/API/Misc/Generator/Version"/>
-		<xsl:text>, and a special XSL file&nl;</xsl:text>
-		<xsl:text>($RCSfile$ $Revision$ $Date$ $Author$) */&nl;</xsl:text>
-		<xsl:text>// $Id$	(CVS feature).&nl;</xsl:text>
-		<xsl:text>&nl;</xsl:text>
+		<xsl:text> (Build </xsl:text>
+		<xsl:value-of select="/API/Misc/Generator/Build"/>
+		<xsl:text>),&nl;&tab;and a XSL file </xsl:text>
+		<xsl:text>(CVS features : $Id$).&nl;</xsl:text>
+		<xsl:text>*/&nl;&nl;</xsl:text>
 		<xsl:text>#ifndef </xsl:text>
 		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>__INC&nl;</xsl:text>
-		<xsl:text>#define </xsl:text>
+		<xsl:text># define </xsl:text>
 		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>__INC&nl;</xsl:text>
-		<xsl:text>&nl;&nl;</xsl:text>
-		<xsl:text>#define </xsl:text>
+		<xsl:text>&nl;</xsl:text>
+		<xsl:text># define </xsl:text>
 		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>_TARGET "</xsl:text>
 		<xsl:value-of select="/API/@target"/>
 		<xsl:text>"&nl;</xsl:text>
-		<xsl:text>#define </xsl:text>
+		<xsl:text># define </xsl:text>
 		<xsl:value-of select="/API/@TargetUppercased"/>
 		<xsl:text>_API_VERSION "</xsl:text>
 		<xsl:value-of select="/API/@APIVersion"/>
@@ -42,8 +45,8 @@ This header file contains then the API to access to the backend to which 'getbkd
 	  <xsl:text>__INC&nl;</xsl:text>
 	</xsl:template>
 	<xsl:template match="API">
-	  <xsl:text>&nl;#include "fblfrd.h"&nl;</xsl:text>
-	  <xsl:text>#include "cpe.h"&nl;</xsl:text>
+	  <xsl:text>&nl;# include "fblfrd.h"&nl;</xsl:text>
+	  <xsl:text># include "cpe.h"&nl;</xsl:text>
 	  <xsl:text>&nl;</xsl:text>
 	  <xsl:text>namespace </xsl:text>
 		<xsl:value-of select="/API/@target"/>
@@ -104,15 +107,15 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;Message.Init( Messages );&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>#ifdef CPE__USE_VC_WORKAROUND&nl;</xsl:text>
-		<xsl:text>#&tab;pragma inline_depth( 0 )	// Sinon VC fait n'importe quoi en configuration 'Release'.&nl;</xsl:text>
-		<xsl:text>#endif&nl;</xsl:text>
+		<xsl:text># ifdef E_USE_VC_WORKAROUND&nl;</xsl:text>
+		<xsl:text>#  pragma inline_depth( 0 )	// Sinon VC fait n'importe quoi en configuration 'Release'.&nl;</xsl:text>
+		<xsl:text># endif&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:text>&tab;&tab;Row = Messages.First();&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
-		<xsl:text>#ifdef CPE__USE_VC_WORKAROUND&nl;</xsl:text>
-		<xsl:text>#&tab;pragma inline_depth()&nl;</xsl:text>
-		<xsl:text>#endif&nl;</xsl:text>
+		<xsl:text># ifdef E_USE_VC_WORKAROUND&nl;</xsl:text>
+		<xsl:text>#  pragma inline_depth()&nl;</xsl:text>
+		<xsl:text>#  endif&nl;</xsl:text>
 		<xsl:text>&nl;</xsl:text>
 		<xsl:apply-templates select="Message" mode="test"/>
 		<xsl:text>&tab;&tab;if ( Row != NONE )&nl;</xsl:text>
@@ -166,7 +169,6 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;public:&nl;</xsl:text>
 		<xsl:text>&tab;&tab;void reset( bso::bool__ = true )&nl;</xsl:text>
 		<xsl:text>&tab;&tab;{&nl;</xsl:text>
-		<xsl:text>&tab;&tab;&tab;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;_Backend = NULL;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;&tab;_ID = FBLFRD_UNDEFINED_OBJECT;&nl;</xsl:text>
 		<xsl:text>&tab;&tab;}&nl;</xsl:text>
@@ -327,7 +329,7 @@ This header file contains then the API to access to the backend to which 'getbkd
 	</xsl:template>
 	<xsl:template match="Parameter" mode="data">
 		<xsl:value-of select="ID"/>
-		<xsl:text>,</xsl:text>
+		<xsl:text>, </xsl:text>
 	</xsl:template>
 	<xsl:template match="Commands" mode="function">
 		<xsl:param name="Base"/>
@@ -463,18 +465,9 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;&tab;</xsl:text>
 		<xsl:value-of select="$Base"/>
 		  <xsl:text>Backend().</xsl:text>
-		  <xsl:choose>
-			<xsl:when test="substring(Name,1,2)='xi'">XI<xsl:value-of select="substring(Name,3)"/></xsl:when>
-			<xsl:when test="substring(Name,1,8)='xstrings'">XStrings<xsl:value-of select="substring(Name,9)"/></xsl:when>
-			<xsl:when test="Name='ulong'">ULong</xsl:when>
-			<xsl:when test="Name='ulongs'">ULongs</xsl:when>
-			<xsl:when test="Name='slong'">SLong</xsl:when>
-			<xsl:when test="Name='slongs'">SLongs</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="translate(substring(Name,1,1),'obicsbx','OBICSBX')"/>
-				<xsl:value-of select="substring(Name,2)"/>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:call-template name="HandleTypeCase">
+			<xsl:with-param name="Name" select="Name"/>
+		</xsl:call-template>
 		  <xsl:text>In( In</xsl:text>
 		  <xsl:value-of select="@Discriminator"/>
 		  <xsl:text> );&nl;</xsl:text>
@@ -484,20 +477,26 @@ This header file contains then the API to access to the backend to which 'getbkd
 		<xsl:text>&tab;&tab;&tab;</xsl:text>
 		<xsl:value-of select="$Base"/>
 		<xsl:text>Backend().</xsl:text>
-		<xsl:choose>
-		<xsl:when test="substring(Name,1,2)='xi'">XI<xsl:value-of select="substring(Name,3)"/></xsl:when>
-			<xsl:when test="substring(Name,1,8)='xstrings'">XStrings<xsl:value-of select="substring(Name,9)"/></xsl:when>
-			<xsl:when test="Name='ulong'">ULong</xsl:when>
-			<xsl:when test="Name='ulongs'">ULongs</xsl:when>
-			<xsl:when test="Name='slong'">SLong</xsl:when>
-			<xsl:when test="Name='slongs'">SLongs</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="translate(substring(Name,1,1),'obicsbx','OBICSBX')"/>
-				<xsl:value-of select="substring(Name,2)"/>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:call-template name="HandleTypeCase">
+			<xsl:with-param name="Name" select="Name"/>
+		</xsl:call-template>
 		<xsl:text>Out( Out</xsl:text>
 		<xsl:value-of select="@Discriminator"/>
 		<xsl:text> );&nl;</xsl:text>
+	</xsl:template>
+	<xsl:template name="HandleTypeCase">
+		<xsl:param name="Name"/>
+		  <xsl:choose>
+			<xsl:when test="substring($Name,1,2)='xi'">XI<xsl:value-of select="substring($Name,3)"/></xsl:when>
+			<xsl:when test="substring($Name,1,8)='xstrings'">XStrings<xsl:value-of select="substring($Name,9)"/></xsl:when>
+			<xsl:when test="$Name='uint'">UInt</xsl:when>
+			<xsl:when test="$Name='uints'">UInts</xsl:when>
+			<xsl:when test="$Name='sint'">SInt</xsl:when>
+			<xsl:when test="$Name='sints'">SInts</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="translate(substring($Name,1,1),'obicsbx','OBICSBX')"/>
+				<xsl:value-of select="substring($Name,2)"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

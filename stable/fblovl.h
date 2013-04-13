@@ -60,7 +60,7 @@ extern class ttr_tutor &FBLOVLTutor;
 
 /*$BEGIN$*/
 
-#define FBLOVL_PROTOCOL_VERSION	"4"
+#define FBLOVL_PROTOCOL_VERSION	"5"
 
 namespace fblovl {
 
