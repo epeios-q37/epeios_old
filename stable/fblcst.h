@@ -87,21 +87,21 @@ namespace fblcst {
 		//i 8 bits identifier ( 'bso::u8__' ).
 		cId8,
 		//i Array of 8 bits identifiers ( 'SET_( bso::u8__ )' )
-		cIds8,
+		cId8s,
 		//i Array of array of 8 bits identifiers ( 'XMCONTAINER_( SET_( bso::u8__ ) )' )
-		cXIds8,
+		cXId8s,
 		//i 16 bits identifier ( 'bso::u16__' ).
 		cId16,
 		//i Array of 16 bits identifiers ( 'SET_( bso::u16__ )' )
-		cIds16,
+		cId16s,
 		//i Array of array of 16 bits identifiers ( 'XMCONTAINER_( SET_( bso::u16_ ) )' )
-		cXIds16,
+		cXId16s,
 		//i 32 bits identifier ('bso::u32__').
 		cId32,
 		//i Array of 32 bits identifiers ( 'SET_( bso::u32__ )' )
-		cIds32,
+		cId32s,
 		//i Array of array of 32 bits identifiers ( 'XMCONTAINER_( SET_( bso::u32__ ) )' )
-		cXIds32,
+		cXId32s,
 		//i Generic identifier ( 'bso::uint__' ).
 		cId,
 		//i Array of generic identifier ( 'SET_( bso::uint__ )' ).
@@ -124,17 +124,21 @@ namespace fblcst {
 		//i Array of binaries ( 'XMCONTAINER_( SET_( bso::raw__ ) )' ).
 		cBinaries,
 		//i An array of 8 bits items ( 'XMCONTAINER_( { bso::u8__, str::string_ } )' ).
-		cItems8,
+		cItem8s,
 		//i An array of 16 bits items ( 'XMCONTAINER_( { bso::u16__, str::string_ } )' ).
-		cItems16,
+		cItem16s,
 		//i An array of 32 bits items ( 'XMCONTAINER_( { bso::u32__, str::string_ } )' ).
-		cItems32,
-		//i An array of 8 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
-		cXItems8,
+		cItem32s,
+		//i An array of items ( 'XMCONTAINER_( { bso::u32__, str::string_ } )' ).
+		cItems,
+		//i An array of 8 bits extended items ( 'XMCONTAINER_( { bso::uint__, XMCONTAINER_( str::string_ ) } )' ).
+		cXItem8s,
 		//i An array of 16 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
-		cXItems16,
+		cXItem16s,
 		//i An array of 32 bits extended items ( 'XMCONTAINER_( { bso::u8__, XMCONTAINER_( str::string_ ) } )' ).
-		cXItems32,
+		cXItem32s,
+		//i An array of extended items ( 'XMCONTAINER_( { bso::uint__, XMCONTAINER_( str::string_ ) } )' ).
+		cXItems,
 		// The following casts are used for some special commands.
 		//i Array of command descriptions ( 'XCONTAINER_( { str::string_, SET_( bso::u8__ ) } )' ).
 		cCommandsDetails,
@@ -146,9 +150,9 @@ namespace fblcst {
 		c_Unknow,
 	};	// A modification must be reflected by 'CastsNames'.
 
-	typedef fbltyp::id8__ cast__;
-	typedef fbltyp::ids8_ casts_;
-	typedef fbltyp::ids8 casts;
+	typedef fbltyp::id8_t__ cast__;
+	typedef fbltyp::id8s_t_ casts_;
+	typedef fbltyp::id8s_t casts;
 
 
 	//o The casts names.

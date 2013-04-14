@@ -198,32 +198,32 @@ void fbltyp::GetUInts(
 	GetSet_<uints_, uint__>( IFlow, UInts );
 }
 
-void fbltyp::PutIds8(
-	const ids8_ &Ids8,
+void fbltyp::PutId8s(
+	const id8s_ &Id8s,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( Ids8, OFlow );
+	PutSet_( Id8s, OFlow );
 }
 
-void fbltyp::GetIds8(
+void fbltyp::GetId8s(
 	flw::iflow__ &IFlow,
-	ids8_ &Ids8 )
+	id8s_ &Id8s )
 {
-	GetSet_<ids8_, id8__>( IFlow, Ids8 );
+	GetSet_<id8s_, id8__>( IFlow, Id8s );
 }
 
-void fbltyp::PutIds16(
-	const ids16_ &Ids16,
+void fbltyp::PutId16s(
+	const id16s_ &Id16s,
 	flw::oflow__ &OFlow )
 {
-	PutSet_( Ids16, OFlow );
+	PutSet_( Id16s, OFlow );
 }
 
-void fbltyp::GetIds16(
+void fbltyp::GetId16s(
 	flw::iflow__ &IFlow,
-	ids16_ &Ids16 )
+	id16s_ &Id16s )
 {
-	GetSet_<ids16_, id16__>( IFlow, Ids16 );
+	GetSet_<id16s_, id16__>( IFlow, Id16s );
 }
 
 namespace {
@@ -239,7 +239,7 @@ namespace {
 		flw::iflow__ &IFlow,
 		_item_<t> &I )
 	{
-		flw::Get( IFlow, I.S_.ID );
+		_Get( IFlow, I.S_.ID );
 		IFlow >> I.Value;
 	}
 
@@ -272,45 +272,45 @@ namespace {
 	}
 
 	inline void Put_(
-		const ids8_ &Ids8,
+		const id8s_ &Id8s,
 		flw::oflow__ &OFlow )
 	{
-		PutSet_( Ids8, OFlow );
+		PutSet_( Id8s, OFlow );
 	}
 
 	inline void Get_(
 		flw::iflow__ &IFlow,
-		ids8_ &Ids8 )
+		id8s_ &Id8s )
 	{
-		GetSet_<ids8_, id8__>( IFlow, Ids8 );
+		GetSet_<id8s_, id8__>( IFlow, Id8s );
 	}
 
 	inline void Put_(
-		const ids16_ &Ids16,
+		const id16s_ &Id16s,
 		flw::oflow__ &OFlow )
 	{
-		PutSet_( Ids16, OFlow );
+		PutSet_( Id16s, OFlow );
 	}
 
 	inline void Get_(
 		flw::iflow__ &IFlow,
-		ids16_ &Ids16 )
+		id16s_ &Id16s )
 	{
-		GetSet_<ids16_, id16__>( IFlow, Ids16 );
+		GetSet_<id16s_, id16__>( IFlow, Id16s );
 	}
 
 	inline void Put_(
-		const ids32_ &Ids32,
+		const id32s_ &Id32s,
 		flw::oflow__ &OFlow )
 	{
-		PutSet_( Ids32, OFlow );
+		PutSet_( Id32s, OFlow );
 	}
 
 	inline void Get_(
 		flw::iflow__ &IFlow,
-		ids32_ &Ids32 )
+		id32s_ &Id32s )
 	{
-		GetSet_<ids32_, id32__>( IFlow, Ids32 );
+		GetSet_<id32s_, id32__>( IFlow, Id32s );
 	}
 
 	inline void Put_(
@@ -340,7 +340,7 @@ namespace {
 		command_detail_ &CD )
 	{
 		IFlow >> CD.Name;
-		GetSet_<bch::E_BUNCH_( id8__ ), id8__>( IFlow, CD.Casts );
+		GetSet_<bch::E_BUNCH_( id8_t__ ), id8_t__>( IFlow, CD.Casts );
 	}
 
 	template <typename t> inline void Put_(
@@ -417,7 +417,7 @@ namespace {
 		flw::iflow__ &IFlow,
 		_extended_item_<t> &I )
 	{
-		flw::Get( IFlow, I.S_.ID );
+		_Get( IFlow, I.S_.ID );
 		GetContainer_<strings_, string>( IFlow, I.Values );
 	}
 
@@ -437,32 +437,32 @@ namespace {
 
 }
 
-void fbltyp::PutXIds8(
-	const xids8_ &XIds8,
+void fbltyp::PutXId8s(
+	const xid8s_ &XId8s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<xids8_, ids8_>( XIds8, OFlow );
+	PutMContainer_<xid8s_, id8s_>( XId8s, OFlow );
 }
 
-void fbltyp::GetXIds8(
+void fbltyp::GetXId8s(
 	flw::iflow__ &IFlow,
-	xids8_ &XIds8 )
+	xid8s_ &XId8s )
 {
-	GetContainer_<xids8_, ids8>( IFlow, XIds8 );
+	GetContainer_<xid8s_, id8s>( IFlow, XId8s );
 }
 
-void fbltyp::PutXIds16(
-	const xids16_ &XIds16,
+void fbltyp::PutXId16s(
+	const xid16s_ &XId16s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<xids16_, ids16_>( XIds16, OFlow );
+	PutMContainer_<xid16s_, id16s_>( XId16s, OFlow );
 }
 
-void fbltyp::GetXIds16(
+void fbltyp::GetXId16s(
 	flw::iflow__ &IFlow,
-	xids16_ &XIds16 )
+	xid16s_ &XId16s )
 {
-	GetContainer_<xids16_, ids16>( IFlow, XIds16 );
+	GetContainer_<xid16s_, id16s>( IFlow, XId16s );
 }
 
 void fbltyp::PutBooleans(
@@ -479,31 +479,31 @@ void fbltyp::GetBooleans(
 	GetSet_<booleans_, bso::bool__>( IFlow, Booleans );
 }
 
-void fbltyp::PutIds32(
-	const ids32_ &Ids32,
+void fbltyp::PutId32s(
+	const id32s_ &Id32s,
 	flw::oflow__ &OFlow )
 {
-	Put_( Ids32, OFlow );
+	Put_( Id32s, OFlow );
 }
 
-void fbltyp::GetIds32(
+void fbltyp::GetId32s(
 	flw::iflow__ &IFlow,
-	ids32_ &Ids32 )
+	id32s_ &Id32s )
 {
-	Get_( IFlow, Ids32 );
+	Get_( IFlow, Id32s );
 }
-void fbltyp::PutXIds32(
-	const xids32_ &XIds32,
+void fbltyp::PutXId32s(
+	const xid32s_ &XId32s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<xids32_, ids32_>( XIds32, OFlow );
+	PutMContainer_<xid32s_, id32s_>( XId32s, OFlow );
 }
 
-void fbltyp::GetXIds32(
+void fbltyp::GetXId32s(
 	flw::iflow__ &IFlow,
-	xids32_ &XIds32 )
+	xid32s_ &XId32s )
 {
-	GetContainer_<xids32_, ids32>( IFlow, XIds32 );
+	GetContainer_<xid32s_, id32s>( IFlow, XId32s );
 }
 
 void fbltyp::PutIds(
@@ -603,18 +603,18 @@ void fbltyp::GetItem8(
 	Get_( IFlow, Item8 );
 }
 
-void fbltyp::PutItems8(
-	const items8_ &Items8,
+void fbltyp::PutItem8s(
+	const item8s_ &Item8s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<items8_, item8_>( Items8, OFlow );
+	PutMContainer_<item8s_, item8_>( Item8s, OFlow );
 }
 
-void fbltyp::GetItems8(
+void fbltyp::GetItem8s(
    flw::iflow__ &IFlow,
-   items8_ &Items8 )
+   item8s_ &Item8s )
 {
-	GetContainer_<items8_, item8>( IFlow, Items8 );
+	GetContainer_<item8s_, item8>( IFlow, Item8s );
 }
 
 void fbltyp::PutItem16(
@@ -631,18 +631,18 @@ void fbltyp::GetItem16(
 	Get_( IFlow, Item16 );
 }
 
-void fbltyp::PutItems16(
-	const items16_ &Items16,
+void fbltyp::PutItem16s(
+	const item16s_ &Item16s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<items16_, item16_>( Items16, OFlow );
+	PutMContainer_<item16s_, item16_>( Item16s, OFlow );
 }
 
-void fbltyp::GetItems16(
+void fbltyp::GetItem16s(
    flw::iflow__ &IFlow,
-   items16_ &Items16 )
+   item16s_ &Item16s )
 {
-	GetContainer_<items16_, item16>( IFlow, Items16 );
+	GetContainer_<item16s_, item16>( IFlow, Item16s );
 }
 
 void fbltyp::PutItem32(
@@ -659,18 +659,18 @@ void fbltyp::GetItem32(
 	Get_( IFlow, Item32 );
 }
 
-void fbltyp::PutItems32(
-	const items32_ &Items32,
+void fbltyp::PutItem32s(
+	const item32s_ &Item32s,
 	flw::oflow__ &OFlow )
 {
-	PutMContainer_<items32_, item32_>( Items32, OFlow );
+	PutMContainer_<item32s_, item32_>( Item32s, OFlow );
 }
 
-void fbltyp::GetItems32(
+void fbltyp::GetItem32s(
    flw::iflow__ &IFlow,
-   items32_ &Items32 )
+   item32s_ &Item32s )
 {
-	GetContainer_<items32_, item32>( IFlow, Items32 );
+	GetContainer_<item32s_, item32>( IFlow, Item32s );
 }
 
 void fbltyp::PutItem(
@@ -702,46 +702,46 @@ void fbltyp::GetItems(
 }
 
 
-void fbltyp::PutXItems8(
-	const xitems8_ &XItems8,
+void fbltyp::PutXItem8s(
+	const xitem8s_ &XItem8s,
 	flw::oflow__ &OFlow )
 {
-	PutContainer_<xitems8_, xitem8_>( XItems8, OFlow );
+	PutContainer_<xitem8s_, xitem8_>( XItem8s, OFlow );
 }
 
-void fbltyp::GetXItems8(
+void fbltyp::GetXItem8s(
    flw::iflow__ &IFlow,
-   xitems8_ &XItems8 )
+   xitem8s_ &XItem8s )
 {
-	GetContainer_<xitems8_, xitem8>( IFlow, XItems8 );
+	GetContainer_<xitem8s_, xitem8>( IFlow, XItem8s );
 }
 
-void fbltyp::PutXItems16(
-	const xitems16_ &XItems16,
+void fbltyp::PutXItem16s(
+	const xitem16s_ &XItem16s,
 	flw::oflow__ &OFlow )
 {
-	PutContainer_<xitems16_, xitem16_>( XItems16, OFlow );
+	PutContainer_<xitem16s_, xitem16_>( XItem16s, OFlow );
 }
 
-void fbltyp::GetXItems16(
+void fbltyp::GetXItem16s(
    flw::iflow__ &IFlow,
-   xitems16_ &XItems16 )
+   xitem16s_ &XItem16s )
 {
-	GetContainer_<xitems16_, xitem16>( IFlow, XItems16 );
+	GetContainer_<xitem16s_, xitem16>( IFlow, XItem16s );
 }
 
-void fbltyp::PutXItems32(
-	const xitems32_ &XItems32,
+void fbltyp::PutXItem32s(
+	const xitem32s_ &XItem32s,
 	flw::oflow__ &OFlow )
 {
-	PutContainer_<xitems32_, xitem32_>( XItems32, OFlow );
+	PutContainer_<xitem32s_, xitem32_>( XItem32s, OFlow );
 }
 
-void fbltyp::GetXItems32(
+void fbltyp::GetXItem32s(
    flw::iflow__ &IFlow,
-   xitems32_ &XItems32 )
+   xitem32s_ &XItem32s )
 {
-	GetContainer_<xitems32_, xitem32>( IFlow, XItems32 );
+	GetContainer_<xitem32s_, xitem32>( IFlow, XItem32s );
 }
 
 void fbltyp::PutXItems(

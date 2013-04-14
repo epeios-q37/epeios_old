@@ -444,15 +444,16 @@ namespace fblfrd {
 		FBLFRD_M( UInts, uints_ )
 		FBLFRD_M( Id, id__ )
 		FBLFRD_M( Ids, ids_ )
+		FBLFRD_M( XIds, xids_ )
 		FBLFRD_M( Id8, id8__ )
-		FBLFRD_M( Ids8, ids8_ )
-		FBLFRD_M( XIds8, xids8_ )
+		FBLFRD_M( Id8s, id8s_ )
+		FBLFRD_M( XId8s, xid8s_ )
 		FBLFRD_M( Id16, id16__ )
-		FBLFRD_M( Ids16, ids16_ )
-		FBLFRD_M( XIds16, xids16_ )
+		FBLFRD_M( Id16s, id16s_ )
+		FBLFRD_M( XId16s, xid16s_ )
 		FBLFRD_M( Id32, id32__ )
-		FBLFRD_M( Ids32, ids32_ )
-		FBLFRD_M( XIds32, xids32_ )
+		FBLFRD_M( Id32s, id32s_ )
+		FBLFRD_M( XId32s, xid32s_ )
 		FBLFRD_M( Char, char__ )
 		FBLFRD_M( String, string_ )
 		FBLFRD_M( Strings, strings_ )
@@ -460,12 +461,12 @@ namespace fblfrd {
 		FBLFRD_M( Byte, byte__ )
 		FBLFRD_M( Binary, binary_ )
 		FBLFRD_M( Binaries, binaries_ )
-		FBLFRD_M( Items8, items8_ )
-		FBLFRD_M( Items16, items16_ )
-		FBLFRD_M( Items32, items32_ )
-		FBLFRD_M( XItems8, xitems8_ )
-		FBLFRD_M( XItems16, xitems16_ )
-		FBLFRD_M( XItems32, xitems32_ )
+		FBLFRD_M( Item8s, item8s_ )
+		FBLFRD_M( Item16s, item16s_ )
+		FBLFRD_M( Item32s, item32s_ )
+		FBLFRD_M( XItem8s, xitem8s_ )
+		FBLFRD_M( XItem16s, xitem16s_ )
+		FBLFRD_M( XItem32s, xitem32s_ )
 		FBLFRD_M( CommandsDetails, commands_details_ )
 		FBLFRD_M( ObjectsReferences, objects_references_ )
 		void EndOfInParameters( void )
@@ -582,7 +583,7 @@ namespace fblfrd {
 		command__ GetCommand(
 			type__ Type,
 			const string_ &Name,
-			const ids8_ &Parameters )
+			const id8s_ &Parameters )
 		{
 			command__ Command;
 
@@ -590,7 +591,7 @@ namespace fblfrd {
 
 			Id16In( Type );
 			StringIn( Name );
-			Ids8In( Parameters );
+			Id8sIn( Parameters );
 
 			EndOfInParameters();
 
@@ -605,7 +606,7 @@ namespace fblfrd {
 		void GetCommands(
 			type__ Type,
 			const commands_details_ &CommandDetails,
-			ids16_ &Commands )
+			id16s_ &Commands )
 		{
 			Internal_( fblcmd::cGetCommands );
 
@@ -614,7 +615,7 @@ namespace fblfrd {
 
 			EndOfInParameters();
 
-			Ids16Out( Commands );
+			Id16sOut( Commands );
 
 			_Handle();
 		}
@@ -662,20 +663,20 @@ namespace fblfrd {
 			return Channel_ != NULL;
 		}
 		//f Put in 'TypeXItems' the types prefix, name and id.
-		void GetTypesIDAndPrefixAndName( xitems16_ &TypeXItems )
+		void GetTypesIDAndPrefixAndName( xitem16s_ &TypeXItems )
 		{
 			Internal_( fblcmd::cGetTypesIDAndPrefixAndName );
 
 			EndOfInParameters();
 
-			XItems16Out( TypeXItems );
+			XItem16sOut( TypeXItems );
 
 			_Handle();
 		}
 		//f Put in 'Items' the commands name and id of an object of type 'Type'.
 		void GetCommandsIDAndName(
 			type__ Type,
-			items16_ &CommandItems )
+			item16s_ &CommandItems )
 		{
 			Internal_( fblcmd::cGetCommandsIDAndName );
 
@@ -683,7 +684,7 @@ namespace fblfrd {
 
 			EndOfInParameters();
 
-			Items16Out( CommandItems );
+			Item16sOut( CommandItems );
 
 			_Handle();
 		}
@@ -715,7 +716,7 @@ namespace fblfrd {
 		void GetParameters(
 			type__ Type,
 			command__ Command,
-			ids8_ &Parameters )
+			id8s_ &Parameters )
 		{
 			Internal_( fblcmd::cGetParameters );
 			Id16In( Type );
@@ -723,7 +724,7 @@ namespace fblfrd {
 
 			EndOfInParameters();
 
-			Ids8Out( Parameters );
+			Id8sOut( Parameters );
 
 			_Handle();
 		}

@@ -942,7 +942,7 @@ void nsxpcm::Delete( widget_cores_ &Widgets )
 
 void nsxpcm::Convert(
 	const strings_ &Items,
-	fblfrd::ids32_ &Ids )
+	fblfrd::id32s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
 	sdr::row__ Error = NONE;
@@ -962,7 +962,7 @@ void nsxpcm::Convert(
 
 void nsxpcm::Convert(
 	const strings_ &Items,
-	fblfrd::ids16_ &Ids )
+	fblfrd::id16s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
 	sdr::row__ Error = NONE;
@@ -982,7 +982,7 @@ void nsxpcm::Convert(
 
 void nsxpcm::Convert(
 	const strings_ &Items,
-	fblfrd::ids8_ &Ids )
+	fblfrd::id8s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
 	sdr::row__ Error = NONE;
@@ -1003,7 +1003,7 @@ void nsxpcm::Convert(
 void nsxpcm::SplitAndConvert(
 	const char *Joined,
 	bso::char__ Separator,
-	fblfrd::ids32_ &Ids )
+	fblfrd::id32s_ &Ids )
 {
 ERRProlog
 	strings Splitted;
@@ -1021,7 +1021,7 @@ ERREpilog
 void nsxpcm::SplitAndConvert(
 	const char *Joined,
 	bso::char__ Separator,
-	fblfrd::ids16_ &Ids )
+	fblfrd::id16s_ &Ids )
 {
 ERRProlog
 	strings Splitted;
@@ -1039,7 +1039,7 @@ ERREpilog
 void nsxpcm::SplitAndConvert(
 	const char *Joined,
 	bso::char__ Separator,
-	fblfrd::ids8_ &Ids )
+	fblfrd::id8s_ &Ids )
 {
 ERRProlog
 	strings Splitted;
@@ -1104,7 +1104,7 @@ ERREpilog
 }
 
 void nsxpcm::ConvertAndJoin(
-	const fblfrd::ids8_ &Ids,
+	const fblfrd::id8s_ &Ids,
 	bso::char__ Separator,
 	string_ &Joined )
 {
@@ -1112,7 +1112,7 @@ void nsxpcm::ConvertAndJoin(
 }
 
 void nsxpcm::ConvertJoinAndTransform(
-	const fblfrd::ids8_ &Ids,
+	const fblfrd::id8s_ &Ids,
 	bso::char__ Separator,
 	char **JString )
 {
@@ -1120,7 +1120,7 @@ void nsxpcm::ConvertJoinAndTransform(
 }
 
 void nsxpcm::ConvertAndJoin(
-	const fblfrd::ids16_ &Ids,
+	const fblfrd::id16s_ &Ids,
 	bso::char__ Separator,
 	string_ &Joined )
 {
@@ -1128,7 +1128,7 @@ void nsxpcm::ConvertAndJoin(
 }
 
 void nsxpcm::ConvertJoinAndTransform(
-	const fblfrd::ids16_ &Ids,
+	const fblfrd::id16s_ &Ids,
 	bso::char__ Separator,
 	char **JString )
 {
@@ -1136,7 +1136,7 @@ void nsxpcm::ConvertJoinAndTransform(
 }
 
 void nsxpcm::ConvertAndJoin(
-	const fblfrd::ids32_ &Ids,
+	const fblfrd::id32s_ &Ids,
 	bso::char__ Separator,
 	string_ &Joined )
 {
@@ -1144,7 +1144,7 @@ void nsxpcm::ConvertAndJoin(
 }
 
 void nsxpcm::ConvertJoinAndTransform(
-	const fblfrd::ids32_ &Ids,
+	const fblfrd::id32s_ &Ids,
 	bso::char__ Separator,
 	char **JString )
 {

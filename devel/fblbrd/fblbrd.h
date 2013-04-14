@@ -83,11 +83,11 @@ namespace fblbrd {
 		str::string_ Name;
 		/*o Parameters and return value types. Separated by 'cEnd'. The 'cEnd'
 		to signalize the end of the request must NOT be put. */
-		ids8_ Casts;
+		casts_ Casts;
 		struct s
 		{
 			str::string_::s Name;
-			ids8_::s Casts;
+			casts_::s Casts;
 		} &S_;
 		description_( s &S )
 		: S_( S ),

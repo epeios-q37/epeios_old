@@ -65,7 +65,7 @@ integer mthitg::Divide_(
 	const integer_ &Den,
 	integer_ &Result )
 {
-	bso::ulong__ Inf = 0UL, Sup = 0x10000UL, Rep = 0x10000UL >> 1;
+	bso::u32__ Inf = 0UL, Sup = 0x10000UL, Rep = 0x10000UL >> 1;
 	integer Inter, Comp;
 
 	Inter.Init();
@@ -145,9 +145,9 @@ integer mthitg::Add_(
 {
 	integer ResTemp;
 	const integer_ *Max = &Op1, *Min = &Op2;
-	bso::ushort__ Indice = 0;
-	bso::ulong__ Retenue = 0;
-	bso::ushort__ Limite;
+	bso::u16__ Indice = 0;
+	bso::u32__ Retenue = 0;
+	bso::u16__ Limite;
 
 	ResTemp.Init();
 
@@ -187,7 +187,7 @@ integer mthitg::Add_(
 	}
 
 	if ( Indice >= MTHITG_MAX_SIZE )
-		ERRl();
+		ERRLmt();
 
 	ResTemp.Core.Store( (base__)( Retenue >> 16 ), Indice++ );
 	ResTemp.PutSize_( Indice );
@@ -204,7 +204,7 @@ integer mthitg::Sub_(
 	integer Res;
 	unsigned Indice = 0;
 	size__ Limite;
-	bso::ulong__ Inter = 0;
+	bso::u32__ Inter = 0;
 	const integer_ *Max = &Op1, *Min = &Op2;
 
 	Res.Init( 0UL );
@@ -303,7 +303,7 @@ integer mthitg::Mul_(
 	size__ MaxSize = Max->_GetRealSize(), MinSize = Min->_GetRealSize();
 
 	if ( ( MaxSize + MinSize ) > MTHITG_MAX_SIZE )
-		ERRl();
+		ERRLmt();
 
 	Inter.PutSignFlag_( false );
 

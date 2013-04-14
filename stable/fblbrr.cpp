@@ -57,7 +57,7 @@ public:
 
 using namespace fblbrr;
 
-#define CC( name, type )\
+#define CC( name )\
 	case c##name:\
 		Parameter.Init( fbltyp::New##name(), c##name );\
 		break;
@@ -69,37 +69,42 @@ static parameter___ Create_(
 	parameter___ Parameter;
 
 	switch ( Cast ) {
-	CC( Object, object__)
-	CC( Boolean, boolean__ )
-	CC( Booleans, booleans )
-	CC( SInt, sint__ )
-	CC( SInts, sints )
-	CC( UInt, uint__ )
-	CC( UInts, uints )
-	CC( Id8, id8__ )
-	CC( Ids8, ids8 )
-	CC( XIds8, xids8 )
-	CC( Id16, id16__ )
-	CC( Ids16, ids16 )
-	CC( XIds16, xids16 )
-	CC( Id32, id32__ )
-	CC( Ids32, ids32 )
-	CC( XIds32, xids32 )
-	CC( Char, char__ )
-	CC( String, string )
-	CC( Strings, strings )
-	CC( XStrings, xstrings )
-	CC( Byte, byte__ )
-	CC( Binary, binary )
-	CC( Binaries, binaries )
-	CC( Items8, items8 )
-	CC( Items16, items16 )
-	CC( Items32, items32 )
-	CC( XItems8, xitems8 )
-	CC( XItems16, xitems16 )
-	CC( XItems32, xitems32 )
-	CC( CommandsDetails, commands_details )
-	CC( ObjectsReferences, objects_references )
+	CC( Object )
+	CC( Boolean )
+	CC( Booleans )
+	CC( SInt )
+	CC( SInts )
+	CC( UInt )
+	CC( UInts )
+	CC( Id8 )
+	CC( Id8s )
+	CC( XId8s )
+	CC( Id16 )
+	CC( Id16s )
+	CC( XId16s )
+	CC( Id32 )
+	CC( Id32s )
+	CC( XId32s )
+	CC( Id )
+	CC( Ids )
+	CC( XIds )
+	CC( Char )
+	CC( String )
+	CC( Strings )
+	CC( XStrings )
+	CC( Byte )
+	CC( Binary )
+	CC( Binaries )
+	CC( Item8s )
+	CC( Item16s )
+	CC( Item32s )
+	CC( Items )
+	CC( XItem8s )
+	CC( XItem16s )
+	CC( XItem32s )
+	CC( XItems )
+	CC( CommandsDetails )
+	CC( ObjectsReferences )
 	default:
 		ERRPrm();
 		break;
@@ -130,14 +135,17 @@ static parameter___ _CreateAndGet(
 	CCAG( UInt, uint__ )
 	CCAG( UInts, uints )
 	CCAG( Id8, id8__ )
-	CCAG( Ids8, ids8 )
-	CCAG( XIds8, xids8 )
+	CCAG( Id8s, id8s )
+	CCAG( XId8s, xid8s )
 	CCAG( Id16, id16__ )
-	CCAG( Ids16, ids16 )
-	CCAG( XIds16, xids16 )
+	CCAG( Id16s, id16s )
+	CCAG( XId16s, xid16s )
 	CCAG( Id32, id32__ )
-	CCAG( Ids32, ids32 )
-	CCAG( XIds32, xids32 )
+	CCAG( Id32s, id32s )
+	CCAG( XId32s, xid32s )
+	CCAG( Id, id__ )
+	CCAG( Ids, ids )
+	CCAG( XIds, xids )
 	CCAG( Char, char__ )
 	CCAG( String, string )
 	CCAG( Strings, strings )
@@ -145,12 +153,14 @@ static parameter___ _CreateAndGet(
 	CCAG( Byte, byte__ )
 	CCAG( Binary, binary )
 	CCAG( Binaries, binaries )
-	CCAG( Items8, items8 )
-	CCAG( Items16, items16 )
-	CCAG( Items32, items32 )
-	CCAG( XItems8, xitems8 )
-	CCAG( XItems16, xitems16 )
-	CCAG( XItems32, xitems32 )
+	CCAG( Item8s, item8s )
+	CCAG( Item16s, item16s )
+	CCAG( Item32s, item32s )
+	CCAG( Items, items )
+	CCAG( XItem8s, xitem8s )
+	CCAG( XItem16s, xitem16s )
+	CCAG( XItem32s, xitem32s )
+	CCAG( XItems, xitems )
 	CCAG( CommandsDetails, commands_details )
 	CCAG( ObjectsReferences, objects_references )
 	default:
@@ -168,7 +178,7 @@ static parameter___ _CreateAndGet(
 
 static void Delete_( const parameter___ &Parameter )
 {
-	switch ( *Parameter.Cast ) {
+	switch ( Parameter.Cast ) {
 	CD( Object, object__)
 	CD( Boolean, boolean__ )
 	CD( Booleans, booleans )
@@ -177,14 +187,17 @@ static void Delete_( const parameter___ &Parameter )
 	CD( UInt, uint__ )
 	CD( UInts, uints )
 	CD( Id8, id8__ )
-	CD( Ids8, ids8 )
-	CD( XIds8, xids8 )
+	CD( Id8s, id8s )
+	CD( XId8s, xid8s )
 	CD( Id16, id16__ )
-	CD( Ids16, ids16 )
-	CD( XIds16, xids16 )
+	CD( Id16s, id16s )
+	CD( XId16s, xid16s )
 	CD( Id32, id32__ )
-	CD( Ids32, ids32 )
-	CD( XIds32, xids32 )
+	CD( Id32s, id32s )
+	CD( XId32s, xid32s )
+	CD( Id, id__ )
+	CD( Ids, ids )
+	CD( XIds, xids )
 	CD( Char, char__ )
 	CD( String, string )
 	CD( Strings, strings )
@@ -192,12 +205,14 @@ static void Delete_( const parameter___ &Parameter )
 	CD( Byte, byte__ )
 	CD( Binary, binary )
 	CD( Binaries, binaries )
-	CD( Items8, items8 )
-	CD( Items16, items16 )
-	CD( Items32, items32 )
-	CD( XItems8, xitems8 )
-	CD( XItems16, xitems16 )
-	CD( XItems32, xitems32 )
+	CD( Item8s, item8s )
+	CD( Item16s, item16s )
+	CD( Item32s, item32s )
+	CD( Items, items )
+	CD( XItem8s, xitem8s )
+	CD( XItem16s, xitem16s )
+	CD( XItem32s, xitem32s )
+	CD( XItems, xitems )
 	CD( CommandsDetails, commands_details )
 	CD( ObjectsReferences, objects_references )
 	default:
@@ -218,10 +233,10 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	while ( ( Row != NONE )
 		    && ( Casts( Row ) != cEnd ) ) {
 
-		if ( Flow.Get() != *Casts( Row ) )
+		if ( Flow.Get() != Casts( Row ) )
 			ERRDta();
 
-		if ( _Parameters.Append( _CreateAndGet( Flow, (cast)*Casts( Row ) ) ) != Row )
+		if ( _Parameters.Append( _CreateAndGet( Flow, (cast)Casts( Row ) ) ) != Row )
 			ERRFwk();
 
 		Row = Casts.Next( Row );
@@ -236,7 +251,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
-		if ( _Parameters.Append( Create_( Flow, (cast)*Casts( Row ) ) ) != Row )
+		if ( _Parameters.Append( Create_( Flow, (cast)Casts( Row ) ) ) != Row )
 			ERRFwk();
 
 		Row = Casts.Next( Row );
@@ -271,7 +286,7 @@ void fblbrr::remote_request_functions___::_DeleteAll( void )
 
 #define CP( name, type )\
 	case c##name:\
-		Flow.Put( *Parameter.Cast );\
+		Flow.Put( Parameter.Cast );\
 		fbltyp::Put##name( *(fbltyp::type *)Parameter.Content, Flow );\
 		break;
 
@@ -284,7 +299,7 @@ static void Push_(
 	if ( Parameter.Cast != Cast )
 		ERRPrm();
 
-	switch ( *Parameter.Cast ) {
+	switch ( Parameter.Cast ) {
 	CP( Object, object__)
 	CP( Boolean, boolean__ )
 	CP( Booleans, booleans )
@@ -293,14 +308,17 @@ static void Push_(
 	CP( UInt, uint__ )
 	CP( UInts, uints )
 	CP( Id8, id8__ )
-	CP( Ids8, ids8 )
-	CP( XIds8, xids8 )
+	CP( Id8s, id8s )
+	CP( XId8s, xid8s )
 	CP( Id16, id16__ )
-	CP( Ids16, ids16 )
-	CP( XIds16, xids16 )
+	CP( Id16s, id16s )
+	CP( XId16s, xid16s )
 	CP( Id32, id32__ )
-	CP( Ids32, ids32 )
-	CP( XIds32, xids32 )
+	CP( Id32s, id32s )
+	CP( XId32s, xid32s )
+	CP( Id, id__ )
+	CP( Ids, ids )
+	CP( XIds, xids )
 	CP( Char, char__ )
 	CP( String, string )
 	CP( Strings, strings )
@@ -308,12 +326,14 @@ static void Push_(
 	CP( Byte, byte__ )
 	CP( Binary, binary )
 	CP( Binaries, binaries )
-	CP( Items8, items8 )
-	CP( Items16, items16 )
-	CP( Items32, items32 )
-	CP( XItems8, xitems8 )
-	CP( XItems16, xitems16 )
-	CP( XItems32, xitems32 )
+	CP( Item8s, item8s )
+	CP( Item16s, item16s )
+	CP( Item32s, item32s )
+	CP( Items, items )
+	CP( XItem8s, xitem8s )
+	CP( XItem16s, xitem16s )
+	CP( XItem32s, xitem32s )
+	CP( XItems, xitems )
 	CP( CommandsDetails, commands_details )
 	CP( ObjectsReferences, objects_references )
 	default:
@@ -347,7 +367,7 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 	Row = Casts.Next( Row );
 
 	while ( Row != NONE ) {
-		Push_( Flow, _Parameters( Row ), (cast)*Casts( Row ) );
+		Push_( Flow, _Parameters( Row ), (cast)Casts( Row ) );
 
 		Row = Casts.Next( Row );
 	}

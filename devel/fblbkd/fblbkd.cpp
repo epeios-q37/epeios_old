@@ -241,11 +241,11 @@ static void GetTypesIDAndPrefixAndName_(
 	void * )
 {
 ERRProlog
-	xitem16 XItem;
+	xitem16_t XItem;
 	sdr::row__ P;
 	type__ Type;
 ERRBegin
-	xitems16_ &XItems = Requete.XItems16Out();
+	xitem16s_t_ &XItems = Requete.XItem16sOut();
 
 	P = Backend.Modules.First();
 
@@ -279,12 +279,12 @@ static void WriteCommandsIDAndName_(
 	request__ &Requete )
 {
 ERRProlog
-	item16 Item;
+	item16_t Item;
 	ctn::E_CITEM( description_ ) Description;
 	sdr::row__ P;
 	command__ Command;
 ERRBegin
-	items16_ &Items = Requete.Items16Out();
+	item16s_t_ &Items = Requete.Item16sOut();
 
 	P = Descriptions.First();
 
@@ -334,7 +334,7 @@ static inline void WriteParameters_(
 	const description_ &Description,
 	request__ &Requete )
 {
-	Requete.Ids8Out() = Description.Casts;
+	Requete.Id8sOut() = Description.Casts;
 }
 
 
@@ -545,10 +545,10 @@ static void FillCommands_(
 	backend___ &Backend,
 	type__ Type,
 	const commands_details_ &CommandsDetails,
-	ids16_t_ &Commands )
+	id16s_t_ &Commands )
 {
 ERRProlog
-	id16__ Command;
+	id16_t__ Command;
 	sdr::row__ Position = CommandsDetails.First();
 	ctn::E_CITEM( command_detail_ ) CommandDetail;
 	description Description;
@@ -589,7 +589,7 @@ static void GetTypeAndCommands_(
 	const string_ &Name = Requete.StringIn();
 	const commands_details_ &CommandsDetails = Requete.CommandsDetailsIn();
 	type__ &Type = (type__ &)Requete.Id16Out();
-	ids16_t_ &Commands = Requete.Ids16Out();
+	id16s_t_ &Commands = Requete.Id16sOut();
 
 	if ( ( Type = Backend.Type( Name ) ) == FBLBKD_INVALID_TYPE )
 		ERRFwk();
@@ -621,7 +621,7 @@ ERRBegin
 
 	Description.Init();
 	Description.Name  = Request.StringIn();
-	Description.Casts = Request.Ids8In();
+	Description.Casts = Request.Id8sIn();
 
 /*	if ( !Backend.Valide( T ) )
 		if ( T() != BKDEND9_TYPE_MAITRE )
@@ -653,7 +653,7 @@ static void GetCommands_(
 {
 	type__ Type = Requete.Id16In();
 	const commands_details_ &CommandsDetails = Requete.CommandsDetailsIn();
-	ids16_t_ &Commands = Requete.Ids16Out();
+	id16s_t_ &Commands = Requete.Id16sOut();
 
 	FillCommands_( Backend, Type, CommandsDetails, Commands );
 

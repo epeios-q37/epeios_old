@@ -209,6 +209,15 @@ namespace frdbkd {
 
 	inline void PutId(
 		const char *Name,
+		fbltyp::id__ Id,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		_PutId( Name, Id, FBLTYP_UNDEFINED_ID, Always, Writer );
+	}
+
+	inline void PutId(
+		const char *Name,
 		fbltyp::id32__ Id,
 		bso::bool__ Always,
 		xml::writer_ &Writer )

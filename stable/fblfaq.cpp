@@ -62,7 +62,7 @@ using namespace fblfrd;
 namespace {
 
 	void HandleCommands_(
-		const commands_items_ &Items,
+		const command_items_ &Items,
 		type__ Type,
 		backend_access___ &Backend,
 		commands_ &Commands )
@@ -95,7 +95,7 @@ namespace {
 		commands_ &Commands )
 	{
 	ERRProlog
-		commands_items Items;
+		command_items Items;
 	ERRBegin
 		Items.Init();
 
@@ -116,7 +116,7 @@ namespace {
 
 		Value.Init( Item.Values );
 
-		Type.ID( *Item.ID() );
+		Type.ID( Item.ID() );
 
 		P = Item.Values.First();
 

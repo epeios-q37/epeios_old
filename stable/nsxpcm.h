@@ -1863,7 +1863,7 @@ namespace nsxpcm {
 		{
 # ifdef NSXPCM_DBG
 			if ( GetFirstChild( GetElement() ) != GetLastChild( GetElement() ) )
-				ERRc();
+				ERRFwk();
 # endif
 			if ( GetFirstChild( GetElement() ) == NULL )
 				AppendChild( NewChild );
@@ -3022,58 +3022,58 @@ namespace nsxpcm {
 #ifdef NSXPCM__FBL
 	void Convert(
 		const strings_ &Items,
-		fblfrd::ids32_ &Ids );
+		fblfrd::id32s_ &Ids );
 
 	void Convert(
 		const strings_ &Items,
-		fblfrd::ids16_ &Ids );
+		fblfrd::id16s_ &Ids );
 
 	void Convert(
 		const strings_ &Items,
-		fblfrd::ids8_ &Ids );
+		fblfrd::id8s_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		fblfrd::ids32_ &Ids );
+		fblfrd::id32s_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		fblfrd::ids16_ &Ids );
+		fblfrd::id16s_ &Ids );
 
 	void SplitAndConvert(
 		const char *Joined,
 		bso::char__ Separator,
-		fblfrd::ids8_ &Ids );
+		fblfrd::id8s_ &Ids );
 
 	void ConvertAndJoin(
-		const fblfrd::ids8_ &Ids,
+		const fblfrd::id8s_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const fblfrd::ids8_ &Ids,
+		const fblfrd::id8s_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const fblfrd::ids16_ &Ids,
+		const fblfrd::id16s_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const fblfrd::ids16_ &Ids,
+		const fblfrd::id16s_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 
 	void ConvertAndJoin(
-		const fblfrd::ids32_ &Ids,
+		const fblfrd::id32s_ &Ids,
 		bso::char__ Separator,
 		string_ &Joined );
 
 	void ConvertJoinAndTransform(
-		const fblfrd::ids32_ &Ids,
+		const fblfrd::id32s_ &Ids,
 		bso::char__ Separator,
 		char **JString );
 

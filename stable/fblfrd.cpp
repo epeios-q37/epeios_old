@@ -139,9 +139,9 @@ command__ fblfrd::backend_access___::GetBackendDefaultCommand_()
 }
 
 namespace {
-	void FillCasts_(
+	template <typename type> void FillCasts_(
 		const fblcst::cast *Source,
-		bch::E_BUNCH_( id8__ ) &Dest )
+		bch::E_BUNCH_( type ) &Dest )
 	{
 		int i = 0;
 
@@ -157,7 +157,7 @@ namespace {
 void fblfrd::backend_access___::GetGetCommandsCommand_( command__ DefaultCommand )
 {
 ERRProlog
-	ids8 Casts;
+	id8s Casts;
 	fblfrd::string Name;
 ERRBegin
 	Casts.Init();
@@ -168,7 +168,7 @@ ERRBegin
 	PushHeader( FBLFRD_MASTER_OBJECT, DefaultCommand );
 	Id16In( FBLFRD_MASTER_TYPE );	// MasterType;
 	StringIn( Name );
-	Ids8In( Casts );
+	Id8sIn( Casts );
 
 	EndOfInParameters();
 
@@ -185,7 +185,7 @@ void fblfrd::backend_access___::GetBackendCommands_( void )
 ERRProlog
 	commands_details CommandsDetails;
 	command_detail CommandDetail;
-	ids16 Commands;
+	id16s Commands;
 	int i;
 ERRBegin
 	CommandsDetails.Init();

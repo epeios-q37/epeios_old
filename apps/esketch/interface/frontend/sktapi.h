@@ -1,7 +1,7 @@
 /* DON'T MODIFY : computer-generated file ! */
 /*
-	API from : esketchbkd V0.1.0 (Build : Apr 13 2013 15:39:18 MSVC_x86)
-	This file was generated using getbkdapi V0.2.4 (Build Apr 13 2013 15:40:21 (MSVC_x86)),
+	API from : esketchbkd V0.1.0 (Build : Apr 14 2013 11:05:58 MSVC_x86)
+	This file was generated using getbkdapi V0.2.4 (Build Apr 14 2013 11:21:18 (MSVC_x86)),
 	and a XSL file (CVS features : $Id$).
 */
 
@@ -33,9 +33,9 @@ namespace esketch {
 		{
 			fblfrd::commands_details CommandsDetails;
 			fblfrd::command_detail CommandDetail;
-			fblfrd::ids16 Commands;
+			fblfrd::id16s Commands;
 
-			fblfrd::id8__ Parameters[] = {
+			fblfrd::id8_t__ Parameters[] = {
 				0, 
 			};
 
@@ -90,9 +90,9 @@ namespace esketch {
 		{
 			fblfrd::commands_details CommandsDetails;
 			fblfrd::command_detail CommandDetail;
-			fblfrd::ids16 Commands;
+			fblfrd::id16s Commands;
 
-			fblfrd::id8__ Parameters[] = {
+			fblfrd::id8_t__ Parameters[] = {
 				0, 
 			};
 

@@ -100,7 +100,7 @@ static const cast GetType[] = {
 static const cast GetCommand[] = {
 		cId16,		// The object type.
 		cString,	// The command name.
-		cIds8,	// The casts of the command.
+		cId8s,	// The casts of the command.
 	cEnd,
 		cId16,	// The asked command.
 	cEnd };
@@ -108,14 +108,14 @@ static const cast GetCommands[] = {
 		cId16,		// The object type.
 		cCommandsDetails,	// The wanted commands caracteristics.
 	cEnd,
-		cIds16,		// The asked commands.
+		cId16s,		// The asked commands.
 	cEnd };
 static const cast GetTypeAndCommands[] = {
 		cString,	// The name of the type.
 		cCommandsDetails,		// The wanted commands caracteristics.
 	cEnd,
 		cId16,		// The asked type.
-		cIds16,		// The asked commands.
+		cId16s,		// The asked commands.
 	cEnd };
 static const cast RemoveObject[] = {
 		cObject,	// The object to remove.
@@ -133,18 +133,18 @@ static const cast Disconnect[] = {
 	cEnd };
 static const cast GetTypesIDAndPrefixAndName[] = {
 	cEnd,
-		cXItems16,	// The types ID, prefix and name.
+		cXItem16s,	// The types ID, prefix and name.
 	cEnd };
 static const cast GetCommandsIDAndName[] = {
 		cId16,		// Type of objects from which you want the commands name.
 	cEnd,
-		cItems16,	// The ids and names of the commands.
+		cItem16s,	// The ids and names of the commands.
 	cEnd };
 static const cast GetParameters[] = {
 		cId16,		// Type of objects from which you want the parameters.
 		cId16,	// Command of objects from which you want the parameters.
 	cEnd,
-		cIds8,	// The parameters of the commands.
+		cId8s,	// The parameters of the commands.
 	cEnd };
 static const cast GetLanguage[] = {
 	cEnd,

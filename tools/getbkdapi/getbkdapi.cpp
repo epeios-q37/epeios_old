@@ -338,34 +338,45 @@ static inline const char *GetTypeName(
 	case fblcst::cId8:
 		TypeName = "id8";
 		break;
-	case fblcst::cIds8:
-		TypeName = "ids8";
+	case fblcst::cId8s:
+		TypeName = "id8s";
 		CastType = ctBunch;
 		break;
-	case fblcst::cXIds8:
-		TypeName = "xids8";
+	case fblcst::cXId8s:
+		TypeName = "xid8s";
 		CastType = ctContainer;
 		break;
 	case fblcst::cId16:
 		TypeName = "id16";
 		break;
-	case fblcst::cIds16:
-		TypeName = "ids16";
+	case fblcst::cId16s:
+		TypeName = "id16s";
 		CastType = ctBunch;
 		break;
-	case fblcst::cXIds16:
-		TypeName = "xids16";
+	case fblcst::cXId16s:
+		TypeName = "xid16s";
 		CastType = ctContainer;
 		break;
 	case fblcst::cId32:
 		TypeName = "id32";
 		break;
-	case fblcst::cIds32:
-		TypeName = "ids32";
+	case fblcst::cId32s:
+		TypeName = "id32s";
 		CastType = ctBunch;
 		break;
-	case fblcst::cXIds32:
-		TypeName = "xids32";
+	case fblcst::cXId32s:
+		TypeName = "xid32s";
+		CastType = ctContainer;
+		break;
+	case fblcst::cId:
+		TypeName = "id";
+		break;
+	case fblcst::cIds:
+		TypeName = "ids";
+		CastType = ctBunch;
+		break;
+	case fblcst::cXIds:
+		TypeName = "xids";
 		CastType = ctContainer;
 		break;
 	case fblcst::cChar:
@@ -393,28 +404,36 @@ static inline const char *GetTypeName(
 	case fblcst::cBinaries:
 		TypeName = "binaries";
 		break;
-	case fblcst::cItems8:
-		TypeName = "items8";
+	case fblcst::cItem8s:
+		TypeName = "item8s";
 		CastType = ctContainer;
 		break;
-	case fblcst::cItems16:
-		TypeName = "items16";
+	case fblcst::cItem16s:
+		TypeName = "item16s";
 		CastType = ctContainer;
 		break;
-	case fblcst::cItems32:
-		TypeName = "items32";
+	case fblcst::cItem32s:
+		TypeName = "item32s";
 		CastType = ctContainer;
 		break;
-	case fblcst::cXItems8:
-		TypeName = "xitems8";
+	case fblcst::cItems:
+		TypeName = "items";
 		CastType = ctContainer;
 		break;
-	case fblcst::cXItems16:
-		TypeName = "xitems16";
+	case fblcst::cXItem8s:
+		TypeName = "xitem8s";
 		CastType = ctContainer;
 		break;
-	case fblcst::cXItems32:
-		TypeName = "xitems32";
+	case fblcst::cXItem16s:
+		TypeName = "xitem16s";
+		CastType = ctContainer;
+		break;
+	case fblcst::cXItem32s:
+		TypeName = "xitem32s";
+		CastType = ctContainer;
+		break;
+	case fblcst::cXItems:
+		TypeName = "xitems";
 		CastType = ctContainer;
 		break;
 	case fblcst::cCommandsDetails:
@@ -699,7 +718,7 @@ void Generate(
 	if ( IsMaster )
 		Writer.PutAttribute( "Object", "Master" );
 	
-	Writer.PutValue( Convert( Type.ID() ), "ID" );
+	Writer.PutValue( Convert( *Type.ID() ), "ID" );
 	Generate( Type, Writer );
 	
 	if ( Type.Commands.Amount() != 0 )

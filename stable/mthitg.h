@@ -64,7 +64,7 @@ extern class ttr_tutor &MTHITGTutor;
 //D MaTH InTeGer
 /* End addendum to automatic documentation generation part. */
 
-#include "mmi.h"
+#include "ias.h"
 #include "err.h"
 #include "flw.h"
 #include "bso.h"
@@ -77,8 +77,8 @@ extern class ttr_tutor &MTHITGTutor;
 
 
 namespace mthitg {
-	typedef bso::ushort__	base__;
-	typedef bso::ushort__	size__;
+	typedef bso::u16__	base__;
+	typedef bso::u16__	size__;
 	
 	class integer;
 	class integer_;
@@ -101,7 +101,7 @@ namespace mthitg {
 			size__ Size = _GetRawSize();
 
 			if ( Size == 0 )
-				ERRu();
+				ERRFwk();
 
 			while ( ( Size-- ) && !Core( Size ) );
 
@@ -144,7 +144,7 @@ namespace mthitg {
 		friend integer Mul_(
 			const integer_ &Op1,
 			const integer_ &Op2 );
-		bso::ulong__ _GetAbsULong( void )	// Valeur absolue en 'ulong'.
+		bso::u32__ _GetAbsULong( void )	// Valeur absolue en 'ulong'.
 		{
 			Adjust_();
 
@@ -155,7 +155,7 @@ namespace mthitg {
 			else if ( _GetRawSize() == 2 )
 				return Core( Core.First() ) | ( Core( Core.First( 1 ) ) << 16UL );
 			else
-				ERRu();
+				ERRFwk();
 
 			return 0;	// To avoid a 'warning'.
 		}
@@ -178,13 +178,13 @@ namespace mthitg {
 			Core.reset( P );
 			S_.Size = 0;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Core.plug( MD );
+			Core.plug( SD );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Core.plug( M );
+			Core.plug( AS );
 		}
 		integer_ &operator =( const integer_ &I )
 		{
@@ -202,7 +202,7 @@ namespace mthitg {
 			this->operator =( Integer );
 		}
 		//f Initialization.
-		void Init( bso::slong__ Seed = 0 )
+		void Init( bso::s32__ Seed = 0 )
 		{
 			S_.Size = 0;
 			Core.Init();
@@ -231,7 +231,7 @@ namespace mthitg {
 				PutSize_( 2 );
 			}
 		}
-		void Init( bso::ulong__ Seed )
+		void Init( bso::u32__ Seed )
 		{
 			S_.Size = 0;
 			Core.Init();
@@ -256,11 +256,11 @@ namespace mthitg {
 		}
 		void Init( unsigned int Seed )
 		{
-			Init( (bso::ulong__)Seed );
+			Init( (bso::u32__)Seed );
 		}
 		void Init( signed int Seed )
 		{
-			Init( (bso::slong__)Seed );
+			Init( (bso::s32__)Seed );
 		}
 /*			friend flw::oflow___ &operator <<(
 			flw::oflow___ &Flow,
@@ -281,22 +281,22 @@ namespace mthitg {
 		{
 			return _GetRawSize() != 0;
 		}
-		bso::ulong__ GetULong( void )
+		bso::u32__ GetU32( void )
 		{
 			if ( _GetSignFlag() )
-				ERRu();
+				ERRFwk();
 
 			return _GetAbsULong();
 		}
-		bso::slong__ GetSLong()
+		bso::s32__ GetS32()
 		{
-			bso::ulong__ Value = _GetAbsULong();
+			bso::u32__ Value = _GetAbsULong();
 
-			if ( Value > BSO_SLONG_MAX )
-				ERRu();
+			if ( Value > BSO_S32_MAX )
+				ERRFwk();
 
 			if ( _GetSignFlag() )
-				return -(bso::slong__)Value;
+				return -(bso::s32__)Value;
 			else
 				return Value;
 		}
@@ -352,14 +352,14 @@ namespace mthitg {
 			
 			integer_::operator =( I );
 		}
-		integer( bso::slong__ Seed )
+		integer( bso::s32__ Seed )
 		: integer_( S_ )
 		{
 			reset( false );
 
 			integer_::Init( Seed );
 		}
-		integer( bso::ulong__ Seed )
+		integer( bso::u32__ Seed )
 		: integer_( S_ )
 		{
 			reset( false );

@@ -74,21 +74,29 @@ extern class ttr_tutor &FBLTYPTutor;
 #define FBLTYP_UNDEFINED_ID32	((fbltyp::id32__)BSO_U32_MAX)
 #define FBLTYP_UNDEFINED_ID		((fbltyp::id__)BSO_UINT_MAX)
 
-#define FBLTYP_ITEM( id, name )\
-	typedef fbltyp::_item_<id>	name##_;\
-	E_AUTO( name )
+#define FBLTYP_ITEM( type, name )\
+	typedef fbltyp::_item_<type##__>	name##_;\
+	E_AUTO( name )\
+	typedef fbltyp::_item_<type##_t__>	name##_t_;\
+	E_AUTO( name##_t )
 
-#define FBLTYP_ITEMS( item, name )\
-	typedef ctn::E_MCONTAINER_( item##_ )	name##_;\
-	E_AUTO( name )
+#define FBLTYP_ITEMS( name )\
+	typedef ctn::E_MCONTAINER_( name##_ )	name##s_;\
+	E_AUTO( name##s )\
+	typedef ctn::E_MCONTAINER_( name##_t_ )	name##s_t_;\
+	E_AUTO( name##s_t )
 
-#define FBLTYP_XITEM( id, name )\
-	typedef fbltyp::_extended_item_<id>	name##_;\
-	E_AUTO( name )
+#define FBLTYP_XITEM( type, name )\
+	typedef fbltyp::_extended_item_<type##__>	name##_;\
+	E_AUTO( name )\
+	typedef fbltyp::_extended_item_<type##_t__>	name##_t_;\
+	E_AUTO( name##_t )
 
-#define FBLTYP_XITEMS( item, name )\
-	typedef ctn::E_CONTAINER_( item##_ )	name##_;\
-	E_AUTO( name )
+#define FBLTYP_XITEMS( name )\
+	typedef ctn::E_CONTAINER_( name##_ )	name##s_;\
+	E_AUTO( name##s )\
+	typedef ctn::E_CONTAINER_( name##_t_ )	name##s_t_;\
+	E_AUTO( name##s_t )
 
 # define FBLTYP_MIMIC( stype, sname )	E_TMIMIC__( stype##__, sname##__ )
 
@@ -124,14 +132,14 @@ extern class ttr_tutor &FBLTYPTutor;
 # define FBLTYP_MIMIC_ID32( sname ) FBLTYP_MIMIC( fbltyp::id32, sname )
 # define FBLTYP_MIMIC_ID( sname ) FBLTYP_MIMIC( fbltyp::id, sname )
 
-# define FBLTYP_MIMIC_IDS8( sname, bname ) FBLTYP_MIMICS( fbltyp::id8, fbltyp::ids8, sname, bname )
-# define FBLTYP_MIMIC_IDS16( sname, bname ) FBLTYP_MIMICS( fbltyp::id16, fbltyp::ids16, sname, bname )
-# define FBLTYP_MIMIC_IDS32( sname, bname ) FBLTYP_MIMICS( fbltyp::id32, fbltyp::ids32, sname, bname )
+# define FBLTYP_MIMIC_ID8S( sname, bname ) FBLTYP_MIMICS( fbltyp::id8, fbltyp::id8s, sname, bname )
+# define FBLTYP_MIMIC_ID16S( sname, bname ) FBLTYP_MIMICS( fbltyp::id16, fbltyp::id16s, sname, bname )
+# define FBLTYP_MIMIC_ID32S( sname, bname ) FBLTYP_MIMICS( fbltyp::id32, fbltyp::id32s, sname, bname )
 # define FBLTYP_MIMIC_IDS( sname, bname ) FBLTYP_MIMICS( fbltyp::id, fbltyp::ids, sname, bname )
 
-# define FBLTYP_MIMIC_XIDS8( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id8, fbltyp::ids8, fbltyp::xids8, sname, bname, xname )
-# define FBLTYP_MIMIC_XIDS16( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::ids16, fbltyp::xids16, sname, bname, xname )
-# define FBLTYP_MIMIC_XIDS32( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::ids32, fbltyp::xids32, sname, bname, xname )
+# define FBLTYP_MIMIC_XID8S( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id8, fbltyp::id8S, fbltyp::xid8s, sname, bname, xname )
+# define FBLTYP_MIMIC_XID16S( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id16, fbltyp::id16s, fbltyp::xid16s, sname, bname, xname )
+# define FBLTYP_MIMIC_XID32S( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id32, fbltyp::id32s, fbltyp::xid32s, sname, bname, xname )
 # define FBLTYP_MIMIC_XIDS( sname, bname, xname ) FBLTYP_MIMICX( fbltyp::id, fbltyp::ids, fbltyp::xids, sname, bname, xname )
 
 # define FBLTYP_MIMIC_UINT( sname ) FBLTYP_MIMIC( fbltyp::uint, sname )
@@ -302,45 +310,50 @@ namespace fbltyp {
 	E_TMIMIC__( object_t__, object__ );
 
 	typedef bso::bool__ boolean_t__;
-	typedef boolean_t__	boolean__;
-	typedef bitbch::bit_bunch_<sdr::row__>	booleans_t_;
-	E_TMIMIC( booleans_t, booleans );
+	typedef boolean_t__ boolean__;
+	typedef bitbch::E_BIT_BUNCH_ booleans_;
+	E_AUTO( booleans );
+	typedef bitbch::E_BIT_BUNCH_ booleans_t_;
+	E_AUTO( booleans_t );
 
-	using bso::sint__;
-	typedef bch::E_BUNCH_( sint__ ) sints_t_;
-	E_TMIMIC( sints_t, sints );
+# define FBLTYP_S( type )\
+	typedef bch::E_BUNCH_( type##__ ) type##s_;\
+	E_AUTO( type##s )\
+	typedef bch::E_BUNCH_( type##_t__ ) type##s_t_;\
+	E_AUTO( type##s_t )
 
-	using bso::uint__;
-	typedef bch::E_BUNCH_( uint__ ) uints_t_;
-	E_TMIMIC( uints_t, uints );
+# define FBLTYP_X( type )\
+	FBLTYP_S( type )\
+	typedef ctn::E_MCONTAINER_( type##s_ ) x##type##s_;\
+	E_AUTO( x##type##s )\
+	typedef ctn::E_MCONTAINER_( type##s_t_ ) x##type##s_t_;\
+	E_AUTO( x##type##s_t )
+
+
+
+	typedef bso::sint__ sint_t__;
+	typedef sint_t__ sint__;
+	FBLTYP_S( sint )
+
+	typedef bso::uint__ uint_t__;
+	typedef uint_t__ uint__;
+	FBLTYP_S( uint )
 
 	typedef bso::u8__ id8_t__;
 	E_TMIMIC__(id8_t__, id8__ );
-	typedef bch::E_BUNCH_( id8__ ) ids8_t_;
-	E_TMIMIC( ids8_t, ids8 );
-	typedef ctn::E_MCONTAINER_( ids8_ ) xids8_t_;
-	E_TMIMIC( xids8_t, xids8 );
+	FBLTYP_X( id8 );
 
 	typedef bso::u16__ id16_t__;
 	E_TMIMIC__( id16_t__, id16__ );
-	typedef bch::E_BUNCH_( id16__ ) ids16_t_;
-	E_TMIMIC( ids16_t, ids16 );
-	typedef ctn::E_MCONTAINER_( ids16_ ) xids16_t_;
-	E_TMIMIC( xids16_t, xids16 );
+	FBLTYP_X( id16 );
 
 	typedef bso::u32__ id32_t__;
 	E_TMIMIC__( id32_t__, id32__ );
-	typedef bch::E_BUNCH_( id32__ ) ids32_t_;
-	E_TMIMIC( ids32_t, ids32 );
-	typedef ctn::E_MCONTAINER_( ids32_ ) xids32_t_;
-	E_TMIMIC( xids32_t, xids32 );
+	FBLTYP_X( id32 );
 
 	typedef bso::uint__ id_t__;
 	E_TMIMIC__( id_t__, id__ );
-	typedef bch::E_BUNCH_( id__ ) ids_t_;
-	E_TMIMIC( ids_t, ids );
-	typedef ctn::E_MCONTAINER_( ids_ ) xids_t_;
-	E_TMIMIC( xids_t, xids );
+	FBLTYP_X( id );
 
 	typedef bso::char__ char_t__;
 	typedef char_t__	char__;
@@ -356,25 +369,25 @@ namespace fbltyp {
 	typedef bch::E_BUNCH( bso::raw__ )	binary;
 	typedef ctn::E_MCONTAINER_( binary_ ) binaries_;
 	typedef ctn::E_MCONTAINER( binary_ ) binaries;
-	FBLTYP_ITEM( id8__, item8 )
-	FBLTYP_ITEMS( item8, items8 )
-	FBLTYP_ITEM( id16__, item16 )
-	FBLTYP_ITEMS( item16, items16 )
-	FBLTYP_ITEM( id32__, item32 )
-	FBLTYP_ITEMS( item32, items32 )
-	FBLTYP_ITEM( id__, item )
-	FBLTYP_ITEMS( item, items )
-	FBLTYP_XITEM( id8__, xitem8 )
-	FBLTYP_XITEMS( xitem8, xitems8 )
-	FBLTYP_XITEM( id16__, xitem16 )
-	FBLTYP_XITEMS( xitem16, xitems16 )
-	FBLTYP_XITEM( id32__, xitem32 )
-	FBLTYP_XITEMS( xitem32, xitems32 )
-	FBLTYP_XITEM( id__, xitem )
-	FBLTYP_XITEMS( xitem, xitems )
+	FBLTYP_ITEM( id8, item8 )
+	FBLTYP_ITEMS( item8 )
+	FBLTYP_ITEM( id16, item16 )
+	FBLTYP_ITEMS( item16 )
+	FBLTYP_ITEM( id32, item32 )
+	FBLTYP_ITEMS( item32 )
+	FBLTYP_ITEM( id, item )
+	FBLTYP_ITEMS( item )
+	FBLTYP_XITEM( id8, xitem8 )
+	FBLTYP_XITEMS( xitem8 )
+	FBLTYP_XITEM( id16, xitem16 )
+	FBLTYP_XITEMS( xitem16 )
+	FBLTYP_XITEM( id32, xitem32 )
+	FBLTYP_XITEMS( xitem32 )
+	FBLTYP_XITEM( id, xitem )
+	FBLTYP_XITEMS( xitem )
 	/* Both below declaration are not part of the protocol. */
-	typedef fbltyp::detail_<id8__, sdr::row__>	command_detail_	;
-	typedef fbltyp::detail<id8__, sdr::row__>	command_detail;
+	typedef fbltyp::detail_<id8_t__, sdr::row__>	command_detail_	;
+	typedef fbltyp::detail<id8_t__, sdr::row__>	command_detail;
 	/**/
 	typedef ctn::E_CONTAINER_( command_detail_ ) commands_details_;
 	typedef ctn::E_CONTAINER( command_detail_ ) commands_details;
@@ -477,6 +490,8 @@ namespace fbltyp {
 	{
 		_Delete( P );
 	}
+
+# undef FBLTYP_S
 
 #define FBLTYP_S( name, type )\
 	inline type *New##name( void )\
@@ -625,29 +640,29 @@ namespace fbltyp {
 	
 	FBLTYP_S( Id8, id8__ )
 
-	//f Put 'Ids8' into 'OFlow'.
-	void PutIds8(
-		const ids8_ &Ids8,
+	//f Put 'Id8s' into 'OFlow'.
+	void PutId8s(
+		const id8s_ &Id8s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Ids8' from 'OFlow'.
-	void GetIds8(
+	//f Get 'Id8s' from 'OFlow'.
+	void GetId8s(
 		flw::iflow__ &IFlow,
-		ids8_ &Ids8 );
+		id8s_ &Id8s );
 
-	FBLTYP_D( Ids8, ids8 )
+	FBLTYP_D( Id8s, id8s )
 
-	//f Put 'XIds8' into 'OFlow'.
-	void PutXIds8(
-		const xids8_ &XIds8,
+	//f Put 'XId8s' into 'OFlow'.
+	void PutXId8s(
+		const xid8s_ &XId8s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'XIds8' from 'OFlow'.
-	void GetXIds8(
+	//f Get 'XId8s' from 'OFlow'.
+	void GetXId8s(
 		flw::iflow__ &IFlow,
-		xids8_ &XIds8 );
+		xid8s_ &XId8s );
 
-	FBLTYP_D( XIds8, xids8 )
+	FBLTYP_D( XId8s, xid8s )
 
 	//f Put 'Id16' into 'OFlow'.
 	inline void PutId16(
@@ -667,29 +682,29 @@ namespace fbltyp {
 	
 	FBLTYP_S( Id16, id16__ )
 
-	//f Put 'Ids16' into 'OFlow'.
-	void PutIds16(
-		const ids16_ &Ids16,
+	//f Put 'Id16s' into 'OFlow'.
+	void PutId16s(
+		const id16s_ &Id16s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Ids16' from 'OFlow'.
-	void GetIds16(
+	//f Get 'Id16s' from 'OFlow'.
+	void GetId16s(
 		flw::iflow__ &IFlow,
-		ids16_ &Ids16 );
+		id16s_ &Id16s );
 
-	FBLTYP_D( Ids16, ids16 )
+	FBLTYP_D( Id16s, id16s )
 
-	//f Put 'XIds16' into 'OFlow'.
-	void PutXIds16(
-		const xids16_ &XIds16,
+	//f Put 'XId16s' into 'OFlow'.
+	void PutXId16s(
+		const xid16s_ &XId16s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'XIds16' from 'OFlow'.
-	void GetXIds16(
+	//f Get 'XId16s' from 'OFlow'.
+	void GetXId16s(
 		flw::iflow__ &IFlow,
-		xids16_ &XIds16 );
+		xid16s_ &XId16s );
 
-	FBLTYP_D( XIds16, xids16 )
+	FBLTYP_D( XId16s, xid16s )
 
 
 	//f Put 'Id32' into 'OFlow'.
@@ -710,29 +725,29 @@ namespace fbltyp {
 	
 	FBLTYP_S( Id32, id32__ )
 
-	//f Put 'Ids32' into 'OFlow'.
-	void PutIds32(
-		const ids32_ &Ids32,
+	//f Put 'Id32s' into 'OFlow'.
+	void PutId32s(
+		const id32s_ &Id32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Ids32' from 'OFlow'.
-	void GetIds32(
+	//f Get 'Id32s' from 'OFlow'.
+	void GetId32s(
 		flw::iflow__ &IFlow,
-		ids32_ &Ids32 );
+		id32s_ &Id32s );
 
-	FBLTYP_D( Ids32, ids32 )
+	FBLTYP_D( Id32s, id32s )
 
-	//f Put 'XIds32' into 'OFlow'.
-	void PutXIds32(
-		const xids32_ &XIds32,
+	//f Put 'XId32s' into 'OFlow'.
+	void PutXId32s(
+		const xid32s_ &XId32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'XIds32' from 'OFlow'.
-	void GetXIds32(
+	//f Get 'XId32s' from 'OFlow'.
+	void GetXId32s(
 		flw::iflow__ &IFlow,
-		xids32_ &XIds32 );
+		xid32s_ &XId32s );
 
-	FBLTYP_D( XIds32, xids32 )
+	FBLTYP_D( XId32s, xid32s )
 
 		
 	//f Put 'Id' into 'OFlow'.
@@ -884,24 +899,24 @@ namespace fbltyp {
 		const item8_ Item8,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Items8' from 'IFlow'.
+	//f Get 'Item8s' from 'IFlow'.
 	void GetItem8(
 	   flw::iflow__ &IFlow,
 	   item8_ &Item8 );
 
-	FBLTYP_D( Items8, items8 )
+	FBLTYP_D( Item8s, item8s )
 
-	//f Put 'Items8' into 'OFlow'.
-	void PutItems8(
-		const items8_ &Items8,
+	//f Put 'Item8s' into 'OFlow'.
+	void PutItem8s(
+		const item8s_ &Item8s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Items8' from 'IFlow'.
-	void GetItems8(
+	//f Get 'Item8s' from 'IFlow'.
+	void GetItem8s(
 		flw::iflow__ &IFlow,
-		items8_ &Items8 );
+		item8s_ &Item8s );
 
-	FBLTYP_D( Items16, items16 )
+	FBLTYP_D( Item16s, item16s )
 
 	//f Put 'Item16' into 'OFlow'.
 	void PutItem16(
@@ -915,17 +930,17 @@ namespace fbltyp {
 
 	FBLTYP_D( Item16, item16 )
 
-	//f Put 'Items16' into 'OFlow'.
-	void PutItems16(
-		const items16_ &Items16,
+	//f Put 'Item16s' into 'OFlow'.
+	void PutItem16s(
+		const item16s_ &Item16s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Items16' from 'IFlow'.
-	void GetItems16(
+	//f Get 'Item16s' from 'IFlow'.
+	void GetItem16s(
 		flw::iflow__ &IFlow,
-		items16_ &Items16 );
+		item16s_ &Item16s );
 
-	FBLTYP_D( items16, items16 )
+	FBLTYP_D( item16s, item16s )
 
 
 	//f Put 'Item32' into 'OFlow'.
@@ -938,19 +953,19 @@ namespace fbltyp {
 	   flw::iflow__ &IFlow,
 	   item32_ &Item32 );
 
-	FBLTYP_D( Item32, items32 )
+	FBLTYP_D( Item32, item32s )
 
-	//f Put 'Items32' into 'OFlow'.
-	void PutItems32(
-		const items32_ &Items32,
+	//f Put 'Item32s' into 'OFlow'.
+	void PutItem32s(
+		const item32s_ &Item32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'Items32' from 'IFlow'.
-	void GetItems32(
+	//f Get 'Item32s' from 'IFlow'.
+	void GetItem32s(
 		flw::iflow__ &IFlow,
-		items32_ &Items32 );
+		item32s_ &Item32s );
 
-	FBLTYP_D( Items32, items32 )
+	FBLTYP_D( Item32s, item32s )
 
 	
 	//f Put 'Item' into 'OFlow'.
@@ -978,42 +993,42 @@ namespace fbltyp {
 	FBLTYP_D( Items, items )
 
 
-	//f Put 'XItems8' into 'OFlow'.
-	void PutXItems8(
-		const xitems8_ &XItems8,
+	//f Put 'XItem8s' into 'OFlow'.
+	void PutXItem8s(
+		const xitem8s_ &XItem8s,
 		flw::oflow__ &OFlow );
 
 	//f Get 'XItems8' from 'IFlow'.
-	void GetXItems8(
+	void GetXItem8s(
 		flw::iflow__ &IFlow,
-		xitems8_ &XItems8 );
+		xitem8s_ &XItem8s );
 
-	FBLTYP_D( XItems8, xitems8 )
+	FBLTYP_D( XItem8s, xitem8s )
 
 	//f Put 'XItems16' into 'OFlow'.
-	void PutXItems16(
-		const xitems16_ &XItems16,
+	void PutXItem16s(
+		const xitem16s_ &XItem16s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'XItems16' from 'IFlow'.
-	void GetXItems16(
+	//f Get 'XItem16s' from 'IFlow'.
+	void GetXItem16s(
 		flw::iflow__ &IFlow,
-		xitems16_ &XItems16 );
+		xitem16s_ &XItem16s );
 
-	FBLTYP_D( XItems16, xitems16 )
+	FBLTYP_D( XItem16s, xitem16s )
 
 
-		//f Put 'XItems32' into 'OFlow'.
-	void PutXItems32(
-		const xitems32_ &XItems32,
+		//f Put 'XItem32s' into 'OFlow'.
+	void PutXItem32s(
+		const xitem32s_ &XItem32s,
 		flw::oflow__ &OFlow );
 
-	//f Get 'XItems32' from 'IFlow'.
-	void GetXItems32(
+	//f Get 'XItem32s' from 'IFlow'.
+	void GetXItem32s(
 		flw::iflow__ &IFlow,
-		xitems32_ &XItems32 );
+		xitem32s_ &XItem32s );
 
-	FBLTYP_D( XItems32, xitems32 )
+	FBLTYP_D( XItem32s, xitem32s )
 
 	
 		//f Put 'XItems' into 'OFlow'.

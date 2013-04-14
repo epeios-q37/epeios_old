@@ -70,19 +70,19 @@ namespace fblfaq {
 	typedef fblfrd::id8__	parameter__;
 
 	//t Broker parameters.
-	typedef fblfrd::ids8_ 	parameters_;
-	typedef fblfrd::ids8	parameters;
+	typedef fblfrd::id8s_ 	parameters_;
+	typedef fblfrd::id8s	parameters;
 
-	FBLTYP_ITEM( fblfrd::id16__, command_item )
-	FBLTYP_ITEMS( command_item, commands_items )
+	FBLTYP_ITEM( fblfrd::id16, command_item )
+	FBLTYP_ITEMS( command_item )
 
-	typedef bso::u16__	type_id__;
+	typedef fbltyp::id16__	type_id__;
 
 	typedef fblfrd::xitem16		type_item;
 	typedef fblfrd::xitem16_	type_item_;
 	
-	typedef fblfrd::xitems16	types_items;
-	typedef fblfrd::xitems16_	types_items_;
+	typedef fblfrd::xitem16s	types_items;
+	typedef fblfrd::xitem16s_	types_items_;
 	
 	//c A broker Command.
 	class command_
