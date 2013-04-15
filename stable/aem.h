@@ -278,13 +278,13 @@ namespace aem {
 			if ( S_.Amount )
 				return S_.Amount - 1;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		row Last( sdr::size__ Offset ) const
 		{
 			row Row = Last();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row = Previous( Row, Offset  );
 
 			return Row;
@@ -295,13 +295,13 @@ namespace aem {
 			if ( S_.Amount )
 				return 0;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		row First( sdr::size__ Offset ) const
 		{
 			row Row = First();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row =  Next( Row, Offset  );
 
 			return Row;
@@ -314,7 +314,7 @@ namespace aem {
 			if ( ( *Current += Offset ) < S_.Amount )
 				return Current;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the object after 'Current' (to the top).
 		row Next( row Current ) const
@@ -329,7 +329,7 @@ namespace aem {
 			if ( *Current >= Offset )
 				return *Current - Offset;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
 		row Previous( row Current ) const
@@ -430,13 +430,13 @@ namespace aem {
 			if ( Amount_ )
 				return Amount_ - 1;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		row Last( sdr::size__ Offset ) const
 		{
 			row Row = Last();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row =  Previous( Row, Offset  );
 
 			return Row;
@@ -447,13 +447,13 @@ namespace aem {
 			if ( Amount_ )
 				return 0;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		row First( sdr::size__ Offset ) const
 		{
 			row Row = First();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row = Next( Row, Offset  );
 
 			return Row;
@@ -466,7 +466,7 @@ namespace aem {
 			if ( ( *Current += Offset ) < Amount_ )
 				return Current;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the object after 'Current' (to the top).
 		row Next( row Current ) const
@@ -481,7 +481,7 @@ namespace aem {
 			if ( *Current >= Offset )
 				return *Current - Offset;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the object before 'Current' (to the bottom).
 		row Previous( row Current ) const

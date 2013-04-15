@@ -245,7 +245,7 @@ void string_::StripLeadingCharacter( char Model )
 	sdr::row__ Row = First();
 	sdr::size__ Amount = 0;
 
-	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+	while ( ( Row != E_NIL ) && ( Get( Row ) == Model ) ) {
 		Amount++;
 		Row = Next( Row );
 	}
@@ -259,7 +259,7 @@ void string_::StripTailingCharacter( char Model )
 	sdr::row__ Row = Last();
 	sdr::size__ Amount = 0;
 
-	while ( ( Row != NONE ) && ( Get( Row ) == Model ) ) {
+	while ( ( Row != E_NIL ) && ( Get( Row ) == Model ) ) {
 		Amount++;
 		Row = Previous( Row );
 	}
@@ -295,11 +295,11 @@ bso::bool__ string_::Replace(
 		ERRPrm();
 #endif
 
-	while ( ( Position-- ) && ( Row != NONE ) ) {
+	while ( ( Position-- ) && ( Row != E_NIL ) ) {
 		Row = Search( Tag, Row );
 	}
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Remove( Row, 1 );
 
 		Insert( Value, Row );
@@ -322,12 +322,12 @@ sdr::row__ string_::Search(
 			(*Start)++;
 
 		if ( *Start > Limit )
-			return NONE;
+			return E_NIL;
 		else
 			return Start;
 	}
 	else {
-		return NONE;
+		return E_NIL;
 	}
 }
 
@@ -342,7 +342,7 @@ sdr::row__ string_::Search(
 		(*Start)++;
 
 	if ( *Start >= Limit )
-		return NONE;
+		return E_NIL;
 	else
 		return Start;
 }
@@ -375,7 +375,7 @@ uint__ str::_GenericUnsignedConversion(
 	OtherLimit = Limit / Base;
 
 	if ( *P < String.Amount() )
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 			C = Convert_( String.Get( P ) );
 
 			if ( C >= Base )
@@ -394,7 +394,7 @@ uint__ str::_GenericUnsignedConversion(
 			P = String.Next( P );
 		}
 
-	if ( P != NONE )
+	if ( P != E_NIL )
 		if ( ErrP )
 			*ErrP = P;
 		else
@@ -415,13 +415,13 @@ sint__ str::_GenericSignedConversion(
 		ERRPrm();
 
 	if ( String.Get( Begin ) == '-' )
-		if ( String.Next( Begin ) == NONE ) {
+		if ( String.Next( Begin ) == E_NIL ) {
 			*ErrP = *Begin + 1;
 			return 0;
 		} else 
 			return -(sint__)_GenericUnsignedConversion( String, String.Next( Begin ), ErrP, Base, -NegativeLimit );
 	else if ( String.Get( Begin ) == '+' )
-		if ( String.Next( Begin ) == NONE ) {
+		if ( String.Next( Begin ) == E_NIL ) {
 			if ( ErrP != NULL )
 				*ErrP = *Begin + 1;
 			else
@@ -444,7 +444,7 @@ bso::lfloat__ string_::ToLF(
 	unsigned char C;
 
 	if ( *P < Amount() ) {
-		if ( P != NONE ) 
+		if ( P != E_NIL ) 
 			if ( Get( P ) == '-' ) {
 				Negate = true;
 				P = Next( P );
@@ -452,16 +452,16 @@ bso::lfloat__ string_::ToLF(
 				P = Next( P );
 			}
 
-		while( ( P != NONE ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_LFLOAT_MAX / 10 ) ) ) {
+		while( ( P != E_NIL ) && isdigit( C = Get( P ) ) && ( Result < ( BSO_LFLOAT_MAX / 10 ) ) ) {
 			Result = Result * 10 + C - '0';
 			P = Next( P );
 		}
 
-		if ( ( P != NONE )
+		if ( ( P != E_NIL )
 			  && ( ( ( C = Get( P ) ) == '.' ) || ( C == ',' ) ) ) {
 			bso::lfloat__ Factor = .1;
 			P = Next( P );
-			while( ( P != NONE ) && isdigit( C = Get( P ) ) ) {
+			while( ( P != E_NIL ) && isdigit( C = Get( P ) ) ) {
 				Result += ( C - '0' ) * Factor;
 				Factor /= 10;
 				P = Next( P );
@@ -469,7 +469,7 @@ bso::lfloat__ string_::ToLF(
 		}
 	}
 
-	if ( P != NONE )
+	if ( P != E_NIL )
 		if ( ErrP )
 			*ErrP = P;
 		else
@@ -490,7 +490,7 @@ static void Replace0Tag_(
 ERRProlog
 	str::string MergedValues;
 	ctn::E_CMITEM( str::string_ ) Value;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	str::string Tag;
 ERRBegin
 	Value.Init( Values );
@@ -499,14 +499,14 @@ ERRBegin
 
 	MergedValues.Init( " (" );
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		MergedValues.Append( '\'' );
 		MergedValues.Append( Value( Row ) );
 		MergedValues.Append( '\'' );
 		Row = Values.Next( Row );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		MergedValues.Append( " ,'" );
 		MergedValues.Append( Value( Row ) );
 		MergedValues.Append( '\'' );
@@ -521,14 +521,14 @@ ERRBegin
 	
 	Row = Message.Search( Tag );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Message.Remove( Row, Tag.Amount() );
 
 		Message.Insert( MergedValues, Row );
 
 		Row = Message.Next( Row, MergedValues.Amount() );
 
-		if ( Row != NONE )
+		if ( Row != E_NIL )
 			Row = Message.Search( Tag, Row );
 	}
 
@@ -547,7 +547,7 @@ void str::ReplaceTags(
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Value;
 	bso::u8__ Indice = 1;
-	sdr::row__ Row = NONE, SearchRow = NONE;
+	sdr::row__ Row = E_NIL, SearchRow = E_NIL;
 	str::string Tag;
 	bso::integer_buffer__ Buffer;
 ERRBegin
@@ -560,14 +560,14 @@ ERRBegin
 
 	Row = Values.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Tag.Init();
 		Tag.Append( TagMarker );
 		Tag.Append( bso::Convert( Indice, Buffer ) );
 
 		SearchRow = String.Search( Tag );
 
-		while ( SearchRow != NONE ) {
+		while ( SearchRow != E_NIL ) {
 			String.Remove( SearchRow, Tag.Amount() );
 
 			String.Insert( Value( Row ), SearchRow );
@@ -586,7 +586,7 @@ ERRBegin
 
 	SearchRow = String.Search( Tag );
 
-	while ( SearchRow != NONE ) {
+	while ( SearchRow != E_NIL ) {
 		String.Remove( SearchRow, Tag.Amount() );
 
 		String.Insert( TagMarker, SearchRow );

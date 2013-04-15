@@ -219,10 +219,10 @@ ERREpilog
 			POSITION__ P = Descriptions.First();
 			broker9__command C = BROKER9_INVALID_COMMAND;
 
-			while ( ( P != NONE ) && ( Descriptions( P ).Name != str_string( PrimaryCommandName ) ) )
+			while ( ( P != E_NIL ) && ( Descriptions( P ).Name != str_string( PrimaryCommandName ) ) )
 				P = Descriptions.Next( P );
 
-			if ( P != NONE )
+			if ( P != E_NIL )
 				C = (broker9__tcommand)P;
 
 			Requete.Output().Put( 0 );	// No explanation message;
@@ -288,7 +288,7 @@ ERRProlog
 ERRBegin
 	Requete.BeginMulti();
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Type = (rqm__ttype)P;
 		Requete.AddValue( rqm::cType, &Type );
@@ -317,7 +317,7 @@ static void WriteCommandsIDAndName_(
 
 	Requete.BeginMulti();
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Command = (broker9__tcommand)P;
 		Requete.AddValue( rqm::cCommand, &Command );
@@ -569,7 +569,7 @@ ERRBegin
 
 	Manager.BeginMulti();
 
-	while( Position != NONE )
+	while( Position != E_NIL )
 	{
 		if ( ( Command = Frontend.Command( Type, Description( Position ) ) ) == BROKER9_INVALID_COMMAND )
 			ERRb();
@@ -753,10 +753,10 @@ broker9__type broker9_frontend::Type( str_string_ &Name )
 {
 	POSITION__ C = Modules.First();
 
-	while ( ( C != NONE ) && ( str_string( Modules(C)->Name() ) != Name )  )
+	while ( ( C != E_NIL ) && ( str_string( Modules(C)->Name() ) != Name )  )
 		C = Modules.Next( C );
 
-	if ( C == NONE )
+	if ( C == E_NIL )
 		C = BROKER9_INVALID_TYPE;
 	else if ( C > BROKER9_INVALID_TYPE )
 		ERRl();

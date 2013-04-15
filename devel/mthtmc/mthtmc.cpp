@@ -66,7 +66,7 @@ static inline bso::ulong__ ExtractItem_(
 	const str::string_ String,
 	epeios::row__ &Position )
 {
-	if ( Position == NONE )
+	if ( Position == E_NIL )
 		return 0;
 
 	return String.ToUL( Position, &Position, str::bAuto );
@@ -76,7 +76,7 @@ static inline bso::bool__ TestPosition_(
 	const str::string_ &String,
 	epeios::row__ &Position )
 {
-	if ( Position == NONE )
+	if ( Position == E_NIL )
 		return false;
 
 	bso::char__ C = String( Position );
@@ -93,7 +93,7 @@ bso::bool__ xfps_::Init(
 	const str::string_ &String,
 	epeios::row__ &Position )
 {
-	epeios::row__ Error = NONE;
+	epeios::row__ Error = E_NIL;
 	bso::ulong__ FPS = String.ToUL( Position, &Error, str::bAuto );
 
 	this->FPS.reset();
@@ -102,7 +102,7 @@ bso::bool__ xfps_::Init(
 	if ( FPS < 1 )
 		return false;
 
-	if ( Error == NONE )
+	if ( Error == E_NIL )
 		Init( FPS, tNDF );
 	else if ( String( Error ) == 'd' ) {
 		if ( ( FPS == 29 ) || ( FPS == 30 ) )
@@ -255,9 +255,9 @@ ERRBegin
 
 	XFPS.Init();
 
-	if ( Position != NONE ) {
+	if ( Position != E_NIL ) {
 		if ( ( String( Position ) == '!' ) || ( String( Position ) == '@' ) || ( String( Position ) == '|' ) ) {
-			if ( ( Position = String.Next( Position ) ) != NONE )
+			if ( ( Position = String.Next( Position ) ) != E_NIL )
 				if ( ! XFPS.Init( String, Position ) )
 					ERRReturn;
 		} else {
@@ -766,12 +766,12 @@ ERRBegin
 
 	epeios::row__ Row = Format.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Format( Row ) == '%' ) {
 			MarkerPending = true;
 			Row = Format.Next( Row );
 
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				ERRReturn;
 		}
 
@@ -905,7 +905,7 @@ ERRBegin
 
 					Row = Format.Next( Row );
 
-					if ( Row == NONE )
+					if ( Row == E_NIL )
 						ERRReturn;
 
 					C = Format( Row );
@@ -921,7 +921,7 @@ ERRBegin
 
 					Row = Format.Next( Row );
 
-					if ( Row == NONE )
+					if ( Row == E_NIL )
 						ERRReturn;
 
 					C = Format( Row );
@@ -934,7 +934,7 @@ ERRBegin
 
 					Row = Format.Next( Row );
 
-					if ( Row == NONE )
+					if ( Row == E_NIL )
 						ERRReturn;
 
 					C = Format( Row );

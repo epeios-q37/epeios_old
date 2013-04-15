@@ -87,12 +87,12 @@ void txmpgh::paragraph_::Merge( line_ &Line ) const
 
 	Part.Init( *this );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 		Line.Append( Part( P ) );
 		P = lines_::Next( P );
 	}
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Line.Append( ' ' );
 		Line.Append( Part( P ) );
 		P = lines_::Next( P );
@@ -110,7 +110,7 @@ txf::text_oflow__ &operator <<(
 
 	Element.Init( P );
 
-	while ( Position != NONE ) {
+	while ( Position != E_NIL ) {
 		F << Element( Position ) << txf::nl;
 		Position = P.Next( Position );
 	}

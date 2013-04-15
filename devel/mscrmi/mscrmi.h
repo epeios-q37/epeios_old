@@ -368,7 +368,7 @@ namespace mscrmi {
 		void reset( bso::bool__ P = true )
 		{
 			_parameter_core_::reset( P );
-			S_.GroupRow = NONE;
+			S_.GroupRow = E_NIL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -388,7 +388,7 @@ namespace mscrmi {
 		void Init( void )
 		{
 			_parameter_core_::Init();
-			S_.GroupRow = NONE;
+			S_.GroupRow = E_NIL;
 		}
 		void Init(
 			const label_ &Label,
@@ -418,7 +418,7 @@ namespace mscrmi {
 
 	row__ Search(
 		address__ Address,
-		row__ Current,	// Si == 'NONE', on part du premier élément de 'Parameters'.
+		row__ Current,	// Si == 'E_NIL', on part du premier élément de 'Parameters'.
 		const parameters_ &Parameters );
 
 	void Print(
@@ -610,7 +610,7 @@ namespace mscrmi {
 		void reset( bso::bool__ P = true )
 		{
 			Data.reset( P );
-			S_.Row = NONE;
+			S_.Row = E_NIL;
 		}
 		void plug( mdr::E_MEMORY_DRIVER__ &MD )
 		{
@@ -627,7 +627,7 @@ namespace mscrmi {
 
 			return *this;
 		}
-		void Init( row__ Row = NONE )
+		void Init( row__ Row = E_NIL )
 		{
 			Data.Init();
 			S_.Row = Row;

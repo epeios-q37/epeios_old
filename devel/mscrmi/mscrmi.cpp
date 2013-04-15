@@ -78,7 +78,7 @@ void mscrmi::Print(
 
 	Flow << Buffer << " : ";
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( sprintf( Buffer, "%02lX", (bso::ulong__)Data( Row ) ) < 0 )
 			ERRs();
 
@@ -97,7 +97,7 @@ void mscrmi::Print(
 
 	Data.Init( DataSet );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Print( Data( Row ), Flow );
 
 		Flow << txf::nl;
@@ -210,11 +210,11 @@ void mscrmi::GetBlocs(
 
 	Parameter.Init( Parameters );
 
-	if ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Parameter( Row ).Type() == t_Group ) )
+	if ( Row != E_NIL ) {
+		while ( ( Row != E_NIL ) && ( Parameter( Row ).Type() == t_Group ) )
 			Row = Parameters.Next( Row );
 
-		if ( Row != NONE ) {
+		if ( Row != E_NIL ) {
 			Bloc.Address = Parameter( Row ).Address();
 			Bloc.Size = Parameter( Row ).Size();
 
@@ -223,11 +223,11 @@ void mscrmi::GetBlocs(
 	}
 
 
-	while ( Row != NONE ) {
-		while ( ( Row != NONE ) && ( Parameter( Row ).Type() == t_Group ) )
+	while ( Row != E_NIL ) {
+		while ( ( Row != E_NIL ) && ( Parameter( Row ).Type() == t_Group ) )
 			Row = Parameters.Next( Row );
 
-		if ( Row != NONE ) {
+		if ( Row != E_NIL ) {
 			if ( Sum_( Bloc.Address, Bloc.Size ) == Parameter( Row ).Address() )
 				Bloc.Size += Parameter( Row ).Size();
 			else {
@@ -258,7 +258,7 @@ ERRBegin
 
 	Row = Parameter( Row ).GroupRow();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Path.Insert( '/', 0 );
 		Path.Insert( Parameter( Row ).Label, 0 );
 
@@ -304,18 +304,18 @@ row__ mscrmi::Search(
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	row__ &Row = Current;
 	
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		Row = Parameters.First();
 
 	Parameter.Init( Parameters );
 
-	while ( ( Row != NONE ) &&
+	while ( ( Row != E_NIL ) &&
 			( ( Parameter( Row ).Address() < Address )
 				|| ( ( Parameter( Row ).Type() ) == t_Group ) ) )
 		Row = Parameters.Next( Row );
 
-	if ( ( Row != NONE ) && ( Parameter( Row ).Address() > Address ) )
-		Row = NONE;
+	if ( ( Row != E_NIL ) && ( Parameter( Row ).Address() > Address ) )
+		Row = E_NIL;
 
 	return Row;
 }
@@ -330,8 +330,8 @@ void mscrmi::Print(
 {
 ERRProlog
 	srows Rows;
-	row__ Row = NONE;
-	row__ ParentRow = NONE;
+	row__ Row = E_NIL;
+	row__ ParentRow = E_NIL;
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 ERRBegin
 	Parameter.Init( Parameters );
@@ -339,7 +339,7 @@ ERRBegin
 
 	Rows.Init();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 
 		while ( Parameter( Row ).GroupRow() != ParentRow ) {
 			Writer.PopTag();
@@ -452,7 +452,7 @@ static bso::ubyte__ Convert_(
 {
 	bso::size__ Amount = Source.Amount();
 	bso::ulong__ Value;
-	epeios::row__ Error = NONE;
+	epeios::row__ Error = E_NIL;
 
 	if ( Amount == 0 )
 		return 0;
@@ -465,7 +465,7 @@ static bso::ubyte__ Convert_(
 
 	Value = Source.ToUL( &Error, str::b16 );
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		return 0;
 #if 0
 	switch ( Amount >> 1 ) {
@@ -510,12 +510,12 @@ static xaddress__ HandleAddress_(
 	xaddress__ Address,
 	const str::string_ &Value )
 {
-	epeios::row__ Error = NONE;
+	epeios::row__ Error = E_NIL;
 	address__ Long = Value.ToUL( &Error, str::b16 );
 	bso::size__ Amount = Value.Amount();
 	bso::ubyte__ StencilSize = 0;
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		return MSCRMI_UNDEFINED_ADDRESS;
 
 	if ( Amount == 0 )
@@ -875,7 +875,7 @@ protected:
 		parse_status__ Status = ps_Undefined;
 	ERRProlog
 		parameter Parameter;
-		row__ GroupRow = NONE;
+		row__ GroupRow = E_NIL;
 	ERRBegin
 		if ( Core.Address() == MSCRMI_UNDEFINED_ADDRESS ) {
 			_GroupRow = _Parameters->Get( _GroupRow ).GroupRow();
@@ -900,7 +900,7 @@ public:
 	void reset( bso::bool__ = true )
 	{
 		_Parameters = NULL;
-		_GroupRow = NONE;
+		_GroupRow = E_NIL;
 	}
 	implementation_callback__( void )
 	{
@@ -913,7 +913,7 @@ public:
 	void Init( parameters_ &Parameters )
 	{
 		_Parameters = &Parameters;
-		_GroupRow = NONE;
+		_GroupRow = E_NIL;
 	}
 };
 
@@ -1116,7 +1116,7 @@ private:
 		data_ &Data )
 	{
 		bso::ulong__ Long;
-		epeios::row__ Error = NONE;
+		epeios::row__ Error = E_NIL;
 
 		switch ( Size ) {
 		case 0:
@@ -1133,7 +1133,7 @@ private:
 			break;
 		}
 
-		if ( Error != NONE )
+		if ( Error != E_NIL )
 			return psBadValue;
 
 		if ( !Append( Long, Size, Data ) )
@@ -1152,7 +1152,7 @@ private:
 		if ( Value.Amount() > Size )
 			return psBadValue;
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			Char = Value( Row );
 
 			if ( ( Char < 32 ) ||( Char > 127 ) )
@@ -1181,7 +1181,7 @@ private:
 		if ( Value.Amount() != 9 )
 			return psBadValue;
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			Char = Value( Row );
 
 			if ( ( Char < '0' ) ||( Char > '8' ) )
@@ -1208,7 +1208,7 @@ protected:
 
 		if ( Core.Type() != t_Group ) {
 
-			if ( ( _Row = _Search( Core.Address() ) ) == NONE ) {
+			if ( ( _Row = _Search( Core.Address() ) ) == E_NIL ) {
 				Status = psBadValue;
 				ERRReturn;
 			}
@@ -1274,7 +1274,7 @@ public:
 		_Data.reset( P );
 		_DataSet = NULL;
 		_Parameters = NULL;
-		_Row = NONE;
+		_Row = E_NIL;
 
 	}
 	settings_callback___( void )
@@ -1398,7 +1398,7 @@ void mscrmi::Print(
 
 	Writer.PushTag( "MIDIImplementation" );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Print( Implementation( Row ), Writer );
 
 		Row = Implementations.Next( Row );
@@ -1410,7 +1410,7 @@ void mscrmi::Print(
 static datum__ Checksum_(
 	const data_ &Data,
 	epeios::row__ First = 0,
-	epeios::row__ Last = NONE )
+	epeios::row__ Last = E_NIL )
 {
 	bso::ubyte__ Checksum = 0;
 	epeios::row__ Row = First;
@@ -1420,7 +1420,7 @@ static datum__ Checksum_(
 		Row = Data.Next( Row );
 	}
 
-	if ( Last != NONE ) 
+	if ( Last != E_NIL ) 
 		Checksum += Data( Row );
 
 	return ( 128 - ( Checksum & 0x7f ) ) & 0x7f;
@@ -1535,12 +1535,12 @@ ERRBegin
 
 	Counter = Buffer.Amount();
 
-	while ( ( Row != NONE ) && ( Counter-- ) ) {
+	while ( ( Row != E_NIL ) && ( Counter-- ) ) {
 		Header.Append( RawData( Row ) );
 		Row = RawData.Next( Row );
 	}
 
-	if ( Row == NONE ) {
+	if ( Row == E_NIL ) {
 		Status = tsIncorrectData;
 		ERRReturn;
 	}
@@ -1559,7 +1559,7 @@ ERRBegin
 
 	while ( Counter-- ) {
 
-		if ( Row == NONE ) {
+		if ( Row == E_NIL ) {
 			Status = tsIncorrectData;
 			ERRReturn;
 		}
@@ -1569,7 +1569,7 @@ ERRBegin
 		Row = RawData.Next( Row );
 	}
 
-	if ( Row == NONE ) {
+	if ( Row == E_NIL ) {
 		Status = tsIncorrectData;
 		ERRReturn;
 	}
@@ -1591,8 +1591,8 @@ static void Fill_(
 {
 ERRProlog
 	setting Setting;
-	epeios::row__ DataRow = NONE;
-	address__ Address = NONE;
+	epeios::row__ DataRow = E_NIL;
+	address__ Address = E_NIL;
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	type__ Type;
 ERRBegin
@@ -1600,13 +1600,13 @@ ERRBegin
 	DataRow = Data.First();
 	Parameter.Init( Parameters );
 
-	while ( DataRow != NONE ) {
-		while ( ( ParameterRow != NONE ) &&
+	while ( DataRow != E_NIL ) {
+		while ( ( ParameterRow != E_NIL ) &&
 			    ( ( Parameter( ParameterRow ).Address() < Address )
 				   || ( ( Type = Parameter( ParameterRow ).Type() ) == t_Group ) ) )
 			ParameterRow = Parameters.Next( ParameterRow );
 
-		if ( ( ParameterRow == NONE ) || ( Parameter( ParameterRow ).Address() > Address ) )
+		if ( ( ParameterRow == E_NIL ) || ( Parameter( ParameterRow ).Address() > Address ) )
 			ERRu();
 
 		if ( !Data.Exists( Data.Next( DataRow, Size( Type ) - 1 ) ) )
@@ -1636,7 +1636,7 @@ static bso::ulong__ Convert_( const str::string_ &Value )
 	if ( Value.Amount() > 4 )
 		ERRl();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		V = ( V << 8 ) + Value( Row );
 
 		Row = Value.Next( Row );
@@ -1664,7 +1664,7 @@ static const str::string_ &ConvertToNibbleValue_(
 	bso::ulong__ Value = 0;
 	epeios::row__ Row = Data.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Data( Row ) > 15 )
 			ERRc();
 
@@ -1690,7 +1690,7 @@ static const str::string_ &ConvertToNameValue_(
 	if ( Data.Amount() > Size )
 		ERRc();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Char = Data( Row );
 
 		if ( ( Char < 32 ) ||( Char > 127 ) )
@@ -1720,7 +1720,7 @@ static const str::string_ &ConvertToHBarsValue_(
 	if ( Data.Amount() > Size )
 		ERRc();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Char = Data( Row );
 
 		if ( ( Char < 0 ) ||( Char > 8 ) )
@@ -1802,10 +1802,10 @@ static void BuildPath_(
 
 	Parameter.Init( Parameters );
 
-	if ( Row != NONE )
+	if ( Row != E_NIL )
 		Row = Parameter( Row ).GroupRow();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Rows.Insert( Row, 0 );
 		Row = Parameter( Row ).GroupRow();
 	}
@@ -1817,14 +1817,14 @@ static epeios::row__ SearchLastCommon_(
 {
 	epeios::row__ Row1 = Rows1.First(), Row2 = Rows2.First();
 
-	while ( ( Row1 != NONE ) && ( Row2 != NONE ) && ( Rows1( Row1 ) == Rows2( Row2 ) ) ) {
+	while ( ( Row1 != E_NIL ) && ( Row2 != E_NIL ) && ( Rows1( Row1 ) == Rows2( Row2 ) ) ) {
 		Row1 = Rows1.Next( Row1 );
 		Row2 = Rows2.Next( Row2 );
 	}
 
-	if ( Row1 == NONE )
+	if ( Row1 == E_NIL )
 		return Rows1.Last();
-	else if ( Row2 == NONE )
+	else if ( Row2 == E_NIL )
 		return Rows2.Last();
 	else if ( Row1 != Row2 )
 		ERRc();
@@ -1855,9 +1855,9 @@ static void Push_(
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	Parameter.Init( Parameters );
 
-	Row = ( Row == NONE ? Rows.First() : Rows.Next( Row ) );
+	Row = ( Row == E_NIL ? Rows.First() : Rows.Next( Row ) );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Writer.PushTag( "Parameters" );
 		Print_( Parameter( Rows( Row ) ), Writer );
 
@@ -1873,7 +1873,7 @@ static void PrintTags_(
 {
 ERRProlog
 	rows CurrentRows, PreviousRows;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	CurrentRows.Init();
 	BuildPath_( Current, Parameters, CurrentRows );
@@ -1898,9 +1898,9 @@ void mscrmi::Print(
 {
 ERRProlog
 	rows Rows;
-	row__ ParameterRow = NONE;
-	epeios::row__ Row = NONE;
-	row__ PreviousRow = NONE;
+	row__ ParameterRow = E_NIL;
+	epeios::row__ Row = E_NIL;
+	row__ PreviousRow = E_NIL;
 	ctn::E_CMITEM( setting_ ) Setting;
 	ctn::E_CMITEMt( parameter_, row__ ) Parameter;
 	Parameter.Init( Parameters );
@@ -1911,7 +1911,7 @@ ERRBegin
 
 	Rows.Init();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 
 		PrintTags_( Setting( Row ).Row(), PreviousRow, Parameters, Writer );
 
@@ -1924,7 +1924,7 @@ ERRBegin
 		Row = Settings.Next( Row );
 	}
 
-	PrintTags_( NONE, PreviousRow, Parameters, Writer );
+	PrintTags_( E_NIL, PreviousRow, Parameters, Writer );
 ERRErr
 ERREnd
 ERREpilog
@@ -1942,7 +1942,7 @@ static void Fill_(
 
 	Data.Init( DataSet );
 
-	while ( DataSetRow != NONE ) {
+	while ( DataSetRow != E_NIL ) {
 		Fill_( Data( DataSetRow ), Parameters, ParameterRow, Settings );
 
 		DataSetRow = DataSet.Next( DataSetRow );
@@ -1978,7 +1978,7 @@ transmission_status__ mscrmi::GetDeviceFamilyAndSoftwareRevision(
 	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	data Data;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 	data Model;
 ERRBegin
 
@@ -2028,7 +2028,7 @@ transmission_status__ mscrmi::Extract(
 	transmission_status__ Status = ts_Undefined;
 ERRProlog
 	mscmdm::data RawData;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RawData.Init();
 	ExtractSysEx_( Flow, Origin, RawData );
@@ -2083,12 +2083,12 @@ transmission_status__ mscrmi::Retrieve(
 {
 	transmission_status__ Status = ts_Undefined;
 ERRProlog
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 	adata Data;
 ERRBegin
 	Row = Blocs.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Data.Init();
 
 		if( ( Status = Retrieve( Flow, Blocs( Row ).Address, Blocs( Row ).Size, Identity, Data ) ) != tsOK )
@@ -2115,7 +2115,7 @@ epeios::row__ mscrmi::GetCorrespondingMIDIImplementation(
 
 	Implementation.Init( Implementations );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( memcmp( Implementation( Row ).DeviceFamily(), DeviceFamily, sizeof( DeviceFamily ) ) == 0 )
 			break;
 
@@ -2167,7 +2167,7 @@ void mscrmi::Send(
 
 	Data.Init( DataSet );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Send(Data( Row ),  Identity, Flow );
 
 		Row = DataSet.Next( Row );

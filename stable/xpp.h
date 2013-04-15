@@ -211,7 +211,7 @@ namespace xpp {
 
 			NamesItem.Init( Names );
 
-			while ( ( Row!= NONE ) && ( NamesItem( Row ) != Name ) )
+			while ( ( Row!= E_NIL ) && ( NamesItem( Row ) != Name ) )
 				Row = Names.Next( Row );
 
 			return Row;
@@ -267,7 +267,7 @@ namespace xpp {
 		{
 			_rrow__ Row = _Locate( Name );
 
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				Names.Remove( Row );
 				Coords.Remove( Row );
 				FileNames.Remove( Row );
@@ -305,7 +305,7 @@ namespace xpp {
 		{
 			_rrow__ Row = _Locate( Name );
 
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				return false;
 
 			Coord = Coords.Get( Row );
@@ -332,7 +332,7 @@ namespace xpp {
 
 			NamesItem.Init( Names );
 
-			while ( ( Row != NONE ) && ( NamesItem( Row ) != Name ) )
+			while ( ( Row != E_NIL ) && ( NamesItem( Row ) != Name ) )
 				Row = Names.Next( Row );
 
 			return Row;
@@ -363,7 +363,7 @@ namespace xpp {
 		{
 			_vrow__ Row = _Locate( Name );
 
-			if ( Row == NONE ) {
+			if ( Row == E_NIL ) {
 				Row = Names.Append( Name );
 				if ( Row != Values.Append( Value ) )
 				ERRFwk();
@@ -378,18 +378,18 @@ namespace xpp {
 		{
 			_vrow__ Row = _Locate( Name );
 
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				ctn::E_CMITEMt( str::string_, _vrow__ ) ValuesItem;
 				ValuesItem.Init( Values );
 
 				Value = ValuesItem( Row );
 			}
 
-			return Row != NONE;
+			return Row != E_NIL;
 		}
 		bso::bool__ Exists( const str::string_ &Name ) const
 		{
-			return _Locate( Name ) != NONE;
+			return _Locate( Name ) != E_NIL;
 		}
 		bso::bool__ IsEqual(
 			const str::string_ &Name,
@@ -398,7 +398,7 @@ namespace xpp {
 			ctn::E_CMITEMt( str::string_, _vrow__ ) ValuesItem;
 			_vrow__ Row = _Locate( Name );
 
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				ERRFwk();
 
 			ValuesItem.Init( Values );

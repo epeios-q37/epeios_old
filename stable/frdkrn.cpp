@@ -480,7 +480,7 @@ static bso::bool__ IsProjectIdValid_( const str::string_ &Id )
 	if ( Id.Amount() == 0 )
 		return false;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !isalnum( Id( Row ) ) && ( Id( Row ) != '_' ) )
 			return false;
 
@@ -839,7 +839,7 @@ static void GetPredefinedProjects_(
 
 	Id.Init( Ids );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Writer.PushTag( "PredefinedProject" );
 		Writer.PutAttribute( "id", Id( Row ) );
 
@@ -911,7 +911,7 @@ static void GetPredefinedBackends_(
 
 	Id.Init( Ids );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Writer.PushTag( "PredefinedBackend" );
 		Writer.PutAttribute( "id", Id( Row ) );
 

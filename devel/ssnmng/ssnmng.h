@@ -192,7 +192,7 @@ namespace ssnmng {
 		void reset( bool P = true )
 		{
 			S_.Absolute = S_.Relative = 0;
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 			_UserFunctions = NULL;
 
 			Pointers.reset( P );
@@ -237,7 +237,7 @@ namespace ssnmng {
 
 			S_.Relative = Relative;
 			S_.Absolute = Absolute;
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 			_UserFunctions = &UserFunctions;
 		}
 		//f Return the position of a mandatory new session.
@@ -250,14 +250,14 @@ namespace ssnmng {
 			Pointers.Delete( Row );
 			Queue.Delete( Row );
 		}
-		//f Return the position of 'SessionID' or NONE if non-existent.
+		//f Return the position of 'SessionID' or E_NIL if non-existent.
 		row__ Search( const session_id__ &SessionID ) const
 		{
 			return Search( SessionID.Value() );
 		}
-		//f Return the position of 'SessionID' or NONE if non-existent.
+		//f Return the position of 'SessionID' or E_NIL if non-existent.
 		row__ Search( const char *SessionID ) const;
-		//f Return the position of 'SessionID' or NONE if non-existent.
+		//f Return the position of 'SessionID' or E_NIL if non-existent.
 		row__ Search( const str::string_ &SessionID ) const;
 		//f Return the session id. corresponding to 'Position'.
 		session_id__ SessionID( row__ Position )
@@ -311,7 +311,7 @@ namespace ssnmng {
 		//f Balance the index. 
 		void Balance( void )
 		{
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				S_.Root = Index.Balance( S_.Root );
 		}
 		//f Put in 'Expired' the expired sessions.

@@ -281,7 +281,7 @@ template <typename t> static sdr::row__ Search_(
 {
 	sdr::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( Bunch( P ).Id != Id ) )
+	while( ( P != E_NIL ) && ( Bunch( P ).Id != Id ) )
 		P = Bunch.Next( P );
 
 	return P;
@@ -293,10 +293,10 @@ template <typename t> static id__ Search_(
 {
 	sdr::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( Bunch( P ).Short != C ) )
+	while( ( P != E_NIL ) && ( Bunch( P ).Short != C ) )
 		P = Bunch.Next( P );
 
-	if ( P == NONE )
+	if ( P == E_NIL )
 		return CLNARG_NONE;
 	else
 		return Bunch( P ).Id;
@@ -308,10 +308,10 @@ template <typename t> static id__ Search_(
 {
 	sdr::row__ P = Bunch.First();
 
-	while( ( P != NONE ) && ( strcmp( Bunch( P ).Long, String ) ) )
+	while( ( P != E_NIL ) && ( strcmp( Bunch( P ).Long, String ) ) )
 		P = Bunch.Next( P );
 
-	if ( P == NONE )
+	if ( P == E_NIL )
 		return CLNARG_NONE;
 	else
 		return Bunch( P ).Id;
@@ -366,10 +366,10 @@ static bso::bool__ Exists_(
 {
 	sdr::row__ P = Options.First();
 
-	while( ( P != NONE ) && ( Options( P ) != Id ) )
+	while( ( P != E_NIL ) && ( Options( P ) != Id ) )
 		P = Options.Next( P );
 
-	return P != NONE;
+	return P != E_NIL;
 }
 
 static inline void Add_(
@@ -601,10 +601,10 @@ static const char *GetLabel_(
 {
 	sdr::row__ P = Items.First();
 	
-	while( ( P != NONE ) && ( Items( P ).Id != Id ) )
+	while( ( P != E_NIL ) && ( Items( P ).Id != Id ) )
 		P = Items.Next( P );
 		
-	if ( P == NONE )
+	if ( P == E_NIL )
 		ERRFwk();
 		
 	return  GetLabel_( Items( P ), Id, Separator, Buffer );

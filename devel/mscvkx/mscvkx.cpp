@@ -194,7 +194,7 @@ static void Dump_(
 ERRProlog
 	xml::writer XML;
 	browser__  Browser;
-	mscvkt::row__ Row = NONE;
+	mscvkt::row__ Row = E_NIL;
 	bso::bool__ Skip = false;
 ERRBegin
 	XML.Init( Flow, xml::oIndent );
@@ -207,7 +207,7 @@ ERRBegin
 
 	Row = Browser.Position();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		switch ( Browser.Kinship() ) {
 		case dtr::kParent:
 			XML.PopTag();
@@ -320,10 +320,10 @@ private:
 		const str::string_ &Pattern,
 		bso::bool__ SetAddress )
 	{
-		epeios::row__ Error = NONE;
+		epeios::row__ Error = E_NIL;
 		mscvkp::address__ Address = Pattern.ToUL( &Error, str::b16 );
 
-		if ( Error != NONE )
+		if ( Error != E_NIL )
 			return false;
 
 		if ( SetAddress ) {
@@ -390,7 +390,7 @@ private:
 	}
 	bso::bool__ _HandleValue( const str::string_ &Pattern )
 	{
-		epeios::row__ Error = NONE;
+		epeios::row__ Error = E_NIL;
 
 #ifdef MSCVKX_DBG
 		if ( _Datum != MSCVKP_UNDEFINED_DATUM )
@@ -399,7 +399,7 @@ private:
 
 		_Datum = Pattern.ToUB( &Error, str::bAuto );
 
-		if ( Error != NONE )
+		if ( Error != E_NIL )
 			return false;
 
 		return true;
@@ -443,7 +443,7 @@ private:
 		bso::bool__ Success = false;
 	ERRProlog
 		str::string Bars;
-		epeios::row__ Row = NONE;
+		epeios::row__ Row = E_NIL;
 	ERRBegin
 		if ( mscvkp::IsPedalBar( _Address + _Offset ) ) {
 			if ( Value.Amount() != 2 )
@@ -455,7 +455,7 @@ private:
 
 		Row = Value.First();
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			if ( ( Value( Row ) < '0' ) || ( Value( Row ) > '8' ) )
 				ERRReturn;
 

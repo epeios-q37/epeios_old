@@ -502,7 +502,7 @@ namespace ctn {
 	private:
 		bool Vide_( void ) const
 		{
-			return Pilote_.Index() == NONE;
+			return Pilote_.Index() == E_NIL;
 		}
 		void Vider_( void )
 		{
@@ -514,7 +514,7 @@ namespace ctn {
 				Conteneur_->Statics.Store( ctn_S_, *Pilote_.Index() );
 			}
 
-			Pilote_.Index( NONE );
+			Pilote_.Index( E_NIL );
 		}
 	protected:
 		// Conteneur auquel est rattaché l'élément.
@@ -568,7 +568,7 @@ namespace ctn {
 		void Set( r Position )
 		{
 #ifdef CTN_DBG
-			if ( Position == NONE )
+			if ( Position == E_NIL )
 				ERRPrm();
 #endif
 			if ( Pilote_.Index() != *Position )
@@ -600,7 +600,7 @@ namespace ctn {
 		// Set as flushed, but without flushing the content.
 		void Erase( void )
 		{
-			Pilote_.Index( NONE );
+			Pilote_.Index( E_NIL );
 		}
 		r Index( void ) const
 		{
@@ -613,11 +613,11 @@ namespace ctn {
 	private:
 		bool Vide_( void ) const
 		{
-			return Pilote_.Index() == NONE;
+			return Pilote_.Index() == E_NIL;
 		}
 		void Vider_( void )
 		{
-			Pilote_.Index( NONE );
+			Pilote_.Index( E_NIL );
 		}
 	protected:
 		// Conteneur auquel est rattaché l'élément.
@@ -665,7 +665,7 @@ namespace ctn {
 		void Set( r Position )
 		{
 #ifdef CTN_DBG
-			if ( Position == NONE )
+			if ( Position == E_NIL )
 				ERRPrm();
 #endif
 			if ( *Pilote_.Index() != *Position )
@@ -691,7 +691,7 @@ namespace ctn {
 		// Set as flushed, but without flushing the content.
 		void Erase( void )
 		{
-			Pilote_.Index( NONE );
+			Pilote_.Index( E_NIL );
 		}
 		r Index( void ) const
 		{

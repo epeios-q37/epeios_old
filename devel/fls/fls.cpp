@@ -145,7 +145,7 @@ row__ fls::_Register(
 	file_storage___ &FS,
 	id__ ID )
 {
-	row__ Row = NONE;
+	row__ Row = E_NIL;
 	_data__ Data = {
 #ifdef FLS__AUTOFLUSH
 		false,
@@ -195,7 +195,7 @@ struct _flusher_data__
 	time_t LastFileWriteTime;
 	 _flusher_data__( void )
 	{
-		Row = NONE;
+		Row = E_NIL;
 		LastFileWriteTime = tol::EpochTime( false );
 	}
 } FlusherData_;
@@ -209,7 +209,7 @@ static inline void Flusher_( void * )
 
 	_data__ Data;
 
-	while ( FlusherData_.Row != NONE ) {
+	while ( FlusherData_.Row != E_NIL ) {
 
 		Unlock_();
 		tht::Defer();
@@ -230,7 +230,7 @@ static inline void Flusher_( void * )
 			Lock_();
 		}
 
-		if ( FlusherData_.Row != NONE ) {
+		if ( FlusherData_.Row != E_NIL ) {
 			List_.Recall( FlusherData_.Row, Data );
 
 			if ( Data.ToFlush ) {
@@ -256,7 +256,7 @@ inline static void LaunchFlusher_( void )
 	if ( !IsLocked_() )
 		ERRc();
 #endif
-	if ( FlusherData_.Row == NONE )
+	if ( FlusherData_.Row == E_NIL )
 		mtk::Launch( Flusher_, NULL );	// Le verrou est posé, donc ne fait rien tant que l'appelant n'ôte pas le verrou.
 
 	FlusherData_.Row = Queue_.Last();
@@ -328,7 +328,7 @@ static void _Search(
 {
 	row__ Row = List_.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( List_( Row ).ID == ID )
 			Rows.Append( Row );
 
@@ -340,7 +340,7 @@ static void _Release( const bch::E_BUNCH_( row__ ) &Rows )
 {
 	sdr::row__ Row = Rows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		List_( Rows( Row ) ).File->ReleaseFile( false );
 
 		if ( Queue_.IsMember( Rows( Row ) ) )
@@ -377,7 +377,7 @@ void fls::ReleaseInactiveFiles_(
 
 	time_t Now = tol::EpochTime( false );
 
-	while ( MaxAmount-- && ( Queue_.Tail() != NONE ) && ( ( Now - List_( Queue_.Tail() ).File->EpochTimeStamp() ) <= Delay ) ) {
+	while ( MaxAmount-- && ( Queue_.Tail() != E_NIL ) && ( ( Now - List_( Queue_.Tail() ).File->EpochTimeStamp() ) <= Delay ) ) {
 		List_( Queue_.Tail() ).File->ReleaseFile( false );
 		Queue_.Delete( Queue_.Tail() );
 	}
@@ -393,7 +393,7 @@ void fls::ReleaseAllFiles( void )
 	fls::row__ Row = List.First();
 	fls::row__ RowBuffer;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		RowBuffer = Row;
 
 		Row = List.Next( Row );

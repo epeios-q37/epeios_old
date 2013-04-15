@@ -390,7 +390,7 @@ ERRProlog
 	bso::char__ C;
 	str::string Buffer;
 ERRBegin
-	while( Position != NONE ) {
+	while( Position != E_NIL ) {
 		switch ( C = Target( Position ) ) {
 		case '"':
 			Buffer.Init( "&#34;" );

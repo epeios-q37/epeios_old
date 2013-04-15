@@ -205,7 +205,7 @@ row_t__ untyped_memory_::Search(
 	if ( Trouve )
 		return Debut;
 	else
-		return NONE;
+		return E_NIL;
 }
 
 
@@ -327,7 +327,7 @@ row__ uym::_Position(
 		Begin += Size;
 
 	if ( Begin > End )
-		return NONE;
+		return E_NIL;
 	else
 		return Begin;
 }

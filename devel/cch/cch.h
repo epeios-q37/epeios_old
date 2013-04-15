@@ -179,7 +179,7 @@ namespace cch {
 			} else {
 				Amount_ = Size_;
 
-				if ( Position_ == NONE ) {
+				if ( Position_ == E_NIL ) {
 					if ( ( ( Size_ - Amount ) / 2 ) > *Position )
 						Position_ = 0;
 					else
@@ -200,7 +200,7 @@ namespace cch {
 			if ( Amount_ != 0 )
 				ReadDirectlyFromBunch_( Position_, Amount_, Cache_ );
 			else
-				Position_ = NONE;
+				Position_ = E_NIL;
 		}
 	public:
 		void reset( bso::bool__ P = true )
@@ -220,7 +220,7 @@ namespace cch {
 			Size_ = 0;
 			Amount_ = 0;
 
-			Position_ = NONE;
+			Position_ = E_NIL;
 
 		}
 		const_bunch_cache___( void )
@@ -250,7 +250,7 @@ namespace cch {
 				Position_ = CCH_ROW_MAX;
 				break;
 			case fcjCentered:
-				Position_ = NONE;
+				Position_ = E_NIL;
 				break;
 			default:
 				ERRu();
@@ -330,7 +330,7 @@ namespace cch {
 				}
 
 			this->Amount_ = 0;
-			this->Position_ = NONE;
+			this->Position_ = E_NIL;
 			Last_ = 0;
 			First_ = CCH_POSITION_MAX;
 		}
@@ -381,7 +381,7 @@ namespace cch {
 				ReadFromCache_( Position, Amount, Buffer );
 			else {
 				this->Amount_ = 0;
-				this->Position_ = NONE;
+				this->Position_ = E_NIL;
 
 				if ( Amount > this->Size_ ) {
 					ReadDirectlyFromBunch_( Position, Amount, Buffer );
@@ -405,7 +405,7 @@ namespace cch {
 		void Synchronize( void )
 		{
 			this->Amount_ = 0;
-			this->Position_ = NONE;
+			this->Position_ = E_NIL;
 		}
 	};
 
@@ -665,7 +665,7 @@ namespace cch {
 
 			core_read_only_cache___<type__, rb>::reset( P );
 
-			PositionInContainer_ = NONE;
+			PositionInContainer_ = E_NIL;
 		}
 		item_read_only_cache___( void )
 		{
@@ -894,7 +894,7 @@ namespace cch {
 
 			rc R = Caches_.First();
 
-			while( R != NONE ) {
+			while( R != E_NIL ) {
 				IC = &GetCache_( R );
 
 				if ( IC != NULL )

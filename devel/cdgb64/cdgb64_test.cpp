@@ -59,7 +59,7 @@ ERRProlog
 	flx::E_STRING_OFLOW___ OFlow;
 	cdgb64::encoding_oflow___ Encoder;
 //	crptgr::encrypt_oflow___ Encrypter;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	OFlow.Init( Target );
 	Encoder.Init( OFlow );
@@ -67,7 +67,7 @@ ERRBegin
 
 	Row = Source.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Encoder.Put( Source( Row ) );
 
 		Row = Source.Next( Row );

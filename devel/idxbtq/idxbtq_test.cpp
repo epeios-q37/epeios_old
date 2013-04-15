@@ -43,7 +43,7 @@ void DisplayTree(
 {
 	epeios::row__ Row = Index.First( Root );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		cout << *Row << txf::tab << txf::sync;
 
 		Row = Index.Next( Row );
@@ -61,13 +61,13 @@ void DisplayQueue(
 {
 	epeios::row__ Row = Root;
 
-	while ( Root != NONE ) {
+	while ( Root != E_NIL ) {
 		Row = Root;
 
 		Root = Index.Previous( Root );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		cout << *Row << txf::tab << txf::sync;
 
 		Row = Index.Next( Row );

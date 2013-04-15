@@ -204,7 +204,7 @@ namespace bitbch {
 			Current = Table_.Suivant( Value, Current );
 
 			if ( Current >= t )
-				Current = NONE;
+				Current = E_NIL;
 
 			return Current;
 		}
@@ -252,7 +252,7 @@ namespace bitbch {
 			if ( ++Current < t )
 				return Current;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the bit previous to 'Current'.
 		r Down( r Current ) const
@@ -260,7 +260,7 @@ namespace bitbch {
 			if ( Current )
 				return Current - 1 ;
 			else
-				return NONE;
+				return E_NIL;
 		}
 	};
 

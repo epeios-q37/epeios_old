@@ -284,13 +284,13 @@ void mscmld::SplitToMatchBars(
 	melody_ &Target )
 {
 ERRProlog
-	row__ Row = NONE;
+	row__ Row = E_NIL;
 	mthfrc::fraction Bar, Note, Buffer;
 	signature_time__ Time;
 ERRBegin
 	Row = Source.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !Source( Row ).IsValid() )
 			ERRu();
 
@@ -394,7 +394,7 @@ void mscmld::Merge(
 	drow__ DRow = Durations.First();
 	srow__ SRow = Signatures.First();
 
-	while ( ( PRow != NONE ) && ( DRow != NONE ) && ( SRow != NONE ) ) {
+	while ( ( PRow != E_NIL ) && ( DRow != E_NIL ) && ( SRow != E_NIL ) ) {
 		Notes.Append( note__( Pitches( PRow ), Durations( DRow ), Signatures( SRow ) ) );
 
 		PRow = Pitches.Next( PRow );
@@ -645,7 +645,7 @@ void mscmld::WriteXML(
 	xml::writer_ &Writer )
 {
 ERRProlog
-	row__ Row = NONE;
+	row__ Row = E_NIL;
 	mthfrc::fraction BarFraction, NoteFraction;
 	note__ PreviousNote, Note;
 	bso::bool__ BarClosed = true;
@@ -655,7 +655,7 @@ ERRBegin
 
 	Writer.PushTag( "Melody" );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !Melody( Row ).IsValid() )
 			ERRu();
 
@@ -697,7 +697,7 @@ ERRBegin
 		Row = Melody.Next( Row );
 	}
 /*
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !Melody( Row ).IsValid() )
 			ERRu();
 

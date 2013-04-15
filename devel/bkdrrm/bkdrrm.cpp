@@ -213,11 +213,11 @@ void bkdrrm::remote_request_manager::_CreateAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 
 	Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) ) {
 
 		if ( Flow.Get() != *Casts( Row ) )
@@ -229,7 +229,7 @@ void bkdrrm::remote_request_manager::_CreateAll(
 		Row = Casts.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRc();
 
 	if ( Repository_.Append( (void *)NULL ) != Row )
@@ -237,7 +237,7 @@ void bkdrrm::remote_request_manager::_CreateAll(
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Repository_.Append( _Create( Flow, (cast)*Casts( Row ) ) ) != Row )
 			ERRc();
 
@@ -256,19 +256,19 @@ void bkdrrm::remote_request_manager::_DeleteAll( const casts_ &Casts )
 
 	epeios::row__ Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) ) {
 		_Delete( Repository_( Row ), (cast)*Casts( Row ) );
 
 		Row = Casts.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRc();
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Delete( Repository_( Row ), (cast)*Casts( Row ) );
 
 		Row = Casts.Next( Row );
@@ -337,16 +337,16 @@ void bkdrrm::remote_request_manager::BKDRQMPush(
 
 	epeios::row__ Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) )
 		Row = Casts.Next( Row );
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRc();
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Push( Flow, Repository_( Row ), (cast)*Casts( Row ) );
 
 		Row = Casts.Next( Row );

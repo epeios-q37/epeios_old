@@ -260,7 +260,7 @@ namespace brkrqm {
 		{
 			Description_ = NULL;
 
-			Position_ = NONE;
+			Position_ = E_NIL;
 			Closed_ = true;
 			Cast_ = cInvalid;
 			Parsed_ = false;
@@ -536,7 +536,7 @@ namespace brkrqm {
 				if ( Channel_->Get() != brkcst::cEnd )
 					ERRb();
 
-				if ( Position_ != NONE )
+				if ( Position_ != E_NIL )
 					ERRu();
 			}
 

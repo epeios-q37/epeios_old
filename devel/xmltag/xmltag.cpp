@@ -69,7 +69,7 @@ tag_row__ xmltag::tags_::Position(
 
 	P = basic_::First( Tag );
 
-	while( ( P != NONE )
+	while( ( P != E_NIL )
 	       && ( ( Item( P ).Type() != Type )
 		        || ( Item( P ).Name != Name ) ) ) {
 		P = basic_::Next( P );
@@ -105,7 +105,7 @@ static bso::bool__ WriteXMLAttributes_(
 
 	TagRow = Tags.First( TagRow );
 
-	while( TagRow != NONE ) {
+	while( TagRow != E_NIL ) {
 		if ( Tag( TagRow ).IsAttribute() )
 			Flow << ' ' << Tag( TagRow ).Name << "=\"\"";
 		else
@@ -169,7 +169,7 @@ static void WriteXMLWithEmptyTag_(
 			break;
 		}
 
-	} while( Tags.Browse( Browser ) != NONE );
+	} while( Tags.Browse( Browser ) != E_NIL );
 }
 
 static void WriteXMLNoEmptyTag_(
@@ -177,7 +177,7 @@ static void WriteXMLNoEmptyTag_(
 	txf::text_oflow__ &Flow )
 {
 	dtr::browser__<tag_row__> Browser;
-	tag_row__ Precedent = NONE;
+	tag_row__ Precedent = E_NIL;
 	ctn::E_CMITEMt( tag_, tag_row__ ) Tag;
 	bso::bool__ NoRegularChild = true;
 	bso::bool__ JustParent = false;
@@ -228,7 +228,7 @@ static void WriteXMLNoEmptyTag_(
 		}
 
 		Precedent = Browser.Position();
-	} while( Tags.Browse( Browser ) != NONE );
+	} while( Tags.Browse( Browser ) != E_NIL );
 }
 
 void xmltag::WriteXML(
@@ -271,10 +271,10 @@ ERRBegin
 
 	Browser.Init( Source.GetRoot() );
 
-	while( Browser.Position() != NONE ) {
+	while( Browser.Position() != E_NIL ) {
 		switch( Browser.Status() ) {
 		case dtr::bChild:
-			if ( ( IntermediateRow = Target.Position( SourceItem( Browser.Position() ).Name, TargetRow, SourceItem( Browser.Position() ).Type() ) ) == NONE ) {
+			if ( ( IntermediateRow = Target.Position( SourceItem( Browser.Position() ).Name, TargetRow, SourceItem( Browser.Position() ).Type() ) ) == E_NIL ) {
 				Buffer.Init( SourceItem().Name, SourceItem().Type() );
 				IntermediateRow = Target.BecomeLast( Buffer, TargetRow );
 			}
@@ -282,7 +282,7 @@ ERRBegin
 			TargetRow = IntermediateRow;
 			break;
 		case dtr::bBrother:
-			if ( ( IntermediateRow = Target.Position( SourceItem( Browser.Position() ).Name, Target.Parent( TargetRow ), SourceItem( Browser.Position() ).Type() ) ) == NONE ) {
+			if ( ( IntermediateRow = Target.Position( SourceItem( Browser.Position() ).Name, Target.Parent( TargetRow ), SourceItem( Browser.Position() ).Type() ) ) == E_NIL ) {
 				Buffer.Init( SourceItem().Name, SourceItem().Type() );
 				IntermediateRow = Target.BecomeNext( Buffer, TargetRow );
 			}

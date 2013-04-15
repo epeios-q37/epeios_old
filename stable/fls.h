@@ -112,7 +112,7 @@ namespace fls {
 
 	// Identifiant sous lequel est regroupé un ensemble de fichiers.
 	E_ROW( id__ );
-	#define FLS_UNDEFINED_ID	NONE
+	#define FLS_UNDEFINED_ID	E_NIL
 
 	id__ GetId( void );
 
@@ -436,7 +436,7 @@ namespace fls {
 			{
 				ReleaseFile();
 
-				if ( _Row != NONE )
+				if ( _Row != E_NIL )
 					_Unregister( _Row, _ID );
 
 				if ( Nom_ )
@@ -455,7 +455,7 @@ namespace fls {
 			Temoin_.Interne = false;
 			Temoin_.Mode = fil::mReadOnly;
 			TailleFichier_ = 0;
-			_Row = NONE;
+			_Row = E_NIL;
 			_ID = FLS_UNDEFINED_ID;
 			_EpochTimeStamp = 0;
 		}

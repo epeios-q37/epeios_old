@@ -63,7 +63,7 @@ void dbstbl::table_::_InsertInIndexes( rrow__ Row )
 {
 	epeios::row__ IRow = Indexes.First();
 
-	while ( IRow != NONE ) {
+	while ( IRow != E_NIL ) {
 		Indexes( IRow )->Index( Row, false );
 
 		IRow = Indexes.Next( IRow );
@@ -74,7 +74,7 @@ void dbstbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
 	epeios::row__ IRow = Indexes.First();
 
-	while ( IRow != NONE ) {
+	while ( IRow != E_NIL ) {
 		if ( !Indexes( IRow )->InitializationCompleted() )
 			Indexes( IRow )->CompleteInitialization();
 
@@ -94,7 +94,7 @@ void dbstbl::table_::_ReindexAll( observer_functions__ &Observer )
 		Observer.Set( Indexes.Amount() );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Indexes( Row )->Reindex( Observer );
 
 		if ( &Observer )
@@ -110,7 +110,7 @@ void dbstbl::table_::Retrieve(
 {
 ERRProlog
 	datum Datum;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	_Test( mReadOnly );
 
@@ -118,7 +118,7 @@ ERRBegin
 
 	Row = Rows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Datum.Init();
 
 		Content.Retrieve( Rows( Row ), Datum );
@@ -143,7 +143,7 @@ void dbstbl::table_::Insert(
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		RecordRows.Append( Insert( Datum( Row ) ) );
 
 		Row = Data.Next( Row );
@@ -164,7 +164,7 @@ void dbstbl::table_::Update(
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Update( Datum( Row ), RecordRows( Row ) );
 
 		Row = Data.Next( Row );
@@ -177,7 +177,7 @@ void dbstbl::table_::Delete( const rrows_ &RecordRows )
 
 	epeios::row__ Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Delete( RecordRows( Row ) );
 
 		Row = RecordRows.Next( Row );
@@ -189,7 +189,7 @@ void dbstbl::table_::_ResetAllIndexes( void )
 {
 	epeios::row__ Row = Indexes.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Indexes( Row )->Reset();
 
 		Row = Indexes.Next( Row );
@@ -204,7 +204,7 @@ void dbstbl::table_::TestRecordsExistence(
 
 	epeios::row__ Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !RecordExists( RecordRows( Row ) ) )
 			Rows.Append( Row );
 
@@ -220,7 +220,7 @@ bso::bool__ dbstbl::table_::AreAllIndexesSynchronized( void ) const
 
 	epeios::row__ Row = Indexes.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !Indexes( Row )->IsSynchronized() )
 			return false;
 
@@ -267,7 +267,7 @@ ERREpilog
 
 rrow__ dbstbl::thread_safe_table_::Insert( const datum_ &Datum )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 ERRBegin
 	RW
@@ -286,7 +286,7 @@ void dbstbl::thread_safe_table_::Insert(
 {
 ERRProlog
 	ctn::E_CMITEM( datum_ ) Datum;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RW
 
@@ -294,7 +294,7 @@ ERRBegin
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		RecordRows.Append( T.Insert( Datum( Row ) ) );
 
 		Row = Data.Next( Row );
@@ -326,7 +326,7 @@ void dbstbl::thread_safe_table_::Update(
 {
 ERRProlog
 	ctn::E_CMITEM( datum_ ) Datum;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RW
 
@@ -337,7 +337,7 @@ ERRBegin
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		T.Update( Datum( Row ), RecordRows( Row ) );
 
 		Row = Data.Next( Row );
@@ -369,13 +369,13 @@ void dbstbl::thread_safe_table_::Retrieve(
 {
 ERRProlog
 	datum Datum;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RO
 
 	Row = Rows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Datum.Init();
 
 		T.Retrieve( Rows( Row ), Datum );
@@ -406,13 +406,13 @@ ERREpilog
 void dbstbl::thread_safe_table_::Delete( const rrows_ &RecordRows )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RW
 
 	Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		T.Delete( RecordRows( Row ) );
 
 		Row = RecordRows.Next( Row );
@@ -431,7 +431,7 @@ rrow__ dbstbl::thread_safe_table_::LooseSeek(
 	skip_level__ SkipLevel,
 	bso::sign__ &Sign )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 ERRBegin
 	RO
@@ -450,7 +450,7 @@ rrow__ dbstbl::thread_safe_table_::StrictSeek(
 	behavior__ EqualBehavior,
 	skip_level__ SkipLevel )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 ERRBegin
 	RO
@@ -465,7 +465,7 @@ ERREpilog
 
 rrow__ dbstbl::thread_safe_table_::First( irow__ IRow )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 ERRBegin
 	RO
@@ -480,7 +480,7 @@ ERREpilog
 
 rrow__ dbstbl::thread_safe_table_::Last( irow__ IRow )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 ERRBegin
 	RO
@@ -622,13 +622,13 @@ void dbstbl::thread_safe_table_::TestRecordsExistence(
 	rows_ &Rows )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	RO
 
 	Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !T.RecordExists( RecordRows( Row ) ) )
 			Rows.Append( Row );
 

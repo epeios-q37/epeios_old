@@ -114,7 +114,7 @@ namespace ias {
 		{
 			E_SDRIVER__::reset( P );
 
-			_Index = NONE;
+			_Index = E_NIL;
 			_AStorage = NULL;
 		}
 		//f Initialize with 'Multimemory' multimemory.
@@ -122,7 +122,7 @@ namespace ias {
 		{
 			E_SDRIVER__::Init();
 
-			_Index = NONE;
+			_Index = E_NIL;
 		}
 		//f The 'Index' memory becomes the memory handled by this memory driver.
 		void Index( index__ Index )
@@ -359,11 +359,11 @@ namespace ias {
 			else
 				AllouerPlus_( CurrentAmount, Amount, Mode );
 		}
-		index__ New( index__ Index = NONE )
+		index__ New( index__ Index = E_NIL )
 		{
 			descriptor__ D = AGS_UNDEFINED_DESCRIPTOR;
 
-			if ( Index == NONE )
+			if ( Index == E_NIL )
 				Index = Descriptors.New();
 			else if ( !Descriptors.Exists( Index ) )
 				ERRPrm();
@@ -411,7 +411,7 @@ namespace ias {
 		{
 			descriptor__ D = Descriptors( *Index );
 
-			if ( D != NONE )
+			if ( D != E_NIL )
 				return AStorage.Size( D );
 			else
 				return 0;
@@ -617,7 +617,7 @@ namespace ias {
 
 	inline sdr::size__ _indexed_aggregated_storage_driver__::Size( void ) const
 	{
-		if ( _Index == NONE )
+		if ( _Index == E_NIL )
 			return 0;
 		else
 			return _AStorage->Size( _Index );

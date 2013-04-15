@@ -96,7 +96,7 @@ extern class ttr_tutor &BKDMNGTutor;
 #define BKDMNG_MASTER_COMMAND		BKDMNG_INVALID_COMMAND
 
 //d This is the value of the index returned for a shared object already created.
-#define BKDMNG_SHARED_OBJECT_INDEX	NONE
+#define BKDMNG_SHARED_OBJECT_INDEX	E_NIL
 
 //d Value for an undefined Id32.
 #define BKDMNG_UNDEFINED_ID32		BKDTPM_UNDEFINED_ID32
@@ -286,7 +286,7 @@ namespace bkdmng {
 		{
 			epeios::row__ Row = Indexes.Search( Index );
 
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				ERRu();
 
 			Indexes.Remove( Index );
@@ -349,7 +349,7 @@ namespace bkdmng {
 		{
 			epeios::row__ P = Descriptions.Position( Description );
 
-			if ( P == NONE )
+			if ( P == E_NIL )
 				P = BKDMNG_INVALID_COMMAND;
 			else if ( *P > BKDMNG_COMMAND_MAX )
 				ERRl();

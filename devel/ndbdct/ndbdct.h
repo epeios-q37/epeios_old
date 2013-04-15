@@ -208,7 +208,7 @@ namespace ndbdct {
 			Available -= TotalWritten;
 
 			if ( Available == 0 )
-				Row = NONE;
+				Row = E_NIL;
 
 			return Written;
 		}
@@ -275,7 +275,7 @@ namespace ndbdct {
 		size__ RawSize;
 		available__( void )
 		{
-			Row = NONE;
+			Row = E_NIL;
 			RawSize = 0;
 		}
 		bool operator !=( const available__ &A ) const
@@ -295,7 +295,7 @@ namespace ndbdct {
 		drow__ Tail;
 		entry__( void )
 		{
-			Head = Tail = NONE;
+			Head = Tail = E_NIL;
 		}
 	};
 
@@ -320,7 +320,7 @@ namespace ndbdct {
 
 			Written = Storage.Store( Data, Offset, Available.Row, Available.RawSize );
 
-			if ( Available.Row != NONE ) {
+			if ( Available.Row != E_NIL ) {
 #ifdef NDBDCT_DBG
 				if ( Written != ( Data.Amount() - Offset ) )
 					ERRPrm();
@@ -379,13 +379,13 @@ namespace ndbdct {
 		{
 			entry__ Entry = Entries.Get( Row );
 
-			if ( Entry.Tail != NONE )
+			if ( Entry.Tail != E_NIL )
 				_Erase( Entry.Tail );
 
-			if ( Entry.Head != NONE )
+			if ( Entry.Head != E_NIL )
 				_Erase( Entry.Head );
 
-			Entry.Head = Entry.Tail = NONE;
+			Entry.Head = Entry.Tail = E_NIL;
 
 			Entries.Store( Entry, Row );
 		}
@@ -494,12 +494,12 @@ namespace ndbdct {
 		{
 			entry__ Entry = Entries.Get( Row );
 
-			if ( Entry.Head != NONE )
+			if ( Entry.Head != E_NIL )
 				_Retrieve( Entry.Head, Datum );
 			else
 				return false;
 
-			if ( Entry.Tail != NONE )
+			if ( Entry.Tail != E_NIL )
 				_Retrieve( Entry.Tail, Datum );
 
 			return true;

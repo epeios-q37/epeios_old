@@ -84,7 +84,7 @@ namespace idxbtr {
 
 		Current = Tree.Next( Temp );
 
-		while ( Current != NONE )
+		while ( Current != E_NIL )
 		{
 			Queue.BecomeNext( Current, Temp );
 
@@ -138,7 +138,7 @@ namespace idxbtr {
 
 			Courant = *File.Next( Courant );
 
-			if ( Courant != NONE )
+			if ( Courant != E_NIL )
 			{
 				if ( File.HasNext( Courant ) )
 				{
@@ -189,7 +189,7 @@ sdr::row_t__ idxbtr::Compare_(
 {
 	sdr::row_t__ &Row = First;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Queue.Next( Row ) != Tree.Next( Row ) )
 			return Row;
 

@@ -90,13 +90,13 @@ static void GetHex_(
 {
 	mdr::row__ Row = Data.First();
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Result.Append( GetHex_( Data( Row ) ) );
 
 		Row = Data.Next( Row );
 	}
 
-	while ( Row != NONE  ) {
+	while ( Row != E_NIL  ) {
 		Result.Append( ' ' );
 
 		Result.Append( GetHex_( Data( Row ) ) );
@@ -237,23 +237,23 @@ private:
 		const str::string_ &Value,
 		mscmdm::data_ &Data )
 	{
-		mdr::row__ Error = NONE;
+		mdr::row__ Error = E_NIL;
 
 		mdr::row__ Row = Value.First();
 
-		while ( Row != NONE ) {
-			Error = NONE;
+		while ( Row != E_NIL ) {
+			Error = E_NIL;
 
 			Data.Append( Value.ToUB( Row, &Error, str::b16 ) );
 
-			if ( Error != NONE ) {
+			if ( Error != E_NIL ) {
 				if ( Value( Error ) != ' ' )
 					return false;
 
 				Row = Value.Next( Error );
 
 			} else
-				Row = NONE;
+				Row = E_NIL;
 		}
 		
 		return true;
@@ -287,7 +287,7 @@ protected:
 			const str::string_ &Value,
 			const dump_ &Dump )
 		{
-			mdr::row__ Error = NONE;
+			mdr::row__ Error = E_NIL;
 
 			if ( TagName == MIDI_FILE_TAG ) {
 				if ( Name == SMF_TYPE_ATTRIBUTE )
@@ -309,7 +309,7 @@ protected:
 						return false;
 			}
 
-			return Error == NONE;
+			return Error == E_NIL;
 
 		}
 		virtual bso::bool__ XMLValue(
@@ -346,10 +346,10 @@ protected:
 						_MetaData.Remove( _MetaData.First() );	// Removing Meta id
 
 						// Removing size.
-						while ( ( _MetaData.First() != NONE ) && ( _MetaData( _MetaData.First() ) & 0x80 ) )
+						while ( ( _MetaData.First() != E_NIL ) && ( _MetaData( _MetaData.First() ) & 0x80 ) )
 							_MetaData.Remove( _MetaData.First() );
 
-						if ( _MetaData.First() != NONE )
+						if ( _MetaData.First() != E_NIL )
 							_MetaData.Remove( _MetaData.First() );
 					}
 
@@ -434,23 +434,23 @@ static inline bso::bool__ GetData_(
 	const str::string_ &Value,
 	mscmdm::data_ &Data )
 {
-	mdr::row__ Error = NONE;
+	mdr::row__ Error = E_NIL;
 
 	mdr::row__ Row = Value.First();
 
-	while ( Row != NONE ) {
-		Error = NONE;
+	while ( Row != E_NIL ) {
+		Error = E_NIL;
 
 		Data.Append( Value.ToUB( Row, &Error, str::b16 ) );
 
-		if ( Error != NONE ) {
+		if ( Error != E_NIL ) {
 			if ( Value( Error ) != ' ' )
 				return false;
 
 			Row = Value.Next( Error );
 
 		} else
-			Row = NONE;
+			Row = E_NIL;
 	}
 		
 	return true;
@@ -488,7 +488,7 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				mdr::row__ Error = NONE;
+				mdr::row__ Error = E_NIL;
 
 				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
 					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
@@ -502,7 +502,7 @@ ERRBegin
 					if ( !GetData_( Parser.Value(), RawData ) )
 						return Status = sBadDataAttributeValue;
 
-				if ( Error != NONE )
+				if ( Error != E_NIL )
 					Status = sBadIdValue;
 
 				InProgress = true;
@@ -539,10 +539,10 @@ ERRBegin
 						MetaData.Remove( MetaData.First() );	// Removing Meta id
 
 						// Removing size.
-						while ( ( MetaData.First() != NONE ) && ( MetaData( MetaData.First() ) & 0x80 ) )
+						while ( ( MetaData.First() != E_NIL ) && ( MetaData( MetaData.First() ) & 0x80 ) )
 							MetaData.Remove( MetaData.First() );
 
-						if ( MetaData.First() != NONE )
+						if ( MetaData.First() != E_NIL )
 							MetaData.Remove( MetaData.First() );
 					}
 
@@ -608,7 +608,7 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() == EVENT_TAG ) {
-				mdr::row__ Error = NONE;
+				mdr::row__ Error = E_NIL;
 
 				if ( Parser.AttributeName() == DELTA_TIME_TICKS_ATTRIBUTE )
 					EventDeltaTimeTicks = Parser.Value().ToUL( &Error );
@@ -622,7 +622,7 @@ ERRBegin
 					if ( !GetData_( Parser.Value(), RawData ) )
 						return Status = sBadDataAttributeValue;
 
-				if ( Error != NONE )
+				if ( Error != E_NIL )
 					Status = sBadIdValue;
 
 				InProgress = true;
@@ -661,10 +661,10 @@ ERRBegin
 						MetaData.Remove( MetaData.First() );	// Removing Meta id
 
 						// Removing size.
-						while ( ( MetaData.First() != NONE ) && ( MetaData( MetaData.First() ) & 0x80 ) )
+						while ( ( MetaData.First() != E_NIL ) && ( MetaData( MetaData.First() ) & 0x80 ) )
 							MetaData.Remove( MetaData.First() );
 
-						if ( MetaData.First() != NONE )
+						if ( MetaData.First() != E_NIL )
 							MetaData.Remove( MetaData.First() );
 					}
 

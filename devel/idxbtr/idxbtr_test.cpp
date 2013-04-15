@@ -47,13 +47,13 @@ ERRProlog
 	idxbtr::E_IBTREEt( row__ ) Index;
 	idxbtr::E_TSEEKERt__( row__ )	Seeker;
 ERRBegin
-	Index.Balance( NONE );
+	Index.Balance( E_NIL );
 
-	Index.First( NONE );
+	Index.First( E_NIL );
 
-	Index.Delete( NONE, NONE );
+	Index.Delete( E_NIL, E_NIL );
 
-	Index.BecomeGreater( NONE, NONE, NONE );
+	Index.BecomeGreater( E_NIL, E_NIL, E_NIL );
 ERRErr
 ERREnd
 ERREpilog

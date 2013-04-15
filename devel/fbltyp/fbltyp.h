@@ -426,7 +426,7 @@ namespace fbltyp {
 		type Value,
 		flw::oflow__ &Flow )
 	{
-		_StraightPut( (type)( Value + 1 ), Flow );	// 'NONE ('-1') devient 0, donc ne prend qu'un seul octet.
+		_StraightPut( (type)( Value + 1 ), Flow );	// 'E_NIL ('-1') devient 0, donc ne prend qu'un seul octet.
 	}
 
 	template <typename type> inline void _AdjustingGet(
@@ -435,7 +435,7 @@ namespace fbltyp {
 	{
 		_StraightGet( Flow, Value );
 
-		Value--;	// '0' devient 'NONE' (voir '_AdjustingPut()').
+		Value--;	// '0' devient 'E_NIL' (voir '_AdjustingPut()').
 	}
 
 	template <typename type> inline void _AdjustingDGet(

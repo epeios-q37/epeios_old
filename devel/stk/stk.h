@@ -127,7 +127,7 @@ namespace stk {
 		//f Return 'true' if 'Object' exists in the stack, false otherwise.
 		bso::bool__ Exists( const item &Object ) const
 		{
-			return structure::Search( Object, 0, structure::Amount() ) != NONE;
+			return structure::Search( Object, 0, structure::Amount() ) != E_NIL;
 		}
 		//f Return true if an entry exists for row 'Row'.
 		bso::bool__ Exists( row Row ) const

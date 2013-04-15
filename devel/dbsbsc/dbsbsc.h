@@ -110,7 +110,7 @@ namespace dbsbsc {
 		bso::bool__ _IsMember( rrow__ Row ) const
 		{
 			if ( List.Exists( Row ) )
-				return List( Row ) != NONE;
+				return List( Row ) != E_NIL;
 			else
 				return false;
 		}
@@ -175,10 +175,10 @@ namespace dbsbsc {
 			Container.Allocate( AmountMax );
 
 			Links.Allocate( AmountMax );
-			Links.Set( NONE );
+			Links.Set( E_NIL );
 
 			List.Allocate( Size );
-			List.Set( NONE );
+			List.Set( E_NIL );
 
 			S_.AmountMax = AmountMax;
 		}
@@ -204,11 +204,11 @@ namespace dbsbsc {
 			if ( _IsMember( Row ) )
 				ERRu();
 #endif
-			crow__ CacheRow = NONE;
+			crow__ CacheRow = E_NIL;
 
 			if ( Queue.Amount() >= S_.AmountMax ) {
 				CacheRow = Queue.Tail();
-				List.Store( NONE, Links( CacheRow ) );
+				List.Store( E_NIL, Links( CacheRow ) );
 			} else
 				CacheRow = Container.New();
 
@@ -222,10 +222,10 @@ namespace dbsbsc {
 			if ( _IsMember( Row ) ) {
 				crow__ CacheRow = List( Row );
 				Container.Delete( CacheRow );
-				List.Store( NONE, Links( CacheRow ) );
-				Links.Store( NONE, CacheRow );
+				List.Store( E_NIL, Links( CacheRow ) );
+				Links.Store( E_NIL, CacheRow );
 				Queue.Delete( CacheRow );
-				List.Store( NONE, Row );
+				List.Store( E_NIL, Row );
 			}
 		}
 	};

@@ -116,9 +116,9 @@ namespace cgiarg {
 		data_row__ Suffix;
 		data_row__ Value;
 		link__(
-			data_row__ Name = NONE,
-			data_row__ Suffix = NONE,
-			data_row__ Value = NONE )
+			data_row__ Name = E_NIL,
+			data_row__ Suffix = E_NIL,
+			data_row__ Value = E_NIL )
 		{
 			this->Name = Name;
 			this->Suffix = Suffix;
@@ -131,11 +131,11 @@ namespace cgiarg {
 	{
 	public:
 		struct s{
-			ctn::E_MCONTAINERt_( str::string_, data_row__ )::s Data;
+			ctn::E_XMCONTAINERt_( str::string_, data_row__ )::s Data;
 			bch::E_BUNCHt_( link__, row__ )::s Links;
 		};
 		//o The different strings.
-		ctn::E_MCONTAINERt_( str::string_, data_row__ ) Data;
+		ctn::E_XMCONTAINERt_( str::string_, data_row__ ) Data;
 		//o The links.
 		bch::E_BUNCHt_( link__, row__ ) Links;
 		arguments_( s &S )
@@ -186,7 +186,7 @@ namespace cgiarg {
 			const name_ &Name,
 			const value_ &Value )
 		{
-			return Links.Append( link__( Data.Append( Name ), NONE, Data.Append( Value ) ) );
+			return Links.Append( link__( Data.Append( Name ), E_NIL, Data.Append( Value ) ) );
 		}
 		//f Add the argument of name 'Name', and value 'Value'. Return the position where added.
 		row__ Add(
@@ -198,7 +198,7 @@ namespace cgiarg {
 		//f Add the argument of name 'Name'. Return the position where added.
 		row__ Add( const name_ &Name )
 		{
-			return Links.Append( link__( Data.Append( Name ), NONE, NONE ) );
+			return Links.Append( link__( Data.Append( Name ), E_NIL, E_NIL ) );
 		}
 		//f Add the argument of name 'Name'. Return the position where added.
 		row__ Add( const bso::char__ *Name )
@@ -212,7 +212,7 @@ namespace cgiarg {
 		{
 			link__ L = Links( Position );
 
-			if ( L.Value == NONE )
+			if ( L.Value == E_NIL )
 			{
 				L.Value = Data.New();
 				Links.Store( L, Position );
@@ -222,28 +222,28 @@ namespace cgiarg {
 			Data.Flush();
 		}
 		/*f Return the position of the first argument of name 'Name', beginning at 'Begin' (not included),
-		using comparison method 'Method', 'NONE' if inexistant. */
+		using comparison method 'Method', 'E_NIL' if inexistant. */
 		row__ Locate(
 			const name_ &Name,
-			row__ Begin = NONE,
+			row__ Begin = E_NIL,
 			comparison_method__ Method = cmStrictly ) const;
 		/*f Return the position of the first argument of name 'Name', beginning at 'Begin' (not included),
-		using comparison method 'Method', 'NONE' if inexistant. */
+		using comparison method 'Method', 'E_NIL' if inexistant. */
 		row__ Locate(
 			const char *Name,
-			row__ Begin = NONE,
+			row__ Begin = E_NIL,
 			comparison_method__ Method = cmStrictly) const
 		{
 			return Locate( name( Name ), Begin, Method );
 		}
 		/*f Return the position of the first argument of name 'Name', and suffix 'Suffix'
-		using comparison method 'Method', 'NONE' if inexistant. */
+		using comparison method 'Method', 'E_NIL' if inexistant. */
 		row__ Locate(
 			const name_ &Name,
 			const suffix_ &Suffix,
 			comparison_method__ Method = cmStrictly ) const;
 		/*f Return the position of the first argument of name 'Name', beginning at 'Begin' (not included),
-		using comparison method 'Method', 'NONE' if inexistant. */
+		using comparison method 'Method', 'E_NIL' if inexistant. */
 		row__ Locate(
 			const char *Name,
 			const char *Suffix,
@@ -277,7 +277,7 @@ namespace cgiarg {
 		//f Return the value at position 'Position'. Only valid until another call of this method.
 		const name_ &GetValue( row__ Position ) const;
 #endif
-		//f Return the position of data of suffix of argument at position 'Position', or NONE if this argument hasn't a suffix.
+		//f Return the position of data of suffix of argument at position 'Position', or E_NIL if this argument hasn't a suffix.
 		data_row__ GetSuffixPosition( row__ Position ) const
 		{
 			return Links( Position ).Suffix;
@@ -289,7 +289,7 @@ namespace cgiarg {
 		{
 			data_row__ R = GetSuffixPosition( Position );
 
-			if ( R != NONE )
+			if ( R != E_NIL )
 				Data.Recall( R, Suffix );
 			else
 				Suffix.Init();
@@ -319,7 +319,7 @@ namespace cgiarg {
 		{
 			row__ P = Locate( Name, Suffix );
 
-			if ( P != NONE ){
+			if ( P != E_NIL ){
 				GetValue( P, Value );
 				return true;
 			} else

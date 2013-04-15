@@ -64,14 +64,14 @@ void lcl::locale_::_GetCorrespondingLabels(
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) Label;
 	str::string Wording;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	str::string Path;
 ERRBegin
 	Label.Init( Labels );
 
 	Row = Labels.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Path.Init( "Languages/Language[label=\"" );
 		Path.Append( Label( Row ) );
 		Path.Append( "\"]/@Wording" );
@@ -200,13 +200,13 @@ void lcl::locale_::GetLanguages(
 	strings_ &Labels,
 	strings_ &Wordings ) const
 {
-	sdr::row__ PathErrorRow = NONE;
+	sdr::row__ PathErrorRow = E_NIL;
 
 	Registry.GetValues( str::string( "Languages/Language/@label" ), Labels, &PathErrorRow );
 
 	_GetCorrespondingLabels( Labels, Wordings );
 
-	if ( PathErrorRow != NONE )
+	if ( PathErrorRow != E_NIL )
 		ERRFwk();
 }
 
@@ -218,7 +218,7 @@ void lcl::meaning_::AddTag( const meaning_ &Meaning )
 
 	Value.Init( Meaning.Values );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Push( Level = ( Meaning.Levels( Row ) + 1 ), Value( Row ) );
 
 		Row = Meaning.Levels.Next( Row );

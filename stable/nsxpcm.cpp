@@ -156,7 +156,7 @@ ERRBegin
 	} else {
 		sdr::row__ Row = MasterWindows_.Search( Window );
 
-		if ( Row == NONE )
+		if ( Row == E_NIL )
 			ERRFwk();
 
 		MasterWindows_.Remove( Row );
@@ -397,7 +397,7 @@ void nsxpcm::Split(
 	strings_ &Splitted )
 {
 ERRProlog
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	string Item;
 ERRBegin
 	if ( Joined.Amount() != 0 ) {	
@@ -406,7 +406,7 @@ ERRBegin
 
 		Row = Joined.First();
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			if ( Joined( Row ) != Separator )
 				Item.Append( Joined( Row ) );
 			else {
@@ -450,12 +450,12 @@ void nsxpcm::Join(
 
 	Item.Init( Splitted );
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Joined.Append( Item( Row ) );
 		Row = Splitted.Next( Row );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Joined.Append( Separator );
 		Joined.Append( Item( Row ) );
 		Row = Splitted.Next( Row );
@@ -482,7 +482,7 @@ ERREpilog
 
 void nsxpcm::SetSelectedItem(
 	nsIDOMNode *Node,
-	bso::bool__ SelectFirstOneIfNone )
+	bso::bool__ SelectFirstOneIfE_NIL )
 {
 ERRProlog
 	str::string Value;
@@ -504,7 +504,7 @@ ERRBegin
 
 	SetSelectedItem( Node, Selected );
 
-	if ( ( Selected == NULL ) && ( SelectFirstOneIfNone ) )
+	if ( ( Selected == NULL ) && ( SelectFirstOneIfE_NIL ) )
 		nsxpcm::SetSelectedIndex( Node, 0 );
 	
 ERRErr
@@ -570,7 +570,7 @@ ERRProlog
 	nsIDOMElement *Element = NULL;
 	nsEmbedString String;
 	str::string S;
-	mdr::row__ Row = NONE;
+	mdr::row__ Row = E_NIL;
 ERRBegin
 	Event->GetTarget( &EventTarget );
 	Element = nsxpcm::QueryInterface<nsIDOMElement>( EventTarget, err::hSkip  );
@@ -580,10 +580,10 @@ ERRBegin
 
 	Row = Cores.First();
 
-	while ( ( Row != NONE ) && ( Cores( Row )->GetElement() != Element ) )
+	while ( ( Row != E_NIL ) && ( Cores( Row )->GetElement() != Element ) )
 		Row = Cores.Next( Row );
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRu();
 
 	Event->GetType( String );
@@ -674,7 +674,7 @@ static void AddFilters_(
 
 	Filter.Init( Filters );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		AddFilter_( Filter( Row ), FilePicker );
 
 		Row = Filters.Next( Row );
@@ -779,7 +779,11 @@ ERRBegin
 	} else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
 		ERRLbr();
 
+# if 1
+	nsIFile *File;
+# else
 	nsILocalFile *File;
+# endif
 
 	if ( ( Error = FilePicker->GetFile( &File ) ) != NS_OK )
 		ERRLbr();
@@ -919,14 +923,14 @@ bso::bool__ nsxpcm::DirectorySelectDialogBox(
 	const char *Language,
 	str::string_ &FileName )
 {
-	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_None, Locale, Language, FileName );
+	return FileDialogBox_( ParentWindow, Title, fptFolder, "", fpmf_E_NIL, Locale, Language, FileName );
 }
 
 void nsxpcm::Delete( widget_cores_ &Widgets )
 {
 	sdr::row__ Row = Widgets.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		delete Widgets( Row );
 
 		Widgets.Store( NULL, Row );
@@ -945,18 +949,18 @@ void nsxpcm::Convert(
 	fblfrd::id32s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Ids.Append( Item( Row ).ToU32( &Error ) );
 
 		Row = Items.Next( Row );
 	}
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		ERRDta();
 }
 
@@ -965,18 +969,18 @@ void nsxpcm::Convert(
 	fblfrd::id16s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Ids.Append( Item( Row ).ToU16( &Error ) );
 
 		Row = Items.Next( Row );
 	}
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		ERRDta();
 }
 
@@ -985,18 +989,18 @@ void nsxpcm::Convert(
 	fblfrd::id8s_ &Ids )
 {
 	sdr::row__ Row = Items.First();
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 	ctn::E_CMITEM( string_ ) Item;
 
 	Item.Init( Items );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Ids.Append( Item( Row ).ToU8( &Error ) );
 
 		Row = Items.Next( Row );
 	}
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		ERRDta();
 }
 
@@ -1058,7 +1062,7 @@ template< typename t> inline static const char *Convert_(
 	t Value,
 	bso::integer_buffer__ &Buffer )
 {
-	if ( Value == NONE )
+	if ( Value == E_NIL )
 		return "";
 	else
 		return bso::Convert( Value, Buffer );
@@ -1073,12 +1077,12 @@ template<typename id__, typename id_t__> static inline void ConvertAndJoin_(
 	sdr::row__ Row = Ids.First();
 	bso::integer_buffer__ Buffer;
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Joined.Append( Convert_( Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Joined.Append( Separator );
 		Joined.Append( Convert_( Ids( Row ), Buffer ) );
 		Row = Ids.Next( Row );
@@ -1191,12 +1195,12 @@ void nsxpcm::ConvertAndJoin(
 {
 	sdr::row__ Row = Booleans.First();
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Joined.Append( Booleans( Row ) ? "1" : "0" );
 		Row = Booleans.Next( Row );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Joined.Append( Separator );
 		Joined.Append( Booleans( Row ) ? "1" : "0" );
 		Row = Booleans.Next( Row );
@@ -1233,7 +1237,7 @@ void GetData_(
 
 	while ( Amount-- ) {
 #ifdef NSXPCM_DBG
-		if ( Row == NONE )
+		if ( Row == E_NIL )
 			ERRFwk();
 #endif
 		Data.Append( Item( Row ) );
@@ -1251,8 +1255,8 @@ void nsxpcm::Split(
 ERRProlog
 	nsxpcm::strings Amounts;
 	nsxpcm::strings Splitted;
-	sdr::row__ Error = NONE;
-	sdr::row__ ARow = NONE, SRow = NONE;
+	sdr::row__ Error = E_NIL;
+	sdr::row__ ARow = E_NIL, SRow = E_NIL;
 	strings Data;
 ERRBegin
 	Splitted.Init();
@@ -1265,7 +1269,7 @@ ERRBegin
 
 	SRow = Splitted.First();
 
-	while ( ARow != NONE )
+	while ( ARow != E_NIL )
 	{
 		Data.Init();
 
@@ -1970,6 +1974,8 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::GetMatchCount(PRUint32 *aMatchCoun
     return NS_OK;
 }
 
+# define NS_OUTPARAM
+
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetValueAt(PRInt32 index, nsAString & _retval NS_OUTPARAM)
 {
 ERRProlog
@@ -2033,6 +2039,12 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::RemoveValueAt(PRInt32 rowIndex, NS
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP nsxpcm::autocomplete_result___::GetTypeAheadResult(bool *aTypeAheadResult)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
 /* Fin 'textbox' 'atutocomplete'. */
 
 NS_IMPL_ISUPPORTS1(nsxpcm::clh__, nsxpcm::iclh__)
@@ -2070,7 +2082,7 @@ ERRProlog
 	STR_BUFFER___ NameBuffer;
 	ctn::E_CITEM( xslt_parameter_ ) Parameter;
 	nsresult Result = NS_OK;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	nsxpcm::CreateInstance( "@mozilla.org/document-transformer;1?type=xslt", Processor );
 
@@ -2083,7 +2095,7 @@ ERRBegin
 
 	Row = Parameters.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Transform( Parameter( Row ).Name, Name );
 
 		nsxpcm::CreateInstance( NS_VARIANT_CONTRACTID, Value );
@@ -2389,7 +2401,7 @@ ERRProlog
 	nsString Transformed;
 	str::string Joined;
 	strings Splitted;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	GetWorkingDirectory( Directory );
 
@@ -2406,7 +2418,7 @@ ERRBegin
 
 	Row = Splitted.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Transform( Splitted( Row ), Transformed );
 
 		T( LocalFile->AppendRelativePath( Transformed ) );

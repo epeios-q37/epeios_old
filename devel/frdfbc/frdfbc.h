@@ -82,7 +82,7 @@ namespace frdfbc {
 		{
 			Id = NULL;
 			Registry = NULL;
-			Root = NONE;
+			Root = E_NIL;
 			Locale = NULL;
 		}
 		void Init( void )

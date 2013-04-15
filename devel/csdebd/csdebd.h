@@ -87,10 +87,10 @@ namespace csdebd {
 			fdr::size__ Maximum,
 			fdr::datum__ *Buffer )
 		{
-			if ( _Row == NONE )
+			if ( _Row == E_NIL )
 				_Row = _Read.First();
 
-			if ( _Row == NONE )
+			if ( _Row == E_NIL )
 				ERRu();
 
 			if ( ( _Read.Amount() - *_Row ) < (epeios::size__)Maximum )
@@ -103,7 +103,7 @@ namespace csdebd {
 /* Concernant GESBIB, si l'on enlève le bloc ci-dessous, le logiciel est susceptible de se planter lorsque l'on manipule
 une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme si le 'Dismiss()' n'était pas lancé correctement. */
 // Début bloc.
-			if ( _Row == NONE )
+			if ( _Row == E_NIL )
 				_Read.Init();
 // Fin bloc.
 
@@ -112,7 +112,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		virtual void FDRDismiss( void )
 		{
 #ifdef CSDEBD_DBG
-			if ( _Row != NONE )
+			if ( _Row != E_NIL )
 				ERRu();
 #endif
 			_Read.Init();
@@ -132,7 +132,7 @@ une requête de manière trés intense (bombardage de 'push' 'join'). C'est comme s
 		{
 			fdr::ioflow_driver___<>::reset( P );
 
-			_Row = NONE;
+			_Row = E_NIL;
 		}
 		_passive_generic_driver___(
 			data_ &Read,

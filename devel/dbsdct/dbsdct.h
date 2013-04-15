@@ -204,7 +204,7 @@ namespace dbsdct {
 		/* Stocke 'Data' à la position 'Row'. sachant qu'il y a 'Available' octets de disponibles à cette position.
 		'Unallocated' est la position du premier octet non alloué. S'il n'y a pas assez de place à 'Row', alors
 		une partie de 'Data' est placé à 'Unavailable' (en allouant l'espace nécessaire), qui est alors modifié
-		pour pointer sur la nouvelle position du premier octet non alloué. Si 'Row', au retour, est != 'NONE',
+		pour pointer sur la nouvelle position du premier octet non alloué. Si 'Row', au retour, est != 'E_NIL',
 		alors il reste 'Available' octets à 'Row'. */
 /*
 		datum_row__ Write(
@@ -215,14 +215,14 @@ namespace dbsdct {
 		{
 			size__ Written = _Store( Data, Row, Available );
 			size__ TotalWritten = Written + dtfptb::GetSizeLength( Written );
-			datum_row__ Rest = NONE;
+			datum_row__ Rest = E_NIL;
 
 			Available -= TotalWritten;
 
 			if ( Available != 0 )
 				*Row += TotalWritten;
 			else
-				Row = NONE;
+				Row = E_NIL;
 
 			if ( Written != Data.Amount() ) {
 				Rest = Unallocated;
@@ -244,7 +244,7 @@ namespace dbsdct {
 			Available -= TotalWritten;
 
 			if ( Available == 0 )
-				Row = NONE;
+				Row = E_NIL;
 
 			return Written;
 		}
@@ -311,7 +311,7 @@ namespace dbsdct {
 		size__ RawSize;
 		available__( void )
 		{
-			Row = NONE;
+			Row = E_NIL;
 			RawSize = 0;
 		}
 		bool operator !=( const available__ &A ) const
@@ -335,7 +335,7 @@ namespace dbsdct {
 		datum_row__ Tail;
 		entry__( void )
 		{
-			Head = Tail = NONE;
+			Head = Tail = E_NIL;
 		}
 	};
 
@@ -372,7 +372,7 @@ namespace dbsdct {
 
 			Written = Storage.Store( Data, Offset, Available.Row, Available.RawSize );
 
-			if ( Available.Row != NONE ) {
+			if ( Available.Row != E_NIL ) {
 #ifdef DBSDCT_DBG
 				if ( Written != ( Data.Amount() - Offset ) )
 					ERRc();
@@ -431,13 +431,13 @@ namespace dbsdct {
 		{
 			entry__ Entry = Entries.Get( Row );
 
-			if ( Entry.Tail != NONE )
+			if ( Entry.Tail != E_NIL )
 				_Erase( Entry.Tail );
 
-			if ( Entry.Head != NONE )
+			if ( Entry.Head != E_NIL )
 				_Erase( Entry.Head );
 
-			Entry.Head = Entry.Tail = NONE;
+			Entry.Head = Entry.Tail = E_NIL;
 
 			Entries.Store( Entry, Row );
 		}
@@ -548,12 +548,12 @@ namespace dbsdct {
 		{
 			entry__ Entry = Entries.Get( Row );
 
-			if ( Entry.Head != NONE )
+			if ( Entry.Head != E_NIL )
 				_Retrieve( Entry.Head, Datum );
 			else
 				return false;
 
-			if ( Entry.Tail != NONE )
+			if ( Entry.Tail != E_NIL )
 				_Retrieve( Entry.Tail, Datum );
 
 			return true;

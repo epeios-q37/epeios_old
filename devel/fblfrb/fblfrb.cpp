@@ -179,7 +179,7 @@ void fblfrb::backend_remote_access_base___::PostProcess( flw::ioflow__ &Flow )
 	sdr::row__ Row = Data.First();
 	datum__ Datum;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Pop_( Data( Row ), Flow );
 
 		Row = Data.Next( Row );

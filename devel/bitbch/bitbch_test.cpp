@@ -41,7 +41,7 @@ void Fill( bitbch::E_BIT_BUNCH_ &B )
 {
 	epeios::row__ Row = B.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		B.Store( ( rand() % 2 ? true : false ), Row );
 		
 		Row = B.Next( Row );

@@ -905,7 +905,7 @@ static sdr::row__ ExtractAttributeName_(
 {
 	sdr::row__ Row = Source.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( isalnum( Source( Row ) ) || ( Source( Row ) == ':' ) || ( Source( Row ) == '_' ) ) ) {
 		Value.Append( Source( Row ) );
 		Row = Source.Next( Row );
@@ -922,13 +922,13 @@ status__ xpp::_extended_parser___::_HandleAttributeDirective(
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string AttributeName, MacroName;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	AttributeName.Init();
 
 	Row = ExtractAttributeName_( Parameters, AttributeName );
 
-	if ( ( Row == NONE )
+	if ( ( Row == E_NIL )
 		  || ( AttributeName.Amount() == 0 )
 		  || ( Parameters( Row ) != ',' ) ) {
 		Status = sBadAttributeDefinitionSyntax;
@@ -1040,7 +1040,7 @@ static bso::bool__ StripHeadingSpaces_(
 
 static void StripHeadingSpaces_( str::string_ &Data )
 {
-	while ( ( Data.First() != NONE ) && ( isspace( Data( Data.First() ) ) ) )
+	while ( ( Data.First() != E_NIL ) && ( isspace( Data( Data.First() ) ) ) )
 		Data.Remove( Data.First() );
 }
 

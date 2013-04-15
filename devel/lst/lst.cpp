@@ -69,7 +69,7 @@ static void Save_(
 {
 	stk::row__ Row = Bunch.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Save_( Bunch( Row ), Flow );
 
 		Row = Bunch.Next( Row );
@@ -149,7 +149,7 @@ sdr::row_t__ lst::Successeur_(
 	while( ( ++Element < Amount ) && Libres.IsAvailable( Element ) ) {};
 
 	if ( Element >= Amount )
-		return NONE;
+		return E_NIL;
 	else
 		return Element;
 }
@@ -166,7 +166,7 @@ sdr::row_t__ lst::Predecesseur_(
 	if ( Trouve )
 		return Element;
 	else
-		return NONE;
+		return E_NIL;
 }
 
 void lst::MarkAsReleased_(

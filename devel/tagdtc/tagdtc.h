@@ -69,7 +69,7 @@ extern class ttr_tutor &TAGDTCTutor;
 
 
 //d Special value indicating end of flow.
-#define TAGDTC_UNKNOW			NONE
+#define TAGDTC_UNKNOW			E_NIL
 // depend on the type of tagdtc__id.
 
 //d Special value indicating an unknow tag.

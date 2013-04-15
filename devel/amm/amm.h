@@ -552,7 +552,7 @@ namespace amm {
 		size__ Size;
 		void reset( bso::bool__ = true )
 		{
-			Row = NONE;
+			Row = E_NIL;
 			Size = 0;
 		}
 		E_CDTOR( tracker__ );
@@ -564,7 +564,7 @@ namespace amm {
 			mdr::row_t__ Row,
 			size__ Size )
 		{
-			if ( ( Row ==  NONE ) || ( Size == 0 ) )
+			if ( ( Row ==  E_NIL ) || ( Size == 0 ) )
 				ERRc();
 
 			this->Row = Row;
@@ -841,7 +841,7 @@ namespace amm {
 			const xsize__ &XSize,
 			bso::bool__ &All )
 		{
-			mdr::row_t__ Row = NONE;
+			mdr::row_t__ Row = E_NIL;
 
 			if ( S_.Free.IsSuitable( XSize.Size(), All ) ) {
 				Row = S_.Free.Row;
@@ -853,27 +853,27 @@ namespace amm {
 		descriptor__ _Allocate( mdr::size__ Size )
 		{
 			xsize__ XSize;
-			mdr::row_t__ Row = NONE;
-			descriptor__ Descriptor = NONE;
+			mdr::row_t__ Row = E_NIL;
+			descriptor__ Descriptor = E_NIL;
 			bso::bool__ All = false;
 			size__ Available = _GetTailFreeSize();
 
 			XSize.Init( Size, sUsed );
 
-			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize, All ) ) != NONE )
+			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize, All ) ) != E_NIL )
 				if ( Available >= Size ) {
 					Row = _GetTailFreeFragment();
 					All = Available == Size;
 				}
 
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				Descriptor = _SetUsedFragmentUsingFreeFragment( Row, XSize, sUsed );
 			} else { 
 				Descriptor = _AllocateAndSetUsedFragmentAtTail( XSize, sUsed, All );
 			}
 
 			if ( All )
-				if ( ( Row == NONE ) || _IsLast( Row ) )
+				if ( ( Row == E_NIL ) || _IsLast( Row ) )
 					_UpdateFirstFragmentPredecessorStatus( sUsed );
 				else
 					_UpdatePredecessorStatus( Row + XSize.FragmentSize(), sUsed );
@@ -960,24 +960,24 @@ namespace amm {
 		descriptor__ Allocate( size__ Size )
 		{
 			if ( Size == 0 )
-				return NONE;
+				return E_NIL;
 			else
 				return _Allocate( Size );
 		}
 		void Free( descriptor__ Descriptor )
 		{
-			if ( Descriptor != NONE ) 
+			if ( Descriptor != E_NIL ) 
 				return _Free( Descriptor );
 		}
 		descriptor__ Reallocate(
 			descriptor__ Descriptor,
 			size__ Size )
 		{
-			descriptor__ NewDescriptor = NONE;
+			descriptor__ NewDescriptor = E_NIL;
 
 			if ( Size == 0 )
 				Free( Descriptor );
-			else if ( Descriptor == NONE )
+			else if ( Descriptor == E_NIL )
 				NewDescriptor = Allocate( Size );
 			else {
 				size__ OldSize = _GetSize( Descriptor );

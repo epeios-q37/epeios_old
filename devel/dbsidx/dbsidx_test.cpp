@@ -58,12 +58,12 @@ void Delete(
 	  dbsctt::content_ &Content,
 	  dbsidx::index_ &Index )
 {
-	dbsidx::rrow__ Row = NONE;
+	dbsidx::rrow__ Row = E_NIL;
 	const char *Buffer;
 
 	Buffer = Generate();
 
-	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != NONE ) {
+	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != E_NIL ) {
 		Index.Delete( Row );
 		Content.Erase( Row );
 	}
@@ -97,14 +97,14 @@ void Display(
 	  const dbsidx::index_ &Index )
 {
 ERRProlog
-	dbsctt::rrow__ Row = NONE;
+	dbsctt::rrow__ Row = E_NIL;
 	dbsctt::datum Datum;
 ERRBegin
 	cout << txf::nl << "---------------------" << txf::nl;
 
 	Row = Index.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Datum.Init();
 
 		Content.Retrieve( Row, Datum );
@@ -127,7 +127,7 @@ void Display(
 ERRProlog
 	dbsidx::datum Datum;
 ERRBegin
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		Datum.Init();
 		Content.Retrieve( Row, Datum );
 		cout << Datum;
@@ -146,14 +146,14 @@ void Search(
 	  const dbsctt::content_ &Content,
 	  const dbsidx::index_ &Index )
 {
-	dbsidx::rrow__ Row = NONE;
+	dbsidx::rrow__ Row = E_NIL;
 	const char *Buffer;
 
 	Buffer = Generate();
 
 	cout << txf::nl << Buffer << " : ";
 
-	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != NONE ) {
+	if ( ( Row = Index.Seek( str::string( Buffer ) ) ) != E_NIL ) {
 		Display( Content, Index.Previous( Row ) );
 		cout << txf::tab;
 		Display( Content, Row );

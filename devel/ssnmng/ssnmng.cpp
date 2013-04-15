@@ -84,7 +84,7 @@ static bso::sign__ Search_(
 	bso::sign__ Test;
 	row__ Row = Seeker.GetCurrent();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 			&& ( ( Test = Test_( T( Row ).Value(), S ) ) != 0 ) ) {
 		switch( Test ) {
 		case 1:
@@ -112,11 +112,11 @@ row__ ssnmng::sessions_manager_::New( void *UP )
 
 	do {
 		SessionID.New();
-	} while( Search( SessionID ) != NONE );
+	} while( Search( SessionID ) != E_NIL );
 
 	Table.Store( SessionID, Row );
 
-	if ( S_.Root == NONE ) {
+	if ( S_.Root == E_NIL ) {
 		S_.Root = Row;
 		Queue.Create( Row );
 	} else {
@@ -155,7 +155,7 @@ row__ ssnmng::sessions_manager_::New( void *UP )
 
 row__ ssnmng::sessions_manager_::Search( const char *SessionID ) const
 {
-	if ( S_.Root != NONE )	{
+	if ( S_.Root != E_NIL )	{
 		idxbtq::E_ISEEKERt__( row__ ) Seeker;
 
 		Seeker.Init( Index, S_.Root );
@@ -163,10 +163,10 @@ row__ ssnmng::sessions_manager_::Search( const char *SessionID ) const
 		if ( Search_( Table, SessionID, Seeker ) == 0 )
 			return Seeker.GetCurrent();
 		else
-			return NONE;
+			return E_NIL;
 	}
 
-	return NONE;
+	return E_NIL;
 }
 
 row__ ssnmng::sessions_manager_::Search( const str::string_ &SessionID ) const
@@ -174,7 +174,7 @@ row__ ssnmng::sessions_manager_::Search( const str::string_ &SessionID ) const
 	char Buffer[SSNMNG_SIZE+1];
 
 	if ( SessionID.Amount() != SSNMNG_SIZE )
-		return NONE;
+		return E_NIL;
 
 	SessionID.Recall( 0, SSNMNG_SIZE, Buffer );
 
@@ -187,7 +187,7 @@ void ssnmng::sessions_manager_::GetExpired( rows_ &Expired ) const
 {
 	row__ Row = First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( IsExpired( Row ) )
 			Expired.Append( Row );
 
@@ -199,7 +199,7 @@ void ssnmng::sessions_manager_::GetAll( rows_ &Rows ) const
 {
 	row__ Row = First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Rows.Append( Row );
 
 		Row = Next( Row );
@@ -210,7 +210,7 @@ void ssnmng::sessions_manager_::_Close( const rows_ &Rows )
 {
 	mdr::row__ Row = Rows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Close( Rows( Row ) );
 
 		Row = Rows.Next( Row );

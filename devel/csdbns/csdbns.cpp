@@ -266,7 +266,7 @@ inline static void Unlock_( void )
 
 inline static rrow__ New_( const csdbns_repository_item__ &Item )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 
 	Lock_();
 
@@ -305,7 +305,7 @@ inline static void Clean_( void )
 
 	rrow__ Row = Repository_.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		UnsafeClean_( Row );
 
 		Row = Repository_.Next( Row );
@@ -325,7 +325,7 @@ ERRFProlog
 	socket__ Socket = Data.Socket;
 	void *UP = NULL;
 	action__ Action = a_Undefined;
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 	csdbns_repository_item__ Item;
 	tol::E_FPOINTER___( char ) Buffer;
 ERRFBegin
@@ -347,7 +347,7 @@ ERRFBegin
 		while ( ( Action = Functions.Process( Socket, UP ) ) == aContinue );
 	ERRErr
 	ERREnd
-		if ( Row != NONE )
+		if ( Row != E_NIL )
 			Clean_( Row );
 	ERREpilog
 ERRFErr

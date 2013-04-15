@@ -252,7 +252,7 @@ public:
 	{
 		POSITION__ P = Descriptions.Position( Description );
 
-		if ( P == NONE )
+		if ( P == E_NIL )
 			P = BROKER9_INVALID_COMMAND;
 		else if ( P > BROKER9_COMMAND_MAX )
 			ERRl();

@@ -68,12 +68,12 @@ ERRProlog
 ERRBegin
 	NameBuffer.Init();
 
-	if ( Begin == NONE )
+	if ( Begin == E_NIL )
 		P = First();
 	else
 		P = Next( Begin );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		if ( GetName( P, NameBuffer ).Amount() >= Name.Amount() )
 			if ( str::Compare( NameBuffer, Name, 0, 0, Name.Amount() ) == 0 )
 				if ( Method == cmBegins )
@@ -97,7 +97,7 @@ row__ arguments_::Locate(
 	const suffix_ &Suffix,
 	comparison_method__ Method ) const
 {
-	row__ P = NONE;
+	row__ P = E_NIL;
 ERRProlog
 	name NameBuffer;
 	suffix SuffixBuffer;
@@ -107,7 +107,7 @@ ERRBegin
 
 	P = First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		if ( GetName( P, NameBuffer ).Amount() >= Name.Amount() )
 			if ( ( str::Compare( NameBuffer, Name, 0, 0, Name.Amount() ) == 0 )
 				&& ( str::Compare( GetSuffix( P, SuffixBuffer ), Suffix ) == 0 ) )
@@ -201,10 +201,10 @@ bso::bool__ arguments_::GetValue(
 {
 	row__ P = Locate( Name );
 
-	while( ( P != NONE ) && ( GetSuffixPosition( P ) != NONE ) )
+	while( ( P != E_NIL ) && ( GetSuffixPosition( P ) != E_NIL ) )
 		P = Locate( Name, P );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 		GetValue( P, Value );
 		return true;
 	} else
@@ -216,17 +216,17 @@ txf::text_oflow__ &operator <<(
 	const cgiarg::arguments_ &A )
 {
 ERRProlog
-	cgiarg::row__ P = NONE;
+	cgiarg::row__ P = E_NIL;
 	str::string Buffer;
 ERRBegin
 	P = A.First();
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Buffer.Init();
 		F << A.GetName( P, Buffer );
 
-		if ( A.GetSuffixPosition( P ) != NONE ) {
+		if ( A.GetSuffixPosition( P ) != E_NIL ) {
 			Buffer.Init();
 			F << CGIARG_SUFFIX_DELIMITER << A.GetSuffix( P, Buffer );
 		}

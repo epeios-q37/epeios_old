@@ -140,7 +140,7 @@ row_t__ btr::_nodes_manager_::ParentOfFirstLeftNode( row_t__ Node ) const
 	if ( IsLeft( Node ) )
 		return Parent( Node );
 	else
-		return NONE;
+		return E_NIL;
 }
 
 // Retourne le père du premier noeud qui est fille en remontant.
@@ -153,7 +153,7 @@ row_t__ btr::_nodes_manager_::ParentOfFirstRightNode( row_t__ Node ) const
 	if ( IsRight( Node ) )
 		return Parent( Node );
 	else
-		return NONE;
+		return E_NIL;
 }
 
 

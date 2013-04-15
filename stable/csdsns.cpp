@@ -81,7 +81,7 @@ void csdsns::_functions___::_Clean( void )
 {
 	sdr::row__ Row = _Core.UPs.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Functions->PostProcess( _Core.UPs( Row ) );
 
 		Row = _Core.UPs.Next( Row );

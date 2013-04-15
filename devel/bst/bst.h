@@ -249,7 +249,7 @@ namespace bst {
 			if ( S_.Capacite )
 				return S_.Capacite - 1;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the bottom of the set.
 		POSITION__ Bottom( void ) const
@@ -257,7 +257,7 @@ namespace bst {
 			if ( S_.Capacite )
 				return 0;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position next to 'Current'.
 		POSITION__ Up( POSITION__ Current ) const
@@ -265,7 +265,7 @@ namespace bst {
 			if ( ++Current < S_.Capacite )
 				return Current;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position previous to 'Current'.
 		POSITION__ Down( POSITION__ Current ) const
@@ -273,7 +273,7 @@ namespace bst {
 			if ( Current )
 				return Current - 1 ;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the first of 'Size' new bits.
 		POSITION__ New( SIZE__ Size = 1 )
@@ -612,7 +612,7 @@ namespace bst {
 			Current = Table_.Suivant( Value, Current );
 
 			if ( Current >= t )
-				Current = NONE;
+				Current = E_NIL;
 
 			return Current;
 		}
@@ -660,7 +660,7 @@ namespace bst {
 			if ( ++Current < t )
 				return Current;
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return the position of the bit previous to 'Current'.
 		POSITION__ Down( POSITION__ Current ) const
@@ -668,7 +668,7 @@ namespace bst {
 			if ( Current )
 				return Current - 1 ;
 			else
-				return NONE;
+				return E_NIL;
 		}
 	};
 

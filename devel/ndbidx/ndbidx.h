@@ -104,7 +104,7 @@ namespace ndbidx {
 		bso::uint__ Used;
 		extremities__( void )
 		{
-			Smallest = Greatest = NONE;
+			Smallest = Greatest = E_NIL;
 			Used = 0;
 		}
 	};
@@ -266,7 +266,7 @@ namespace ndbidx {
 		{
 			BIndex.reset( P );
 			DIndex.reset( P );
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 			_Bufferized = false;
 
 			_SortPointer = NULL;
@@ -304,7 +304,7 @@ namespace ndbidx {
 		{
 			BIndex.Init();
 			DIndex.Init();
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 
 			_ContentPointer = &Content;
 			_SortPointer = &Sort;
@@ -315,7 +315,7 @@ namespace ndbidx {
 		// Vide l'index.
 		void Reset( void )
 		{
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 
 			BIndex.Init();
 			DIndex.Init();
@@ -343,7 +343,7 @@ namespace ndbidx {
 			_CompleteInitialization();
 
 #ifdef NDBIDX_DBG
-			if ( S_.Root == NONE )
+			if ( S_.Root == E_NIL )
 				ERRFwk();
 #endif
 			if ( _Bufferized )
@@ -369,7 +369,7 @@ namespace ndbidx {
 			switch ( Sign ) {
 			case -1:
 				if ( EqualBehavior == bStop )
-					Row = NONE;
+					Row = E_NIL;
 				else
 					Row = Next( Row );
 				break;
@@ -377,7 +377,7 @@ namespace ndbidx {
 				break;
 			case 1:
 				if ( EqualBehavior == bStop )
-					Row = NONE;
+					Row = E_NIL;
 				else
 					Row = Previous( Row );
 				break;
@@ -409,8 +409,8 @@ namespace ndbidx {
 
 			rrow__ Candidate = S_.Root = _Content().First();
 
-			if ( Candidate != NONE ) 
-				while ( ( Candidate = _Index().GetTreeParent( Candidate ) ) != NONE )
+			if ( Candidate != E_NIL ) 
+				while ( ( Candidate = _Index().GetTreeParent( Candidate ) ) != E_NIL )
 					S_.Root = Candidate;
 
 			return S_.Root;
@@ -419,19 +419,19 @@ namespace ndbidx {
 		{
 			_CompleteInitialization();
 
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return _Index().First( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		rrow__ Last( void ) const
 		{
 			_CompleteInitialization();
 
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return _Index().Last( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
@@ -447,8 +447,8 @@ namespace ndbidx {
 
 			rrow__ Candidate = Previous( Row );
 
-			if ( Candidate == NONE )
-				return NONE;
+			if ( Candidate == E_NIL )
+				return E_NIL;
 			else if ( Compare( Row, Candidate, SkipLevel ) != 0 )
 				return Candidate;
 			else
@@ -462,8 +462,8 @@ namespace ndbidx {
 
 			rrow__ Candidate = Next( Row );
 
-			if ( Candidate == NONE )
-				return NONE;
+			if ( Candidate == E_NIL )
+				return E_NIL;
 			else if ( Compare( Row, Candidate, SkipLevel ) != 0 )
 				return Candidate;
 			else
@@ -500,7 +500,7 @@ namespace ndbidx {
 
 			_CompleteInitialization();
 
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				S_.Root = DIndex.Balance( S_.Root );
 
 			_Touch( false );
@@ -509,10 +509,10 @@ namespace ndbidx {
 		{
 			_CompleteInitialization();
 
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return _Index().Compare( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		void Bufferize( void )
 		{

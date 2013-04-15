@@ -197,7 +197,7 @@ namespace ndbctt {
 		}
 		rrow__ Store( const datum_ &Datum )
 		{
-			rrow__ Row = NONE;
+			rrow__ Row = E_NIL;
 			sdr::size__ Size = 0;
 
 			switch ( _Test() ) {
@@ -318,7 +318,7 @@ namespace ndbctt {
 				break;
 			}
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Last( void ) const
 		{
@@ -334,7 +334,7 @@ namespace ndbctt {
 				break;
 			}
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
@@ -350,7 +350,7 @@ namespace ndbctt {
 				break;
 			}
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
@@ -366,7 +366,7 @@ namespace ndbctt {
 				break;
 			}
 
-			return NONE;
+			return E_NIL;
 		}
 		sdr::size__ Extent( void ) const
 		{

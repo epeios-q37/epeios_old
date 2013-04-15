@@ -147,18 +147,18 @@ namespace cgitol {
 		xmlf_ &XMLFiller )
 	{
 ERRProlog
-			cgiarg::row__ Row = NONE;
+			cgiarg::row__ Row = E_NIL;
 			cgiarg::name Name;
 			cgiarg::suffix Suffix;
 			cgiarg::value Value;
 ERRBegin
 			Row = Arguments.First();
 
-			while( Row != NONE ) {
+			while( Row != E_NIL ) {
 				XMLFiller.PushTag( "Argument" );
 				Name.Init();
 				XMLFiller.PutAttribute( "Name", Arguments.GetName( Row, Name ) );
-				if ( Arguments.GetSuffixPosition( Row ) != NONE ) {
+				if ( Arguments.GetSuffixPosition( Row ) != E_NIL ) {
 					Suffix.Init();
 					XMLFiller.PutAttribute( "Suffix", Arguments.GetSuffix( Row, Suffix ) );
 				}

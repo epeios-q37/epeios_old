@@ -69,14 +69,14 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CMITEM( command_item_ ) Item;
-		sdr::row__ P =NONE;
+		sdr::row__ P =E_NIL;
 		command Command;
 	ERRBegin
 		Item.Init( Items );
 
 		P = Items.First();
 
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 			Command.Init();
 			Command.Identification.Value = Item( P ).Value;
 			Command.Identification.ID( Item( P ).ID() );
@@ -111,7 +111,7 @@ namespace {
 		const type_item_ &Item,
 		type_ &Type )
 	{
-		sdr::row__ P = NONE;
+		sdr::row__ P = E_NIL;
 		ctn::E_CMITEM( str::string_ ) Value;
 
 		Value.Init( Item.Values );
@@ -120,21 +120,21 @@ namespace {
 
 		P = Item.Values.First();
 
-		if ( P == NONE) 
+		if ( P == E_NIL) 
 			ERRFwk();
 
 		Type.Prefix = Value( P );
 
 		P = Item.Values.Next( P );
 
-		if ( P == NONE) 
+		if ( P == E_NIL) 
 			ERRFwk();
 
 		Type.Name = Value( P );
 
 		P = Item.Values.Next( P );
 
-		if ( P != NONE) 
+		if ( P != E_NIL) 
 			ERRFwk();
 	}
 
@@ -145,14 +145,14 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CITEM( xitem16_ ) Item;
-		sdr::row__ P = NONE;
+		sdr::row__ P = E_NIL;
 		type Type;
 	ERRBegin
 		Item.Init( Items );
 
 		P = Items.First();
 
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 
 			Type.Init();
 

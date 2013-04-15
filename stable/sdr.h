@@ -65,7 +65,7 @@ extern class ttr_tutor &SDRTutor;
 
 # define SDR_INTERNAL_SDRIVER *(sdr::E_SDRIVER__ *)NULL
 
-# define NONE ( (sdr::row_t__) -1 )
+# define E_NIL ( (sdr::row_t__) -1 )
 
 # define SDR__DSIZE_SIZE_MAX ( ( ( 8 * sizeof( sdr::size__ ) ) / 7 ) + 1 )
 

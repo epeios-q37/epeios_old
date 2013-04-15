@@ -85,7 +85,7 @@ static tag GetType_(
 	int t = 0;
 
 	while( ( t < amount )
-		   && ( ( P = L.Search( str::string( Tag[t] ) ) ) == NONE ) )
+		   && ( ( P = L.Search( str::string( Tag[t] ) ) ) == E_NIL ) )
 		t++;
 
 	if ( t != amount )
@@ -124,7 +124,7 @@ static void GetListSectionHeader_(
 
 	Header.Init();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Header.Parse( FilterTitlePrefix_( L( P ) ) );
 		P = Paragraph.Next( P );
 	}
@@ -254,7 +254,7 @@ ERRBegin
 
 	str::ToUpper( T );
 
-	R = ( T == str::string( "NONE" ) ) || ( T == str::string( "NEVER" ) );
+	R = ( T == str::string( "E_NIL" ) ) || ( T == str::string( "NEVER" ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -377,7 +377,7 @@ template <class t> void Print_(
 
 	Element.Init( C );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		F << "> " << Element( P );
 		P = C.Next( P );
 	}
@@ -418,7 +418,7 @@ txf::text_oflow__ &operator <<(
 
 	Element.Init( S );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		F << txf::tab << Element( P ) << txf::nl;
 		P = S.Next( P );
 	}

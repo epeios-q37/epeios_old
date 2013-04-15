@@ -301,7 +301,7 @@ namespace xmlbsc {
 		//f Returns true if 'Node' exists, or false if no.
 		bso::bool__ Exists( r Node ) const
 		{
-			return E_DTREEt_( r )::Parent( Node ) != NONE;
+			return E_DTREEt_( r )::Parent( Node ) != E_NIL;
 		}
 		r First( r Node ) const
 		{

@@ -204,7 +204,7 @@ namespace fblbrq {
 		}
 		void Test_( cast Cast )
 		{
-			if ( Position_ == NONE )
+			if ( Position_ == E_NIL )
 				Position_ = Casts_.First();
 			else
 				Position_ = Casts_.Next( Position_ );
@@ -234,7 +234,7 @@ namespace fblbrq {
 			_Functions = NULL;
 			Casts_.reset( P );
 
-			Position_ = NONE;
+			Position_ = E_NIL;
 			Closed_ = true;
 			Cast_ = c_Unknow;
 			Parsed_ = false;
@@ -263,7 +263,7 @@ namespace fblbrq {
 		//f Initialization with 'Channel' to parse/answer the request.
 		void Prepare( const casts_ &Casts )
 		{
-			Position_ = NONE;
+			Position_ = E_NIL;
 			Closed_ = false;
 			Cast_ = c_Unknow;
 			Parsed_ = false;

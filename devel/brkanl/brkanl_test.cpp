@@ -94,7 +94,7 @@ void Print(	const parameters_ &Parameters )
 {
 	POSITION__ P = Parameters.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		fout << txf::tab << brkcst::CastsNames[Parameters( P )];
 		P = Parameters.Next( P );
 	}
@@ -109,7 +109,7 @@ void Print(	const commands_ &Commands )
 
 	Command.Init( Commands );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		fout << Command( P ).Identification.Value << " (" << Command( P ).Identification.ID() << "):" << txf::nl;
 		Print( Command( P ).Parameters );
 		P = Commands.Next( P );
@@ -125,7 +125,7 @@ void Print( types_ &Types )
 
 	Type.Init( Types );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		fout << Type( P ).Identification.Value << " (" << Type( P ).Identification.ID() << "):" << txf::nl;
 		Print( Type( P ).Commands );
 		P = Types.Next( P );
@@ -171,14 +171,14 @@ void GenFunctionParameters(
 		P = Parameters.Next( P );
 	}
 
-	if ( P == NONE )
+	if ( P == E_NIL )
 		Flow << " void";
 	else {
 		GenFunctionParameter( (brkcst::cast)Parameters( P ), In, Indice++, Flow );
 		P = Parameters.Next( P );
 	}
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		if ( ( Cast = (brkcst::cast)Parameters( P) ) == brkcst::cEnd ) {
 			In = false;
 			Indice = 1;
@@ -204,12 +204,12 @@ void GenFunctionBody(
 	brkcst::cast Cast;
 	bso__ulong Indice = 1;
 
-	while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P) ) != brkcst::cEnd ) ) {
+	while ( ( P != E_NIL ) && ( ( Cast = (brkcst::cast)Parameters( P) ) != brkcst::cEnd ) ) {
 		Flow << txf::tab << txf::tab << txf::tab << "Frontend_->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
 		P = Parameters.Next( P );
 	}
 
-	if ( P == NONE )
+	if ( P == E_NIL )
 		ERRf();
 
 	Flow << txf::tab << txf::tab << txf::tab
@@ -219,7 +219,7 @@ void GenFunctionBody(
 
 	P = Parameters.Next( P );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Flow << txf::tab << txf::tab << txf::tab << txf::tab
 			 << "Frontend->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
 		P = Parameters.Next( P );
@@ -241,7 +241,7 @@ void GenRemoteCommandParameters(
 	
 	P = Parameters.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Flow << (bso__ulong)Parameters( P ) << ", " ;
 		P = Parameters.Next( P );
 	}
@@ -257,7 +257,7 @@ void GenAPI(
 	txf::text_oflow___ &Flow)
 {
 	CITEM( command_ ) Command;
-	POSITION__ P = NONE;
+	POSITION__ P = E_NIL;
 	bso__ushort I = 0;
 	bso__ulong Cumul = 0;
 
@@ -281,7 +281,7 @@ void GenAPI(
 	
 	P = Commands.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		GenRemoteCommandParameters( Command( P ).Parameters, Flow );
 		P = Commands.Next( P );
 	}
@@ -293,7 +293,7 @@ void GenAPI(
 
 	P = Commands.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		
 		Flow << txf::tab << txf::tab << txf::tab << "CommandDetail.Init();" << txf::nl;
 		Flow << txf::tab << txf::tab << txf::tab << "CommandDetail.Name = \"" << Command( P ).Identification.Value << "\";" << txf::nl;
@@ -316,7 +316,7 @@ void GenAPI(
 	
 	P = Commands.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Flow << txf::tab << txf::tab << "bso__bool " << Command( P ).Identification.Value << "(" << txf::nl;
 		GenFunctionParameters( Command( P ).Parameters, Flow );
 		Flow << txf::tab << txf::tab << "{" << txf::nl;
@@ -415,7 +415,7 @@ inline void GenCommandCastsList(
 	
 	P = Parameters.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Flow << (bso__ulong)Parameters( P ) << ", " ;
 		P = Parameters.Next( P );
 	}
@@ -629,12 +629,12 @@ namespace {
 			bso__ulong Indice = 1;
 			brkcst::cast Cast;
 			
-			while ( ( P != NONE ) && ( ( Cast = (brkcst::cast)Parameters( P ) ) != brkcst::cEnd ) ) {
+			while ( ( P != E_NIL ) && ( ( Cast = (brkcst::cast)Parameters( P ) ) != brkcst::cEnd ) ) {
 				Flow << txf::tab << txf::tab << txf::tab << "Frontend_->Push" << brkcst::CastsNames[Cast] << "( In" << Indice++ << " );" << txf::nl;
 				P = Parameters.Next( P );
 			}
 
-			if ( P == NONE )
+			if ( P == E_NIL )
 				ERRf();
 			
 			return Parameters.Next( P );
@@ -647,7 +647,7 @@ namespace {
 		{
 			bso__ulong Indice = 1;
 
-			while( P != NONE ) {
+			while( P != E_NIL ) {
 				Flow << txf::tab << txf::tab << txf::tab << txf::tab
 					 << "Frontend_->Pop" << brkcst::CastsNames[Parameters( P)] << "( Out" << Indice++ << " );" << txf::nl;
 				P = Parameters.Next( P );
@@ -665,7 +665,7 @@ namespace {
 			bso__ulong Indice,
 			txf::text_oflow___ &Flow )
 		{
-			POSITION__ P = NONE;
+			POSITION__ P = E_NIL;
 
 			Flow << txf::tab << txf::tab << txf::tab << "Frontend_->PushHeader( ID_, Commands_[" << Indice << "] );" << txf::nl;
 			
@@ -691,7 +691,7 @@ namespace {
 				P = Parameters.Next( P );
 			}
 
-			if ( P == NONE )
+			if ( P == E_NIL )
 				Flow << " void";
 			else {
 				Flow << txf::nl;
@@ -699,7 +699,7 @@ namespace {
 				P = Parameters.Next( P );
 			}
 
-			while( P != NONE ) {
+			while( P != E_NIL ) {
 				if ( ( Cast = (brkcst::cast)Parameters( P) ) == brkcst::cEnd ) {
 					In = false;
 					Indice = 1;
@@ -757,14 +757,14 @@ namespace {
 			txf::text_oflow___ &Flow )
 		{
 			CITEM( command_ ) Command;
-			POSITION__ P = NONE;
+			POSITION__ P = E_NIL;
 			bso__ulong Indice = 0;
 			
 			Command.Init( Commands );
 
 			P = Commands.First();
 
-			while( P != NONE ) {
+			while( P != E_NIL ) {
 				GenObjectCommandFunction( Command( P ), Indice++, Flow );
 				P = Commands.Next( P );
 			}
@@ -835,7 +835,7 @@ void GenAPI(
 
 	Type.Init( Types );
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		GenClasses( Type( P ), Flow );
 		P = Types.Next( P );
 	}
@@ -843,7 +843,7 @@ void GenAPI(
 
 POSITION__ FindMasterType( const types_ &Types )
 {
-	POSITION__ P = NONE;
+	POSITION__ P = E_NIL;
 ERRProlog
 	CITEM( type_ ) Type;
 ERRBegin
@@ -851,10 +851,10 @@ ERRBegin
 	
 	P = Types.First();
 	
-	while( ( P != NONE ) && ( Type( P ).Identification.ID() != BROKER_MASTER_TYPE ) )
+	while( ( P != E_NIL ) && ( Type( P ).Identification.ID() != BROKER_MASTER_TYPE ) )
 		P = Types.Next( P );
 		
-	if ( P == NONE )
+	if ( P == E_NIL )
 		ERRb();
 ERRErr
 ERREnd
@@ -875,7 +875,7 @@ ERRBegin
 	
 	P = Commands.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		if ( Command( P ).Identification.Value( 0 ) != '_' )
 			C.Add( Command( P ) );
 			

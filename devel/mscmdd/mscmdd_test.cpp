@@ -47,7 +47,7 @@ void Print( const mscmdd::descriptions_ &Descriptions )
 
 	Description.Init( Descriptions );
 
-	while ( Row != NONE ){
+	while ( Row != E_NIL ){
 		cout << Description( Row ) << txf::nl;
 		Row = Descriptions.Next( Row );
 	}
@@ -296,7 +296,7 @@ ERRBegin
 
 	epeios::row__ Row = String.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Flow.Put( String( Row ) );
 
 		Row = String.Next( Row );

@@ -85,7 +85,7 @@ template <typename item> static void Save_(
 {
 	stk::row__ Row = Bunch.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Save_( Bunch( Row ), Flow );
 
 		Row = Bunch.Next( Row );

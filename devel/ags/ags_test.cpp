@@ -85,10 +85,10 @@ sdr::row__ Locate(
 
 	String.Init( Strings );
 
-	while ( ( Row!= NONE ) && ( String( Row ) != Name ) )
+	while ( ( Row!= E_NIL ) && ( String( Row ) != Name ) )
 		Row = Strings.Next( Row );
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRc();
 
 	return Row;

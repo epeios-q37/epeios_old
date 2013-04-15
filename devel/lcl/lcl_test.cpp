@@ -42,13 +42,13 @@ void Display( const lcl::strings_ &Strings )
 {
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) String;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	String.Init( Strings );
 
 	Row = Strings.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		cout << String( Row ) << txf::tab;
 
 		Row = Strings.Next( Row );

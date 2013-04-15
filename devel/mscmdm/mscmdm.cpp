@@ -504,7 +504,7 @@ void mscmdm::PrintMIDIEvent(
 
 	mdr::row__ Row = Data.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		OFlow << ' ' << (bso::ulong__)Data( Row );
 
 		Row = Data.Next( Row );
@@ -555,7 +555,7 @@ void mscmdm::PrintMetaEvent(
 	{
 		mdr::row__ Row = Data.First();
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			OFlow << ' ' << (bso::ulong__)Data( Row );
 
 			Row = Data.Next( Row );
@@ -688,7 +688,7 @@ void Write_(
 {
 	mdr::row__ Row = String.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		OFlow.Put( String( Row ) );
 
 		Row = String.Next( Row );
@@ -770,7 +770,7 @@ void mscmdm::PutEvents(
 
 	Event.Init( Events );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		PutEvent( Event( Row ), Extraneous, OFlow );
 
 		Row = Events.Next( Row );
@@ -785,7 +785,7 @@ static mscmdf::track_chunk_size__ GetSize_( const events_ &Events )
 
 	Event.Init( Events );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Size+= GetDeltaTimeTicksSize_( Event( Row ).EventHeader().DeltaTimeTicks );
 
 		switch( Event().EventHeader().EventType ) {
@@ -819,7 +819,7 @@ void mscmdm::PutTrack(
 	flw::oflow__ &OFlow )
 {
 	ctn::E_CMITEMt( event_, erow__ ) Event;
-	erow__ Row = NONE;
+	erow__ Row = E_NIL;
 	bso::bool__ LastEventIsEndOfTrack = false;
 	mscmdf::track_chunk_size__ Size = GetSize_( Track );
 
@@ -827,7 +827,7 @@ void mscmdm::PutTrack(
 
 	Row = Track.Last();
 
-	if ( Row != NONE )
+	if ( Row != E_NIL )
 		LastEventIsEndOfTrack = ( Event( Row ).EventHeader().EventType == etMeta ) && ( Event( Row ).EventHeader().MetaEvent.Event == mtaEndOfTrack );
 
 	if ( !LastEventIsEndOfTrack )
@@ -852,7 +852,7 @@ void mscmdm::PutTracks(
 
 	Track.Init( Tracks );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		PutTrack( Track( Row ), Extraneous, OFlow );
 
 		Row = Tracks.Next( Row );

@@ -63,8 +63,8 @@ static void Display_(
 	row__ Position,
 	txf::text_oflow__ &Flow )
 {
-	if ( Position == NONE )
-		Flow << "NONE";
+	if ( Position == E_NIL )
+		Flow << "E_NIL";
 	else
 		Flow << *Position;
 }
@@ -89,7 +89,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 		row__ Position = 0;
 		mdr::datum__ Header[MMM2_HEADER_MAX_LENGTH];
 
-		while ( Position != NONE ) {
+		while ( Position != E_NIL ) {
 			Flow << *Position << txf::tab << ": ";
 
 			_GetHeader( Position, Header );
@@ -103,14 +103,14 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 				if ( _IsUsedFragmentFreeFlagSet( Header ) )
 					Flow << *_GetFreeFragmentPosition( Position );
 				else
-					Flow << "NONE";
+					Flow << "E_NIL";
 
 				Flow << txf::tab;
 
 				if ( _IsUsedFragmentLinkFlagSet( Header ) )
 					Flow << *_GetUsedFragmentLink( Position, Header );
 				else
-					Flow << "NONE";
+					Flow << "E_NIL";
 
 				Position = _GetUsedFragmentNextFragmentPosition( Position, Header );
 			} else if ( _IsFragmentFree( Header ) ) {
@@ -132,7 +132,7 @@ void mmm::multimemory_::DisplayStructure( txf::text_oflow__ &Flow ) const
 			Flow << txf::nl;
 
 			if ( Position == S_.Extent )
-				Position = NONE;
+				Position = E_NIL;
 			else if ( *Position > S_.Extent )
 				ERRc();
 

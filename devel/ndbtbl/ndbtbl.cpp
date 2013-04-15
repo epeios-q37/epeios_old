@@ -63,7 +63,7 @@ void ndbtbl::table_::_InsertInIndexes( rrow__ Row )
 {
 	sdr::row__ IRow = _Indexes.First();
 
-	while ( IRow != NONE ) {
+	while ( IRow != E_NIL ) {
 		_Indexes( IRow )->Index( Row, false );
 
 		IRow = _Indexes.Next( IRow );
@@ -74,7 +74,7 @@ void ndbtbl::table_::_DeleteFromIndexes( rrow__ Row )
 {
 	sdr::row__ IRow = _Indexes.First();
 
-	while ( IRow != NONE ) {
+	while ( IRow != E_NIL ) {
 /*		if ( !Indexes( IRow )->InitializationCompleted() )
 			Indexes( IRow )->CompleteInitialization();
 */
@@ -94,7 +94,7 @@ void ndbtbl::table_::_ReindexAll( observer_functions__ &Observer )
 		Observer.Set( _Indexes.Amount() );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Indexes( Row )->Reindex( Observer );
 
 		if ( &Observer )
@@ -110,13 +110,13 @@ void ndbtbl::table_::Retrieve(
 {
 ERRProlog
 	datum Datum;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	_Test( mReadOnly );
 
 	Row = Rows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Datum.Init();
 
 		Content().Retrieve( Rows( Row ), Datum );
@@ -141,7 +141,7 @@ void ndbtbl::table_::Insert(
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		RecordRows.Append( Insert( Datum( Row ) ) );
 
 		Row = Data.Next( Row );
@@ -162,7 +162,7 @@ void ndbtbl::table_::Update(
 
 	Datum.Init( Data );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Update( Datum( Row ), RecordRows( Row ) );
 
 		Row = Data.Next( Row );
@@ -175,7 +175,7 @@ void ndbtbl::table_::Delete( const rrows_ &RecordRows )
 
 	sdr::row__ Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Delete( RecordRows( Row ) );
 
 		Row = RecordRows.Next( Row );
@@ -187,7 +187,7 @@ void ndbtbl::table_::_ResetAllIndexes( void )
 {
 	sdr::row__ Row = _Indexes.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Indexes( Row )->Reset();
 
 		Row = _Indexes.Next( Row );
@@ -202,7 +202,7 @@ void ndbtbl::table_::TestRecordsExistence(
 
 	sdr::row__ Row = RecordRows.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !RecordExists( RecordRows( Row ) ) )
 			Rows.Append( Row );
 
@@ -217,7 +217,7 @@ bso::bool__ ndbtbl::table_::AreAllIndexesSynchronized( void ) const
 
 	sdr::row__ Row = _Indexes.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !_Indexes( Row )->IsSynchronized() )
 			return false;
 

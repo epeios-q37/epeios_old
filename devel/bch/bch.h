@@ -413,7 +413,7 @@ namespace bch {
 
 			return P;
 		}
-		//f Return row of 'Object' between 'Begin' (included) and 'End' (excluded), or 'NONE' if not found.
+		//f Return row of 'Object' between 'Begin' (included) and 'End' (excluded), or 'E_NIL' if not found.
 		row Search(
 			const type &Object,
 			row Begin,
@@ -421,7 +421,7 @@ namespace bch {
 		{
 			return mmr::Search( Object, Begin, End );
 		}
-		//f Return row of 'Object' beginning at 'Begin' (included), or 'NONE' if not found.
+		//f Return row of 'Object' beginning at 'Begin' (included), or 'E_NIL' if not found.
 		row Search(
 			const type &Object,
 			row Begin = 0 ) const

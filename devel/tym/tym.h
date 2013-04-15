@@ -202,7 +202,7 @@ namespace tym {
 		{
 			b::Store( (mdr::datum__ *)&Object, sizeof( t ), *Position * sizeof( t ), Amount );
 		}
-		//f Return the position from 'Object' between 'Begin' and 'End' (both included) or 'NONE' if non-existant.
+		//f Return the position from 'Object' between 'Begin' and 'End' (both included) or 'E_NIL' if non-existant.
 		r Search(
 			const t &Object,
 			r Begin,
@@ -210,7 +210,7 @@ namespace tym {
 		{
 			mdr::row_t__ Position;
 
-			if ( ( Position = b::Search( (mdr::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != NONE )
+			if ( ( Position = b::Search( (mdr::datum__ *)&Object, sizeof( t ), *Begin * sizeof( t ), *End * sizeof( t ) ) ) != E_NIL )
 				Position /= sizeof( t );
 
 			return Position;

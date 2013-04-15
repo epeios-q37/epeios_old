@@ -67,14 +67,14 @@ const str::string_ &crptgr::Encrypt(
 ERRProlog
 	flx::E_STRING_OFLOW___ SFlow;
 	encrypt_oflow___ EFlow;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	SFlow.Init( Crypted );
 	EFlow.Init( SFlow, Key );
 
 	Row = Plain.First();
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		EFlow.Put( Plain( Row ) );
 
 		Row = Plain.Next( Row );

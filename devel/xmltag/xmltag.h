@@ -199,7 +199,7 @@ namespace xmltag {
 		//f Initialization. Returns root's reference.
 		tag_row__ Init( void );
 		/*f Returns the position of tag named 'Name' which belongs
-		to 'TagRow' and of type 'Type', or 'NONE' if non-existant. */
+		to 'TagRow' and of type 'Type', or 'E_NIL' if non-existant. */
 		tag_row__ Position(
 			const name_ &Name,
 			tag_row__ TagRow,

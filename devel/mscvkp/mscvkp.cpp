@@ -110,7 +110,7 @@ datum__ mscvkp::Checksum( const data_set_ &DataSet )
 	address__ Address = DataSet.Address();
 	epeios::row__ Row = DataSet.First();
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Checksum += DataSet( Row );
 		Row = DataSet.Next( Row );
 	}
@@ -165,12 +165,12 @@ txf::text_oflow__ &operator <<(
 {
 	epeios::row__ Row = Descriptions.First();
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 		TFlow << Descriptions( Row );
 		Row = Descriptions.Next( Row );
 	}
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		TFlow << '/';
 		TFlow << Descriptions( Row );
 		Row = Descriptions.Next( Row );
@@ -192,7 +192,7 @@ ERRBegin
 
 	epeios::row__ Row = DataSet.First();
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		if ( !IsName( Address ) || ( Address & 0xff ) == 0 ) {
 			TFlow << AddressToString( Address ) << ' ';
 
@@ -231,7 +231,7 @@ txf::text_oflow__ &operator <<(
 
 	DataSet.Init( DataSets );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		TFlow << DataSet( Row );
 		Row = DataSets.Next( Row );
 		TFlow << txf::nl;
@@ -1400,7 +1400,7 @@ bso::size__ mscvkp::Send(
 	bso::size__ Length = 0;
 ERRProlog
 	str::string Header;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 
 	Flow.Put( '\xf0' );
@@ -1411,7 +1411,7 @@ ERRBegin
 
 	Row = Header.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Flow.Put( Header( Row ) );
 
 		Row = Header.Next( Row );
@@ -1421,7 +1421,7 @@ ERRBegin
 
 	Row = DataSet.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Flow.Put( DataSet( Row ) );
 
 		Row = DataSet.Next( Row );
@@ -1449,7 +1449,7 @@ void mscvkp::Send(
 
 	DataSet.Init( DataSets );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Length += Send( DataSet( Row ), Flow );
 
 		if ( Length > 128 ) {
@@ -1496,7 +1496,7 @@ void mscvkp::BuildTrack(
 	mscmdm::track_ &Track )
 {
 ERRProlog
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 	ctn::E_CMITEM( data_set_ ) DataSet;
 	mscmdm::event Event;
 	bso::ulong__ Length = 0;
@@ -1505,7 +1505,7 @@ ERRBegin
 
 	DataSet.Init( DataSets );
 
-	if ( Row != NONE ) {
+	if ( Row != E_NIL ) {
 			BuildEvent_( DataSet( Row ), 1, Event );
 
 			Track.Append( Event );
@@ -1515,7 +1515,7 @@ ERRBegin
 			Row = DataSets.Next( Row );
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Event.Init();
 
 		if ( ( Length + DataSet( Row ).Amount() ) < 110 ){

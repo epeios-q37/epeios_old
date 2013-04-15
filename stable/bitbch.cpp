@@ -285,7 +285,7 @@ void bitbch::Not(
 	if ( R.Amount() < O.Amount() )
 		R.Allocate( O.Amount() );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		R.Table.Store( ~O.Table( Row ), Row );
 
 		Row++;
@@ -336,7 +336,7 @@ txf::text_oflow__ &operator <<(
 {
 	sdr::row__ Row = Bunch.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		OStream << (unsigned long)Bunch( Row );
 
 		Row = Bunch.Next( Row );

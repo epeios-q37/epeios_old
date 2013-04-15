@@ -96,7 +96,7 @@ ERRBegin
 
 	D.Init( *this );
 
-	while( ( Position != NONE )
+	while( ( Position != E_NIL )
 		    && ( ( D( Position ).Name != Description.Name )
 		         || ( D( Position ).Casts != Description.Casts ) ) )
 		Position = E_CONTAINER_( description_ )::Next( Position );

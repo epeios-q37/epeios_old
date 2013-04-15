@@ -122,7 +122,7 @@ namespace mmi {
 		{
 			E_MEMORY_DRIVER__::reset( P );
 
-			_Index = NONE;
+			_Index = E_NIL;
 			Multimemoire_ = NULL;
 		}
 		//f Initialize with 'Multimemory' multimemory.
@@ -130,7 +130,7 @@ namespace mmi {
 		{
 			E_MEMORY_DRIVER__::Init();
 
-			_Index = NONE;
+			_Index = E_NIL;
 		}
 		//f The 'Index' memory becomes the memory handled by this memory driver.
 		void Index( index__ Index )

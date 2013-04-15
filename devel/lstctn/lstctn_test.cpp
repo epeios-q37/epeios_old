@@ -149,7 +149,7 @@ ERRBegin
 
 	epeios::row__ RM = CM.First();
 
-	while ( RM != NONE ) {
+	while ( RM != E_NIL ) {
 		Cm = ECM( RM );
 
 		for ( m ='a'; m <= Lm; m++ )

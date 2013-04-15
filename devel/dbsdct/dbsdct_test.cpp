@@ -41,7 +41,7 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	dbsdct::file_content Content;
-	dbsdct::row__ Row1 = NONE, Row2 = NONE;
+	dbsdct::row__ Row1 = E_NIL, Row2 = E_NIL;
 	dbsdct::data Data;
 ERRBegin
 	if ( !Content.Init( str::string( "test" ) ) ) {

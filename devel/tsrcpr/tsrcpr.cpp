@@ -366,10 +366,10 @@ void ExtractCVSTag_( str::string_ &Tag )
 {
 	epeios::row_t__ P;
 
-	if ( ( ( P = *Tag.Search( ':' ) ) != NONE ) && ( Tag.Amount() >= P + 2 ) ) {
+	if ( ( ( P = *Tag.Search( ':' ) ) != E_NIL ) && ( Tag.Amount() >= P + 2 ) ) {
 		Tag.Delete( 0, P + 2 );
 
-		if ( ( P = *Tag.Search( '$' ) ) != NONE ) {
+		if ( ( P = *Tag.Search( '$' ) ) != E_NIL ) {
 			Tag.Allocate( P - 1 );
 		}
 	}

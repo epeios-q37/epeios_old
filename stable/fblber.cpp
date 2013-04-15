@@ -70,11 +70,11 @@ void fblber::embed_request_functions___::_GetAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 
 	Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) ) {
 
 		if ( Flow.Get() != Casts( Row ) )
@@ -86,7 +86,7 @@ void fblber::embed_request_functions___::_GetAll(
 		Row = Casts.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRFwk();
 
 	if ( Flow.Get() != fblcst::cEnd )
@@ -97,7 +97,7 @@ void fblber::embed_request_functions___::_GetAll(
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Flow.Get() != Casts( Row ) )
 			ERRFwk();
 

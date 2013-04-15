@@ -40,7 +40,7 @@ ERRProlog
 	bts::E_BTREE_SEEKER__ Seeker;
 	btr::E_BTREE Tree;
 ERRBegin
-	Seeker.Init( Tree, NONE );
+	Seeker.Init( Tree, E_NIL );
 
 	Seeker.First();
 

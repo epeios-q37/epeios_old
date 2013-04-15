@@ -84,8 +84,8 @@ namespace epeios_deprecated {
 
 	#define EPEIOS_DEPRECATED_SIZE_MAX		MDR_SIZE_MAX
 
-#ifndef NONE
-#	define NONE ((mdr::row_t__)-1)
+#ifndef E_NIL
+#	define E_NIL ((mdr::row_t__)-1)
 #endif
 
 	using mdr::datum__;

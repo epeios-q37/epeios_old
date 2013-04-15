@@ -66,7 +66,7 @@ row__ mscvkt::tree_::_GetNode(
 {
 	row__ Row = _dtree_::FirstChild( Parent );
 
-	while ( ( Row != NONE ) && ( Get( Row ).Description != Description ) )
+	while ( ( Row != E_NIL ) && ( Get( Row ).Description != Description ) )
 		Row = _dtree_::NextSibling( Row );
 
 	return Row;
@@ -80,8 +80,8 @@ row__ mscvkt::tree_::_GetOrCreateNode(
 {
 	row__ &Row = Candidate;
 
-	if ( ( Row == NONE ) || ( nodes_::Get( Row ).Description != Description ) ) {
-		if ( ( Row = _GetNode( Description, Parent ) ) == NONE ) {
+	if ( ( Row == E_NIL ) || ( nodes_::Get( Row ).Description != Description ) ) {
+		if ( ( Row = _GetNode( Description, Parent ) ) == E_NIL ) {
 			Row = nodes_::Append( node__( Description, GetLevel( Parent ) <= 1 ? Address : 0xffffffff ) );
 			_dtree_::Allocate( *Row + 1 );
 			_dtree_::BecomeLastChild( Row, Parent );
@@ -99,9 +99,9 @@ row__ mscvkt::tree_::_CreateNode(
 	row__ NRow = S_.Root;
 	epeios::row__ DRow = Descriptions.First();
 
-	while ( DRow != NONE ) {
+	while ( DRow != E_NIL ) {
 		if ( !Rows.Exists( DRow ) )
-			Rows.Append( NONE );
+			Rows.Append( E_NIL );
 
 		NRow = _GetOrCreateNode( Descriptions( DRow ), Address, NRow, Rows( DRow ) );
 
@@ -149,7 +149,7 @@ void mscvkt::tree_::Add( const mscvkp::data_set_ &DataSet )
 
 	Rows.Init();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		_Add( Address++, DataSet( Row ), Rows );
 
 		Row = DataSet.Next( Row );
@@ -163,7 +163,7 @@ void mscvkt::tree_::Add( const mscvkp::data_sets_ &DataSets )
 
 	DataSet.Init( DataSets );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Add( DataSet( Row ) );
 
 		Row = DataSets.Next( Row );
@@ -175,7 +175,7 @@ txf::text_oflow__ operator <<(
 	const mscvkt::tree_ &Tree )
 {
 	dtr::browser__<row__>  Browser;
-	row__ Row = NONE;
+	row__ Row = E_NIL;
 	mscvkp::descriptions__ Descriptions;
 
 	Descriptions.Init();
@@ -188,7 +188,7 @@ txf::text_oflow__ operator <<(
 
 	Row = Browser.Position();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		switch ( Browser.Kinship() ) {
 		case dtr::kChild:
 			Descriptions.Append( Tree( Row ).Description );
@@ -205,7 +205,7 @@ txf::text_oflow__ operator <<(
 			break;
 		}
 
-		if ( Tree._dtree_::FirstChild( Row ) == NONE )
+		if ( Tree._dtree_::FirstChild( Row ) == E_NIL )
 			TFlow << "(" << mscvkp::AddressToString( Tree( Row ).Address ) << ") " << Descriptions << " : " << mscvkp::DatumToString( Tree( Row ).Datum, false ) << txf::nl;
 
 		Row = Tree.Browse( Browser );

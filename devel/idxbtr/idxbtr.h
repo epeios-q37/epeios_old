@@ -175,7 +175,7 @@ namespace idxbtr {
 				else if ( BaseTree.IsRight( Item ) )
 					return BaseTree.ParentOfFirstLeftNode( Item );
 				else
-					return NONE;
+					return E_NIL;
 		}
 		//f Return the item previous to 'Item'.
 		r Previous( r Position ) const
@@ -188,7 +188,7 @@ namespace idxbtr {
 				else if ( BaseTree.IsLeft( Position ) )
 					return BaseTree.SearchFirstRightFather( Position );
 				else
-					return NONE;
+					return E_NIL;
 		}
 		sdr::size__ Amount( void ) const
 		{
@@ -200,7 +200,7 @@ namespace idxbtr {
 			r Root )
 		{
 			if ( BaseTree.HasBothChildren( Node ) ) {
-				r TargetNode = NONE;
+				r TargetNode = E_NIL;
 
 				if ( *Node & 1 )	// Petit générateur aléatoire.
 					TargetNode = _SearchMostLeftNode( BaseTree.Right( Node ) );
@@ -228,7 +228,7 @@ namespace idxbtr {
 			}
 
 			if ( Root == Node )
-				Root = NONE;
+				Root = E_NIL;
 
 			return Root;
 		}
@@ -242,45 +242,45 @@ namespace idxbtr {
 			r Fille = BaseTree.Right( Item );
 			r Pere = BaseTree.Parent( Item );
 
-			if ( Fils != NONE )
+			if ( Fils != E_NIL )
 				BaseTree.Cut( Fils );
 
-			if ( Fille != NONE )
+			if ( Fille != E_NIL )
 				BaseTree.Cut( Fille );
 
 			if ( BaseTree.IsLeft( Item ) )
 			{
 				BaseTree.Cut( Item );
 
-				if ( Fils != NONE )
+				if ( Fils != E_NIL )
 				{
 					BaseTree.BecomeLeft( Fils, Pere );
 
-					if ( Fille != NONE )
+					if ( Fille != E_NIL )
 						BaseTree.BecomeRight( Fille, _SearchMostRightNode( Fils ) );
 				}
-				else if ( Fille != NONE )
+				else if ( Fille != E_NIL )
 					BaseTree.BecomeLeft( Fille, Pere );
 			}
 			else if ( BaseTree.IsRight( Item ) )
 			{
 				BaseTree.Cut( Item );
 
-				if ( Fille != NONE )
+				if ( Fille != E_NIL )
 				{
 					BaseTree.BecomeRight( Fille, Pere );
 
-					if ( Fils != NONE )
+					if ( Fils != E_NIL )
 						BaseTree.BecomeLeft( Fils, _SearchMostLeftNode( Fille ) );
 				}
-				else if ( Fils != NONE )
+				else if ( Fils != E_NIL )
 					BaseTree.BecomeRight( Fils, Pere );
 			}
 			else
 			{
-				if ( Fils != NONE )
+				if ( Fils != E_NIL )
 				{
-					if ( Fille != NONE )
+					if ( Fille != E_NIL )
 						BaseTree.BecomeRight( Fille, _SearchMostRightNode( Fils ) );
 
 					return Fils;
@@ -329,7 +329,7 @@ namespace idxbtr {
 		}
 		bso::bool__ HasLesser( r Node ) const
 		{
-			return GetLesser( Node ) != NONE;
+			return GetLesser( Node ) != E_NIL;
 		}
 		r GetGreater( r Node ) const
 		{
@@ -337,7 +337,7 @@ namespace idxbtr {
 		}
 		bso::bool__ HasGreater( r Node ) const
 		{
-			return GetGreater( Node ) != NONE;
+			return GetGreater( Node ) != E_NIL;
 		}
 		r BecomeGreater(
 			r Row,
@@ -453,13 +453,13 @@ namespace idxbtr {
 			if ( Index_== NULL )
 				ERRFwk();
 
-			if ( _Current == NONE )
+			if ( _Current == E_NIL )
 				ERRFwk();
 		}
 #endif
 		r _Handle( r Row )
 		{
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				_Current = Row;
 
 			return Row;
@@ -467,7 +467,7 @@ namespace idxbtr {
 	public:
 		void reset( bso::bool__ = true )
 		{
-			_Current = NONE;
+			_Current = E_NIL;
 			Index_ = NULL;
 		}
 		tree_seeker__( void )
@@ -503,7 +503,7 @@ namespace idxbtr {
 		}
 		bso::bool__ HasGreater( void ) const
 		{
-			return GetGreater() != NONE;
+			return GetGreater() != E_NIL;
 		}
 		//f Try to find an element lesser then the current.
 		r GetLesser( void ) const
@@ -519,7 +519,7 @@ namespace idxbtr {
 		}
 		bso::bool__ HasLesser( void ) const
 		{
-			return GetLesser() != NONE;
+			return GetLesser() != E_NIL;
 		}
 
 		E_RODISCLOSE__( r, Current )

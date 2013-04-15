@@ -71,7 +71,7 @@ extern class ttr_tutor &IDXQUETutor;
 #include "stk.h"
 
 //d The end of the queue.
-#define IDXQUE_END	NONE
+#define IDXQUE_END	E_NIL
 
 namespace idxque {
 	using namespace que;

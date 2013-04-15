@@ -111,7 +111,7 @@ namespace btf {
 			Tree_ = &Tree;
 			E_BSTACKt_( r, row__ )::Init();
 
-			if ( Root != NONE )
+			if ( Root != E_NIL )
 				E_BSTACKt_( r, row__ )::Push( Root );
 		}
 		//f Join the 2 nodes at bottom of stack with 'Node', which is pushed in stack.
@@ -139,10 +139,10 @@ namespace btf {
 			if ( !IsComplete() )
 				ERRFwk();
 #endif
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				return E_BSTACKt_( r, row__ )::Get( Row );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Return true if a call to 'Join' is possible, false otherwise.
 		bso::bool__ IsJoinable( void ) const

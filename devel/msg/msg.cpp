@@ -116,11 +116,11 @@ ERRBegin
 	do {
 		Line.Init();
 
-		switch ( State = GetFirstNonEmptyLine_( Flow, Line, Row == NONE ) ) {
+		switch ( State = GetFirstNonEmptyLine_( Flow, Line, Row == E_NIL ) ) {
 		case sEnd:
 			break;
 		case sRaw:
-			if ( ( Row == NONE ) || ( RawMessage( Row ) != Line ) ) {
+			if ( ( Row == E_NIL ) || ( RawMessage( Row ) != Line ) ) {
 				State = sEnd;
 			} else {
 				English.New();
@@ -165,7 +165,7 @@ ERRBegin
 		}
 	} while ( State != sEnd );
 
-	if ( Row != NONE )
+	if ( Row != E_NIL )
 		Location = Flow.Coord().Line;
 ERRErr
 ERREnd

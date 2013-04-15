@@ -116,7 +116,7 @@ namespace dbsctt {
 			else
 				ERRu();
 
-			return NONE;	// Pour éviter un 'warning'.
+			return E_NIL;	// Pour éviter un 'warning'.
 		}
 		void Erase( rrow__ Row )
 		{
@@ -189,7 +189,7 @@ namespace dbsctt {
 			else
 				ERRu();
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Last( void ) const
 		{
@@ -200,7 +200,7 @@ namespace dbsctt {
 			else
 				ERRu();
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
@@ -211,7 +211,7 @@ namespace dbsctt {
 			else
 				ERRu();
 
-			return NONE;
+			return E_NIL;
 		}
 		rrow__ Previous( rrow__ Row ) const
 		{
@@ -222,7 +222,7 @@ namespace dbsctt {
 			else
 				ERRu();
 
-			return NONE;
+			return E_NIL;
 		}
 		epeios::size__ Extent( void ) const
 		{

@@ -327,7 +327,7 @@ private:
 		duration__ PendingDuration;
 		epeios::row__ Row = Data.First();
 
-		while ( Row != NONE ) {
+		while ( Row != E_NIL ) {
 			if ( isspace( Data( Row ) ) ) {
 				if ( PendingDuration.IsValid() ) {
 					Durations.Append( PendingDuration );
@@ -362,12 +362,12 @@ private:
 				}
 				prow__ PRow = *Durations.Last();
 
-				if ( PRow == NONE )
+				if ( PRow == E_NIL )
 					PRow = Pitches.First();
 				else
 					PRow = Pitches.Next( PRow );
 
-				if ( PRow == NONE ) {
+				if ( PRow == E_NIL ) {
 					ERRu();
 				} else 
 					Pitches.Store( pitch__( pnRest, 0 ), PRow );

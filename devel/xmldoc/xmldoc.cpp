@@ -76,9 +76,9 @@ ERRBegin
 
 	Row = Document.Data.FirstChild( Row );
 
-	HasChild = ( Row != NONE );
+	HasChild = ( Row != E_NIL );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		if ( Document.Structure.GetOddity( Document.Data.GetOddity( Row ) ) == tAttribute ) {
 			Flow << ' ' << Name( Document.Data.GetOddity( Row ) ) << "=\"";
 
@@ -125,7 +125,7 @@ ERRBegin
 	Browser.Init( Root );
 	Document.Data.Browse( Browser );
 
-	while( Browser.Position() != NONE ) {
+	while( Browser.Position() != E_NIL ) {
 		switch( Browser.Kinship() ) {
 		case dtr::kChild:
 		case dtr::kSibling:

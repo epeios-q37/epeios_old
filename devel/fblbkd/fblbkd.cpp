@@ -119,7 +119,7 @@ void fblbkd::untyped_module::_Clean( void )
 {
 	sdr::row__ Row = Indexes.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		FBLBKDDelete( Indexes( Row ) );
 
 		Row = Indexes.Next( Row );
@@ -212,10 +212,10 @@ ERREpilog
 			LogFunctions.Log( "", "MASTER", str::string( "MASTER_COMMAND(GetCommandCommand)" ), false );
 
 			
-			while ( ( P != NONE ) && ( Description( P ).Name != str::string( PrimaryCommandName ) ) )
+			while ( ( P != E_NIL ) && ( Description( P ).Name != str::string( PrimaryCommandName ) ) )
 				P = Descriptions.Next( P );
 
-			if ( P != NONE )
+			if ( P != E_NIL )
 				C = (command__)*P;
 
 			Requete.Output().Put( 0 );	// No explanation message;
@@ -249,7 +249,7 @@ ERRBegin
 
 	P = Backend.Modules.First();
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		XItem.Init();
 
@@ -290,7 +290,7 @@ ERRBegin
 
 	Description.Init( Descriptions );
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Item.Init();
 
@@ -507,13 +507,13 @@ static void GetRawMessages_(
 	bso::bool__ &,
 	void * )
 {
-	mdr::row__ Row = NONE;
+	mdr::row__ Row = E_NIL;
 	strings_ &Messages = Requete.StringsOut();
 	Messages = Backend.GetMasterRawMessages();
 
 	Row = Backend.Modules.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Backend.Modules( Row )->GetRawMessages( Messages );
 
 		Row = Backend.Modules.Next( Row );
@@ -555,7 +555,7 @@ ERRProlog
 ERRBegin
 	CommandDetail.Init( CommandsDetails );
 
-	while( Position != NONE )
+	while( Position != E_NIL )
 	{
 		Description.Init();
 
@@ -785,10 +785,10 @@ type__ fblbkd::backend___::Type( const str::string_ &Name ) const
 {
 	sdr::row__ C = Modules.First();
 
-	while ( ( C != NONE ) && ( str::string( Modules(C)->Name() ) != Name )  )
+	while ( ( C != E_NIL ) && ( str::string( Modules(C)->Name() ) != Name )  )
 		C = Modules.Next( C );
 
-	if ( C == NONE )
+	if ( C == E_NIL )
 		C = FBLBKD_INVALID_TYPE;
 	else if ( *C > FBLBKD_INVALID_TYPE )
 		ERRLmt();

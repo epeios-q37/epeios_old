@@ -43,7 +43,7 @@ void Consult(
 	const rgstry::registry_ &Registry,
 	rgstry::row__ Root )
 {
-	epeios::row__ Cursor = NONE;
+	epeios::row__ Cursor = E_NIL;
 	rgstry::buffer Buffer;
 #if 0
 	cout << "Limit : " << Registry.GetPathValue( str::string( "RecordAmountLimitation" ), Root, Buffer ) << txf::nl;
@@ -81,9 +81,9 @@ ERRBegin
 	Coord.Init();
 
 	ErrorDetails.Init();
-	Root = rgstry::Parse( FFlow, str::string( "" ), Registry, NONE, ErrorDetails );
+	Root = rgstry::Parse( FFlow, str::string( "" ), Registry, E_NIL, ErrorDetails );
 
-	if ( Root == NONE ) {
+	if ( Root == E_NIL ) {
 		cerr << "Erreur";
 
 		if ( FileName.Amount() )

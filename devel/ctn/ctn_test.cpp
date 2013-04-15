@@ -69,7 +69,7 @@ E_AUTO( data_cluster )
 
 void Print( const data_ &Data )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	ctn::E_CMITEM( datum_ ) Datum;
 
 	Datum.Init( Data );
@@ -78,7 +78,7 @@ void Print( const data_ &Data )
 
 	cout << "****" << txf::tab << txf::commit;
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		cout << '>' << txf::commit;
 		cout << Datum( Row ) << '<' << txf::tab << txf::commit;
 		Row = Data.Next( Row );
@@ -91,7 +91,7 @@ void Fill( data_cluster_ &DataCluster )
 {
 ERRProlog
 
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	data Data;
 ERRBegin
 
@@ -104,7 +104,7 @@ ERRBegin
 	DataCluster.Allocate( 3 );
 	Row = DataCluster.First();
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		DataCluster( Row ).Append( Data( Row ) );
 		DataCluster( Row ).Flush();
 		Row = DataCluster.Next( Row );
@@ -118,7 +118,7 @@ ERREpilog
 
 void PrintV( data_cluster_ &DataCluster )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 
 	DataCluster.Flush();
 
@@ -126,7 +126,7 @@ void PrintV( data_cluster_ &DataCluster )
 
 	cout << ">>> V" << txf::nl << txf::commit;
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Print( DataCluster( Row ) );
 		Row = DataCluster.Next( Row );
 	}
@@ -138,7 +138,7 @@ void PrintV( data_cluster_ &DataCluster )
 
 void PrintC( const data_cluster_ &DataCluster )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	ctn::E_CITEM( data_ ) Data;
 
 	Data.Init( DataCluster );
@@ -147,7 +147,7 @@ void PrintC( const data_cluster_ &DataCluster )
 
 	cout << ">>> C" << txf::nl << txf::commit;
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		Print( Data( Row ) );
 		Row = DataCluster.Next( Row );
 	}
@@ -159,7 +159,7 @@ void BugTracking( void )
 {
 ERRProlog
 	data_cluster DataCluster;
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	DataCluster.Init();
 	Fill( DataCluster );
@@ -187,7 +187,7 @@ void Display( const ctn::E_MCONTAINER_( str::string_ ) &C )
 
 	S.Init( C );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		cio::COut << S( Row ) << txf::pad;
 
 		Row = C.Next( Row );
@@ -354,7 +354,7 @@ ERRBegin
 
 	P = CS.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		cout << ECS(P) << txf::tab;
 		P = CS.Next( P );
 	}
@@ -378,7 +378,7 @@ ERRBegin
 
 	P = CS.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		cout << ECS(P) << txf::tab;
 		P = CS.Next( P );
 	}
@@ -461,7 +461,7 @@ ERRBegin
 
 	P = CS.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		cout << ECS(P) << txf::tab;
 		P = CS.Next( P );
 	}
@@ -489,7 +489,7 @@ ERRBegin
 
 	P = CD.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		cout << ECD(P) << txf::tab;
 		P = CD.Next( P );
 	}
@@ -502,7 +502,7 @@ ERRBegin
 
 	P = CD.First();
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		cout << ECD(P) << txf::tab;
 		P = CD.Next( P );
 	}

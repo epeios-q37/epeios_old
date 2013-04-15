@@ -101,7 +101,7 @@ void csdsnc::core_::Ping( void )
 
 	stk::row__ Row = Flows.First();
 	
-	while ( Row != NONE )
+	while ( Row != E_NIL )
 	{
 		Ping_( *Flows( Row ), S_.Ping.Delay );
 

@@ -265,7 +265,7 @@ namespace rqm
 			return Add( Description );
 		}
 		/*f Return the position of the description of the request named 'Name' or 
-		'NONE' if non-existant. */
+		'E_NIL' if non-existant. */
 		POSITION__ Position( const char *Name ) const;
 		/*f Return the position of the description 'Description'. */
 		POSITION__ Position( const description_ &Description ) const;
@@ -352,7 +352,7 @@ namespace rqm
 			{
 				flw::Get( *Channel_, Cast );
 
-				if ( ( Array_ != NONE )
+				if ( ( Array_ != E_NIL )
 					  && ( Cast != cEnd )
 					  && ( Description_->Read( Position_ ) == cEnd ) )
 						Position_ = Array_;
@@ -382,8 +382,8 @@ namespace rqm
 		{
 			Description_ = NULL;
 
-			Position_ = NONE;
-			Array_ = NONE;
+			Position_ = E_NIL;
+			Array_ = E_NIL;
 			Closed_ = true;
 			Cast_ = cInvalid;
 			Parsed_ = false;
@@ -432,7 +432,7 @@ namespace rqm
 				if ( Position_ != Description_->Amount() )
 					ERRu();
 
-				if ( Array_ != NONE )
+				if ( Array_ != E_NIL )
 					ERRu();
 
 			}
@@ -452,7 +452,7 @@ namespace rqm
 		{
 			TestEndOfParsing_();
 
-			if ( Array_ != NONE )
+			if ( Array_ != E_NIL )
 				if ( ( Position_ >= Description_->Amount() )
 					|| ( Description_->Read( Position_ ) != Cast ) )
 					ERRu();
@@ -466,7 +466,7 @@ namespace rqm
 		{
 			TestEndOfParsing_();
 
-			if ( Array_ != NONE )
+			if ( Array_ != E_NIL )
 				ERRu();
 
 			if ( ( Position_ >= Description_->Amount() )
@@ -483,12 +483,12 @@ namespace rqm
 		//f Signalize the end of a array session.
 		void EndArray( void )
 		{
-			if ( Array_ == NONE )
+			if ( Array_ == E_NIL )
 				ERRu();
 
 			AddCast( cEnd, *Channel_ ) ;
 
-			Array_ = NONE;
+			Array_ = E_NIL;
 		}
 		//f Send a message that explain the reason of no treatment.
 		void SendExplanationMessage( const char *Message )

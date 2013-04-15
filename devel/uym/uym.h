@@ -386,7 +386,7 @@ namespace uym {
 			mdr::size__ Size,
 			mdr::row_t__ Position,
 			mdr::size__ Count );
-		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
+		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'E_NIL' if non-existant.
 		mdr::row_t__ Search(
 			const mdr::datum__ *Objet,
 			mdr::size__ Size,
@@ -538,8 +538,8 @@ namespace uym {
 
 
 	//d A position take this value if an object cannot be find.
-#ifndef NONE
-	#define NONE	UYM_UNREACHABLE_POSITION
+#ifndef E_NIL
+	#define E_NIL	UYM_UNREACHABLE_POSITION
 #endif
 
 	void _Copy(
@@ -658,7 +658,7 @@ namespace uym {
 		{
 			_Store( Object, Size, Count, Position, m::Data_ );
 		}
-		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
+		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'E_NIL' if non-existant.
 		mdr::row_t__ Search(
 			const mdr::datum__ *Object,
 			mdr::size__ Size,

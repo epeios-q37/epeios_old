@@ -62,7 +62,7 @@ void Print( const clnarg::arguments_ &Arguments )
 	tym::row__ P = Arguments.First();
 	ctn::E_CMITEM( clnarg::argument_ ) Item;
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		stf::cout << txf::tab << Arguments( P, Item );
 		P = Arguments.Next( P );
 	}
@@ -95,7 +95,7 @@ void Print(
 {
 	tym::row__ P = List.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		stf::cout << (unsigned long)List( P ) << ": ";
 		Print( A, List( P ) );
 		stf::cout << txf::nl;

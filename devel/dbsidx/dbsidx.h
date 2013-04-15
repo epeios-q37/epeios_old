@@ -103,7 +103,7 @@ namespace dbsidx {
 		bso::ulong__ Used;
 		extremities__( void )
 		{
-			Smallest = Greatest = NONE;
+			Smallest = Greatest = E_NIL;
 			Used = 0;
 		}
 	};
@@ -235,7 +235,7 @@ namespace dbsidx {
 		void reset( bso::bool__ P = true )
 		{
 			BaseIndex.reset( P );
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 
 			S_.Sort = NULL;
 			S_.Content = NULL;
@@ -267,7 +267,7 @@ namespace dbsidx {
 			bso::bool__ Partial = false )
 		{
 			BaseIndex.Init();
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 
 			S_.Content = &Content;
 			S_.Sort = &Sort;
@@ -279,7 +279,7 @@ namespace dbsidx {
 		// Vide l'index.
 		void Reset( void )
 		{
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 			BaseIndex.Init();
 			ErasePhysically();
 
@@ -298,7 +298,7 @@ namespace dbsidx {
 		void Delete( rrow__ Row )
 		{
 #ifdef DBSIDX_DBG
-			if ( S_.Root == NONE )
+			if ( S_.Root == E_NIL )
 				ERRu();
 #endif
 			S_.Root = BaseIndex.Delete( Row, S_.Root );
@@ -321,7 +321,7 @@ namespace dbsidx {
 			switch ( Sign ) {
 			case -1:
 				if ( EqualBehavior == bStop )
-					Row = NONE;
+					Row = E_NIL;
 				else
 					Row = Next( Row );
 				break;
@@ -329,7 +329,7 @@ namespace dbsidx {
 				break;
 			case 1:
 				if ( EqualBehavior == bStop )
-					Row = NONE;
+					Row = E_NIL;
 				else
 					Row = Previous( Row );
 				break;
@@ -359,25 +359,25 @@ namespace dbsidx {
 		{	
 			S_.Root = Member;
 
-			if ( Member != NONE ) 
-				while ( ( Member = BaseIndex.GetTreeParent( Member ) ) != NONE )
+			if ( Member != E_NIL ) 
+				while ( ( Member = BaseIndex.GetTreeParent( Member ) ) != E_NIL )
 					S_.Root = Member;
 
 			return S_.Root;
 		}
 		rrow__ First( void ) const
 		{
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return BaseIndex.First( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		rrow__ Last( void ) const
 		{
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return BaseIndex.Last( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		rrow__ Next( rrow__ Row ) const
 		{
@@ -389,8 +389,8 @@ namespace dbsidx {
 		{
 			rrow__ Candidate = Next( Row );
 
-			if ( Candidate == NONE )
-				return NONE;
+			if ( Candidate == E_NIL )
+				return E_NIL;
 			else if ( Compare( Row, Candidate, SkipLevel ) != 0 )
 				return Candidate;
 			else
@@ -418,17 +418,17 @@ namespace dbsidx {
 		}
 		void Balance( void )
 		{
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				S_.Root = BaseIndex.Balance( S_.Root );
 
 			_Touch( false );
 		}
 		rrow__ CompareTreeAndQueue( void ) const
 		{
-			if ( S_.Root != NONE )
+			if ( S_.Root != E_NIL )
 				return BaseIndex.Compare( S_.Root );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		rrow__ Test( void ) const;
 		void Reindex( observer_functions__ &Observer );

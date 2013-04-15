@@ -84,7 +84,7 @@ void Print( const mscrmi::blocs_ &Blocs )
 {
 	epeios::row__ Row = Blocs.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		PrintAddress( Blocs( Row ).Address );
 		cout << " - ";
 
@@ -99,14 +99,14 @@ void GetBlocs( const mscrmi::midi_implementations_ &Implementations )
 {
 ERRProlog
 	ctn::E_CITEM( mscrmi::midi_implementation_ ) Implementation;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 	mscrmi::blocs Blocs;
 ERRBegin
 	Implementation.Init( Implementations );
 
 	Row = Implementations.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Blocs.Init();
 		mscrmi::GetBlocs( Implementation( Row ).Definitions, Blocs );
 

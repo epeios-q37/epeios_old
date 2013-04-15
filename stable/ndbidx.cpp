@@ -87,8 +87,8 @@ ERRBegin
 
 	Round = 0;
 
-	if ( S_.Root == NONE ) {
-		Row = NONE;
+	if ( S_.Root == E_NIL ) {
+		Row = E_NIL;
 
 		ERRReturn;
 	}
@@ -97,7 +97,7 @@ ERRBegin
 
 	Row = Seeker.GetCurrent();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		DatumToCompare.Init();
 
 		if ( !_Retrieve( Row, DatumToCompare, Cache ) )
@@ -107,7 +107,7 @@ ERRBegin
 		case 0:
 			switch ( EqualBehavior ) {
 			case bStop:
-				Row = NONE;	// Pour sortir de la boucle.
+				Row = E_NIL;	// Pour sortir de la boucle.
 				break;
 			case bGreater:
 				Row = Seeker.SearchGreater();
@@ -117,7 +117,7 @@ ERRBegin
 				break;
 			case bStopIfOneChildMissing:
 				if ( !Seeker.HasLesser() || !Seeker.HasGreater() )
-					Row = NONE;	// Popur sortir de la boucle.
+					Row = E_NIL;	// Popur sortir de la boucle.
 				else if ( *Row & 1 )	// Petit générateur aléatoire (sans doute inutile ?).
 					Row = Seeker.SearchLesser();
 				else
@@ -155,43 +155,43 @@ rrow__ ndbidx::index_::_SearchStrictGreater(
 	_CompleteInitialization();	
 
 	rrow__ Buffer = _Index().GetTreeGreater( Row );
-	rrow__ Candidate = NONE;
+	rrow__ Candidate = E_NIL;
 
-	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
+	while ( ( Buffer != E_NIL ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
 		Buffer = _Index().GetTreeGreater( Buffer );
 
-	if ( Buffer != NONE ) {
+	if ( Buffer != E_NIL ) {
 		Candidate = Buffer;
 
 		Buffer = _Index().GetTreeLesser( Buffer );
 
-		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
+		while ( ( Buffer != E_NIL ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
 			Candidate = Buffer;
 
 			Buffer = _Index().GetTreeLesser( Buffer );
 		}
 
-		if ( Buffer != NONE ) {
+		if ( Buffer != E_NIL ) {
 			Buffer = _SearchStrictGreater( Buffer, SkipLevel );
 
-			if ( Buffer != NONE )
+			if ( Buffer != E_NIL )
 				Candidate = Buffer;
 		}
 	} else {
 		Buffer = _Index().GetTreeParent( Row );
 
-		if ( Buffer != NONE ) {
+		if ( Buffer != E_NIL ) {
 
 			if ( _Index().IsTreeGreater( Row ) ) {
-				while ( ( Buffer != NONE ) && _Index().IsTreeGreater( Buffer ) )
+				while ( ( Buffer != E_NIL ) && _Index().IsTreeGreater( Buffer ) )
 					Buffer = _Index().GetTreeParent( Buffer );
 			} else
 				Buffer = Row;
 
-			if ( Buffer != NONE ) {
+			if ( Buffer != E_NIL ) {
 				Buffer = _Index().GetTreeParent( Buffer );
 
-				if ( Buffer != NONE ) {
+				if ( Buffer != E_NIL ) {
 					if ( Compare( Row, Buffer, SkipLevel ) != 0 )
 						Candidate = Buffer;
 					else
@@ -211,43 +211,43 @@ rrow__ ndbidx::index_::_SearchStrictLesser(
 	_CompleteInitialization();	
 
 	rrow__ Buffer = _Index().GetTreeLesser( Row );
-	rrow__ Candidate = NONE;
+	rrow__ Candidate = E_NIL;
 
-	while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
+	while ( ( Buffer != E_NIL ) && ( Compare( Buffer, Row, SkipLevel ) == 0 ) )
 		Buffer = _Index().GetTreeLesser( Buffer );
 
-	if ( Buffer != NONE ) {
+	if ( Buffer != E_NIL ) {
 		Candidate = Buffer;
 
 		Buffer = _Index().GetTreeGreater( Buffer );
 
-		while ( ( Buffer != NONE ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
+		while ( ( Buffer != E_NIL ) && ( Compare( Buffer, Row, SkipLevel ) != 0 ) ) {
 			Candidate = Buffer;
 
 			Buffer = _Index().GetTreeGreater( Buffer );
 		}
 
-		if ( Buffer != NONE ) {
+		if ( Buffer != E_NIL ) {
 			Buffer = _SearchStrictLesser( Buffer, SkipLevel );
 
-			if ( Buffer != NONE )
+			if ( Buffer != E_NIL )
 				Candidate = Buffer;
 		}
 	} else {
 		Buffer = _Index().GetTreeParent( Row );
 
-		if ( Buffer != NONE ) {
+		if ( Buffer != E_NIL ) {
 
 			if ( _Index().IsTreeLesser( Row ) ) {
-				while ( ( Buffer != NONE ) && _Index().IsTreeLesser( Buffer ) )
+				while ( ( Buffer != E_NIL ) && _Index().IsTreeLesser( Buffer ) )
 					Buffer = _Index().GetTreeParent( Buffer );
 			} else
 				Buffer = Row;
 
-			if ( Buffer != NONE ) {
+			if ( Buffer != E_NIL ) {
 				Buffer = _Index().GetTreeParent( Buffer );
 
-				if ( Buffer != NONE ) {
+				if ( Buffer != E_NIL ) {
 					if ( Compare( Row, Buffer, SkipLevel ) != 0 )
 						Candidate = Buffer;
 					else
@@ -270,7 +270,7 @@ bso::u8__ ndbidx::index_::Index(
 ERRProlog
 	datum DatumToCompare;
 	datum Datum;
-	rrow__ TargetRow = NONE;
+	rrow__ TargetRow = E_NIL;
 	bso::sign__ Result;
 //	tol::buffer__ Buffer;
 //	cio::aware_cout___ cout;
@@ -283,7 +283,7 @@ ERRBegin
 	if ( _Content().Amount() > DIndex.Amount() )
 		DIndex.Allocate( _Content().Amount(), aem::m_Default );
 
-	if ( S_.Root == NONE ) {
+	if ( S_.Root == E_NIL ) {
 		S_.Root = Row;
 
 		DIndex.BecomeRoot( Row );
@@ -298,7 +298,7 @@ ERRBegin
 					// Ce cas ne devrait pas arrivé, sauf lorsqu'il y a eu des problèmes de corruption corrigés à la main.
 
 	if ( Extremities != NULL ) {
-		if ( Extremities->Smallest == NONE )
+		if ( Extremities->Smallest == E_NIL )
 			Extremities->Smallest = DIndex.First( S_.Root );
 
 		TargetRow = Extremities->Smallest;
@@ -314,7 +314,7 @@ ERRBegin
 		case -1:
 			break;
 		case 1:
-			TargetRow = NONE;
+			TargetRow = E_NIL;
 			break;
 		default:
 			ERRFwk();
@@ -322,8 +322,8 @@ ERRBegin
 		}
 	}
 
-	if ( ( TargetRow == NONE ) && ( Extremities != NULL ) ) {
-		if ( Extremities->Greatest == NONE )
+	if ( ( TargetRow == E_NIL ) && ( Extremities != NULL ) ) {
+		if ( Extremities->Greatest == E_NIL )
 			Extremities->Greatest = DIndex.Last( S_.Root );
 
 		TargetRow = Extremities->Greatest;
@@ -339,7 +339,7 @@ ERRBegin
 		case 1:
 			break;
 		case -1:
-			TargetRow = NONE;
+			TargetRow = E_NIL;
 			break;
 		default:
 			ERRFwk();
@@ -347,7 +347,7 @@ ERRBegin
 		}
 	} 
 
-	if ( TargetRow == NONE )
+	if ( TargetRow == E_NIL )
 		Result = _Seek( Datum, NDBIDX_NO_SKIP, bStopIfOneChildMissing, TargetRow, Round, Cache );
 	else
 		Extremities->Used++;
@@ -387,7 +387,7 @@ ERRBegin
 #endif
 
 #ifdef NDBIDX_DBG
-	if ( TargetRow == NONE )
+	if ( TargetRow == E_NIL )
 		ERRFwk();
 #endif
 
@@ -404,18 +404,18 @@ rrow__ ndbidx::index_::LooseSeek(
 	skip_level__ SkipLevel,
 	bso::sign__ &Sign ) const
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 	bso::u8__ Round;
 
 	_CompleteInitialization();
 
-	if ( S_.Root == NONE )
-		return NONE;
+	if ( S_.Root == E_NIL )
+		return E_NIL;
 
 	Sign = _Seek( Datum, SkipLevel, EqualBehavior, Row, Round, *(ndbctt::cache_ *)NULL );
 
 #ifdef NDBIDX_DBG
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRFwk();
 #endif
 
@@ -424,13 +424,13 @@ rrow__ ndbidx::index_::LooseSeek(
 
 rrow__ ndbidx::index_::Test( void ) const
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 	datum Datum;
 ERRBegin
 	_CompleteInitialization();
 
-	if ( S_.Root == NONE )
+	if ( S_.Root == E_NIL )
 		ERRReturn;
 
 	Row = First();
@@ -441,7 +441,7 @@ ERRBegin
 
 	Row = Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( Compare( Row, Datum, NDBIDX_NO_SKIP ) == 1 )
 			ERRReturn;
 
@@ -515,7 +515,7 @@ static inline void Reindex_(
 	tol::E_DPOINTER___( extremities__ ) &Extremities,
 	bso::bool__ Randomly )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 	bso::u8__ Round = 0;
 
 	while ( Rows.Amount() ) {
@@ -557,7 +557,7 @@ ERRProlog
 	tol::E_DPOINTER___( extremities__ ) Extremities;
 	bso::uint__ BalancingCount = 0;
 	bch::E_BUNCH( rrow__ ) Rows;
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 	bso::uint__ PanelRecordCounter;
 	bso::uint__ PanelRecordSize;
 	bso::bool__ Randomly = false;
@@ -594,7 +594,7 @@ ERRBegin
 		Timer.Launch();
 	}
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Rows.Append( Row );
 
 		if ( PanelRecordCounter-- == 0 ) {

@@ -183,7 +183,7 @@ inline static void SetElementAttributeFromRegistry_(
 
 	Name.Init( AttributeNames );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		SetElementAttributeFromRegistry_( Document, DocumentId, ElementId, Name( Row ) );
 
 		Row = AttributeNames.Next( Row );
@@ -223,7 +223,7 @@ inline static void SetElementsAttributesFromRegistry_(
 
 	Id.Init( ElementIds );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		SetElementAttributesFromRegistry_( Document, DocumentId, Id( Row ) );
 
 		Row = ElementIds.Next( Row );

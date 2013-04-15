@@ -91,17 +91,17 @@ namespace que {
 		sdr::row_t__ Next;
 		link__( void )
 		{
-			Previous = Next = NONE;
+			Previous = Next = E_NIL;
 		}
 		// Return 'true' if node has next node, false otherwise.
 		bso::bool__ HasNext( void ) const
 		{
-			return Next != NONE;
+			return Next != E_NIL;
 		}
 		// Return 'true' if node has previous node, false otherwise.
 		bso::bool__ HasPrevious( void ) const
 		{
-			return Previous != NONE;
+			return Previous != E_NIL;
 		}
 		// To help swapping. Replace all reference to 'Node1' by 'Node2'.
 		void Replace(
@@ -223,7 +223,7 @@ namespace que {
 		{
 			link__ L = Links( Item );
 
-			if ( ( L.Previous != NONE ) || ( L.Next != NONE ) )
+			if ( ( L.Previous != E_NIL ) || ( L.Next != E_NIL ) )
 				ERRFwk();
 		}
 	#endif
@@ -344,7 +344,7 @@ namespace que {
 			if ( LNode.HasPrevious() )
 				Links.SetNext( LNode.Previous, LNode.Next );
 
-			LNode.Next = LNode.Previous = NONE;
+			LNode.Next = LNode.Previous = E_NIL;
 
 			Links.Store( LNode, *Node );
 		}
@@ -390,14 +390,14 @@ namespace que {
 
 			link__ L = Links.Get( *Node );
 
-			L.Previous = NONE;
+			L.Previous = E_NIL;
 
 			Links.Store( L, *Node );
 
-			if ( P != NONE ) {
+			if ( P != E_NIL ) {
 				L = Links.Get( *P );
 
-				L.Next = NONE;
+				L.Next = E_NIL;
 
 				Links.Store( L, *P );
 			}
@@ -451,14 +451,14 @@ namespace que {
 	#ifdef QUE_DBG
 		void Test_( void ) const
 		{
-			if ( ( Tail_ == NONE ) ||( Head_ == NONE ) )
+			if ( ( Tail_ == E_NIL ) ||( Head_ == E_NIL ) )
 				ERRFwk();
 		}
 	#endif
 	public:
 		void reset( bso::bool__ = true )
 		{
-			Head_ = Tail_ = NONE;
+			Head_ = Tail_ = E_NIL;
 			Amount_ = 0;
 		}
 		queue_manager__( void )
@@ -476,7 +476,7 @@ namespace que {
 		//f Initialization with queue 'Queue'.
 		void Init( que::E_QUEUEt_( r ) & )
 		{
-			Head_ = Tail_ = NONE;
+			Head_ = Tail_ = E_NIL;
 			Amount_ = 0;
 		}
 		//f Create the queue with item 'Item'.
@@ -485,7 +485,7 @@ namespace que {
 			que::E_QUEUEt_(r) & )
 		{
 # ifdef QUE_DBG
-			if ( ( Head_ != NONE ) || ( Tail_ != NONE ) )
+			if ( ( Head_ != E_NIL ) || ( Tail_ != E_NIL ) )
 				ERRFwk();
 # endif
 			Head_ = Tail_ = Item;
@@ -593,7 +593,7 @@ namespace que {
 	#ifdef QUE_DBG
 			Test_();
 
-			if ( Node == NONE )
+			if ( Node == E_NIL )
 				ERRPrm();
 	#endif
 			return Queue.Next( Node );
@@ -606,7 +606,7 @@ namespace que {
 	#ifdef QUE_DBG
 			Test_();
 
-			if ( Node == NONE )
+			if ( Node == E_NIL )
 				ERRPrm();
 	#endif
 			return Queue.Previous( Node );

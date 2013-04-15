@@ -251,7 +251,7 @@ namespace uys {
 			_AggregatedStorageDriver.reset( P );
 
 			S_.Size = 0;
-			S_.Descriptor = AGS_UNDEFINED_DESCRIPTOR;
+			S_.Descriptor = E_NIL;
 		}
 		untyped_storage_( s &S )
 		: S_( S ),
@@ -367,7 +367,7 @@ namespace uys {
 			sdr::size__ Size,
 			sdr::row_t__ Position,
 			sdr::size__ Count );
-		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'NONE' if non-existant.
+		//f Search 'Object' of size 'Size' between 'Begin' and 'End' (excluded) and return its position or 'E_NIL' if non-existant.
 		sdr::row_t__ Search(
 			const sdr::datum__ *Objet,
 			sdr::size__ Size,
@@ -518,8 +518,8 @@ namespace uys {
 
 
 	//d A position take this value if an object cannot be find.
-#ifndef NONE
-	#define NONE	UYS_UNREACHABLE_POSITION
+#ifndef E_NIL
+	#define E_NIL	UYS_UNREACHABLE_POSITION
 #endif
 
 	void _Copy(
@@ -638,7 +638,7 @@ namespace uys {
 		{
 			_Store( Object, Size, Count, Position, m::Data_ );
 		}
-		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'NONE' if non-existant.
+		//f Return the position from 'Object' of size 'Size' between 'Begin' and 'End' (excluded) oR 'E_NIL' if non-existant.
 		sdr::row_t__ Search(
 			const sdr::datum__ *Object,
 			sdr::size__ Size,

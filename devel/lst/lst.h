@@ -206,12 +206,12 @@ namespace lst {
 		{
 			return (r_t)Nouveau_( Mode );
 		}
-		//f Return the row of a new entry. Use 'Row' if != 'NONE' (restoration purpose).
+		//f Return the row of a new entry. Use 'Row' if != 'E_NIL' (restoration purpose).
 		r New(
 			r Row,
 			aem::mode__ Mode = aem::m_Default )
 		{
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				r FirstAvailable = *Locations.GetFirstAvailable();
 
 				if ( Locations.New( *Row ) ) {
@@ -226,7 +226,7 @@ namespace lst {
 			} else
 				return New();
 		}
-		//f Return the first entry if exists, 'NONE' if list empty.
+		//f Return the first entry if exists, 'E_NIL' if list empty.
 		r First( void ) const
 		{
 			if ( Extent_() )
@@ -235,18 +235,18 @@ namespace lst {
 				else
 					return Successeur_( 0 );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		r First( sdr::size__ Offset ) const
 		{
 			r Row = First();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row = Next( Row, Offset  );
 
 			return Row;
 		}
-		//f Return the last entry, 'NONE' if list empty.
+		//f Return the last entry, 'E_NIL' if list empty.
 		r Last( void ) const
 		{
 			if ( Extent_() )
@@ -259,13 +259,13 @@ namespace lst {
 					return Predecesseur_( P );
 			}
 			else
-				return NONE;
+				return E_NIL;
 		}
 		r Last( sdr::size__ Offset ) const
 		{
 			r Row = Last();
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Row = Previous( Row, Offset  );
 
 			return Row;
@@ -275,7 +275,7 @@ namespace lst {
 		{
 			return Amount() == 0;
 		}
-		//f Return the entry next to 'Entry', 'NONE' if 'Entry' is the last one.
+		//f Return the entry next to 'Entry', 'E_NIL' if 'Entry' is the last one.
 		r Next(
 			r Entry,
 			sdr::size__ Offset = 1 ) const
@@ -286,9 +286,9 @@ namespace lst {
 				else
 					return Successeur_( *Entry );
 			else
-				return NONE;
+				return E_NIL;
 		}
-		//f Return the previous entry of 'Entry', 'NONE' if 'Entry' the first one.
+		//f Return the previous entry of 'Entry', 'E_NIL' if 'Entry' the first one.
 		r Previous(
 			r Entry,
 			sdr::size__ Offset = 1 ) const
@@ -299,7 +299,7 @@ namespace lst {
 				else
 					return Predecesseur_( *Entry );
 			else
-				return NONE;
+				return E_NIL;
 		}
 		//f Amount of entries, NOT the extent of the list.
 		sdr::size__ Amount( void ) const
@@ -525,12 +525,12 @@ namespace lst {
 			Occupation_.Reset( false );
 			Nombre_ = 0;
 		}
-		//f First entry, 'NONE' if no entries.
+		//f First entry, 'E_NIL' if no entries.
 		r First( void ) const
 		{
 			return Occupation_.First( true );
 		}
-		//f LAsttry, 'NONE' if no entries.
+		//f LAsttry, 'E_NIL' if no entries.
 		r Last( void ) const
 		{
 			return Occupation_.Last( true );
@@ -548,7 +548,7 @@ namespace lst {
 		//f Return the position of a new entry.
 		r CreateEntry( err::handling__ ErrorHandling = err::h_Default  )
 		{
-			sdr::row_t__ Position = NONE;
+			sdr::row_t__ Position = E_NIL;
 
 			if ( Nombre_ == t ) 
 			{

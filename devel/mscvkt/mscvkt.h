@@ -140,7 +140,7 @@ namespace mscvkt {
 		{
 			nodes_::reset( P );
 			_dtree_::reset( P );
-			S_.Root = NONE;
+			S_.Root = E_NIL;
 		}
 		void plug( mmm::E_MULTIMEMORY_ &MM )
 		{

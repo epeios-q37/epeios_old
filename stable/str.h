@@ -222,11 +222,11 @@ namespace str {
 			char Tag,
 			bso::uint__ Position,
 			const string_ &Value );
-		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'NONE' if no occurence.
+		//f Return the position of the first occurence of 'S', beginning at 'Start'. Return 'E_NIL' if no occurence.
 		sdr::row__ Search(
 			const string_ &S,
 			sdr::row__ Start = 0 ) const;
-		//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'NONE' if no occurence.
+		//f Return the position of the first occurence of 'C', beginning at 'Start'. Return 'E_NIL' if no occurence.
 		sdr::row__ Search(
 			char C,
 			sdr::row__ Start = 0 ) const;

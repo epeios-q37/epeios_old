@@ -146,7 +146,7 @@ void cgimng::tool___::Create(
 	str::string_ &SessionID )
 {
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	session_id__ SID;
 	lck::read_write_access___<sessions_> Sessions;
 	data__ *Data = NULL;
@@ -186,14 +186,14 @@ answer__ cgimng::tool___::GetAndLock(
 {
 	answer__ Answer = aUndefined;
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
 	P = Sessions().Position( SessionID );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 
 		data__ &Data =  *(data__ *)Sessions().Get( P );
 
@@ -231,12 +231,12 @@ ERREpilog
 void cgimng::tool___::Release( const str::string_ &SessionID )
 {
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
-	if ( ( P = Sessions().Position( SessionID ) ) != NONE )	{
+	if ( ( P = Sessions().Position( SessionID ) ) != E_NIL )	{
 
 		data__ &Data =  *(data__ *)Sessions().Get( P );
 
@@ -264,14 +264,14 @@ answer__ cgimng::tool___::Close( const str::string_ &SessionID )
 {
 	answer__ Answer = aUndefined;
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
 	P = Sessions().Position( SessionID );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 
 		data__ &Data =  *(data__ *)Sessions().Get( P );
 

@@ -191,14 +191,14 @@ bso::bool__ frdrgy::GetProfileUIntValue(
 	bso::bool__ Success = false;
 ERRProlog
 	str::string Value;
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 ERRBegin
 	Value.Init();
 
 	if ( GetProfileValue( Path, Registry, Value ) ) {
 		Id = Value.ToUInt( &Error );
 
-		Success = Error == NONE;
+		Success = Error == E_NIL;
 	}
 ERRErr
 ERREnd

@@ -116,7 +116,7 @@ namespace mmi {
 		{
 			E_MEMORY_DRIVER__::reset( P );
 
-			_Index = NONE;
+			_Index = E_NIL;
 			Multimemoire_ = NULL;
 		}
 		//f Initialize with 'Multimemory' multimemory.
@@ -124,7 +124,7 @@ namespace mmi {
 		{
 			E_MEMORY_DRIVER__::Init();
 
-			_Index = NONE;
+			_Index = E_NIL;
 		}
 		//f The 'Index' memory becomes the memory handled by this memory driver.
 		void Index( index__ Index )
@@ -366,11 +366,11 @@ namespace mmi {
 			else
 				AllouerPlus_( CurrentAmount, Amount, Mode );
 		}
-		index__ New( index__ Index = NONE )
+		index__ New( index__ Index = E_NIL )
 		{
 			descripteur__ D = { MMM_UNDEFINED_DESCRIPTOR, 0 };
 
-			if ( Index == NONE )
+			if ( Index == E_NIL )
 				Index = Descripteurs.New();
 			else if ( !Descripteurs.Exists( Index ) )
 				ERRc();
@@ -418,7 +418,7 @@ namespace mmi {
 		{
 			mmm::descriptor__ D = Descripteurs( *Index ).Descripteur;
 
-			if ( D != NONE )
+			if ( D != E_NIL )
 				return Multimemoire.Size( D );
 			else
 				return 0;
@@ -432,7 +432,7 @@ namespace mmi {
 			mdr::size__ Amount );
 		void Shift( index__ Index )	// Shift all elements from 'Index' from one position to the end. Last element is lost.
 		{
-			descripteur__ Descripteur = {NONE, 0};
+			descripteur__ Descripteur = {E_NIL, 0};
 			Descripteurs.Store( Descripteurs, Descripteurs.Amount() - 1 - *Index, *Index + 1, Index );
 			Descripteurs.Store( Descripteur, Index );
 		}
@@ -625,7 +625,7 @@ namespace mmi {
 
 	inline mdr::size__ _base_indexed_multimemory_driver__::Size( void ) const
 	{
-		if ( _Index == NONE )
+		if ( _Index == E_NIL )
 			return 0;
 		else
 			return Multimemoire_->Size( _Index );

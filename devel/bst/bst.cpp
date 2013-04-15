@@ -178,7 +178,7 @@ namespace bst {
 
 
 		if ( Courant == Limite )
-			return NONE;
+			return E_NIL;
 		else
 			return Courant;
 	}
@@ -193,7 +193,7 @@ namespace bst {
 		while( ( functions__<pointeur>::Lire( --Courant, P ) != Valeur ) && Courant );
 
 		if ( !Courant && functions__<pointeur>::Lire( 0, P ) != Valeur )
-			return NONE;
+			return E_NIL;
 		else
 			return Courant;
 	}

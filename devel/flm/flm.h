@@ -115,7 +115,7 @@ namespace flm {
 
 	// Identifiant sous lequel est regroupé un ensemble de fichiers.
 	E_ROW( id__ );
-	#define FLM_UNDEFINED_ID	NONE
+	#define FLM_UNDEFINED_ID	E_NIL
 
 	id__ GetId( void );
 
@@ -450,7 +450,7 @@ namespace flm {
 			{
 				ReleaseFile();
 
-				if ( _Row != NONE )
+				if ( _Row != E_NIL )
 					_Unregister( _Row, _ID );
 
 				if ( Nom_ )
@@ -469,7 +469,7 @@ namespace flm {
 			Temoin_.Interne = false;
 			Temoin_.Mode = fil::mReadOnly;
 			TailleFichier_ = 0;
-			_Row = NONE;
+			_Row = E_NIL;
 			_ID = FLM_UNDEFINED_ID;
 			_EpochTimeStamp = 0;
 		}

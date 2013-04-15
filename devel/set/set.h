@@ -269,7 +269,7 @@ namespace set {
 
 			return P;
 		}
-		//f Return position of 'Object' between 'Begin' (included) and 'End' (excluded), or 'NONE' if not found.
+		//f Return position of 'Object' between 'Begin' (included) and 'End' (excluded), or 'E_NIL' if not found.
 		POSITION__ Position(
 			const type &Object,
 			POSITION__ Begin,
@@ -278,7 +278,7 @@ namespace set {
 			if ( Amount() )
 				return memory::Position( Object, Begin, End );
 		}
-		//f Return position of 'Object' beginning at 'Begin' (included), or 'NONE' if not found.
+		//f Return position of 'Object' beginning at 'Begin' (included), or 'E_NIL' if not found.
 		POSITION__ Position(
 			const type &Object,
 			POSITION__ Begin = 0 ) const

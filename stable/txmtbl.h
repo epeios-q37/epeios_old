@@ -257,7 +257,7 @@ namespace txmtbl {
 		{
 			sdr::row__ P = cells_::First();
 
-			if ( P != NONE )
+			if ( P != E_NIL )
 				return RemoveCellsAt( P );
 			else
 				return 0;

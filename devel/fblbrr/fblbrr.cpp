@@ -226,11 +226,11 @@ void fblbrr::remote_request_functions___::_CreateAll(
 	flw::iflow__ &Flow,
 	const casts_ &Casts )
 {
-	sdr::row__ Row = NONE;
+	sdr::row__ Row = E_NIL;
 
 	Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) ) {
 
 		if ( Flow.Get() != Casts( Row ) )
@@ -242,7 +242,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 		Row = Casts.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRFwk();
 
 	if ( _Parameters.Append( parameter___( cEnd ) ) != Row )
@@ -250,7 +250,7 @@ void fblbrr::remote_request_functions___::_CreateAll(
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( _Parameters.Append( Create_( Flow, (cast)Casts( Row ) ) ) != Row )
 			ERRFwk();
 
@@ -262,22 +262,22 @@ void fblbrr::remote_request_functions___::_DeleteAll( void )
 {
 	sdr::row__ Row = _Parameters.First();
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		return;
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( _Parameters( Row ).Cast != cEnd ) ) {
 		Delete_( _Parameters( Row ) );
 
 		Row =  _Parameters.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRFwk();
 
 	Row =  _Parameters.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Delete_( _Parameters( Row ) );
 
 		Row = _Parameters.Next( Row );
@@ -354,19 +354,19 @@ void fblbrr::remote_request_functions___::FBLBRQPush(
 
 	sdr::row__ Row = Casts.First();
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( Casts( Row ) != cEnd ) ) {
 		if ( _Parameters( Row ).Cast != Casts( Row ) )
 			ERRFwk();
 		Row = Casts.Next( Row );
 	}
 
-	if ( Row == NONE )
+	if ( Row == E_NIL )
 		ERRFwk();
 
 	Row = Casts.Next( Row );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Push_( Flow, _Parameters( Row ), (cast)Casts( Row ) );
 
 		Row = Casts.Next( Row );

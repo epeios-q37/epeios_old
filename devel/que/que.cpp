@@ -81,14 +81,14 @@ void que::Dump_(
 			Stack.Push( Begin );
 			Begin = Queue.Next( Begin );
 		}
-		while ( Begin != NONE );
+		while ( Begin != E_NIL );
 	else
 		do
 		{
 			Stack.Push( Begin );
 			Begin = Queue.Previous( Begin );
 		}
-		while ( Begin != NONE );
+		while ( Begin != E_NIL );
 }
 
 /* Although in theory this class is inaccessible to the different modules,

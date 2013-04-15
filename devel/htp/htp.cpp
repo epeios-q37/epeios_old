@@ -151,19 +151,19 @@ static void GetValue_(
 	const str::string_ &FieldName,
 	str::string_ &Value )
 {
-	epeios::row__ P = NONE;
+	epeios::row__ P = E_NIL;
 
 	P = *RawHeader.Search( FieldName );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 		P = RawHeader.Next( P, FieldName.Amount() );
 		
-		while ( ( P != NONE ) && ( RawHeader( P ) != NL[0] ) ) {
+		while ( ( P != E_NIL ) && ( RawHeader( P ) != NL[0] ) ) {
 			Value.Append( RawHeader( P ) );
 			P = RawHeader.Next( P );
 		}
 		
-		if ( P == NONE )
+		if ( P == E_NIL )
 			ERRf();
 	}
 }
@@ -193,7 +193,7 @@ static bso::ulong__ GetULong_(
 	bso::ulong__ Value = 0;
 ERRProlog
 	str::string SValue;
-	epeios::row__ Error = NONE;
+	epeios::row__ Error = E_NIL;
 ERRBegin
 	SValue.Init();
 
@@ -201,7 +201,7 @@ ERRBegin
 
 	Value = SValue.ToUL( &Error );
 
-	if ( Error != NONE )
+	if ( Error != E_NIL )
 		ERRu();
 ERRErr
 ERREnd
@@ -306,7 +306,7 @@ void htp::Post(
 
 	Flow << "POST " << URL << " HTTP/1.1" << NL;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Write_( Field( Row ), Flow );
 
 		Row = Fields.Next( Row );

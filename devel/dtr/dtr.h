@@ -90,8 +90,8 @@ namespace dtr {
 		browser__( void )
 		{
 			_Kinship = k_Undefined;
-			_Position = NONE;
-			_Root = NONE;
+			_Position = E_NIL;
+			_Root = E_NIL;
 		}
 		//f Initialization wih 'Root' as root.
 		void Init( r Root )
@@ -158,7 +158,7 @@ namespace dtr {
 			r First,
 			r Node )
 		{
-			if ( Tree.Left( Node ) == NONE )
+			if ( Tree.Left( Node ) == E_NIL )
 				Tree.BecomeOverridingRight( First, Node );
 			else
 				Queue.BecomePrevious( First, Tree.Left( Node ) );
@@ -170,7 +170,7 @@ namespace dtr {
 			r Last,
 			r Node )
 		{
-			if ( Tree.Right( Node ) == NONE )
+			if ( Tree.Right( Node ) == E_NIL )
 				Tree.BecomeOverridingLeft( Last, Node );
 			else
 				Queue.BecomeNext( Last, Tree.Right( Node ) );
@@ -186,7 +186,7 @@ namespace dtr {
 
 			Queue.BecomePrevious( Previous, Node );
 
-			if ( ( Parent = Tree.Parent( Node ) ) != NONE ) {
+			if ( ( Parent = Tree.Parent( Node ) ) != E_NIL ) {
 				if ( Tree.Left( Parent ) == Node )
 					Tree.BecomeLeft( Previous, Parent );
 				Tree.ForceParent( Previous, Parent );
@@ -201,7 +201,7 @@ namespace dtr {
 
 			Queue.BecomeNext( Next, Node );
 
-			if ( ( Parent = Tree.Parent( Node ) ) != NONE ) {
+			if ( ( Parent = Tree.Parent( Node ) ) != E_NIL ) {
 				if ( Tree.Right( Parent ) == Node )
 					Tree.BecomeRight( Next, Parent );
 				Tree.ForceParent( Next, Parent );
@@ -217,7 +217,7 @@ namespace dtr {
 
 			Queue.Swap( Node1, Node2 );
 
-			if ( ( Parent = Tree.Parent( Node1 ) ) != NONE ) {
+			if ( ( Parent = Tree.Parent( Node1 ) ) != E_NIL ) {
 				if ( Tree.Left( Parent ) == Node1 )
 					Tree.BecomeLeft( Node2, Parent );
 				else if ( Tree.Left( Parent ) == Node2 )
@@ -242,7 +242,7 @@ namespace dtr {
 		}
 		bso::bool__ HasChild( r Node ) const
 		{
-			return FirstChild( Node ) != NONE;
+			return FirstChild( Node ) != E_NIL;
 		}
 		//f Return node previous to 'Node'.
 		r PreviousSibling( r Node ) const
@@ -251,7 +251,7 @@ namespace dtr {
 		}
 		bso::bool__ HasPreviousSibling( r Node ) const
 		{
-			return PreviousSibling( Node ) != NONE;
+			return PreviousSibling( Node ) != E_NIL;
 		}
 		//f Return node next to 'Node'.
 		r NextSibling( r Node ) const
@@ -260,7 +260,7 @@ namespace dtr {
 		}
 		bso::bool__ HasNextSibling( r Node ) const
 		{
-			return NextSibling( Node ) != NONE;
+			return NextSibling( Node ) != E_NIL;
 		}
 		//f Return parent of 'Node'.
 		r Parent( r Node ) const
@@ -274,14 +274,14 @@ namespace dtr {
 
 			Tree.Cut( Node );
 
-			if ( P != NONE ) {
-				if ( L == NONE ) {
-					if ( R != NONE )
+			if ( P != E_NIL ) {
+				if ( L == E_NIL ) {
+					if ( R != E_NIL )
 						Tree.BecomeLeft( R, P );
 				}
 
-				if ( R == NONE ) {
-					if ( L != NONE )
+				if ( R == E_NIL ) {
+					if ( L != E_NIL )
 						Tree.BecomeRight( L, P );
 				}
 			}
@@ -292,14 +292,14 @@ namespace dtr {
 		}
 		bso::bool__ HasParent( r Node ) const
 		{
-			return Parent( Node ) != NONE;
+			return Parent( Node ) != E_NIL;
 		}
 		//f Return amount of nodes.
 		mdr::size__ Amount( void ) const
 		{
 			return Tree.Amount();
 		}
-		/*f Return the first, then next node, or 'NONE' if no more,
+		/*f Return the first, then next node, or 'E_NIL' if no more,
 		using 'BrowseStruct'. */
 		r Browse( browser__<r> &Browser ) const
 		{
@@ -308,7 +308,7 @@ namespace dtr {
 
 			switch ( Kinship ) {
 			case k_Undefined:
-				if ( Root == NONE )
+				if ( Root == E_NIL )
 					ERRu();
 
 				if ( HasChild( Position ) ) {
@@ -352,7 +352,7 @@ namespace dtr {
 			}
 
 			if ( Position == Root ) {
-				Position = NONE;
+				Position = E_NIL;
 				Kinship = k_Undefined;
 			}
 

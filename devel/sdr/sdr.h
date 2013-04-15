@@ -65,7 +65,7 @@ extern class ttr_tutor &SDRTutor;
 
 # define SDR_INTERNAL_SDRIVER *(sdr::E_SDRIVER__ *)NULL
 
-# define NONE ( (sdr::row_t__) -1 )
+# define E_NIL ( (sdr::row_t__) -1 )
 
 # define SDR__DSIZE_SIZE_MAX ( ( ( 8 * sizeof( sdr::size__ ) ) / 7 ) + 1 )
 
@@ -79,7 +79,7 @@ namespace sdr {
 	typedef bso::p_size__	p_row_t__;
 	E_TMIMIC__( p_row_t__, p_row__ );
 # endif
-	#define SDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'NONE'.
+	#define SDR_ROW_T_MAX		( BSO_SIZE_MAX - 1 )	// 'BSO_SIZE_MAX' is 'E_NIL'.
 
 	//t The size of a storage.
 	using bso::size__;

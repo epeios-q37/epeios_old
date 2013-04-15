@@ -79,7 +79,7 @@ extern class ttr_tutor &MMM0Tutor;
 #ifdef MMM__USE_V1
 #	define MMM_UNDEFINED_DESCRIPTOR	0
 #elif defined( MMM__USE_V2 )
-#	define MMM_UNDEFINED_DESCRIPTOR NONE
+#	define MMM_UNDEFINED_DESCRIPTOR E_NIL
 #else
 #	error "No 'MMM' version défined !".
 #endif

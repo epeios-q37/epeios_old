@@ -102,7 +102,7 @@ static void Terminate_( void )
 	sdr::row__ Row = Steerings_.First();
 	csdleo::user_functions__ *Steering = NULL;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 
 		Steering = Steerings_( Row );
 

@@ -52,7 +52,7 @@ ERRProlog
 	flx::E_STRING_OFLOW___ SFlow;
 	crptgr::encrypt_oflow___ Encrypter;
 	txf::text_oflow__ TFlow;
-	epeios::row__ Row = NONE;
+	epeios::row__ Row = E_NIL;
 ERRBegin
 	SFlow.Init( Encrypted );
 	Encrypter.Init( SFlow, Key );
@@ -60,7 +60,7 @@ ERRBegin
 
 	Row = Text.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		TFlow.Put( Text( Row ) );
 		Row = Text.Next( Row );
 	}

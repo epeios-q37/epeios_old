@@ -94,7 +94,7 @@ extern class ttr_tutor &FBLBKDTutor;
 # define FBLBKD_MASTER_COMMAND		FBLBKD_INVALID_COMMAND
 
 //d This is the value of the index returned for a shared object already created.
-# define FBLBKD_SHARED_OBJECT_INDEX	NONE
+# define FBLBKD_SHARED_OBJECT_INDEX	E_NIL
 
 # if 0
 //d Value for an undefined Id32.
@@ -294,7 +294,7 @@ namespace fblbkd {
 		{
 			sdr::row__ Row = Indexes.Search( Index );
 
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				ERRFwk();
 
 			Indexes.Remove( Index );
@@ -357,7 +357,7 @@ namespace fblbkd {
 		{
 			sdr::row__ P = Descriptions.Position( Description );
 
-			if ( P == NONE )
+			if ( P == E_NIL )
 				P = FBLBKD_INVALID_COMMAND;
 			else if ( *P > FBLBKD_COMMAND_MAX )
 				ERRLmt();

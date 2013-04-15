@@ -201,7 +201,7 @@ ERRBegin
 
 	Description.Init( *this );
 
-	while( ( Position != NONE ) && ( Description( Position ).Name != str_string( Name ) ) )
+	while( ( Position != E_NIL ) && ( Description( Position ).Name != str_string( Name ) ) )
 		Position = CONTAINER_( description_ )::Next( Position );
 ERRErr
 ERREnd
@@ -219,7 +219,7 @@ ERRBegin
 
 	D.Init( *this );
 
-	while( ( Position != NONE )
+	while( ( Position != E_NIL )
 		    && ( ( D( Position ).Name != Description.Name )
 		         || ( D( Position ).Casts != Description.Casts ) ) )
 		Position = CONTAINER_( description_ )::Next( Position );
@@ -268,7 +268,7 @@ void rqm::AddValue(
 		const SET_( cast__ ) &Casts = *( const SET_( cast__ ) * )Valeur;
 		POSITION__ Position = Casts.First();
 
-		while ( Position  != NONE )
+		while ( Position  != E_NIL )
 		{
 			flw::Put( Casts( Position ), Flot );
 			Position = Casts.Next( Position );
@@ -499,11 +499,11 @@ kind rqm::request_manager___::GetValue(
 
 	GetValue_( Cast, Valeur );
 
-	if ( Array_ != NONE )
+	if ( Array_ != E_NIL )
 	{
 		if ( ( Cast_ = GetCast_() ) == cEnd )
 		{
-			Array_ = NONE;
+			Array_ = E_NIL;
 			Cast_ = cInvalid;
 
 			Kind = kArrayLast;

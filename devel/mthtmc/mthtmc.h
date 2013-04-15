@@ -151,7 +151,7 @@ namespace mthtmc {
 		}
 		bso::bool__ Init(
 			const str::string_ &String,
-			epeios::row__ &Position );	// 'Position' is set to the position of first unhandled character, or 'NONE' if all characters handled.
+			epeios::row__ &Position );	// 'Position' is set to the position of first unhandled character, or 'E_NIL' if all characters handled.
 		bso::bool__ Init( const str::string_ &String )
 		{
 			epeios::row__ Position = String.First();

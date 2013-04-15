@@ -130,10 +130,10 @@ ERREpilog
 			tym::row__ P = Descriptions.First();
 			command__ C = BROKER_INVALID_COMMAND;
 
-			while ( ( P != NONE ) && ( Descriptions( P ).Name != str::string( PrimaryCommandName ) ) )
+			while ( ( P != E_NIL ) && ( Descriptions( P ).Name != str::string( PrimaryCommandName ) ) )
 				P = Descriptions.Next( P );
 
-			if ( P != NONE )
+			if ( P != E_NIL )
 				C = (command__)P.V;
 
 			Requete.Output().Put( 0 );	// No explanation message;
@@ -201,7 +201,7 @@ ERRBegin
 
 	P = Broker.Modules.First();
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Item.Init();
 
@@ -241,7 +241,7 @@ ERRBegin
 
 	Description.Init( Descriptions );
 
-	while( P != NONE )
+	while( P != E_NIL )
 	{
 		Item.Init();
 
@@ -474,7 +474,7 @@ ERRProlog
 ERRBegin
 	CommandDetail.Init( CommandsDetails );
 
-	while( Position != NONE )
+	while( Position != E_NIL )
 	{
 		Description.Init();
 
@@ -669,10 +669,10 @@ namespace broker {
 	{
 		tym::row__ C = Modules.First();
 
-		while ( ( C != NONE ) && ( str::string( Modules(C)->Name() ) != Name )  )
+		while ( ( C != E_NIL ) && ( str::string( Modules(C)->Name() ) != Name )  )
 			C = Modules.Next( C );
 
-		if ( C == NONE )
+		if ( C == E_NIL )
 			C = BROKER_INVALID_TYPE;
 		else if ( C.V > BROKER_INVALID_TYPE )
 			ERRl();

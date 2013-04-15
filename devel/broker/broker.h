@@ -196,7 +196,7 @@ namespace broker {
 		{
 			tym::row__ P = Descriptions.Position( Description );
 
-			if ( P == NONE )
+			if ( P == E_NIL )
 				P = BROKER_INVALID_COMMAND;
 			else if ( P.V > BROKER_COMMAND_MAX )
 				ERRl();

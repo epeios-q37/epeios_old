@@ -86,7 +86,7 @@ extern class ttr_tutor &AGSTutor;
 #   error
 #  endif
 
-# define AGS_UNDEFINED_DESCRIPTOR	( (ags::descriptor__)NONE )
+# define AGS_UNDEFINED_DESCRIPTOR	( (ags::descriptor__)E_NIL )
 
 namespace ags {
 
@@ -708,7 +708,7 @@ namespace ags {
 		size__ Size;
 		void reset( bso::bool__ = true )
 		{
-			Row = NONE;
+			Row = E_NIL;
 			Size = 0;
 		}
 		E_CDTOR( tracker__ );
@@ -720,7 +720,7 @@ namespace ags {
 			sdr::row_t__ Row,
 			size__ Size )
 		{
-			if ( ( Row ==  NONE ) || ( Size == 0 ) )
+			if ( ( Row ==  E_NIL ) || ( Size == 0 ) )
 				ERRPrm();
 
 			this->Row = Row;
@@ -875,7 +875,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 		sdr::row_t__ _GetTailFreeFragment( void ) const
 		{
 			if ( _GetTailFreeSize() == 0 )
-				return NONE;
+				return E_NIL;
 			else
 				return _Size() - _GetTailFreeSize();
 		}
@@ -1046,7 +1046,7 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 		}
 		sdr::row_t__ _GetUsableFreeFragmentIfAvailable( size__ Size )
 		{
-			sdr::row_t__ Row = NONE;
+			sdr::row_t__ Row = E_NIL;
 
 			if ( S_.Free.IsSuitable( Size ) ) {
 				Row = S_.Free.Row;
@@ -1058,20 +1058,20 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 		descriptor__ _Allocate( sdr::size__ Size )
 		{
 			xsize__ XSize;
-			sdr::row_t__ Row = NONE;
-			descriptor__ Descriptor = NONE;
+			sdr::row_t__ Row = E_NIL;
+			descriptor__ Descriptor = E_NIL;
 			bso::bool__ All = false;
 
 			XSize.Init( Size, sUsed );
 
-			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize.FragmentSize() ) ) == NONE )
+			if ( ( Row = _GetUsableFreeFragmentIfAvailable( XSize.FragmentSize() ) ) == E_NIL )
 				if ( _GetTailFreeSize() >= XSize.FragmentSize() )
 					Row = _GetTailFreeFragment();
 
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				Descriptor = _SetUsedFragmentUsingFreeFragment( Row, XSize, ( Row == 0 ? _TailFragmentStatus() : sUsed ), All );
 			} else { 
-				if ( ( Row = _GetTailFreeFragment() ) == NONE )
+				if ( ( Row = _GetTailFreeFragment() ) == E_NIL )
 					Row = _Size();
 				Descriptor = _AllocateAndSetUsedFragmentAtTail( XSize, sUsed, All );
 			}
@@ -1205,24 +1205,24 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 		descriptor__ Allocate( size__ Size )
 		{
 			if ( Size == 0 )
-				return NONE;
+				return E_NIL;
 			else
 				return _Allocate( Size );
 		}
 		void Free( descriptor__ Descriptor )
 		{
-			if ( Descriptor != NONE ) 
+			if ( Descriptor != E_NIL ) 
 				return _Free( Descriptor );
 		}
 		descriptor__ Reallocate(
 			descriptor__ Descriptor,
 			size__ Size )
 		{
-			descriptor__ NewDescriptor = NONE;
+			descriptor__ NewDescriptor = E_NIL;
 
 			if ( Size == 0 )
 				Free( Descriptor );
-			else if ( Descriptor == NONE )
+			else if ( Descriptor == E_NIL )
 				NewDescriptor = Allocate( Size );
 			else {
 				size__ OldSize = _GetSize( Descriptor );

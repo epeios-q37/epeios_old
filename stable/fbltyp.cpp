@@ -151,7 +151,7 @@ namespace {
 
 		PutSize_( S.Amount(), OFlow );
 
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 			_Put( S( P ), OFlow );
 			P = S.Next( P );
 		}
@@ -362,7 +362,7 @@ namespace {
 
 		PutSize_( C.Amount(), OFlow );
 
-		while ( P != NONE ) {
+		while ( P != E_NIL ) {
 			Put_( Item( P ), OFlow );
 			P = C.Next( P );
 		}

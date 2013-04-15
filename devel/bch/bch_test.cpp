@@ -67,7 +67,7 @@ template <typename t> void Dump( const t &Mys )
 {
 	epeios::row__ R = Mys.First();
 
-	while( R != NONE ) {
+	while( R != E_NIL ) {
 		Dump( Mys( R ) );
 		R = Mys.Next( R );
 	}

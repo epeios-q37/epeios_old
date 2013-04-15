@@ -375,7 +375,7 @@ namespace rgstry {
 		void reset( bso::bool__ P = true )
 		{
 			S_.Nature = n_Undefined;
-			S_.ParentRow = NONE;
+			S_.ParentRow = E_NIL;
 
 			Name.reset( P );
 			Value.reset( P );
@@ -408,7 +408,7 @@ namespace rgstry {
 			nature__ Nature,
 			const name_ &Name,
 			const value_ &Value,
-			row__ ParentRow = NONE )
+			row__ ParentRow = E_NIL )
 		{
 			reset();
 
@@ -423,7 +423,7 @@ namespace rgstry {
 		void Init(
 			nature__ Nature,
 			const name_ &Name,
-			row__ ParentRow = NONE )
+			row__ ParentRow = E_NIL )
 		{
 			Init( Nature, Name, value(), ParentRow );
 		}
@@ -505,7 +505,7 @@ namespace rgstry {
 			const name_ &Name,
 			row__ Row ) const
 		{
-			cursor__ Cursor = NONE;
+			cursor__ Cursor = E_NIL;
 
 			return _Search( nKey, Name, Row, Cursor );
 		}
@@ -520,7 +520,7 @@ namespace rgstry {
 			const name_ &Name,
 			row__ Row ) const
 		{
-			cursor__ Cursor = NONE;
+			cursor__ Cursor = E_NIL;
 
 			return _Search( nAttribute, Name, Row, Cursor );
 		}
@@ -528,7 +528,7 @@ namespace rgstry {
 			const name_ &Name,
 			row__ Row ) const
 		{
-			return _SearchAttribute( Name, Row ) != NONE;
+			return _SearchAttribute( Name, Row ) != E_NIL;
 		}
 		row__ _SearchAttribute(
 			const name_ &Name,
@@ -537,11 +537,11 @@ namespace rgstry {
 		{
 			Row = _SearchAttribute( Name, Row );
 
-			if ( Row != NONE ) {
+			if ( Row != E_NIL ) {
 				buffer Buffer;
 
 				if ( _GetValue( Row, Buffer ) != Value )
-					Row = NONE;
+					Row = E_NIL;
 			}
 
 			return Row;
@@ -551,7 +551,7 @@ namespace rgstry {
 			const value_ &Value,
 			row__ Row ) const
 		{
-			return _SearchAttribute( Name, Value, Row ) != NONE;
+			return _SearchAttribute( Name, Value, Row ) != E_NIL;
 		}
 		row__ _Search(
 			const name_ &KeyName,
@@ -570,7 +570,7 @@ namespace rgstry {
 			const path_item_ &Item,
 			row__ Row ) const
 		{
-			cursor__ Cursor = NONE;
+			cursor__ Cursor = E_NIL;
 
 			return _Search( Item, Row, Cursor );
 		}
@@ -590,7 +590,7 @@ namespace rgstry {
 			nature__ Nature,
 			const name_ &Name,
 			const value_ &Value,
-			row__ Row = NONE )
+			row__ Row = E_NIL )
 		{
 			row__ NewRow = Nodes.New();
 
@@ -602,7 +602,7 @@ namespace rgstry {
 			nature__ Nature,
 			const name_ &Name,
 			const value_ &Value,
-			row__ Row = NONE )
+			row__ Row = E_NIL )
 		{
 			Row = _CreateWithoutFlush( Nature, Name, Value, Row );
 
@@ -612,7 +612,7 @@ namespace rgstry {
 		}
 		row__ _CreateKey(
 			const name_ &Name,
-			row__ Row = NONE )
+			row__ Row = E_NIL )
 		{
 			return _CreateWithFlush( nKey, Name, value(), Row );
 		}
@@ -720,7 +720,7 @@ namespace rgstry {
 			Nodes( ParentRow ).Children.Append( Row );
 
 #ifdef RGSTRY_DBG
-			if ( Nodes( Row ).ParentRow() != NONE )
+			if ( Nodes( Row ).ParentRow() != E_NIL )
 				ERRFwk();
 #endif
 			Nodes( Row ).ParentRow() = ParentRow;
@@ -945,7 +945,7 @@ namespace rgstry {
 			row__ ResultRow = _SearchAttribute( Name, Row );
 
 #ifdef RGSTRY_DBG
-			if ( Row == NONE )
+			if ( Row == E_NIL )
 				ERRFwk();
 #endif
 			return _GetValue( ResultRow, Buffer );
@@ -960,7 +960,7 @@ namespace rgstry {
 		{
 			row__ ResultRow = _Search( Path, Row );
 
-			if ( ResultRow != NONE ) {
+			if ( ResultRow != E_NIL ) {
 				_Delete( ResultRow );
 				return true;
 			} else
@@ -978,7 +978,7 @@ namespace rgstry {
 			const path_ &Path,
 			row__ Row ) const
 		{
-			return _Search( Path, Row ) != NONE;
+			return _Search( Path, Row ) != E_NIL;
 		}
 		bso::bool__ Exists(
 			const str::string_ &PathString,
@@ -1016,7 +1016,7 @@ namespace rgstry {
 		void reset( bso::bool__ P = true )
 		{
 			S_.Coord.reset( P );
-			S_.PathErrorRow = NONE;
+			S_.PathErrorRow = E_NIL;
 			S_.XPPStatus = xpp::s_Undefined;
 
 			S_.Coord.reset( P );
@@ -1059,16 +1059,16 @@ namespace rgstry {
 		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
-		row__ &Root,	// Peut être = 'NONE', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
+		row__ &Root,	// Peut être = 'E_NIL', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
 		xpp::context___ &Context );
 
 	inline row__ Parse(
 		xtf::extended_text_iflow__ &XFlow,
 		const xpp::criterions___ &Criterions,
 		registry_ &Registry,
-		row__ &Root	) // Peut être = 'NONE', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
+		row__ &Root	) // Peut être = 'E_NIL', auquel cas une nouvelle 'registry' est créee dont la racine est stockée dans ce paramètre.
 	{
-		row__ Row = NONE;
+		row__ Row = E_NIL;
 	ERRProlog
 		xpp::context___ Context;
 	ERRBegin
@@ -1105,7 +1105,7 @@ namespace rgstry {
 			_context___::reset( P );
 
 			Status = s_Undefined;
-			PathErrorRow = NONE;
+			PathErrorRow = E_NIL;
 		}
 		context___( void )
 		{
@@ -1122,7 +1122,7 @@ namespace rgstry {
 			_context___::Init();
 
 			Status = s_Undefined;
-			PathErrorRow = NONE;
+			PathErrorRow = E_NIL;
 		}
 	};
 
@@ -1202,10 +1202,10 @@ namespace rgstry {
 		void reset( bso::bool__ P = true )
 		{
 			Global.Registry = NULL;
-			Global.Root = NONE;
+			Global.Root = E_NIL;
 
 			Local.Registry = NULL;
-			Local.Root = NONE;
+			Local.Root = E_NIL;
 		}
 		overloaded_registry___( void )
 		{
@@ -1219,7 +1219,7 @@ namespace rgstry {
 			const registry_ &Global,
 			row__ Root,
 			registry_ &Local,	// 'Global' et 'Local' peuvent être identiques.
-			row__ LocalRoot )	// Si égal à NONE et 'Local' != 'NULL', est crée et retourné.
+			row__ LocalRoot )	// Si égal à E_NIL et 'Local' != 'NULL', est crée et retourné.
 		{
 			buffer Buffer;
 
@@ -1228,7 +1228,7 @@ namespace rgstry {
 
 			this->Local.Registry = &Local;
 
-			if ( ( &Local != NULL ) && ( LocalRoot == NONE ) )
+			if ( ( &Local != NULL ) && ( LocalRoot == E_NIL ) )
 				LocalRoot = Local.CreateRegistry( this->Global.Registry->GetName( Root, Buffer ) );
 
 			return this->Local.Root = LocalRoot;
@@ -1238,13 +1238,13 @@ namespace rgstry {
 			const registry_ &Global,
 			row__ Root )
 		{
-			Init( Global, Root, *(registry_ *)NULL, NONE );
+			Init( Global, Root, *(registry_ *)NULL, E_NIL );
 		}
 		row__ SetLocal(
 			registry_ &Registry,	// Si == 'NULL', on prend le 'Global'.
-			row__ Root )	// Si == 'NONE' est crée et retourné.
+			row__ Root )	// Si == 'E_NIL' est crée et retourné.
 		{
-			if ( ( &Global.Registry == NULL ) || ( Global.Root == NONE ) )
+			if ( ( &Global.Registry == NULL ) || ( Global.Root == E_NIL ) )
 				ERRFwk();
 
 			if ( &Registry == NULL )
@@ -1252,7 +1252,7 @@ namespace rgstry {
 
 			Local.Registry = &Registry;
 
-			if ( Root == NONE ) {
+			if ( Root == E_NIL ) {
 				buffer Buffer;
 
 				Root = Registry.CreateRegistry( this->Global.Registry->GetName( Global.Root, Buffer ) );
@@ -1318,12 +1318,12 @@ namespace rgstry {
 		void reset( bso::bool__ P = true )
 		{
 			if ( P ) {
-				if ( _LocalRoot != NONE )
+				if ( _LocalRoot != E_NIL )
 					overloaded_registry___::Delete( _LocalRoot );
 			}
 
 			overloaded_registry___::reset( P );
-			_LocalRoot = NONE;
+			_LocalRoot = E_NIL;
 		}
 		overloaded_unique_registry___( void )
 		{
@@ -1335,25 +1335,25 @@ namespace rgstry {
 		}
 		row__ Init(
 			registry_ &Global,
-			row__ Root )	// Si == 'NONE', est crée et retourné.
+			row__ Root )	// Si == 'E_NIL', est crée et retourné.
 		{
 			reset();
 
-			if ( Root == NONE )
+			if ( Root == E_NIL )
 				Root = Global.CreateRegistry( name() );
 
-			_LocalRoot = overloaded_registry___::Init( Global, Root, *(registry_ *)NULL, NONE );
+			_LocalRoot = overloaded_registry___::Init( Global, Root, *(registry_ *)NULL, E_NIL );
 
 			return Root;
 		}
 		row__ Init(
 			registry_ &Global,
 			row__ Root,
-			row__ LocalRoot ) // Si égal à NONE, est crée et retourné.
+			row__ LocalRoot ) // Si égal à E_NIL, est crée et retourné.
 		{
 			reset();
 
-			if ( LocalRoot == NONE )
+			if ( LocalRoot == E_NIL )
 				LocalRoot = _LocalRoot = overloaded_registry___::Init( Global, Root, Global, LocalRoot );
 			else
 				overloaded_registry___::Init( Global, Root, Global, LocalRoot );
@@ -1362,9 +1362,9 @@ namespace rgstry {
 		}
 		row__ SetLocal(
 			registry_ &Registry,
-			row__ Root )	// Si 'Root' == 'NONE'
+			row__ Root )	// Si 'Root' == 'E_NIL'
 		{
-			if ( Root == NONE )
+			if ( Root == E_NIL )
 				Root = _LocalRoot = overloaded_registry___::SetLocal( Registry, Root );
 			else
 				overloaded_registry___::SetLocal( Registry, Root );
@@ -1374,25 +1374,25 @@ namespace rgstry {
 	};
 # endif
 	E_ROW( level__ );
-#	define RGSTRY_UNDEFINED_LEVEL	NONE
+#	define RGSTRY_UNDEFINED_LEVEL	E_NIL
 
 	struct _entry__ {
 		row__ Root;
 		const registry_ *Registry;
 		void reset( bso::bool__ = true )
 		{
-			Root = NONE;
+			Root = E_NIL;
 			Registry = NULL;
 		}
 		void Init(
-			row__ Root = NONE,
+			row__ Root = E_NIL,
 			const registry_ &Registry = *(const registry_ *)NULL )
 		{
 			this->Root = Root;
 			this->Registry = &Registry;
 		}
 		_entry__(
-			row__ Root = NONE,
+			row__ Root = E_NIL,
 			const registry_ &Registry = *(const registry_ *)NULL )
 		{
 			Init( Root, Registry );
@@ -1749,20 +1749,20 @@ namespace rgstry {
 			level__ Level,
 			const path_ &Path ) const
 		{
-			return Search( Level, Path ) != NONE;
+			return Search( Level, Path ) != E_NIL;
 		}
 		bso::bool__ Exists(
 			level__ Level,
 			const str::string_ &PathString,
 			sdr::row__ *PathErrorRow = NULL ) const
 		{
-			return Search( Level, PathString, PathErrorRow ) != NONE;
+			return Search( Level, PathString, PathErrorRow ) != E_NIL;
 		}
 		bso::bool__ Exists(
 			const str::string_ &PathString,
 			sdr::row__ *PathErrorRow = NULL ) const
 		{
-			return Search( PathString, PathErrorRow ) != NONE;
+			return Search( PathString, PathErrorRow ) != E_NIL;
 		}
 		status__ Fill(
 			level__ Level,
@@ -1866,11 +1866,11 @@ namespace rgstry {
 		str::uint__ Max )
 	{
 		str::uint__ Value = Default;
-		sdr::row__ LocalError = NONE;
+		sdr::row__ LocalError = E_NIL;
 
 		Value = str::_GenericUnsignedConversion( RawValue, 0, &LocalError, str::bAuto, Max );
 
-		if ( ( LocalError != NONE ) || ( Value < Min ) ) {
+		if ( ( LocalError != E_NIL ) || ( Value < Min ) ) {
 
 			Value = Default;
 
@@ -1894,7 +1894,7 @@ namespace rgstry {
 		str::uint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
-		sdr::row__ PathError = NONE;
+		sdr::row__ PathError = E_NIL;
 		bso::bool__ ConversionError = false;
 	ERRBegin
 		RawValue.Init();
@@ -1902,7 +1902,7 @@ namespace rgstry {
 		if ( Registry.GetValue( Path, RawValue, &PathError ) )
 			Value = _GetUnsigned( RawValue, Default, &ConversionError, Min, Max );
 
-		if ( ( PathError != NONE ) || ConversionError ) {
+		if ( ( PathError != E_NIL ) || ConversionError ) {
 
 			Value = Default;
 
@@ -1928,14 +1928,14 @@ namespace rgstry {
 		str::sint__ Value = Default;
 	ERRProlog
 		str::string RawValue;
-		sdr::row__ GenericError = NONE;
+		sdr::row__ GenericError = E_NIL;
 	ERRBegin
 		RawValue.Init();
 
 		if ( Registry.GetValue( Path, RawValue, &GenericError ) )
 			Value = str::_GenericSignedConversion( RawValue, 0, &GenericError, str::bAuto, Min, Max );
 
-		if ( ( GenericError != NONE ) ) {
+		if ( ( GenericError != E_NIL ) ) {
 
 			Value = Default;
 

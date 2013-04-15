@@ -238,7 +238,7 @@ ERRBegin
 
 	Stack.Init();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		if ( !Cell( Current ).Amount() )
 		{
@@ -263,7 +263,7 @@ sdr::row__ line_::FirstNonEmptyCell( void ) const
 
 	Cell.Init( *this );
 
-	while( ( Current != NONE ) && !Cell( Current ).Amount() )
+	while( ( Current != E_NIL ) && !Cell( Current ).Amount() )
 		Current = Next( Current );
 
 	return Current;
@@ -276,7 +276,7 @@ sdr::row__ line_::LastNonEmptyCell( void ) const
 
 	Cell.Init( *this );
 
-	while( ( Current != NONE ) && !Cell( Current ).Amount() )
+	while( ( Current != E_NIL ) && !Cell( Current ).Amount() )
 		Current = Previous( Current );
 
 	return Current;
@@ -291,11 +291,11 @@ ERRProlog
 ERRBegin
 	Stack.Init();
 
-	if ( Current != NONE )
+	if ( Current != E_NIL )
 	{
 		Current = Previous( Current );
 
-		while( Current != NONE )
+		while( Current != E_NIL )
 		{
 			Stack.Push( Current );
 
@@ -324,11 +324,11 @@ ERRBegin
 
 	Stack.Init();
 
-	if ( Current != NONE )
+	if ( Current != E_NIL )
 	{
 		Current = Next( Current );
 
-		while( Current != NONE )
+		while( Current != E_NIL )
 		{
 
 			Stack.Push( Current );
@@ -379,7 +379,7 @@ ERRBegin
 
 		Erase_( Stack );
 	}
-	else if ( this->Amount() && ( Current == NONE ) )
+	else if ( this->Amount() && ( Current == E_NIL ) )
 		RemoveAllCells();
 ERRErr
 ERREnd
@@ -395,7 +395,7 @@ ERRProlog
 ERRBegin
 	Stack.Init();
 
-	while( Position != NONE )
+	while( Position != E_NIL )
 	{
 		Stack.Push( Position );
 
@@ -425,10 +425,10 @@ amount__ line_::RemoveComment( bso::char__ Marker )
 
 	Cell.Init( *this );
 
-	while( ( Position != NONE ) && !IsCommentary_( Cell( Position ), Marker ) )
+	while( ( Position != E_NIL ) && !IsCommentary_( Cell( Position ), Marker ) )
 		Position = Next( Position );
 
-	if ( Position != NONE )
+	if ( Position != E_NIL )
 		return RemoveCellsAt( Position );
 	else
 		return 0;
@@ -445,13 +445,13 @@ txf::text_oflow__ &operator <<(
 
 	Current = Line.First();
 
-	if ( Current != NONE )
+	if ( Current != E_NIL )
 	{
 		Flow << Cell( Current );
 		Current = Line.Next( Current );
 	}
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		Flow << txf::tab << Cell( Current );
 		Current = Line.Next( Current );
@@ -518,7 +518,7 @@ void table_::RemoveEmptyCells( void )
 {
 	sdr::row__ Current = First();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		lines_::operator ()( Current ).RemoveEmptyCells();
 
@@ -532,7 +532,7 @@ void table_::RemoveHeadingEmptyCells( void )
 {
 	sdr::row__ Current = First();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		lines_::operator ()( Current ).RemoveHeadingEmptyCells();
 
@@ -546,7 +546,7 @@ void table_::RemoveTailingEmptyCells( void )
 {
 	sdr::row__ Current = First();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		lines_::operator ()( Current ).RemoveTailingEmptyCells();
 
@@ -560,7 +560,7 @@ void table_::RemoveCentralEmptyCells( void )
 {
 	sdr::row__ Current = First();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		lines_::operator()( Current ).RemoveCentralEmptyCells();
 
@@ -574,7 +574,7 @@ void table_::RemoveComments( bso::char__ Marker )
 {
 	sdr::row__ Current = First();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		lines_::operator()( Current ).RemoveComment( Marker );
 
@@ -596,7 +596,7 @@ ERRBegin
 
 	Stack.Init();
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		if ( !Line( Current ).Amount() )
 		{
@@ -626,13 +626,13 @@ txf::text_oflow__ &operator <<(
 
 	Current = Table.First();
 
-	if ( Current != NONE )
+	if ( Current != E_NIL )
 	{
 		Flow << Line( Current );
 		Current = Table.Next( Current );
 	}
 
-	while( Current != NONE )
+	while( Current != E_NIL )
 	{
 		Flow << txf::nl << Line( Current );
 		Current = Table.Next( Current );

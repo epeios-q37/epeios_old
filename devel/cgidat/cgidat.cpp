@@ -77,7 +77,7 @@ row__ data_::GetDataWithName( const content_ &Name ) const
 
 	Content.Init( Contents );
 
-	while( ( Row != NONE ) && ( Content( Relationships( Row ).Name ) != Name ) )
+	while( ( Row != E_NIL ) && ( Content( Relationships( Row ).Name ) != Name ) )
 		Row = Relationships.Next( Row );
 
 	return Row;
@@ -92,7 +92,7 @@ row__ data_::GetDataWithNameAndSuffix(
 
 	Content.Init( Contents );
 
-	while( ( Row != NONE )
+	while( ( Row != E_NIL )
 		   && ( ( Content( Relationships( Row ).Name ) != Name )
 			  || ( Content( Relationships( Row ).Suffix ) != Suffix ) ) )
 		Row = Relationships.Next( Row );
@@ -105,12 +105,12 @@ void cgidat::Fill(
 	data_ &Data )
 {
 ERRProlog
-	cgiarg::row__ Row = NONE;
+	cgiarg::row__ Row = E_NIL;
 	str::string Name, Suffix, Value;
 ERRBegin
 	Row = Args.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Name.Init();
 		Suffix.Init();
 		Value.Init();

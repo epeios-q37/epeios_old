@@ -153,7 +153,7 @@ extern class ttr_tutor &NSXPCMTutor;
 #  define NSXPCM__ENABLE_FORMHISTORY
 # endif
 
-#if 0
+#if 1
 #  define NSXPCM__BOOL	bool
 # else
 #  define NSXPCM__BOOL	PRBool
@@ -272,7 +272,7 @@ namespace nsxpcm {
 		EF( KeyPress ),
 		EF( Load ),
 		EF( Close ),
-		ef_None = 0,
+		ef_E_NIL = 0,
 		ef_All = ( ( 1 << e_amount ) - 1 ),
 		ef_AllButAnnoying = ef_All & ~efAttributeChange & ~efBlur & ~efFocus	// Pour faciliter le déboguage.
 	};
@@ -656,6 +656,7 @@ namespace nsxpcm {
 	inline bso::bool__ HasAttribute(
 		nsIDOMElement *Element,
 		const char *Name )
+
 	{
 		nsString WName;
 		NSXPCM__BOOL Result;
@@ -924,14 +925,14 @@ namespace nsxpcm {
 		bso::s32__ Index = -1;
 	ERRProlog
 		str::string Value;
-		sdr::row__ Error = NONE;
+		sdr::row__ Error = E_NIL;
 	ERRBegin
 		Value.Init();
 		nsxpcm::GetAttribute( Node, "selectedIndex", Value );
 
 		Index = Value.ToS32( &Error );
 
-		if ( Error != NONE )
+		if ( Error != E_NIL )
 			ERRSys();
 	ERRErr
 	ERREnd
@@ -950,7 +951,7 @@ namespace nsxpcm {
 
 	void SetSelectedItem(	// Cherche parmis les enfants de 'Node' le premier élément ayant l'attribut 'xex:selected' à 'true' et le sélectionne.
 		nsIDOMNode *Node,
-		bso::bool__ SelectFirstOneIfNone = true );	// Lorsque à 'true', si aucun 'item' n'est marqué comme sélectionné, sélectionne le premier.
+		bso::bool__ SelectFirstOneIfE_NIL = true );	// Lorsque à 'true', si aucun 'item' n'est marqué comme sélectionné, sélectionne le premier.
 
 	inline nsIDOMXULSelectControlItemElement *GetSelectedItem( nsIDOMXULSelectControlElement *Element )
 	{
@@ -996,7 +997,11 @@ namespace nsxpcm {
 		bso::bool__ Deep,
 		nsIDOMNode **Clone )
 	{
+# if 1
+		T( Node->CloneNode( Deep, 0, Clone ) );
+# else
 		T( Node->CloneNode( Deep, Clone ) );
+# endif
 	}
 
 	inline void ReplaceChild(
@@ -1413,7 +1418,7 @@ namespace nsxpcm {
 			_MutationEvent = NULL;
 			_KeyEvent = NULL;
 			_EventImbricationLevel = -1;
-			_EventsToIgnore = ef_None;
+			_EventsToIgnore = ef_E_NIL;
 		}
 		event_data__( void )
 		{
@@ -2269,7 +2274,7 @@ namespace nsxpcm {
 #if 0
 		void ClearSelection( bso::bool__ SkipSelectEvent )
 		{
-			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : ef_None );
+			int Buffer = AddEventsToIgnore( SkipSelectEvent ? efSelect : ef_E_NIL );
 
 			T( _GetSelection()->ClearSelection() );
 
@@ -2414,7 +2419,7 @@ namespace nsxpcm {
 		MF( Apps ),
 		MF( XPRJ ),
 		MF( DynamicLibrary ),
-		fpmf_None = 0,
+		fpmf_E_NIL = 0,
 		fpmf_All = ( ( 1 << fpm_amount ) - 1 )	// Ne pas confondre avec 'fpmfAll', désignat que l'on désire tous les fichiers (filtre '*.*').
 	};
 	
@@ -2441,7 +2446,7 @@ namespace nsxpcm {
 		{}
 		void reset( bso::bool__ P = true )
 		{
-			S_.PredefinedFilters = fpmf_None;
+			S_.PredefinedFilters = fpmf_E_NIL;
 
 			Title.reset( P );
 			Filters.reset( P );
@@ -2740,7 +2745,7 @@ namespace nsxpcm {
 			}
 
 			_lpbunch_<type, row>::reset( P );
-			S_.Row = NONE;
+			S_.Row = E_NIL;
 		}
 		repository_( s &S )
 		: S_( S ),
@@ -2766,7 +2771,7 @@ namespace nsxpcm {
 		{
 			type *UserObject = NULL;
 
-			if ( S_.Row != NONE )
+			if ( S_.Row != E_NIL )
 				ERRu();
 
 			if ( ( UserObject = new type ) == NULL )
@@ -2776,21 +2781,21 @@ namespace nsxpcm {
 		}
 		void DismissCurrentObject( void )
 		{
-			if ( S_.Row == NONE )
+			if ( S_.Row == E_NIL )
 				ERRu();
 
-			S_.Row = NONE;
+			S_.Row = E_NIL;
 		}
 		void SetCurrentRow( row Row )
 		{
-			if ( S_.Row != NONE )
+			if ( S_.Row != E_NIL )
 				ERRu();
 
 			S_.Row = Row;
 		}
 		row GetCurrentRow( void ) const
 		{
-			if ( S_.Row == NONE )
+			if ( S_.Row == E_NIL )
 				ERRu();
 
 			return S_.Row;
@@ -3419,6 +3424,8 @@ namespace nsxpcm {
 /* Fin partie concernant 'textbox' 'autocomplete' */
 
 /* Debut partie concernant 'iclh__' */
+
+# define NS_SCRIPTABLE
 
 # define CLH_IID_STR "d333cd20-c453-11dd-ad8b-0800200c9a67"
 

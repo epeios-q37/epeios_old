@@ -221,7 +221,7 @@ namespace idxbtq {
 		{
 			r Parent = GetTreeParent( Node );
 
-			if ( Parent != NONE )
+			if ( Parent != E_NIL )
 				return GetTreeLesser( Parent ) == Node;
 			else
 				return false;
@@ -234,7 +234,7 @@ namespace idxbtq {
 		{
 			r Parent = GetTreeParent( Node );
 
-			if ( Parent != NONE )
+			if ( Parent != E_NIL )
 				return GetTreeGreater( Parent ) == Node;
 			else
 				return false;

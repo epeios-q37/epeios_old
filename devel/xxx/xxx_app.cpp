@@ -94,7 +94,7 @@ ERRBegin
 
 	P = Options.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Argument.Init();
 
 		switch( Option = Options( P ) ) {

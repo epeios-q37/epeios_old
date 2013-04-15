@@ -67,7 +67,7 @@ using namespace sclrgstry;
 #define REGISTRY_FILE_EXTENSION ".xcfg"
 
 static rgstry::registry Registry_;
-static rgstry::row__ Root_ = NONE;
+static rgstry::row__ Root_ = E_NIL;
 static STR_BUFFER___ Translation_;
 
 rgstry::entry___ sclrgstry::Parameters( "Parameters" );
@@ -78,7 +78,7 @@ rgstry::entry___ sclrgstry::Locale( "Locale", Parameters );
 
 bso::bool__ sclrgstry::IsReady( void )
 {
-	return Root_ != NONE;
+	return Root_ != E_NIL;
 }
 
 const rgstry::registry_ &sclrgstry::GetRegistry( void )
@@ -101,7 +101,7 @@ static rgstry::status__ FillRegistry_(
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	if ( Root_ != NONE )
+	if ( Root_ != E_NIL )
 		ERRFwk();
 
 	XFlow.Init( Flow );
@@ -262,7 +262,7 @@ template <typename t> static bso::bool__ GetUnsignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 ERRBegin
 	RawValue.Init();
 
@@ -271,7 +271,7 @@ ERRBegin
 
 	RawValue.ToNumber( Limit, Value, &Error );
 
-	if ( Error != NONE ) {
+	if ( Error != E_NIL ) {
 		ReportBadOrNoValueForEntryError( Entry );
 		ERRExit( EXIT_FAILURE );
 	}
@@ -290,7 +290,7 @@ template <typename t> static bso::bool__ GetSignedNumber_(
 	bso::bool__ Present = false;
 ERRProlog
 	str::string RawValue;
-	sdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 ERRBegin
 	RawValue.Init();
 
@@ -299,7 +299,7 @@ ERRBegin
 
 	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
 
-	if ( Error != NONE ) {
+	if ( Error != E_NIL ) {
 		ReportBadOrNoValueForEntryError( Entry );
 		ERRExit( EXIT_FAILURE );
 	}

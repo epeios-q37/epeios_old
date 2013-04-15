@@ -157,7 +157,7 @@ namespace bkdrqm {
 		}
 		void Test_( cast Cast )
 		{
-			if ( Position_ == NONE )
+			if ( Position_ == E_NIL )
 				Position_ = Casts_.First();
 			else
 				Position_ = Casts_.Next( Position_ );
@@ -186,7 +186,7 @@ namespace bkdrqm {
 		{
 			Casts_.reset( P );
 
-			Position_ = NONE;
+			Position_ = E_NIL;
 			Closed_ = true;
 			Cast_ = c_Unknow;
 			Parsed_ = false;

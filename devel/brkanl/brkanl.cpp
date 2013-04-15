@@ -67,14 +67,14 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CMITEM( command_item_ ) Item;
-		tym::row__ P =NONE;
+		tym::row__ P =E_NIL;
 		command Command;
 	ERRBegin
 		Item.Init( Items );
 
 		P = Items.First();
 
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 			Command.Init();
 			Command.Identification.Value = Item( P ).Value;
 			Command.Identification.ID( Item( P ).ID() );
@@ -112,14 +112,14 @@ namespace {
 	{
 	ERRProlog
 		ctn::E_CMITEM( type_item_ ) Item;
-		tym::row__ P = NONE;
+		tym::row__ P = E_NIL;
 		type Type;
 	ERRBegin
 		Item.Init( Items );
 
 		P = Items.First();
 
-		while( P != NONE ) {
+		while( P != E_NIL ) {
 			Type.Init();
 
 			Type.Identification.Value = Item( P ).Value;

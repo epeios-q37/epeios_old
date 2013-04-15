@@ -280,7 +280,7 @@ static bso::bool__ IsValid_(
 	if ( !AlpahaNumericOnly )
 		return true;
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		if ( !isalnum( Value( Row ) ) && ( Value( Row ) != '_' ) )
 			return false;
 
@@ -453,14 +453,14 @@ static rgstry::row__ ReadSetups_(
 	flw::iflow__ &Flow,
 	rgstry::registry_ &Setups )
 {
-	rgstry::row__ Root = NONE;
+	rgstry::row__ Root = E_NIL;
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	XFlow.Init( Flow );
 
 	if ( rgstry::FillRegistry( XFlow, xpp::criterions___(), SETUPS_LABEL, Setups, Root ) != rgstry::sOK )
-		Root = NONE;
+		Root = E_NIL;
 ERRErr
 ERREnd
 ERREpilog
@@ -539,7 +539,7 @@ static rgstry::row__ RetrieveSetups_(
 	const char *Language,
 	rgstry::registry_ &Setups )
 {
-	rgstry::row__ Root = NONE;
+	rgstry::row__ Root = E_NIL;
 ERRProlog
 	flw::iflow__ *Flow = NULL;
 	ibag___ Bag;
@@ -553,7 +553,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	if ( ( Root = ReadSetups_( *Flow, Setups ) ) == NONE ) {
+	if ( ( Root = ReadSetups_( *Flow, Setups ) ) == E_NIL ) {
 		Translation.Init();
 		UI.LogAndPrompt( Locale.GetTranslation( XULFTK_NAME "_UnableToFind" SETUPS_LABEL, Language, Translation) );
 		ERRReturn;
@@ -636,7 +636,7 @@ void xulftk::trunk___::_ApplySession( const frdkrn::compatibility_informations__
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 	rgstry::registry Setups;
-	rgstry::row__ Root = NONE;
+	rgstry::row__ Root = E_NIL;
 	str::string Setup;
 	flx::E_STRING_IFLOW__ Flow;
 	str::string Value;
@@ -646,7 +646,7 @@ ERRProlog
 ERRBegin
 	Setups.Init();
 
-	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Setups ) ) == NONE )
+	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(), Kernel().Language(), Setups ) ) == E_NIL )
 		ERRAbort();
 
 	ProjectId.Init();
@@ -792,7 +792,7 @@ void xulftk::trunk___::_DropSession( void )
 ERRProlog
 	str::string Setup;
 	rgstry::registry Setups;
-	rgstry::row__ Root = NONE;
+	rgstry::row__ Root = E_NIL;
 	str::string ProjectId;
 ERRBegin
 
@@ -801,7 +801,7 @@ ERRBegin
 
 	Setups.Init();
 
-	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(),Kernel().Language(), Setups ) ) != NONE ) {
+	if ( ( Root = RetrieveSetups_( UI(), Registry(), Kernel().Locale(),Kernel().Language(), Setups ) ) != E_NIL ) {
 		Setup.Init();
 		GetSetup_( Kernel(), Setup );
 
