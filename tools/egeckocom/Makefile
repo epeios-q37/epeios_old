@@ -32,7 +32,7 @@ copt =
 # Epeios general debugging features
 copt += -DXXX_DBG
 # Required for multitasking
-copt += -DCPE_MT
+copt += -DE_MT
 # For using <setjmp.h> instead of C++ exceptions.
 # copt += -DERR_JMPUSE
 
@@ -40,9 +40,9 @@ mods = locale registry
 
 # epeios/core
 mods += cdgb64 cio dlbrry err fil
-mods += flw flx fnm lcl lst mmi
+mods += flw flx fnm lcl lst
 mods += mtk nsxpcm rgstry str tht
-mods += tol ttr uym xml xpp
+mods += tol ttr xml xpp
 
 # epeios/gescko
 mods += geckof
@@ -50,11 +50,11 @@ mods += geckof
 # epeios/scl
 mods += scllocale sclmisc sclrgstry
 
-copt += -DNSXPCM_GECKO_V8 -DMOZ_NO_MOZALLOC
+copt += -DE_GECKO -DNSXPCM_GECKO_V8 -DMOZ_NO_MOZALLOC
 
 os := $(shell uname -o 2>/dev/null || uname -s)
 
-src = $(sdk)/include
+src = $(sdk)/include:$(sdk)/include/nspr
 
 ifndef EPEIOS_SRC
 	src += epeios
@@ -178,7 +178,7 @@ vpath %.cpp $(subst $(ds),:,$(src))
 
 srcd = $(subst $(ds), ,$(src))
 
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
+co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT) -DUINT32_MAX=UINT_MAX
 lo += $(EPEIOS_LOPT)
 
 objs = $(name).$(ox) $(mods:=.$(ox)) 

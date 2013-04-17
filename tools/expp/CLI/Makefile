@@ -1,9 +1,11 @@
-# 'expp' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
-# Builds executable for the 'expp' software.
-# Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2011 Claude SIMON
+# 'expp' Makefile
+#    by Claude SIMON (http://zeusw.org/intl/contact.html).
 #
-#   This file is part of 'expp'.
+# Requires GNU make (http://www.gnu.org/software/make/).
+#
+#	Copyright (C) 2013 Claude SIMON.
+#
+#	This file is part of 'expp'.
 #
 #    'expp' is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,23 +20,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with 'expp'.  If not, see <http://www.gnu.org/licenses/>.
 
-# $Id$
-
 name = expp
-copt =
+
+
 # Epeios general debugging features
 #copt += -DXXX_DBG
 # Required for multitasking
-#copt += -DCPE_MT
-# For using <setjmp.h> instead of C++ exceptions.
-# copt += -DERR_JMPUSE
-mods = cio clnarg epsmsc err fil flw fnm str tol ttr bso
-mods += ias sdr uys xml xpp lcl rgstry cdgb64 ags cpe
-mods += sclmisc scllocale sclerror sclrgstry scltool 
-mods += locale registry
+#copt += -DE_MT
+# For using alt;setjmp.h> instead of C++ exceptions.
+#copt += -DERR_JMPUSE
+	
+mods += ags bso cpe epsmsc err 
+mods += str tol ttr uys cdgb64 
+mods += cio fil flw fnm ias 
+mods += lcl rgstry xml xpp clnarg 
 
-# Don't modify line below.
-os := $(shell uname -o 2>/dev/null || uname -s)
+mods += sclmisc sclerror scllocale sclrgstry scltool 
+
+mods += locale registry 
+
 
 
 ##############################
@@ -51,13 +55,21 @@ CXXFLAGS += -O
 #CXXFLAGS += -pg
 
 ###############################
-
+	
+IA_32=x86
+x86_64=x64
+Cygwin=Cygwin
+MinGW=Msys
+GNULinux=GNU/Linux
+MacOS=Darwin
+os=$(shell uname -o 2>/dev/null || uname -s)
+  
 
 ##########################
 # For Cygwin environment #
 ##########################
 
-ifeq ("$(os)","Cygwin")
+ifeq ("$(os)","$(Cygwin)")
 
 # By default, vanilla Cygwin compiler ('g++') is used.
 # Resulting application uses the Cygwin POSIX Layer.
@@ -68,115 +80,84 @@ ifeq ("$(os)","Cygwin")
 # Use of the MinGW compiler under Cygwin. 
 # To build 64 bits application.
 # Uses directly the MS CRT.
-	#arch=x64
+	#arch=$(X86_64)
 
-# The MinGW compiler under Cygwin.
+# Use of the MinGW compiler under Cygwin.
 # For 32 bits application using directly the MS CRT.
-	#arch=x86
-
-	libs =
+	#arch=$(IA_32)
 
 endif
 
 ##########################
-
-
-#############################
-# For GNU/Linux environment #
-#############################
-
-ifeq ("$(os)","GNU/Linux")
-
-	libs = 
-
-# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-
-endif
-
-#############################
-
+		
 
 #########################
 # For MinGW environment #
 #########################
 
-ifeq ("$(os)","Msys")
-
-	libs =
+ifeq ("$(os)", "$(MinGW)")
 
 endif
 
 #########################
+		
 
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(GNULinux)")
+
+endif
+
+#############################
+	
 
 ##########################
-# For Mac OS environment #
+# For MacOS environment #
 ##########################
 
-ifeq ("$(os)","Darwin")
-
-	libs =
+ifeq ("$(os)","$(MacOS)")
 
 endif
 
 ##########################
-
-
+		
 ###################################
 ###################################
 ##### DON'T MODIFY BELOW !!! ######
 ###################################
 ###################################
+    
 
 ##########################
 # For Cygwin environment #
 ##########################
 
-ifeq ("$(os)","Cygwin")
+ifeq ("$(os)","$(Cygwin)")
 
 	co += -DCYGWIN
 
 	LDFLAGS += -static
 
-	ifeq ("$(arch)","x86")
+	ifeq ("$(arch)","$(IA_32)")
 		CXX = i686-w64-mingw32-g++
-	else ifeq ("$(arch)","x64")
+	else ifeq ("$(arch)","$(x86_64)")
 		CXX = x86_64-w64-mingw32-g++
 	endif
-endif
-
-##################################
-
-
-##########################################
-# Specific for the GNU/Linux environment #
-##########################################
-
-ifeq ("$(os)","GNU/Linux")
-
-	co += -DGNULINUX
-
-	LDFLAGS += -static
-
-	ifeq ("$(arch)","x86")
-		co += -m32
-		lo += -m32
-	else ifeq ("$(arch)","x64")
-		co += -m64
-		lo += -m64
-	endif
+	
+	target=$(name)
 
 endif
 
-##########################################
+##########################
+		
 
+#########################
+# For MinGW environment #
+#########################
 
-##################################
-# Specific to MinGW environment #
-##################################
-
-ifeq ("$(os)","Msys")
+ifeq ("$(os)", "$(MinGW)")
 
 	co += -DMSYS
 
@@ -190,16 +171,40 @@ ifeq ("$(os)","Msys")
 		lo += -m64
 	endif
 
+	target=$(name)
 endif
 
-##################################
-
-
 #########################
-# For Mac OS environment #
-#########################
+		
 
-ifeq ("$(os)","Darwin")
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(GNULinux)")
+
+	co += -DGNULINUX
+
+	LDFLAGS += -static
+
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+	target=$(name)
+endif
+
+#############################
+		
+
+##########################
+# For MacOS environment #
+##########################
+
+ifeq ("$(os)","$(MacOS)")
 
 	co += -DDARWIN
 
@@ -215,21 +220,14 @@ ifeq ("$(os)","Darwin")
 
 endif
 
-#########################
-
-
-##################################
-# Common to all GNU environment. #
-##################################
-
-##################################
-
+##########################
+		
 ifndef EPEIOS_SRC
-	src += ../epeios
+	src += :../epeios
 else
-	src += $(EPEIOS_SRC)
+	src += :$(EPEIOS_SRC)
 endif
-
+    
 ox = o
 ds = :
 
@@ -237,13 +235,14 @@ vpath %.cpp $(subst $(ds),:,$(src))
 
 srcd = $(subst $(ds), ,$(src))
 
-co := -c $(co) $(copt) $(srcd:%=-I%)
-lo += -o $(name) $(objs)
+co := -c $(co) $(copt) $(subst :, -I,$(src))
+lo += -o $(target) $(objs)
 
-objs = $(name).$(ox) $(mods:=.$(ox)) 
+objs = $(name).$(ox) $(mods:=.$(ox))
 
-$(name): $(objs)
+$(target): $(objs)
 	$(CXX) $(LDFLAGS) $(lo) $(libs)
-	
+
 %.$(ox): %.cpp
 	$(CXX) $(CPPFLAGS) $(co) $(CXXFLAGS) $<
+		

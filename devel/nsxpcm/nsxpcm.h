@@ -481,7 +481,7 @@ namespace nsxpcm {
 
 #ifdef NSXPCM_DBG
 		if ( GenericElement == NULL )
-			ERRu();
+			ERRPrm();
 #endif
 
 		Requestor = QueryInterface<nsIInterfaceRequestor>( GenericElement );
@@ -2741,7 +2741,7 @@ namespace nsxpcm {
 		{
 			if ( P ) {
 				if ( _lpbunch_<type, row>::Amount() != 0 )
-					ERRu();	// Car des objets existent qui n'ont pas encore été supprimé ('delete'r).
+					ERRFwk();	// Car des objets existent qui n'ont pas encore été supprimé ('delete'r).
 			}
 
 			_lpbunch_<type, row>::reset( P );
@@ -2772,31 +2772,31 @@ namespace nsxpcm {
 			type *UserObject = NULL;
 
 			if ( S_.Row != E_NIL )
-				ERRu();
+				ERRFwk();
 
 			if ( ( UserObject = new type ) == NULL )
-				ERRa();
+				ERRAlc();
 
 			return S_.Row = Add( UserObject );
 		}
 		void DismissCurrentObject( void )
 		{
 			if ( S_.Row == E_NIL )
-				ERRu();
+				ERRFwk();
 
 			S_.Row = E_NIL;
 		}
 		void SetCurrentRow( row Row )
 		{
 			if ( S_.Row != E_NIL )
-				ERRu();
+				ERRFwk();
 
 			S_.Row = Row;
 		}
 		row GetCurrentRow( void ) const
 		{
 			if ( S_.Row == E_NIL )
-				ERRu();
+				ERRFwk();
 
 			return S_.Row;
 		}
@@ -2808,7 +2808,7 @@ namespace nsxpcm {
 		{
 	#ifdef XXX_DBG
 			if ( !Exists( Row ) )
-				ERRu();
+				ERRFwk();
 	#endif
 			delete Get( Row );
 
