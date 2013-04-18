@@ -185,8 +185,6 @@ ifeq ("$(os)","$(GNULinux)")
 
 	co += -DGNULINUX
 
-	LDFLAGS += -static
-
 	ifeq ("$(arch)","x86")
 		co += -m32
 		lo += -m32
@@ -217,6 +215,7 @@ ifeq ("$(os)","$(MacOS)")
 		co += -m64
 		lo += -m64
 	endif
+	target=$(name)
 
 endif
 

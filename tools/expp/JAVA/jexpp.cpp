@@ -27,7 +27,6 @@
 
 using namespace jvabse;
 
-#include "XMLPreprocessorDemo.h"
 #include "org_zeusw_XPPInputStream.h"
 
 #define WORKAROUND	1

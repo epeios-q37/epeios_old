@@ -27,8 +27,6 @@ import org.xml.sax.*;
 
 class XMLPreprocessorDemo {
 
-	private static native void mallocCygwinBug();
-
 	public static void main ( String[] args )	throws Exception
 	{
 		System.loadLibrary("jexpp");

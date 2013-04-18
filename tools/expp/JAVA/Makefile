@@ -151,8 +151,8 @@ ifeq ("$(os)","$(Cygwin)")
 	endif
 	
 	target=$(name).dll
-	src += :"$(jdk)/include/win32"
 	lo += -Wl,--kill-at -shared
+	src += :"$(jdk)/include/win32"
 
 endif
 
@@ -178,8 +178,8 @@ ifeq ("$(os)", "$(MinGW)")
 	endif
 
 	target=$(name).dll
-	src += :"$(jdk)/include/win32"
 	lo += -Wl,--kill-at -shared
+	src += :"$(jdk)/include/win32"
 endif
 
 #########################
@@ -225,6 +225,9 @@ ifeq ("$(os)","$(MacOS)")
 		co += -m64
 		lo += -m64
 	endif
+	target=lib$(name).dylib
+	lo += -shared
+	co += -fPIC
 
 endif
 
