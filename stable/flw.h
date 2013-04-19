@@ -108,6 +108,14 @@ namespace flw {
 
 			return *_Driver;
 		}
+		const fdr::iflow_driver_base___ &_D( void ) const
+		{
+			if ( _Driver == NULL )
+				ERRFwk();
+
+			return *_Driver;
+		}
+# if 0
 		size__ _ReadUpTo(
 			size__ Amount,
 			datum__ *Buffer,
@@ -151,6 +159,7 @@ namespace flw {
 			size__ Wanted,
 			bso::bool__ Adjust,
 			bso::bool__ &CacheIsEmpty );
+# endif
 		void _Dismiss( void )
 		{
 			_D().Dismiss();
@@ -186,70 +195,52 @@ namespace flw {
 
 			_Red = 0;
 		}
-		size__ Available( void ) const
+		bso::bool__ IsCacheEmpty( void ) const
 		{
-			if ( _Driver == NULL )
-				ERRFwk();
-
-			return _Driver->Available();
+			return _D().IsCacheEmpty();
 		}
 		// Si valeur retournée == '0', alors toutes les données ont été lues.
 		size__ ReadUpTo(
 			size__ Amount,
-			void *Buffer,
-			size__ Minimum = 1 )
+			void *Buffer )
 		{
-			bso::bool__ Dummy = false;
-
-			return _ReadUpTo( Amount, (datum__ *)Buffer, Minimum, true, Dummy );
+			return _D().Read( Amount, (datum__ *)Buffer, fdr::bNonBlocking );
 		}
 		//f Place 'Amount' bytes in 'Buffer'.
 		void Read(
 			size__ Amount,
 			void *Buffer )
 		{
-			bso::bool__ Dummy = false;
-
-			_Read( Amount, (datum__ *)Buffer, true, Dummy );
+			if ( _D().Read( Amount, (datum__ *)Buffer, fdr::bBlocking ) != Amount )
+				ERRDta();
 		}
 		bso::bool__ EndOfFlow( void )
 		{
-			bso::bool__ Dummy = false;
-			datum__ C;
-
-			return  _ReadUpTo( 1, &C, 1, false, Dummy ) == 0;
+			return _D().EndOfFlow();
+		}
+		size__ View(
+			size__ Size,
+			datum__ *Datum )
+		{
+			return _D().Read( Size, Datum, fdr::bKeep );
 		}
 		datum__ View( void )
 		{
 			datum__ C;
-			bso::bool__ Dummy = false;
 
-			if ( _ReadUpTo( 1, &C, 1, false, Dummy ) == 0 )
-				ERRDta();
-
-			return C;
-		}
-		datum__ Get( bso::bool__ &CacheIsEmpty )
-		{
-			datum__ C;
-
-			if ( _ReadUpTo( 1, &C, 1, true, CacheIsEmpty ) == 0 )
+			if ( View( 1, &C ) != 1 )
 				ERRDta();
 
 			return C;
 		}
 		datum__ Get( void )
 		{
-			bso::bool__ Dummy = false;
+			datum__ C;
 
-			return Get( Dummy );
-		}
-		void Unget( datum__ Datum )
-		{
-			if ( EndOfFlow() )
-				ERRFwk();
+			if ( _D().Read( 1, &C, fdr::bBlocking ) != 1 )
+				ERRDta();
 
-			_D().Unget( (flw::datum__)Datum );
+			return C;
 		}
 		//f Skip 'Amount' bytes.
 		void Skip( size__ Amount = 1 )
@@ -282,7 +273,7 @@ namespace flw {
 				ERRFwk();
 #endif
 
-			return _Driver->IsLocked();
+			return _D().IsLocked();
 		}
 		bso::bool__ IFlowIsLocked( void )	// Facilite l'utilisation de 'ioflow__'
 		{

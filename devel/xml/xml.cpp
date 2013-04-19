@@ -622,13 +622,14 @@ ERRBegin
 
 			switch ( _Token ) {
 			case t_Undefined:
-				if ( _Flow.EndOfFlow() )
-					Continue = false;	// Fichier vide.
-				else if ( _Flow.View() != '<' )
+				flw::datum__ Datum[2];
+				if ( _Flow.View( 2, Datum ) != 2 )	// 'EOF'.
+					Continue = false;	// Fichier vide ou presque.
+				else if ( Datum[0] != '<' )
 					RETURN( sUnexpectedCharacter )
 				else {
-					_Flow.Get();
-					if ( _Flow.View() == '?' ) {
+					if ( Datum[1] == '?' ) {
+						_Flow.Get();	// Pour enlever le '<'.
 						HANDLE( HandleProcessingInstruction_( _Flow ) );
 
 						_Token = tProcessingInstruction;
@@ -638,7 +639,6 @@ ERRBegin
 
 					} else {
 						_Context = cTagExpected;
-						_Flow.Unget( '<' );
 					}
 				}
 				break;

@@ -84,7 +84,7 @@ bool flw::GetString(
 	return Position < NombreMax;
 }
 
-
+# if 0
 size__ flw::iflow__::_RawRead(
 	size__ Minimum,
 	datum__ *Buffer,
@@ -116,6 +116,7 @@ ERREnd
 ERREpilog
 	return Amount;
 }
+# endif
 
 size__ flw::oflow__::_DirectWrite(
 	const datum__ *Buffer,

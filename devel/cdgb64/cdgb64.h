@@ -360,8 +360,10 @@ namespace cdgb64 {
 				_Size = 0;
 			}
 
-			while ( ( !CacheIsEmpty || Amount < 4 ) && Maximum-- && ( ( Datum = _Flow->Get( CacheIsEmpty ) ) != '=' ) )
+			while ( ( !CacheIsEmpty || Amount < 4 ) && Maximum-- && ( ( Datum = _Flow->Get() ) != '=' ) ) {
+				CacheIsEmpty = _Flow->IsCacheEmpty();
 				Buffer[Amount++] = (flw::datum__)Datum;
+			}
 
 			if ( Amount != 0 ) {
 				if ( Amount >= 4 )

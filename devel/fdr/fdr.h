@@ -108,6 +108,14 @@ namespace fdr {
 #endif
 	};
 
+	enum behavior__ {
+		bNonBlocking,	// Au moins un octet est lu, davantage si cela n'entrîne pas de blocage.
+		bBlocking,		// Sauf si 'EOF', le nombre d'octets demandé sera lu, même si blocage.
+		bKeep,			// Sauf si 'EOF', le nombre d'octets demandés sera lu, même si blocage, mais ils restent dans le flux.
+		b_amount,
+		b_Undefined
+	};
+
 	//d The max value for a amount.
 #	define FDR_SIZE_MAX			BSO_SIZE_MAX
 
@@ -191,9 +199,124 @@ namespace fdr {
 	private:
 		mutex__ _Mutex;	// Mutex pour protèger la ressource.
 		datum__ *_Cache;
-		size__ _Size;	// Si == '0', signale fin de 'flow' atteint.
+		size__ _Size;	// Si == '0', signale 'EOF' atteint.
 		size__ _Available;
 		size__ _Position;
+		size__ _Read(
+			size__ Wanted,
+			datum__ *Buffer )	// Si valeur retournée == 0, alors , alors 'EOF' atteint.
+		{
+# ifdef FDR_DBG
+			if ( Wanted == 0 )
+				ERRPrm();
+# endif
+			if ( _Size != 0 )
+				return FDRRead( Wanted, Buffer );
+			else
+				return 0;
+		}
+		size__ _LoopingRead(
+			size__ Wanted,
+			datum__ *Buffer )	// Si valeur retournée différent de 'Wanted', alors 'EOF' atteint.
+		{
+			size__ Red = 0, PonctualRed = 0;
+
+			while ( ( Red < Wanted ) && ( ( PonctualRed = _Read( Wanted - Red, Buffer ) ) != 0 ) )
+				Red += PonctualRed;
+
+			return Red;
+		}
+		size__ _FillCache( size__ Size )	// Si != 0, alors on fait le maximum pour lire la quantité demandée. Sinon, on en lit au moins 1, sauf si 'EOF'.
+		{
+#ifdef FDR_DBG
+			if ( _Cache == NULL )
+				ERRFwk();
+
+			if ( _Available != 0 )
+				ERRFwk();
+#endif
+			_Position = 0;
+
+			if ( _Size < Size )
+				ERRPrm();
+
+			if ( Size != 0 ) {
+				_Available = _LoopingRead( Size, _Cache );
+
+				if ( _Available < Size )
+					_Size = 0;	// Pour signaler 'EOF' atteint.
+			} else {
+				_Available = _Read( _Size, _Cache );
+
+				if ( _Available == 0 )
+					_Size = 0;	// Pour signaler 'EOF' atteint.
+			}
+
+			return _Available;
+		}
+		void _CompleteCache( size__ Size )	// Fait le maximum pour que le cahce, avec les données déjà disponibles, contiennt la quantoité demandée.
+		{
+			if ( _Available < Size ) {
+				if ( ( _Size - _Position ) < Size ) {
+					if ( _Size < Size )
+						ERRPrm();
+
+					if ( _Available != 0 )
+						memcpy( _Cache, _Cache + _Position, _Available );
+
+					_Position = 0;
+				}
+
+				_Available += _LoopingRead( Size - _Available, _Cache + _Position + _Available );
+
+				if ( _Available < Size )
+					_Size = 0;	// Pour signaler 'EOF' atteint.
+			}
+		}
+		size__ _ReadFromCache(
+			size__ Size,
+			datum__ *Buffer,
+			bso::bool__ Adjust )
+		{
+			if ( Size > _Available )
+				Size = _Available;
+
+			if ( _Available != 0 )  {
+				memcpy( Buffer, _Cache + _Position, Size );
+
+				if ( Adjust ) {
+					_Available -= Size;
+					_Position += Size;
+				}
+			}
+
+			return Size;
+		}
+		size__ _ReadThroughCache(
+			size__ Size,
+			datum__ *Buffer,
+			bso::bool__ Force )	// Si == 'true', on fait le maximum pour lire la quantitée demandée.
+		{
+			size__ Red = _ReadFromCache( Size, Buffer, true );
+
+			if ( Red < Size )  {
+				if ( Force )
+					_FillCache( Size - Red );
+				else if ( Red == 0 )
+					_FillCache( 0 );
+				else
+					return Red;
+
+				Red = +_ReadFromCache( Size - Red, Buffer, true );
+			}
+
+			return Red;
+		}
+
+		bso::bool__ _EOF( void ) const
+		{
+			return _Size == 0;
+		}
 		void _Lock( void )
 		{
 			Lock_( _Mutex );
@@ -206,23 +329,6 @@ namespace fdr {
 					ERRFwk();
 #endif
 				Unlock_( _Mutex );
-			}
-		}
-		void _FillCache( void )
-		{
-#ifdef FDR_DBG
-			if ( _Cache == NULL )
-				ERRFwk();
-
-			if ( _Available != 0 )
-				ERRFwk();
-#endif
-			if ( _Size != 0 ) {
-				_Position = 1;
-				_Available = FDRRead( _Size - 1, _Cache + 1 );	// On laisse un octet de libre au début pour un éventuel 'Unget(...)'.
-
-				if ( _Available == 0 )
-					_Size = 0;	// Pour signaler que la fin de 'flow' est atteinte.
 			}
 		}
 	protected:
@@ -276,46 +382,38 @@ namespace fdr {
 			}
 		}
 		size__ Read(
-			size__ Maximum,
+			size__ Wanted,
 			datum__ *Buffer,
-			bso::bool__ AdjustCache,
-			bso::bool__ &CacheIsEmpty )
+			behavior__ Behavior )
 		{
 #ifdef FDR_DBG
-			if ( Maximum < 1 )
+			if ( Wanted < 1 )
 				ERRPrm();
+
+			if ( _EOF() )
+				ERRFwk();
 #endif
 			_Lock();
 
-			if ( _Available == 0 )
-				_FillCache();
+			switch ( Behavior ) {
+			case bNonBlocking:
+				return _ReadThroughCache( Wanted, Buffer, false );
+				break;
+			case bBlocking:
+				return _ReadThroughCache( Wanted, Buffer, true );
+				break;
+			case bKeep:
+				_CompleteCache( Wanted );
 
-			if ( Maximum > _Available )
-				Maximum = _Available;
-
-			memcpy( Buffer, _Cache + _Position, Maximum );
-
-			if ( AdjustCache ) {
-				_Available -= Maximum;
-				_Position += Maximum;
+				return _ReadFromCache( Wanted, Buffer, false );
+				break;
+			default:
+				ERRPrm();
+				break;
 			}
 
-			CacheIsEmpty = _Available == 0;
 
-			return Maximum;
-		}
-		void Unget( datum__ Datum )
-		{
-			_Lock();
-
-			if ( _Available == 0 )
-				_Position = 1;
-
-			if ( _Position == 0 )
-				ERRFwk();	// Appeler 'Unget(...)' deux fois de suite (ou seulement avec des 'View(...)' entre) n'est pas conseillé.
-
-			_Cache[--_Position] = Datum;
-			_Available++;
+			return 0;	// Pour éviter un 'warning'.
 		}
 		bso::bool__ IsLocked( void )
 		{
@@ -325,9 +423,18 @@ namespace fdr {
 		{
 			return IsLocked();
 		}
-		size__ Available( void ) const	// Retourne la quantité de donnéées disponible dans le cache.
+		bso::bool__ IsCacheEmpty( void ) const
 		{
-			return _Available;
+			return _Available == 0;
+		}
+		bso::bool__ EndOfFlow( void )
+		{
+			datum__ Dummy;
+
+			if ( _Size == 0 )
+				return true;
+			else
+				return Read( 1, &Dummy, bKeep ) == 0;
 		}
 	};
 

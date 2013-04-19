@@ -62,9 +62,10 @@ extern class ttr_tutor &XTFTutor;
 
 //D eXtended Text Flow. Text flow with extended features.
 
-#include "err.h"
-#include "bso.h"
-#include "str.h"
+# include "err.h"
+# include "bso.h"
+# include "str.h"
+# include "bom.h"
 
 //d The default cell separator.
 #define XTF_DEFAULT_CELL_SEPARATOR	'\t'
@@ -123,6 +124,17 @@ namespace xtf {
 			_Coord.Line++;
 			_Coord.Column = 0;
 		}
+		bom::byte_order_marker__ _HandleBOM( void )
+		{
+			fdr::datum__ BOMBuffer[BOM_SIZE_MAX];
+			fdr::size__ Size = _Flow->View( sizeof( BOMBuffer ), BOMBuffer );
+			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );
+
+			if ( BOM != bom::bom_UnknownOrNone )
+				_Flow->Skip( Size );
+
+			return BOM;
+		}
 	public:
 		void reset( bool P = true )
 		{
@@ -141,7 +153,7 @@ namespace xtf {
 			Init( IFlow, Coord );
 		}
 		//f Initialization with 'Flow'..
-		void Init(
+		bom::byte_order_marker__  Init(
 			flw::iflow__ &IFlow,
 			coord__ Coord = coord__( 1, 0 ) )
 		{
@@ -150,6 +162,8 @@ namespace xtf {
 			EOL_ = 0;
 
 			_Flow = &IFlow;
+
+			return _HandleBOM();
 		}
 		//f Extract and return next character in flow.
 		flw::datum__ Get( void )
@@ -188,24 +202,6 @@ namespace xtf {
 
 			return C;
 		}
-		//f 'C' would be the next character returned by 'get()'.
-		void Unget( flw::datum__ C )
-		{
-			if ( EOL_ )
-				EOL_ = 0;
-
-			if ( ( C != '\n' ) && ( C != '\r' ) )
-				_Coord.Column--;
-			else
-			{
-				if ( _Coord.Line )
-					_Coord.Line--;
-
-				_Coord.Column = 0;
-			}
-
-			_Flow->Unget( C );
-		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
 		const coord__ &Coord( void ) const
 		{
@@ -242,6 +238,12 @@ namespace xtf {
 			}
 
 			return C;
+		}
+		flw::size__ View(
+			flw::size__ Size,
+			flw::datum__ *Buffer )
+		{
+			return _Flow->View( Size, Buffer ); 
 		}
 		//f True if at end of text.
 		bso::bool__ EndOfFlow( void )

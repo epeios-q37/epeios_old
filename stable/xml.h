@@ -191,16 +191,24 @@ namespace xml {
 		{
 			return _Flow->View();
 		}
+		flw::size__ View(
+			flw::size__ Size,
+			flw::datum__ *Datum )
+		{
+			return _Flow->View( Size, Datum );
+		}
 		bso::bool__ EndOfFlow( void )
 		{
 			return _Flow->EndOfFlow();
 		}
+# if 0
 		void Unget( unsigned char C )
 		{
 			_Flow->Unget( C );
 
 			Dump.Data.Truncate();
 		}
+# endif
 		void Purge( void )
 		{
 			Dump.PurgeData();

@@ -194,7 +194,7 @@ namespace crptgr {
 		{
 			fdr::size__ Amount = 0;
 
-			Maximum = _Flow->ReadUpTo( Maximum, Buffer, 0 );
+			Maximum = _Flow->ReadUpTo( Maximum, Buffer );
 
 			// A optimiser.
 			while ( Amount < Maximum ) {

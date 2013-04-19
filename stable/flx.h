@@ -650,12 +650,10 @@ namespace flx {
 			fdr::size__ Maximum,
 			fdr::datum__ *Buffer )
 		{
-			bso::bool__ Dummy = false;
-
 			if ( _Driver == NULL )
 				ERRFwk();
 
-			return _Driver->Read( Maximum, Buffer, true, Dummy );
+			return _Driver->Read( Maximum, Buffer, fdr::bNonBlocking );
 		}
 		virtual void FDRDismiss( void )
 		{
