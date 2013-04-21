@@ -1,13 +1,13 @@
 /*
-	'xtf' library by Claude SIMON (http://zeusw.org/intl/contact.html)
-	Requires the 'xtf' header file ('xtf.h').
-	Copyright (C) 2000-2004 Claude SIMON (http://zeusw.org/intl/contact.html).
-
+	'utf' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'utf' header file ('utf.h').
+	Copyright (C) $COPYRIGHT_DATES$Claude SIMON.
+$_RAW_$
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 3
+	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
  
 	This program is distributed in the hope that it will be useful,
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define XTF__COMPILATION
+#define UTF__COMPILATION
 
-#include "xtf.h"
+#include "utf.h"
 
-class xtftutor
+class utftutor
 : public ttr_tutor
 {
 public:
-	xtftutor( void )
-	: ttr_tutor( XTF_NAME )
+	utftutor( void )
+	: ttr_tutor( UTF_NAME )
 	{
-#ifdef XTF_DBG
-		Version = XTF_VERSION "\b\bD $";
+#ifdef UTF_DBG
+		Version = UTF_VERSION "\b\bD $";
 #else
-		Version = XTF_VERSION;
+		Version = UTF_VERSION;
 #endif
-		Owner = XTF_OWNER;
+		Owner = UTF_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~xtftutor( void ){}
+	virtual ~utftutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,75 +55,21 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-# include "lcl.h"
-
-using namespace xtf;
-
-void xtf::extended_text_iflow__::_SetMeaning( lcl::meaning_ &Meaning )
-{
-	Meaning.SetValue( GetLabel( _Error ) );
-}
-
-
-bso::bool__  xtf::extended_text_iflow__::GetCell(
-	str::string_ &Line,
-	flw::datum__ Separator )
-{
-	bso::bool__ Cont = true;
-	flw::datum__ C;
-
-	if ( !EndOfFlow() ) {
-		C = Get();
-
-		if ( C == Separator )
-			Cont = false;
-		else if ( ( C == '\r' ) || ( C == '\n' ) )
-			if ( EOL_ != 0 )
-				Cont = false;
-			else if ( !EndOfFlow() )
-				C = Get();
-			else
-				Cont = false;
-
-		while( Cont ) {
-
-			if ( C == Separator )
-				Cont = false;
-			else if ( _Coord.Column == 0 )
-				Cont = false;
-			else if ( &Line != NULL )
-				Line.Append( (flw::datum__)C );
-
-			if ( Cont && EndOfFlow() )
-				Cont = false;
-
-			if ( Cont == true )	
-				C = Get();
-		}
-	}
-
-	if ( EndOfFlow() )
-		return false;
-	else if ( Separator == 0 )
-		return true;
-	else
-		return ( C == Separator );
-}
-
+using namespace utf;
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class xtfpersonnalization
-: public xtftutor
+class utfpersonnalization
+: public utftutor
 {
 public:
-	xtfpersonnalization( void )
+	utfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~xtfpersonnalization( void )
+	~utfpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -139,6 +85,6 @@ public:
 
 // 'static' by GNU C++.
 
-static xtfpersonnalization Tutor;
+static utfpersonnalization Tutor;
 
-ttr_tutor &XTFTutor = Tutor;
+ttr_tutor &UTFTutor = Tutor;

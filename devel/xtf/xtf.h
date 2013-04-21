@@ -66,13 +66,63 @@ extern class ttr_tutor &XTFTutor;
 # include "bso.h"
 # include "str.h"
 # include "bom.h"
+# include "utf.h"
 
 //d The default cell separator.
 #define XTF_DEFAULT_CELL_SEPARATOR	'\t'
 
+// Predeclaration.
+namespace lcl {
+	class meaning_;
+};
+
 namespace xtf {
 	//t type of position in a text (line or column).
 	typedef bso::uint__ location__;
+
+	enum error__ {
+		eUnsupportedFormat,
+		eUnexpectedFormat,
+		eMisformedFlow,
+		e_amount,
+		e_Undefined,
+		e_NoError
+	};
+
+	inline const char *GetLabel( error__ Error )
+	{
+		switch ( Error ) {
+		case eUnsupportedFormat:
+			return XTF_NAME "_UnsupportedFormat";
+			break;
+		case eUnexpectedFormat:
+			return XTF_NAME "_UnexpectedFormat";
+			break;
+		case eMisformedFlow:
+			return XTF_NAME "_MisformedFlow";
+			break;
+		default:
+			ERRPrm();
+			break;
+		}
+
+		return NULL;	// Pour éviter un 'Warning'.
+	}
+
+	struct utf__
+	{
+		fdr::datum__ Datum[5];
+		bso::u8__ Size;
+		void reset( bso::bool__ = true )
+		{
+			Size = 0;
+		}
+		E_CDTOR( utf__ )
+		void Init( void )
+		{
+			Size = 0;
+		}
+	};
 
 	struct coord__ {
 		location__ Line;
@@ -114,26 +164,86 @@ namespace xtf {
 		coord__ _Coord;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
-		void NewCharAdjust_( void )
+		utf::utf__ _UTFHandler;
+		utf__ _UTF;
+		error__ _Error;
+		void _NewCharAdjust( void )
 		{
 			_Coord.Column++;
 		}
 		// Adjust counters.after reading a new line character.
-		void NewLineAdjust_( void )
+		void _NewLineAdjust( void )
 		{
 			_Coord.Line++;
 			_Coord.Column = 0;
 		}
-		bom::byte_order_marker__ _HandleBOM( void )
+		utf::format__ _HandleBOM( utf::format__ ExpectedFormat )
 		{
 			fdr::datum__ BOMBuffer[BOM_SIZE_MAX];
 			fdr::size__ Size = _Flow->View( sizeof( BOMBuffer ), BOMBuffer );
-			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );
+			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM4.
 
 			if ( BOM != bom::bom_UnknownOrNone )
 				_Flow->Skip( Size );
 
-			return BOM;
+			switch ( ExpectedFormat ) {
+			case utf::f_Guess:
+				if ( BOM == bom::bomUTF_8 )
+					ExpectedFormat = utf::fUTF_8;
+				else if ( BOM != bom::bom_UnknownOrNone ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fUTF_8:
+				if ( ( BOM != bom::bom_UnknownOrNone ) && ( BOM != bom::bomUTF_8 ) ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fUTF_16_BE:
+				if ( BOM != bom::bomUTF_16_BE ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fUTF_16_LE:
+				if ( BOM != bom::bomUTF_16_LE ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fUTF_32_BE:
+				if ( BOM != bom::bomUTF_32_BE ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fUTF_32_LE:
+				if ( BOM != bom::bomUTF_32_LE ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			default:
+				ERRPrm();	// Les autres formats ne sont pas accpétés et filtrés en amont.
+				break;
+			}
+
+			return ExpectedFormat;
+		}
+		void _SetMeaning( lcl::meaning_ &Meaning );
+		bso::bool__ _PrefetchUTF( void )
+		{
+			if ( _UTF.Size != 0 ) {
+				_UTF.Size = _Flow->ReadUpTo( sizeof( _UTF.Datum ), _UTF.Datum );
+				_UTF.Size = _UTFHandler.Handle( _UTF.Datum, _UTF.Size );
+
+				if ( _UTF.Size == 0 )
+					return false;
+			}
+
+			return true;
 		}
 	public:
 		void reset( bool P = true )
@@ -142,60 +252,77 @@ namespace xtf {
 			_Coord.Line = _Coord.Column = 1;
 			_Flow = NULL;
 			EOL_ = 0;
+			_Error = e_Undefined;
 		}
 		E_CVDTOR( extended_text_iflow__ );
 		extended_text_iflow__(
 			flw::iflow__ &IFlow,
+			utf::format__ Format,
 			coord__ Coord = coord__( 1, 0 ) )
 		{
 			reset( false );
 
-			Init( IFlow, Coord );
+			Init( IFlow, Format, Coord );
 		}
 		//f Initialization with 'Flow'..
-		bom::byte_order_marker__  Init(
+		void Init(
 			flw::iflow__ &IFlow,
+			utf::format__ Format,
 			coord__ Coord = coord__( 1, 0 ) )
 		{
 			_Coord.Init( Coord );
 			_Flow = NULL;
 			EOL_ = 0;
-
 			_Flow = &IFlow;
+			_Error = e_NoError;
 
-			return _HandleBOM();
+			_UTF.Init();
+
+			if ( ( Format = _HandleBOM( Format ) ) != utf::f_Undefined )
+				if ( !_UTFHandler.Init( Format ) )
+					_Error = eUnsupportedFormat;
 		}
 		//f Extract and return next character in flow.
-		flw::datum__ Get( void )
+		flw::datum__ Get( utf__ &UTF )
 		{
-			flw::datum__ C = _Flow->Get();
+			if ( !_PrefetchUTF() )
+				ERRDta();
+
+			UTF = _UTF;
+
+			_Flow->Skip( _UTF.Size );
+
+			_UTF.Init();
+
+			flw::datum__ C = _UTF.Datum[0];
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
 					EOL_ = (flw::datum__)C;
-					NewLineAdjust_();
+					_NewLineAdjust();
 				} else {
-					NewCharAdjust_();
+					_NewCharAdjust();
 				}
 			} else if ( EOL_ == '\r' ) {
 				if ( C == '\n' ) {
 					EOL_ = 0;
 				} else if ( C == '\r' ) {
 					EOL_ = (flw::datum__)C;
-					NewLineAdjust_();
+					_NewLineAdjust();
 				} else {
 					EOL_ = 0;
-					NewCharAdjust_();
+					_NewCharAdjust();
 				}
 			} else if ( EOL_ == '\n' ) {
 				if ( C == '\r' ) {
 					EOL_ = 0;
 				} else if ( C == '\n' ) {
 					EOL_ = (flw::datum__)C;
-					NewLineAdjust_();
+					_NewLineAdjust();
 				} else {
 					EOL_ = 0;
-					NewCharAdjust_();
+					_NewCharAdjust
+						();
 				}
 			} else
 				ERRFwk();
@@ -223,9 +350,16 @@ namespace xtf {
 			GetLine( *(str::string_ *)NULL );
 		}
 		//f Return the next character in the flow, but let it in the flow.
-		flw::datum__ View( bso::bool__ HandleNL = false )
+		flw::datum__ View(
+			utf__ &UTF,
+			bso::bool__ HandleNL = false )
 		{
-			flw::datum__ C = _Flow->View();
+			if ( !_PrefetchUTF() )
+				ERRDta();
+
+			_UTF = UTF;
+
+			flw::datum__ C = _UTF.Datum[0];
 
 			if ( HandleNL && EOL_ ) {
 
@@ -239,16 +373,27 @@ namespace xtf {
 
 			return C;
 		}
-		flw::size__ View(
-			flw::size__ Size,
-			flw::datum__ *Buffer )
-		{
-			return _Flow->View( Size, Buffer ); 
-		}
 		//f True if at end of text.
-		bso::bool__ EndOfFlow( void )
-		{
-			return _Flow->EndOfFlow();
+		bso::bool__ EndOfFlow( error__ &Error )	// Si erreur, 'ErrorMeaning' est initialisé, sinon reste vide.
+		{ 
+
+			if ( _Error == e_NoError ) {
+				if ( _UTF.Size != 0 )
+					return false;
+
+				if ( _Flow->EndOfFlow() )
+					return true;
+
+				if ( !_PrefetchUTF() ) {
+					Error = _Error = eMisformedFlow; 
+					return true;
+				}
+
+				return false;
+			} else {
+				Error = _Error;
+				return true;
+			}
 		}
 		//f Return the amount of data red.
 		flw::size__ AmountRed( void ) const

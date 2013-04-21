@@ -622,14 +622,14 @@ ERRBegin
 
 			switch ( _Token ) {
 			case t_Undefined:
-				flw::datum__ Datum[2];
-				if ( _Flow.View( 2, Datum ) != 2 )	// 'EOF'.
+				if ( _Flow.EndOfFlow() )
 					Continue = false;	// Fichier vide ou presque.
-				else if ( Datum[0] != '<' )
+				else if ( _Flow.View() != '<' )
 					RETURN( sUnexpectedCharacter )
 				else {
-					if ( Datum[1] == '?' ) {
-						_Flow.Get();	// Pour enlever le '<'.
+					_Flow.Get();	// Pour enlever le '<'.
+
+					if ( _Flow.View() == '?' ) {
 						HANDLE( HandleProcessingInstruction_( _Flow ) );
 
 						_Token = tProcessingInstruction;
@@ -638,7 +638,7 @@ ERRBegin
 							Continue = false;
 
 					} else {
-						_Context = cTagExpected;
+						_Context = cTagConfirmed;
 					}
 				}
 				break;
@@ -657,7 +657,7 @@ ERRBegin
 		case cTagExpected:
 			if ( _Flow.Get() != '<' )
 				RETURN( sUnexpectedCharacter )
-
+		case cTagConfirmed:
 			HANDLE( SkipSpaces_( _Flow ) );
 
 			if ( _Flow.View() == '/' ) {
@@ -1011,6 +1011,12 @@ ERRBegin
 
 	_Status = sOK;
 ERRErr
+		if ( ERRType == err::t_Free ) {
+			xtf::error__ Error = xtf::e_NoError;
+
+			if ( _Flow.Flow().EndOfFlow( Error ) && ( Error != xtf::e_NoError ) )
+				# error "à complèter !".
+
 ERREnd
 ERREpilog
 	return _Token;

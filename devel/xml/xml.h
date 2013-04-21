@@ -178,28 +178,37 @@ namespace xml {
 		}
 		flw::datum__ Get( void )
 		{
+			xtf::utf__ UTF;
+
+			UTF.Init();
+
 			if ( Dump.Data.Amount() == 0 )
 				Dump.Set( _Flow->Coord() );
 
-			flw::datum__ C = _Flow->Get();
+			flw::datum__ C = _Flow->Get( UTF );
 
-			Dump.Data.Append( (flw::datum__)C );
+			Dump.Data.Append( (const bso::char__ *)UTF.Datum, UTF.Size );
 
 			return C;
 		}
 		flw::datum__ View( void )
 		{
-			return _Flow->View();
-		}
-		flw::size__ View(
-			flw::size__ Size,
-			flw::datum__ *Datum )
-		{
-			return _Flow->View( Size, Datum );
+			xtf::utf__ UTF;
+
+			UTF.Init();
+
+			return _Flow->View( UTF );
 		}
 		bso::bool__ EndOfFlow( void )
 		{
-			return _Flow->EndOfFlow();
+			xtf::error__ Error = xtf::e_NoError;
+
+			bso::bool__ Result = _Flow->EndOfFlow( Error );
+
+			if ( !Result && ( Error != xtf::e_NoError ) )
+				ERRFree();
+
+			return Result;
 		}
 # if 0
 		void Unget( unsigned char C )
@@ -238,6 +247,7 @@ namespace xml {
 	enum _context__ {
 		cHeaderExpected,
 		cTagExpected,
+		cTagConfirmed,
 		cOpeningTag,
 		cClosingTag,
 		cAttribute,

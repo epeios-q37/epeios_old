@@ -81,15 +81,19 @@ static bom__ BOMS_[bom_amount] =
 static bso::bool__ Match_(
 	const bom__ &Bom,
 	const fdr::datum__ *Buffer,
-	fdr::size__ Size )
+	fdr::size__ &Size )	// Si retourne 'true', "Size' est modifié pour contenir la taille du 'BOM'.
 {
-	return ( ( Size >= Bom.Size ) && ( memcmp( Bom.Data, Buffer, Bom.Size ) == 0 ) );
+	if ( ( Size >= Bom.Size ) && ( memcmp( Bom.Data, Buffer, Bom.Size ) == 0 ) ) {
+		Size = Bom.Size;
+		return true;
+	} else
+		return false;
 }
 
 
 byte_order_marker__ bom::DetectBOM(
 	const fdr::datum__ *Buffer,
-	fdr::size__ Size )
+	fdr::size__ &Size )
 {
 	int Position = bom_First;
 

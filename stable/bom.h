@@ -88,7 +88,7 @@ namespace bom {
 
 	byte_order_marker__ DetectBOM(
 		const fdr::datum__ *Buffer,
-		fdr::size__ Size );
+		fdr::size__ &Size );	// Si valeur retournée différent de 'bom_UnknownOrNone', 'Size' est modifié pour contenir la taille du 'BOMM'.
 
 
 }

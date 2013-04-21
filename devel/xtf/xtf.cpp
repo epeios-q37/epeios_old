@@ -55,7 +55,15 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
+# include "lcl.h"
+
 using namespace xtf;
+
+void xtf::extended_text_iflow__::_SetMeaning( lcl::meaning_ &Meaning )
+{
+	Meaning.SetValue( GetLabel( _Error ) );
+}
+
 
 bso::bool__  xtf::extended_text_iflow__::GetCell(
 	str::string_ &Line,

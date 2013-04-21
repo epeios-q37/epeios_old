@@ -367,7 +367,7 @@ ERRProlog
 ERRBegin
 	Context.Init();
 
-	XFlow.Init( IFlow );
+	XFlow.Init( IFlow, utf::f_Default );
 
 	if ( ( Status = xpp::Process( XFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
