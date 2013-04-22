@@ -111,7 +111,7 @@ namespace xtf {
 
 	struct utf__
 	{
-		fdr::datum__ Datum[5];
+		fdr::datum__ Data[5];
 		bso::u8__ Size;
 		void reset( bso::bool__ = true )
 		{
@@ -167,6 +167,13 @@ namespace xtf {
 		utf::utf__ _UTFHandler;
 		utf__ _UTF;
 		error__ _Error;
+		flw::iflow__ &_F( void ) const
+		{
+			if ( _Flow == NULL )
+				ERRFwk();
+
+			return *_Flow;
+		}
 		void _NewCharAdjust( void )
 		{
 			_Coord.Column++;
@@ -180,17 +187,24 @@ namespace xtf {
 		utf::format__ _HandleBOM( utf::format__ ExpectedFormat )
 		{
 			fdr::datum__ BOMBuffer[BOM_SIZE_MAX];
-			fdr::size__ Size = _Flow->View( sizeof( BOMBuffer ), BOMBuffer );
+			fdr::size__ Size = _F().View( sizeof( BOMBuffer ), BOMBuffer );
 			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM4.
 
 			if ( BOM != bom::bom_UnknownOrNone )
-				_Flow->Skip( Size );
+				_F().Skip( Size );
 
 			switch ( ExpectedFormat ) {
 			case utf::f_Guess:
 				if ( BOM == bom::bomUTF_8 )
 					ExpectedFormat = utf::fUTF_8;
 				else if ( BOM != bom::bom_UnknownOrNone ) {
+					_Error = eUnexpectedFormat;
+					ExpectedFormat = utf::f_Undefined;
+				}
+				break;
+			case utf::fANSI:
+				if ( BOM != bom::bom_UnknownOrNone )
+				{
 					_Error = eUnexpectedFormat;
 					ExpectedFormat = utf::f_Undefined;
 				}
@@ -235,9 +249,13 @@ namespace xtf {
 		void _SetMeaning( lcl::meaning_ &Meaning );
 		bso::bool__ _PrefetchUTF( void )
 		{
-			if ( _UTF.Size != 0 ) {
-				_UTF.Size = _Flow->ReadUpTo( sizeof( _UTF.Datum ), _UTF.Datum );
-				_UTF.Size = _UTFHandler.Handle( _UTF.Datum, _UTF.Size );
+			if ( _UTF.Size == 0 ) {
+				_UTF.Size = _F().View(sizeof( _UTF.Data ), _UTF.Data );
+
+				if ( _UTF.Size == 0 )
+					return false;
+
+				_UTF.Size = _UTFHandler.Handle( _UTF.Data, _UTF.Size );
 
 				if ( _UTF.Size == 0 )
 					return false;
@@ -290,11 +308,11 @@ namespace xtf {
 
 			UTF = _UTF;
 
-			_Flow->Skip( _UTF.Size );
+			_F().Skip( _UTF.Size );
 
 			_UTF.Init();
 
-			flw::datum__ C = _UTF.Datum[0];
+			flw::datum__ C = _UTF.Data[0];
 
 			if ( EOL_ == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
@@ -321,8 +339,7 @@ namespace xtf {
 					_NewLineAdjust();
 				} else {
 					EOL_ = 0;
-					_NewCharAdjust
-						();
+					_NewCharAdjust();
 				}
 			} else
 				ERRFwk();
@@ -357,19 +374,25 @@ namespace xtf {
 			if ( !_PrefetchUTF() )
 				ERRDta();
 
-			_UTF = UTF;
-
-			flw::datum__ C = _UTF.Datum[0];
+			flw::datum__ C = _UTF.Data[0];
 
 			if ( HandleNL && EOL_ ) {
 
 				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
 					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
-						 EOL_ = 0;
-						 _Flow->Get();
-						 C = _Flow->View();
+
+						EOL_ = 0;
+
+						_F().Skip( _UTF.Size );
+						
+						if ( !_PrefetchUTF() )
+							ERRDta();
+
+						C = _UTF.Data[0];
 				}
 			}
+
+			UTF = _UTF;
 
 			return C;
 		}
@@ -381,7 +404,7 @@ namespace xtf {
 				if ( _UTF.Size != 0 )
 					return false;
 
-				if ( _Flow->EndOfFlow() )
+				if ( _F().EndOfFlow() )
 					return true;
 
 				if ( !_PrefetchUTF() ) {
@@ -398,7 +421,7 @@ namespace xtf {
 		//f Return the amount of data red.
 		flw::size__ AmountRed( void ) const
 		{
-			return _Flow->AmountRed();
+			return _F().AmountRed();
 		}
 		void Set( coord__ Coord )
 		{
@@ -406,8 +429,17 @@ namespace xtf {
 		}
 		flw::iflow__ &UndelyingFlow( void ) const
 		{
-			return *_Flow;
+			return _F();
 		}
+		bso::bool__ SetFormat( utf::format__ Format )
+		{
+			return _UTFHandler.SetFormat( Format );
+		}
+		utf::format__ Format( void ) const
+		{
+			return _UTFHandler.Format();
+		}
+
 	};
 }
 

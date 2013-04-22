@@ -130,6 +130,7 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( MissingCypherKey );
 	CASE( MissingKeyOrFormatAttribute );
 	CASE( CDataNestingForbidden );
+	CASE( MixedFormat );
 	default:
 		ERRPrm();
 		break;
@@ -522,7 +523,7 @@ ERRBegin
 
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->_InitWithContent( Content, FileName, Coord, _Directory, _CypherKey );
+	Status = Parser->_InitWithContent( Content, FileName, Coord, _Directory, _CypherKey, _Parser.GetFormat() );
 ERRErr
 	if ( Parser != NULL ) {
 		delete Parser;
@@ -548,7 +549,7 @@ ERRProlog
 ERRBegin
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->_InitWithFile( FileName, _Directory, _CypherKey );
+	Status = Parser->_InitWithFile( FileName, _Directory, _CypherKey, _Parser.GetFormat() );
 ERRErr
 	if ( Parser != NULL ) {
 		delete Parser;
@@ -736,7 +737,7 @@ ERRBegin
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
 		Parser = NewParser( _Repository, _Variables, _Directives );
 
-		Status = Parser->_InitWithContent( Content, _LocalizedFileName, Coord, _Directory, _CypherKey );
+		Status = Parser->_InitWithContent( Content, _LocalizedFileName, Coord, _Directory, _CypherKey, _Parser.GetFormat() );
 	}
 ERRErr
 	if ( Parser != NULL ) {
@@ -798,7 +799,7 @@ status__ xpp::_extended_parser___::_HandleCypherDecryption(
 {
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	return Parser->_InitCypher( _Parser.Flow().UndelyingFlow(), _LocalizedFileName, Coord(), _Directory, _CypherKey );
+	return Parser->_InitCypher( _Parser.Flow().UndelyingFlow(), _LocalizedFileName, Coord(), _Directory, _CypherKey, _Parser.GetFormat() );
 }
 
 status__ xpp::_extended_parser___::_HandleCypherOverride(
@@ -952,7 +953,8 @@ ERREpilog
 status__ xpp::_extended_parser___::_InitWithFile(
 	const str::string_ &FileName,
 	const str::string_ &Directory,
-	const str::string_ &CypherKey )
+	const str::string_ &CypherKey,
+	utf::format__ Format )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -970,7 +972,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	_XFlow.Init( _FFlow );
+	_XFlow.Init( _FFlow, Format );
 
 	Location = fnm::GetLocation( LocalizedFileNameBuffer, LocationBuffer );
 
@@ -991,7 +993,8 @@ status__ xpp::_extended_parser___::_InitWithContent(
 	const str::string_ &NameOfTheCurrentFile,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory,
-	const str::string_ &CypherKey )
+	const str::string_ &CypherKey,
+	utf::format__ Format )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1000,7 +1003,7 @@ ERRBegin
 	_SFlow.Init( _MacroContent );
 //	_SFlow.EOFD( XTF_EOXT );
 
-	_XFlow.Init( _SFlow, Coord );
+	_XFlow.Init( _SFlow, Format, Coord );
 
 	if ( ( Status = Init( _XFlow, NameOfTheCurrentFile, Directory, CypherKey ) ) != sOK )
 		ERRReturn;
@@ -1017,11 +1020,12 @@ status__ xpp::_extended_parser___::_InitCypher(
 	const str::string_ &FileName,
 	const xtf::coord__ &Coord,
 	const str::string_ &Directory,
-	const str::string_ &CypherKey )
+	const str::string_ &CypherKey,
+	utf::format__ Format )
 {
 	_Decoder.Init( Flow );
 	_Decrypter.Init( _Decoder, CypherKey );
-	_XFlow.Init( _Decrypter, Coord );
+	_XFlow.Init( _Decrypter, Format, Coord );
 
 	return Init( _XFlow, FileName, Directory, CypherKey );
 }
@@ -1293,8 +1297,11 @@ sdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 				ERRFwk();
 #endif
 			if ( _Parsers.Amount() != 0 ) {
+				utf::format__ Format = _CurrentParser->GetFormat();
 				delete _CurrentParser;
 				_CurrentParser = _Parsers.Pop();
+				if ( Format != utf::f_Guess )
+					_Parser().SetFormat( Format );
 				_Status = _Parser().Handle( Parser, _Data );
 			} else {
 				Maximum = 0;	// Pour sortir de la boucle.
@@ -1340,7 +1347,7 @@ ERRProlog
 	xtf::extended_text_iflow__ RelayXFlow;
 ERRBegin
 	PFlow.Init( XFlow, Criterions );
-	RelayXFlow.Init( PFlow );
+	RelayXFlow.Init( PFlow, XFlow.Format() );
 
 	Parser.Init( RelayXFlow, xml::ehKeep );
 
@@ -1379,6 +1386,9 @@ ERRBegin
 			break;
 		}
 	}
+
+	if ( RelayXFlow.Format() != utf::f_Guess )
+		XFlow.SetFormat( RelayXFlow.Format() );
 ERRErr
 ERREnd
 ERREpilog
@@ -1495,6 +1505,7 @@ ERREpilog
 status__ xpp::Encrypt(
 	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
+	utf::format__ Format,
 	xml::writer_ &Writer,
 	context___ &Context )
 {
@@ -1508,7 +1519,7 @@ ERRProlog
 ERRBegin
 	Directives.Init( Namespace );
 
-	XFlow.Init( IFlow );
+	XFlow.Init( IFlow, Format );
 
 	Parser.Init( XFlow, xml::ehKeep );
 
@@ -1573,6 +1584,7 @@ status__ xpp::Encrypt(
 	const str::string_ &Namespace,
 	flw::iflow__ &IFlow,
 	xml::outfit__ Outfit,
+	utf::format__ Format,
 	txf::text_oflow__ &OFlow,
 	context___ &Context )
 {
@@ -1582,7 +1594,7 @@ ERRProlog
 ERRBegin
 	Writer.Init( OFlow, Outfit, xml::e_None, xml::schKeep );
 
-	Status = Encrypt( Namespace, IFlow, Writer, Context );
+	Status = Encrypt( Namespace, IFlow, Format, Writer, Context );
 ERRErr
 ERREnd
 ERREpilog

@@ -66,7 +66,7 @@ struct bom__ {
 	fdr::size__ Size;
 };
 
-#define M( m ) { m, sizeof( m ) }
+#define M( m ) { m, sizeof( m ) - 1 }
 
 // doit relèter l'ordre des déclarations dans 'byte_order_marker__'.
 static bom__ BOMS_[bom_amount] =

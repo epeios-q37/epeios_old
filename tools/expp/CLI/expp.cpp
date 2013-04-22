@@ -461,6 +461,7 @@ ERRBegin
 	if ( xpp::Encrypt( str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ),
 								  IFlow,
 								  Indent ? xml::oIndent : xml::oCompact,
+								  utf::f_Default,
 								  ( Destination == NULL ? COut : TOFlow ),  Context ) != xpp::sOK )	{
 		Meaning.Init();
 

@@ -254,7 +254,7 @@ namespace fdr {
 
 			return _Available;
 		}
-		void _CompleteCache( size__ Size )	// Fait le maximum pour que le cahce, avec les données déjà disponibles, contiennt la quantoité demandée.
+		void _CompleteCache( size__ Size )	// Fait le maximum pour que le cache, avec les données déjà disponibles, contiennt la quantité demandée.
 		{
 			if ( _Available < Size ) {
 				if ( ( _Size - _Position ) < Size ) {
@@ -313,9 +313,14 @@ namespace fdr {
 			return Red;
 		}
 
-		bso::bool__ _EOF( void ) const
+		bso::bool__ _EOF( void )
 		{
-			return _Size == 0;
+			if ( _Available ) 
+				return false;
+			else if ( _Size == 0 )
+				return true;
+			else
+				return _FillCache( 0 ) == 0;
 		}
 		void _Lock( void )
 		{
@@ -429,12 +434,7 @@ namespace fdr {
 		}
 		bso::bool__ EndOfFlow( void )
 		{
-			datum__ Dummy;
-
-			if ( _Size == 0 )
-				return true;
-			else
-				return Read( 1, &Dummy, bKeep ) == 0;
+			return _EOF();
 		}
 	};
 

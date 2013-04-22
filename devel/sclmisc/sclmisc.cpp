@@ -91,7 +91,9 @@ ERREnd
 ERREpilog
 }
 
-static void LoadConfigurationLocale_( const str::string_ &Locale )
+static void LoadConfigurationLocale_(
+	const str::string_ &Locale,
+	utf::format__ Format )
 {
 ERRProlog
 	flx::E_STRING_IFLOW__ Flow;
@@ -102,7 +104,7 @@ ERRBegin
 	Flow.Init( Locale );
 
 	Context.Init();
-	Level = scllocale::Push( Flow, NULL, "Locale", Context );
+	Level = scllocale::Push( Flow, NULL, "Locale", Format, Context );
 
 	if ( Level == LCL_UNDEFINED_LEVEL ) {
 		ErrorMeaning.Init();
@@ -116,7 +118,7 @@ ERREnd
 ERREpilog
 }
 
-static void LoadConfigurationLocale_( void )
+static void LoadConfigurationLocale_( utf::format__ Format )
 {
 ERRProlog
 	str::string Locale;
@@ -126,7 +128,7 @@ ERRBegin
 	sclrgstry::GetRegistry().GetValue( sclrgstry::Locale, sclrgstry::GetRoot(), Locale );
 
 	if ( Locale.Amount() != 0 )
-		LoadConfigurationLocale_( Locale );
+		LoadConfigurationLocale_( Locale, Format );
 ERRErr
 ERREnd
 ERREpilog
@@ -134,17 +136,19 @@ ERREpilog
 
 static void Initialize_(
 	flw::iflow__ &LocaleFlow,
+	utf::format__ LocaleFormat,
 	flw::iflow__ &RegistryFlow,
+	utf::format__ RegistryFormat,
 	const char *LocaleRootPath,
 	const char *RegistryRootPath,
 	const char *LocaleDirectory,
 	const char *RegistryDirectory )
 {
-	scllocale::Load( LocaleFlow, LocaleDirectory, LocaleRootPath );
+	scllocale::Load( LocaleFlow, LocaleDirectory, LocaleRootPath, LocaleFormat );
 
 	sclrgstry::Load( RegistryFlow, RegistryDirectory, RegistryRootPath );
 
-	LoadConfigurationLocale_();
+	LoadConfigurationLocale_( LocaleFormat);
 }
 
 static void BuildRootPath_(
@@ -162,7 +166,9 @@ static void BuildRootPath_(
 
 void sclmisc::Initialize(
 	flw::iflow__ &LocaleFlow,
+	utf::format__ LocaleFormat,
 	flw::iflow__ &RegistryFlow,
+	utf::format__ RegistryFormat,
 	const char *Target,
 	const char *LocaleDirectory,
 	const char *RegistryDirectory )
@@ -177,7 +183,7 @@ ERRBegin
 	RegistryRootPath.Init();
 	BuildRootPath_( "Configuration", Target, RegistryRootPath );
 
-	Initialize_( LocaleFlow, RegistryFlow, LocaleRootPath.Convert( LocaleBuffer ), RegistryRootPath.Convert( RegistryBuffer ), LocaleDirectory, RegistryDirectory );
+	Initialize_( LocaleFlow, LocaleFormat,RegistryFlow, RegistryFormat, LocaleRootPath.Convert( LocaleBuffer ), RegistryRootPath.Convert( RegistryBuffer ), LocaleDirectory, RegistryDirectory );
 ERRErr
 ERREnd
 ERREpilog
@@ -299,7 +305,7 @@ ERRBegin
 	RegistryDirectory.Init();
 	InitializeRegistryFlow_( Target, SuggestedDirectory, RegistryFlow, RegistryDirectory );
 
-	Initialize( LocaleFlow, RegistryFlow, Target, LocaleDirectory.Convert( LocaleBuffer ), RegistryDirectory.Convert( RegistryBuffer ) ); 
+	Initialize( LocaleFlow, utf::f_Default, RegistryFlow, utf::f_Default, Target, LocaleDirectory.Convert( LocaleBuffer ), RegistryDirectory.Convert( RegistryBuffer ) ); 
 ERRErr
 ERREnd
 ERREpilog

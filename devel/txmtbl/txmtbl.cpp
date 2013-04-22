@@ -65,11 +65,15 @@ static inline bso::bool__ HandleEscape_(
 	bso::char__ &C )
 {
 	bso::bool__ Retry = false;
+	xtf::error__ Error = xtf::e_NoError;
+	xtf::utf__ UTF;
 
-	if ( Flow.EndOfFlow() )
+	UTF.Init();
+
+	if ( Flow.EndOfFlow( Error ) )
 		ERRDta();
 		
-	switch( C = Flow.Get() ) {
+	switch( C = Flow.Get( UTF ) ) {
 	case 'n':
 		C = '\n';
 		break;
@@ -83,16 +87,16 @@ static inline bso::bool__ HandleEscape_(
 		C = '\t';
 		break;
 	case '\n':
-		if ( !( EOX = Flow.EndOfFlow() ) ) {
-			if ( Flow.View() == '\r' )
-				Flow.Get();
+		if ( !( EOX = Flow.EndOfFlow( Error ) ) ) {
+			if ( Flow.View( UTF ) == '\r' )
+				Flow.Get( UTF );
 			Retry = true;
 		}
 		break;
 	case '\r':
-		if ( !( EOX = Flow.EndOfFlow() ) ) {
-			if ( Flow.View() == '\n' )
-				Flow.Get();
+		if ( !( EOX = Flow.EndOfFlow( Error ) ) ) {
+			if ( Flow.View( UTF ) == '\n' )
+				Flow.Get( UTF );
 			Retry = true;
 		}
 		break;
@@ -104,6 +108,9 @@ static inline bso::bool__ HandleEscape_(
 			ERRDta();
 		break;
 	}
+
+	if ( Error != xtf::e_NoError )
+		ERRDta();
 	
 	return Retry;
 }
@@ -116,15 +123,22 @@ static inline bso::bool__ IsNotEndOfCell_(
 	bso::char__ &C )
 {
 	bso::bool__ Loop = false;
+	xtf::error__ Error = xtf::e_NoError;
+	xtf::utf__ UTF;
 
-	if ( !( EOX = Flow.EndOfFlow() ) )
+	UTF.Init();
+
+	if ( !( EOX = Flow.EndOfFlow( Error ) ) )
 		do {		
-			if ( ( C = Flow.Get() ) == Escape )
+			if ( ( C = Flow.Get( UTF ) ) == Escape )
 				Loop = HandleEscape_( Flow, Separator, Escape, EOX, C );
 			else
 				Loop = false;
 		} while ( Loop );
 		
+	if ( Error != xtf::e_NoError )
+		ERRDta();
+
 	return !EOX && ( C != Separator ) && ( C != '\n' ) && ( C != '\r' );
 }
 
@@ -134,19 +148,30 @@ static inline txmtbl::delimiter GetDelimiter_(
 	bso::bool__ EOX,
 	bso::char__ C )
 {
+	xtf::error__ Error = xtf::e_NoError;
+	xtf::utf__ UTF;
+
+	UTF.Init();
+
 	if ( EOX )
 		return txmtbl::dEOF;
 	else if ( C == '\n' )
 	{
-		if ( !Flow.EndOfFlow() && ( Flow.View() == '\r' ) )
-			Flow.Get();
+		if ( !Flow.EndOfFlow( Error ) && ( Flow.View( UTF ) == '\r' ) )
+			Flow.Get( UTF );
+
+		if ( Error != xtf::e_NoError )
+			ERRDta();
 
 		return txmtbl::dEOL;
 	}
 	else if ( C == '\r' )
 	{
-		if ( !Flow.EndOfFlow() && ( Flow.View() == '\n' ) )
-			Flow.Get();
+		if ( !Flow.EndOfFlow( Error ) && ( Flow.View( UTF ) == '\n' ) )
+			Flow.Get( UTF );
+
+		if ( Error != xtf::e_NoError )
+			ERRDta();
 
 		return txmtbl::dEOL;
 	}
@@ -186,8 +211,7 @@ txmtbl::delimiter txmtbl::SkipCell(
 	bso::char__ C = 0;
 	bso::bool__ EOX = false;
 
-	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) )
-	{}	// To avoid a warning.
+	while( IsNotEndOfCell_( Flow, Separator, Escape, EOX,C ) );
 
 	return GetDelimiter_( Flow, Separator, EOX, C );
 }
@@ -198,26 +222,33 @@ bso::bool__ txmtbl::GetLine(
 	separator__ Separator,
 	escape__ Escape )
 {
+	bso::bool__ Result = false;
 ERRProlog
 	cell Cell;
 	bso::bool__ Loop;
+	xtf::error__ Error = xtf::e_NoError;
 ERRBegin
 	Cell.Init();
 
 	Line.Location( Flow.Coord().Line );
 
 	do {
-		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EndOfFlow();
+		Loop = ( GetCell( Flow, Cell, Separator, Escape ) == txmtbl::dSeparator ) && !Flow.EndOfFlow( Error );
 
 		if ( Loop || Cell.Amount() || Line.Amount() )
 			Line.Add( Cell );
 
-	}while ( Loop );
+	} while ( Loop );
+
+	Result = !Flow.EndOfFlow( Error );
+
+	if ( Error != xtf::e_NoError )
+		ERRDta();
 ERRErr
 ERREnd
 ERREpilog
 
-	return !Flow.EndOfFlow();
+	return Result;
 }
 
 void line_::Erase_( stack_ &Stack )
@@ -466,9 +497,14 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 	separator__ Separator,
 	escape__ Escape )
 {
-	if ( Flow.EndOfFlow() )
+	xtf::error__ Error = xtf::e_NoError;
+
+	if ( Flow.EndOfFlow( Error ) ) {
+		if ( Error != xtf::e_NoError )
+			ERRDta();
+
 		return false;
-	else
+	} else
 	{
 		do
 		{
@@ -477,7 +513,10 @@ bso::bool__ txmtbl::GetFirstNonEmptyLine(
 
 			Line.RemoveEmptyCells();
 
-		} while( !Line.Amount() && !Flow.EndOfFlow() );
+		} while( !Line.Amount() && !Flow.EndOfFlow( Error ) );
+
+		if ( Error != xtf::e_NoError )
+			ERRDta();
 
 		return Line.Amount() != 0;
 	}
@@ -492,8 +531,9 @@ void txmtbl::GetTable(
 {
 ERRProlog
 	line Line;
+	xtf::error__ Error = xtf::e_NoError;
 ERRBegin
-	while( !Flow.EndOfFlow() )
+	while( !Flow.EndOfFlow( Error ) )
 	{
 		Line.Init();
 
@@ -503,6 +543,9 @@ ERRBegin
 
 		Table.AddLine( Line );
 	}
+
+	if ( Error != xtf::e_NoError )
+		ERRDta();
 ERRErr
 ERREnd
 ERREpilog

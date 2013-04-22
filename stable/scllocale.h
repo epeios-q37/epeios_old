@@ -88,12 +88,14 @@ namespace scllocale {
 	void Load(
 		flw::iflow__ &Flow,
 		const char *Directory,
-		const char *RootPath );	// Chargement de la locale de base, propre au logiciel.
+		const char *RootPath,
+		utf::format__ Format );	// Chargement de la locale de base, propre au logiciel.
 
 	lcl::level__ Push(
 		flw::iflow__ &Flow,
 		const char *Directory,
 		const char *RootPath,
+		utf::format__ Format,
 		rgstry::context___ &Context );
 }
 

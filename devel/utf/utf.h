@@ -163,6 +163,8 @@ namespace utf {
 				ERRFwk();
 				break;
 			}
+
+			return 0;	// Pour éviter un 'warning'.
 		}
 	};
 
@@ -271,6 +273,23 @@ namespace utf {
 
 			return 0;	// Pour éviter iun 'warning'.
 		}
+		bso::bool__ SetFormat( format__ Format )
+		{
+			if ( Format == f_Guess )
+				ERRPrm();
+
+			if ( _Format == f_Guess ) {
+				if ( ( Format != fUTF_8 ) || ( Format != fANSI ) )
+					return false;
+
+				_Format = Format;
+			} else if ( _Format != Format )
+				return false;
+
+			return true;
+		}
+		E_RODISCLOSE__( format__, Format );
+
 	};
 }
 

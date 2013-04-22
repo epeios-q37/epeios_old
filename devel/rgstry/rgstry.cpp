@@ -1035,7 +1035,7 @@ ERRBegin
 	Callback.Init( Root );
 
 	PFlow.Init( XFlow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
-	PXFlow.Init( PFlow );
+	PXFlow.Init( PFlow, XFlow.Format() );
 
 	switch ( xml::Parse( PXFlow, xml::ehReplace, Callback ) ) {
 	case xml::sOK:
@@ -1051,6 +1051,9 @@ ERRBegin
 		ERRFwk();
 		break;
 	}
+
+	if ( PXFlow.Format() != utf::f_Guess )
+		XFlow.SetFormat( PXFlow.Format() );
 ERRErr
 ERREnd
 ERREpilog
@@ -1560,7 +1563,7 @@ ERRBegin
 		ERRReturn;
 	}
 
-	XFlow.Init( FFlow );
+	XFlow.Init( FFlow, utf::f_Default );
 
 	if ( Criterions.Directory.Amount() != 0 )
 		ERRPrm();

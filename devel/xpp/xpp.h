@@ -106,6 +106,7 @@ namespace xpp {
 		sMissingKeyOrFormatAttribute,
 		sEmptyResult,
 		sCDataNestingForbidden,
+		sMixedFormat,
 
 		s_amount,
 		s_Undefined,
@@ -432,19 +433,22 @@ namespace xpp {
 		status__ _InitWithFile(
 			const str::string_ &FileName,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey );
+			const str::string_ &CypherKey,
+			utf::format__ Format );
 		status__ _InitWithContent(
 			const str::string_ &Content,
 			const str::string_ &NameOfTheCurrentFile,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey );
+			const str::string_ &CypherKey,
+			utf::format__ Format );
 		status__ _InitCypher(
 			flw::iflow__ &Flow,
 			const str::string_ &FileName,
 			const xtf::coord__ &Coord,
 			const str::string_ &Directory,
-			const str::string_ &CypherKey );
+			const str::string_ &CypherKey,
+			utf::format__ Format );
 		status__ _HandleMacroExpand(
 			const str::string_ &MacroName,
 			_extended_parser___ *&Parser );
@@ -534,6 +538,14 @@ namespace xpp {
 		const xtf::coord__ &Coord( void ) const
 		{
 			return _Parser.Flow().Coord();
+		}
+		utf::format__ GetFormat( void ) const
+		{
+			return _Parser.GetFormat();
+		}
+		bso::bool__ SetFormat( utf::format__ Format )
+		{
+			return _Parser.SetFormat( Format );
 		}
 		E_RODISCLOSE__( str::string_, LocalizedFileName );
 	};
@@ -749,6 +761,7 @@ namespace xpp {
 	status__ Encrypt(
 		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
+		utf::format__ Format,
 		xml::writer_ &Writer,
 		context___ &Context );
 
@@ -756,6 +769,7 @@ namespace xpp {
 		const str::string_ &Namespace,
 		flw::iflow__ &IFlow,
 		xml::outfit__ Outfit,
+		utf::format__ Format,
 		txf::text_oflow__ &OFlow,
 		context___ &Context );
 

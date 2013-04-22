@@ -60,15 +60,18 @@ extern class ttr_tutor &SCLMISCTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
-#include "fil.h"
+# include "err.h"
+# include "flw.h"
+# include "fil.h"
+# include "utf.h"
 
 namespace sclmisc {
 
 	void Initialize(
 		flw::iflow__ &LocaleFlow,
+		utf::format__ LocaleFormat,
 		flw::iflow__ &RegistryFlow,
+		utf::format__ RegistryFormat,
 		const char *Target,
 		const char *LocaleDirectory,
 		const char *RegistryDirectory );

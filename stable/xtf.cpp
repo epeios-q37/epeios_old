@@ -71,18 +71,22 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 {
 	bso::bool__ Cont = true;
 	flw::datum__ C;
+	error__ Error = e_NoError;
+	utf__ UTF;
 
-	if ( !EndOfFlow() ) {
-		C = Get();
+	if ( !EndOfFlow( Error ) ) {
+		UTF.Init();
+		C = Get( UTF );
 
 		if ( C == Separator )
 			Cont = false;
 		else if ( ( C == '\r' ) || ( C == '\n' ) )
 			if ( EOL_ != 0 )
 				Cont = false;
-			else if ( !EndOfFlow() )
-				C = Get();
-			else
+			else if ( !EndOfFlow( Error ) ) {
+				UTF.Init();
+				C = Get( UTF );
+			} else
 				Cont = false;
 
 		while( Cont ) {
@@ -92,17 +96,19 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 			else if ( _Coord.Column == 0 )
 				Cont = false;
 			else if ( &Line != NULL )
-				Line.Append( (flw::datum__)C );
+				Line.Append( (const bso::char__ *)UTF.Data, UTF.Size );
 
-			if ( Cont && EndOfFlow() )
+			if ( Cont && EndOfFlow( Error ) )
 				Cont = false;
 
-			if ( Cont == true )	
-				C = Get();
+			if ( Cont == true )	 {
+				UTF.Init();
+				C = Get( UTF );
+			}
 		}
 	}
 
-	if ( EndOfFlow() )
+	if ( EndOfFlow( Error ) )
 		return false;
 	else if ( Separator == 0 )
 		return true;

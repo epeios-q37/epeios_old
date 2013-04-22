@@ -457,7 +457,7 @@ static rgstry::row__ ReadSetups_(
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	XFlow.Init( Flow );
+	XFlow.Init( Flow, utf::f_Default );
 
 	if ( rgstry::FillRegistry( XFlow, xpp::criterions___(), SETUPS_LABEL, Setups, Root ) != rgstry::sOK )
 		Root = E_NIL;
@@ -658,7 +658,7 @@ ERRBegin
 	if ( Setup.Amount() != 0 ) {
 		Flow.Init( Setup );
 
-		XFlow.Init( Flow );
+		XFlow.Init( Flow, utf::f_Default );
 
 		Handle_( Kernel().FillSetupRegistry( XFlow, xpp::criterions___() ) );
 	}

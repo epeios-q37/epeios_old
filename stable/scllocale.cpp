@@ -92,7 +92,8 @@ ERREpilog
 void scllocale::Load(
 	flw::iflow__ &Flow,
 	const char *Directory,
-	const char *RootPath )
+	const char *RootPath,
+	utf::format__ Format )
 {
 ERRProlog
 	lcl::meaning ErrorMeaning;
@@ -100,7 +101,7 @@ ERRProlog
 	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRBegin
 	Context.Init();
-	Level = Push( Flow, Directory, RootPath, Context );
+	Level = Push( Flow, Directory, RootPath, Format, Context );
 
 	if ( Level == LCL_UNDEFINED_LEVEL ) {
 		ErrorMeaning.Init();
@@ -118,13 +119,14 @@ lcl::level__ scllocale::Push(
 	flw::iflow__ &Flow,
 	const char *Directory,
 	const char *RootPath,
+	utf::format__ Format,
 	rgstry::context___ &Context )
 {
 	lcl::level__ Level = LCL_UNDEFINED_LEVEL;
 ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
-	XFlow.Init( Flow );
+	XFlow.Init( Flow, Format );
 
 	Level = Locale_.Push( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath,  Context );
 ERRErr

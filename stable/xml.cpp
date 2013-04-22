@@ -75,6 +75,9 @@ using namespace xml;
 
 const char *xml::GetLabel( status__ Status )
 {
+	if ( ( Status >= s_FirstXTFError ) && ( Status < s_FirstNonXTFError ) )
+		return xtf::GetLabel( (xtf::error__)( Status - s_FirstNonXTFError ) );
+
 	switch( Status ) {
 	CASE( OK );
 	CASE( UnexpectedEOF );
@@ -1014,9 +1017,12 @@ ERRErr
 		if ( ERRType == err::t_Free ) {
 			xtf::error__ Error = xtf::e_NoError;
 
-			if ( _Flow.Flow().EndOfFlow( Error ) && ( Error != xtf::e_NoError ) )
-				# error "à complèter !".
-
+			if ( _Flow.Flow().EndOfFlow( Error ) && ( Error != xtf::e_NoError ) ) {
+				_Status = (status__)( s_FirstXTFError + Error );
+				_Token = t_Error;
+				ERRRst();
+			}
+		}
 ERREnd
 ERREpilog
 	return _Token;
@@ -1244,6 +1250,9 @@ class xmlpersonnalization
 public:
 	xmlpersonnalization( void )
 	{
+		if ( ( s_FirstNonXTFError - s_FirstXTFError ) != xtf::e_amount )
+			ERRChk();
+
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}

@@ -642,7 +642,7 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	Flow.Init( LocaleContent );
-	XFlow.Init( Flow );
+	XFlow.Init( Flow, utf::f_Default );
 
 	if ( Locale.Push( XFlow, xpp::criterions___(), "Locale", Context ) != LCL_UNDEFINED_LEVEL )
 		Success = true;

@@ -2257,7 +2257,7 @@ ERRBegin
 	if ( FFlow.Init( FileName.Convert( STRBuffer ) ) != fil::sSuccess )
 		ERRLmt();	// Devrait normalement faire remonter un message d'erreur explicatif.
 
-	XFlow.Init( FFlow );
+	XFlow.Init( FFlow, utf::f_Default );
 
 	XSLLocation = fnm::GetLocation( FileName.Convert( STRBuffer ), FNMBuffer );
 

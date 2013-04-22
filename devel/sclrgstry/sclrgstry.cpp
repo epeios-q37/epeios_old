@@ -104,7 +104,7 @@ ERRBegin
 	if ( Root_ != E_NIL )
 		ERRFwk();
 
-	XFlow.Init( Flow );
+	XFlow.Init( Flow, utf::f_Default );
 
 	Status = rgstry::FillRegistry( XFlow, xpp::criterions___( str::string( Directory ) ), RootPath, Registry_, Root_, Context );
 ERRErr

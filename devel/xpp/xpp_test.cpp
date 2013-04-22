@@ -113,7 +113,7 @@ ERRBegin
 
 	Test.Init();
 
-	XFlow.Init( Flow );
+	XFlow.Init( Flow, utf::f_Default );
 
 #if 0
 	PFlow.Init( XFlow, xpp::criterions___( str::string( "" ), str::string( "" ), str::string( NAMESPACE ) ) );
@@ -121,7 +121,7 @@ ERRBegin
 	PFlow.Init( XFlow, Criterions );
 #endif
 
-	PXFlow.Init( PFlow );
+	PXFlow.Init( PFlow, utf::f_Default );
 
 	Parser.Init( PXFlow, xml::eh_Default );
 
@@ -146,7 +146,7 @@ ERRBegin
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	
@@ -180,6 +180,7 @@ ERRFBegin
 		ERRExit( EXIT_SUCCESS );
 	}
 
+	COut << txf::commit;
 ERRFErr
 ERRFEnd
 ERRFEpilog

@@ -79,7 +79,12 @@ namespace xml {
 	// Code d'erreur 'retourné' par 'Parse()'.
 	enum status__ {
 		sOK,
-		sUnexpectedEOF,
+		s_FirstXTFError,
+		eUnsupportedFormat = s_FirstXTFError + xtf::eUnexpectedFormat,
+		eUnexpectedFormat = s_FirstXTFError + xtf::eUnexpectedFormat,
+		eMisformedFlow = s_FirstXTFError + xtf::eMisformedFlow,
+		s_FirstNonXTFError,
+		sUnexpectedEOF = s_FirstNonXTFError,
 		sUnknownEntity,
 		sMissingEqualSign,
 		sBadAttributeValueDelimiter,
@@ -187,7 +192,7 @@ namespace xml {
 
 			flw::datum__ C = _Flow->Get( UTF );
 
-			Dump.Data.Append( (const bso::char__ *)UTF.Datum, UTF.Size );
+			Dump.Data.Append( (const bso::char__ *)UTF.Data, UTF.Size );
 
 			return C;
 		}
@@ -413,6 +418,14 @@ namespace xml {
 		const xtf::extended_text_iflow__ &Flow( void ) const
 		{
 			return _Flow.Flow();
+		}
+		utf::format__ GetFormat( void ) const
+		{
+			return Flow().Format();
+		}
+		bso::bool__ SetFormat( utf::format__ Format )
+		{
+			return Flow().SetFormat( Format );
 		}
 	};
 
