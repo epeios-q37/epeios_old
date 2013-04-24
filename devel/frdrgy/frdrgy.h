@@ -76,7 +76,7 @@ extern class ttr_tutor &FRDRGYTutor;
 namespace frdrgy {
 
 	extern rgstry::entry___ Parameters;
-	extern rgstry::entry___ Settings;
+	extern rgstry::entry___ Patterns;
 	extern rgstry::entry___ Definitions;
 
 	extern rgstry::entry___ DefaultProject;
