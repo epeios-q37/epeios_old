@@ -61,12 +61,8 @@ it is necessary to personalize it, or certain compiler would not work properly *
 
 using namespace bom;
 
-struct bom__ {
-	const char *Data;
-	fdr::size__ Size;
-};
-
-#define M( m ) { m, sizeof( m ) - 1 }
+// #define M( m ) { m, sizeof( m ) - 1 }
+#define M( m ) bom__( m, sizeof( m ) - 1 )
 
 // doit relèter l'ordre des déclarations dans 'byte_order_marker__'.
 static bom__ BOMS_[bom_amount] =
@@ -105,6 +101,15 @@ byte_order_marker__ bom::DetectBOM(
 
 	return (byte_order_marker__)Position;
 }
+
+const bom__ &bom::GetBOM( byte_order_marker__ BOM )
+{
+	if ( BOM > bom_amount )
+		ERRPrm();
+
+	return BOMS_[BOM];
+}
+
 
 
 

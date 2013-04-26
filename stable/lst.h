@@ -470,11 +470,12 @@ namespace lst {
 #endif
 		bso::bool__ CreateFiles( err::handling__ ErrorHandling = err::h_Default )
 		{
-			if ( fil::FileExists( _FileName ) )
+			if ( fil::FileExists( _FileName ) ) {
 				if ( ErrorHandling == err::hThrowException )
 					ERRFwk();
 				else
 					return false;
+			}
 
 			return fil::CreateFile( _FileName, ErrorHandling );
 		}

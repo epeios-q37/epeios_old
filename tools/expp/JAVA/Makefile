@@ -34,9 +34,10 @@ name = jexpp
 copt += -DE_JAVA
 		
 mods += ags bso cpe epsmsc err 
-mods += str tol ttr uys cdgb64 
-mods += cio fil flw fnm ias 
-mods += lcl rgstry xml xpp clnarg 
+mods += str tol ttr uys bom 
+mods += cdgb64 cio fil flw fnm 
+mods += ias lcl rgstry xml xpp 
+mods += clnarg 
 
 mods += sclmisc sclerror scllocale sclrgstry 
 
@@ -148,6 +149,10 @@ ifeq ("$(os)","$(Cygwin)")
 		CXX = i686-w64-mingw32-g++
 	else ifeq ("$(arch)","$(x86_64)")
 		CXX = x86_64-w64-mingw32-g++
+    
+  else
+$(error JAVA component does compile with genuine 'Cygwin' compiler, but does NOT work properly due to a JVM and/or a 'Cygwin' bug. You have to use the 'MinGW' compiler')
+      
 	endif
 	
 	target=$(name).dll

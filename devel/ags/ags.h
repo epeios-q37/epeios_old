@@ -1076,11 +1076,12 @@ Si ce n'est plus le cas, alors il faut modifier cette fonction.
 				Descriptor = _AllocateAndSetUsedFragmentAtTail( XSize, sUsed, All );
 			}
 
-			if ( All )
+			if ( All ) {
 				if ( _IsLast( Row ) )
 					_UpdateFirstFragmentPredecessorStatus( sUsed );
 				else
 					_UpdatePredecessorStatus( Row + XSize.FragmentSize(), sUsed );
+			}
 
 			return Descriptor;
 		}

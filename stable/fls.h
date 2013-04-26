@@ -369,18 +369,19 @@ namespace fls {
 				
 				Amount = File_.Read( Nombre, Tampon );
 					
-				if ( Amount <= 0 )
-					if ( Amount == 0 )
-						if ( ( Position + Nombre ) <= TailleFichier_ )	/* Lors d'une allocation, la nouvelle taille est notée, mais la taille du fichier n'est pas modifiée
+				if ( Amount <= 0 ) {
+					if ( Amount == 0 ) {
+						if ( ( Position + Nombre ) <= TailleFichier_ )	{ /* Lors d'une allocation, la nouvelle taille est notée, mais la taille du fichier n'est pas modifiée
 																		   (gain de temps). Or, certaines bibliothèques ('MMM', par exemple) lisent un emplacement alloué
 																		   avant d'avoir écrit dedans, on considère donc que la quantité, si correcte par rapport à la taille allouée,
 																		   de données demandée est disponible, peu importe le contenu.
 																		*/
 							Amount = Nombre;
-						else
+						} else
 							ERRPrm();
-					else
+					} else
 						ERRFwk();
+				}
 					
 				Nombre -= Amount;
 				Tampon = (char *)Tampon + Amount;

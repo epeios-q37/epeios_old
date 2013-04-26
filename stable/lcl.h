@@ -303,7 +303,7 @@ namespace lcl {
 		}
 		level__ Pop( void )
 		{
-			Registry.Pop();
+			return Registry.Pop();
 		}
 		void GetLanguages(
 			strings_ &Labels,

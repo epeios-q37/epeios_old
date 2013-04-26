@@ -364,10 +364,19 @@ ERRProlog
 	xpp::context___ Context;
 	xtf::extended_text_iflow__ XFlow;
 	lcl::meaning Meaning;
+	bom::byte_order_marker__ BOM;
+	bom::bom__ BOMContent;
 ERRBegin
 	Context.Init();
 
-	XFlow.Init( IFlow, utf::f_Default );
+	BOM = XFlow.Init( IFlow, utf::f_Default );
+
+	if ( BOM != bom::bom_UnknownOrNone ) {
+		BOMContent.Init();
+
+		BOMContent = bom::GetBOM( BOM );
+		OFlow.Put( (const fdr::datum__ *)BOMContent.Data, BOMContent.Size );
+	}
 
 	if ( ( Status = xpp::Process( XFlow, xpp::criterions___( str::string( Directory == NULL ? (const char *)"" : Directory ), str::string(),
 															 str::string( Namespace == NULL ? DEFAULT_NAMESPACE : Namespace ) ),
@@ -421,8 +430,11 @@ ERRBegin
 	Process_( Source == NULL ? CIn.Flow() : IFlow, Namespace, Directory, Indent ? xml::oIndent : xml::oCompact, Destination == NULL ? COut : TOFlow );
 
 ERRErr
-	if ( BackedUp )
+	if ( BackedUp ) {
+		TOFlow.reset();
+		OFlow.reset();
 		scltool::RecoverBackupFile( Destination );
+	}
 ERREnd
 ERREpilog
 }

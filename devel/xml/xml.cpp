@@ -76,7 +76,7 @@ using namespace xml;
 const char *xml::GetLabel( status__ Status )
 {
 	if ( ( Status >= s_FirstXTFError ) && ( Status < s_FirstNonXTFError ) )
-		return xtf::GetLabel( (xtf::error__)( Status - s_FirstNonXTFError ) );
+		return xtf::GetLabel( (xtf::error__)( Status - s_FirstXTFError ) );
 
 	switch( Status ) {
 	CASE( OK );
@@ -122,8 +122,8 @@ ERREpilog
 
 static status__ SkipSpaces_( _flow___ &Flow )
 {
-	while ( !Flow.EndOfFlow() && isspace( Flow.View() ) )
-		Flow.Get();
+	while ( !Flow.EndOfFlow() && isspace( Flow.View_() ) )
+		Flow.Get_();
 
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
@@ -133,10 +133,10 @@ static status__ SkipSpaces_( _flow___ &Flow )
 
 static status__ HandleProcessingInstruction_( _flow___ &Flow )	// Gère aussi le prologue '<?xml ... ?>'
 {
-	if ( Flow.Get() != '?' )
+	if ( Flow.Get_() != '?' )
 		ERRDta();
 
-	while ( !Flow.EndOfFlow() && ( Flow.Get() != '>' ) );
+	while ( !Flow.EndOfFlow() && ( Flow.Get_() != '>' ) );
 
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
@@ -151,7 +151,7 @@ static status__ Test_(
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
-	if ( Flow.Get() != C )
+	if ( Flow.Get_() != C )
 		return sUnexpectedCharacter;
 
 	return sOK;
@@ -178,7 +178,7 @@ static status__ GetComment_(
 	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
 
-	if ( Flow.Get() != '-' )
+	if ( Flow.Get_() != '-' )
 		ERRDta();
 
 	if ( ( Status = Test_( Flow, '-' ) ) != sOK )
@@ -188,25 +188,31 @@ static status__ GetComment_(
 		return sUnexpectedEOF;
 
 	while ( Continue ) {
-		while ( !Flow.EndOfFlow() && ( Flow.View() != '-' ) )
-			Content.Append( Flow.Get() );
+		while ( !Flow.EndOfFlow() && ( Flow.View_() != '-' ) ) {
+			xtf::utf__ UTF;
+
+			UTF.Init();
+
+			Flow.Get( UTF );
+			Content.Append( (bso::char__ *)UTF.Data, UTF.Size );
+		}
 		
 		if ( Flow.EndOfFlow() )
 			return sUnexpectedEOF;
 
-		Flow.Get();	// Pour passer le '-' de début de fin de commentaire.
+		Flow.Get_();	// Pour passer le '-' de début de fin de commentaire.
 
 		if ( Flow.EndOfFlow() )
 			return sUnexpectedEOF;
 
-		if ( Flow.View() == '-' ) {
-			Flow.Get();
+		if ( Flow.View_() == '-' ) {
+			Flow.Get_();
 
 			if ( Flow.EndOfFlow() )
 				return sUnexpectedEOF;
 
-			if ( Flow.View() == '>' ) {
-				Flow.Get();
+			if ( Flow.View_() == '>' ) {
+				Flow.Get_();
 
 				Continue = false;
 			} else
@@ -224,7 +230,7 @@ static status__ GetCData_(
 	status__ Status = s_Undefined;
 	bso::bool__ Continue = true;
 
-	if ( Flow.Get() != '[' )
+	if ( Flow.Get_() != '[' )
 		ERRDta();
 
 	if ( ( Status = Test_( Flow, "CDATA[" ) ) != sOK )
@@ -237,25 +243,33 @@ static status__ GetCData_(
 		return sUnexpectedEOF;
 
 	while ( Continue ) {
-		while ( !Flow.EndOfFlow() && ( Flow.View() != ']' ) )
-			Content.Append( Flow.Get() );
+		while ( !Flow.EndOfFlow() && ( Flow.View_() != ']' ) )
+		{
+			xtf::utf__ UTF;
+
+			UTF.Init();
+
+			Flow.Get( UTF );
+
+			Content.Append( (bso::char__ *)UTF.Data, UTF.Size );
+		}
 
 		if ( Flow.EndOfFlow() )
 			return sUnexpectedEOF;
 
-		Flow.Get();	// Pour passer le ']' de début de fin de 'CDATA'.
+		Flow.Get_();	// Pour passer le ']' de début de fin de 'CDATA'.
 
 		if ( Flow.EndOfFlow() )
 			return sUnexpectedEOF;
 
-		if ( Flow.View() == ']' ) {
-			Flow.Get();
+		if ( Flow.View_() == ']' ) {
+			Flow.Get_();
 
 			if ( Flow.EndOfFlow() )
 				return sUnexpectedEOF;
 
-			if ( Flow.View() == '>' ) {
-				Flow.Get();
+			if ( Flow.View_() == '>' ) {
+				Flow.Get_();
 
 				Continue = false;
 			} else
@@ -273,16 +287,16 @@ static status__ GetCommentOrCData_(
 {
 	bso::bool__ Continue = true;
 
-	if ( Flow.Get() != '!' )
+	if ( Flow.Get_() != '!' )
 		ERRDta();
 
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
 
-	if ( Flow.View() == '-' ) {
+	if ( Flow.View_() == '-' ) {
 		IsCData = false;
 		return GetComment_( Flow, Content );
-	} else if ( Flow.View() == '[' ) {
+	} else if ( Flow.View_() == '[' ) {
 		IsCData = true;
 		return GetCData_( Flow, Content );
 	}	else
@@ -295,9 +309,16 @@ static sdr::size__ GetId_(
 {
 	bso::size__ Size = 0;
 
-	while ( !Flow.EndOfFlow() && ( isalnum( Flow.View() ) || Flow.View() == ':' || Flow.View() == '_' || Flow.View() == '-' ) ) {
-		Id.Append( Flow.Get() );
-		Size++;
+	while ( !Flow.EndOfFlow() && ( isalnum( Flow.View_() ) || Flow.View_() == ':' || Flow.View_() == '_' || Flow.View_() == '-' ) ) {
+		xtf::utf__ UTF;
+
+		UTF.Init();
+
+		Flow.Get( UTF );
+
+		Id.Append( (bso::char__ *)UTF.Data, UTF.Size );
+
+		Size += UTF.Size;
 	}
 
 	return Size;
@@ -340,7 +361,7 @@ static unsigned char HandleEntity_( _flow___ &Flow )
 
 		switch ( State ) {
 		case ehsStart:
-			switch( Flow.Get() ) {
+			switch( Flow.Get_() ) {
 			case 'l':
 				State = ehsL;
 				break;
@@ -359,31 +380,31 @@ static unsigned char HandleEntity_( _flow___ &Flow )
 			}
 			break;
 		case ehsL:
-			if ( Flow.Get() != 't' )
+			if ( Flow.Get_() != 't' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsLT;
 			break;
 		case ehsLT:
-			if ( Flow.Get() != ';' )
+			if ( Flow.Get_() != ';' )
 				return ENTITY_ERROR_VALUE;
 
 			return '<';
 			break;
 		case ehsG:
-			if ( Flow.Get() != 't' )
+			if ( Flow.Get_() != 't' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsGT;
 			break;
 		case ehsGT:
-			if ( Flow.Get() != ';' )
+			if ( Flow.Get_() != ';' )
 				return ENTITY_ERROR_VALUE;
 
 			return '>';
 			break;
 		case ehsA:
-			switch ( Flow.Get() ) {
+			switch ( Flow.Get_() ) {
 			case 'm':
 				State = ehsAM;
 				break;
@@ -396,53 +417,53 @@ static unsigned char HandleEntity_( _flow___ &Flow )
 			}
 			break;
 		case ehsAM:
-			if ( Flow.Get() != 'p' )
+			if ( Flow.Get_() != 'p' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsAMP;
 			break;
 		case ehsAMP:
-			if ( Flow.Get() != ';' )
+			if ( Flow.Get_() != ';' )
 				return ENTITY_ERROR_VALUE;
 
 			return '&';
 			break;
 		case ehsAP:
-			if ( Flow.Get() != 'o' )
+			if ( Flow.Get_() != 'o' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsAPO;
 			break;
 		case ehsAPO:
-			if ( Flow.Get() != 's' )
+			if ( Flow.Get_() != 's' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsAPOS;
 			break;
 		case ehsAPOS:
-			if ( Flow.Get() != ';' )
+			if ( Flow.Get_() != ';' )
 				return ENTITY_ERROR_VALUE;
 
 			return '\'';
 			break;
 		case ehsQ:
-			if ( Flow.Get() != 'u' )
+			if ( Flow.Get_() != 'u' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsQU;
 			break;
 		case ehsQU:
-			if ( Flow.Get() != 'o' )
+			if ( Flow.Get_() != 'o' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsQUO;
 		case ehsQUO:
-			if ( Flow.Get() != 't' )
+			if ( Flow.Get_() != 't' )
 				return ENTITY_ERROR_VALUE;
 
 			State = ehsQUOT;
 		case ehsQUOT:
-			if ( Flow.Get() != ';' )
+			if ( Flow.Get_() != ';' )
 				return ENTITY_ERROR_VALUE;
 
 			return '"';
@@ -467,9 +488,13 @@ static status__ GetValue_(
 	unsigned char C;
 	OnlySpaces = true;
 
-	while ( !Flow.EndOfFlow() && ( Flow.View() != Delimiter ) ) {
+	while ( !Flow.EndOfFlow() && ( Flow.View_() != Delimiter ) ) {
 
-		if ( !isspace( C = Flow.Get() ) )
+		xtf::utf__ UTF;
+
+		UTF.Init();
+
+		if ( !isspace( C = Flow.Get( UTF ) ) )
 			OnlySpaces = false;
 		else if ( !OnlySpaces && ErrorIfSpaceInValue && ( C != ' ' ) )
 			return sUnexpectedCharacter;
@@ -479,9 +504,12 @@ static status__ GetValue_(
 
 			if ( C == ENTITY_ERROR_VALUE )
 				return sUnknownEntity;
+
+			UTF.Data[0] = C;
+			UTF.Size = 1;
 		}
 
-		Value.Append( C );
+		Value.Append( (bso::char__ *)UTF.Data, UTF.Size );
 	}
 
 	if ( Flow.EndOfFlow() )
@@ -517,25 +545,25 @@ static status__ GetAttribute_(
 	status__ Status = s_Undefined;
 
 	if ( GetName_( Flow, Name ) == 0 ) {
-		Flow.Get();	// Pour ajuster les coordonnées de l'erreur.
+		Flow.Get_();	// Pour ajuster les coordonnées de l'erreur.
 		return sUnexpectedCharacter;
 	}
 
 	HANDLE( SkipSpaces_( Flow ) );
 
-	if ( Flow.Get() != '=' )
+	if ( Flow.Get_() != '=' )
 		return sMissingEqualSign;
 
 	HANDLE( SkipSpaces_( Flow ) );
 
-	Delimiter = Flow.Get();
+	Delimiter = Flow.Get_();
 
 	if ( ( Delimiter != '"' ) && ( Delimiter != '\'' ) )
 		return sBadAttributeValueDelimiter;
 
 	HANDLE( GetAttributeValue_( Flow, Delimiter, EntitiesHandling, Value ) );
 
-	Flow.Get();	// To skip the '"' or '''.
+	Flow.Get_();	// To skip the '"' or '''.
 /*
 	if ( Flow.EndOfFlow() )
 		return sUnexpectedEOF;
@@ -627,12 +655,12 @@ ERRBegin
 			case t_Undefined:
 				if ( _Flow.EndOfFlow() )
 					Continue = false;	// Fichier vide ou presque.
-				else if ( _Flow.View() != '<' )
+				else if ( _Flow.View_() != '<' )
 					RETURN( sUnexpectedCharacter )
 				else {
-					_Flow.Get();	// Pour enlever le '<'.
+					_Flow.Get_();	// Pour enlever le '<'.
 
-					if ( _Flow.View() == '?' ) {
+					if ( _Flow.View_() == '?' ) {
 						HANDLE( HandleProcessingInstruction_( _Flow ) );
 
 						_Token = tProcessingInstruction;
@@ -658,14 +686,14 @@ ERRBegin
 			}
 			break;
 		case cTagExpected:
-			if ( _Flow.Get() != '<' )
+			if ( _Flow.Get_() != '<' )
 				RETURN( sUnexpectedCharacter )
 		case cTagConfirmed:
 			HANDLE( SkipSpaces_( _Flow ) );
 
-			if ( _Flow.View() == '/' ) {
+			if ( _Flow.View_() == '/' ) {
 				_Context = cClosingTag;
-				_Flow.Get();
+				_Flow.Get_();
 			} else
 				_Context = cOpeningTag;
 			break;
@@ -674,7 +702,7 @@ ERRBegin
 			case tComment:
 			case tCData:
 			case t_Undefined:
-				if ( _Flow.View() == '!' ) {
+				if ( _Flow.View_() == '!' ) {
 					bso::bool__ IsCData = false;
 
 					_Value.Init();
@@ -704,8 +732,8 @@ ERRBegin
 					_Token = tStartTag;
 
 					// Pour faciliter la localisation d'une erreur.
-					if ( isspace( _Flow.View() ) )
-						_Flow.Get();
+					if ( isspace( _Flow.View_() ) )
+						_Flow.Get_();
 
 					if ( ( 1 << _Token ) & TokenToReport )
 						Continue = false;
@@ -716,13 +744,13 @@ ERRBegin
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
-				switch( _Flow.View() ) {
+				switch( _Flow.View_() ) {
 				case '/':
-					_Flow.Get();
+					_Flow.Get_();
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
-					if ( _Flow.Get() != '>' )
+					if ( _Flow.Get_() != '>' )
 						RETURN( sUnexpectedCharacter );
 
 					if ( _Tags.IsEmpty() )
@@ -741,7 +769,7 @@ ERRBegin
 
 				break;
 				case '>':
-					_Flow.Get();
+					_Flow.Get_();
 
 					_TagName.Init();
 
@@ -823,15 +851,15 @@ ERRBegin
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
-				if ( _Flow.View() == '/' ) {
+				if ( _Flow.View_() == '/' ) {
 
-					_Flow.Get();
+					_Flow.Get_();
 
 					HANDLE( SkipSpaces_( _Flow ) );
 
-					if ( _Flow.View() == '>' ) {
+					if ( _Flow.View_() == '>' ) {
 
-						_Flow.Get();
+						_Flow.Get_();
 
 						if ( _Tags.IsEmpty() )
 							ERRFwk();
@@ -849,11 +877,11 @@ ERRBegin
 
 
 					} else {
-						_Flow.Get();	// Pour la mise à jour des coordonnées.
+						_Flow.Get_();	// Pour la mise à jour des coordonnées.
 						RETURN( sUnexpectedCharacter );
 					}
-				} else if ( _Flow.View() == '>' ) {
-					_Flow.Get();
+				} else if ( _Flow.View_() == '>' ) {
+					_Flow.Get_();
 
 					_TagName.Init();
 
@@ -921,7 +949,7 @@ ERRBegin
 
 				HANDLE( SkipSpaces_( _Flow ) );
 
-				if ( _Flow.Get() != '>' )
+				if ( _Flow.Get_() != '>' )
 					RETURN( sUnexpectedCharacter );
 
 				if ( _Tags.IsEmpty() )
@@ -970,7 +998,7 @@ ERRBegin
 		case cValueExpected:
 			switch( _Token ) {
 			case t_Undefined:
-				if ( _Flow.View() != '<' ) {
+				if ( _Flow.View_() != '<' ) {
 					_Value.Init();
 					
 					HANDLE( GetTagValue_( _Flow, _Value, _EntitiesHandling, OnlySpaces ) );

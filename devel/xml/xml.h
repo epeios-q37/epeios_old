@@ -80,9 +80,9 @@ namespace xml {
 	enum status__ {
 		sOK,
 		s_FirstXTFError,
-		eUnsupportedFormat = s_FirstXTFError + xtf::eUnexpectedFormat,
-		eUnexpectedFormat = s_FirstXTFError + xtf::eUnexpectedFormat,
-		eMisformedFlow = s_FirstXTFError + xtf::eMisformedFlow,
+		eUnsupportedEncoding = s_FirstXTFError + xtf::eUnsupportedEncoding,
+		eUnexpectedEncoding = s_FirstXTFError + xtf::eUnexpectedEncoding,
+		eEncodingDiscrepancy = s_FirstXTFError + xtf::eEncodingDiscrepancy,
 		s_FirstNonXTFError,
 		sUnexpectedEOF = s_FirstNonXTFError,
 		sUnknownEntity,
@@ -181,7 +181,7 @@ namespace xml {
 		{
 			reset();
 		}
-		flw::datum__ Get( void )
+		flw::datum__ Get( xtf::utf__ &UTFOut )
 		{
 			xtf::utf__ UTF;
 
@@ -194,35 +194,42 @@ namespace xml {
 
 			Dump.Data.Append( (const bso::char__ *)UTF.Data, UTF.Size );
 
+			if ( &UTFOut != NULL )
+				UTFOut = UTF;
+
 			return C;
 		}
-		flw::datum__ View( void )
+		flw::datum__ Get_( void )
+		{
+			return Get( *(xtf::utf__ *)NULL );
+		}
+		flw::datum__ View( xtf::utf__ &UTFOut )
 		{
 			xtf::utf__ UTF;
 
 			UTF.Init();
 
-			return _Flow->View( UTF );
+			flw::datum__  C = _Flow->View( UTF );
+
+			if ( &UTFOut != NULL )
+				UTFOut = UTF;
+
+			return C;
+		}
+		flw::datum__ View_( void )
+		{
+			return View( *(xtf::utf__ *)NULL );
 		}
 		bso::bool__ EndOfFlow( void )
 		{
 			xtf::error__ Error = xtf::e_NoError;
+			bso::bool__ EOFlow = _Flow->EndOfFlow( Error );
 
-			bso::bool__ Result = _Flow->EndOfFlow( Error );
-
-			if ( !Result && ( Error != xtf::e_NoError ) )
+			if ( EOFlow && ( Error != xtf::e_NoError ) )
 				ERRFree();
 
-			return Result;
+			return EOFlow;
 		}
-# if 0
-		void Unget( unsigned char C )
-		{
-			_Flow->Unget( C );
-
-			Dump.Data.Truncate();
-		}
-# endif
 		void Purge( void )
 		{
 			Dump.PurgeData();

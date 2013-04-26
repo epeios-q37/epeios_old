@@ -133,7 +133,7 @@ namespace err {
 		void Handler(
 			const char *File = NULL,
 			int Line = 0,
-			err::type Type = Type );
+			err::type Type = err_::Type );
 	};
 
 	void Final( void );
@@ -229,13 +229,13 @@ namespace err {
 
 # endif
 
-# define ERRTestEpilog	if ( ERRHit() && !ERRNoError && err::Concerned() )\
-							if ( ERRType == err::t_Return )\
+# define ERRTestEpilog	if ( ERRHit() && !ERRNoError && err::Concerned() ) {\
+							if ( ERRType == err::t_Return ) {\
 								ERRRst()
 
 //d End of the error bloc.
-# define ERREpilog	ERRCommonEpilog ERRTestEpilog else ERRT();
-# define ERRFEpilog	ERRCommonEpilog ERRTestEpilog else err::Final();
+# define ERREpilog	ERRCommonEpilog ERRTestEpilog } } else ERRT();
+# define ERRFEpilog	ERRCommonEpilog ERRTestEpilog } } else err::Final();
 # define ERRFProlog	ERRProlog
 # define ERRFBegin	ERRBegin
 # define ERRFErr		ERRErr

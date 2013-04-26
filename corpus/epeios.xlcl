@@ -12,5 +12,6 @@
 	<xpp:expand href="scl.xlcl"/>
 	<xpp:expand href="xml.xlcl"/>
 	<xpp:expand href="xpp.xlcl"/>
+	<xpp:expand href="xtf.xlcl"/>
 	<xpp:expand href="xulf.xlcl"/>
 </xpp:bloc>

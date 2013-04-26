@@ -428,8 +428,11 @@ namespace fdr {
 		{
 			return IsLocked();
 		}
-		bso::bool__ IsCacheEmpty( void ) const
+		bso::bool__ IsCacheEmpty( bso::size__ &Available ) const
 		{
+			if ( &Available != NULL )
+				Available = _Available;
+
 			return _Available == 0;
 		}
 		bso::bool__ EndOfFlow( void )

@@ -249,7 +249,7 @@ namespace aem {
 			if ( StepValue >= 128 )
 				ERRPrm();
 
-			S_.Misc = ( S_.Misc & 0xffffff40 | StepValue );
+			S_.Misc = ( ( S_.Misc & 0xffffff40 ) | StepValue );
 
 		}
 		//f Return the step value.

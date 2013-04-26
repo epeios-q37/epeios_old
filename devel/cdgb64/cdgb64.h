@@ -369,7 +369,7 @@ namespace cdgb64 {
 				if ( Amount >= 4 )
 					Decode_( Buffer, Amount & ~3UL );
 
-				if ( Amount & 3 )
+				if ( Amount & 3 ) {
 					if ( Datum == '=' )
 						DecodePartial_( Buffer + ( Amount & ~3UL ), Amount & 3, Buffer + 3 * ( Amount >> 2 ) );
 					else {
@@ -377,6 +377,7 @@ namespace cdgb64 {
 						memcpy( _Cache, Buffer + ( Amount & ~3UL ), _Size );
 						Amount &= ~3UL;
 					}
+				}
 
 			}
 

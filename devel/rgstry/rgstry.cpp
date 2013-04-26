@@ -385,13 +385,14 @@ static inline bso::bool__ BuildPath_(
 {
 	sdr::row__ PathErrorRowBuffer = BuildPath( PathString, Path );
 
-	if ( PathErrorRowBuffer != E_NIL )
+	if ( PathErrorRowBuffer != E_NIL ) {
 		if ( PathErrorRow == NULL )
 			ERRDta();
 		else {
 			*PathErrorRow = PathErrorRowBuffer;
 			return false;
 		}
+	}
 
 	return true;
 
@@ -1527,14 +1528,15 @@ status__ rgstry::FillRegistry(
 	if ( rgstry::Parse( XFlow, Criterions, Registry, RegistryRoot, Context ) == E_NIL )
 		return Context.Status = sParseError;
 
-	if ( ( RootPath != NULL ) && ( *RootPath ) )
-		if ( ( NewRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &PathErrorRow ) ) == E_NIL )
+	if ( ( RootPath != NULL ) && ( *RootPath ) ) {
+		if ( ( NewRoot = Registry.Search( str::string( RootPath ), RegistryRoot, &PathErrorRow ) ) == E_NIL ) {
 			if ( PathErrorRow != E_NIL ) {
 				Context.PathErrorRow = PathErrorRow;
 				return Context.Status = sRootPathError;
 			} else
 				return Context.Status = sUnableToFindRootPath;
-		else if ( Registry.GetNature( RegistryRoot ) == nAttribute )
+		}
+	} else if ( Registry.GetNature( RegistryRoot ) == nAttribute )
 			return Context.Status = sRootPathError;
 		else
 			RegistryRoot = NewRoot;
@@ -1594,11 +1596,12 @@ static bso::u8__ GetTagAmount_( const str::string_ &String )
 		if ( Row == E_NIL )
 			ERRFwk();
 
-		if ( String( Row ) != RGSTRY__TAG_MARKER_C )
+		if ( String( Row ) != RGSTRY__TAG_MARKER_C ) {
 			if ( Amount == LIMIT )
 				ERRLmt();
 			else
 				Amount++;
+		}
 
 		Row = String.Next( Row );
 	}

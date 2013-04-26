@@ -160,7 +160,7 @@ ERRJBegin
 	Flow = GetFlow_( Env, Object );
 
 	if ( Flow != NULL )
-		Amount = Flow->Available();
+		Amount = Flow->IsCacheEmpty( Amount );
 
 	if ( Amount < 0 )
 		ERRFwk();
@@ -271,7 +271,7 @@ ERRJBegin
 
 	Data->Flow.Init( Data->Param );
 
-	Data->XFlow.Init( Data->Flow );
+	Data->XFlow.Init( Data->Flow, utf::f_Guess );
 
 #if 1
 	D.Init( ".." );

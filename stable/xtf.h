@@ -81,9 +81,9 @@ namespace xtf {
 	typedef bso::uint__ location__;
 
 	enum error__ {
-		eUnsupportedFormat,
-		eUnexpectedFormat,
-		eMisformedFlow,
+		eUnsupportedEncoding,
+		eUnexpectedEncoding,
+		eEncodingDiscrepancy,
 		e_amount,
 		e_Undefined,
 		e_NoError
@@ -92,14 +92,14 @@ namespace xtf {
 	inline const char *GetLabel( error__ Error )
 	{
 		switch ( Error ) {
-		case eUnsupportedFormat:
-			return XTF_NAME "_UnsupportedFormat";
+		case eUnsupportedEncoding:
+			return XTF_NAME "_UnsupportedEncoding";
 			break;
-		case eUnexpectedFormat:
-			return XTF_NAME "_UnexpectedFormat";
+		case eUnexpectedEncoding:
+			return XTF_NAME "_UnexpectedEncoding";
 			break;
-		case eMisformedFlow:
-			return XTF_NAME "_MisformedFlow";
+		case eEncodingDiscrepancy:
+			return XTF_NAME "_EncodingDiscrepancy";
 			break;
 		default:
 			ERRPrm();
@@ -184,58 +184,64 @@ namespace xtf {
 			_Coord.Line++;
 			_Coord.Column = 0;
 		}
-		utf::format__ _HandleBOM( utf::format__ ExpectedFormat )
+		bom::byte_order_marker__ _GetBOM( void )
 		{
 			fdr::datum__ BOMBuffer[BOM_SIZE_MAX];
 			fdr::size__ Size = _F().View( sizeof( BOMBuffer ), BOMBuffer );
-			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM4.
+			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM'.
 
 			if ( BOM != bom::bom_UnknownOrNone )
 				_F().Skip( Size );
 
+			return BOM;
+		}
+		utf::format__ _HandleFormat(
+			utf::format__ ExpectedFormat,
+			bom::byte_order_marker__ BOM )
+		{
 			switch ( ExpectedFormat ) {
 			case utf::f_Guess:
 				if ( BOM == bom::bomUTF_8 )
 					ExpectedFormat = utf::fUTF_8;
 				else if ( BOM != bom::bom_UnknownOrNone ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fANSI:
 				if ( BOM != bom::bom_UnknownOrNone )
 				{
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fUTF_8:
 				if ( ( BOM != bom::bom_UnknownOrNone ) && ( BOM != bom::bomUTF_8 ) ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fUTF_16_BE:
 				if ( BOM != bom::bomUTF_16_BE ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fUTF_16_LE:
 				if ( BOM != bom::bomUTF_16_LE ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fUTF_32_BE:
 				if ( BOM != bom::bomUTF_32_BE ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
 			case utf::fUTF_32_LE:
 				if ( BOM != bom::bomUTF_32_LE ) {
-					_Error = eUnexpectedFormat;
+					_Error = eUnexpectedEncoding;
 					ExpectedFormat = utf::f_Undefined;
 				}
 				break;
@@ -283,7 +289,7 @@ namespace xtf {
 			Init( IFlow, Format, Coord );
 		}
 		//f Initialization with 'Flow'..
-		void Init(
+		bom::byte_order_marker__ Init(
 			flw::iflow__ &IFlow,
 			utf::format__ Format,
 			coord__ Coord = coord__( 1, 0 ) )
@@ -296,9 +302,13 @@ namespace xtf {
 
 			_UTF.Init();
 
-			if ( ( Format = _HandleBOM( Format ) ) != utf::f_Undefined )
+			bom::byte_order_marker__ BOM = _GetBOM();
+
+			if ( ( Format = _HandleFormat( Format, BOM ) ) != utf::f_Undefined )
 				if ( !_UTFHandler.Init( Format ) )
-					_Error = eUnsupportedFormat;
+					_Error = eUnsupportedEncoding;
+
+			return BOM;
 		}
 		//f Extract and return next character in flow.
 		flw::datum__ Get( utf__ &UTF )
@@ -408,7 +418,7 @@ namespace xtf {
 					return true;
 
 				if ( !_PrefetchUTF() ) {
-					Error = _Error = eMisformedFlow; 
+					Error = _Error = eEncodingDiscrepancy; 
 					return true;
 				}
 

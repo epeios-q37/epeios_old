@@ -31,9 +31,10 @@ name = expp
 #copt += -DERR_JMPUSE
 	
 mods += ags bso cpe epsmsc err 
-mods += str tol ttr uys cdgb64 
-mods += cio fil flw fnm ias 
-mods += lcl rgstry xml xpp clnarg 
+mods += str tol ttr uys bom 
+mods += cdgb64 cio fil flw fnm 
+mods += ias lcl rgstry xml xpp 
+mods += clnarg 
 
 mods += sclmisc sclerror scllocale sclrgstry scltool 
 
@@ -138,7 +139,7 @@ ifeq ("$(os)","$(Cygwin)")
 
 	co += -DCYGWIN
 
-	LDFLAGS += -static
+#	LDFLAGS += -static
 
 	ifeq ("$(arch)","$(IA_32)")
 		CXX = i686-w64-mingw32-g++

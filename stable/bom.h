@@ -60,8 +60,9 @@ extern class ttr_tutor &BOMTutor;
 
 /*$BEGIN$*/
 
-#include "err.h"
-#include "flw.h"
+# include "err.h"
+# include "flw.h"
+# include "tol.h"
 
 # define BOM_SIZE_MAX	4
 
@@ -72,6 +73,29 @@ extern class ttr_tutor &BOMTutor;
 # define BOM_UTF_8		"\xEF\xBB\xBF"
 
 namespace bom {
+
+	struct bom__ {
+		const char *Data;
+		fdr::size__ Size;
+		void reset( bso::bool__ = true )
+		{
+			Data = NULL;
+			Size = 0;
+		}
+		E_CDTOR( bom__ );
+		bom__(
+			const char *Data,
+			fdr::size__ Size )
+		{
+			this->Data = Data;
+			this->Size = Size;
+		}
+		void Init( void )
+		{
+			reset();
+		}
+	};
+
 	enum byte_order_marker__ {
 		// Important ! Doivent se succèder par ordre de taille décroissant.
 		bom_First,
@@ -88,7 +112,9 @@ namespace bom {
 
 	byte_order_marker__ DetectBOM(
 		const fdr::datum__ *Buffer,
-		fdr::size__ &Size );	// Si valeur retournée différent de 'bom_UnknownOrNone', 'Size' est modifié pour contenir la taille du 'BOMM'.
+		fdr::size__ &Size );	// Si valeur retournée différent de 'bom_UnknownOrNone', 'Size' est modifié pour contenir la taille du 'BOM'.
+
+	const bom__ &GetBOM( byte_order_marker__ BOM );
 
 
 }

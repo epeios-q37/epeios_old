@@ -59,7 +59,7 @@ using namespace frdrgy;
 
 rgstry::entry___ frdrgy::Parameters( "Parameters" );
 rgstry::entry___ frdrgy::Definitions( "Definitions" );
-rgstry::entry___ frdrgy::Patterns( "Patterns" );
+rgstry::entry___ frdrgy::Layouts( "Layouts" );
 
 rgstry::entry___ frdrgy::DefaultProject( "DefaultProject", Parameters );
 rgstry::entry___ frdrgy::Locale( "Locale", Parameters );

@@ -71,6 +71,24 @@ extern class ttr_tutor &NSXPCMTutor;
 
 # include "xpcom-config.h"
 
+# define NSXPCM__DEFAULT_GECKO_API_VERSION	2
+
+# ifdef E_GECKO_API_VERSION
+#  define NSXPCM__GECKO_API_VERSION	E_GECKO_API_VERSION
+# else
+#  define NSXPCM__GECKO_API_VERSION	NSXPCM__DEFAULT_GECKO_API_VERSION
+# endif
+
+# if NSXPCM__GECKO_API_VERSION == 1
+#  define NSXPCM_GECKO_API_V1
+# elif NSXPCM__GECKO_API_VERSION == 2
+#  define NSXPCM_GECKO_API_V2
+# elif NSXPCM__GECKO_API_VERSION == 3
+#  define NSXPCM_GECKO_API_V3
+# else
+#  error "Unknwon Gecko API version :"
+# endif
+
 # ifndef CPE_GECKO
 #  error "The NSXPCM library can only be used in a 'Gecko' copmonent :'
 # endif
@@ -78,17 +96,6 @@ extern class ttr_tutor &NSXPCMTutor;
 # ifndef CPE_LIBRARY
 #  error "A 'Gecko' component must be a dynamic library !"
 # endif
-
-# if NSXPCM_GECKO_V1
-#  define NSXPCM__GECKO_V1
-# elif NSXPCM_GECKO_V2
-#  define NSXPCM__GECKO_V2
-# elif NSXPCM_GECKO_V8
-#  define NSXPCM__GECKO_V8
-# else
-#  error "Missing adequate 'NSXPCM_GECKO_Vx' definition ! Accepted values for 'x' : 1 (Gecko 1.9) or 2 (Gecko 2) or 8 (Gecko 8)"
-# endif
-
 
 # pragma warning( push )
 # pragma warning( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
@@ -110,10 +117,14 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsIDOMXULButtonElement.h"
 # include "nsIDOMXULTreeElement.h"
 # include "nsIDOMXULDescriptionElement.h"
-# ifdef NSXPCM__GECKO_V8
+# if defined( NSXPCM_GECKO_API_V1 )
 #  include "nsIDOMWindow.h"
-# else
+# elif defined( NSXPCM_GECKO_API_V2 )
+#  include "nsIDOMWindow.h"
+# elif defined ( NSXPCM_GECKO_API_V3 )
 #  include "nsIDOMWindowInternal.h"
+# else
+#  error
 # endif
 # include "nsIDOMXULLabelElement.h"
 # include "nsIDOMMutationEvent.h"
@@ -131,10 +142,12 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "nsServiceManagerUtils.h"
 # include "nsIInterfaceRequestor.h"
 # include "nsIDOMEventListener.h"
-# ifdef NSXPCM__GECKO_V1
-#  inclu de "nsIGenericFactory.h"
-# elif defined( NSXPCM__GECKO_V2 ) || defined ( NSXPCM__GECKO_V8 )
+# if defined( NSXPCM_GECKO_API_V1 )
 #  include "mozilla/ModuleUtils.h"
+# elif defined( NSXPCM_GECKO_API_V2 )
+#  include "mozilla/ModuleUtils.h"
+# elif defined( NSXPCM_GECKO_API_V3 )
+#  include "nsIGenericFactory.h"
 # else
 #  error
 # endif
@@ -153,10 +166,14 @@ extern class ttr_tutor &NSXPCMTutor;
 #  define NSXPCM__ENABLE_FORMHISTORY
 # endif
 
-#if 1
+# if defined( NSXPCM_GECKO_API_V1 )
+#  define NSXPCM__BOOL	PRBool
+# elif defined( NSXPCM_GECKO_API_V2 )
+#  define NSXPCM__BOOL	PRBool
+# elif defined( NSXPCM_GECKO_API_V3 )
 #  define NSXPCM__BOOL	bool
 # else
-#  define NSXPCM__BOOL	PRBool
+#  error
 # endif
 
 
@@ -997,10 +1014,14 @@ namespace nsxpcm {
 		bso::bool__ Deep,
 		nsIDOMNode **Clone )
 	{
-# if 1
+# if defined( NSXPCM_GECKO_API_V1 )
+		T( Node->CloneNode( Deep, Clone ) );
+# elif defined( NSXPCM_GECKO_API_V2 )
+		T( Node->CloneNode( Deep, Clone ) );
+# elif defined( NSXPCM_GECKO_API_V3 )
 		T( Node->CloneNode( Deep, 0, Clone ) );
 # else
-		T( Node->CloneNode( Deep, Clone ) );
+#  error
 # endif
 	}
 
@@ -1294,11 +1315,15 @@ namespace nsxpcm {
 
 	inline nsIDOMWindowInternal* GetOpener( nsIDOMWindowInternal *Window )
 	{
-# ifdef NSXPCM__GECKO_V8
+# if defined( NSXPCM_GECKO_API_V1 )
 		T( Window->GetOpener( (nsIDOMWindow **)&Window ) );
-# else
+# elif defined( NSXPCM_GECKO_API_V2 )
+		T( Window->GetOpener( (nsIDOMWindow **)&Window ) );
+# elif defined( NSXPCM_GECKO_API_V3 )
 		T( Window->GetOpener( &Window ) );
-#endif
+# else
+#  error
+# endif
 
 		return Window;
 	}

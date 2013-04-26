@@ -779,11 +779,15 @@ ERRBegin
 	} else if ( ( _retval != nsIFilePicker::returnOK ) && ( _retval != nsIFilePicker::returnReplace ) )
 		ERRLbr();
 
-# if 1
-	nsIFile *File;
-# else
+#if defined( NSXPCM_GECKO_API_V1 )
 	nsILocalFile *File;
-# endif
+#elif defined( NSXPCM_GECKO_API_V2 )
+	nsILocalFile *File;
+#elif defined( NSXPCM_GECKO_API_V3 )
+	nsIFile *File;
+#else
+# error
+#endif
 
 	if ( ( Error = FilePicker->GetFile( &File ) ) != NS_OK )
 		ERRLbr();
@@ -2039,10 +2043,16 @@ NS_IMETHODIMP nsxpcm::autocomplete_result___::RemoveValueAt(PRInt32 rowIndex, NS
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+#if defined( NSXPCM_GECKO_API_V1 )
+#elif defined( NSXPCM_GECKO_API_V2 )
+#elif defined( NSXPCM_GECKO_API_V3 )
 NS_IMETHODIMP nsxpcm::autocomplete_result___::GetTypeAheadResult(bool *aTypeAheadResult)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
+#else
+# error
+#endif
 
 
 /* Fin 'textbox' 'atutocomplete'. */
@@ -2171,10 +2181,14 @@ static bso::bool__ _GetXSLStylesheet(
 
 	CreateInstance( NS_XMLHTTPREQUEST_CONTRACTID, HTTPRequest );
 
-#ifdef NSXPCM__GECKO_V8
+#if defined( NSXPCM_GECKO_API_V1 )
 	Result = HTTPRequest->Open( Method, URL, false, Empty, Empty );
-#else
+#elif defined( NSXPCM_GECKO_API_V2 )
+	Result = HTTPRequest->Open( Method, URL, false, Empty, Empty );
+#elif defined( NSXPCM_GECKO_API_V3 )
 	Result = HTTPRequest->OpenRequest( Method, URL, false, Empty, Empty );
+#else
+# error
 #endif
 
 	if ( Result != NS_OK )

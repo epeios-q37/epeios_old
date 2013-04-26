@@ -377,8 +377,7 @@ using namespace nsxpcm;
 NS_IMPL_ISUPPORTS1(egeckocom___, EIGeckoCOM)
 NS_GENERIC_FACTORY_CONSTRUCTOR(egeckocom___)
 
-#ifdef NSXPCM__GECKO_V1
-
+#if defined( NSXPCM_GECKO_API_V1 )
 static nsModuleComponentInfo components[] =
 {
     {
@@ -393,7 +392,7 @@ static nsModuleComponentInfo components[] =
 NS_IMPL_NSGETMODULE("EGeckoCOMModule", components) 
 
 
-#elif defined( NSXPCM__GECKO_V2 ) || defined ( NSXPCM__GECKO_V8 )
+#elif  defined( NSXPCM_GECKO_API_V2 )
 # include "mozilla/ModuleUtils.h"
 
 

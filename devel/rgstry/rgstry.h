@@ -395,6 +395,8 @@ namespace rgstry {
 			Name = N.Name;
 			Value = N.Value;
 			Children = N.Children;
+
+			return *this;
 		}
 		void Init( void )
 		{
