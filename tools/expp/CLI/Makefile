@@ -241,7 +241,7 @@ lo += -o $(target) $(objs)
 objs = $(name).$(ox) $(mods:=.$(ox))
 
 $(target): $(objs)
-	$(CXX) $(LDFLAGS) $(lo) $(libs)
+	$(CXX) $(lo) $(libs) $(LDFLAGS) 
 
 %.$(ox): %.cpp
 	$(CXX) $(CPPFLAGS) $(co) $(CXXFLAGS) $<

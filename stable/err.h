@@ -234,8 +234,8 @@ namespace err {
 								ERRRst()
 
 //d End of the error bloc.
-# define ERREpilog	ERRCommonEpilog ERRTestEpilog } } else ERRT();
-# define ERRFEpilog	ERRCommonEpilog ERRTestEpilog } } else err::Final();
+# define ERREpilog	ERRCommonEpilog ERRTestEpilog } else ERRT();  };
+# define ERRFEpilog	ERRCommonEpilog ERRTestEpilog } else err::Final(); };
 # define ERRFProlog	ERRProlog
 # define ERRFBegin	ERRBegin
 # define ERRFErr		ERRErr
