@@ -1,7 +1,6 @@
 /*
-	Header for the 'expp' module by Claude SIMON (http://zeusw.org/epeios/contact.html).
 	Part of th 'expp' tool. See http://intl/expp/
-	Copyright (C) 2011 by Claude SIMON (http://zeusw.org/epeios/contact.html).
+	Copyright (C) 2013 by Claude SIMON (http://zeusw.org/epeios/contact.html).
 
 	This file is part of the Epeios project (http://zeusw.org/epeios/).
 
@@ -22,11 +21,14 @@
 */
 // $Id$
 
-#ifndef EXPP__INC
-# define EXPP__INC
+#ifndef DETAILS__INC
+# define DETAILS__INC
 
-# include "details.h"
+# include "epsmsc.h"
 
-# define NAME				"expp"
+# define VERSION		"2013-04-30"
+# define COPYRIGHT_YEARS	"2007-2013"
+# define APP_URL			EPSMSC_APP_URL( NAME )
+# define COPYRIGHT			EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
 
 #endif

@@ -497,7 +497,7 @@ namespace flw {
 			_AmountMax = AmountMax;
 		}
 # if 0
-/*		size__ WriteRelay(
+		size__ WriteRelay(
 			const datum__ *Buffer,
 			size__ Maximum )
 		{

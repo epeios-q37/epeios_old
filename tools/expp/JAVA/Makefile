@@ -27,7 +27,7 @@ name = jexpp
 #copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DE_MT
-# For using alt;setjmp.h> instead of C++ exceptions.
+# For using <setjmp.h> instead of C++ exceptions.
 #copt += -DERR_JMPUSE
 	
 # Required for Java

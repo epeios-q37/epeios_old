@@ -27,7 +27,7 @@ name = expp
 #copt += -DXXX_DBG
 # Required for multitasking
 #copt += -DE_MT
-# For using alt;setjmp.h> instead of C++ exceptions.
+# For using <setjmp.h> instead of C++ exceptions.
 #copt += -DERR_JMPUSE
 	
 mods += ags bso cpe epsmsc err 
@@ -139,12 +139,13 @@ ifeq ("$(os)","$(Cygwin)")
 
 	co += -DCYGWIN
 
-#	LDFLAGS += -static
+	LDFLAGS += -static
 
 	ifeq ("$(arch)","$(IA_32)")
 		CXX = i686-w64-mingw32-g++
 	else ifeq ("$(arch)","$(x86_64)")
 		CXX = x86_64-w64-mingw32-g++
+    
 	endif
 	
 	target=$(name)
@@ -222,6 +223,8 @@ endif
 
 ##########################
 		
+src += :..
+
 ifndef EPEIOS_SRC
 	src += :../epeios
 else
@@ -241,7 +244,7 @@ lo += -o $(target) $(objs)
 objs = $(name).$(ox) $(mods:=.$(ox))
 
 $(target): $(objs)
-	$(CXX) $(lo) $(libs) $(LDFLAGS) 
+	$(CXX) $(LDFLAGS) $(lo) $(libs)
 
 %.$(ox): %.cpp
 	$(CXX) $(CPPFLAGS) $(co) $(CXXFLAGS) $<

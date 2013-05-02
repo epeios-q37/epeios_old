@@ -20,6 +20,9 @@ $GET epeios $DIR documentation/packages/$DIR/Directives.pdf
 $GET epeios $DIR tools/$DIR/CHANGELOG.txt
 $GET epeios $DIR documentation/packages/$DIR/Manual.pdf
 
+$GET epeios $DIR tools/$DIR/*.h
+# $GET epeios $DIR tools/$DIR/*.cpp
+
 $GET epeios $CLI tools/$CLI/Makefile
 $GET epeios $CLI tools/$CLI/*.cpp
 $GET epeios $CLI tools/$CLI/*.h
@@ -32,10 +35,9 @@ $GET epeios $JAVA tools/$JAVA/*.cpp
 $GET epeios $JAVA tools/$JAVA/*.h
 cp /cygdrive/h/bin/jexpp.dll $JAVA
 
-mkdir -p $JAVA/org/zeusw/epeios
+mkdir -p $JAVA/org/zeusw
 $GET epeios $JAVA tools/$JAVA/*.java
 $GET epeios $JAVA/org/zeusw tools/$JAVA/org/zeusw/*.java
-$GET epeios $JAVA/org/zeusw/epeios tools/$JAVA/org/zeusw/epeios/*.java
 
 
 $GET epeios $DIR tools/$DIR/Linux.xcf

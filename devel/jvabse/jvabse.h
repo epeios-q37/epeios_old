@@ -80,7 +80,7 @@ extern class ttr_tutor &JVABSETutor;
 # define ERRJBegin	ERRBegin
 # define ERRJErr	ERRErr
 # define ERRJEnd	ERREnd
-# define ERRJEpilog	ERRCommonEpilog ERRTestEpilog else jvabse::ERRFinal( Env );
+# define ERRJEpilog	ERRCommonEpilog ERRTestEpilog } else jvabse::ERRFinal( Env ); }
 
 namespace jvabse {
 
