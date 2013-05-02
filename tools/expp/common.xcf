@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ï»¿<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:define name="LinuxURL">
@@ -10,7 +10,7 @@
 	<xpp:define name="Linux">
 		<xpp:bloc>
 			<xpp:define name="Directory">
-				<xpp:bloc>/home/dupônd/</xpp:bloc>
+				<xpp:bloc>/home/dupÃ´nd/</xpp:bloc>
 			</xpp:define>
 			<xpp:define name="RootURL">
 				<xpp:expand select="LinuxURL"/>
@@ -20,7 +20,7 @@
 	<xpp:define name="Windows">
 		<xpp:bloc>
 			<xpp:define name="Directory">
-				<xpp:bloc>c:\Documents\Dûpond\</xpp:bloc>
+				<xpp:bloc>c:\Documents\DÃ»pond\</xpp:bloc>
 			</xpp:define>
 			<xpp:define name="RootURL">
 				<xpp:expand select="WindowsURL"/>
