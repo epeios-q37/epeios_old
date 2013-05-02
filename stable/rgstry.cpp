@@ -1535,11 +1535,11 @@ status__ rgstry::FillRegistry(
 				return Context.Status = sRootPathError;
 			} else
 				return Context.Status = sUnableToFindRootPath;
-		}
-	} else if ( Registry.GetNature( RegistryRoot ) == nAttribute )
-			return Context.Status = sRootPathError;
-		else
-			RegistryRoot = NewRoot;
+		} else if ( Registry.GetNature( RegistryRoot ) == nAttribute )
+				return Context.Status = sRootPathError;
+			else
+				RegistryRoot = NewRoot;
+	}
 
 
 	return sOK;

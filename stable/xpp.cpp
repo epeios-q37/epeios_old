@@ -130,7 +130,6 @@ const char *xpp::GetLabel( status__ Status )
 	CASE( MissingCypherKey );
 	CASE( MissingKeyOrFormatAttribute );
 	CASE( CDataNestingForbidden );
-	CASE( MixedFormat );
 	default:
 		ERRPrm();
 		break;

@@ -106,7 +106,6 @@ namespace xpp {
 		sMissingKeyOrFormatAttribute,
 		sEmptyResult,
 		sCDataNestingForbidden,
-		sMixedFormat,
 
 		s_amount,
 		s_Undefined,

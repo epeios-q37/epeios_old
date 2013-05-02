@@ -11,7 +11,7 @@
   </Translations>
   <Translations text="XTF_EncodingDiscrepancy">
     <Translation language="fr">Divergence d'encodage</Translation>
-    <Translation language="en">EncodingDiscrepancy</Translation>
+    <Translation language="en">Encoding discrepancy</Translation>
   </Translations>
   <!--
 	<Translations text="XTF_">
