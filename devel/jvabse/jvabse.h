@@ -82,6 +82,8 @@ extern class ttr_tutor &JVABSETutor;
 # define ERRJEnd	ERREnd
 # define ERRJEpilog	ERRCommonEpilog ERRTestEpilog } else jvabse::ERRFinal( Env ); }
 
+# define JVABSE_EXPORT	extern "C" JNIEXPORT
+
 namespace jvabse {
 
 	inline void ERRFinal( JNIEnv *Env )

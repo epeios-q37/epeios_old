@@ -1372,6 +1372,9 @@ ERRBegin
 		case xml::tEndTag:
 			Writer.PopTag();
 			break;
+		case xml::tCData:
+			Writer.PutCData( Parser.Value() );
+			break;
 		case xml::t_Processed:
 			Continue = false;
 			break;

@@ -32,7 +32,6 @@ cp /cygdrive/h/bin/expp.exe $CLI
 
 $GET epeios $JAVA tools/$JAVA/Makefile
 $GET epeios $JAVA tools/$JAVA/*.cpp
-$GET epeios $JAVA tools/$JAVA/*.h
 cp /cygdrive/h/bin/jexpp.dll $JAVA
 
 mkdir -p $JAVA/org/zeusw

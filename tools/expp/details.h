@@ -26,7 +26,7 @@
 
 # include "epsmsc.h"
 
-# define VERSION		"2013-04-30"
+# define VERSION			"2013-05-06"
 # define COPYRIGHT_YEARS	"2007-2013"
 # define APP_URL			EPSMSC_APP_URL( NAME )
 # define COPYRIGHT			EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )

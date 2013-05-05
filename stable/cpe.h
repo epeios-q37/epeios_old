@@ -108,10 +108,10 @@ extern class ttr_tutor &CPETutor;
 
 
 # undef CPE_X86		// Processeur IA-32 compatibles.
-# define CPE_X86_LABEL	"x86"
+# define CPE_X86_LABEL	"IA-32"
 
 # undef CPE_X64		// Processeur AMD 64 bits et compatibles.
-# define CPE_X64_LABEL	"x64"
+# define CPE_X64_LABEL	"x86-64"
 
 # undef CPE_ARM		// Processeur ARM.
 # define CPE_ARM_LABEL "ARM"

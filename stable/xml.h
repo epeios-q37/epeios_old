@@ -691,8 +691,7 @@ namespace xml {
 		{
 			PushTag( name( Name ) );
 		}
-		void PutValue(
-			const value_ &Value );
+		void PutValue( const value_ &Value );
 		void PutValue( const char *Value )
 		{
 			PutValue( value( Value ) );
@@ -733,6 +732,11 @@ namespace xml {
 			const value_ &Value )
 		{
 			PutAttribute( name( Name ), Value );
+		}
+		void PutCData( const str::string_ &Value );
+		void PutCData( const char *Value )
+		{
+			PutCData( value( Value ) ) ;
 		}
 		void PopTag( void );
 		txf::text_oflow__ &GetFlow( void )

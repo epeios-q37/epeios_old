@@ -405,7 +405,7 @@ ERRProlog
 	flf::file_oflow___ OFlow;
 	txf::text_oflow__ TOFlow;
 	flf::file_iflow___ IFlow;
-	const char *Directory;
+	const char *Directory = NULL;
 	bso::bool__ BackedUp = false;
 	FNM_BUFFER___ Buffer;
 ERRBegin

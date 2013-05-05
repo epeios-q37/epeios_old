@@ -2,6 +2,10 @@ $Id$
 
 // For both CLI version and JAVA version.
 
+- /04/2013 :
+	- adaptation to x86-64.
+	- Handling of UTF-8 wiht ot without BOM.
+
 - 25/11/2012 :
 	- Adaptation.
 

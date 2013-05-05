@@ -79,7 +79,7 @@ namespace utf {
 		{
 			// Standardisation.
 		}
-		fdr::size__ Handle(
+		bso::u8__ Handle(
 			const fdr::datum__ *Datum,
 			fdr::size__ Size )
 		{
@@ -105,6 +105,9 @@ namespace utf {
 	{
 		bso::u8__ Amount = 0;
 
+		if ( Size > BSO_U8_MAX )
+			ERRPrm();
+
 		while ( Size-- && ( ( Datum[Amount] & 0xC0 ) == 0x80 ) )
 			Amount++;
 
@@ -123,7 +126,7 @@ namespace utf {
 		{
 			// Standardisation.
 		}
-		fdr::size__ Handle(
+		bso::u8__ Handle(
 			const fdr::datum__ *Datum,
 			fdr::size__ Size )
 		{
@@ -220,7 +223,7 @@ namespace utf {
 
 			return true;
 		}
-		bso::size__ Handle(
+		bso::u8__ Handle(
 			const fdr::datum__ *Datum,
 			bso::size__ Size )	// 5, sauf si EOF !
 		{

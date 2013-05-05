@@ -27,9 +27,9 @@
 
 using namespace jvabse;
 
-#include "org_zeusw_XPPInputStream.h"
+# define EXPORT	JVABSE_EXPORT
 
-#define WORKAROUND	1
+//#include "org_zeusw_XPPInputStream.h"
 
 static void Print_(
 	JNIEnv *Env,
@@ -45,49 +45,6 @@ static void Print_(
 	Env->CallNonvirtualVoidMethod( Out, GetClass( Env, Out ), GetMethodID( Env, Out, "println", "(Ljava/lang/String;)V" ), Env->NewStringUTF( Text ) );
 
 	Env->CallNonvirtualVoidMethod( Out, GetClass( Env, Out ), GetMethodID( Env, Out, "flush", "()V" ), Text );
-}
-
-#ifdef WORKAROUND
-#endif
-
-#if 0
-static void *malloc_( int Size )
-{
-#ifdef WORKAROUND
-	return new char;
-#else
-	return calloc( Size, 1 );
-#endif
-
-}
-
-static void free_( void *P )
-{
-#ifdef WORKAROUND
-	delete P;
-#else
-	free( P );
-#endif
-
-}
-#endif
-JNIEXPORT void JNICALL Java_XMLPreprocessorDemo_mallocCygwinBug
-  (JNIEnv *Env, jclass)
-{
-#if 0
-ERRJProlog
-	void *Test = NULL;
-ERRJBegin
-	Test = malloc_( 10 );
-
-	if( Test == NULL )
-		ERRa();
-ERRJErr
-ERRJEnd
-	if ( Test != NULL )
-		free_( Test );
-ERRJEpilog
-#endif
 }
 
 #define BUFFER_SIZE	JVASTF_BUFFER_SIZE
@@ -149,7 +106,7 @@ ERREpilog
 	return Flow;
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_available(
+EXPORT jint JNICALL Java_org_zeusw_XPPInputStream_available(
 	JNIEnv *Env,
 	jobject Object )
 {
@@ -173,7 +130,7 @@ ERRJEpilog
 	return (jint)Amount;
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read__(
+EXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read__(
 	JNIEnv *Env,
 	jobject Object )
 {
@@ -231,7 +188,7 @@ int Read(
 	return Read( Env, Object, b, 0, Env->GetArrayLength( b ) );
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3B(
+EXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3B(
 	JNIEnv *Env,
 	jobject Object,
 	jbyteArray b )
@@ -239,7 +196,7 @@ JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3B(
 	return Read( Env, Object, b );
 }
 
-JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII(
+EXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII(
 	JNIEnv *Env,
 	jobject Object,
 	jbyteArray b,
@@ -251,7 +208,7 @@ JNIEXPORT jint JNICALL Java_org_zeusw_XPPInputStream_read___3BII(
 
 
 
-JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_constructor(
+EXPORT void JNICALL Java_org_zeusw_XPPInputStream_constructor(
   JNIEnv *Env,
   jobject Object )
 {
@@ -298,7 +255,7 @@ ERRJEpilog
 }
 
 
-JNIEXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor(
+EXPORT void JNICALL Java_org_zeusw_XPPInputStream_destructor(
 	JNIEnv *Env,
 	jobject Object )
 {

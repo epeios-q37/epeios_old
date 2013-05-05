@@ -256,12 +256,14 @@ namespace xtf {
 		bso::bool__ _PrefetchUTF( void )
 		{
 			if ( _UTF.Size == 0 ) {
-				_UTF.Size = _F().View(sizeof( _UTF.Data ), _UTF.Data );
-
-				if ( _UTF.Size == 0 )
+				bso::size__ Size = _F().View( sizeof( _UTF.Data ), _UTF.Data );
+				
+				if ( Size == 0  ) {
+					_UTF.Size = 0;
 					return false;
+				}
 
-				_UTF.Size = _UTFHandler.Handle( _UTF.Data, _UTF.Size );
+				_UTF.Size = _UTFHandler.Handle( _UTF.Data, Size );
 
 				if ( _UTF.Size == 0 )
 					return false;

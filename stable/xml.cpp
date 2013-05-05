@@ -1236,6 +1236,11 @@ ERREnd
 ERREpilog
 }
 
+void xml::writer_::PutCData( const value_ &Value )
+{
+	*S_.Flow << "<![CDATA[" << Value << "]]>";
+}
+
 
 void xml::writer_::PopTag( void )
 {
