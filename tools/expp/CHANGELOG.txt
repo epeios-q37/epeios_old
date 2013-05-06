@@ -2,9 +2,14 @@ $Id$
 
 // For both CLI version and JAVA version.
 
-- /04/2013 :
+- 06/05/2013 :
+	- Release.
+
+- .../04/2013 :
 	- adaptation to x86-64.
-	- Handling of UTF-8 wiht ot without BOM.
+	- Handling of UTF-8, with ot without BOM.
+	- Adding 'cdata' directive.
+	- Introducing new version numbering (based on date).
 
 - 25/11/2012 :
 	- Adaptation.
@@ -18,14 +23,14 @@ Version 0.4.2 :
 
 - 26/04/2012 : Publication.
 
-25/04/201 :
+- 25/04/201 :
 	- Creation of the JAVA version.
 
-18/12/2011 :
+- 18/12/2011 :
 	- Adaptation to changes in underlying libraries.
 	- Even if the original flow is not empty and contains a valid XML tree, if the result of the preprocessing is empty, an error is reported.
 
-25/09/2011 :
+- 25/09/2011 :
 	- Adaptation to changes in underlying libraries.
 
 ---------------
