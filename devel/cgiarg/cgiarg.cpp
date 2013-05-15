@@ -82,7 +82,7 @@ ERRBegin
 					if ( NameBuffer.Amount() == Name.Amount() ) 
 						break;
 				} else
-					ERRu();
+					ERRFwk();
 
 		P = Next( P );
 	}
@@ -117,7 +117,7 @@ ERRBegin
 					if ( NameBuffer.Amount() == Name.Amount() ) 
 						break;
 				} else
-					ERRu();
+					ERRFwk();
 
 		P = Next( P );
 	}
@@ -135,7 +135,7 @@ void arguments_::Parse(
 	row__ P;
 
 	if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
-		ERRl();
+		ERRLmt();
 
 	while( strlen( Buffer ) )
 	{
@@ -151,12 +151,12 @@ void arguments_::Parse(
 			P = Add( Buffer );
 
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
-			ERRl();
+			ERRLmt();
 
 		PutValue( str::string( Buffer ), P );
 
 		if ( !flw::GetString( Flow, Buffer, sizeof( Buffer ) ) )
-			ERRl();
+			ERRLmt();
 	}
 }
 

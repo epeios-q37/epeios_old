@@ -1,4 +1,4 @@
-# 'expp' Makefile
+# 'expp' Project
 #    by Claude SIMON (http://zeusw.org/intl/contact.html).
 #
 # Requires GNU make (http://www.gnu.org/software/make/).

@@ -11,9 +11,13 @@
       <Translation language="fr">Erreur module : %1</Translation>
       <Translation language="en">Module error : %1</Translation>
     </Translations>
-    <Translations text="UnableToLoadBackend">
-      <Translation language="fr">Impossible de charger le moteur de traitement '%1'</Translation>
-      <Translation language="en">Unable to load backend '%1'</Translation>
+    <Translations text="UnableToLoadModule">
+      <Translation language="fr">Impossible de charger le module '%1'</Translation>
+      <Translation language="en">Unable to load module '%1'</Translation>
+    </Translations>
+    <Translations text="UnknownError">
+      <Translation language="fr">Erreur inconnue</Translation>
+      <Translation language="en">Unknown error</Translation>
     </Translations>
     <!--
 			<Translations text="">

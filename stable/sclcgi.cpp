@@ -79,7 +79,7 @@ private:
 	steering_callback__ &_Callback( void ) const
 	{
 		if ( _SteeringCallback == NULL )
-			ERRc();
+			ERRFwk();
 
 		return *_SteeringCallback;
 	}
@@ -95,25 +95,25 @@ protected:
 	{
 	ERRProlog
 		void *UP = NULL;
-		ssnmng::row__ SessionRow = NONE;
-		cgiarg::row__ ArgRow = NONE;
+		ssnmng::row__ SessionRow = E_NIL;
+		cgiarg::row__ ArgRow = E_NIL;
 		str::string RawSession;
 		ssnmng::session_id__ Session;
 	ERRBegin
 		ArgRow = Arguments.Locate( "_session" );
 		RawSession.Init();
 
-		if ( ArgRow == NONE )
+		if ( ArgRow == E_NIL )
 			SessionRow = _Sessions.New( _Callback().NewSession( Arguments ) );
-		else if ( ( SessionRow = _Sessions.Search( Arguments.GetValue( ArgRow, RawSession ) ) ) == NONE )
+		else if ( ( SessionRow = _Sessions.Search( Arguments.GetValue( ArgRow, RawSession ) ) ) == E_NIL )
 			_Callback().ReportExpiredSession( Writer, XSLFileName );
 		else if ( _Sessions.IsExpired( SessionRow ) ) {
 			_Sessions.Close( SessionRow );	// Appelle 'sclcgi::SCLCGI::DeleteSession.
 			_Callback().ReportExpiredSession( Writer, XSLFileName );
-			SessionRow = NONE;
+			SessionRow = E_NIL;
 		}
 
-		if ( SessionRow != NONE ) {
+		if ( SessionRow != E_NIL ) {
 			Session.Init();
 			_Sessions.SessionID( SessionRow );
 
@@ -124,7 +124,7 @@ protected:
 				_Sessions.Close( SessionRow );	// Appelle 'sclcgi::SCLCGI::DeleteSession.
 				break;
 			default:
-				ERRc();
+				ERRFwk();
 				break;
 			}
 		}
@@ -164,7 +164,7 @@ ERRBegin
 		ERRReturn;
 
 	if ( ( Gate = new gate__ ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	Gate->Init( *Callback );
 ERRErr

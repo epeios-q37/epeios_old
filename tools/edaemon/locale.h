@@ -35,14 +35,15 @@
 namespace locale {
 
 	enum message__ {
-		mUnableToLoadBackend,
+		mUnableToLoadModule,
 		mUnableToOpenLogFile,
+		mModuleError,
 		m_amount,
 		m_Undefined
 	};
 
 // To adjust if above 'enum' is modified.
-# define GLOBAL__MESSAGE_AMOUNT	2
+# define GLOBAL__MESSAGE_AMOUNT	3
 
 	using scllocale::GetLocale;
 
@@ -60,11 +61,18 @@ namespace locale {
 		return GetMeaning_( mUnableToOpenLogFile, &Meaning, FileName );
 	}
 
-	inline const lcl::meaning_ &GetUnableToLoadBackendMeaning(
-		const char *BackendFileName,
+	inline const lcl::meaning_ &GetUnableToLoadModuleMeaning(
+		const char *DaemonFileName,
 		lcl::meaning_ &Meaning )
 	{
-		return GetMeaning_( mUnableToLoadBackend, &Meaning, BackendFileName );
+		return GetMeaning_( mUnableToLoadModule, &Meaning, DaemonFileName );
+	}
+
+	inline const lcl::meaning_ &GetModuleErrorMeaning(
+		const char *DaemonFileName,
+		lcl::meaning_ &Meaning )
+	{
+		return GetMeaning_( mModuleError, &Meaning );
 	}
 }
 

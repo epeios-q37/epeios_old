@@ -147,10 +147,10 @@ namespace cgiarg {
 			Data.reset( P );
 			Links.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Data.plug( M );
-			Links.plug( M );
+			Data.plug( AS );
+			Links.plug( AS );
 		}
 		arguments_ &operator =( const arguments_ &A )
 		{

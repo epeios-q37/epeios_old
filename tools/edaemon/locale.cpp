@@ -45,13 +45,14 @@ using namespace locale;
 
 const char *locale::Label( message__ Message )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 2
+#if	GLOBAL__MESSAGE_AMOUNT != 3
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
 	switch( Message ) {
-	CASE( UnableToLoadBackend );
+	CASE( UnableToLoadModule );
 	CASE( UnableToOpenLogFile );
+	CASE( ModuleError );
 	default:
 		ERRPrm();
 		break;
@@ -65,7 +66,7 @@ const lcl::meaning_ &locale::GetMeaning_(
 	lcl::meaning_ *Meaning,
 	... )
 {
-#if	GLOBAL__MESSAGE_AMOUNT != 2
+#if	GLOBAL__MESSAGE_AMOUNT != 3
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 	va_list Args;
@@ -77,8 +78,10 @@ const lcl::meaning_ &locale::GetMeaning_(
 
 	switch ( Message ) {
 	case mUnableToOpenLogFile:
-	case mUnableToLoadBackend:
+	case mUnableToLoadModule:
 		Meaning->AddTag( va_arg( Args, const char * ) );
+		break;
+	case mModuleError:
 		break;
 	default:
 		ERRPrm();

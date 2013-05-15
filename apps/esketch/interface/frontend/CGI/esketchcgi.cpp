@@ -66,7 +66,7 @@ protected:
 		Instance = new instance___;
 
 		if ( Instance == NULL )
-			ERRa();
+			ERRAlc();
 
 		Instance->Init( _Kernel );
 	ERRErr
@@ -99,7 +99,7 @@ protected:
 	virtual void SCLCGIDeleteSession( void *UP )
 	{
 		if( UP == NULL )
-			ERRc();
+			ERRPrm();
 
 		delete (instance___ *)UP;
 	}
@@ -126,7 +126,7 @@ sclcgi::steering_callback__ *sclcgi::SCLCGICreateSteering( void )
 ERRProlog
 ERRBegin
 	if ( ( SteeringCallback = new ::steering_callback__ ) == NULL )
-		ERRc();
+		ERRAlc();
 
 	SteeringCallback->Init();
 ERRErr

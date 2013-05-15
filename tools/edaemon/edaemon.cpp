@@ -239,16 +239,16 @@ ERREpilog
 
 /* End of the part which handles command line arguments. */
 
-enum backend_connection_type__ {
-	bctStraight,	
-	bctSwitched,
-	bct_amount,
-	bct_Undefined
+enum module_connection_type__ {
+	mctStraight,	
+	mctSwitched,
+	mct_amount,
+	mct_Undefined
 };
 
-static backend_connection_type__ GetModuleConnectionType_( void )
+static module_connection_type__ GetModuleConnectionType_( void )
 {
-	backend_connection_type__ Type = bct_Undefined;
+	module_connection_type__ Type = mct_Undefined;
 ERRProlog
 	str::string Value;
 ERRBegin
@@ -257,9 +257,9 @@ ERRBegin
 	registry::GetRawModuleServiceType( Value );
 
 	if ( Value == "Straight" )
-		Type = bctStraight;
+		Type = mctStraight;
 	else if ( Value == "Switched" )
-		Type = bctSwitched;
+		Type = mctSwitched;
 	else {
 		Value.Init();
 		sclrgstry::ReportBadOrNoValueForEntryError( registry::ModuleServiceType );
@@ -304,7 +304,7 @@ ERREpilog
 
 static void UseStraightConnections_(
 	csdsuf::user_functions__ &UserFunctions,
-	const bso::char__ *Backend,
+	const bso::char__ *Module,
 	csdbns::port__ Port )
 {
 ERRProlog
@@ -321,7 +321,7 @@ ERREpilog
 static void UseSwitchingConnections_(
 	csdsuf::user_functions__ &UserFunctions,
 	csdsns::log_functions__ &LogFunctions,
-	const bso::char__ *Backend,
+	const bso::char__ *Module,
 	csdbns::port__ Port )
 {
 ERRProlog
@@ -381,7 +381,7 @@ static void UseSwitchingConnections_(
 	csdsuf::user_functions__ &UserFunctions,
 	const char *LogFileName,
 	log_file_handling__ LogFileHandling,
-	const bso::char__ *Backend,
+	const bso::char__ *Module,
 	csdbns::port__ Port )
 {
 ERRProlog
@@ -416,16 +416,16 @@ ERRBegin
 			TFlow.Init( FFlow );
 	}
 
-	UseSwitchingConnections_( UserFunctions, LogFileName == NULL ? *(csdsns::log_functions__ *)NULL : LogFunctions, Backend, Port );
+	UseSwitchingConnections_( UserFunctions, LogFileName == NULL ? *(csdsns::log_functions__ *)NULL : LogFunctions, Module, Port );
 ERRErr
 ERREnd
 ERREpilog
 }
 
 static csdlec::library_embedded_client_core__ *Go_(
-	const bso::char__ *BackendFileName,
+	const bso::char__ *ModuleFileName,
 	csdbns::port__ Port,
-	backend_connection_type__ ConnectionType,
+	module_connection_type__ ConnectionType,
 	const char *LogFileName,
 	log_file_handling__ LogFileHandling )
 {
@@ -441,24 +441,24 @@ ERRBegin
 	SharedLocale.Init();
 	SharedRegistry.Init();
 
-	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false, (void *)BackendFileName );
+	LibraryData.Init( csdleo::mRemote, cio::COutDriver, cio::CErrDriver, false, (void *)ModuleFileName );
 
 	if ( ( Core = new csdlec::library_embedded_client_core__ ) == NULL )
 		ERRAlc();
 
-	if ( !Core->Init( BackendFileName, LibraryData, err::hUserDefined ) ) {
+	if ( !Core->Init( ModuleFileName, LibraryData, err::hUserDefined ) ) {
 		Meaning.Init();
-		locale::GetUnableToLoadBackendMeaning( BackendFileName, Meaning );
+		locale::GetUnableToLoadModuleMeaning( ModuleFileName, Meaning );
 		sclerror::SetMeaning( Meaning );
 		ERRExit( EXIT_FAILURE );
 	}
 
 	switch ( ConnectionType ) {
-	case bctStraight:
-		UseStraightConnections_( Core->GetSteering(), BackendFileName, Port );
+	case mctStraight:
+		UseStraightConnections_( Core->GetSteering(), ModuleFileName, Port );
 		break;
-	case bctSwitched:
-		UseSwitchingConnections_( Core->GetSteering(), LogFileName, LogFileHandling, BackendFileName, Port );
+	case mctSwitched:
+		UseSwitchingConnections_( Core->GetSteering(), LogFileName, LogFileHandling, ModuleFileName, Port );
 		break;
 	default:
 		ERRFwk();
@@ -466,7 +466,7 @@ ERRBegin
 	}
 ERRErr
 	Meaning.Init();
-	Meaning.SetValue( "ModuleError" );
+	locale::GetModuleErrorMeaning( ModuleFileName, Meaning );
 
 	if ( ERRType >= err::t_amount ) {
 		if ( sclerror::IsErrorPending() )

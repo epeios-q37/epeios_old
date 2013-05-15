@@ -62,7 +62,7 @@ extern class ttr_tutor &CGIDATTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "epeios.h"
+#include "sdr.h"
 #include "str.h"
 #include "lstbch.h"
 #include "lstctn.h"
@@ -91,7 +91,7 @@ namespace cgidat {
 		content_row__ Value;
 		void reset( bso::bool__ P = true )
 		{
-			Name = Suffix = Value = NONE;
+			Name = Suffix = Value = E_NIL;
 		}
 		_relationship__( void )
 		{
@@ -129,10 +129,10 @@ namespace cgidat {
 			Relationships.reset( P );
 			Contents.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Relationships.plug( MM );
-			Contents.plug( MM );
+			Relationships.plug( AS );
+			Contents.plug( AS );
 		}
 		data_ &operator =( const data_ &D )
 		{
@@ -154,9 +154,9 @@ namespace cgidat {
 			const content_ &Value )
 		{
 			_relationship__ Relationship;
-			row__ Row = NONE;
+			row__ Row = E_NIL;
 
-			if ( ( Row = GetDataWithNameAndSuffix( Name, Suffix ) ) != NONE ) {
+			if ( ( Row = GetDataWithNameAndSuffix( Name, Suffix ) ) != E_NIL ) {
 				Relationships.Recall( Row, Relationship );
 				Contents.Store( Suffix, Relationship.Suffix );
 				Contents.Store( Value, Relationship.Value );
@@ -215,7 +215,7 @@ namespace cgidat {
 		{
 			row__ Row = GetDataWithNameAndSuffix( Name, Suffix );
 
-			if ( Row != NONE )
+			if ( Row != E_NIL )
 				Delete( Row );
 		}
 		//f Delete datum of 'Name' and 'Suffix'.
@@ -281,12 +281,12 @@ namespace cgidat {
 		xmlf &XMLF )
 	{
 ERRProlog
-		row__ Row = NONE;
+		row__ Row = E_NIL;
 		content Content;
 ERRBegin
 		Row = Data.First();
 
-		while( Row != NONE ) {
+		while( Row != E_NIL ) {
 			XMLF.PushTag( "Datum" );
 			Content.Init();
 			XMLF.PutAttribute( "Name", Data.GetContent( Data.GetNameRow( Row ), Content ) );

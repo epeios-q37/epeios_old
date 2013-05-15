@@ -79,7 +79,7 @@ private:
 	steering_callback__ &_Callback( void ) const
 	{
 		if ( _SteeringCallback == NULL )
-			ERRc();
+			ERRFwk();
 
 		return *_SteeringCallback;
 	}
@@ -124,7 +124,7 @@ protected:
 				_Sessions.Close( SessionRow );	// Appelle 'sclcgi::SCLCGI::DeleteSession.
 				break;
 			default:
-				ERRc();
+				ERRFwk();
 				break;
 			}
 		}
@@ -164,7 +164,7 @@ ERRBegin
 		ERRReturn;
 
 	if ( ( Gate = new gate__ ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	Gate->Init( *Callback );
 ERRErr

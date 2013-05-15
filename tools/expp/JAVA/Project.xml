@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xpp="http://zeusw.org/epeios/xpp">
+  <xpp:bloc><!-- User definitions -->
+    <xpp:set name="Type" value="JavaComponent"/>
+    <xpp:define name="CopyrightYears">
+      <Years>2013</Years>
+    </xpp:define>
+  </xpp:bloc>
+  <xpp:expand href="h:/batchs/prj/Main.xml"/>
+  <About>
+    <Program>jexpp</Program>
+    <Software>expp</Software>
+  </About>
+  <Modules>
+    <Modules Group="Epeios" xpp:attribute="Path,EpeiosPath">
+      <Modules Group="Core">
+        <xpp:expand select="Core"/>
+      </Modules>
+    </Modules>
+  </Modules>
+</Project>

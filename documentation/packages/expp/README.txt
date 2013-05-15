@@ -10,5 +10,5 @@ $Id$
 
 See enclosed PDF files and go to 'http://zeusw.org/intl/expp/' for more details.
 
-'Linux.xcf', 'Windows.xcf', 'common.xcf', 'Contacts.xml' and 'Villes.xml' are example files.
+'Linux.xcf', 'Windows.xcf', 'common.xcf', 'Contacts.xml' and 'villes.xml' are example files.
 

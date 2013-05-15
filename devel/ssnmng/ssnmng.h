@@ -149,14 +149,14 @@ namespace ssnmng {
 		user_functions__ &_UF( void )
 		{
 			if ( _UserFunctions == NULL )
-				ERRc();
+				ERRFwk();
 
 			return *_UserFunctions;
 		}
 		void _Close( const rows_ &Rows );
 		void _AdjustSizes( void )
 		{
-			mdr::size__ Size = Pointers.Extent();
+			sdr::size__ Size = Pointers.Extent();
 
 			Queue.Allocate( Size, aem::mFit );
 			Table.Allocate( Size, aem::mFit );
@@ -172,8 +172,8 @@ namespace ssnmng {
 			bch::E_BUNCHt_( session_id__, row__ )::s Table;
 			idxbtq::E_INDEXt_( row__ )::s Index;
 			bch::E_BUNCHt_( chrono__, row__ )::s Chronos;
-			bso::ushort__ Absolute;
-			bso::ushort__ Relative;
+			bso::u16__ Absolute;
+			bso::u16__ Relative;
 			row__ Root;
 		} &S_;
 		lstbch::E_LBUNCHt_( void *, row__ ) Pointers;
@@ -201,13 +201,13 @@ namespace ssnmng {
 			Index.reset( P );
 			Chronos.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Pointers.plug( M );
-			Queue.plug( M );
-			Table.plug( M );
-			Index.plug( M );
-			Chronos.plug( M );
+			Pointers.plug( AS );
+			Queue.plug( AS );
+			Table.plug( AS);
+			Index.plug( AS );
+			Chronos.plug( AS );
 		}
 		sessions_manager_ &operator =( const sessions_manager_ &SM )
 		{
@@ -225,8 +225,8 @@ namespace ssnmng {
 		}
 		//f Initialization with 'Relative' and 'Absolute' amonut of second.
 		void Init(
-			bso::ushort__ Relative,
-			bso::ushort__ Absolute,
+			bso::u16__ Relative,
+			bso::u16__ Absolute,
 			user_functions__ &UserFunctions )
 		{
 			Pointers.Init();
@@ -270,14 +270,14 @@ namespace ssnmng {
 			chrono__ C = Chronos.Get( P );
 
 			if ( time( &C.Relative ) == -1 )
-				ERRs();
+				ERRLbr();
 
 			C.Immortal = false;
 
 			Chronos.Store( C, P );
 	#ifdef SSNMNG_DBG
 			if ( Queue.Amount() == 0 )
-				ERRu();
+				ERRFwk();
 	#endif
 
 			if ( ( Queue.Amount() != 1 ) && ( Queue.Tail() != P ) ) {

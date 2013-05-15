@@ -131,11 +131,11 @@ namespace cgiarg {
 	{
 	public:
 		struct s{
-			ctn::E_XMCONTAINERt_( str::string_, data_row__ )::s Data;
+			ctn::E_MCONTAINERt_( str::string_, data_row__ )::s Data;
 			bch::E_BUNCHt_( link__, row__ )::s Links;
 		};
 		//o The different strings.
-		ctn::E_XMCONTAINERt_( str::string_, data_row__ ) Data;
+		ctn::E_MCONTAINERt_( str::string_, data_row__ ) Data;
 		//o The links.
 		bch::E_BUNCHt_( link__, row__ ) Links;
 		arguments_( s &S )
@@ -147,10 +147,10 @@ namespace cgiarg {
 			Data.reset( P );
 			Links.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Data.plug( M );
-			Links.plug( M );
+			Data.plug( AS );
+			Links.plug( AS );
 		}
 		arguments_ &operator =( const arguments_ &A )
 		{

@@ -62,7 +62,7 @@ extern class ttr_tutor &CGIDATTutor;
 
 #include "err.h"
 #include "flw.h"
-#include "epeios.h"
+#include "sdr.h"
 #include "str.h"
 #include "lstbch.h"
 #include "lstctn.h"
@@ -129,10 +129,10 @@ namespace cgidat {
 			Relationships.reset( P );
 			Contents.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Relationships.plug( MM );
-			Contents.plug( MM );
+			Relationships.plug( AS );
+			Contents.plug( AS );
 		}
 		data_ &operator =( const data_ &D )
 		{

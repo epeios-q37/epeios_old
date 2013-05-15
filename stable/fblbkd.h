@@ -556,7 +556,7 @@ namespace fblbkd {
 		virtual void *FBLBKDObject( index__ Index )
 		{
 			if ( *Index >= Objets.Amount() )
-				ERRCcp();
+				ERRPrm();
 
 			return (void *)Element_( Index ).OBJECT();
 		}

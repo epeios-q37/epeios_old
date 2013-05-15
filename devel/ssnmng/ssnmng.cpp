@@ -94,7 +94,7 @@ static bso::sign__ Search_(
 			Row = Seeker.SearchLesser();
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -132,7 +132,7 @@ row__ ssnmng::sessions_manager_::New( void *UP )
 			S_.Root = Index.BecomeLesser( Row, Seeker.GetCurrent(), S_.Root );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 
@@ -141,10 +141,10 @@ row__ ssnmng::sessions_manager_::New( void *UP )
 
 
 	if ( time( &C.Relative ) == -1 )
-		ERRs();
+		ERRLbr();
 
 	if ( time( &C.Absolute ) == -1 )
-		ERRs();
+		ERRLbr();
 
 	C.Immortal = false;
 
@@ -208,7 +208,7 @@ void ssnmng::sessions_manager_::GetAll( rows_ &Rows ) const
 
 void ssnmng::sessions_manager_::_Close( const rows_ &Rows )
 {
-	mdr::row__ Row = Rows.First();
+	sdr::row__ Row = Rows.First();
 
 	while ( Row != E_NIL ) {
 		Close( Rows( Row ) );

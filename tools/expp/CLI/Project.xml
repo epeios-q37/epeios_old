@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns:xpp="http://zeusw.org/epeios/xpp">
+  <xpp:bloc><!-- User definitions -->
+    <xpp:set name="Type" value="CommandLineExecutable"/>
+    <xpp:define name="CopyrightYears">
+      <Years>2013</Years>
+    </xpp:define>
+  </xpp:bloc>
+  <xpp:expand href="h:/batchs/prj/Main.xml"/>
+  <About>
+    <Program>expp</Program>
+    <Software>expp</Software>
+  </About>
+  <Modules>
+    <Modules Group="Epeios" Path="h:/cvs/epeios/stable">
+      <Modules Group="Core">
+        <xpp:expand select="Core"/>
+      </Modules>
+      <Modules Group="SCL">
+        <xpp:expand select="SCL"/>
+      </Modules>
+    </Modules>
+    <Module>locale</Module>
+    <Module>registry</Module>
+  </Modules>
+  <SourceDirs>
+    <SourceDir>..</SourceDir>
+  </SourceDirs>
+  <PreprocessorDefinitions>
+	<PreprocessorDefinition>E_ST</PreprocessorDefinition>
+  </PreprocessorDefinitions>
+</Project>
