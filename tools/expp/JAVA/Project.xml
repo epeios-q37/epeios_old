@@ -15,6 +15,15 @@
     <Modules Group="Epeios" xpp:attribute="Path,EpeiosPath">
       <Modules Group="Core">
         <xpp:expand select="Core"/>
+		<Module>bom</Module>
+		<Module>cdgb64</Module>
+		<Module>cio</Module>
+		<Module>fil</Module>
+		<Module>fnm</Module>
+		<Module>lcl</Module>
+		<Module>rgstry</Module>
+		<Module>xml</Module>
+		<Module>xpp</Module>
       </Modules>
     </Modules>
   </Modules>

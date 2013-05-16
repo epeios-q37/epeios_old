@@ -31,9 +31,9 @@ name = expp
 #copt += -DERR_JMPUSE
 	
 mods += ags bso cpe epsmsc err 
-mods += str tol ttr uys bom 
-mods += cdgb64 cio fil flw fnm 
-mods += ias lcl rgstry xml xpp 
+mods += flw ias str tol ttr 
+mods += uys cio bom cdgb64 fil 
+mods += fnm lcl rgstry xml xpp 
 mods += clnarg 
 
 mods += sclmisc sclerror scllocale sclrgstry scltool 
@@ -56,7 +56,8 @@ CXXFLAGS += -O
 #CXXFLAGS += -pg
 
 ###############################
-	
+	copt += -DE_ST
+
 IA_32=x86
 x86_64=x64
 Cygwin=Cygwin

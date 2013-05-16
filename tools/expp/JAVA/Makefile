@@ -1,4 +1,4 @@
-# 'jexpp' Makefile
+# 'jexpp' Project
 #    by Claude SIMON (http://zeusw.org/intl/contact.html).
 #
 # Requires GNU make (http://www.gnu.org/software/make/).
@@ -30,13 +30,10 @@ name = jexpp
 # For using <setjmp.h> instead of C++ exceptions.
 #copt += -DERR_JMPUSE
 	
-# Required for Java
-copt += -DE_JAVA
-		
 mods += ags bso cpe epsmsc err 
-mods += str tol ttr uys bom 
-mods += cdgb64 cio fil flw fnm 
-mods += ias lcl rgstry xml xpp 
+mods += flw ias str tol ttr 
+mods += uys bom cdgb64 cio fil 
+mods += fnm lcl rgstry xml xpp 
 
 
 
@@ -56,6 +53,9 @@ CXXFLAGS += -O
 
 ###############################
 	
+# Required for JAVA.
+copt += -DE_JAVA
+
 IA_32=x86
 x86_64=x64
 Cygwin=Cygwin
