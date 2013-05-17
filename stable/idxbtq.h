@@ -131,11 +131,11 @@ namespace idxbtq {
 		}
 		void BecomeNext( void )	//Obsolete.
 		{
-			ERRu();	// 
+			ERRChk();	// 
 		}
 		void BecomePrevious( void )	//Obsolete.
 		{
-			ERRu();	// 
+			ERRChk();	// 
 		}
 		//f Put 'Row' as greater then 'Current'. 'Current' must be the result as a search with 'seeker_'.
 		r BecomeGreater(
@@ -249,11 +249,11 @@ namespace idxbtq {
 		}
 		void HasGreater( void )	// Obsolete.
 		{
-			ERRu();	
+			ERRChk();	
 		}
 		void HasLesser( void )	// Obsolete.
 		{
-			ERRu();	
+			ERRChk();	
 		}
 	};
 

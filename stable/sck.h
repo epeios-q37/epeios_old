@@ -276,7 +276,7 @@ namespace sck {
 #elif defined( SCK__POSIX )
 	//	shutdown( Socket, 2 );
 		if ( close( Socket ) == SCK_SOCKET_ERROR )
-			ERRd();
+			ERRLbr();
 #else
 #	error
 #endif

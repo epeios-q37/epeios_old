@@ -69,6 +69,16 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "lcl.h"
 # include "cpe.h"
 
+# ifdef CPE_WIN
+#  define XP_WIN
+# elif defined ( CPE_POSIX )
+#  define XP_UNIX
+# else
+#  error
+# endif
+
+# define MOZ_NO_MOZALLOC
+
 # include "xpcom-config.h"
 
 # define NSXPCM__DEFAULT_GECKO_API_VERSION	2
@@ -90,7 +100,7 @@ extern class ttr_tutor &NSXPCMTutor;
 # endif
 
 # ifndef CPE_GECKO
-#  error "The NSXPCM library can only be used in a 'Gecko' copmonent :'
+#  error "The NSXPCM library can only be used in a 'Gecko' copmonent :"
 # endif
 
 # ifndef CPE_LIBRARY
@@ -2562,11 +2572,11 @@ namespace nsxpcm {
 		return FileOpenDialogBox( ParentWindow, Title, "xprj", fpmfXPRJ, Locale, Language, FileName );
 	}
 
-# ifdef CPE_WIN
+# if defined( CPE_MSVC ) || defined( CPE_CYGWIN )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dll"
 # elif defined( CPE_LINUX )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "so"
-# elif defined( CPE_MAC )
+# elif defined( CPE_XCODE )
 #  define NSXPCM__DYNAMIC_LIBRARY_EXTENSION "dylib"
 # else
 #  error "Unknown platform !"

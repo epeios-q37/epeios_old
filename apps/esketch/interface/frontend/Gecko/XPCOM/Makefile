@@ -1,4 +1,4 @@
-# 'esketchcgi' Project
+# 'esketchgck' Project
 #    by Claude SIMON (http://zeusw.org/intl/contact.html).
 #
 # Requires GNU make (http://www.gnu.org/software/make/).
@@ -20,7 +20,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with 'ESketch'.  If not, see <http://www.gnu.org/licenses/>.
 
-name = esketchcgi
+name = esketchgck
 
 
 # Epeios general debugging features
@@ -30,21 +30,6 @@ name = esketchcgi
 # For using <setjmp.h> instead of C++ exceptions.
 #copt += -DERR_JMPUSE
 	
-mods += ags bso cpe epsmsc err 
-mods += flw ias str tol ttr 
-mods += uys flx cio btr cgiarg 
-mods += cgigat dlbrry dtfptb que sck 
-mods += ssnmng lcl xml rgstry fnm 
-mods += fil xpp bom cdgb64 
-
-mods += sclcgi 
-
-mods += fblcmd fblcst fblfrb fblfrd fblovl 
-mods += fbltyp 
-
-mods += csdbnc csdlec csdsnc csducl 
-
-mods += frdkrn frdrgy 
 
 
 
@@ -64,6 +49,9 @@ CXXFLAGS += -O
 
 ###############################
 	
+# Required for Gecko.
+copt += -DE_GECKO
+
 IA_32=x86
 x86_64=x64
 Cygwin=Cygwin
@@ -72,6 +60,8 @@ GNULinux=GNU/Linux
 MacOS=Darwin
 os=$(shell uname -o 2>/dev/null || uname -s)
   
+gdk = $(GDK)
+      
 
 ##########################
 # For Cygwin environment #
@@ -236,8 +226,8 @@ endif
 
 ##########################
 		
-src += :..
-src += :../../..
+src += :../..
+src += :../../../..
 
 ifndef EPEIOS_SRC
 	src += :../epeios
@@ -245,6 +235,8 @@ else
 	src += :$(EPEIOS_SRC)
 endif
     
+src += :"$(gdk)/include"
+      
 ox = o
 ds = :
 
