@@ -179,7 +179,7 @@ namespace mtx {
 	inline void _Set(
 		counter__ &Counter,
 		int Value,
-		bso::bool__ Destroy )	// Retourne le signe de 'Counter'.
+		bso::bool__ Destroy )
 	{
 #ifdef	MTX__USE_WIN_ATOMIC_OPERATIONS
 		Counter = Value;
@@ -191,16 +191,16 @@ namespace mtx {
 		Counter.Value = Value;
 		if ( Destroy ) {
 			if ( pthread_mutex_destroy( &Counter.Mutex ) )
-				ERRs();
+				ERRFwk();
 			if ( pthread_mutexattr_destroy( &Counter.MutexAttr ) )
-				ERRs();
+				ERRFwk();
 		} else {
 			if ( pthread_mutexattr_init( &Counter.MutexAttr ) )
-				ERRs();
+				ERRFwk();
 			if ( pthread_mutexattr_setpshared( &Counter.MutexAttr, PTHREAD_PROCESS_PRIVATE ) )
-				ERRs();
+				ERRFwk();
 			if ( pthread_mutex_init( &Counter.Mutex, &Counter.MutexAttr ) )
-				ERRs();
+				ERRFwk();
 		}
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		Counter = Value;
@@ -253,10 +253,10 @@ namespace mtx {
 		OSAtomicIncrement32( &Counter );
 #elif defined( MTX__USE_PTHREAD_MUTEX )
 		if ( pthread_mutex_lock( &Counter.Mutex ) )
-			ERRs();;
+			ERRFwk();
 		++Counter.Value;
 		if ( pthread_mutex_unlock( &Counter.Mutex ) )
-			ERRs();
+			ERRFwk();
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		++Counter;
 #else
@@ -277,10 +277,10 @@ namespace mtx {
 #elif defined( MTX__USE_PTHREAD_MUTEX )
 		bso::bool__ Buffer;
 		if ( pthread_mutex_lock( &Counter.Mutex ) )
-			ERRs();
+			ERRFwk();
 		Buffer = --Counter.Value == 0;
 		if ( pthread_mutex_unlock( &Counter.Mutex ) )
-			ERRs();
+			ERRFwk();
 		return Buffer;
 #elif defined( MTX__NO_ATOMIC_OPERATIONS )
 		return --Counter == 0;

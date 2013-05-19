@@ -72,7 +72,7 @@ namespace strng {
 # ifdef CPE_XCODE
 }
 
-using strng::memchp;
+using strng::memchr;
 using strng::memcmp;
 using strng::memcpy;
 using strng::memmove;

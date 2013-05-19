@@ -30,7 +30,30 @@ name = esketchgck
 # For using <setjmp.h> instead of C++ exceptions.
 #copt += -DERR_JMPUSE
 	
+mods += ags bso cpe epsmsc err 
+mods += flw ias str tol ttr 
+mods += uys bom cdgb64 fil fnm 
+mods += lcl rgstry xml xpp nsxpcm 
+mods += cio dlbrry dtfptb flx sck 
+mods += tht 
 
+mods += xulfbs xulfdg xulfkl xulfmn xulfrg 
+mods += xulfsf xulfsv xulftk xulfui 
+
+mods += fblcmd fblcst fblfrb fblfrd fblovl 
+mods += fbltyp 
+
+mods += csdbnc csdlec csdsnc csducl 
+
+mods += frdkrn frdrgy 
+
+mods += geckob geckoo 
+
+mods += sclmisc sclerror scllocale sclrgstry sclgecko 
+
+mods += ui ui_main ui_ssn_frm ui_ssn_vew 
+
+mods += binding trunk 
 
 
 
@@ -51,6 +74,9 @@ CXXFLAGS += -O
 	
 # Required for Gecko.
 copt += -DE_GECKO
+
+# Multitasking.
+copt += -DE_MT
 
 IA_32=x86
 x86_64=x64

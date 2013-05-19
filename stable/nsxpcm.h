@@ -69,10 +69,12 @@ extern class ttr_tutor &NSXPCMTutor;
 # include "lcl.h"
 # include "cpe.h"
 
-# ifdef CPE_WIN
+# ifdef CPE_MSVC
 #  define XP_WIN
-# elif defined ( CPE_POSIX )
+# elif defined ( CPE_LINUX )
 #  define XP_UNIX
+# elif defined ( CPE_XCODE )
+#  define XP_MACOSX
 # else
 #  error
 # endif
@@ -372,7 +374,7 @@ namespace nsxpcm {
 		const str::string_ &String,
 		nsACString &CString );
 
-	inline void Transform(
+	void Transform(
 		const char *String,
 		nsACString &CString );
 
