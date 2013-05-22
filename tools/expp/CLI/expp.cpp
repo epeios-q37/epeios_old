@@ -59,10 +59,7 @@ enum exit_value__ {
 };
 
 enum command__ {
-	cHelp,
-	cVersion,
-	cLicense,
-	cProcess,
+	cProcess = scltool::c_amount,
 	cEncrypt,
 	c_amount,
 	c_Undefined
@@ -91,44 +88,6 @@ struct parameters___ {
 	}
 };
 
-static void PrintSpecialsCommandsDescriptions_(	const clnarg::description_ &Description,
-	const lcl::locale_ &Locale,
-	const char *Language )
-{
-ERRProlog
-	CLNARG_BUFFER__ Buffer;
-	lcl::meaning Meaning;
-	str::string Translation;
-ERRBegin
-	Translation.Init();
-	COut << Locale.GetTranslation( "ProgramDescription", Language, Translation ) << '.'  << txf::nl;
-	COut << txf::nl;
-
-	COut << NAME " " << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
-	Meaning.Init();
-	clnarg::GetVersionCommandDescription( Meaning );
-	Translation.Init();
-	Locale.GetTranslation( Meaning, Language, Translation );
-	COut << txf::pad << Translation << '.' << txf::nl;
-
-	COut << NAME " " << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
-	Meaning.Init();
-	clnarg::GetLicenseCommandDescription( Meaning );
-	Translation.Init();
-	Locale.GetTranslation( Meaning, Language, Translation );
-	COut << txf::pad << Translation << '.' << txf::nl;
-
-	COut << NAME " " << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
-	Meaning.Init();
-	clnarg::GetHelpCommandDescription( Meaning );
-	Translation.Init();
-	Locale.GetTranslation( Meaning, Language, Translation );
-	COut << txf::pad << Translation << '.' << txf::nl;
-ERRErr
-ERREnd
-ERREpilog
-}
-
 static void PrintUsage_( const clnarg::description_ &Description )
 {
 ERRProlog
@@ -137,7 +96,7 @@ ERRProlog
 	lcl::meaning Meaning;
 	str::string Translation;
 ERRBegin
-	PrintSpecialsCommandsDescriptions_( Description, scllocale::GetLocale(), scltool::GetLanguage() );
+	scltool::PrintDefaultCommandDescriptions( NAME, Description );
 
 	// Commands.
 	COut << NAME << " [" << Description.GetCommandLabels( cProcess, Buffer );
@@ -174,7 +133,7 @@ ERRBegin
 	COut << txf::pad << Description.GetOptionLabels( oNoIndent, Buffer ) << " :" << txf::nl;
 	COut << txf::tab;
 	Translation.Init();
-	COut << scllocale::GetTranslation( locale::Label( locale::mNoIndentOptionDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << locale::GetNoIndentOptionDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
@@ -186,17 +145,13 @@ ERRBegin
 
 	COut << txf::pad << "<src> :" << txf::nl;
 	COut << txf::tab;
-	Meaning.Init();
-	locale::GetSourceFileArgumentDescriptionMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << locale::GetSourceFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "<dst> :" << txf::nl;
 	COut << txf::tab;
-	Meaning.Init();
-	locale::GetDestFileArgumentDescriptionMeaning( Meaning );
 	Translation.Init();
-	COut << scllocale::GetTranslation( Meaning, scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << locale::GetDestFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 
 ERRErr
 ERREnd
@@ -304,10 +259,9 @@ ERRProlog
 ERRBegin
 	Description.Init();
 
+	scltool::AddDefaultCommands( Description );
+
 //	Description.AddCommand( '', "", c );
-	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
-	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
-	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( 'p', "process", cProcess );
 	Description.AddCommand( CLNARG_NO_SHORT, "encrypt", cEncrypt );
 //	Description.AddOption( '', "", o );
@@ -317,16 +271,16 @@ ERRBegin
 	Analyzer.Init( argc, argv, Description );
 
 	switch ( Analyzer.GetCommand() ) {
-	case cVersion:
+	case scltool::cVersion:
 		PrintHeader_();
 //		TTR.Advertise( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;
-	case cHelp:
+	case scltool::cHelp:
 		PrintUsage_( Description );
 		ERRExit( EXIT_SUCCESS );
 		break;
-	case cLicense:
+	case scltool::cLicense:
 		epsmsc::PrintLicense( COut );
 		ERRExit( EXIT_SUCCESS );
 		break;

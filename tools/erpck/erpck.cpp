@@ -34,6 +34,11 @@
 #include "dtr.h"
 #include "lcl.h"
 
+#include "scltool.h"
+#include "scllocale.h"
+
+#include "locale.h"
+
 #include "rpkbsc.h"
 #include "rpkals.h"
 #include "rpkrcd.h"
@@ -44,7 +49,6 @@
 #define VERSION					"0.4.5"
 #define COPYRIGHT_YEARS			"2010-2011"
 #define DESCRIPTION				"Epeios random picker"
-#define PROJECT_AFFILIATION		EPSMSC_EPEIOS_PROJECT_AFFILIATION
 #define AUTHOR_NAME				EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT			EPSMSC_AUTHOR_CONTACT
 #define HELP					EPSMSC_HELP_INVITATION( NAME )
@@ -57,7 +61,7 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
-typedef bso::ulong__	id__;
+typedef bso::uint__	id__;
 #define ALL				BSO_ULONG_MAX
 #define UNDEFINED		ALL
 
@@ -76,10 +80,7 @@ enum exit_value__ {
 };
 
 enum command {
-	cHelp,
-	cVersion,
-	cLicense,
-	cPick,
+	cPick = scltool::c_amount,
 	c_amount,
 	c_Undefined
 };
@@ -96,73 +97,122 @@ struct parameters {
 	id__ Id;
 	parameters( void )
 	{
-		Id = 0;	// By default, a randomrecord is displayed.
+		Id = 0;	// By default, a random record is displayed.
 	}
 };
 
 void PrintUsage( const clnarg::description_ &Description )
 {
-	COut << DESCRIPTION << txf::nl;
-	COut << NAME << " --version|--license|--help" << txf::nl;
-	clnarg::PrintCommandUsage( Description, cVersion, "print version of " NAME " components.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cLicense, "print the license.", clnarg::vSplit, false );
-	clnarg::PrintCommandUsage( Description, cHelp, "print this message.", clnarg::vOneLine, false );
-	COut << NAME << " <command> [options] <project-file> [id]" << txf::nl;
-	COut << txf::tab << "project-file:" << txf::tab << "file containing the project defintions." << txf::nl;
-	COut << "command: " << txf::nl;
-	clnarg::PrintCommandUsage( Description, cPick, "Pick a random entry according to project file.", clnarg::vSplit, true );
-	COut << txf::tab << "Id : the id of the reocrd to diaplay; if 0, all records are displayed; if absent, a random record is diaplayed." << txf::nl;
-//	clnarg::PrintCommandUsage( Description, c, "", false, true );
-//	COut << "options:" << txf::nl;
-//	clnarg::PrintOptionUsage( Description, o, "", clnarg::vSplit );
-}
-
-void PrintHeader( void )
-{
-	COut << NAME " V" VERSION " "__DATE__ " " __TIME__;
-	COut << " by "AUTHOR_NAME " (" AUTHOR_CONTACT ")" << txf::nl;
-	COut << COPYRIGHT << txf::nl;
-	COut << PROJECT_AFFILIATION << txf::nl;
-	COut << "CVS file details : " << CVS_DETAILS << txf::nl;
-}
-
-static void AnalyzeOptions(
-	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters )
-{
 ERRProlog
-	epeios::row__ P;
-	clnarg::option_list Options;
-	clnarg::id__ Option;
-	const char *Unknow = NULL;
-	clnarg::argument Argument;
+	STR_BUFFER___ TBuffer;
+	CLNARG_BUFFER__ Buffer;
+	lcl::meaning Meaning;
+	str::string Translation;
 ERRBegin
-	Options.Init();
+	scltool::PrintDefaultCommandDescriptions( NAME, Description );
 
-	if ( ( Unknow = Analyzer.GetOptions( Options ) ) != NULL ) {
-		CErr << '\'' << Unknow << "': unknow option." << txf::nl;
-		COut << HELP << txf::nl;
-		ERRi();
-	}
+	COut << NAME << " [" << Description.GetCommandLabels( cPick, Buffer );
+	COut << "] <project-file> [id]";
+	COut << txf::nl;
+	Translation.Init();
+	COut << txf::pad << locale::GetPickCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
 
-	P = Options.First();
-	
-	while( P != NONE ) {
-		Argument.Init();
+	COut << txf::pad << "project-file :" << txf::nl;
+	COut << txf::tab;
+	Translation.Init();
+	COut << locale::GetProjectFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 
-		switch( Option = Options( P ) ) {
-/*		case o:
-			break;
-*/		default:
-			ERRc();
-		}
-
-		P = Options.Next( P );
-	}
+	COut << txf::pad << "id :" << txf::nl;
+	COut << txf::tab;
+	Translation.Init();
+	COut << locale::GetIdArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
 }
+
+static void PrintHeader_( void )
+{
+	COut << NAME " V" VERSION << " (" APP_URL ")" << txf::nl;
+	COut << COPYRIGHT << txf::nl;
+	COut << txf::pad << "Build : "__DATE__ " " __TIME__ << " (" << cpe::GetDescription() << ')' << txf::nl;
+}
+
+static void AnalyzeOptions(
+	clnarg::analyzer___ &Analyzer,
+	parameters___ &Parameters )
+{
+ERRProlog
+	sdr::row__ P;
+	clnarg::option_list Options;
+	clnarg::id__ Option;
+	const bso::char__ *Unknown = NULL;
+	clnarg::argument Argument;
+	clnarg::buffer__ Buffer;
+ERRBegin
+	Options.Init();
+
+	if ( ( Unknown = Analyzer.GetOptions( Options ) ) != NULL )
+		clnarg::ReportUnknownOptionError( Unknown, NAME, scllocale::GetLocale(), scltool::GetLanguage() );
+
+	P = Options.First();
+
+	while( P != E_NIL ) {
+		Argument.Init();
+
+		switch( Option = Options( P ) ) {
+		default:
+			ERRFwk();
+		}
+
+		P = Options.Next( P );
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void AnalyzeFreeArguments(
+	clnarg::analyzer___ &Analyzer,
+	parameters___ &Parameters )
+{
+ERRProlog
+	clnarg::arguments Free;
+	sdr::row__ P;
+ERRBegin
+	Free.Init();
+
+	Analyzer.GetArguments( Free );
+
+	P = Free.Last();
+
+	switch( Free.Amount() ) {
+	case 2:
+		Id = Free( P ).ToUL( &Error );
+
+		if ( Error != NONE ) {
+			CErr << "Bad value for record id !" << txf::nl;
+			ERRExit( EXIT_FAILURE );
+		}
+
+		Parameters.Id = ( Id == 0 ? ALL : Id );
+		P = Free.Previous( P );
+	case 1:
+		Free( P ).Convert( Parameters.Project );
+		break;
+	case 0:
+		break;
+	default:
+		clnarg::ReportWrongNumberOfArgumentsError( NAME, scllocale::GetLocale(), scltool::GetLanguage() );
+		break;
+	}
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 static void AnalyzeFreeArguments(
 	clnarg::analyzer___ &Analyzer,

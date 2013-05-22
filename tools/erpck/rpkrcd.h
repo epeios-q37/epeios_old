@@ -46,10 +46,10 @@ namespace rpkrcd {
 			S_.Weight = DEFAULT_WEIGHT;
 			S_.Skip = false;
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Label.plug( MM );
-			Content.plug( MM );
+			Label.plug( AS );
+			Content.plug( AS );
 		}
 		record_ &operator =( const record_ &R )
 		{

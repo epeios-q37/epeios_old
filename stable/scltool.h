@@ -63,6 +63,7 @@ extern class ttr_tutor &SCLTOOLTutor;
 # include "err.h"
 # include "flw.h"
 # include "lcl.h"
+# include "clnarg.h"
 
 # include "sclmisc.h"
 
@@ -72,10 +73,25 @@ namespace scltool {
 	using sclmisc::RecoverBackupFile;
 	using sclmisc::ReportFileOpeningErrorAndExit;
 
+	enum command {
+		cHelp,
+		cVersion,
+		cLicense,
+		c_amount
+	};
+
+
 	// A définir par l'utilisateur.
 	extern const char *TargetName;
 
 	const char *GetLanguage( void );
+
+	void AddDefaultCommands( clnarg::description_ &Description );
+
+	void PrintDefaultCommandDescriptions(
+		const char *ProgramName,
+		const clnarg::description_ &Description );
+
 
 	// A définir par l'utilisateur.
 	void Main(

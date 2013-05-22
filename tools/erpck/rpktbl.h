@@ -42,10 +42,10 @@ namespace rpktbl {
 			S_.Skipped = 0;
 
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Label.plug( MM );
-			Records.plug( MM );
+			Label.plug( AS );
+			Records.plug( AS );
 	//		Aliases.plug( MM );
 		}
 		table_ &operator =(const table_ &T )
@@ -105,7 +105,7 @@ namespace rpktbl {
 	}
 
 	inline void Insert(
-		mdr::row__ AliasRow,
+		sdr::row__ AliasRow,
 		const record_aliases_ &Aliases,
 		const tables_ &Tables,
 		record_ &Record )

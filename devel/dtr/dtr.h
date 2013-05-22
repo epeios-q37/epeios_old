@@ -147,7 +147,7 @@ namespace dtr {
 		}
 		//f Allocate place nedeed for 'Size' nodes.
 		void Allocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode = aem::m_Default )
 		{
 			Tree.Allocate( Size, Mode );
@@ -295,7 +295,7 @@ namespace dtr {
 			return Parent( Node ) != E_NIL;
 		}
 		//f Return amount of nodes.
-		mdr::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return Tree.Amount();
 		}
@@ -359,11 +359,14 @@ namespace dtr {
 
 			return Position;
 		}
-		bso::ulong__ GetLevel( r Row ) const
+		bso::uint__ GetLevel( r Row ) const
 		{
-			bso::ulong__ Level = 0;
+			bso::uint__ Level = 0;
 
 			while ( HasParent( Row ) ) {
+				if ( Level == BSO_UINT_MAX )
+					ERRLmt();
+
 				Level++;
 				Row = Parent( Row );
 			}

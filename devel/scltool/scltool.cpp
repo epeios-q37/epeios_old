@@ -64,6 +64,9 @@ public:
 
 using namespace scltool;
 
+using cio::COut;
+using scllocale::GetLocale;
+
 static STR_BUFFER___ Language_;
 
 #define DEFAULT_LANGUAGE	"en"
@@ -75,6 +78,54 @@ const char *scltool::GetLanguage( void )
 
 	return Language_;
 }
+
+void scltool::AddDefaultCommands( clnarg::description_ &Description )
+{
+	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
+	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
+	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
+}
+
+
+void scltool::PrintDefaultCommandDescriptions(
+	const char *ProgramName,
+	const clnarg::description_ &Description )
+{
+ERRProlog
+	CLNARG_BUFFER__ Buffer;
+	lcl::meaning Meaning;
+	str::string Translation;
+ERRBegin
+	Translation.Init();
+	COut << scllocale::GetLocale().GetTranslation( "ProgramDescription", GetLanguage(), Translation ) << '.'  << txf::nl;
+	COut << txf::nl;
+
+	COut << ProgramName << ' ' << Description.GetCommandLabels( cVersion, Buffer ) << txf::nl;
+	Meaning.Init();
+	clnarg::GetVersionCommandDescription( Meaning );
+	Translation.Init();
+	GetLocale().GetTranslation( Meaning, GetLanguage(), Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
+
+	COut << ProgramName << ' ' << Description.GetCommandLabels( cLicense, Buffer ) << txf::nl;
+	Meaning.Init();
+	clnarg::GetLicenseCommandDescription( Meaning );
+	Translation.Init();
+	GetLocale().GetTranslation( Meaning, GetLanguage(), Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
+
+	COut << ProgramName << ' ' << Description.GetCommandLabels( cHelp, Buffer ) << txf::nl;
+	Meaning.Init();
+	clnarg::GetHelpCommandDescription( Meaning );
+	Translation.Init();
+	GetLocale().GetTranslation( Meaning, GetLanguage(), Translation );
+	COut << txf::pad << Translation << '.' << txf::nl;
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
 
 static void ReportSCLPendingError_( void )
 {

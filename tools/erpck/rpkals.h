@@ -33,16 +33,16 @@ namespace rpkals {
 		{
 			Label.reset( P );
 
-			S_.TableRow = NONE;
-			S_.RecordRow = NONE;
+			S_.TableRow = E_NIL;
+			S_.RecordRow = E_NIL;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Label.plug( MD );
+			Label.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_  &AS )
 		{
-			Label.plug( MM );
+			Label.plug( AS );
 		}
 		record_alias_ &operator =( const record_alias_ &RA )
 		{
@@ -96,15 +96,15 @@ namespace rpkals {
 		{
 			Label.reset( P );
 
-			S_.TableRow = NONE;
+			S_.TableRow = E_NIL;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Label.plug( MD );
+			Label.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Label.plug( MM );
+			Label.plug( AS );
 		}
 		table_alias_ &operator =( const table_alias_ &TA )
 		{
@@ -154,10 +154,10 @@ namespace rpkals {
 			Records.reset( P );
 			Tables.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Records.plug( MM );
-			Tables.plug( MM );
+			Records.plug( AS );
+			Tables.plug( AS );
 		}
 		aliases_ &operator =( const aliases_ &A )
 		{
@@ -177,18 +177,18 @@ namespace rpkals {
 
 	E_AUTO( aliases )
 
-	inline mdr::row__ FindRecordAlias_(
+	inline sdr::row__ FindRecordAlias_(
 		const str::string_ &Label,
 		const record_aliases_ &Aliases )
 	{
-		return SearchInMono<record_aliases_, record_alias_, mdr::row__>( Label, Aliases );
+		return SearchInMono<record_aliases_, record_alias_, sdr::row__>( Label, Aliases );
 	}
 
-	inline mdr::row__ FindTableAlias_(
+	inline sdr::row__ FindTableAlias_(
 		const str::string_ &Label,
 		const table_aliases_ &Aliases )
 	{
-		return SearchInMono<table_aliases_, table_alias_, mdr::row__>( Label, Aliases );
+		return SearchInMono<table_aliases_, table_alias_, sdr::row__>( Label, Aliases );
 	}
 
 	trow__ SearchTable(

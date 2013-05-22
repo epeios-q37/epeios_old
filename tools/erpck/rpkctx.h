@@ -15,9 +15,9 @@
 namespace rpkctx {
 	using namespace rpkbsc;
 
-	typedef bso::ubyte__ coeff__;
+	typedef bso::u8__ coeff__;
 
-	typedef mdr::size__ amount__;
+	typedef sdr::size__ amount__;
 #	define RPKCTX_AMOUNT_MAX	EPEIOS_SIZE_MAX
 
 	E_TMIMIC( rrows, pool );
@@ -43,13 +43,13 @@ namespace rpkctx {
 			S_.Session = S_.Cycle = 0;
 			S_.TimeStamp = 0;
 		}
-		void plug( mdr::E_MEMORY_DRIVER__ &MD )
+		void plug( sdr::E_SDRIVER__ &SD )
 		{
-			Pool.plug( MD );
+			Pool.plug( SD );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Pool.plug( MM );
+			Pool.plug( AS );
 		}
 		context_ &operator =( const context_ &C )
 		{
@@ -67,7 +67,7 @@ namespace rpkctx {
 		}
 		rrow__ Pick(
 			amount__ Amount,
-			bso::ulong__ SessionDuration );	// In minute; '0' for infinite.
+			bso::uint__ SessionDuration );	// In minute; '0' for infinite.
 	};
 
 	E_AUTO( context );

@@ -28,9 +28,17 @@
 
 // # include "xxx.h"
 # include "scllocale.h"
+# include "scltool.h"
 
 # include "lcl.h"
 # include "cio.h"
+
+// 'Simple Translation Function'. To get the translation of messages which do not need parameters.
+# define STF( name )\
+	inline const str::string_ &Get##name##Translation( str::string_ &Translation )\
+	{\
+		return scllocale::GetTranslation( Label( m##name ), scltool::GetLanguage(), Translation );\
+	}
 
 namespace locale {
 
@@ -59,18 +67,11 @@ namespace locale {
 		lcl::meaning_ *Meaning,	// '&Meaning' ne fonctionne pas avec 'va_arg'.
 		... );
 
-	// For 'meanings' with no tags.
-#define GET_MEANING( name )\
-	inline const lcl::meaning_ &Get##name##Meaning( lcl::meaning_ &Meaning )\
-	{\
-		return GetMeaning_( m##name, &Meaning );\
-	}
-
-	GET_MEANING( ProcessCommandDescription );
-	GET_MEANING( EncryptCommandDescription );
-	GET_MEANING( NoIndentOptionDescription );
-	GET_MEANING( SourceFileArgumentDescription );
-	GET_MEANING( DestFileArgumentDescription );
+	STF( ProcessCommandDescription );
+	STF( EncryptCommandDescription );
+	STF( NoIndentOptionDescription );
+	STF( SourceFileArgumentDescription );
+	STF( DestFileArgumentDescription );
 
 	inline const lcl::meaning_ &GetNamespaceOptionDescriptionMeaning(
 		const char *DefaultNamespace,
