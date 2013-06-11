@@ -36,8 +36,9 @@
 
 #include "scltool.h"
 #include "scllocale.h"
+#include "sclerror.h"
 
-#include "locale.h"
+//#include "locale.h"
 
 #include "rpkbsc.h"
 #include "rpkals.h"
@@ -48,12 +49,10 @@
 #define NAME					"erpck"
 #define VERSION					"0.4.5"
 #define COPYRIGHT_YEARS			"2010-2011"
-#define DESCRIPTION				"Epeios random picker"
 #define AUTHOR_NAME				EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT			EPSMSC_AUTHOR_CONTACT
-#define HELP					EPSMSC_HELP_INVITATION( NAME )
+#define APP_URL					EPSMSC_APP_URL( NAME )
 #define COPYRIGHT				EPSMSC_COPYRIGHT( COPYRIGHT_YEARS )
-#define CVS_DETAILS				("$Id$\b " + 5)
 
 #define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
 
@@ -61,8 +60,8 @@ using cio::CIn;
 using cio::COut;
 using cio::CErr;
 
-typedef bso::uint__	id__;
-#define ALL				BSO_ULONG_MAX
+typedef bso::uint__		id__;
+#define ALL				BSO_UINT_MAX
 #define UNDEFINED		ALL
 
 /* Beginning of the part which handles command line arguments. */
@@ -92,16 +91,16 @@ enum option {
 
 #define STRING_PARAM___( name )	CLNARG_STRING_PARAM___( name )
 
-struct parameters {
+struct parameters___ {
 	STRING_PARAM___( Project );
 	id__ Id;
-	parameters( void )
+	parameters___( void )
 	{
 		Id = 0;	// By default, a random record is displayed.
 	}
 };
 
-void PrintUsage( const clnarg::description_ &Description )
+void PrintUsage_( const clnarg::description_ &Description )
 {
 ERRProlog
 	STR_BUFFER___ TBuffer;
@@ -115,17 +114,17 @@ ERRBegin
 	COut << "] <project-file> [id]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << locale::GetPickCommandDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << txf::pad << scltool::GetTranslation( "PickCommandDescription", Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "project-file :" << txf::nl;
 	COut << txf::tab;
 	Translation.Init();
-	COut << locale::GetProjectFileArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << scltool::GetTranslation( "ProjectFileArgumentDescription", Translation ) << '.' << txf::nl;
 
 	COut << txf::pad << "id :" << txf::nl;
 	COut << txf::tab;
 	Translation.Init();
-	COut << locale::GetIdArgumentDescriptionTranslation( Translation ) << '.' << txf::nl;
+	COut << scltool::GetTranslation( "IdArgumentDescription", Translation ) << '.' << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -163,6 +162,7 @@ ERRBegin
 		switch( Option = Options( P ) ) {
 		default:
 			ERRFwk();
+			break;
 		}
 
 		P = Options.Next( P );
@@ -179,7 +179,9 @@ static void AnalyzeFreeArguments(
 {
 ERRProlog
 	clnarg::arguments Free;
-	sdr::row__ P;
+	sdr::row__ P = E_NIL, Error = E_NIL;
+	id__ Id = 0;
+	lcl::meaning Meaning;
 ERRBegin
 	Free.Init();
 
@@ -189,11 +191,12 @@ ERRBegin
 
 	switch( Free.Amount() ) {
 	case 2:
-		Id = Free( P ).ToUL( &Error );
+		Id = Free( P ).ToUInt( &Error );
 
-		if ( Error != NONE ) {
-			CErr << "Bad value for record id !" << txf::nl;
-			ERRExit( EXIT_FAILURE );
+		if ( Error != E_NIL ) {
+			Meaning.Init();
+			Meaning.SetValue( "BadIdError" );
+			scltool::ReportAndExit( Meaning );
 		}
 
 		Parameters.Id = ( Id == 0 ? ALL : Id );
@@ -213,52 +216,10 @@ ERREnd
 ERREpilog
 }
 
-
-static void AnalyzeFreeArguments(
-	clnarg::analyzer___ &Analyzer,
-	parameters &Parameters )
-{
-ERRProlog
-	clnarg::arguments Free;
-	epeios::row__ P = NONE, Error = NONE;
-	id__ Id = 0;
-ERRBegin
-	Free.Init();
-
-	Analyzer.GetArguments( Free );
-
-	P = Free.Last();
-
-	switch( Free.Amount() ) {
-	case 2:
-		Id = Free( P ).ToUL( &Error );
-
-		if ( Error != NONE ) {
-			CErr << "Bad value for record id !" << txf::nl;
-			ERRExit( EXIT_FAILURE );
-		}
-
-		Parameters.Id = ( Id == 0 ? ALL : Id );
-		P = Free.Previous( P );
-	case 1:
-		Free( P ).Convert( Parameters.Project );
-		break;
-	default:
-		CErr << "Wrong amount of arguments." << txf::nl;
-		COut << HELP << txf::nl;
-		ERRi();
-		break;
-	}
-
-ERRErr
-ERREnd
-ERREpilog
-}
-
 static void AnalyzeArgs(
 	int argc,
 	const char *argv[],
-	parameters &Parameters )
+	parameters___ &Parameters )
 {
 ERRProlog
 	clnarg::description Description;
@@ -266,34 +227,34 @@ ERRProlog
 ERRBegin
 	Description.Init();
 
+	scltool::AddDefaultCommands( Description );
+
 //	Description.AddCommand( '', "", c );
-	Description.AddCommand( CLNARG_NO_SHORT, "version", cVersion );
-	Description.AddCommand( CLNARG_NO_SHORT, "help", cHelp );
-	Description.AddCommand( CLNARG_NO_SHORT, "license", cLicense );
 	Description.AddCommand( 'p', "pick", cPick );
 //	Description.AddOption( '', "", o );
 
 	Analyzer.Init( argc, argv, Description );
 
 	switch ( Analyzer.GetCommand() ) {
-	case cVersion:
-		PrintHeader();
-		TTR.Advertise( cio::COut );
-		ERRi();
+	case scltool::cVersion:
+		PrintHeader_();
+//		TTR.Advertise( COut );
+		ERRExit( EXIT_SUCCESS );
 		break;
-	case cHelp:
-		PrintUsage( Description );
-		ERRi();
+	case scltool::cHelp:
+		PrintUsage_( Description );
+		ERRExit( EXIT_SUCCESS );
 		break;
-	case cLicense:
+	case scltool::cLicense:
 		epsmsc::PrintLicense( COut );
-		ERRi();
+		ERRExit( EXIT_SUCCESS );
 		break;
 	case cPick:
 	case CLNARG_NONE:
 		break;
 	default:
-		ERRc();
+		ERRFwk();
+		break;
 	}
 
 	AnalyzeOptions( Analyzer, Parameters );
@@ -352,69 +313,78 @@ static bso::bool__ BelongsToNamespace_( const str::string_ &Name )
 	return str::Compare( Name, str::string( NAMESPACE ), 0, 0, strlen( NAMESPACE ) ) == 0;
 }
 
-static void PrintPosition_(
-	const xtf::coord__ &Coord,
-	txf::text_oflow__ &TFlow )
-{
-	TFlow << "line " << Coord.Line << ", column " << Coord.Column;
-}
-
-static void PrintPosition_(
-	const xpp::preprocessing_iflow___ &IFlow,
-	txf::text_oflow__ &TFlow )
+static void ReportAndExit_( const xpp::preprocessing_iflow___ &IFlow )
 {
 ERRProlog
-	xpp::context___ Context;
+	lcl::meaning Meaning;
 ERRBegin
+	Meaning.Init();
+	xpp::GetMeaning( IFlow, Meaning );
 
-	Context.Init();
+	sclerror::SetMeaning( Meaning );
 
-	IFlow.GetContext( Context );
-
-	PrintPosition_( Context.Coord, TFlow );
-
-	if ( Context.FileName.Amount() != 0 )
-		TFlow << " in file '" << Context.FileName << '\'';
+	ERRExit( EXIT_FAILURE );
 ERRErr
 ERREnd
 ERREpilog
 }
 
-static void ReportErrorAndExit_( 
-	const str::string_ &Message,
-	const xpp::preprocessing_iflow___ &IFlow )
-{
-	CErr << "Parsing interrupted at ";
-/*
-	PrintPosition_( XFlow.Coord(), CErr );
-	if ( XFlow.Preprocessor().LocalizedFileName().Amount() != 0 )
-		CErr << " in file '" << XFlow.Preprocessor().LocalizedFileName() << '\'';
-*/
-	PrintPosition_( IFlow, CErr );
-	CErr << " : " << Message << " !" << txf::nl;
-	ERRExit( EXIT_FAILURE );
-
-}
-
-static void ReportErrorAndExit_( 
-	const char *Message,
-	xpp::preprocessing_iflow___ &IFlow )
-{
-	ReportErrorAndExit_( str::string( Message ), IFlow );
-}
-
-static void ReportErrorAndExit_( xpp::preprocessing_iflow___ &IFlow )
+static void GetMeaning_(
+	const xpp::preprocessing_iflow___ &IFlow,
+	lcl::meaning_ &Meaning )
 {
 ERRProlog
-	lcl::locale Locale;
-	str::string ErrorMessage;
+	xpp::context___ Context;
 ERRBegin
-	Locale.Init();
-	ErrorMessage.Init();
-	CErr << xpp::GetTranslation( IFlow, lcl::rack__( Locale, "" ), ErrorMessage ) << " at ";
-	PrintPosition_( IFlow, CErr );
-	CErr << " !" << txf::nl;
-	ERRExit( EXIT_FAILURE );
+	Context.Init();
+	IFlow.GetContext( Context );
+
+	if ( Context.Status != xpp::sOK )
+		ERRFwk();
+
+	xpp::GetMeaning( Context.Coordinates, Meaning );
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void ReportAndExit_( 
+	const lcl::meaning_ &Meaning,
+	const xpp::preprocessing_iflow___ &IFlow )
+
+{
+ERRProlog
+	lcl::meaning GenericMeaning;
+	lcl::meaning MeaningBuffer;
+ERRBegin
+	GenericMeaning.Init();
+	GenericMeaning.SetValue( "GenericError" );
+
+	GenericMeaning.AddTag( Meaning );
+	
+	MeaningBuffer.Init();
+	GetMeaning_( IFlow, MeaningBuffer );
+	GenericMeaning.AddTag( MeaningBuffer );
+
+	scltool::ReportAndExit( GenericMeaning );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+static void ReportAndExit_( 
+	const char *Error,
+	const xpp::preprocessing_iflow___ &IFlow )
+
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+	Meaning.SetValue( Error );
+
+	ReportAndExit_( Meaning, IFlow );
 ERRErr
 ERREnd
 ERREpilog
@@ -425,11 +395,14 @@ static void Insert_(
 	const records_ &Records,
 	xpp::preprocessing_iflow___ &IFlow,
 	record_ &Record )
-{
-	rrow__ Row = rpkrcd::SearchRecord( RecordLabel, Records );
 
-	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find record", IFlow );
+{
+	rrow__ Row = E_NIL;
+
+	Row = rpkrcd::SearchRecord( RecordLabel, Records );
+
+	if ( Row != E_NIL )
+		ReportAndExit_( "RecordNotFoundError", IFlow );
 
 	rpkrcd::Insert( Row, Records, Record );
 }
@@ -441,10 +414,12 @@ static void InsertUsingRecordAlias_(
 	xpp::preprocessing_iflow___ &IFlow,
 	record_ &Record )
 {
-	epeios::row__ Row = FindRecordAlias_( RecordAlias, Aliases );
+	sdr::row__ Row = E_NIL;
 
-	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find record alias", IFlow );
+	Row = FindRecordAlias_( RecordAlias, Aliases );
+
+	if ( Row == E_NIL )
+		ReportAndExit_( "RecordAliasNotFoundError", IFlow );
 
 	Insert( Row, Aliases, Tables, Record );
 }
@@ -474,7 +449,7 @@ static void Insert_(
 
 static void Insert_(
 	const str::string_ &RecordLabel,
-	epeios::row__ AliasRow,
+	sdr::row__ AliasRow,
 	const table_aliases_ &Aliases,
 	const tables_ &Tables,
 	xpp::preprocessing_iflow___ &IFlow,
@@ -495,10 +470,12 @@ static void InsertUsingTableAlias_(
 	xpp::preprocessing_iflow___ &IFlow,
 	record_ &Record )
 {
-	epeios::row__ Row = FindTableAlias_( TableAlias, Aliases );
+	sdr::row__ Row = E_NIL;
 
-	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find table alias", IFlow );
+	Row = FindTableAlias_( TableAlias, Aliases );
+
+	if ( Row == E_NIL )
+		ReportAndExit_( "TableAliasNotFoundError", IFlow );
 
 	Insert_( RecordLabel, Row, Aliases, Tables, IFlow, Record );
 }
@@ -510,11 +487,13 @@ static void InsertUsingLabels_(
 	xpp::preprocessing_iflow___ &IFlow,
 	record_ &Record )
 {
-	trow__ Row = SearchTable( TableLabel, Tables );
+	trow__ Row = E_NIL;
 	ctn::E_CITEMt( table_, trow__ ) Table;
 
-	if ( Row == NONE )
-		ReportErrorAndExit_( "Unable to find table", IFlow );
+	Row = SearchTable( TableLabel, Tables );
+
+	if ( Row == E_NIL )
+		ReportAndExit_( "ableNotFoundError", IFlow );
 
 	Table.Init( Tables );
 
@@ -522,24 +501,26 @@ static void InsertUsingLabels_(
 }
 
 static void Assign_(
-	str::string_ &Target,
-	const char *TargetLabel,
+	const char *TargetWording,
 	xml::parser___ &Parser,
-	xpp::preprocessing_iflow___ &IFlow )
+	xpp::preprocessing_iflow___ &IFlow,
+	str::string_ &Target )
 {
 ERRProlog
-	str::string ErrorMessage;
+	lcl::meaning Meaning;
 ERRBegin
-	ErrorMessage.Init( TargetLabel );
-
 	if ( Target.Amount() != 0 ) {
-		ErrorMessage.Append( " already defined" );
-		ReportErrorAndExit_( ErrorMessage, IFlow );
+		Meaning.Init();
+		Meaning.SetValue( "ItemAlreadyDefinedError" );
+		Meaning.AddTag( TargetWording );
+		ReportAndExit_( Meaning, IFlow );
 	}
 
 	if ( Parser.Value().Amount() == 0 ) {
-		ErrorMessage.Append( " value can not be empty" );
-		ReportErrorAndExit_( ErrorMessage, IFlow );
+		Meaning.Init();
+		Meaning.SetValue( "ItemValueEmptyError" );
+		Meaning.AddTag( TargetWording );
+		ReportAndExit_( Meaning, IFlow );
 	}
 
 	Target = Parser.Value();
@@ -555,24 +536,31 @@ static inline bso::bool__ Test_( const str::string_ &Value )
 }
 
 static void ReportInsertionErrorAndExit_(
-	const char *ItemLabel1,
-	const char *ItemLabel2,
+	const char *Item1Wording,
+	const char *Item2Wording,
 	xpp::preprocessing_iflow___ &IFlow )
 {
 ERRProlog
-	str::string ErrorMessage;
+	lcl::meaning Meaning;
 ERRBegin
-	ErrorMessage.Init( "Both " );
-	ErrorMessage.Append( ItemLabel1 );
-	ErrorMessage.Append( " and " );
-	ErrorMessage.Append( ItemLabel2 );
-	ErrorMessage.Append( " cannot be define together" );
+	Meaning.Init();
 
-	ReportErrorAndExit_( ErrorMessage, IFlow );
+	Meaning.SetValue( "ItemsDefinedTogetherError" );
+
+	Meaning.AddTag( Item1Wording );
+	Meaning.AddTag( Item2Wording );
+
+	ReportAndExit_( Meaning, IFlow );
 ERRErr
 ERREnd
 ERREpilog
 }
+
+# define TABLE_ALIAS_WORDING		"TableAliasWording"
+# define TABLE_LABEL_WORDING		"TableLabelWording"
+# define RECORD_ALIAS_WORDING		"RecordAliasWording"
+# define RECORD_LABEL_WORDING		"RecordLabelWording"
+# define MISSING_RECORD_LABEL_ERROR	"MissingRecordLabelError"
 
 // '...<erpck:insert ...>...' -> '...</erpck:insert>...'
 //                   ^                              ^
@@ -595,19 +583,19 @@ ERRBegin
 	while ( Continue ) {
 		switch ( Parser.Parse( xml::tfStartTag |xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			ReportErrorAndExit_( "No tag allowed", IFlow );
+			ReportAndExit_( "TagNotAllowedHereError", IFlow );
 			break;
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == INSERTION_TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( TableLabel, "Table label", Parser, IFlow );
+				Assign_( "TableLabelWording", Parser, IFlow, TableLabel );
 			} else if ( Parser.AttributeName() == INSERTION_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Parser, IFlow );
+				Assign_( "RecordLabelWording", Parser, IFlow, RecordLabel );
 			} else if ( Parser.AttributeName() == INSERTION_TABLE_ALIAS_ATTRIBUTE ) {
-				Assign_( TableAlias, "Table alias", Parser, IFlow );
+				Assign_( "TableAliasWording", Parser, IFlow, TableAlias );
 			} else if ( Parser.AttributeName() == INSERTION_RECORD_ALIAS_ATTRIBUTE ) {
-				Assign_( RecordAlias, "Record alias", Parser, IFlow );
+				Assign_( "RecordAliasWording", Parser, IFlow, RecordAlias );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", IFlow );
+				ReportAndExit_( "UnknownAttributeError", IFlow );
 			break;
 		case xml::tEndTag:
 		{
@@ -619,41 +607,41 @@ ERRBegin
 
 			if ( TA )
 				if ( TL )
-					ReportInsertionErrorAndExit_( "table alias", "table label", IFlow );
+					ReportInsertionErrorAndExit_( TABLE_ALIAS_WORDING, TABLE_LABEL_WORDING, IFlow );
 				else if ( RA )
-					ReportInsertionErrorAndExit_( "table alias", "record alias", IFlow );
+					ReportInsertionErrorAndExit_( TABLE_ALIAS_WORDING, RECORD_ALIAS_WORDING, IFlow );
 				else if ( !RL )
-					ReportErrorAndExit_( "Record label missing", IFlow );
+					ReportAndExit_( MISSING_RECORD_LABEL_ERROR, IFlow );
 				else
 					InsertUsingTableAlias_( TableAlias, RecordLabel, Aliases.Tables, Tables, IFlow, Record );
 			else if ( TL )
 				if ( RA )
-					ReportInsertionErrorAndExit_( "table label", "record alias", IFlow );
+					ReportInsertionErrorAndExit_( TABLE_LABEL_WORDING, RECORD_ALIAS_WORDING, IFlow );
 				else if ( !RL )
-					ReportErrorAndExit_( "Record label missing", IFlow );
+					ReportAndExit_( MISSING_RECORD_LABEL_ERROR, IFlow );
 				else
 					InsertUsingLabels_( TableLabel, RecordLabel, Tables, IFlow, Record );
 			else if ( RL )
 				if ( RA )
-					ReportInsertionErrorAndExit_( "record label", "record alias", IFlow );
+					ReportInsertionErrorAndExit_( RECORD_LABEL_WORDING, RECORD_ALIAS_WORDING, IFlow );
 				else
-					ERRc();	// Normally already handled before.
+					ERRFwk();	// Normally already handled before.
 			else if ( RA )
 				InsertUsingRecordAlias_( RecordAlias, Aliases.Records, Tables, IFlow, Record );
 			else
-				ReportErrorAndExit_( "Missing insertion parameters", IFlow );
+				ReportAndExit_( "MissingInsertionParametersError", IFlow );
 
 			Continue = false;
 			break;
 		}
 		case xml::tValue:
-			ReportErrorAndExit_( "No value allowed here", IFlow );
+			ReportAndExit_( "ValueNotAllowedHereError", IFlow );
 			break;
 		case xml::t_Error:
-			ReportErrorAndExit_( IFlow );
+			ReportAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -672,7 +660,7 @@ static void ProcessRecord_(
 	const tables_ &Tables,
 	record_ &Record )
 {
-	bso::ulong__ Level = 0;
+	bso::uint__ Level = 0;
 	bso::bool__ Continue = true;
 
 	while ( Continue ) {
@@ -682,7 +670,7 @@ static void ProcessRecord_(
 				if ( Parser.TagName() == INSERTION_TAG )
 					ProcessInsertion_( Parser, IFlow, Aliases, Tables, Record );	// '...<erpck:insert ...
 				else																//                   ^
-					ReportErrorAndExit_( "'" INSERTION_TAG "' is the only '" NAMESPACE "' tag allowed here", IFlow );
+					ReportAndExit_( "ForbiddenTagError", IFlow );
 			} else {
 				Level++;
 				Record.Content.Append( Parser.DumpData() );
@@ -690,13 +678,13 @@ static void ProcessRecord_(
 			break;
 		case xml::tAttribute:
 			if ( BelongsToNamespace_( Parser.AttributeName() ) )
-				ReportErrorAndExit_( "Unexpected attribute", IFlow );
+				ReportAndExit_( "AttributeNotAllowedHereError", IFlow );
 
 			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::tValue:
 			if ( Level == 0 )
-				ReportErrorAndExit_( "Missing tag", IFlow );
+				ReportAndExit_( "MissingTagError", IFlow );
 
 			if ( Record.Label.Amount() == 0 )
 				if ( Parser.TagName() == DefaultRecordLabelTag )
@@ -716,10 +704,10 @@ static void ProcessRecord_(
 			Record.Content.Append( Parser.DumpData() );
 			break;
 		case xml::t_Error:
-			ReportErrorAndExit_( IFlow );
+			ReportAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -752,27 +740,27 @@ ERRBegin
 			break;
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == RECORD_WEIGHT_ATTRIBUTE ) {
-				epeios::row__ Error = NONE;
+				sdr::row__ Error = E_NIL;
 
-				Weight = Parser.Value().ToUB( &Error );
+				Weight = Parser.Value().ToU8( &Error );
 
-				if ( Error != NONE )
-					ReportErrorAndExit_( "Bad attribute value", IFlow );
+				if ( Error != E_NIL )
+					ReportAndExit_( "BadAttributeValueError", IFlow );
 			} else if ( Parser.AttributeName() == RECORD_LABEL_ATTRIBUTE ) {
-					Assign_( Record.Label, "Record label", Parser, IFlow );
+				Assign_( RECORD_LABEL_WORDING, Parser, IFlow, Record.Label );
 			} else if ( Parser.AttributeName() == RECORD_HANDLING_ATTRIBUTE ) {
 				if ( Parser.Value() == RECORD_HANDLING_ATTRIBUTE_SKIP_VALUE ) {
 					if ( Skipped == RPKBSC_COUNTER_MAX )
-						ERRl();
+						ERRLmt();
 					Skipped++;
 
 					Record.Skip() = true;
 				}else if ( Parser.Value() == RECORD_HANDLING_ATTRIBUTE_IGNORE_VALUE )
 					Ignore = true;
 				else
-					ReportErrorAndExit_( "Unknown attribute value", IFlow );
+					ReportAndExit_( "UnknownAttributeValueError", IFlow );
 			} else if ( BelongsToNamespace_( Parser.AttributeName() ) ) {
-				ReportErrorAndExit_( "Unknown attribute", IFlow );
+				ReportAndExit_( "tUnknownAttributeError", IFlow );
 			} else
 				Record.Content.Append( Parser.DumpData() );
 			break;
@@ -792,10 +780,10 @@ ERRBegin
 			Continue = false;	// '...<ercp:content ...></ercp:content>...'
 			break;				//                                      ^
 		case xml::t_Error:
-			ReportErrorAndExit_( IFlow );
+			ReportAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -823,28 +811,28 @@ ERRBegin
 		switch ( Parser.Parse( xml::tfAttribute | xml::tfStartTagClosed | xml::tfEndTag ) ) {
 		case xml::tAttribute:
 			if ( Parser.TagName() != CONTENT_TAG )
-				ERRc();
+				ERRFwk();
 
 			if ( Parser.AttributeName() == CONTENT_DEFAULT_RECORD_LABEL_TAG_ATTRIBUTE ) {
-				Assign_( DefaultRecordLabelTag, "Default record label", Parser, IFlow );
+				Assign_( "DefaultRecordLabelTagWording", Parser, IFlow, DefaultRecordLabelTag );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", IFlow );
+				ReportAndExit_( "UnknownAttributeError", IFlow );
 			break;
 		case xml::tStartTagClosed:
 			if ( Parser.TagName() == CONTENT_TAG ) {
 				ProcessRecords_( Parser, IFlow, DefaultRecordLabelTag, Aliases, Tables, Table.Records, Table.Skipped() );	// '<ercp:content ...><...' -> '</erpck:content>...'
 				Continue = false;
 			}  else																						        			//                    ^                         ^
-				ERRc();
+				ERRFwk();
 			break;
 		case xml::tEndTag:
 			Continue = false;	// '</erpck:content>...'
 			break;				//                  ^
 		case xml::t_Error:
-			ReportErrorAndExit_( IFlow );
+			ReportAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -872,8 +860,8 @@ static alias_type__ ProcessAlias_(
 	alias_type__ AliasType = at_Undefined;
 ERRProlog
 	bso::bool__ Continue = true;
-	trow__ TableRow = NONE;
-	rrow__ RecordRow = NONE;
+	trow__ TableRow = E_NIL;
+	rrow__ RecordRow = E_NIL;
 	str::string TableAliasLabel, TableLabel, RecordLabel, AliasLabel;
 ERRBegin
 	TableAliasLabel.Init();
@@ -884,42 +872,42 @@ ERRBegin
 	while ( Continue ) {
 		switch ( Parser.Parse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfValue | xml::tfEndTag ) ) {
 		case xml::tStartTag:
-			ReportErrorAndExit_( "No tag allowed here", IFlow );
+			ReportAndExit_( "TagNotAllowedHereError", IFlow );
 			break;
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == ALIAS_TABLE_ALIAS_ATTRIBUTE ) {
 				if ( TableLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", IFlow );
+					ReportAndExit_( "CanNotBeUsedTogetherError", IFlow, ALIAS_TABLE_LABEL_ATTRIBUTE,  ALIAS_TABLE_ALIAS_ATTRIBUTE );
 
-				Assign_( TableAliasLabel, "Table alias", Parser, IFlow );
+				Assign_( locale::tTableAliasWording, Parser, IFlow, TableAliasLabel );
 			} else if ( Parser.AttributeName() == ALIAS_TABLE_LABEL_ATTRIBUTE ) {
 				if ( TableAliasLabel.Amount() != 0 )
-					ReportErrorAndExit_( "Both '" ALIAS_TABLE_LABEL_ATTRIBUTE "' and '" ALIAS_TABLE_ALIAS_ATTRIBUTE "' cannot be defined together", IFlow );
+					ReportErrorAndExit_( locale::tCanNotBeUsedTogetherError, IFlow, ALIAS_TABLE_LABEL_ATTRIBUTE,  ALIAS_TABLE_ALIAS_ATTRIBUTE );
 
-				Assign_( TableLabel, "Table alias", Parser, IFlow );
+				Assign_( locale::tTableAliasWording, Parser, IFlow, TableLabel );
 			} else if ( Parser.AttributeName() == ALIAS_RECORD_LABEL_ATTRIBUTE ) {
-				Assign_( RecordLabel, "Record label", Parser, IFlow );
+				Assign_( locale::tRecordLabelWording,Parser, IFlow, RecordLabel );
 			} else if ( Parser.AttributeName() == ALIAS_LABEL_ATTRIBUTE ) {
-				Assign_( AliasLabel, "Alias label", Parser, IFlow );
+				Assign_( locale::tAliasLabelWording, Parser, IFlow, AliasLabel );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", IFlow );
+				ReportErrorAndExit_( locale::tUnknownAttributeError, IFlow );
 			break;
 		case xml::tStartTagClosed:
 			if ( TableLabel.Amount() != 0 ) {
-				if ( ( TableRow = SearchTable( TableLabel, Tables ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find table", IFlow );
+				if ( ( TableRow = SearchTable( TableLabel, Tables ) ) == E_NIL )
+					ReportErrorAndExit_( locale::tTableNotFoundError, IFlow );
 			} else if ( TableAliasLabel.Amount() != 0 ) {
-				if ( ( TableRow = SearchTable( TableAliasLabel, TableAliases ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find table", IFlow );
+				if ( ( TableRow = SearchTable( TableAliasLabel, TableAliases ) ) == E_NIL )
+					ReportErrorAndExit_( locale::tTableNotFoundError, IFlow );
 			} else
-				ReportErrorAndExit_( "Missing table reference", IFlow );
+				ReportErrorAndExit_( locale::tMissingTableReferenceError, IFlow );
 
 			if ( AliasLabel.Amount() == 0 )
-				ReportErrorAndExit_( "Alias label missing", IFlow );
+				ReportErrorAndExit_( locale::tMissingAliasLabelError, IFlow );
 
 			if ( RecordLabel.Amount() ) {
-				if ( ( RecordRow = SearchRecord( RecordLabel, TableRow, Tables ) ) == NONE )
-					ReportErrorAndExit_( "Unable to find record", IFlow );
+				if ( ( RecordRow = SearchRecord( RecordLabel, TableRow, Tables ) ) == E_NIL )
+					ReportErrorAndExit_( locale::tRecordNotFoundError, IFlow );
 
 				AliasType = atRecord;
 			} else
@@ -934,11 +922,11 @@ ERRBegin
 				break;
 			break;
 			default:
-				ERRc();
+				ERRFwk();
 			}
 			break;
 		case xml::tValue:
-			ReportErrorAndExit_( "No value allowed here", IFlow );
+			ReportErrorAndExit_( locale::tValueNotAllowedHereError, IFlow );
 			break;
 		case xml::tEndTag:
 			switch ( AliasType ) {
@@ -947,10 +935,10 @@ ERRBegin
 				Continue = false;
 				break;
 			case at_Undefined:
-				ReportErrorAndExit_( "Incomplete alias definition", IFlow );
+				ReportErrorAndExit_( locale::tIncompleteAliasDefinitionError, IFlow );
 				break;
 			default:
-				ERRc();
+				ERRFwk();
 				break;
 			}
 			break;
@@ -958,7 +946,7 @@ ERRBegin
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -996,11 +984,11 @@ ERRBegin
 					Aliases.Tables.Append( TableAlias );
 					break;
 				default:
-					ERRc();
+					ERRFwk();
 					break;
 				}
 			} else
-				ReportErrorAndExit_( "Unknow tag", IFlow );
+				ReportErrorAndExit_( locale::tUnknownTagError, IFlow );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -1009,7 +997,7 @@ ERRBegin
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -1040,16 +1028,16 @@ ERRBegin
 			else if ( Parser.TagName() == CONTENT_TAG )			//                                     ^
 				ProcessContent_( Parser, IFlow, Table, Tables, Aliases );	// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
 			else															//                                     ^                              ^
-				ReportErrorAndExit_( "Unknown tag", IFlow );
+				ReportErrorAndExit_( locale::tUnknownTagError, IFlow );
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() != TABLE_TAG )
-				ERRc();
+				ERRFwk();
 
 			if ( Parser.AttributeName() == TABLE_LABEL_ATTRIBUTE ) {
-				Assign_( Table.Label, "Table label", Parser, IFlow );
+				Assign_( locale::tTableLabelWording, Parser, IFlow, Table.Label );
 			} else
-				ReportErrorAndExit_( "Unknown attribute", IFlow );
+				ReportErrorAndExit_( locale::tUnknownAttributeError, IFlow );
 			break;
 		case xml::tEndTag:
 			Continue = false;
@@ -1058,7 +1046,7 @@ ERRBegin
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -1101,7 +1089,7 @@ ERRBegin
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -1125,18 +1113,14 @@ ERRProlog
 	FNM_BUFFER___ Buffer;
 	xtf::extended_text_iflow__ PXFlow;
 ERRBegin
-	if ( FFlow.Init( DataFileName, err::hUserDefined ) != fil::sSuccess ) {
-		CErr << "Unable to open data file '" << DataFileName << "' !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	if ( FFlow.Init( DataFileName, err::hUserDefined ) != fil::sSuccess )
+		scltool::ReportFileOpeningErrorAndExit( DataFileName );
 
-	FFlow.EOFD( XTF_EOXT );
-
-	XFlow.Init( FFlow );
+	XFlow.Init( FFlow, utf::f_Default );
 
 	IFlow.Init( XFlow, xpp::criterions___( str::string( fnm::GetLocation( DataFileName, Buffer ) ) ) );
 
-	PXFlow.Init( IFlow );
+	PXFlow.Init( IFlow, utf::f_Default );
 
 	Parser.Init( PXFlow, xml::eh_Default );
 
@@ -1149,11 +1133,11 @@ ERRBegin
 				ProcessData_( Parser, IFlow, Data );	// '...<erpck:data><erpck:table ...>' -> '...</erpck:table>...'
 				DataDetected = true;					//                 ^                                       ^
 			} else {
-				ReportErrorAndExit_( "Unexpected tag", IFlow );
+				ReportErrorAndExit_( locale::tForbiddenTagError, IFlow );
 			} 
 			break;
 		case xml::tAttribute:
-			ReportErrorAndExit_( "Unexpected attribute", IFlow );
+			ReportErrorAndExit_( locale::t"Unexpected attribute", IFlow );
 			break;
 		case xml::t_Processed:
 			if ( !DataDetected ) {
@@ -1166,7 +1150,7 @@ ERRBegin
 			ReportErrorAndExit_( IFlow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -1186,10 +1170,10 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	IFlow.Init( XML );
-	XFlow.Init( IFlow );
+	XFlow.Init( IFlow, utf::f_Default );
 
 	if ( xpp::Process( XFlow, Writer ) != xpp::sOK )
-		ERRc();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog
@@ -1226,7 +1210,7 @@ static void DisplayAll_(
 
 	Record.Init( Records );
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Display_( Record( Row ), Writer );
 
 		Row = Records.Next( Row );
@@ -1239,19 +1223,19 @@ counter__ GetSkippedAmount_(
 	const records_ &Records )
 {
 	counter__ Skipped = 0;
-	epeios::row__ Row = RecordRows.Last();
-	rrow__ RecordRow = NONE;
+	sdr::row__ Row = RecordRows.Last();
+	rrow__ RecordRow = E_NIL;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
 
 	Record.Init( Records );
 
-	while ( ( Row != NONE ) && ( SessionAmount-- ) ) {
+	while ( ( Row != E_NIL ) && ( SessionAmount-- ) ) {
 		RecordRow = RecordRows( Row );
 
 		if ( Records.Exists( RecordRow ) )
 			if ( Record( RecordRow ).Skip() ) {
 				if ( Skipped == RPKBSC_COUNTER_MAX )
-					ERRl();
+					ERRLmt();
 				Skipped++;
 			}
 
@@ -1265,13 +1249,13 @@ counter__ GetSkippedAmount_(
 id__  Display_(
 	id__ Id,
 	counter__ Skipped,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	const records_ &Records,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 	bso::integer_buffer__ Buffer;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
 	counter__ Counter = Records.Amount();	// NOTA : there is at least one record.
@@ -1296,7 +1280,7 @@ id__  Display_(
 
 			if ( !Counter ) {
 				Writer.PutAttribute( "Amount", "0" );
-				Row = NONE;
+				Row = E_NIL;
 			} else if ( !Record( Row ).GetSkip() ) {
 				Id = *Row + 1;
 				Writer.PutAttribute( "Amount", "1" );
@@ -1318,7 +1302,7 @@ id__  Display_(
 			}
 		}
 
-		if ( Row != NONE )
+		if ( Row != E_NIL )
 			Display_( Row, Records, Label, Writer );
 	}
 
@@ -1328,7 +1312,7 @@ id__  Display_(
 static id__ Display_(
 	id__ Id,
 	const table_ &Table,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
@@ -1346,7 +1330,7 @@ static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	txf::text_oflow__ &Output )
@@ -1418,7 +1402,7 @@ static id__ DisplayWithoutBackup_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const char *FileName )
@@ -1445,7 +1429,7 @@ static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const char *FileName )
@@ -1473,7 +1457,7 @@ static id__ Display_(
 	id__ Id,
 	const data_ &Data,
 	const str::string_ &XSLFileName,
-	bso::ulong__ SessionMaxDuration,
+	bso::uint__ SessionMaxDuration,
 	str::string_ &Label,
 	rpkctx::context_ &Context,
 	const str::string_ &OutputFileName )
@@ -1598,21 +1582,21 @@ ERRBegin
 		switch ( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
 			if ( Parser.TagName() != "Context" )
-				ERRc();
+				ERRFwk();
 
 			break;
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == "Target" ) {
 				if ( Target.Amount() != 0 )
-					ERRc();
+					ERRFwk();
 
 				Target = Parser.Value();
 			} else if ( Parser.AttributeName() != "TimeStamp" )
-				ERRc();
+				ERRFwk();
 			break;
 		case xml::tStartTagClosed:
 			if ( Target != NAME )
-				ERRc();
+				ERRFwk();
 
 			rpkctx::Retrieve( Parser, Context );
 			break;
@@ -1620,7 +1604,7 @@ ERRBegin
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -1648,9 +1632,7 @@ ERRBegin
 		ERRExit( EXIT_FAILURE );
 	}
 
-	FFlow.EOFD( XTF_EOXT );
-
-	XFlow.Init( FFlow );
+	XFlow.Init( FFlow, utf::f_Default );
 
 	Parser.Init( XFlow, xml::eh_Default );
 
@@ -1674,7 +1656,7 @@ ERRProlog
 	str::string XSLFileName;
 	str::string Command;
 	str::string ContextFileName;
-	bso::ulong__ SessionMaxDuration = 0;
+	bso::uint__ SessionMaxDuration = 0;
 	bso::bool__ Error = false;
 	str::string Label;
 ERRBegin
@@ -1706,7 +1688,7 @@ ERRBegin
 	Data.Init();
 	RetrieveData_( DataFileName.Convert( Buffer ), Data );
 
-	SessionMaxDuration = rgstry::GetUL( Registry, str::string( SESSION_MAX_DURATION_TAG ), 0, &Error );
+	SessionMaxDuration = rgstry::GetUInt( Registry, str::string( SESSION_MAX_DURATION_TAG ), 0, &Error );
 
 	Label.Init();
 	Id = Display_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, OutputFileName );
@@ -1732,11 +1714,11 @@ ERRProlog
 	registry Registry;
 	lcl::locale Locale;
 	str::string ErrorMessage;
-	rgstry::row__ RegistryRoot = NONE;
+	rgstry::row__ RegistryRoot = E_NIL;
 	rgstry::level__ Level = RGSTRY_UNDEFINED_LEVEL;
 ERRBegin
 	Registry.Init();
-	Level = Registry.AddEmbeddedLevel();
+	Level = Registry.PushEmbeddedLevel();
 
 	Context.Init();
 
@@ -1753,7 +1735,7 @@ ERREnd
 ERREpilog
 }
 
-void Go( const parameters &Parameters )
+void Go( const parameters___ &Parameters )
 {
 ERRProlog
 ERRBegin
@@ -1768,7 +1750,7 @@ static inline void Main(
 	const char *argv[] )
 {
 ERRProlog
-	parameters Parameters;
+	parameters___ Parameters;
 ERRBegin
 	AnalyzeArgs( argc, argv, Parameters );
 

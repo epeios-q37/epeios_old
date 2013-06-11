@@ -124,18 +124,19 @@ namespace xtf {
 		}
 	};
 
-	struct coord__ {
+	// Position dans le flux.
+	struct pos__ {
 		location__ Line;
 		location__ Column;
 		void reset( bso::bool__ = false )
 		{
 			Line = Column = 0;
 		}
-		coord__( void )
+		pos__( void )
 		{
 			reset( true );
 		}
-		coord__(
+		pos__(
 			location__ Line,
 			location__ Column )
 		{
@@ -144,11 +145,11 @@ namespace xtf {
 			this->Line = Line;
 			this->Column = Column;
 		}
-		void Init( coord__ Coord = coord__() )
+		void Init( pos__ Position = pos__() )
 		{
 			reset();
 
-			*this = Coord;
+			*this = Position;
 		}
 	};
 
@@ -160,8 +161,8 @@ namespace xtf {
 	private:
 		// L'entree de base.
 		flw::iflow__ *_Flow;
-		// Corrdonnée du prochain caractère.
-		coord__ _Coord;
+		// Position du prochain caractère.
+		pos__ _Position;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
 		bso::char__ EOL_;
 		utf::utf__ _UTFHandler;
@@ -176,13 +177,13 @@ namespace xtf {
 		}
 		void _NewCharAdjust( void )
 		{
-			_Coord.Column++;
+			_Position.Column++;
 		}
 		// Adjust counters.after reading a new line character.
 		void _NewLineAdjust( void )
 		{
-			_Coord.Line++;
-			_Coord.Column = 0;
+			_Position.Line++;
+			_Position.Column = 0;
 		}
 		bom::byte_order_marker__ _GetBOM( void )
 		{
@@ -274,8 +275,8 @@ namespace xtf {
 	public:
 		void reset( bool P = true )
 		{
-			_Coord.reset( P );
-			_Coord.Line = _Coord.Column = 1;
+			_Position.reset( P );
+			_Position.Line = _Position.Column = 1;
 			_Flow = NULL;
 			EOL_ = 0;
 			_Error = e_Undefined;
@@ -284,19 +285,19 @@ namespace xtf {
 		extended_text_iflow__(
 			flw::iflow__ &IFlow,
 			utf::format__ Format,
-			coord__ Coord = coord__( 1, 0 ) )
+			pos__ Position = pos__( 1, 0 ) )
 		{
 			reset( false );
 
-			Init( IFlow, Format, Coord );
+			Init( IFlow, Format, Position );
 		}
 		//f Initialization with 'Flow'..
 		bom::byte_order_marker__ Init(
 			flw::iflow__ &IFlow,
 			utf::format__ Format,
-			coord__ Coord = coord__( 1, 0 ) )
+			pos__ Position = pos__( 1, 0 ) )
 		{
-			_Coord.Init( Coord );
+			_Position.Init( Position );
 			_Flow = NULL;
 			EOL_ = 0;
 			_Flow = &IFlow;
@@ -359,9 +360,9 @@ namespace xtf {
 			return C;
 		}
 		//f NOTA : if '.Line' == 0; a '\n' or a '\r' was unget()'.
-		const coord__ &Coord( void ) const
+		const pos__ &Position( void ) const
 		{
-			return _Coord;
+			return _Position;
 		}
 		/*f Put the rest of the current cell in 'Cell'. Return true if the cell is delimited by 'Separator',
 		false otherwise (cell delimited by a new line, for example). */
@@ -435,9 +436,9 @@ namespace xtf {
 		{
 			return _F().AmountRed();
 		}
-		void Set( coord__ Coord )
+		void Set( pos__ Position )
 		{
-			_Coord = Coord;
+			_Position = Position;
 		}
 		flw::iflow__ &UndelyingFlow( void ) const
 		{

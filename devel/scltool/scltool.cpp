@@ -126,6 +126,24 @@ ERREnd
 ERREpilog
 }
 
+void scltool::ReportAndExit(
+	const char *Text,
+	int ExitValue )
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+
+	Meaning.SetValue( Text );
+
+	ReportAndExit( Meaning, ExitValue );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 static void ReportSCLPendingError_( void )
 {

@@ -82,6 +82,13 @@ namespace sclgecko {
 
 	void SetElementsAttributesFromRegistry( nsxpcm::window__ &Window );
 
+	void UpdateAccessibility(
+		const str::string_ &XMLDigest,
+		nsIDOMElement *Boradcasterset,
+		nsIDOMDocument *Document,
+		const char *XSLFileNameAffix,
+		xulftk::trunk___ &Trunk );
+
 }
 
 /*$END$*/

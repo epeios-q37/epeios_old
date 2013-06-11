@@ -99,7 +99,7 @@ const char *xml::GetLabel( status__ Status )
 
 void xml::GetMeaning(
 	status__ Status,
-	const coord__ &Coord,
+	const pos__ &Position,
 	lcl::meaning_ &Meaning )
 {
 ERRProlog
@@ -113,8 +113,8 @@ ERRBegin
 
 	Meaning.AddTag( MeaningBuffer );
 
-	Meaning.AddTag( bso::Convert( Coord.Line, IBuffer ) );
-	Meaning.AddTag( bso::Convert( Coord.Column, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Position.Line, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Position.Column, IBuffer ) );
 ERRErr
 ERREnd
 ERREpilog

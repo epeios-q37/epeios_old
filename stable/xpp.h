@@ -119,16 +119,51 @@ namespace xpp {
 
 	const char *GetLabel( status__ Status );
 
+	struct coords___
+	{
+	public:
+		xtf::pos__ Position;
+		str::string FileName;
+		void reset( bso::bool__ P = true )
+		{
+			Position.reset( P  );
+			FileName.reset( P );
+		}
+		coords___( void )
+		{
+			reset( false );
+
+			Init();
+		}
+		coords___(
+			const xtf::pos__ &Position,
+			const str::string_ &FileName = str::string() )
+		{
+			reset( false );
+
+			this->Position = Position;
+			this->FileName.Init( FileName );
+		}
+		~coords___( void )
+		{
+			reset();
+		}
+		void Init( void )
+		{
+			Position.Init();
+			FileName.Init();
+		}
+	};
+
+
 	struct context___ {
 		status__ Status;
-		xtf::coord__ Coord;
-		str::string FileName;
+		coords___ Coordinates;
 		void reset( bso::bool__ P = true )
 		{
 			Status = s_Undefined;
 
-			Coord.reset( P  );
-			FileName.reset( P );
+			Coordinates.reset( P  );
 		}
 		context___( void )
 		{
@@ -138,14 +173,12 @@ namespace xpp {
 		}
 		context___(
 			status__ Status,
-			const xtf::coord__ &Coord,
-			const str::string_ &FileName = str::string() )
+			const coords___ &Coordinates )
 		{
 			reset( false );
 
 			this->Status = Status;
-			this->Coord = Coord;
-			this->FileName.Init( FileName );
+			this->Coordinates = Coordinates;
 		}
 		~context___( void )
 		{
@@ -155,10 +188,13 @@ namespace xpp {
 		{
 			Status = s_Undefined;
 
-			Coord.Init();
-			FileName.Init();
+			Coordinates.Init();
 		}
 	};
+
+	void GetMeaning(
+		const coords___ &Coordinates,
+		lcl::meaning_ &Meaning );
 
 	void GetMeaning(
 		const context___ &Context,
@@ -219,38 +255,38 @@ namespace xpp {
 	public:
 		struct s {
 			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s Names;
-			bch::E_BUNCHt_( xtf::coord__, _rrow__ )::s Coords;
+			bch::E_BUNCHt_( xtf::pos__, _rrow__ )::s Positions;
 			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s FileNames;
 			ctn::E_MCONTAINERt_( str::string_, _rrow__ )::s Contents;
 		};
 		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) Names;
-		bch::E_BUNCHt_( xtf::coord__, _rrow__ ) Coords;
+		bch::E_BUNCHt_( xtf::pos__, _rrow__ ) Positions;
 		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) FileNames;
 		ctn::E_MCONTAINERt_( str::string_, _rrow__ ) Contents;
 		_repository_( s &S )
 		: Names( S.Names ),
-		  Coords( S.Coords ),
+		  Positions( S.Positions ),
 		  FileNames( S.FileNames ),
 		  Contents( S.Contents )
 		{}
 		void reset( bso::bool__ P = true )
 		{
 			Names.reset( P );
-			Coords.reset( P );
+			Positions.reset( P );
 			FileNames.reset( P );
 			Contents.reset( P );
 		}
 		void plug( ags::E_ASTORAGE_ &AS )
 		{
 			Names.plug( AS );
-			Coords.plug( AS );
+			Positions.plug( AS );
 			FileNames.plug( AS );
 			Contents.plug( AS );
 		}
 		_repository_ &operator =( const _repository_ &R )
 		{
 			Names = R.Names;
-			Coords = R.Coords;
+			Positions = R.Positions;
 			FileNames = R.FileNames;
 			Contents = R.Contents;
 
@@ -259,7 +295,7 @@ namespace xpp {
 		void Init( void )
 		{
 			Names.Init();
-			Coords.Init();
+			Positions.Init();
 			FileNames.Init();
 			Contents.Init();
 		}
@@ -269,7 +305,7 @@ namespace xpp {
 
 			if ( Row != E_NIL ) {
 				Names.Remove( Row );
-				Coords.Remove( Row );
+				Positions.Remove( Row );
 				FileNames.Remove( Row );
 				Contents.Remove( Row );
 
@@ -279,14 +315,14 @@ namespace xpp {
 		}
 		bso::bool__ Store(
 			const str::string_ &Name,
-			xtf::coord__ Coord,
+			xtf::pos__ Position,
 			const str::string_ &FileName,
 			const str::string_ &Content )
 		{
 			bso::bool__ AlreadyExists = Delete( Name );
 			_rrow__ Row = Names.Append( Name );
 
-			if ( Row != Coords.Append( Coord ) )
+			if ( Row != Positions.Append( Position ) )
 				ERRFwk();
 
 			if ( Row != FileNames.Append( FileName ) )
@@ -299,7 +335,7 @@ namespace xpp {
 		}
 		bso::bool__ Get(
 			const str::string_ &Name,
-			xtf::coord__ &Coord,
+			xtf::pos__ &Position,
 			str::string_ &FileName,
 			str::string_ &Content ) const
 		{
@@ -308,7 +344,7 @@ namespace xpp {
 			if ( Row == E_NIL )
 				return false;
 
-			Coord = Coords.Get( Row );
+			Position = Positions.Get( Row );
 
 			FileNames.Recall( Row, FileName );
 
@@ -437,14 +473,14 @@ namespace xpp {
 		status__ _InitWithContent(
 			const str::string_ &Content,
 			const str::string_ &NameOfTheCurrentFile,
-			const xtf::coord__ &Coord,
+			const xtf::pos__ &Position,
 			const str::string_ &Directory,
 			const str::string_ &CypherKey,
 			utf::format__ Format );
 		status__ _InitCypher(
 			flw::iflow__ &Flow,
 			const str::string_ &FileName,
-			const xtf::coord__ &Coord,
+			const xtf::pos__ &Position,
 			const str::string_ &Directory,
 			const str::string_ &CypherKey,
 			utf::format__ Format );
@@ -530,13 +566,13 @@ namespace xpp {
 		{
 			return _Parser.DumpData();
 		}
-		const xtf::coord__ &DumpCoord( void ) const
+		const xtf::pos__ &DumpPosition( void ) const
 		{
-			return _Parser.DumpCoord();
+			return _Parser.DumpPosition();
 		}
-		const xtf::coord__ &Coord( void ) const
+		const xtf::pos__ &Position( void ) const
 		{
-			return _Parser.Flow().Coord();
+			return _Parser.Flow().Position();
 		}
 		utf::format__ GetFormat( void ) const
 		{
@@ -699,8 +735,7 @@ namespace xpp {
 		}
 		const context___ &GetContext( context___ &Context ) const
 		{
-			Context.Coord = _Parser().Coord();
-			Context.FileName = _Parser().LocalizedFileName();
+			Context.Coordinates = coords___( _Parser().Position(), _Parser().LocalizedFileName() );
 			Context.Status = _Status;
 
 			return Context;
@@ -742,7 +777,7 @@ namespace xpp {
 	};
 
 	// Lorsqu'une erreur s'est produite; information stockées dans 'PFlow'.
-	inline void GetMEaning(
+	inline void GetMeaning(
 		const preprocessing_iflow___ &PFlow,
 		lcl::meaning_ &Meaning )
 	{

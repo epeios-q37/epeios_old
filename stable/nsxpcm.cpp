@@ -1569,7 +1569,7 @@ ERRProlog
 ERRBegin
 	nsIDOMAttr *Attribute = nsxpcm::QueryInterface<nsIDOMAttr>( Node );
 
-	Attribute->GetName( RawName );
+	T( Attribute->GetName( RawName ) );
 
 	Name.Init();
 	Transform( RawName, Name );
@@ -1646,17 +1646,17 @@ static void AttachIfConcerned_(
 	nsIDOMNode *AttributeNode = NULL;
 	event__ Event = e_Undefined;
 	
-	Attributes->GetLength( &Amount );
+	T( Attributes->GetLength( &Amount ) );
 
 	while ( Amount-- != 0 )  {
-		Attributes->Item( Amount, &AttributeNode );
+		T( Attributes->Item( Amount, &AttributeNode ) );
 
 		if ( ( Event = GetEventIfConcerned_( AttributeNode, Id, NameSpace ) ) != e_Undefined )
 			EventHandler.Add( Patch_( Node ), 1 << Event );
 	}
 }
 
-void nsxpcm::Attach(
+void nsxpcm::AttachEventHandler(
 	nsIDOMNode *Node,
 	const char *Id,
 	event_handler__ &EventHandler,
@@ -1669,10 +1669,111 @@ ERRBegin
 	Browser.Init( Node );
 
 	while ( Node != NULL ) {
-		Node->GetAttributes( &Attributes ); 
+		T( Node->GetAttributes( &Attributes ) );
 
 		if ( Attributes != NULL )
 			AttachIfConcerned_( Node, Attributes, Id, EventHandler, NameSpace );
+
+		Node = Browser.GetNext();
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+bso::bool__ GetRelevantBroadcasterId_(
+	const str::string_ &CustomizedObserverAttributeName,
+	nsIDOMNode *AttributeNode,
+	str::string_ &ObserverId )
+{
+	bso::bool__ Relevant = false;
+ERRProlog
+	nsString RawName, RawValue;
+	str::string Name;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	nsIDOMAttr *Attribute = nsxpcm::QueryInterface<nsIDOMAttr>( AttributeNode );
+
+	T( Attribute->GetName( RawName ) );
+
+	Name.Init();
+	Transform( RawName, Name );
+
+	if ( Name != CustomizedObserverAttributeName )
+		ERRReturn;
+
+	Relevant = true;
+
+	T( Attribute->GetValue( RawValue ) );
+
+	Transform ( RawValue, ObserverId );
+ERRErr
+ERREnd
+ERREpilog
+	return Relevant;
+}
+
+bso::bool__ GetRelevantBroadcasterId_(
+	const str::string_ &CustomizedObserverAttributeName,
+	nsIDOMNode *Node,
+	nsIDOMNamedNodeMap *Attributes,
+	str::string_ &ObserverId )
+{
+	PRUint32 Amount;
+	nsIDOMNode *AttributeNode = NULL;
+	event__ Event = e_Undefined;
+	bso::bool__ Relevant = false;
+	
+	T( Attributes->GetLength( &Amount ) );
+
+	while ( !Relevant && ( Amount-- != 0 ) ) {
+		Attributes->Item( Amount, &AttributeNode );
+
+		Relevant = GetRelevantBroadcasterId_( CustomizedObserverAttributeName, AttributeNode, ObserverId );
+	}
+
+	return Relevant;
+}
+
+static inline void RefreshObserver_(
+	nsIDOMNode *Node,
+	const str::string_ &ObserverId )
+{
+	nsxpcm::RemoveAttribute( Node , "observes" );
+	nsxpcm::SetAttribute( Node, "observes", ObserverId );
+}
+
+/*
+	Comme certains 'broadcasters' sont génèrés dynamiquement, à l'aide d'une transformation 'XSL',
+	il est nécessaire de rafraîchir les attributs 'observes' des éléments qui s'y réfèrenet,
+	sinon les modifications de seont pas prises en comptes.
+*/
+
+void nsxpcm::RefreshObservers(
+	nsIDOMNode *Node,
+	const char *NameSpace )
+{
+ERRProlog
+	nsxpcm::browser__ Browser;
+	nsIDOMNamedNodeMap *Attributes = NULL;
+	str::string CustomizedObserverAttributeName;
+	str::string ObserverId;
+ERRBegin
+	CustomizedObserverAttributeName.Init();
+	CustomizedObserverAttributeName.Append( NameSpace );
+	CustomizedObserverAttributeName.Append( ":observes" );
+
+	Browser.Init( Node );
+
+	while ( Node != NULL ) {
+		Node->GetAttributes( &Attributes ); 
+
+		if ( Attributes != NULL ) {
+			ObserverId.Init();
+
+			if ( GetRelevantBroadcasterId_( CustomizedObserverAttributeName, Node, Attributes, ObserverId ) )
+				RefreshObserver_( Node, ObserverId );
+		}
 
 		Node = Browser.GetNext();
 	}

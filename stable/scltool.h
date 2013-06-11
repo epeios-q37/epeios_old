@@ -66,6 +66,8 @@ extern class ttr_tutor &SCLTOOLTutor;
 # include "clnarg.h"
 
 # include "sclmisc.h"
+# include "scllocale.h"
+# include "sclerror.h"
 
 
 namespace scltool {
@@ -92,13 +94,37 @@ namespace scltool {
 		const char *ProgramName,
 		const clnarg::description_ &Description );
 
-
 	// A définir par l'utilisateur.
 	void Main(
 		int argc,
 		const char *argv[] );
 
+	inline const str::string_ &GetTranslation(
+		const char *Text,
+		str::string_ &Translation )
+	{
+		return scllocale::GetTranslation( Text, GetLanguage(), Translation );
+	}
 
+
+	inline const str::string_ &GetTranslation(
+		const lcl::meaning_ &Meaning,
+		str::string_ &Translation )
+	{
+		return scllocale::GetTranslation( Meaning, GetLanguage(), Translation );
+	}
+
+	inline void ReportAndExit(
+		const lcl::meaning_ &Meaning,
+		int ExitValue = EXIT_FAILURE )
+	{
+		sclerror::SetMeaning( Meaning );
+		ERRExit( ExitValue );
+	}
+
+	void ReportAndExit(
+		const char *Text,
+		int ExitValue = EXIT_FAILURE );
 }
 
 /*$END$*/

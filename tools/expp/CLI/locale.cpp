@@ -40,17 +40,17 @@
 using namespace locale;
 
 #define CASE( l )\
-	case m##l:\
+	case t##l:\
 	return #l;\
 	break
 
-const char *locale::Label( message__ Message )
+const char *locale::Label( text__ Text )
 {
-#if	LOCALE__MESSAGE_AMOUNT != 8
+#if	LOCALE__TEXT_AMOUNT != 8
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 
-	switch( Message ) {
+	switch( Text ) {
 	CASE( ProcessCommandDescription );
 	CASE( EncryptCommandDescription );
 	CASE( NamespaceOptionDescription );
@@ -68,11 +68,11 @@ const char *locale::Label( message__ Message )
 }
 
 const lcl::meaning_ &locale::GetMeaning_(
-	message__ Message,
+	text__ Text,
 	lcl::meaning_ *Meaning,
 	... )
 {
-#if	LOCALE__MESSAGE_AMOUNT != 8
+#if	LOCALE__TEXT_AMOUNT != 8
 #	error "Amount of 'message__' entries changed ! Update !"
 #endif
 ERRProlog
@@ -81,30 +81,25 @@ ERRProlog
 ERRBegin
 	va_start( Args, Meaning );
 
-	switch ( Message ) {
-	case mProcessCommandDescription:
-	case mEncryptCommandDescription:
-	case mNamespaceOptionDescription:
-	case mNoIndentOptionDescription:
-		Meaning->SetValue( Label( Message ) );
+	Meaning->SetValue( Label( Text) );
 
+	switch ( Text ) {
+	case tProcessCommandDescription:
+	case tEncryptCommandDescription:
+	case tNamespaceOptionDescription:
+	case tNoIndentOptionDescription:
 		Meaning->AddTag( va_arg( Args, const char *) );
 		break;
-	case mSourceFileArgumentDescription:
-	case mDestFileArgumentDescription:
-		Meaning->SetValue( Label( Message ) );
+	case tSourceFileArgumentDescription:
+	case tDestFileArgumentDescription:
 		break;
-	case mProcessingError:
-		Meaning->SetValue( Label( Message ) );
-
+	case tProcessingError:
 		MeaningBuffer.Init();
 		xpp::GetMeaning( *va_arg( Args, const xpp::context___ *), MeaningBuffer );
 
 		Meaning->AddTag( MeaningBuffer );
 		break;
-	case mEncryptionError:
-		Meaning->SetValue( Label( Message ) );
-
+	case tEncryptionError:
 		MeaningBuffer.Init();
 		xpp::GetMeaning( *va_arg( Args, const xpp::context___ *), MeaningBuffer );
 
@@ -123,7 +118,7 @@ ERREpilog
 static struct locale_cdtor {
 	locale_cdtor( void )
 	{
-		if ( LOCALE__MESSAGE_AMOUNT != m_amount )
+		if ( LOCALE__TEXT_AMOUNT != t_amount )
 			ERRChk();
 	}
 	~locale_cdtor( void )

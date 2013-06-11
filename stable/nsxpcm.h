@@ -1631,11 +1631,15 @@ namespace nsxpcm {
 		}
 	};
 
-	void Attach(
+	void AttachEventHandler(
 		nsIDOMNode *Node,
 		const char *Id,
 		event_handler__ &EventHandler,
-		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );
+		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );	// Gestion des attributs relatifs aux évènements (ex. : 'xex:oncommand').
+
+	void RefreshObservers(
+		nsIDOMNode *Node,
+		const char *NameSpace = NSCPM__XUL_EXTENSION_DEFAULT_NAMESPACE );	// Gestion des 'xex:observes'.
 
 	struct supports__ 
 	{

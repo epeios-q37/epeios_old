@@ -93,7 +93,7 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 
 			if ( C == Separator )
 				Cont = false;
-			else if ( _Coord.Column == 0 )
+			else if ( _Position.Column == 0 )
 				Cont = false;
 			else if ( &Line != NULL )
 				Line.Append( (const bso::char__ *)UTF.Data, UTF.Size );

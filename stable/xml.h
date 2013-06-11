@@ -74,7 +74,7 @@ namespace lcl {
 }
 
 namespace xml {
-	using xtf::coord__;
+	using xtf::pos__;
 
 	// Code d'erreur 'retourné' par 'Parse()'.
 	enum status__ {
@@ -99,7 +99,7 @@ namespace xml {
 
 	void GetMeaning(
 		status__ Status,
-		const coord__ &Coord,	// Obtenu de 'xtf::extended_text_iflow__'.
+		const pos__ &Position,	// Obtenu de 'xtf::extended_text_iflow__'.
 		lcl::meaning_ &Meaning );
 
 
@@ -107,7 +107,7 @@ namespace xml {
 	public:
 		struct s {
 			str::string_::s Data;
-			coord__ Coord;
+			pos__ Position;
 		} &S_;
 		str::string_ Data;
 		dump_( s &S )
@@ -119,7 +119,7 @@ namespace xml {
 		{
 			Data.reset( P );
 
-			S_.Coord.reset( P );
+			S_.Position.reset( P );
 		}
 		void plug( sdr::E_SDRIVER__ &SD )
 		{
@@ -133,7 +133,7 @@ namespace xml {
 		{
 			Data = D.Data;
 
-			S_.Coord = D.S_.Coord;
+			S_.Position = D.S_.Position;
 
 			return *this;
 		}
@@ -141,11 +141,11 @@ namespace xml {
 		{
 			Data.Init();
 
-			S_.Coord.Init();
+			S_.Position.Init();
 		}
-		void Set( coord__ Coord )
+		void Set( pos__ Position )
 		{
-			S_.Coord = Coord;
+			S_.Position = Position;
 		}
 		void Append( const dump_ &Dump )
 		{
@@ -158,7 +158,7 @@ namespace xml {
 		{
 			Init();
 		}
-		E_RWDISCLOSE_( coord__, Coord );
+		E_RWDISCLOSE_( pos__, Position );
 	};
 
 	E_AUTO( dump )
@@ -188,7 +188,7 @@ namespace xml {
 			UTF.Init();
 
 			if ( Dump.Data.Amount() == 0 )
-				Dump.Set( _Flow->Coord() );
+				Dump.Set( _Flow->Position() );
 
 			flw::datum__ C = _Flow->Get( UTF );
 
@@ -242,9 +242,9 @@ namespace xml {
 
 			Dump.Init();
 		}
-		const xtf::coord__ &GetCurrentCoord( void ) const
+		const xtf::pos__ &GetCurrentPosition( void ) const
 		{
-			return _Flow->Coord();
+			return _Flow->Position();
 		}
 		xtf::extended_text_iflow__ &Flow( void )
 		{
@@ -396,9 +396,9 @@ namespace xml {
 
 			return Token;
 		}
-		const xtf::coord__ &DumpCoord( void ) const
+		const xtf::pos__ &DumpPosition( void ) const
 		{
-			return _Flow.Dump.Coord();
+			return _Flow.Dump.Position();
 		}
 		const str::string_ &DumpData( void ) const
 		{
@@ -414,9 +414,9 @@ namespace xml {
 		E_RODISCLOSE__( status__, Status );
 		E_RODISCLOSE__( token__, Token );
 		E_RODISCLOSE__( entities_handling__, EntitiesHandling );
-		const xtf::coord__ &GetCurrentCoord( void ) const
+		const xtf::pos__ &GetCurrentPosition( void ) const
 		{
-			return _Flow.GetCurrentCoord();
+			return _Flow.GetCurrentPosition();
 		}
 		xtf::extended_text_iflow__ &Flow( void )
 		{
@@ -754,6 +754,35 @@ namespace xml {
 		txf::text_oflow__ &OFlow )
 	{
 		OFlow << "<?xml-stylesheet type=\"text/xsl\" href=\"" << XSLHRef << "\"?>";
+	}
+
+	template <typename s, typename i> void PutValue(
+		i Value,
+		xml::writer_ &Writer )
+	{
+		bso::integer_buffer__ IBuffer;
+
+		Writer.PutValue( bso::Convert( Value, IBuffer ) );
+	}
+
+	template <typename s, typename i> void PutValue(
+		i Value,
+		const s &Name,
+		xml::writer_ &Writer )
+	{
+		bso::integer_buffer__ IBuffer;
+
+		Writer.PutValue( bso::Convert( Value, IBuffer ), Name );
+	}
+
+	template <typename s, typename i> void PutAttribute(
+		const s &Name,
+		i Value,
+		xml::writer_ &Writer )
+	{
+		bso::integer_buffer__ IBuffer;
+
+		Writer.PutAttribute( Name, bso::Convert( Value, IBuffer ) );
 	}
 }
 

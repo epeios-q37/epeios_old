@@ -138,22 +138,22 @@ const char *xpp::GetLabel( status__ Status )
 	return NULL;	// Pour éviter un 'warning'.
 }
 
-static void PutFileLineColumn_(
-	const context___ &Context,
+void xpp::GetMeaning(
+	const coords___ &Coordinates,
 	lcl::meaning_ &Meaning )
 {
 ERRProlog
 	STR_BUFFER___ SBuffer;
 	bso::integer_buffer__ IBuffer;
 ERRBegin
-	if ( Context.FileName.Amount() != 0 ) {
+	if ( Coordinates.FileName.Amount() != 0 ) {
 		Meaning.SetValue( XPP_NAME "_ErrorInFileAtLineColumn" );
-		Meaning.AddTag( Context.FileName );
+		Meaning.AddTag( Coordinates.FileName );
 	} else
 		Meaning.SetValue( XPP_NAME "_ErrorAtLineColumn" );
 
-	Meaning.AddTag( bso::Convert( Context.Coord.Line, IBuffer ) );
-	Meaning.AddTag( bso::Convert( Context.Coord.Column, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Coordinates.Position.Line, IBuffer ) );
+	Meaning.AddTag( bso::Convert( Coordinates.Position.Column, IBuffer ) );
 ERRErr
 ERREnd
 ERREpilog
@@ -166,7 +166,7 @@ void xpp::GetMeaning(
 ERRProlog
 	lcl::meaning MeaningBuffer;
 ERRBegin
-	PutFileLineColumn_( Context, Meaning );
+	GetMeaning( Context.Coordinates, Meaning );
 
 	MeaningBuffer.Init();
 
@@ -440,11 +440,11 @@ status__ xpp::_extended_parser___::_HandleDefineDirective( _extended_parser___ *
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Name, Content;
-	xtf::coord__ Coord;
+	xtf::pos__ Position;
 ERRBegin
 	Parser = NULL;
 
-	Coord = _Parser.GetCurrentCoord();
+	Position = _Parser.GetCurrentPosition();
 
 	Name.Init();
 	Content.Init();
@@ -452,7 +452,7 @@ ERRBegin
 	if ( ( Status = GetDefineNameAndContent_( _Parser, Name, Content ) ) != sOK )
 		ERRReturn;
 
-	_Repository.Store( Name, Coord, _LocalizedFileName, Content );
+	_Repository.Store( Name, Position, _LocalizedFileName, Content );
 ERRErr
 ERREnd
 ERREpilog
@@ -510,19 +510,19 @@ status__ xpp::_extended_parser___::_HandleMacroExpand(
 ERRProlog
 	str::string FileName;
 	str::string Content;
-	xtf::coord__ Coord;
+	xtf::pos__ Position;
 ERRBegin
 	FileName.Init();
 	Content.Init();
 
-	if ( !_Repository.Get( MacroName, Coord, FileName, Content ) ) {
+	if ( !_Repository.Get( MacroName, Position, FileName, Content ) ) {
 		Status = sUnknownMacro;
 		ERRReturn;
 	}
 
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	Status = Parser->_InitWithContent( Content, FileName, Coord, _Directory, _CypherKey, _Parser.GetFormat() );
+	Status = Parser->_InitWithContent( Content, FileName, Position, _Directory, _CypherKey, _Parser.GetFormat() );
 ERRErr
 	if ( Parser != NULL ) {
 		delete Parser;
@@ -709,7 +709,7 @@ status__ xpp::_extended_parser___::_HandleIfeqDirective( _extended_parser___ *&P
 	status__ Status = s_Undefined;
 ERRProlog
 	str::string Name, ExpectedValue, TrueValue, Content;
-	xtf::coord__ Coord;
+	xtf::pos__ Position;
 ERRBegin
 	Parser = NULL;
 
@@ -725,7 +725,7 @@ ERRBegin
 
 	Content.Init();
 
-	Coord = _Parser.GetCurrentCoord();
+	Position = _Parser.GetCurrentPosition();
 
 	if ( ( Status = RetrieveTree_( _Parser, Content ) ) != sOK)
 		ERRReturn;
@@ -736,7 +736,7 @@ ERRBegin
 	if ( ( _Variables.Get( Name, TrueValue ) ) && ( ExpectedValue == TrueValue ) ) {
 		Parser = NewParser( _Repository, _Variables, _Directives );
 
-		Status = Parser->_InitWithContent( Content, _LocalizedFileName, Coord, _Directory, _CypherKey, _Parser.GetFormat() );
+		Status = Parser->_InitWithContent( Content, _LocalizedFileName, Position, _Directory, _CypherKey, _Parser.GetFormat() );
 	}
 ERRErr
 	if ( Parser != NULL ) {
@@ -798,7 +798,7 @@ status__ xpp::_extended_parser___::_HandleCypherDecryption(
 {
 	Parser = NewParser( _Repository, _Variables, _Directives );
 
-	return Parser->_InitCypher( _Parser.Flow().UndelyingFlow(), _LocalizedFileName, Coord(), _Directory, _CypherKey, _Parser.GetFormat() );
+	return Parser->_InitCypher( _Parser.Flow().UndelyingFlow(), _LocalizedFileName, Position(), _Directory, _CypherKey, _Parser.GetFormat() );
 }
 
 status__ xpp::_extended_parser___::_HandleCypherOverride(
@@ -990,7 +990,7 @@ ERREpilog
 status__ xpp::_extended_parser___::_InitWithContent(
 	const str::string_ &Content,
 	const str::string_ &NameOfTheCurrentFile,
-	const xtf::coord__ &Coord,
+	const xtf::pos__ &Position,
 	const str::string_ &Directory,
 	const str::string_ &CypherKey,
 	utf::format__ Format )
@@ -1002,7 +1002,7 @@ ERRBegin
 	_SFlow.Init( _MacroContent );
 //	_SFlow.EOFD( XTF_EOXT );
 
-	_XFlow.Init( _SFlow, Format, Coord );
+	_XFlow.Init( _SFlow, Format, Position );
 
 	if ( ( Status = Init( _XFlow, NameOfTheCurrentFile, Directory, CypherKey ) ) != sOK )
 		ERRReturn;
@@ -1017,14 +1017,14 @@ ERREpilog
 status__ xpp::_extended_parser___::_InitCypher(
 	flw::iflow__ &Flow,
 	const str::string_ &FileName,
-	const xtf::coord__ &Coord,
+	const xtf::pos__ &Position,
 	const str::string_ &Directory,
 	const str::string_ &CypherKey,
 	utf::format__ Format )
 {
 	_Decoder.Init( Flow );
 	_Decrypter.Init( _Decoder, CypherKey );
-	_XFlow.Init( _Decrypter, Format, Coord );
+	_XFlow.Init( _Decrypter, Format, Position );
 
 	return Init( _XFlow, FileName, Directory, CypherKey );
 }
@@ -1401,7 +1401,7 @@ static status__ Encrypt_(
 	xml::parser___ &Parser,
 	const str::string_ &CypherKey,
 	str::string_ &Target,
-	xtf::coord__ &Coord )
+	xtf::pos__ &Position )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1415,7 +1415,7 @@ ERRBegin
 
 	Status = RetrieveTree_( Parser, Encrypter );
 
-	Coord = Parser.GetCurrentCoord();
+	Position = Parser.GetCurrentPosition();
 ERRErr
 ERREnd
 ERREpilog
@@ -1427,7 +1427,7 @@ static status__ Encrypt_(
 	const str::string_ &Namespace,
 	const str::string_ &CypherKey,
 	xml::writer_ &Writer,
-	xtf::coord__ &Coord )
+	xtf::pos__ &Position )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1442,7 +1442,7 @@ ERRBegin
 
 	Tree.Init();
 
-	Status = Encrypt_( Parser, CypherKey, Tree, Coord );
+	Status = Encrypt_( Parser, CypherKey, Tree, Position );
 
 	Writer.PutValue( Tree );
 
@@ -1458,7 +1458,7 @@ static status__ HandleCypherDirective_(
 	const str::string_ &Namespace,
 	xml::parser___ &Parser,
 	xml::writer_ &Writer,
-	xtf::coord__ &Coord )
+	xtf::pos__ &Position )
 {
 	status__ Status = s_Undefined;
 ERRProlog
@@ -1488,7 +1488,7 @@ ERRBegin
 				Status = sMissingCypherKey;
 				ERRReturn;
 			}
-			if ( ( Status = Encrypt_( Parser, Namespace, CypherKey, Writer, Coord ) ) != sOK )
+			if ( ( Status = Encrypt_( Parser, Namespace, CypherKey, Writer, Position ) ) != sOK )
 				ERRReturn;
 			Continue = false;
 			break;
@@ -1536,7 +1536,7 @@ ERRBegin
 			break;
 		case xml::tStartTag:
 			if ( Parser.TagName() == Directives.CypherTag ) {
-				if ( ( Status = HandleCypherDirective_( Namespace, Parser, Writer, Context.Coord ) ) != sOK ) {
+				if ( ( Status = HandleCypherDirective_( Namespace, Parser, Writer, Context.Coordinates.Position ) ) != sOK ) {
 					Context.Status = Status;
 					ERRReturn;
 				}
@@ -1566,7 +1566,7 @@ ERRBegin
 			break;
 		case xml::t_Error:
 			Context.Status = Status = _Convert( Parser.Status() );
-			Context.Coord = XFlow.Coord();
+			Context.Coordinates.Position = XFlow.Position();
 			ERRReturn;
 			break;
 		default:

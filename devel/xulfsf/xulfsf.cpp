@@ -392,7 +392,7 @@ static void Register_(
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	nsxpcm::Attach( Trunk.UI().SessionForm().Document(), Id, EventHandler );
+	nsxpcm::AttachEventHandler( Trunk.UI().SessionForm().Document(), Id, EventHandler );
 }
 
 #undef R

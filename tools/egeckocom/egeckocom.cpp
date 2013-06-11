@@ -19,9 +19,14 @@
 
 // $Id$
 
-#include "egeckocom.h"
-
+/*
+   Placed before the dedicated header ('egeckocom.h') as this one is computer-generated
+   a nd the 'nspxm.h' header has to included before any Gecko-related header to
+   define the correct 'XP_(WIN|UNIX|MACOSX|...)'.
+*/
 #include "nsxpcm.h"
+
+#include "egeckocom.h"
 
 #include "geckof.h"
 

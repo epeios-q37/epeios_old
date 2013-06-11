@@ -98,7 +98,7 @@ ERRBegin
 	case sUnableToOpenFile:
 		Meaning.SetValue( GetLabel( Context.Status ) );
 
-		Meaning.AddTag( Context.FileName );
+		Meaning.AddTag( Context.Coordinates.FileName );
 		break;
 	case sParseError:
 		Meaning.SetValue( GetLabel( Context.Status ) );
@@ -1561,7 +1561,7 @@ ERRProlog
 ERRBegin
 	if ( FFlow.Init( FileName, err::hUserDefined ) != fil::sSuccess ) {
 		Status = Context.Status = sUnableToOpenFile;
-		Context.FileName = FileName;
+		Context.Coordinates.FileName = FileName;
 		ERRReturn;
 	}
 
@@ -1573,8 +1573,8 @@ ERRBegin
 	Status = FillRegistry( XFlow, xpp::criterions___( str::string( fnm::GetLocation( FileName, DirectoryBuffer ) ), Criterions.CypherKey, Criterions.Namespace ), RootPath, Registry, RegistryRoot, Context );
 
 	if ( Status == sParseError )
-		if ( Context.FileName.Amount() == 0 )
-			Context.FileName = FileName;
+		if ( Context.Coordinates.FileName.Amount() == 0 )
+			Context.Coordinates.FileName = FileName;
 ERRErr
 ERREnd
 ERREpilog

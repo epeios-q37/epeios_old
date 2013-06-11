@@ -365,6 +365,10 @@ namespace xulftk {
 		{
 			return Kernel().Registry();
 		}
+		const char *Language( void ) const
+		{
+			return Kernel().Language();
+		}
 		void UpdateUI( void )
 		{
 			UI().Update();

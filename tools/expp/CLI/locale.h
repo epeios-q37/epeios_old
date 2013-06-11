@@ -37,33 +37,40 @@
 # define STF( name )\
 	inline const str::string_ &Get##name##Translation( str::string_ &Translation )\
 	{\
-		return scllocale::GetTranslation( Label( m##name ), scltool::GetLanguage(), Translation );\
+		return scllocale::GetTranslation( Label( t##name ), scltool::GetLanguage(), Translation );\
+	}
+
+// 'Simple Meaning Function'. To get the translation of messages which do not need parameters.
+# define SMF( name )\
+	inline const lcl::meaning_ &Get##name##Translation( lcl::meaning_ &Meaning )\
+	{\
+		return GetMeaning_( t##name, &Meaning );\
 	}
 
 namespace locale {
 
-	enum message__ {
-		mProcessCommandDescription,
-		mEncryptCommandDescription,
-		mNamespaceOptionDescription,
-		mNoIndentOptionDescription,
-		mSourceFileArgumentDescription,
-		mDestFileArgumentDescription,
-		mProcessingError,
-		mEncryptionError,
-		m_amount,
-		m_Undefined
+	enum text__ {
+		tProcessCommandDescription,
+		tEncryptCommandDescription,
+		tNamespaceOptionDescription,
+		tNoIndentOptionDescription,
+		tSourceFileArgumentDescription,
+		tDestFileArgumentDescription,
+		tProcessingError,
+		tEncryptionError,
+		t_amount,
+		t_Undefined
 	};
 
 // To adjust if above 'enum' is modified.
-# define LOCALE__MESSAGE_AMOUNT	8
+# define LOCALE__TEXT_AMOUNT	8
 
 	using scllocale::GetLocale;
 
-	const char *Label( message__ Message );
+	const char *Label( text__ Text );
 
 	const lcl::meaning_ &GetMeaning_(
-		message__ Message,
+		text__ Text,
 		lcl::meaning_ *Meaning,	// '&Meaning' ne fonctionne pas avec 'va_arg'.
 		... );
 
@@ -77,21 +84,21 @@ namespace locale {
 		const char *DefaultNamespace,
 		lcl::meaning_ &Meaning )
 	{
-		return GetMeaning_( mNamespaceOptionDescription, &Meaning, DefaultNamespace );
+		return GetMeaning_( tNamespaceOptionDescription, &Meaning, DefaultNamespace );
 	}
 
 	inline const lcl::meaning_ &GetProcessingErrorMeaning(
 		const xpp::context___ &Context,
 		lcl::meaning_ &Meaning )
 	{
-		return GetMeaning_( mProcessingError, &Meaning, &Context );
+		return GetMeaning_( tProcessingError, &Meaning, &Context );
 	}
 
 	inline const lcl::meaning_ &GetEncryptionErrorMeaning(
 		const xpp::context___ &Context,
 		lcl::meaning_ &Meaning )
 	{
-		return GetMeaning_( mEncryptionError, &Meaning, &Context );
+		return GetMeaning_( tEncryptionError, &Meaning, &Context );
 	}
 
 }

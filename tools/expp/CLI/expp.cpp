@@ -105,7 +105,7 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::mProcessCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::tProcessCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << NAME << ' ' << Description.GetCommandLabels( cEncrypt, Buffer );
 	COut << " [" << Description.GetOptionLabels( oNamespace, Buffer ) << " <ns>]";
@@ -113,7 +113,7 @@ ERRBegin
 	COut << "] [<src> [<dst>]]";
 	COut << txf::nl;
 	Translation.Init();
-	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::mEncryptCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
+	COut << txf::pad << scllocale::GetTranslation( locale::Label( locale::tEncryptCommandDescription ), scltool::GetLanguage(), Translation ) << '.' << txf::nl;
 
 	COut << txf::nl;
 
@@ -293,6 +293,7 @@ ERRBegin
 		break;
 	default:
 		ERRFwk();
+		break;
 	}
 
 	AnalyzeOptions_( Analyzer, Parameters );

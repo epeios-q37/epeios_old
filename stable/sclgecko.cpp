@@ -64,6 +64,8 @@ public:
 #include "sclerror.h"
 #include "sclrgstry.h"
 
+#include "xulftk.h"
+
 using namespace sclgecko;
 
 static bso::bool__ IsInitialized_ = false;
@@ -266,6 +268,37 @@ ERRErr
 ERREnd
 ERREpilog
 }
+
+void sclgecko::UpdateAccessibility(
+	const str::string_ &XMLDigest,
+	nsIDOMElement *Broadcasterset,
+	nsIDOMDocument *Document,
+	const char *XSLFileNameAffix,
+	xulftk::trunk___ &Trunk )
+{
+ERRProlog
+	str::string XSLFileName;
+ERRBegin
+	Trunk.UI().LogQuietly( XMLDigest );
+
+	XSLFileName.Init();
+	Trunk.BuildXSLDefaultLocalizedFileName( XSLFileNameAffix, XSLFileName );
+
+	Trunk.UI().LogQuietly( XSLFileName );
+
+	nsxpcm::RemoveChildren( Broadcasterset );
+
+	nsIDOMDocumentFragment *Fragment = nsxpcm::XSLTransformByFileName( XMLDigest, XSLFileName, Document, nsxpcm::xslt_parameters() );
+	
+	nsxpcm::AppendChild( Broadcasterset, Fragment );
+
+	nsxpcm::RefreshObservers( Document );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */

@@ -27,6 +27,7 @@
 # include "nsxpcm.h"
 
 # include "sclrgstry.h"
+# include "scllocale.h"
 
 # include "sktinf.h"
 # include "frdkernl.h"
@@ -87,6 +88,36 @@ namespace trunk {
 			_UI.Init( *this );
 
 			return _Kernel.Init( ConfigurationRegistry, ConfigurationRegistryRoot, PROGRAM_NAME, Locale, Language, DefaultReportingFunctions() );
+		}
+		void ReportAndAbort( const lcl::meaning_ &Meaning )
+		{
+		ERRProlog
+			str::string Translation;
+		ERRBegin
+			Translation.Init();
+			scllocale::GetTranslation( Meaning, Language(), Translation );
+
+			UI().Alert( Translation );
+
+			ERRAbort();
+		ERRErr
+		ERREnd
+		ERREpilog
+		}
+		void ReportAndAbort( const char *Text )
+		{
+		ERRProlog
+			str::string Translation;
+		ERRBegin
+			Translation.Init();
+			scllocale::GetTranslation( Text, Language(), Translation );
+
+			UI().Alert( Translation );
+
+			ERRAbort();
+		ERRErr
+		ERREnd
+		ERREpilog
 		}
 		void FinalizeGoToHome( void )
 		{

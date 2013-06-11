@@ -254,8 +254,11 @@ namespace fdr {
 
 			return _Available;
 		}
-		void _CompleteCache( size__ Size )	// Fait le maximum pour que le cache, avec les données déjà disponibles, contiennt la quantité demandée.
+		void _CompleteCache( size__ Size )	// Fait le maximum pour que le cache, avec les données déjà disponibles, contienne la quantité demandée.
 		{
+			if ( _Size == 0 )	// Plus de donnée disponibles.
+				return;
+
 			if ( _Available < Size ) {
 				if ( ( _Size - _Position ) < Size ) {
 					if ( _Size < Size )
@@ -394,11 +397,11 @@ namespace fdr {
 #ifdef FDR_DBG
 			if ( Wanted < 1 )
 				ERRPrm();
-
-			if ( _EOF() )
-				ERRFwk();
 #endif
 			_Lock();
+
+			if ( _EOF() )
+				return 0;
 
 			switch ( Behavior ) {
 			case bNonBlocking:
@@ -437,6 +440,8 @@ namespace fdr {
 		}
 		bso::bool__ EndOfFlow( void )
 		{
+			_Lock();
+
 			return _EOF();
 		}
 	};

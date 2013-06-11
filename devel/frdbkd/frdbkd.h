@@ -183,55 +183,53 @@ namespace frdbkd {
 	template <typename object> E_TMIMIC__( object, backend_object___ );
 # endif
 
-	template <typename type> inline void Put(
-		const char *Name,
-		type Value,
-		xml::writer_ &Writer )
-	{
-		bso::integer_buffer__ Buffer;
-
-		Writer.PutAttribute( Name, Convert( Value, Buffer ) );
-	}
-
-
 	template <typename type> inline void _PutId(
-		const char *Name,
 		type Id,
+		const char *Name,
 		type UndefinedValue,
 		bso::bool__ Always,
 		xml::writer_ &Writer )
 	{
 		if ( Id != UndefinedValue )
-			Put( Name, *Id, Writer );
+			xml::PutAttribute( Name, *Id, Writer );
 		else if ( Always )
 			Writer.PutAttribute( Name, "" );
 	}
 
 	inline void PutId(
+		fbltyp::id__ Id,
 		const char *Name,
+		bso::bool__ Always,
+		xml::writer_ &Writer )
+	{
+		_PutId( Id, Name, FBLTYP_UNDEFINED_ID, Always, Writer );
+	}
+
+	inline void PutId(
 		fbltyp::id32__ Id,
+		const char *Name,
 		bso::bool__ Always,
 		xml::writer_ &Writer )
 	{
-		_PutId( Name, Id, FBLTYP_UNDEFINED_ID32, Always, Writer );
+		_PutId( Id, Name, FBLTYP_UNDEFINED_ID32, Always, Writer );
 	}
 
 	inline void PutId(
-		const char *Name,
 		fbltyp::id16__ Id,
+		const char *Name,
 		bso::bool__ Always,
 		xml::writer_ &Writer )
 	{
-		_PutId( Name, Id, FBLTYP_UNDEFINED_ID16, Always, Writer );
+		_PutId( Id, Name, FBLTYP_UNDEFINED_ID16, Always, Writer );
 	}
 
 	inline void PutId(
-		const char *Name,
 		fbltyp::id8__ Id,
+		const char *Name,
 		bso::bool__ Always,
 		xml::writer_ &Writer )
 	{
-		_PutId( Name, Id, FBLTYP_UNDEFINED_ID8, Always, Writer );
+		_PutId( Id, Name, FBLTYP_UNDEFINED_ID8, Always, Writer );
 	}
 
 }

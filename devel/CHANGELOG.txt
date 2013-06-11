@@ -1,5 +1,11 @@
 $Id$
 
+30/05/2013 :
+	- Général :
+		- Adaptation.
+	- XTF :
+		- 'coord__' -> 'pos__'
+
 22/05/2013 :
 	- DIR :
 		- Adaptation.
