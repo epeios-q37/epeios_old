@@ -34,7 +34,7 @@ namespace rpkbsc {
 
 		Item.Init( Container );
 
-		while ( ( Row != NONE ) && ( Item( Row ).Label != Label ) )
+		while ( ( Row != E_NIL ) && ( Item( Row ).Label != Label ) )
 			Row = Container.Next( Row );
 
 		return Row;

@@ -1,142 +1,252 @@
-# 'erpck' Makefile by Claude SIMON (http://zeusw.org/intl/contact.html)
-# Builds executable for the 'erpck' software.
-# Requires GNU make (http://www.gnu.org/).
-# Copyright (C) 2007 Claude SIMON
+# 'erpck' Project
+#    by Claude SIMON (http://zeusw.org/intl/contact.html).
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# Requires GNU make (http://www.gnu.org/software/make/).
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, go to http://www.fsf.org/
-# or write to the:
+#	Copyright (C) 2010-2011 2013 Claude SIMON.
 #
-#                       Free Software Foundation, Inc.,
-#          59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#	This file is part of 'erpck'.
 #
-
-# $Id$
+#    'erpck' is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    'erpck' is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with 'erpck'.  If not, see <http://www.gnu.org/licenses/>.
 
 name = erpck
-copt =
+
+
 # Epeios general debugging features
-copt += -DXXX_DBG
+#copt += -DXXX_DBG
 # Required for multitasking
-# copt += -DCPE_MT
+#copt += -DE_MT
 # For using <setjmp.h> instead of C++ exceptions.
-# copt += -DERR_JMPUSE
-mods = cio clnarg epsmsc err fil flw fnm mmi cdgb64
-mods += str tol ttr uym xml lcl rgstry xpp
-mods += rpkals rpkbsc rpkctx rpkrcd rpktbl
+#copt += -DERR_JMPUSE
+	
+mods += ags bso cpe epsmsc err 
+mods += flw ias str tol ttr 
+mods += uys cio bom cdgb64 fil 
+mods += fnm lcl rgstry xml xpp 
+mods += clnarg 
 
-os := $(shell uname -o 2>/dev/null || uname -s)
+mods += sclmisc sclerror scllocale sclrgstry scltool 
 
-src =
+mods += locale registry 
+
+
+
+##############################
+# Common to all environment. #
+##############################
+
+# Generates debugging data.
+#CXXFLAGS += -g
+
+# General optimization.
+CXXFLAGS += -O
+
+# To use with gprof
+#CXXFLAGS += -pg
+
+###############################
+	copt += -DE_ST
+
+IA_32=x86
+x86_64=x64
+Cygwin=Cygwin
+MinGW=Msys
+GNULinux=GNU/Linux
+MacOS=Darwin
+os=$(shell uname -o 2>/dev/null || uname -s)
+  
+
+##########################
+# For Cygwin environment #
+##########################
+
+ifeq ("$(os)","$(Cygwin)")
+
+# By default, vanilla Cygwin compiler ('g++') is used.
+# Resulting application uses the Cygwin POSIX Layer.
+# Currently, only 32 bits application can be made.
+# For 64 bits and/or application using
+# directly the MS CRT, see below.
+
+# Use of the MinGW compiler under Cygwin. 
+# To build 64 bits application.
+# Uses directly the MS CRT.
+	#arch=$(X86_64)
+
+# Use of the MinGW compiler under Cygwin.
+# For 32 bits application using directly the MS CRT.
+	#arch=$(IA_32)
+
+endif
+
+##########################
+		
+
+#########################
+# For MinGW environment #
+#########################
+
+ifeq ("$(os)", "$(MinGW)")
+
+endif
+
+#########################
+		
+
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(GNULinux)")
+
+endif
+
+#############################
+	
+
+##########################
+# For MacOS environment #
+##########################
+
+ifeq ("$(os)","$(MacOS)")
+
+endif
+
+##########################
+		
+###################################
+###################################
+##### DON'T MODIFY BELOW !!! ######
+###################################
+###################################
+    
+
+##########################
+# For Cygwin environment #
+##########################
+
+ifeq ("$(os)","$(Cygwin)")
+
+	co += -DCYGWIN
+
+	LDFLAGS += -static
+
+	ifeq ("$(arch)","$(IA_32)")
+		CXX = i686-w64-mingw32-g++
+	else ifeq ("$(arch)","$(x86_64)")
+		CXX = x86_64-w64-mingw32-g++
+    
+	endif
+	
+	target=$(name)
+
+endif
+
+##########################
+		
+
+#########################
+# For MinGW environment #
+#########################
+
+ifeq ("$(os)", "$(MinGW)")
+
+	co += -DMSYS
+
+	LDFLAGS += -static
+
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+
+	target=$(name)
+endif
+
+#########################
+		
+
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(GNULinux)")
+
+	co += -DGNULINUX
+
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+	target=$(name)
+endif
+
+#############################
+		
+
+##########################
+# For MacOS environment #
+##########################
+
+ifeq ("$(os)","$(MacOS)")
+
+	co += -DDARWIN
+
+	#LDFLAGS += -static	// Doesn't work.
+
+	ifeq ("$(arch)","x86")
+		co += -m32
+		lo += -m32
+	else ifeq ("$(arch)","x64")
+		co += -m64
+		lo += -m64
+	endif
+	target=$(name)
+
+endif
+
+##########################
+		
+src += :..
 
 ifndef EPEIOS_SRC
-	src += epeios
+	src += :../epeios
 else
-	src += $(EPEIOS_SRC)
+	src += :$(EPEIOS_SRC)
 endif
-
-##################################
-# Specific to Cygwin environment #
-##################################
-
-ifeq ("$(os)","Cygwin")
-	env = gnu
-	co +=
-	lo +=
-	libs =
-
-	# To use as Windows service.
-	#mods += wintol
-endif
-
-##########################################
-# Specific for the GNU/Linux environment #
-##########################################
-
-ifeq ("$(os)","GNU/Linux")
-	env = gnu
-	co +=
-	lo +=
-	libs = 
-
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-endif
-
-##################################################
-# Specific for the Linux environment (N900/N810) #
-##################################################
-
-ifeq ("$(os)","Linux")
-	env = gnu
-	co +=
-	lo +=
-	libs = 
-
-	# For sound (i.e. MIDI)-related functions.
-	#libs += -lasound
-endif
-
-#########################
-# For Mac OS environment #
-#########################
-
-ifeq ("$(os)","Darwin")
-	env = gnu
-	lo +=
-	libs =
-endif
-
-##################################
-# Common to all GNU environment. #
-##################################
-
-ifeq ("$(env)","gnu")
-	lo = -o $(name)
-
-	# Generates debugging data.
-	#co += -g
-
-	# General optimization.
-	co += -O
-
-	# To use with gprof
-	#co += -pg
-endif
-
-######################
-# Don't modify below #
-######################
-
-ifeq ("$(env)","gnu")
-	co := -c $(co)
-	ox = o
-	cc = g++ 
-	larg = $(lo) $(objs)
-	ds = :
-endif
+    
+ox = o
+ds = :
 
 vpath %.cpp $(subst $(ds),:,$(src))
 
 srcd = $(subst $(ds), ,$(src))
 
-co += $(copt) $(srcd:%=-I%) $(EPEIOS_COPT)
-lo += $(EPEIOS_LOPT)
+co := -c $(co) $(copt) $(subst :, -I,$(src))
+lo += -o $(target) $(objs)
 
-objs = $(name).$(ox) $(mods:=.$(ox)) 
+objs = $(name).$(ox) $(mods:=.$(ox))
 
-$(name):  $(objs)
-	$(cc) $(larg) $(libs)
-	
+$(target): $(objs)
+	$(CXX) $(LDFLAGS) $(lo) $(libs)
+
 %.$(ox): %.cpp
-	$(cc) $(co) $<
+	$(CXX) $(CPPFLAGS) $(co) $(CXXFLAGS) $<
+		
