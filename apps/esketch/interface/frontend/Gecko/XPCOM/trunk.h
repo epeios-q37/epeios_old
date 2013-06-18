@@ -34,7 +34,7 @@
 # include "ui.h"
 
 # define PROGRAM_NAME				SKTINF_LC_AFFIX	"gck"
-# define VERSION					"0.1.0"
+# define VERSION					"2013-0-0"
 # define AFFILIATED_PROJECT_NAME	SKTINF_AFFILIATED_PROJECT_NAME
 # define AFFILIATED_PROJECT_URL		SKTINF_AFFILIATED_PROJECT_URL
 # define AFFILIATED_SOFTWARE_NAME	SKTINF_AFFILIATED_SOFTWARE_NAME
@@ -43,12 +43,6 @@
 # define AUTHOR_CONTACT				SKTINF_AUTHOR_CONTACT
 # define COPYRIGHT					SKTINF_COPYRIGHT
 # define WEBSITE_URL				SKTINF_WEBSITE_URL
-
-# ifdef XXX_DBG
-#  define DEBUG_FLAG	" (D)"
-# else
-#  define DEBUG_FLAG	""
-# endif
 
 namespace trunk {
 	using namespace frdkernl;
@@ -87,7 +81,7 @@ namespace trunk {
 			_trunk__::Init( SKTINF_LC_AFFIX, "chrome://" SKTINF_LC_AFFIX "/content/xsl/", _UI, _Kernel, UserCallback, Steering ),
 			_UI.Init( *this );
 
-			return _Kernel.Init( ConfigurationRegistry, ConfigurationRegistryRoot, PROGRAM_NAME, Locale, Language, DefaultReportingFunctions() );
+			return _Kernel.Init( ConfigurationRegistry, ConfigurationRegistryRoot, Locale, Language, DefaultReportingFunctions() );
 		}
 		void ReportAndAbort( const lcl::meaning_ &Meaning )
 		{

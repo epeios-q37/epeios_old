@@ -35,9 +35,9 @@ void Dump_(
 	const rrows_ &Records,
 	xml::writer_ &Writer )
 {
-	mdr::row__ Row = Records.First();
+	sdr::row__ Row = Records.First();
 
-	while ( Row != NONE ) {
+	while ( Row != E_NIL ) {
 		Writer.PushTag( RECORD_TAG_NAME );
 		Writer.PutAttribute( RECORD_ID_ATTRIBUTE_NAME, bso::Convert( *Records.Get( Row ) ) );
 		Writer.PopTag();
@@ -51,32 +51,32 @@ void Dump_(
 //						 ^
 static rrow__ RetrieveRecordId_( xml::parser___ &Parser )
 {
-	rrow__ Id = NONE;
+	rrow__ Id = E_NIL;
 	bso::bool__ Continue = true;
-	mdr::row__ Error = NONE;
+	sdr::row__ Error = E_NIL;
 
 	while ( Continue ) {
 		switch ( Parser.Parse( xml::tfObvious ) ) {
 		case xml::tAttribute:
 			if ( Parser.AttributeName() != RECORD_ID_ATTRIBUTE_NAME )
-				ERRc();
+				ERRFwk();
 
-			Id = Parser.Value().ToUL( &Error );
+			Id = Parser.Value().ToUInt( &Error );
 
-			if ( Error != NONE )
-				ERRc();
+			if ( Error != E_NIL )
+				ERRFwk();
 			break;
 		case xml::tEndTag:
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
 
-	if ( Id == NONE )
-		ERRc();
+	if ( Id == E_NIL )
+		ERRFwk();
 
 	return Id;
 }
@@ -90,14 +90,14 @@ static void Retrieve_(
 	rrows_ &Records )
 {
 	bso::bool__ Continue = true;
-	mdr::row__ Error = NONE;
-	rrow__ Row = NONE;
+	sdr::row__ Error = E_NIL;
+	rrow__ Row = E_NIL;
 
 	while ( Continue ) {
 		switch ( Parser.Parse( xml::tfObvious ) ) {
 		case xml::tStartTag:
 			if ( Parser.TagName() != RECORD_TAG_NAME )
-				ERRc();
+				ERRFwk();
 
 			Records.Append( RetrieveRecordId_( Parser ) );
 			break;
@@ -105,7 +105,7 @@ static void Retrieve_(
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -144,18 +144,18 @@ static void RetrievePool_(
 		switch( Parser.Parse( xml::tfObvious | xml::tfStartTagClosed ) ) {
 		case xml::tStartTag:
 			if ( Parser.TagName() != POOL_TAG_NAME )
-				ERRc();
+				ERRFwk();
 
 			break;
 		case xml::tAttribute:
 			if ( Parser.AttributeName() == POOL_SESSION_AMOUNT_ATTRIBUTE_NAME )
-				Context.S_.Session = Parser.Value().ToUL();
+				Context.S_.Session = Parser.Value().ToUInt();
 			else if ( Parser.AttributeName() == POOL_CYCLE_AMOUNT_ATTRIBUTE_NAME )
-				Context.S_.Cycle = Parser.Value().ToUL();
+				Context.S_.Cycle = Parser.Value().ToUInt();
 			else if ( Parser.AttributeName() == POOL_TIMESTAMP_ATTRIBUTE_NAME )
-				Context.S_.TimeStamp = Parser.Value().ToULL();
+				Context.S_.TimeStamp = Parser.Value().ToUInt();
 			else
-				ERRc();
+				ERRFwk();
 
 			break;
 		case xml::tStartTagClosed:
@@ -165,7 +165,7 @@ static void RetrievePool_(
 			Continue = false;
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 	}
@@ -185,10 +185,10 @@ static amount__ Remove_(
 	amount__ TotalAmount,
 	grid_ &Grid )
 {
-	epeios::row__ Row = Records.Last();
+	sdr::row__ Row = Records.Last();
 	amount__ Counter = 0;
 
-	while ( ( Row != NONE ) && ( Counter < Amount ) ) {
+	while ( ( Row != E_NIL ) && ( Counter < Amount ) ) {
 		if ( *Records( Row ) < TotalAmount ) {
 			Grid.Store( false, Records( Row ) );
 			Counter++;
@@ -202,7 +202,7 @@ static amount__ Remove_(
 
 static rrow__ Pick_( const grid_ &Grid )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 
 	tol::InitializeRandomGenerator();
 
@@ -217,11 +217,11 @@ static void Add_(
 	const rrows_ &Source,
 	rrows_ &Target )
 {
-	epeios::row__ Row = Source.First();
-	epeios::row__ Position = NONE;
+	sdr::row__ Row = Source.First();
+	sdr::row__ Position = E_NIL;
 
-	while ( Row != NONE ) {
-		if ( ( Position = ( Target.Search( Source( Row ) ) ) ) != NONE )
+	while ( Row != E_NIL ) {
+		if ( ( Position = ( Target.Search( Source( Row ) ) ) ) != E_NIL )
 			Target.Remove( Position );
 
 		Target.Append( Source ( Row ) );
@@ -232,7 +232,7 @@ static void Add_(
 
 static inline bso::bool__ IsNewSession_(
 	time_t TimeStamp,
-	bso::ulong__ Duration )	// in minutes.
+	bso::uint__ Duration )	// in minutes.
 {
 	if ( Duration == 0 )
 		return false;
@@ -243,9 +243,9 @@ static inline bso::bool__ IsNewSession_(
 
 rrow__ rpkctx::context_::Pick(
 	amount__ Amount,
-	bso::ulong__ Duration )
+	bso::uint__ Duration )
 {
-	rrow__ Row = NONE;
+	rrow__ Row = E_NIL;
 ERRProlog
 	grid Grid;
 	amount__ Applicaple = 0;

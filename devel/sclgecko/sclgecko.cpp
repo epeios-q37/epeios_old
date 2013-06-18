@@ -150,6 +150,20 @@ ERREnd
 ERREpilog
 }
 
+static inline void GetValue_(
+	rgstry::tentry__ &Entry,
+	str::string_ &Value )
+{
+	sclrgstry::GetRegistry().GetValue( Entry, sclrgstry::GetRoot(), Value );
+}
+
+static inline void GetValues_(
+	rgstry::tentry__ &Entry,
+	rgstry::values_ &Values )
+{
+	sclrgstry::GetRegistry().GetValues( Entry, sclrgstry::GetRoot(), Values );
+}
+
 inline static void SetElementAttributeFromRegistry_(
 	nsIDOMDocument *Document,
 	const str::string_ &DocumentId,
@@ -166,7 +180,7 @@ ERRBegin
 	Tags.Append( AttributeName );
 
 	Value.Init();
-	sclrgstry::GetValue( rgstry::tentry__( AttributeValue, Tags ), Value );
+	GetValue_( rgstry::tentry__( AttributeValue, Tags ), Value );
 
 	SetElementAttribute_( Document, ElementId, AttributeName, Value );
 ERRErr
@@ -207,7 +221,7 @@ ERRBegin
 
 	Names.Init();
 
-	sclrgstry::GetValues( rgstry::tentry__( AttributeName, Tags ), Names );
+	GetValues_( rgstry::tentry__( AttributeName, Tags ), Names );
 
 	SetElementAttributeFromRegistry_( Document, DocumentId, ElementId, Names );
 ERRErr
@@ -245,7 +259,7 @@ ERRBegin
 
 	Ids.Init();
 
-	sclrgstry::GetValues( rgstry::tentry__( ElementId, Tags ), Ids );
+	GetValues_( rgstry::tentry__( ElementId, Tags ), Ids );
 
 	SetElementsAttributesFromRegistry_( Document, DocumentId, Ids );
 ERRErr

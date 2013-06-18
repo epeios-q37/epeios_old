@@ -280,7 +280,7 @@ namespace frdkrn {
 			csdsnc::log_functions__ &LogFunctions = *(csdsnc::log_functions__ *)NULL );
 		virtual void FRDKRNConnection( fblfrd::backend_access___ &BackendAccess ) = 0;	// Appelé lors aprés connection au 'backned'.
 		virtual void FRDKRNDisconnection( void ) = 0;	// Appelé avant déconnexion du 'backend'.
-		void _Report( const lcl::meaning_ &Meaning ) const
+		void _Report( const lcl::meaning_ &Meaning )const
 		{
 		ERRProlog
 			str::string Translation;
@@ -292,7 +292,7 @@ namespace frdkrn {
 
 			Locale().GetTranslation( Meaning, Language(), Translation );
 
-			_ReportingFunctions->ReportFrontendError( Translation );
+			return _ReportingFunctions->ReportFrontendError( Translation );
 		ERRErr
 		ERREnd
 		ERREpilog
@@ -324,7 +324,6 @@ namespace frdkrn {
 		status__ Init(
 			const rgstry::registry_ &ConfigurationRegistry,
 			rgstry::row__ ConfigurationRegistryRoot,
-			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
 			reporting_functions__ &ReportingFunctions )

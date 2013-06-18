@@ -81,7 +81,6 @@ namespace xulftk {
 		const char *BuildInformations,
 		const char *AppName,
 		const char *Version,
-		const char *DebugFlag,
 		const char *AuthorName,
 		const char *AuthorContact,
 		const char *Copyright,

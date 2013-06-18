@@ -324,6 +324,18 @@ namespace lcl {
 	};
 
 	E_AUTO( locale );
+
+	// Fonction utilisée dans le cadre de l'internationalisation, qui sert juste à contrôler l'existence du premier paramètre, qui correspond généralement à une entrée d'un 'enume'.
+	inline const char *Control_(
+		int,	// Sert juste à vérifier l'existence d'une entrée d'un 'enum'.
+		const char *Text )
+	{
+		return Text;
+	}
+
+// A utiliser dans une macro '_( name )', qui prédéfini le paramètre 'prefix'.
+# define LCL_M( prefix, name ) lcl::Control_( prefix##name, #name )
+
 }
 
 /*$END$*/

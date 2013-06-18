@@ -82,7 +82,6 @@ namespace scltool {
 		c_amount
 	};
 
-
 	// A définir par l'utilisateur.
 	extern const char *TargetName;
 
@@ -98,6 +97,14 @@ namespace scltool {
 	void Main(
 		int argc,
 		const char *argv[] );
+
+	void LoadProject(
+		const char *FileName,
+		const char *Target );
+
+	void LoadProject(
+		const str::string_ &FileName,
+		const char *Target );
 
 	inline const str::string_ &GetTranslation(
 		const char *Text,
@@ -125,6 +132,97 @@ namespace scltool {
 	void ReportAndExit(
 		const char *Text,
 		int ExitValue = EXIT_FAILURE );
+
+	bso::bool__ GetValue(
+		const rgstry::tentry__ &Entry,
+		str::string_ &Value );
+
+	bso::bool__ GetValues(
+		const rgstry::tentry__ &Entry,
+		str::strings_ &Values );
+
+	const str::string_ &GetOptionalValue(
+		const rgstry::tentry__ &Entry,
+		str::string_ &Value,
+		bso::bool__ *Missing = NULL );
+
+	const char *GetOptionalValue(
+		const rgstry::tentry__ &Entry,
+		STR_BUFFER___ &Buffer,
+		bso::bool__ *Missing = NULL );
+
+	const str::string_ &GetMandatoryValue(
+		const rgstry::tentry__ &Entry,
+		str::string_ &Value );
+
+	const char *GetMandatoryValue(
+		const rgstry::tentry__ &Entry,
+		STR_BUFFER___ &Buffer );
+
+# define SCLTOOL__UN( type, name, limit )\
+	type GetMandatory##name(\
+		const rgstry::tentry__ &Entry,\
+		type Limit = limit );\
+	type Get##name(\
+		const rgstry::tentry__ &Entry,\
+		type DefaultValue,\
+		type Limit = limit );
+
+	SCLTOOL__UN( bso::uint__, UInt, BSO_UINT_MAX )
+# ifdef BSO__64BITS_ENABLED
+	SCLTOOL__UN( bso::u64__, U64, BSO_U64_MAX )
+# endif
+	SCLTOOL__UN( bso::u32__, U32, BSO_U32_MAX )
+	SCLTOOL__UN( bso::u16__, U16, BSO_U16_MAX )
+	SCLTOOL__UN( bso::u8__, U8, BSO_U8_MAX )
+
+# define SCLTOOL__SN( type, name, min, max )\
+	type GetMandatory##name(\
+		const rgstry::tentry__ &Entry,\
+		type Min = min,\
+		type Max = max );\
+	type Get##name(\
+		const rgstry::tentry__ &Entry,\
+		type DefaultValue,\
+		type Min = min,\
+		type Max = max );
+
+	SCLTOOL__SN( bso::sint__, SInt, BSO_SINT_MIN, BSO_SINT_MAX )
+# ifdef BSO__64BITS_ENABLED
+	SCLTOOL__SN( bso::s64__, S64, BSO_S64, BSO_S64_MAX )
+#endif
+	SCLTOOL__SN( bso::s32__, S32, BSO_S32_MIN, BSO_S32_MAX )
+	SCLTOOL__SN( bso::s16__, S16, BSO_S16_MIN, BSO_S16_MAX )
+	SCLTOOL__SN( bso::s8__, S8, BSO_S8_MIN, BSO_S8_MAX )
+
+// To define function retrieving mandatory registry value.
+# define SCLTOOL_MV( name, entry )\
+	inline const char *name(\
+		STR_BUFFER___ &Buffer )\
+	{\
+		return GetMandatoryValue( entry, Buffer );\
+	}\
+	inline const str::string_ &name(\
+		str::string_ &Value )\
+	{\
+		return GetMandatoryValue( entry, Value );\
+	}
+
+// To define function retrieving optional registry value.
+# define SCLTOOL_OV( name, entry )\
+	inline const char *name(\
+		STR_BUFFER___ &Buffer,\
+		bso::bool__ *Missing = NULL )\
+	{\
+		return GetOptionalValue( entry, Buffer, Missing );\
+	}\
+	inline const str::string_ &name(\
+		str::string_ &Value,\
+		bso::bool__ *Missing = NULL )\
+	{\
+		return GetOptionalValue( entry, Value, Missing );\
+	}
+
 }
 
 /*$END$*/

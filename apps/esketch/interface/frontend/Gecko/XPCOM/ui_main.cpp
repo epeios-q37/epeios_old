@@ -53,7 +53,7 @@ static void InitAndRegister_(
 	const char *Id )
 {
 	EventHandler.Init( Trunk );
-	nsxpcm::Attach( Trunk.UI().Main.Document(), Id, EventHandler );
+	nsxpcm::AttachEventHandler( Trunk.UI().Main.Document(), Id, EventHandler );
 }
 
 #define IR( name )\

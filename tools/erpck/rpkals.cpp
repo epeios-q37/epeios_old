@@ -15,15 +15,15 @@ trow__ rpkals::SearchTable(
 	const table_aliases_ &Aliases )
 {
 	ctn::E_CMITEM( table_alias_ ) Alias;
-	mdr::row__ Row = Aliases.First();
+	sdr::row__ Row = Aliases.First();
 
 	Alias.Init( Aliases );
 
-	if ( ( Row != NONE ) && ( Alias( Row ).Label != Label ) )
+	if ( ( Row != E_NIL ) && ( Alias( Row ).Label != Label ) )
 		Row = Aliases.Next( Row );
 
-	if ( Row != NONE )
+	if ( Row != E_NIL )
 		return Alias( Row ).TableRow();
 	else
-		return NONE;
+		return E_NIL;
 }

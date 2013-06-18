@@ -113,7 +113,6 @@ const str::string_ &xulftk::BuildAboutText(
 	const char *BuildInformations,
 	const char *AppName,
 	const char *Version,
-	const char *DebugFlag,
 	const char *AuthorName,
 	const char *AuthorContact,
 	const char *Copyright,
@@ -128,9 +127,8 @@ ERRProlog
 	str::string AuthorText, ProjectAffiliationText, SoftwareAffiliationText, ProtocolVersion, BackendLabel, APIVersion, BackendInformations;
 ERRBegin
 	Text.Append( AppName );
-	Text.Append(" V" );
+	Text.Append( ' ' );
 	Text.Append( Version );
-	Text.Append( DebugFlag );
 	Text.Append( " Build " __DATE__ " " __TIME__ );
 	Text.Append( " (" );
 	Text.Append( BuildInformations );

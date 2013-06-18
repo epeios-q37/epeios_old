@@ -56,6 +56,8 @@
 
 #define DEFAULT_NAMESPACE	XML_EXTENDED_PARSER_DEFAULT_NAMESPACE
 
+const char *scltool::TargetName = NAME;
+
 using cio::CIn;
 using cio::COut;
 using cio::CErr;

@@ -324,7 +324,6 @@ namespace frdkrn {
 		status__ Init(
 			const rgstry::registry_ &ConfigurationRegistry,
 			rgstry::row__ ConfigurationRegistryRoot,
-			const char *TargetName,
 			const lcl::locale_ &Locale,
 			const char *Language,
 			reporting_functions__ &ReportingFunctions )

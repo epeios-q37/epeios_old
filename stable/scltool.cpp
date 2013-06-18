@@ -71,6 +71,10 @@ static STR_BUFFER___ Language_;
 
 #define DEFAULT_LANGUAGE	"en"
 
+static rgstry::multi_level_registry Registry_;
+
+static rgstry::level__ RegistryProjectLevel_ = RGSTRY_UNDEFINED_LEVEL;
+
 const char *scltool::GetLanguage( void )
 {
 	if ( Language_ == NULL )
@@ -143,14 +147,11 @@ ERREnd
 ERREpilog
 }
 
-
-
 static void ReportSCLPendingError_( void )
 {
 	if ( sclerror::ReportPendingError( GetLanguage(), err::hUserDefined ) )
 		ERRRst();
 }
-
 
 int main(
 	int argc,
@@ -163,8 +164,13 @@ ERRFBegin
 
 	Language.Init();
 
-	if ( sclrgstry::GetValue( sclrgstry::Language, Language ) )
+	if ( sclrgstry::GetRegistry().GetValue( sclrgstry::Language, sclrgstry::GetRoot(), Language ) ) 
 		Language.Convert( Language_ );
+
+	Registry_.Init();
+
+	Registry_.PushImportedLevel( sclrgstry::GetRegistry(), sclrgstry::GetRoot() );
+	RegistryProjectLevel_ = Registry_.PushEmbeddedLevel( str::string( "Project" ) );
 
 	Main( argc, argv );
 ERRFErr
@@ -175,6 +181,259 @@ ERRFEnd
 ERRFEpilog
 	return ERRExitValue;
 }
+
+#define PROJECT_ROOT_PATH	"Projects/Project[@target=\"%1\"]"
+
+void scltool::LoadProject(
+	const char *FileName,
+	const char *Target )
+{
+ERRProlog
+	str::string Path;
+	STR_BUFFER___ Buffer;
+	rgstry::context___ Context;
+	lcl::meaning Meaning;
+ERRBegin
+	Path.Init( PROJECT_ROOT_PATH );
+	str::ReplaceTag( Path, 1, str::string( Target ), '%' );
+
+	if ( Registry_.Fill( RegistryProjectLevel_, FileName, xpp::criterions___(), Path.Convert( Buffer ), Context ) != rgstry::sOK ) {
+		Meaning.Init();
+		rgstry::GetMeaning( Context, Meaning );
+		ReportAndExit( Meaning );
+	};
+
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void scltool::LoadProject(
+	const str::string_ &FileName,
+	const char *Target )
+{
+ERRProlog
+	STR_BUFFER___ Buffer;
+ERRBegin
+	LoadProject( FileName.Convert( Buffer ), Target );
+ERRErr
+ERREnd
+ERREpilog
+}
+
+
+
+bso::bool__ scltool::GetValue(
+	const rgstry::tentry__ &Entry,
+	str::string_ &Value )
+{
+	return Registry_.GetValue( Entry, Value );
+}
+
+bso::bool__ scltool::GetValues(
+	const rgstry::tentry__ &Entry,
+	str::strings_ &Values )
+{
+	return Registry_.GetValues( Entry, Values );
+}
+
+const str::string_ &scltool::GetOptionalValue(
+	const rgstry::tentry__ &Entry,
+	str::string_ &Value,
+	bso::bool__ *Missing )
+{
+	if ( !GetValue( Entry, Value ) )
+		if ( Missing != NULL )
+			*Missing = true;
+	
+	return Value;
+}
+
+const char *scltool::GetOptionalValue(
+	const rgstry::tentry__ &Entry,
+	STR_BUFFER___ &Buffer,
+	bso::bool__ *Missing )
+{
+ERRProlog
+	str::string Value;
+	bso::bool__ LocalMissing = false;
+ERRBegin
+	Value.Init();
+
+	GetOptionalValue( Entry, Value, &LocalMissing );
+
+	if ( LocalMissing ) {
+		if ( Missing != NULL )
+			*Missing = true;
+	} else
+		Value.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+const str::string_ &scltool::GetMandatoryValue(
+	const rgstry::tentry__ &Entry,
+	str::string_ &Value )
+{
+	if ( !GetValue( Entry, Value ) ) {
+		sclrgstry::ReportBadOrNoValueForEntryError( Entry );
+		ERRExit( EXIT_FAILURE );
+	}
+
+	return Value;
+}
+
+const char *scltool::GetMandatoryValue(
+	const rgstry::tentry__ &Entry,
+	STR_BUFFER___ &Buffer )
+{
+ERRProlog
+	str::string Value;
+ERRBegin
+	Value.Init();
+
+	GetMandatoryValue( Entry, Value );
+
+	Value.Convert( Buffer );
+ERRErr
+ERREnd
+ERREpilog
+	return Buffer;
+}
+
+template <typename t> static bso::bool__ GetUnsignedNumber_(
+	const rgstry::tentry__ &Entry,
+	t Limit,
+	t &Value )
+{
+	bso::bool__ Present = false;
+ERRProlog
+	str::string RawValue;
+	sdr::row__ Error = E_NIL;
+ERRBegin
+	RawValue.Init();
+
+	if ( !( Present = GetValue( Entry, RawValue ) ) )
+		ERRReturn;
+
+	RawValue.ToNumber( Limit, Value, &Error );
+
+	if ( Error != E_NIL ) {
+		sclrgstry::ReportBadOrNoValueForEntryError( Entry );
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Present;
+}
+
+template <typename t> static bso::bool__ GetSignedNumber_(
+	const rgstry::tentry__ &Entry,
+	t LowerLimit,
+	t UpperLimit,
+	t &Value )
+{
+	bso::bool__ Present = false;
+ERRProlog
+	str::string RawValue;
+	sdr::row__ Error = E_NIL;
+ERRBegin
+	RawValue.Init();
+
+	if ( !( Present = GetValue( Entry, RawValue ) ) )
+		ERRReturn;
+
+	RawValue.ToNumber( UpperLimit, LowerLimit, Value, &Error );
+
+	if ( Error != E_NIL ) {
+		sclrgstry::ReportBadOrNoValueForEntryError( Entry );
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+	return Present;
+}
+
+#define UN( name, type )\
+	type scltool::GetMandatory##name(\
+		const rgstry::tentry__ &Entry,\
+		type Limit  )\
+	{\
+		type Value;\
+\
+		if ( !GetUnsignedNumber_( Entry, Limit, Value ) ) {\
+			sclrgstry::ReportBadOrNoValueForEntryError( Entry );\
+			ERRExit( EXIT_FAILURE );\
+		}\
+\
+		return Value;\
+	}\
+	type scltool::Get##name(\
+		const rgstry::tentry__ &Entry,\
+		type DefaultValue,\
+		type Limit )\
+	{\
+		type Value;\
+\
+		if ( !GetUnsignedNumber_( Entry, Limit, Value ) )\
+			Value = DefaultValue;\
+\
+		return Value;\
+	}
+
+
+UN( UInt, bso::uint__ )
+#ifdef BSO__64BITS_ENABLED
+UN( U64, bso::u64__ )
+#endif
+UN( U32, bso::u32__ )
+UN( U16, bso::u16__ )
+UN( U8, bso::u8__ )
+
+#define SN( name, type )\
+	type scltool::GetMandatory##name(\
+		const rgstry::tentry__ &Entry,\
+		type Min,\
+		type Max)\
+	{\
+		type Value;\
+\
+		if ( !GetSignedNumber_( Entry, Min, Max, Value ) ) {\
+			sclrgstry::ReportBadOrNoValueForEntryError( Entry );\
+			ERRExit( EXIT_FAILURE );\
+		}\
+		return Value;\
+	}\
+	type scltool::Get##name(\
+		const rgstry::tentry__ &Entry,\
+		type DefaultValue,\
+		type Min,\
+		type Max )\
+	{\
+		type Value;\
+\
+		if ( !GetSignedNumber_( Entry, Min, Max, Value ) )\
+			Value = DefaultValue;\
+\
+		return Value;\
+	}
+
+	SN( SInt, bso::sint__ )
+#ifdef BSO__64BITS_ENABLED
+	SN( S64, bso::s64__ )
+#endif
+	SN( S32, bso::s32__ )
+	SN( S16, bso::s16__ )
+	SN( S8, bso::s8__ )
+
+
+
+
+
 
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
