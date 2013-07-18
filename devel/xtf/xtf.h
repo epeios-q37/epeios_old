@@ -155,6 +155,67 @@ namespace xtf {
 
 	typedef bso::u8__ _amount__;
 
+	struct feeder__ {
+	private:
+		flw::iflow__ *_Flow;
+		bso::size__ _Amount;
+		bso::size__ _Length;
+		fdr::datum__ _Data[10];
+		flw::iflow__ &_F( void )
+		{
+			if ( _Flow == NULL )
+				ERRFwk();
+
+			return *_Flow;
+		}
+		bso::bool__ _FillData( void )
+		{
+			bso::size__ NewLength = _Amount + 1;
+
+			if ( NewLength > ( sizeof( _Data ) / sizeof( _Data[0] ) ) )
+				ERRLmt();
+
+			if ( _Length < NewLength ) {
+				if ( ( _Length = _F().View( NewLength, _Data ) ) < NewLength )
+					return false;
+				else
+					return true;
+			} else
+				return true;
+		}
+	public:
+		void reset( bso::bool__ = true )
+		{
+			_Flow = NULL;
+			_Amount = _Length = 0;
+		}
+		E_CDTOR( feeder__ )
+		void Init( flw::iflow__ &Flow )
+		{
+			_Flow = &Flow;
+			_Amount = _Length = 0;
+		}
+		void Reset( void )
+		{
+			_Amount = _Length = 0;
+		}
+		bso::bool__ IsEmpty( void )
+		{
+			if ( _Length == 0 )
+				return _F().EndOfFlow();
+			else
+				return !_FillData();
+		}
+		fdr::datum__ Get( void )
+		{
+			if ( !_FillData() )
+				ERRFwk();
+
+			return _Data[_Amount++];
+		}
+	};
+
+
 	//c To handle a text flow, with counting lines and columns.
 	class extended_text_iflow__
 	{
@@ -164,8 +225,9 @@ namespace xtf {
 		// Position du prochain caractère.
 		pos__ _Position;
 		// '0' if no EOL char encountered, or the value of the EOL char ('\r' or '\n').
-		bso::char__ EOL_;
-		utf::utf__ _UTFHandler;
+		bso::char__ _EOL;
+		feeder__ _Feeder;
+		utf::utf__<feeder__> _UTFHandler;
 		utf__ _UTF;
 		error__ _Error;
 		flw::iflow__ &_F( void ) const
@@ -187,6 +249,7 @@ namespace xtf {
 		}
 		bom::byte_order_marker__ _GetBOM( void )
 		{
+# if 0
 			fdr::datum__ BOMBuffer[BOM_SIZE_MAX];
 			fdr::size__ Size = _F().View( sizeof( BOMBuffer ), BOMBuffer );
 			bom::byte_order_marker__ BOM = bom::DetectBOM( BOMBuffer, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM'.
@@ -195,6 +258,15 @@ namespace xtf {
 				_F().Skip( Size );
 
 			return BOM;
+# else
+			fdr::size__ Size = 0;
+			bom::byte_order_marker__ BOM = bom::DetectBOM( _Feeder, Size );	// Si != 'bom::bom_UnknownOrNone', 'Size' contient au retour la taille du 'BOM'.
+
+			if ( BOM != bom::bom_UnknownOrNone )
+				_F().Skip( Size );
+
+			return BOM;
+# endif
 		}
 		utf::format__ _HandleFormat(
 			utf::format__ ExpectedFormat,
@@ -257,16 +329,23 @@ namespace xtf {
 		bso::bool__ _PrefetchUTF( void )
 		{
 			if ( _UTF.Size == 0 ) {
-				bso::size__ Size = _F().View( sizeof( _UTF.Data ), _UTF.Data );
+/*				bso::size__ Size = _F().View( sizeof( _UTF.Data ), _UTF.Data );
 				
 				if ( Size == 0  ) {
 					_UTF.Size = 0;
 					return false;
 				}
+*/
+				_Feeder.Reset();
 
-				_UTF.Size = _UTFHandler.Handle( _UTF.Data, Size );
+				_UTF.Size = _UTFHandler.Handle( _Feeder );
 
-				if ( _UTF.Size == 0 )
+				if ( _UTF.Size != 0 ) {
+					if ( _F().View( _UTF.Size, _UTF.Data ) != _UTF.Size )
+						ERRFwk();
+
+					_F().Skip( _UTF.Size );
+				} else
 					return false;
 			}
 
@@ -278,8 +357,9 @@ namespace xtf {
 			_Position.reset( P );
 			_Position.Line = _Position.Column = 1;
 			_Flow = NULL;
-			EOL_ = 0;
+			_EOL = 0;
 			_Error = e_Undefined;
+			
 		}
 		E_CVDTOR( extended_text_iflow__ );
 		extended_text_iflow__(
@@ -299,10 +379,11 @@ namespace xtf {
 		{
 			_Position.Init( Position );
 			_Flow = NULL;
-			EOL_ = 0;
+			_EOL = 0;
 			_Flow = &IFlow;
 			_Error = e_NoError;
 
+			_Feeder.Init( IFlow );
 			_UTF.Init();
 
 			bom::byte_order_marker__ BOM = _GetBOM();
@@ -321,37 +402,37 @@ namespace xtf {
 
 			UTF = _UTF;
 
-			_F().Skip( _UTF.Size );
+//			_F().Skip( _UTF.Size );
 
 			_UTF.Init();
 
 			flw::datum__ C = _UTF.Data[0];
 
-			if ( EOL_ == 0 ) {
+			if ( _EOL == 0 ) {
 				if ( ( C == '\n' ) || ( C == '\r' ) ) {
-					EOL_ = (flw::datum__)C;
+					_EOL = (flw::datum__)C;
 					_NewLineAdjust();
 				} else {
 					_NewCharAdjust();
 				}
-			} else if ( EOL_ == '\r' ) {
+			} else if ( _EOL == '\r' ) {
 				if ( C == '\n' ) {
-					EOL_ = 0;
+					_EOL = 0;
 				} else if ( C == '\r' ) {
-					EOL_ = (flw::datum__)C;
+					_EOL = (flw::datum__)C;
 					_NewLineAdjust();
 				} else {
-					EOL_ = 0;
+					_EOL = 0;
 					_NewCharAdjust();
 				}
-			} else if ( EOL_ == '\n' ) {
+			} else if ( _EOL == '\n' ) {
 				if ( C == '\r' ) {
-					EOL_ = 0;
+					_EOL = 0;
 				} else if ( C == '\n' ) {
-					EOL_ = (flw::datum__)C;
+					_EOL = (flw::datum__)C;
 					_NewLineAdjust();
 				} else {
-					EOL_ = 0;
+					_EOL = 0;
 					_NewCharAdjust();
 				}
 			} else
@@ -389,14 +470,14 @@ namespace xtf {
 
 			flw::datum__ C = _UTF.Data[0];
 
-			if ( HandleNL && EOL_ ) {
+			if ( HandleNL && _EOL ) {
 
-				if ( ( ( EOL_ == '\r' ) && ( C == '\n' ) ) 
-					 || ( EOL_ == '\n' && ( C == '\r' ) ) ) {
+				if ( ( ( _EOL == '\r' ) && ( C == '\n' ) ) 
+					 || ( _EOL == '\n' && ( C == '\r' ) ) ) {
 
-						EOL_ = 0;
+						_EOL = 0;
 
-						_F().Skip( _UTF.Size );
+//						_F().Skip( _UTF.Size );
 						
 						if ( !_PrefetchUTF() )
 							ERRDta();

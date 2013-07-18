@@ -62,7 +62,6 @@ extern class ttr_tutor &SCLMISCTutor;
 
 # include "err.h"
 # include "flw.h"
-# include "fil.h"
 # include "utf.h"
 
 namespace sclmisc {
@@ -80,6 +79,8 @@ namespace sclmisc {
 		const char *Target,
 		const char *SuggestedDirectory );
 
+// Déplacé dans 'scltool'.
+/*
 	void Terminate( void );
 
 	using fil::GetBackupFileName;
@@ -91,6 +92,7 @@ namespace sclmisc {
 	void RecoverBackupFile( const char *FileName );
 
 	void ReportFileOpeningErrorAndExit( const char *FileName );
+*/
 }
 
 /*$END$*/

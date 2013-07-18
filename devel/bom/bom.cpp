@@ -61,6 +61,8 @@ it is necessary to personalize it, or certain compiler would not work properly *
 
 using namespace bom;
 
+static stsfsm::automat Automat_;
+
 // #define M( m ) { m, sizeof( m ) - 1 }
 #define M( m ) bom__( m, sizeof( m ) - 1 )
 
@@ -73,6 +75,24 @@ static bom__ BOMS_[bom_amount] =
 	M( BOM_UTF_16_BE ),
 	M( BOM_UTF_16_LE ),
 };
+
+#define ADD( name )	stsfsm::Add( BOM_##name, BOMS_[bom##name].Size, bom##name, Automat_ )
+
+static void FillAutomat_( void )
+{
+	Automat_.Init();
+
+	ADD( UTF_32_BE );
+	ADD( UTF_32_LE );
+	ADD( UTF_16_BE );
+	ADD( UTF_16_LE );
+	ADD( UTF_8 );
+}
+
+void bom::InitializeParser( stsfsm::parser__ &Parser )
+{
+	Parser.Init( Automat_ );
+}
 
 static bso::bool__ Match_(
 	const bom__ &Bom,
@@ -87,7 +107,7 @@ static bso::bool__ Match_(
 }
 
 
-byte_order_marker__ bom::DetectBOM(
+/* byte_order_marker__ bom::DetectBOM(
 	const fdr::datum__ *Buffer,
 	fdr::size__ &Size )
 {
@@ -100,7 +120,41 @@ byte_order_marker__ bom::DetectBOM(
 		Position = bom_UnknownOrNone;
 
 	return (byte_order_marker__)Position;
+}*/
+
+struct feeder__ {
+	const fdr::datum__ *Buffer;
+	sdr::size__ Size;
+	sdr::size__ Position;
+	bso::bool__ IsEmpty( void ) const
+	{
+		return Position >= Size;
+	}
+	bso::char__ Get( void )
+	{
+		return Buffer[Position++];
+	}
+};
+
+
+byte_order_marker__ bom::DetectBOM(
+	const fdr::datum__ *Buffer,
+	fdr::size__ &Size )
+{
+	if ( Size == 0 )
+		return bom::bom_UnknownOrNone;
+
+	feeder__ Feeder;
+
+	Feeder.Buffer = Buffer;
+	Feeder.Size = Size;
+	Feeder.Position = 0;
+
+	byte_order_marker__ BOM = DetectBOM( Feeder, Size );
+
+	return BOM;
 }
+
 
 const bom__ &bom::GetBOM( byte_order_marker__ BOM )
 {
@@ -110,9 +164,6 @@ const bom__ &bom::GetBOM( byte_order_marker__ BOM )
 	return BOMS_[BOM];
 }
 
-
-
-
 class bompersonnalization
 : public bomtutor
 {
@@ -121,6 +172,11 @@ public:
 	{
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
+
+		if ( bom_amount != 5 )
+			ERRChk();
+
+		FillAutomat_();
 	}
 	~bompersonnalization( void )
 	{

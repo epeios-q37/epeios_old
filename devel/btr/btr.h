@@ -647,7 +647,7 @@ namespace btr {
 
 #ifdef BTR_DBG
 			if ( B == E_NIL )
-				ERRu();
+				ERRFwk();
 #endif
 			Cut( B );
 
@@ -686,7 +686,7 @@ namespace btr {
 
 #ifdef BTR_DBG
 			if ( E == E_NIL )
-				ERRu();
+				ERRFwk();
 #endif
 			Cut( E );
 
@@ -1500,7 +1500,7 @@ namespace btr {
 
 #ifdef BTR_DBG
 			if ( B == E_NIL )
-				ERRu();
+				ERRFwk();
 #endif
 
 			A = Left( B );
@@ -1545,7 +1545,7 @@ namespace btr {
 
 #ifdef BTR_DBG
 			if ( D == E_NIL )
-				ERRu();
+				ERRFwk();
 #endif
 
 			E = Right( D );

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:expand href="xml.xlcl"/>"
@@ -13,7 +13,7 @@
 		<Translation language="en">%4 (file '%1', line %2, column %3)</Translation>
 	</Translations>
 	<Translations text="XPP_NoTagsAllowedHere">
-		<Translation language="fr">balises non autorisées ici</Translation>
+		<Translation language="fr">balises non autorisÃ©es ici</Translation>
 		<Translation language="en">no tag allowed here</Translation>
 	</Translations>
 	<Translations text="XPP_UnexpectedValue">
@@ -69,7 +69,7 @@
 		<Translation language="en">missing 'select' and 'value' attributes</Translation>
 	</Translations>
 	<Translations text="XPP_MustBeEmpty">
-		<Translation language="fr">doit être vide</Translation>
+		<Translation language="fr">doit Ãªtre vide</Translation>
 		<Translation language="en">must be empty</Translation>
 	</Translations>
 	<Translations text="XPP_TooManyTags">
@@ -85,7 +85,7 @@
 		<Translation language="en">unknown macro</Translation>
 	</Translations>
 	<Translations text="XPP_BadAttributeDefinitionSyntax">
-		<Translation language="fr">mauvaise syntaxe pour une définition d'attribut</Translation>
+		<Translation language="fr">mauvaise syntaxe pour une dÃ©finition d'attribut</Translation>
 		<Translation language="en">bad attribute definition syntax</Translation>
 	</Translations>
 	<Translations text="XPP_BadCypherKey">
@@ -101,11 +101,11 @@
 		<Translation language="en">missing 'key' or 'format' attribute</Translation>
 	</Translations>
 	<Translations text="XPP_EmptyResult">
-		<Translation language="fr">Résultat vide.</Translation>
+		<Translation language="fr">RÃ©sultat vide.</Translation>
 		<Translation language="en">Empty result.</Translation>
 	</Translations>
   <Translations text="XPP_CDataNestingForbidden">
-    <Translation language="fr">Les 'CDATA' ne peuvent pas être imbriqués</Translation>
+    <Translation language="fr">Les 'CDATA' ne peuvent pas Ãªtre imbriquÃ©s</Translation>
     <Translation language="en">Nesting from 'CDATA' are forbidden</Translation>
   </Translations>
   <!--

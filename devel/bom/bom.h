@@ -63,6 +63,7 @@ extern class ttr_tutor &BOMTutor;
 # include "err.h"
 # include "flw.h"
 # include "tol.h"
+# include "stsfsm.h"
 
 # define BOM_SIZE_MAX	4
 
@@ -110,9 +111,31 @@ namespace bom {
 		bom_Undefined
 	};
 
+	void InitializeParser( stsfsm::parser__ &Parser );
+
+	template <typename feeder> byte_order_marker__ DetectBOM(
+		feeder &Feeder,
+		fdr::size__ &Size )	// Size contient la taille du BOM.
+	{
+		stsfsm::parser__ Parser;
+		Size = 0;
+
+		InitializeParser( Parser );
+
+		while ( !Feeder.IsEmpty() && ( Parser.Handle( Feeder.Get() ) != stsfsm::sLost ) )
+			Size++;
+
+		if ( Parser.GetId() == STSFSM_UNDEFINED_ID ) {
+			Size = 0;
+			return bom_UnknownOrNone;
+		} else
+			return (byte_order_marker__)Parser.GetId();
+	}
+
+
 	byte_order_marker__ DetectBOM(
 		const fdr::datum__ *Buffer,
-		fdr::size__ &Size );	// Si valeur retournée différent de 'bom_UnknownOrNone', 'Size' est modifié pour contenir la taille du 'BOM'.
+		fdr::size__ &Size );	// 'Size' est modifié pour contenir la taille du 'BOM'.
 
 	const bom__ &GetBOM( byte_order_marker__ BOM );
 

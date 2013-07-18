@@ -63,7 +63,7 @@ static lcl::meaning Meaning_;
 
 bso::bool__ sclerror::IsErrorPending( void )
 {
-	return !Meaning_.Levels.IsEmpty();
+	return !Meaning_.IsEmpty();
 }
 
 const lcl::meaning_ &sclerror::GetMeaning( void )
@@ -84,7 +84,7 @@ void sclerror::SetMeaning( const lcl::meaning_ &Meaning )
 	if ( IsErrorPending() )
 		ERRFwk();
 
-	if ( Meaning.Levels.IsEmpty() )
+	if ( Meaning.IsEmpty() )
 		ERRFwk();
 
 	Meaning_ = Meaning;

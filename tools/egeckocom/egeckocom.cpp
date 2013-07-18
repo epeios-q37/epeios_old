@@ -46,7 +46,7 @@
 #define COMPONENT_VERSION	"5"
 
 #define APP_NAME	"egeckocom"
-#define VERSION		"2013-06-12"
+#define VERSION		"2013-07-09"
 
 #define EGECKOCOM_CONTRACTID "@zeusw.org/egeckocom;" COMPONENT_VERSION
 #define EGECKOCOM_CLASSNAME "Generic Epeios component"
@@ -94,7 +94,8 @@ protected:
 		str::string ErrorTranslation;\
 		err::buffer__ ERRBuffer;
 
-#define RB	ERRBegin
+#define RB	ERRBegin\
+	ErrorMeaning.Init();
 
 #define RR	\
 	ERRErr
@@ -105,7 +106,7 @@ protected:
 		if ( CErrString_.Amount() != 0 ) {\
 			ErrorTranslation = CErrString_;\
 			CErrString_.Init();\
-		} else if ( !ErrorMeaning.Levels.IsEmpty() ) {\
+		} else if ( !ErrorMeaning.IsEmpty() ) {\
 			ERRRst();\
 			scllocale::GetLocale().GetTranslation( ErrorMeaning, _LanguageBuffer, ErrorTranslation );\
 		} else if ( sclerror::IsErrorPending() ) {\
@@ -126,6 +127,25 @@ protected:
 	ERREpilog\
 	return NSResult;
 
+static bso::bool__ GetValue_(
+	const rgstry::tentry__ &Entry,
+	str::string_ &Value )
+{
+	return registry::GetRegistry().GetValue( Entry, registry::GetRoot(), Value );
+}
+
+static const str::string_ &GetMandatoryValue_(
+	const rgstry::tentry__ &Entry,
+	str::string_ &Value )
+{
+	if ( !GetValue_( Entry, Value ) ) {
+		sclrgstry::ReportBadOrNoValueForEntryError( Entry );
+		ERRExit( EXIT_FAILURE );
+	}
+
+	return Value;
+}
+
 static const str::string_ &GetComponent_(
 	const char *ComponentId,
 	str::string_ &Component )
@@ -136,7 +156,7 @@ ERRBegin
 	Tags.Init();
 	Tags.Append( str::string( ComponentId ) );
 
-	registry::GetMandatoryValue( rgstry::tentry__( registry::TaggedComponent, Tags ), Component );
+	GetMandatoryValue_( rgstry::tentry__( registry::TaggedComponent, Tags ), Component );
 ERRErr
 ERREnd
 ERREpilog
@@ -224,7 +244,6 @@ RB
 
 	if ( !_Wrapper.Init( Buffer, &_Data, err::hUserDefined ) ) {
 		if ( CErrString_.Amount() == 0 ) {
-			ErrorMeaning.Init();
 			ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_OPEN_COMPONENT );
 			ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 			ErrorMeaning.AddTag( ComponentId );
@@ -258,14 +277,12 @@ RB
 	 mtx::Lock( Mutex_ );
 
 	if ( CurrentSteering_ != NULL ) {
-		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_BAD_RETRIEVE_CONTEXT );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 		ERRFree();
 	}
 
 	if ( ( CurrentSteering_ = geckof::RetrieveSteering( LibraryName.Convert( Buffer ), err::hUserDefined ) ) == NULL ) {
-		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_RETRIEVE_FAILURE );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 		ERRFree();
@@ -300,7 +317,6 @@ RB
 	nsxpcm::GetId( nsxpcm::GetElement( Window ), Id );
 
 	if ( !CurrentSteering_->Register( Window, Id ) ) {
-		ErrorMeaning.Init();
 		ErrorMeaning.SetValue( MESSAGE_UNABLE_TO_REGISTER_ELEMENT );
 		ErrorMeaning.AddTag( " F: " __FILE__ "; L: " E_STRING( __LINE__ ) );
 		ErrorMeaning.AddTag( Id );
@@ -496,7 +512,9 @@ public:
 
 		Mutex_ = MTX_INVALID_HANDLER;
 
-		if ( IsInitialized_ )
-			sclmisc::Terminate();
+		if ( IsInitialized_ ) {
+			cio::COut << txf::commit;
+			cio::CErr << txf::commit;
+		}
 	}
 } _CDTor;

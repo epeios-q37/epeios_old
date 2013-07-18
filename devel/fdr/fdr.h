@@ -310,7 +310,7 @@ namespace fdr {
 				else
 					return Red;
 
-				Red = +_ReadFromCache( Size - Red, Buffer, true );
+				Red += _ReadFromCache( Size - Red, Buffer, true );
 			}
 
 			return Red;
@@ -408,7 +408,15 @@ namespace fdr {
 				return _ReadThroughCache( Wanted, Buffer, false );
 				break;
 			case bBlocking:
-				return _ReadThroughCache( Wanted, Buffer, true );
+
+				if ( _Size > ( Wanted - _Available ) )
+					return _ReadThroughCache( Wanted, Buffer, true );
+				else {
+					size__ Red = _ReadFromCache( Wanted, Buffer, true );
+
+					return _LoopingRead( Wanted - Red, Buffer ) + Red;
+				}
+
 				break;
 			case bKeep:
 				_CompleteCache( Wanted );

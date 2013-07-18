@@ -1032,13 +1032,14 @@ ERRProlog
 	callback___ Callback( Registry );
 	xpp::preprocessing_iflow___ PFlow;
 	xtf::extended_text_iflow__ PXFlow;
+	xml::status__ Status = xml::s_Undefined;
 ERRBegin
 	Callback.Init( Root );
 
 	PFlow.Init( XFlow, xpp::criterions___( Criterions.Directory, Criterions.CypherKey, Criterions.IsNamespaceDefined() ? Criterions.Namespace : str::string( DEFAULT_NAMESPACE ) ) );
 	PXFlow.Init( PFlow, XFlow.Format() );
 
-	switch ( xml::Parse( PXFlow, xml::ehReplace, Callback ) ) {
+	switch ( Status = xml::Parse( PXFlow, xml::ehReplace, Callback ) ) {
 	case xml::sOK:
 		Target = Callback.GetTarget();
 		Root = Callback.GetRoot();
@@ -1048,8 +1049,11 @@ ERRBegin
 		PFlow.GetContext( Context );
 		break;
 	default:
-		// Puisque l'on passe par le préprocesseur, si une erreur est rencontrée, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
-		ERRFwk();
+		if ( xml::IsEncodingRelatedError( Status ) )
+			PFlow.GetContext( Context );
+		else
+			// Puisque l'on passe par le préprocesseur, si une erreur est rencontrée, xml::Parse(...)' ne peut normalement retourner que 'xml::sUndexpectedEOF'.
+			ERRFwk();
 		break;
 	}
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="FBLOVL_SoftwareError">
@@ -6,7 +6,7 @@
 		<Translation language="en">Software error</Translation>
 	</Translations>
 	<Translations text="FBLOVL_RequestError">
-		<Translation language="fr">Erreur requ�te</Translation>
+		<Translation language="fr">Erreur requête</Translation>
 		<Translation language="en">Request error</Translation>
 	</Translations>
 	<!--

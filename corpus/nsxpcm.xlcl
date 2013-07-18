@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<!--Translations text="NSXPCM_">
@@ -10,7 +10,7 @@
 		<Translation language="en">XML-Based project file</Translation>
 	</Translations>
 	<Translations text="NSXPCM_DynamicLibraryFilterLabel">
-		<Translation language="fr">Biblioth�que dynamique</Translation>
+		<Translation language="fr">Bibliothèque dynamique</Translation>
 		<Translation language="en">Dynamic library</Translation>
 	</Translations>
 </xpp:bloc>

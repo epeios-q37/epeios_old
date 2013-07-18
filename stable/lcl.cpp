@@ -57,6 +57,123 @@ public:
 
 using namespace lcl;
 
+static inline vrow__ NewValue_(
+	const str::string_ &Value,
+	values_ &Values )
+{
+	vrow__ Row = Values.New();
+
+	Values( Row ).Init( Value );
+
+	Values.Flush();
+
+	return Row;
+}
+
+static inline brow__ NewBasic_(
+	vrow__ Value,
+	bso::bool__ ToTranslate,
+	_basics_ &Basics )
+{
+	brow__ Row = Basics.New();
+
+	Basics( Row ).Init( ToTranslate );
+
+	Basics( Row ).S_.Value = Value;
+
+	Basics.Flush();
+
+	return Row;
+}
+
+static inline brow__ NewBasic_(
+	const str::string_ &Value,
+	bso::bool__ ToTranslate,
+	_core_ &Core )
+{
+	return NewBasic_( NewValue_( Value, Core.Values ), ToTranslate, Core.Basics );
+}
+
+static inline brow__ NewBasic_(
+	const _basic_ &SourceBasic,
+	const _core_ &SourceCore,
+	_core_ &NewCore );	// Pré-déclaration
+
+static void Duplicate_(
+	const brows_ &Tags,
+	const _core_ &SourceCore,
+	_basic_ &Basic,
+	_core_ &NewCore )
+{
+	ctn::E_CMITEMt( _basic_, brow__ ) SourceBasic;
+	sdr::row__ Row = Tags.First();
+
+	SourceBasic.Init( SourceCore.Basics );
+
+	while ( Row != E_NIL ) {
+		Basic.Tags.Append( NewBasic_( SourceBasic( Tags( Row ) ), SourceCore, NewCore ) );
+
+		Row = Tags.Next( Row );
+	}
+}
+
+static inline brow__ NewBasic_(
+	const _basic_ &SourceBasic,
+	const _core_ &SourceCore,
+	_core_ &NewCore )
+{
+	brow__ Row = E_NIL;
+ERRProlog
+	ctn::E_CMITEMt( str::string_, vrow__ ) Value;
+	_basic Basic;
+ERRBegin
+	Value.Init( SourceCore.Values );
+	Row = NewBasic_( Value( SourceBasic.S_.Value ), SourceBasic.ToTranslate(), NewCore );
+
+	Basic.Init( NewCore.Basics( Row ).ToTranslate() );
+	Basic = NewCore.Basics( Row );
+	NewCore.Basics.Flush();
+
+	Duplicate_( SourceBasic.Tags, SourceCore, Basic, NewCore );
+
+	NewCore.Basics( Row ) = Basic;
+	NewCore.Basics.Flush();
+ERRErr
+ERREnd
+ERREpilog
+	return Row;
+}
+
+static inline brow__ NewBasic_(
+	const meaning_ &Meaning,
+	_core_ &Core )
+{
+	ctn::E_CMITEMt( _basic_, brow__ ) Basic;
+
+	return NewBasic_( Meaning.GetBasic( Basic ), Meaning.Core, Core );
+}
+
+void lcl::meaning_::SetValue( const str::string_ &Value )
+{
+	_Basic().S_.Value = NewValue_( Value, Core.Values );
+
+	Core.Basics.Flush();
+}
+
+void lcl::meaning_::AddTag( const str::string_ &Value )
+{
+	_Basic().Tags.Append( NewBasic_( Value, false, Core ) );
+
+	Core.Basics.Flush();
+}
+
+void lcl::meaning_::AddTag( const meaning_ &Meaning )
+{
+	_Basic().Tags.Append( NewBasic_( Meaning, Core ) );
+
+	Core.Basics.Flush();
+}
+
 void lcl::locale_::_GetCorrespondingLabels(
 	const strings_ &Labels,
 	strings_ &Wordings ) const
@@ -210,84 +327,76 @@ void lcl::locale_::GetLanguages(
 		ERRFwk();
 }
 
-void lcl::meaning_::AddTag( const meaning_ &Meaning )
-{
-	row__ Row = Meaning.Levels.First();
-	ctn::E_CMITEMt( str::string_, row__ ) Value;
-	_level__ Level = 0;
-
-	Value.Init( Meaning.Values );
-
-	while ( Row != E_NIL ) {
-		_Push( Level = ( Meaning.Levels( Row ) + 1 ), Value( Row ) );
-
-		Row = Meaning.Levels.Next( Row );
-	}
-
-	if ( Meaning.Levels.Amount() == 1 )
-		_Push( Level + 1, str::string() );	// Lorsque pas de 'tag', on en ajoute un, pour simplifier l'algorithme de la traduction..
-}
-
-void lcl::locale_::_GetTranslation(
-	_levels_ &Levels,
-	_values_ &Values,
+static const str::string_ &GetTranslation_(
+	const _basic_ &Basic,
+	const _core_ &Core,
 	const char *Language,
-	str::string_ &Translation ) const
+	const locale_ &Locale,
+	str::string_ &Translation );	// Pré-déclaration.
+
+static void GetTags_(
+	const brows_ &InputTags,
+	const _core_ &Core,
+	const char *Language,
+	const locale_ &Locale,
+	str::strings_ &Tags )
 {
 ERRProlog
-	str::string Value;
-	_level__ Level = 0;;
-	str::strings Tags;
-	str::string Buffer;
+	ctn::E_CMITEMt( _basic_, brow__ ) Basic;
+	sdr::row__ Row = E_NIL;
+	str::string Translation;
 ERRBegin
-	Tags.Init();
+	Row = InputTags.First();
 
-	if ( !Levels.IsEmpty() ) {
-		Level = Levels.Pop();
+	Basic.Init( Core.Basics );
 
-		Value.Init();
-		Values.Pop( Value );
+	while ( Row != E_NIL ) {
+		Translation.Init();
 
-		if ( Level == 0 ) {
-			Buffer.Init();
-			_GetTranslation( Value, Language, Translation );
-		} else {
-			Buffer.Init();
-			Tags.Insert( Value, 0 );
-		}
-	}
+		GetTranslation_( Basic( InputTags( Row ) ), Core, Language, Locale, Translation );
+		Tags.Append( Translation );
 
-	while ( !Levels.IsEmpty() ) {
-		Value.Init();
-		Values.Pop( Value );
-
-		if ( Levels.Top() != Level ) {
-			Level = Levels.Pop();
-
-			Buffer.Init();
-			_GetTranslation( Value, Language, Buffer );
-
-			str::ReplaceTags( Buffer, Tags, LCL_TAG_MARKER_C );
-
-			if ( Level == 0 )
-				Translation.Append( Buffer );
-			else {
-				if ( Levels.Push( Level ) != Values.Push( Buffer ) )
-					ERRFwk();
-			}
-
-			Tags.Init();
-		} else {
-//			Buffer.Init();
-			//_GetTranslation( Value, Language, Buffer );
-			Tags.Insert( Value, 0 );
-			Levels.Pop();
-		}
-
+		Row = InputTags.Next( Row );
 	}
 ERRErr
 ERREnd
 ERREpilog
+}
+
+static const str::string_ &GetTranslation_(
+	const _basic_ &Basic,
+	const _core_ &Core,
+	const char *Language,
+	const locale_ &Locale,
+	str::string_ &Translation )
+{
+ERRProlog
+	str::strings Tags;
+	str::string Value, Intermediate;
+	STR_BUFFER___ Buffer;
+ERRBegin
+	if ( Basic.S_.Value == E_NIL )
+		ERRReturn;
+
+	Value.Init();
+	Core.Values.Recall( Basic.S_.Value, Value );
+
+	Intermediate.Init();
+	if ( Basic.GetToTranslate() )
+		Locale.GetTranslation( Value.Convert( Buffer ), Language, Intermediate );
+	else
+		Intermediate = Value;
+
+	Tags.Init();
+	GetTags_( Basic.Tags, Core, Language, Locale, Tags );
+
+	str::ReplaceTags( Intermediate, Tags, LCL_TAG_MARKER_C );
+
+	Translation = Intermediate;
+ERRErr
+ERREnd
+ERREpilog
+	return Translation;
 }
 
 const str::string_  &lcl::locale_::GetTranslation(
@@ -295,21 +404,9 @@ const str::string_  &lcl::locale_::GetTranslation(
 	const char *Language,
 	str::string_ &Translation ) const
 {
-ERRProlog
-	_levels Levels;
-	_values Values;
-ERRBegin
-	Levels.Init();
-	Levels = Meaning.Levels;
+	ctn::E_CMITEMt( _basic_, brow__ ) Basic;
 
-	Values.Init();
-	Values = Meaning.Values;
-
-	_GetTranslation( Levels, Values, Language, Translation );
-ERRErr
-ERREnd
-ERREpilog
-	return Translation;
+	return GetTranslation_( Meaning.GetBasic( Basic ), Meaning.Core, Language, *this, Translation );
 }
 
 

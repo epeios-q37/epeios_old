@@ -1,5 +1,12 @@
 $Id$
 
+18/07/2013 :
+	- FDR : 
+		- '= +' -> '+='
+		- 'Read()' en 'blocking' passe dorénavant par un '_LoopingRead()' si la taille demandée dépasse la capacité du cache (cas qui provoquait une erreur auparavent).
+
+...
+
 30/05/2013 :
 	- Général :
 		- Adaptation.

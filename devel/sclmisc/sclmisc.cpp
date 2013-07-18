@@ -311,69 +311,6 @@ ERREnd
 ERREpilog
 }
 
-void sclmisc::Terminate( void )
-{
-	cio::COut << txf::commit;
-	cio::CErr << txf::commit;
-}
-
-
-void sclmisc::CreateBackupFile(
-	const char *FileName,
-	fil::backup_mode__ Mode )
-{
-ERRProlog
-	fil::backup_status__ Status = fil::bs_Undefined;
-	lcl::meaning Meaning;
-ERRBegin
-	if ( ( Status = fil::CreateBackupFile( FileName, Mode, err::hUserDefined ) )!= fil::bsOK ) {
-		Meaning.Init();
-		fil::GetMeaning( Status, FileName, Meaning );
-		sclerror::SetMeaning( Meaning );
-		ERRExit( EXIT_FAILURE );
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void sclmisc::RecoverBackupFile( const char *FileName )
-{
-ERRProlog
-	fil::recover_status__ Status = fil::rs_Undefined;
-	lcl::meaning Meaning;
-ERRBegin
-	if ( ( Status = fil::RecoverBackupFile( FileName, err::hUserDefined ) )!= fil::rsOK ) {
-		Meaning.Init();
-		fil::GetMeaning( Status, FileName, Meaning );
-		sclerror::SetMeaning( Meaning );
-		ERRExit( EXIT_FAILURE );
-	}
-ERRErr
-ERREnd
-ERREpilog
-}
-
-void sclmisc::ReportFileOpeningErrorAndExit( const char *FileName )
-{
-ERRProlog
-	lcl::meaning Meaning;
-ERRBegin
-	Meaning.Init();
-	Meaning.SetValue( SCLMISC_NAME "_UnableToOpenFile" );
-	Meaning.AddTag( FileName );
-
-	sclerror::SetMeaning( Meaning );
-
-	ERRExit( EXIT_FAILURE );
-ERRErr
-ERREnd
-ERREpilog
-}
-
-
-
-
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 

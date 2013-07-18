@@ -102,6 +102,11 @@ namespace xml {
 		const pos__ &Position,	// Obtenu de 'xtf::extended_text_iflow__'.
 		lcl::meaning_ &Meaning );
 
+	inline bso::bool__ IsEncodingRelatedError( status__ Status )
+	{
+		return ( Status >= s_FirstXTFError ) && ( Status < s_FirstNonXTFError );
+	}
+
 
 	class dump_ {
 	public:
@@ -525,9 +530,10 @@ namespace xml {
 
 	enum _encoding__ {
 		eISO_8859_1,
+		eUTF_8,
 		e_amount,
 		e_Undefined,
-		e_Default = eISO_8859_1,
+		e_Default = eUTF_8,
 		e_None,
 	};
 
@@ -536,6 +542,9 @@ namespace xml {
 		switch ( Encoding ) {
 		case eISO_8859_1:
 			return "ISO-8859-1";
+			break;
+		case eUTF_8:
+			return "UTF-8";
 			break;
 		case e_None:
 			return NULL;

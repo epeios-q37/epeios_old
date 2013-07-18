@@ -309,7 +309,7 @@ namespace dtr {
 			switch ( Kinship ) {
 			case k_Undefined:
 				if ( Root == E_NIL )
-					ERRu();
+					ERRFwk();
 
 				if ( HasChild( Position ) ) {
 					Position = FirstChild( Position );
@@ -326,7 +326,7 @@ namespace dtr {
 					Kinship = kSibling;
 #ifdef DTR_DBG
 				} else if ( !HasParent( Position ) ) {
-					ERRc();
+					ERRFwk();
 #endif
 				} else {
 					Position = Parent( Position );
@@ -339,7 +339,7 @@ namespace dtr {
 					Kinship = kSibling;
 #ifdef DTR_DBG
 				} else if ( !HasParent( Position ) ) {
-					ERRc();
+					ERRFwk();
 #endif
 				} else {
 					Position = Parent( Position );
@@ -347,7 +347,7 @@ namespace dtr {
 				}
 				break;
 			default:
-				ERRu();
+				ERRFwk();
 				break;
 			}
 

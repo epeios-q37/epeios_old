@@ -77,95 +77,186 @@ namespace lcl {
 	using str::strings_;
 	using str::strings;
 
-	E_ROW( row__ );
+	E_ROW( vrow__ );	// 'value row'.
+	E_ROW( brow__ );	// 'basic row'.
 
-	typedef bso::u8__ _level__;
-# define LCL_LEVEL_MAX	BSO_U8_MAX
+	typedef ctn::E_MCONTAINERt_( str::string_, vrow__ ) values_;
+	E_AUTO( values );
 
-	typedef stk::E_BSTACKt_( _level__, row__ ) _levels_;
-	E_AUTO( _levels );
+	typedef bch::E_BUNCH_( brow__ ) brows_;
+	E_AUTO( brows );
 
-
-	typedef stk::E_MCSTACKt_( str::string_, row__ ) _values_;
-	E_AUTO( _values );
-
-	class meaning_
+	class _basic_
 	{
-	private:
-		void _Push(
-			_level__ Level,
-			const str::string_ &Value )
-		{
-			if ( Level == LCL_LEVEL_MAX )
-				ERRLmt();
-
-			if ( Levels.Push( Level ) != Values.Push( Value ) )
-				ERRFwk();
-		}
 	public:
 		struct s {
-			_levels_::s Levels;
-			_values_::s Values;
-		};
-		_levels_ Levels;
-		_values_ Values;
-		meaning_( s &S )
-		: Levels( S.Levels ),
-		  Values( S.Values )
+			vrow__ Value;
+			brows_::s Tags;
+			bso::bool__ ToTranslate;
+		} &S_;
+		brows_ Tags;
+		_basic_( s &S )
+		: S_( S ),
+		  Tags( S_.Tags )
 		{}
-		void reset( bso::bool__ P )
+		void reset( bso::bool__ P = true )
 		{
-			Levels.reset( P );
-			Values.reset( P );
+			S_.Value = E_NIL;
+			S_.ToTranslate = false;
+			Tags.reset( P );
+		}
+		void plug( sdr::E_SDRIVER__ &SD )
+		{
+			Tags.plug( SD );
 		}
 		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Levels.plug( AS );
-			Values.plug( AS );
+			Tags.plug( AS );
 		}
-		meaning_ &operator =( const meaning_ &M )
+		_basic_ &operator =( const _basic_ &B )
 		{
-			Levels = M.Levels;
-			Values = M.Values;
+			S_.Value = B.S_.Value;
+
+			Tags = B.Tags;
+
+			return *this;
+		}
+		void Init( bso::bool__ ToTranslate )
+		{
+			S_.Value = E_NIL;
+			S_.ToTranslate = ToTranslate;
+
+			Tags.Init();
+		}
+		E_RODISCLOSE_( bso::bool__, ToTranslate )
+	};
+
+	E_AUTO( _basic );
+
+	typedef ctn::E_MCONTAINERt_( _basic_, brow__ ) _basics_;
+	E_AUTO( _basics );
+
+	class _core_
+	{
+	public:
+		struct s {
+			values_::s Values;
+			_basics_::s Basics;
+		};
+		values_ Values;
+		_basics_ Basics;
+		_core_( s &S )
+		: Values( S.Values ),
+		  Basics( S.Basics )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			Values.reset( P );
+			Basics.reset( P );
+		}
+		void plug( ags::E_ASTORAGE_ &AS )
+		{
+			Values.plug( AS );
+			Basics.plug( AS );
+		}
+		_core_ &operator =( const _core_ &C )
+		{
+			Values = C.Values;
+			Basics = C.Basics;
 
 			return *this;
 		}
 		void Init( void )
 		{
-			Levels.Init();
 			Values.Init();
+			Basics.Init();
 		}
-		void SetValue( const str::string_ &Value )
+	};
+
+	class meaning_ {
+	private:
+		_basic_ &_Basic( void )
 		{
-			if ( !Levels.IsEmpty() )
+			if ( S_.Basic == E_NIL )
 				ERRFwk();
 
-			_Push( 0, Value );
+			return Core.Basics( S_.Basic );
 		}
+		const _basic_ &_GetBasic(
+			brow__ Row,
+			ctn::E_CMITEMt( _basic_, brow__ ) &Basic ) const
+		{
+			Basic.Init( Core.Basics );
+
+			return Basic( Row );
+		}
+		const _basic_ &_Basic( ctn::E_CMITEMt( _basic_, brow__ ) &Basic ) const
+		{
+			if ( S_.Basic == E_NIL )
+				ERRFwk();
+
+			return _GetBasic( S_.Basic, Basic );
+		}
+	public:
+		struct s {
+			brow__ Basic;
+			_core_::s Core;
+		} &S_;
+		_core_ Core;
+		meaning_( s &S )
+		: S_( S ),
+		  Core( S.Core )
+		{}
+		void reset( bso::bool__ P = true )
+		{
+			S_.Basic = E_NIL;
+			Core.reset( P );
+		}
+		void plug( ags::E_ASTORAGE_ &AS )
+		{
+			Core.plug( AS );
+		}
+		meaning_ &operator =( const meaning_ &M )
+		{
+			S_.Basic = M.S_.Basic;
+			Core = M.Core;
+
+			return *this;
+		}
+		void Init( void )
+		{
+			Core.Init();
+
+			S_.Basic = Core.Basics.New();
+
+			_Basic().Init( true );
+
+			Core.Basics.Flush();
+		}
+		void SetValue( const str::string_ &Value );
 		void SetValue( const char *Value )
 		{
 			SetValue( str::string( Value ) );
 		}
-		void AddTag( const str::string_ &Value )
-		{
-			if ( Levels.IsEmpty() )
-				ERRFwk();
-
-			_Push( 1, Value );
-		}
+		void AddTag( const str::string_ &Value );
 		void AddTag( const char *Value )
 		{
 			AddTag( str::string( Value ) );
 		}
 		void AddTag( const meaning_ &Meaning );
+		const _basic_ &GetBasic( ctn::E_CMITEMt( _basic_, brow__ ) &Basic ) const
+		{
+			return _Basic( Basic );
+		}
 		bso::bool__ IsEmpty( void ) const
 		{
-			return Levels.Amount() == 0;
+			ctn::E_CMITEMt( _basic_, brow__ ) Basic;
+
+			return _Basic( Basic ).S_.Value == E_NIL;
 		}
 	};
 
-	E_AUTO( meaning );
-
+	E_AUTO( meaning )
 
 	class locale_ {
 	private:
@@ -192,11 +283,6 @@ namespace lcl {
 			str::string_ &Translation ) const;
 		void _GetTranslation(
 			const str::string_ &Text,
-			const char *Language,
-			str::string_ &Translation ) const;
-		void _GetTranslation(
-			_levels_ &Levels,
-			_values_ &Values,
 			const char *Language,
 			str::string_ &Translation ) const;
 	public:

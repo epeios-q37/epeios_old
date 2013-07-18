@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="XULFTK_Backendtext">
@@ -6,11 +6,11 @@
 		<Translation language="en">Backend text</Translation>
 	</Translations>
 	<Translations text="XULFTK_ProjectClosingAsking">
-		<Translation language="fr">Êtes-vous sûr de vouloir fermer ce projet ?</Translation>
+		<Translation language="fr">Ãtes-vous sÃ»r de vouloir fermer ce projet ?</Translation>
 		<Translation language="en">Are you sure you want to close this project ?</Translation>
 	</Translations>
 	<Translations text="XULFTK_ProjectClosingWarning">
-		<Translation language="fr">Toutes les modifications vont être perdues !</Translation>
+		<Translation language="fr">Toutes les modifications vont Ãªtre perdues !</Translation>
 		<Translation language="en">All modifications will be lost !</Translation>
 	</Translations>
 	<Translations text="XULFTK_MissingOrBadAnnexTarget">
@@ -22,15 +22,15 @@
 		<Translation language="en">Bad or no value for annex target type.</Translation>
 	</Translations>
 	<Translations text="XULFTK_UnableToStoreSetups">
-		<Translation language="fr">Impossible de stocker les paramétrages.</Translation>
+		<Translation language="fr">Impossible de stocker les paramÃ©trages.</Translation>
 		<Translation language="en">Unable to store setups.</Translation>
 	</Translations>
 	<Translations text="XULFTK_UnableToRetrieveSetups">
-		<Translation language="fr">Impossible de récupèrer les paramétrages.</Translation>
+		<Translation language="fr">Impossible de rÃ©cupÃšrer les paramÃ©trages.</Translation>
 		<Translation language="en">Unable to retrieve setups.</Translation>
 	</Translations>
 	<Translations text="XULFTK_UnableToFindSetups">
-		<Translation language="fr">Paramétrages introuvables.</Translation>
+		<Translation language="fr">ParamÃ©trages introuvables.</Translation>
 		<Translation language="en">Unable to find setups.</Translation>
 	</Translations>
 	<Translations text="XULFTK_BadOrNoProjectId">
@@ -46,7 +46,7 @@
     <Translation language="en">Part of '%1' (%2) application</Translation>
   </Translations>
   <Translations text="XULFTK_AffiliatedProjectText">
-    <Translation language="fr">Affilié au projet %1 (%2)</Translation>
+    <Translation language="fr">AffiliÃ© au projet %1 (%2)</Translation>
     <Translation language="en">Affiliated to the %1 project (%2)</Translation>
   </Translations>
   <!--

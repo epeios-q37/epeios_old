@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
   <Translations text="XML_ErrorAtLineColumn"><!-- Generic text displayed before error description. -->
@@ -10,7 +10,7 @@
 		<Translation language="en">unexpected end of file</Translation>
 	</Translations>
 	<Translations text="XML_UnknownEntity">
-		<Translation language="fr">entité inconnue</Translation>
+		<Translation language="fr">entitÃ© inconnue</Translation>
 		<Translation language="en">unknown entity</Translation>
 	</Translations>
 	<Translations text="XML_MissingEqualSign">
@@ -18,11 +18,11 @@
 		<Translation language="en">missing '='</Translation>
 	</Translations>
 	<Translations text="XML_BadAttributeValueDelimiter">
-		<Translation language="fr">mauvais délimiteur d'attribut</Translation>
+		<Translation language="fr">mauvais dÃ©limiteur d'attribut</Translation>
 		<Translation language="en">bad attribute delimiter</Translation>
 	</Translations>
 	<Translations text="XML_UnexpectedCharacter">
-		<Translation language="fr">caractère inattendu</Translation>
+		<Translation language="fr">caractÃšre inattendu</Translation>
 		<Translation language="en">unexpected character</Translation>
 	</Translations>
 	<Translations text="XML_EmptyTagName">
@@ -30,7 +30,7 @@
 		<Translation language="en">empty tag name</Translation>
 	</Translations>
 	<Translations text="XML_MismatchedTag">
-		<Translation language="fr">balise non appariée</Translation>
+		<Translation language="fr">balise non appariÃ©e</Translation>
 		<Translation language="en">mismatched tag</Translation>
 	</Translations>
 </xpp:bloc>

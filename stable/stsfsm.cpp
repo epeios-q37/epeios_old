@@ -1,7 +1,7 @@
 /*
-	'sclerror' library by Claude SIMON (csimon at zeusw dot org)
-	Requires the 'sclerror' header file ('sclerror.h').
-	Copyright (C) 20112004 Claude SIMON.
+	'stsfsm' library by Claude SIMON (csimon at zeusw dot org)
+	Requires the 'stsfsm' header file ('stsfsm.h').
+	Copyright (C) 20132004 Claude SIMON.
 
 	This file is part of the Epeios (http://zeusw.org/epeios/) project.
 
@@ -27,26 +27,26 @@
 
 //	$Id$
 
-#define SCLERROR__COMPILATION
+#define STSFSM__COMPILATION
 
-#include "sclerror.h"
+#include "stsfsm.h"
 
-class sclerrortutor
+class stsfsmtutor
 : public ttr_tutor
 {
 public:
-	sclerrortutor( void )
-	: ttr_tutor( SCLERROR_NAME )
+	stsfsmtutor( void )
+	: ttr_tutor( STSFSM_NAME )
 	{
-#ifdef SCLERROR_DBG
-		Version = SCLERROR_VERSION "\b\bD $";
+#ifdef STSFSM_DBG
+		Version = STSFSM_VERSION "\b\bD $";
 #else
-		Version = SCLERROR_VERSION;
+		Version = STSFSM_VERSION;
 #endif
-		Owner = SCLERROR_OWNER;
+		Owner = STSFSM_OWNER;
 		Date = "$Date$";
 	}
-	virtual ~sclerrortutor( void ){}
+	virtual ~stsfsmtutor( void ){}
 };
 
 /******************************************************************************/
@@ -55,64 +55,75 @@ public:
 				  /*******************************************/
 /*$BEGIN$*/
 
-#include "scllocale.h"
+using namespace stsfsm;
 
-using namespace sclerror;
-
-static lcl::meaning Meaning_;
-
-bso::bool__ sclerror::IsErrorPending( void )
+void stsfsm::Add(
+	const str::string_ &Tag,
+	int Id,
+	automat_ &Automat )
 {
-	return !Meaning_.IsEmpty();
-}
+	sdr::row__ Row = Tag.First();
+	crow__ Current = Automat.First(), Next = E_NIL;
 
-const lcl::meaning_ &sclerror::GetMeaning( void )
-{
-	if ( !IsErrorPending() )
+	if ( Current == E_NIL ) {
+		Current = Automat.New();
+		Automat( Current ).Init();
+	}
+
+
+	while ( Row != E_NIL ) {
+
+		Next = Automat( Current ).Get( Tag( Row ) );
+
+		Automat.Flush();
+
+		if ( Next == E_NIL ) {
+			Next = Automat.New();
+			Automat( Next ).Init();
+			Automat( Current ).Set( Tag( Row ), Next );
+			Automat.Flush();
+		}
+
+		Current = Next;
+
+		Row = Tag.Next( Row );
+	}
+
+	if ( Current == E_NIL )
 		ERRFwk();
 
-	return Meaning_;
-}
-
-void sclerror::ResetPendingError( void )
-{
-	Meaning_.Init();
-}
-
-void sclerror::SetMeaning( const lcl::meaning_ &Meaning )
-{
-	if ( IsErrorPending() )
+	if ( Automat( Current ).GetId() != STSFSM_UNDEFINED_ID )
 		ERRFwk();
 
-	if ( Meaning.IsEmpty() )
-		ERRFwk();
+	Automat( Current ).SetId( Id );
 
-	Meaning_ = Meaning;
+	Automat.Flush();
 }
 
-bso::bool__ sclerror::ReportPendingError(
-	const char *Language,
-	txf::text_oflow__ &TOFlow,
-	err::handling__ ErrHandling )
+status__ stsfsm::parser__::Handle( bso::u8__ C )
 {
-	bso::bool__ PendingErrorAvailable = false;
-ERRProlog
-	str::string Translation;
-ERRBegin
-	Translation.Init();
+	ctn::E_CMITEMt( card_, crow__ ) Card;
+	crow__ Next = E_NIL;
 
-	if ( IsErrorPending() )
-		PendingErrorAvailable = true;
+	Card.Init( _A() );
 
-	if ( PendingErrorAvailable ) {
-		scllocale::GetTranslation( GetMeaning(), Language, Translation );
-		TOFlow << Translation;
-	} else if ( ErrHandling != err::hUserDefined )
+	if ( _Current == E_NIL )
+		_Current = _A().First();
+
+	if ( _Current == E_NIL )
 		ERRFwk();
-ERRErr
-ERREnd
-ERREpilog
-	return PendingErrorAvailable;
+
+	Next = Card( _Current ).Get( C );
+
+	if ( Next == E_NIL )
+		return sLost;
+
+	_Current = Next;
+
+	if ( Card( _Current ).GetId() == STSFSM_UNDEFINED_ID )
+		return sPending;
+	else
+		return sMatch;
 }
 
 
@@ -120,17 +131,16 @@ ERREpilog
 /* Although in theory this class is inaccessible to the different modules,
 it is necessary to personalize it, or certain compiler would not work properly */
 
-class sclerrorpersonnalization
-: public sclerrortutor
+class stsfsmpersonnalization
+: public stsfsmtutor
 {
 public:
-	sclerrorpersonnalization( void )
+	stsfsmpersonnalization( void )
 	{
-		Meaning_.Init();
 		/* place here the actions concerning this library
 		to be realized at the launching of the application  */
 	}
-	~sclerrorpersonnalization( void )
+	~stsfsmpersonnalization( void )
 	{
 		/* place here the actions concerning this library
 		to be realized at the ending of the application  */
@@ -146,6 +156,6 @@ public:
 
 // 'static' by GNU C++.
 
-static sclerrorpersonnalization Tutor;
+static stsfsmpersonnalization Tutor;
 
-ttr_tutor &SCLERRORTutor = Tutor;
+ttr_tutor &STSFSMTutor = Tutor;

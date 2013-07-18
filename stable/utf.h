@@ -67,30 +67,18 @@ extern class ttr_tutor &UTFTutor;
 
 namespace utf {
 
-	class ansi__
+	template <typename feeder> inline bso::u8__ HandleANSI( feeder &Feeder )
 	{
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		E_CDTOR( ansi__ )
-		void Init( void )
-		{
-			// Standardisation.
-		}
-		bso::u8__ Handle(
-			const fdr::datum__ *Datum,
-			fdr::size__ Size )
-		{
-			if ( Size == 0 )
-				ERRFwk();
+		if ( Feeder.IsEmpty() )
+			ERRFwk();	// Erreur.
 
+		if ( HandleUTF8( Feeder ) > 1 )
+			return 0;
+		else
 			return 1;
-		}
-	};
+	}
 
-	inline bso::u8__ FindLast0_( fdr::datum__ C )
+	inline bso::u8__ FindFirst0_( fdr::datum__ C )
 	{
 		bso::u8__ Pos = 8;
 
@@ -99,77 +87,65 @@ namespace utf {
 		return Pos + 1;
 	}
 
-	inline bso::u8__ CountUTF8ContinuationByte_(
-		const fdr::datum__ *Datum,
-		fdr::size__ Size )
+	template <typename feeder> inline bso::bool__ ControlUTF8TailingBytes_(
+		bso::u8__ Amount,
+		feeder &Feeder )
 	{
-		bso::u8__ Amount = 0;
+		while ( !Feeder.IsEmpty() && Amount ) {
+			if ( ( Feeder.Get() & 0xC0 ) != 0x80 )
+				return false;
 
-		if ( Size > BSO_U8_MAX )
-			ERRPrm();
+			Amount--;
+		}
 
-		while ( Size-- && ( ( Datum[Amount] & 0xC0 ) == 0x80 ) )
-			Amount++;
+		if ( Amount != 0 )
+			return false;
 
-		return Amount;
+		return true;
 	}
 
-	class utf8__ 
+	template <typename feeder> inline bso::u8__ HandleUTF8( feeder &Feeder )
 	{
-	public:
-		void reset( bso::bool__ = true )
-		{
-			// Standardisation.
-		}
-		E_CDTOR( utf8__ )
-		void Init( void )
-		{
-			// Standardisation.
-		}
-		bso::u8__ Handle(
-			const fdr::datum__ *Datum,
-			fdr::size__ Size )
-		{
-			bso::u8__ LeadingByteLast0Position = 0;
+		bso::u8__ LeadingByteLast0Position = 0;
 
-			if ( Size == 0 )
-				ERRFwk();	// Erreur.
+		if ( Feeder.IsEmpty() )
+			ERRFwk();	// Erreur.
 
-			LeadingByteLast0Position = FindLast0_( Datum[0] );
+		LeadingByteLast0Position = FindFirst0_( Feeder.Get() );
 
-			switch ( LeadingByteLast0Position ) {
-			case 8:
-				return 1;
-				break;
-			case 7:
+		switch ( LeadingByteLast0Position ) {
+		case 8:
+			return 1;
+			break;
+		case 7:
+			return 0;
+			break;
+		case 6:
+		case 5:
+		case 4:
+		{
+			bso::u8__ Amount = 8 - LeadingByteLast0Position;
+
+			if ( !ControlUTF8TailingBytes_( Amount - 1, Feeder ) )
 				return 0;
-				break;
-			case 6:
-			case 5:
-			case 4:
-			{
-				bso::u8__ ContinuationByteCount = CountUTF8ContinuationByte_( Datum + 1, Size - 1 );
 
-				if ( ( 7 - LeadingByteLast0Position ) != ContinuationByteCount  ) 
-					return 0;
-				else
-					return ContinuationByteCount + 1;
-				break;
-			}
-			case 3:
-			case 2:
-			case 1:
-			case 0:
-				return 0;
-				break;
-			default:
-				ERRFwk();
-				break;
-			}
-
-			return 0;	// Pour éviter un 'warning'.
+			return Amount;
 		}
-	};
+		break;
+		case 3:
+		case 2:
+		case 1:
+		case 0:
+			return 0;
+			break;
+		default:
+			ERRFwk();
+			break;
+		}
+
+		return 0;	// Pour éviter un 'warning'.
+	}
+
 
 	enum format__ {
 		fANSI,
@@ -184,17 +160,13 @@ namespace utf {
 		f_Default = f_Guess
 	};
 
-	class utf__ {
+	template <typename feeder> class utf__ {
 	private:
 		format__ _Format;
-		ansi__ _ANSI;
-		utf8__ _UTF8;
 	public:
 		void reset( bso::bool__ P = true )
 		{
 			_Format = f_Undefined;
-			_ANSI.reset( P );
-			_UTF8.reset( P );
 		}
 		E_CDTOR( utf__ );
 		bso::bool__ Init( format__ Format )	// Retourne 'false' si format non supporté, 'true' sinon.
@@ -203,12 +175,8 @@ namespace utf {
 
 			switch( _Format ) {
 			case f_Guess:
-				_UTF8.Init();
 			case fANSI:
-				_ANSI.Init();
-				break;
 			case fUTF_8:
-				_UTF8.Init();
 				break;
 			case fUTF_16_LE:
 			case fUTF_16_BE:
@@ -223,21 +191,22 @@ namespace utf {
 
 			return true;
 		}
-		bso::u8__ Handle(
-			const fdr::datum__ *Datum,
-			bso::size__ Size )	// 5, sauf si EOF !
+		bso::u8__ Handle( feeder &Feeder )
 		{
-			if ( Size == 0 )
+			if ( Feeder.IsEmpty() )
 				ERRFwk();
 
 			switch( _Format ) {
 			case f_Guess:
 			{
-				bso::u8__ UTFSize = _UTF8.Handle( Datum, Size );
+				bso::u8__ UTFSize = HandleUTF8( Feeder );
 
-				if ( UTFSize > 1 )
-					if ( Size > UTFSize )
-						switch ( Datum[UTFSize] >> 6 ) {
+				if ( UTFSize > 1 ) {
+					if ( !Feeder.IsEmpty() ) {
+
+						fdr::datum__ Datum = Feeder.Get();
+
+						switch ( Datum >> 6 ) {
 						case 0:
 						case 1:
 							break;
@@ -245,18 +214,19 @@ namespace utf {
 							UTFSize = 0;
 							break;
 						case 3:
-							if ( FindLast0_( Datum[UTFSize] ) < 4 )
+							if ( FindFirst0_( Datum ) < 4 )
 								UTFSize = 0;
 							break;
 						default:
 							ERRFwk();
 							break;
 						}
+					}
+				}
 
 				if ( UTFSize  == 0 ) {
 					_Format = fANSI;
-					_ANSI.Init();
-					UTFSize = _ANSI.Handle( Datum, Size );
+					UTFSize = HandleANSI( Feeder );
 				} else if ( UTFSize > 1 )
 					_Format = fUTF_8;
 
@@ -264,10 +234,10 @@ namespace utf {
 				break;
 			}
 			case fANSI:
-				return _ANSI.Handle( Datum, Size );
+				return HandleANSI( Feeder );
 				break;
 			case fUTF_8:
-				return _UTF8.Handle( Datum, Size );
+				return HandleUTF8( Feeder );
 				break;
 			default:
 				ERRPrm();
@@ -276,18 +246,26 @@ namespace utf {
 
 			return 0;	// Pour éviter iun 'warning'.
 		}
-		bso::bool__ SetFormat( format__ Format )
+		bso::bool__ SetFormat(
+			format__ Format,
+			err::handling__ ERRHandling = err::h_Default )
 		{
 			if ( Format == f_Guess )
 				ERRPrm();
 
 			if ( _Format == f_Guess ) {
-				if ( ( Format != fUTF_8 ) || ( Format != fANSI ) )
-					return false;
+				if ( ( Format != fUTF_8 ) && ( Format != fANSI ) )
+					if ( ERRHandling != err::hUserDefined )
+						ERRFwk();
+					else
+						return false;
 
 				_Format = Format;
 			} else if ( _Format != Format )
-				return false;
+				if ( ERRHandling != err::hUserDefined )
+					ERRFwk();
+				else
+					return false;
 
 			return true;
 		}

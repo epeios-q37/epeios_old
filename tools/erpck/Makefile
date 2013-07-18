@@ -33,12 +33,14 @@ name = erpck
 mods += ags bso cpe epsmsc err 
 mods += flw ias str tol ttr 
 mods += uys cio bom cdgb64 fil 
-mods += fnm lcl rgstry xml xpp 
-mods += clnarg 
+mods += fnm lcl rgstry stsfsm xml 
+mods += xpp clnarg 
 
 mods += sclmisc sclerror scllocale sclrgstry scltool 
 
-mods += locale registry 
+mods += registry 
+mods += rpkals rpkbsc rpkctx 
+
 
 
 
@@ -63,6 +65,7 @@ x86_64=x64
 Cygwin=Cygwin
 MinGW=Msys
 GNULinux=GNU/Linux
+Linux=Linux
 MacOS=Darwin
 os=$(shell uname -o 2>/dev/null || uname -s)
   
@@ -115,6 +118,17 @@ endif
 #############################
 	
 
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(Linux)")
+
+endif
+
+#############################
+	
+
 ##########################
 # For MacOS environment #
 ##########################
@@ -144,8 +158,10 @@ ifeq ("$(os)","$(Cygwin)")
 
 	ifeq ("$(arch)","$(IA_32)")
 		CXX = i686-w64-mingw32-g++
-	else ifeq ("$(arch)","$(x86_64)")
-		CXX = x86_64-w64-mingw32-g++
+	else # 'ifeq' on other line due to GNU 3.80 (Maemo on N900)
+		ifeq ("$(arch)","$(x86_64)")
+			CXX = x86_64-w64-mingw32-g++
+		endif
     
 	endif
 	
@@ -166,12 +182,14 @@ ifeq ("$(os)", "$(MinGW)")
 
 	LDFLAGS += -static
 
-	ifeq ("$(arch)","x86")
+	ifeq ("$(arch)","$(IA_32)")
 		co += -m32
 		lo += -m32
-	else ifeq ("$(arch)","x64")
-		co += -m64
-		lo += -m64
+	else # 'ifeq' on other line due to GNU 3.80 (Maemo on N900).
+		ifeq ("$(arch)","$(x86_64)")
+			co += -m64
+			lo += -m64
+		endif
 	endif
 
 	target=$(name)
@@ -188,12 +206,37 @@ ifeq ("$(os)","$(GNULinux)")
 
 	co += -DGNULINUX
 
-	ifeq ("$(arch)","x86")
+	ifeq ("$(arch)","$(IA_32)")
 		co += -m32
 		lo += -m32
-	else ifeq ("$(arch)","x64")
-		co += -m64
-		lo += -m64
+	else # 'ifeq' on other line due to GNU 3.80 (Maemo on N900).
+		ifeq ("$(arch)","$(x86_64)")
+			co += -m64
+			lo += -m64
+		endif
+	endif
+	target=$(name)
+endif
+
+#############################
+		
+
+#############################
+# For GNU/Linux environment #
+#############################
+
+ifeq ("$(os)","$(Linux)")
+
+	co += -DLINUX
+
+	ifeq ("$(arch)","$(IA_32)")
+		co += -m32
+		lo += -m32
+	else # 'ifeq' on other line due to GNU 3.80 (Maemo on N900).
+		ifeq ("$(arch)","$(x86_64)")
+			co += -m64
+			lo += -m64
+		endif
 	endif
 	target=$(name)
 endif
@@ -211,12 +254,14 @@ ifeq ("$(os)","$(MacOS)")
 
 	#LDFLAGS += -static	// Doesn't work.
 
-	ifeq ("$(arch)","x86")
+	ifeq ("$(arch)","$(IA_32)")
 		co += -m32
 		lo += -m32
-	else ifeq ("$(arch)","x64")
-		co += -m64
-		lo += -m64
+	else # 'ifeq' on other line due to GNU 3.80 (Maemo on N900).
+		ifeq ("$(arch)","$(x86_64)")
+			co += -m64
+			lo += -m64
+		endif
 	endif
 	target=$(name)
 
@@ -227,7 +272,7 @@ endif
 src += :..
 
 ifndef EPEIOS_SRC
-	src += :../epeios
+	src += :../epeios:epeios
 else
 	src += :$(EPEIOS_SRC)
 endif

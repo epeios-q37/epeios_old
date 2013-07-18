@@ -177,9 +177,63 @@ ERRFErr
 	if ( ERRType >= err::t_amount )
 		ReportSCLPendingError_();
 ERRFEnd
-	sclmisc::Terminate();
+	cio::COut << txf::commit;
+	cio::CErr << txf::commit;
 ERRFEpilog
 	return ERRExitValue;
+}
+
+void scltool::CreateBackupFile(
+	const char *FileName,
+	fil::backup_mode__ Mode )
+{
+ERRProlog
+	fil::backup_status__ Status = fil::bs_Undefined;
+	lcl::meaning Meaning;
+ERRBegin
+	if ( ( Status = fil::CreateBackupFile( FileName, Mode, err::hUserDefined ) )!= fil::bsOK ) {
+		Meaning.Init();
+		fil::GetMeaning( Status, FileName, Meaning );
+		sclerror::SetMeaning( Meaning );
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void scltool::RecoverBackupFile( const char *FileName )
+{
+ERRProlog
+	fil::recover_status__ Status = fil::rs_Undefined;
+	lcl::meaning Meaning;
+ERRBegin
+	if ( ( Status = fil::RecoverBackupFile( FileName, err::hUserDefined ) )!= fil::rsOK ) {
+		Meaning.Init();
+		fil::GetMeaning( Status, FileName, Meaning );
+		sclerror::SetMeaning( Meaning );
+		ERRExit( EXIT_FAILURE );
+	}
+ERRErr
+ERREnd
+ERREpilog
+}
+
+void scltool::ReportFileOpeningErrorAndExit( const char *FileName )
+{
+ERRProlog
+	lcl::meaning Meaning;
+ERRBegin
+	Meaning.Init();
+	Meaning.SetValue( SCLMISC_NAME "_UnableToOpenFile" );
+	Meaning.AddTag( FileName );
+
+	sclerror::SetMeaning( Meaning );
+
+	ERRExit( EXIT_FAILURE );
+ERRErr
+ERREnd
+ERREpilog
 }
 
 #define PROJECT_ROOT_PATH	"Projects/Project[@target=\"%1\"]"
@@ -220,8 +274,6 @@ ERRErr
 ERREnd
 ERREpilog
 }
-
-
 
 bso::bool__ scltool::GetValue(
 	const rgstry::tentry__ &Entry,

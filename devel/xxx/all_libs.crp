@@ -289,6 +289,8 @@ NAME		PROJECT		COPYRIGHT_DATES\
 	&STRing
 &strng		&epeios	&\
 	&STRiNG
+&stsfsm		&epeios		&2013\
+	&State Transition System Finite State Machine
 &tagdtc		&epeios		&2000-2001, \
 	&TAG DeTeCtor
 &tagexp		&epeios		&2000-2001, \

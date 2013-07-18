@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
-<!-- Traductions pour la bibliothèque 'MSCRMI' -->
+<!-- Traductions pour la bibliothÃšque 'MSCRMI' -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<!--
 	<Translations message="MSCRMI_">
@@ -9,17 +9,17 @@
 	</Translations>
 	 -->
 	
-	<!-- Messages génériques -->
+	<!-- Messages gÃ©nÃ©riques -->
 	<Translations message="MSCRMI_ErrorAtLineColumnInFile">
-		<Translation language="fr">Erreur à la ligne %1, colonne %2 dans le fichier '%3'</Translation>
+		<Translation language="fr">Erreur Ã  la ligne %1, colonne %2 dans le fichier '%3'</Translation>
 		<Translation language="en">Error at line %1, column %2 in file '%3'</Translation>
 	</Translations>
 	<Translations message="MSCRMI_ErrorAtLineColumn">
-		<Translation language="fr">Erreur à la ligne %1, colonne %2</Translation>
+		<Translation language="fr">Erreur Ã  la ligne %1, colonne %2</Translation>
 		<Translation language="en">Error at line %1, column %2</Translation>
 	</Translations>
 
-	<!-- Début traductions 'parse_status' -->
+	<!-- DÃ©but traductions 'parse_status' -->
 	<Translations message="MSCRMI_ParserError">
 		<Translation language="fr">Erreur durant l'analyse</Translation>
 		<Translation language="en">Error during parsing</Translation>
@@ -29,7 +29,7 @@
 		<Translation language="en">Unexpected tag</Translation>
 	</Translations>
 	<Translations message="MSCRMI_AttributeAlreadyDefined">
-		<Translation language="fr">Attribut déjà défini</Translation>
+		<Translation language="fr">Attribut dÃ©jÃ  dÃ©fini</Translation>
 		<Translation language="en">Attribute already defined</Translation>
 	</Translations>
 	<Translations message="MSCRMI_UnexpectedAttribute">
@@ -46,13 +46,13 @@
 	</Translations>
 	<!-- Fin traductions 'parse_status' -->
 	
-	<!-- Début traductions 'transmission_status' -->
+	<!-- DÃ©but traductions 'transmission_status' -->
 	<Translations message="MSCRMI_ChecksumError">
-		<Translation language="fr">Somme de contrôle incorrecte</Translation>
+		<Translation language="fr">Somme de contrÃŽle incorrecte</Translation>
 		<Translation language="en">Checksum error</Translation>
 	</Translations>
 	<Translations message="MSCRMI_IncorrectData">
-		<Translation language="fr">Données incorrectes</Translation>
+		<Translation language="fr">DonnÃ©es incorrectes</Translation>
 		<Translation language="en">Incorrect data</Translation>
 	</Translations>
 	<!-- Fin traductions 'transmission_status' -->

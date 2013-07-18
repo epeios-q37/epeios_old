@@ -47,8 +47,8 @@
 #include "rpkctx.h"
 
 #define NAME					"erpck"
-#define VERSION					"0.4.5"
-#define COPYRIGHT_YEARS			"2010-2011"
+#define VERSION					"2013-07-14"
+#define COPYRIGHT_YEARS			"2010-2013"
 #define AUTHOR_NAME				EPSMSC_AUTHOR_NAME
 #define AUTHOR_CONTACT			EPSMSC_AUTHOR_CONTACT
 #define APP_URL					EPSMSC_APP_URL( NAME )
@@ -99,7 +99,10 @@ enum text__ {
 	tUnknownTagError,
 	tMissingTableTagError,
 	tNoTableTagInDataFileError,
-	tUnexpectedAttribute,
+	tUnexpectedAttributeError,
+	tMissingTableLabelError,
+	tNoDataError,
+	tNoRecordOfGivenIdError,
 	// Wordings
 	tTableLabelWording,
 	tRecordLabelWording,
@@ -388,7 +391,6 @@ ERRBegin
 		ERRFwk();
 
 	xpp::GetMeaning( Context.Coordinates, Meaning );
-
 ERRErr
 ERREnd
 ERREpilog
@@ -406,10 +408,12 @@ ERRBegin
 	GenericMeaning.Init();
 	GenericMeaning.SetValue( _( GenericError ) );
 
-	GenericMeaning.AddTag( Meaning );
+//	GenericMeaning.AddTag( Meaning );
 	
 	MeaningBuffer.Init();
 	GetMeaning_( IFlow, MeaningBuffer );
+	MeaningBuffer.AddTag( Meaning );
+
 	GenericMeaning.AddTag( MeaningBuffer );
 
 	scltool::ReportAndExit( GenericMeaning );
@@ -486,7 +490,7 @@ static void Insert_(
 
 	Row = rpkrcd::SearchRecord( RecordLabel, Records );
 
-	if ( Row != E_NIL )
+	if ( Row == E_NIL )
 		ReportAndExit_( _( RecordNotFoundError ), IFlow );
 
 	rpkrcd::Insert( Row, Records, Record );
@@ -1100,7 +1104,7 @@ ERRBegin
 	Aliases.Init();
 
 	while ( Continue ) {
-		switch ( Parser.Parse( xml::tfStartTag | xml::tfAttribute | xml::tfEndTag ) ) {
+		switch ( Parser.Parse( xml::tfStartTag | xml::tfStartTagClosed | xml::tfAttribute | xml::tfEndTag ) ) {
 		case xml::tStartTag:
 			if ( Parser.TagName() == ALIASES_TAG )
 				ProcessAliases_( Parser, IFlow, Tables, Aliases );	// '<erpck:table ...>...<erpck:aliases ...>...'
@@ -1108,6 +1112,10 @@ ERRBegin
 				ProcessContent_( Parser, IFlow, Table, Tables, Aliases );	// '<erpck:table ...>...<erpck:content ...>...' -> '...</erpc:content>...'
 			else															//                                     ^                              ^
 				ReportAndExit_( _( UnknownTagError ), IFlow );
+			break;
+		case xml::tStartTagClosed:
+			if ( Table.Label.Amount() == 0 )
+				ReportAndExit_( _( MissingTableLabelError ), IFlow );
 			break;
 		case xml::tAttribute:
 			if ( Parser.TagName() != TABLE_TAG )
@@ -1215,13 +1223,12 @@ ERRBegin
 			} 
 			break;
 		case xml::tAttribute:
-			ReportAndExit_( _( UnexpectedAttribute ), IFlow );
+			ReportAndExit_( _( UnexpectedAttributeError ), IFlow );
 			break;
 		case xml::t_Processed:
-			if ( !DataDetected ) {
-				CErr << "No '" << NAME << "' data in '" << DataFileName << "' !" << txf::nl;
-				ERRExit( EXIT_FAILURE );
-			} else
+			if ( !DataDetected )
+				ReportAndExit_( _( NoDataError ), IFlow, DataFileName );
+			else
 				Continue = false;
 			break;
 		case xml::t_Error:
@@ -1333,11 +1340,14 @@ id__  Display_(
 	rpkctx::context_ &Context,
 	xml::writer_ &Writer )
 {
+ERRProlog
 	rrow__ Row = E_NIL;
 	bso::integer_buffer__ Buffer;
 	ctn::E_CITEMt( record_, rrow__ ) Record;
-	counter__ Counter = Records.Amount();	// NOTA : there is at least one record.
-
+	counter__ Counter = 0;
+	lcl::meaning Meaning;
+ERRBegin
+	Counter = Records.Amount();	// NOTA : there is at least one record.
 	Record.Init( Records );
 
 	Writer.PutAttribute( "TotalAmount", bso::Convert( Records.Amount(), Buffer ) );
@@ -1372,8 +1382,10 @@ id__  Display_(
 
 		} else {
 			if ( Id > Records.Amount() ) {
-				CErr << "No record of id '" << Id << "'! " << txf::nl;
-				ERRExit( EXIT_FAILURE )
+				Meaning.Init();
+				Meaning.SetValue( _( NoRecordOfGivenIdError ) );
+				Meaning.AddTag( bso::Convert( Id, Buffer ) );
+				scltool::ReportAndExit( Meaning );
 			} else {
 				Writer.PutAttribute( "Amount", "1" );
 				Row = Id - 1;
@@ -1383,7 +1395,9 @@ id__  Display_(
 		if ( Row != E_NIL )
 			Display_( Row, Records, Label, Writer );
 	}
-
+ERRErr
+ERREnd
+ERREpilog
 	return Id;
 }
 
@@ -1417,7 +1431,7 @@ ERRProlog
 	xml::writer Writer;
 	ctn::E_CITEMt( table_, trow__ ) Table;
 ERRBegin
-	xml::WriteXMLHeader( Output, xml::e_Default );
+	xml::WriteXMLHeader( Output, xml::eISO_8859_1 );
 	Output << txf::nl;
 
 	if ( XSLFileName.Amount() != 0 ) {
@@ -1489,10 +1503,8 @@ ERRProlog
 	flf::file_oflow___ FFlow;
 	txf::text_oflow__ TFlow;
 ERRBegin
-	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		CErr << "Unable to open '" << FileName << "' for output !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	if ( FFlow.Init( FileName ) != fil::sSuccess )
+		scltool::ReportFileOpeningErrorAndExit( FileName );
 
 	TFlow.Init( FFlow );
 
@@ -1515,17 +1527,14 @@ static id__ Display_(
 ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
-	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
-		CErr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	scltool::CreateBackupFile( FileName );
 
 	Backuped = true;
 
 	Id = DisplayWithoutBackup_( Id, Data, XSLFileName, SessionMaxDuration, Label, Context, FileName );
 ERRErr
 	if ( Backuped )
-		fil::RecoverBackupFile( FileName );
+		scltool::RecoverBackupFile( FileName );
 ERREnd
 ERREpilog
 	return Id;
@@ -1576,7 +1585,8 @@ ERRBegin
 		str::ReplaceTag( CompleteCommand, 2, str::string( bso::Convert( Id ) ), '$' );
 		str::ReplaceTag( CompleteCommand, 3, Label, '$' );
 		COut << "Launching '" << CompleteCommand << "\'." << txf::nl << txf::commit;
-		system( CompleteCommand.Convert( Buffer ) );
+		if ( system( CompleteCommand.Convert( Buffer ) ) == -1 )
+			ERRLbr();
 	}
 
 
@@ -1607,14 +1617,12 @@ ERRProlog
 	txf::text_oflow__ TFlow;
 	xml::writer Writer;
 ERRBegin
-	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		CErr << "Unable to open file '" << FileName << "'!" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	if ( FFlow.Init( FileName ) != fil::sSuccess )
+		scltool::ReportFileOpeningErrorAndExit( FileName );
 
 	TFlow.Init( FFlow );
 
-	Writer.Init( TFlow, xml::oIndent, xml::e_Default );
+	Writer.Init( TFlow, xml::oIndent, xml::eISO_8859_1 );
 
 	DumpContext_( Context, Writer ); 
 ERRErr
@@ -1630,17 +1638,14 @@ static void DumpContext_(
 ERRProlog
 	bso::bool__ Backuped = false;
 ERRBegin
-	if ( fil::CreateBackupFile( FileName, fil::bmRename ) != fil::bsOK ) {
-		CErr << "Unable to create backup file for '" << FileName << "'!" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	scltool::CreateBackupFile( FileName );
 
 	Backuped = true;
 
 	DumpContextWithoutBackup_( Context, FileName );
 ERRErr
 	if ( Backuped )
-		fil::RecoverBackupFile( FileName );
+		scltool::RecoverBackupFile( FileName );
 ERREnd
 ERREpilog
 }
@@ -1701,14 +1706,12 @@ ERRProlog
 	xtf::extended_text_iflow__ XFlow;
 ERRBegin
 	if ( !fil::FileExists( FileName ) ) {
-		COut << "Unable to find context file '" << FileName << "'! It will be created at exit." << txf::nl;
+//		COut << "Unable to find context file '" << FileName << "'! It will be created at exit." << txf::nl;
 		ERRReturn;
 	}
 
-	if ( FFlow.Init( FileName ) != fil::sSuccess ) {
-		CErr << "Unable to open file '" << FileName << "' !" << txf::nl;
-		ERRExit( EXIT_FAILURE );
-	}
+	if ( FFlow.Init( FileName ) != fil::sSuccess )
+		scltool::ReportFileOpeningErrorAndExit( FileName );
 
 	XFlow.Init( FFlow, utf::f_Default );
 

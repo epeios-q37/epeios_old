@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
-<!-- Permet d'inclure à l'aide d'un seul fichier l'ensemble des '.xlcl' relatifs aux bibliothèques Epeios -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<xpp:expand href="fblovl.xlcl"/>
 </xpp:bloc>

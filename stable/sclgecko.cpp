@@ -112,7 +112,8 @@ ERRErr
 
 	Steering = NULL;
 ERREnd
-	sclmisc::Terminate();
+	cio::COut << txf::commit;
+	cio::CErr << txf::commit;
 ERREpilog
 	return Steering;
 }

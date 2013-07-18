@@ -219,11 +219,10 @@ extern class ttr_tutor &CPETutor;
 #   define CPE_X86
 #  elif defined( __x86_64__ )
 #   define CPE_X64
+#  elif defined( __ARM_EABI__ )
+#   define CPE_ARM
 #  else
 #   error "Unable to guess architecture."
-#  endif
-#  ifdef __ARM_EABI__
-#   define CPE_ARM
 #  endif
 # endif
 

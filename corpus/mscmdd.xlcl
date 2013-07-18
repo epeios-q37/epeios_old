@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<!--
@@ -8,7 +8,7 @@
 	</Translations>
 	-->
 	<Translations text="MSCMDD_UnableToOpenMIDIInDevice">
-		<Translation language="fr">Impossible d'ouvrir le dispositif d'entr�e MIDI</Translation>
+		<Translation language="fr">Impossible d'ouvrir le dispositif d'entrée MIDI</Translation>
 		<Translation language="en">Unable to open MIDI in device</Translation>
 	</Translations>
 	<Translations text="MSCMDD_UnableToOpenMIDIOutDevice">

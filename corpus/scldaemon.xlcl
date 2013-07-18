@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="SCLDAEMON_ModuleClosing">
@@ -6,7 +6,7 @@
 		<Translation language="en">Please wait : closing module ...</Translation>
 	</Translations>
   <Translations text="SCLDAEMON_ModuleClosed">
-    <Translation language="fr">Module ferm�.</Translation>
+    <Translation language="fr">Module fermé.</Translation>
     <Translation language="en">Module closed.</Translation>
   </Translations>
 

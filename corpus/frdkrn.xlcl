@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- $Id$ -->
 <xpp:bloc xmlns:xpp="http://zeusw.org/epeios/xpp">
 	<Translations text="FRDKRN_ProjectParsingError">
@@ -6,7 +6,7 @@
 		<Translation language="en">Project reading : %1</Translation>
 	</Translations>
 	<Translations text="FRDKRN_ParametersParsingError">
-		<Translation language="fr">Lecture paramètres ; %1</Translation>
+		<Translation language="fr">Lecture paramÃštres ; %1</Translation>
 		<Translation language="en">Parameters reading; %1</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoOrBadProjectId">
@@ -14,11 +14,11 @@
 		<Translation language="en">Bad Or no project id ('%1').</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoOrBadBackendDefinition">
-		<Translation language="fr">Pas de ou mauvaise définition du moteur de traitement (backend).</Translation>
+		<Translation language="fr">Pas de ou mauvaise dÃ©finition du moteur de traitement (backend).</Translation>
 		<Translation language="en">No or bad backend definition.</Translation>
 	</Translations>
 	<Translations text="FRDKRN_NoBackendLocation">
-		<Translation language="fr">Localisation du moteur de traitement (backend) non défini.</Translation>
+		<Translation language="fr">Localisation du moteur de traitement (backend) non dÃ©fini.</Translation>
 		<Translation language="en">No backend location.</Translation>
 	</Translations>
 	<Translations text="FRDKRN_UnableToConnect">

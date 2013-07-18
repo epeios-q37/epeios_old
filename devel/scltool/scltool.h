@@ -71,10 +71,6 @@ extern class ttr_tutor &SCLTOOLTutor;
 
 
 namespace scltool {
-	using sclmisc::CreateBackupFile;
-	using sclmisc::RecoverBackupFile;
-	using sclmisc::ReportFileOpeningErrorAndExit;
-
 	enum command {
 		cHelp,
 		cVersion,
@@ -97,6 +93,16 @@ namespace scltool {
 	void Main(
 		int argc,
 		const char *argv[] );
+
+	using fil::GetBackupFileName;
+
+	void CreateBackupFile(
+		const char *FileName,
+		fil::backup_mode__ Mode = fil::bm_Default );
+
+	void RecoverBackupFile( const char *FileName );
+
+	void ReportFileOpeningErrorAndExit( const char *FileName );
 
 	void LoadProject(
 		const char *FileName,

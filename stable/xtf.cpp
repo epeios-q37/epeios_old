@@ -81,7 +81,7 @@ bso::bool__  xtf::extended_text_iflow__::GetCell(
 		if ( C == Separator )
 			Cont = false;
 		else if ( ( C == '\r' ) || ( C == '\n' ) )
-			if ( EOL_ != 0 )
+			if ( _EOL != 0 )
 				Cont = false;
 			else if ( !EndOfFlow( Error ) ) {
 				UTF.Init();

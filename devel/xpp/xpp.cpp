@@ -1300,8 +1300,13 @@ sdr::size__ xpp::_preprocessing_iflow_driver___::FDRRead(
 				delete _CurrentParser;
 				_CurrentParser = _Parsers.Pop();
 				if ( Format != utf::f_Guess )
-					_Parser().SetFormat( Format );
-				_Status = _Parser().Handle( Parser, _Data );
+					if (_Parser().GetFormat() == utf::f_Guess )
+						_Parser().SetFormat( Format );
+					else if ( _Parser().GetFormat() != Format )
+						_Status = (xpp::status__)xml::eEncodingDiscrepancy;
+
+				if ( _Status == s_Pending )
+					_Status = _Parser().Handle( Parser, _Data );
 			} else {
 				Maximum = 0;	// Pour sortir de la boucle.
 				_Status = (xpp::status__)xml::sOK;

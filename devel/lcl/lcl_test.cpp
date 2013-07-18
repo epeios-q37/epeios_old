@@ -34,27 +34,27 @@
 #include "cio.h"
 #include "flf.h"
 
-using cio::cin;
-using cio::cout;
-using cio::cerr;
+using cio::CIn;
+using cio::COut;
+using cio::CErr;
 
 void Display( const lcl::strings_ &Strings )
 {
 ERRProlog
 	ctn::E_CMITEM( str::string_ ) String;
-	epeios::row__ Row = E_NIL;
+	sdr::row__ Row = E_NIL;
 ERRBegin
 	String.Init( Strings );
 
 	Row = Strings.First();
 
 	while ( Row != E_NIL ) {
-		cout << String( Row ) << txf::tab;
+		COut << String( Row ) << txf::tab;
 
 		Row = Strings.Next( Row );
 	}
 
-	cout << txf::nl;
+	COut << txf::nl;
 ERRErr
 ERREnd
 ERREpilog
@@ -65,16 +65,16 @@ void Generic( int argc, char *argv[] )
 {
 ERRProlog
 	flf::file_iflow___ FFlow;
-	lcl::locales Locales;
+	lcl::locale Locale;
 	lcl::strings Labels, Wordings;
 	str::string Translation;
 	lcl::strings Values;
 ERRBegin
 	if ( FFlow.Init( "test.xml" ) != fil::sSuccess )
-		ERRu();
+		ERRFwk();
 
-	if ( Locales.Init( FFlow, "Locales/Locale[target=\"test\"]" ) != rgstry::eOK )
-		ERRc();
+	if ( Locale.Init( FFlow, "Locales/Locale[target=\"test\"]" ) != rgstry::eOK )
+		ERRFwk();
 
 	Labels.Init();
 	Wordings.Init();
