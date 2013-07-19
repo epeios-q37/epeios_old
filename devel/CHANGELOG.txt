@@ -1,5 +1,9 @@
 $Id$
 
+19/07/2013 :
+	- FRD :
+		- '...read...( Amount -X, Buffer, ...)' -> '...read...( Amount -X, Buffer + X, ...)'
+
 18/07/2013 :
 	- FDR : 
 		- '= +' -> '+='

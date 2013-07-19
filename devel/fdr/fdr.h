@@ -221,7 +221,7 @@ namespace fdr {
 		{
 			size__ Red = 0, PonctualRed = 0;
 
-			while ( ( Red < Wanted ) && ( ( PonctualRed = _Read( Wanted - Red, Buffer ) ) != 0 ) )
+			while ( ( Red < Wanted ) && ( ( PonctualRed = _Read( Wanted - Red, Buffer + Red ) ) != 0 ) )
 				Red += PonctualRed;
 
 			return Red;
@@ -310,7 +310,7 @@ namespace fdr {
 				else
 					return Red;
 
-				Red += _ReadFromCache( Size - Red, Buffer, true );
+				Red += _ReadFromCache( Size - Red, Buffer + Red, true );
 			}
 
 			return Red;
@@ -409,12 +409,15 @@ namespace fdr {
 				break;
 			case bBlocking:
 
-				if ( _Size > ( Wanted - _Available ) )
+				if ( ( _Available >= Wanted ) || ( _Size > ( Wanted - _Available ) ) )
 					return _ReadThroughCache( Wanted, Buffer, true );
 				else {
 					size__ Red = _ReadFromCache( Wanted, Buffer, true );
 
-					return _LoopingRead( Wanted - Red, Buffer ) + Red;
+					if ( Red < Wanted )
+						Red += _LoopingRead( Wanted - Red, Buffer + Red );
+
+					return Red;
 				}
 
 				break;
