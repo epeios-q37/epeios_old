@@ -114,7 +114,7 @@ public:
 	void Init( void )
 	{
 		_ReportingFunctions.Init( _Kernel );
-		_Kernel.Init( sclrgstry::GetRegistry(), sclrgstry::GetRoot(), NAME, scllocale::GetLocale(), sclcgi::GetLanguage(), _ReportingFunctions );
+		_Kernel.Init( sclrgstry::GetRegistry(), sclrgstry::GetRoot(), scllocale::GetLocale(), sclcgi::GetLanguage(), _ReportingFunctions );
 		_steering_callback__::Init();
 	}
 };

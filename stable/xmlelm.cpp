@@ -68,7 +68,7 @@ erow__ xmlelm::Search(
 
 	N.Init( ElementTree );
 
-	while ( ( Row != NONE )
+	while ( ( Row != E_NIL )
 		    && ( ( ElementTree.GetOddity( Row ) != Type )
 			     || ( N( Row ) != Name ) ) )
 		Row = ElementTree.NextSibling( Row );
@@ -89,7 +89,7 @@ static bso::bool__ WriteXMLAttributes_(
 
 	Name.Init( ElementTree );
 
-	while( Row != NONE ) {
+	while( Row != E_NIL ) {
 		if ( ElementTree.GetOddity( Row ) == tAttribute )
 			Flow << ' ' << Name( Row ) << "=\"\"";
 		else
@@ -123,7 +123,7 @@ static void WriteXMLWithEmptyTag_(
 
 	Browser.Init( Root );
 
-	while ( ElementTree.Browse( Browser ) != NONE ) {
+	while ( ElementTree.Browse( Browser ) != E_NIL ) {
 		switch( Browser.Kinship() ) {
 		case dtr::kParent:
 			if ( !NoRegularChild )
@@ -164,7 +164,7 @@ static void WriteXMLNoEmptyTag_(
 	txf::text_oflow__ &Flow )
 {
 	dtr::browser__<tag_row__> Browser;
-	tag_row__ Precedent = NONE;
+	tag_row__ Precedent = E_NIL;
 	ctn::E_CMITEMt( tag_, tag_row__ ) Tag;
 	bso::bool__ NoRegularChild = true;
 	bso::bool__ JustParent = false;
@@ -215,7 +215,7 @@ static void WriteXMLNoEmptyTag_(
 		}
 
 		Precedent = Browser.Position();
-	} while( Tags.Browse( Browser ) != NONE );
+	} while( Tags.Browse( Browser ) != E_NIL );
 }
 
 void xmltag::WriteXML(
@@ -259,16 +259,16 @@ ERRBegin
 
 	Browser.Init( SRoot );
 
-	while( ( SourceRow = Browser.Position() ) != NONE ) {
+	while( ( SourceRow = Browser.Position() ) != E_NIL ) {
 		switch( Browser.Kinship() ) {
 		case dtr::kChild:
-			if ( ( IntermediateRow = Search( Name( SourceRow ), Source.GetOddity( SourceRow ), Target, TargetRow ) ) == NONE )
+			if ( ( IntermediateRow = Search( Name( SourceRow ), Source.GetOddity( SourceRow ), Target, TargetRow ) ) == E_NIL )
 				IntermediateRow = Target.BecomeLastChild( Name( SourceRow ), Source.GetOddity( SourceRow ), TargetRow );
 			ElementMap.Store( IntermediateRow, SourceRow );
 			TargetRow = IntermediateRow;
 			break;
 		case dtr::kSibling:
-			if ( ( IntermediateRow = Search( Name( SourceRow ), Source.GetOddity( SourceRow ), Target, Target.Parent( TargetRow ) ) ) == NONE )
+			if ( ( IntermediateRow = Search( Name( SourceRow ), Source.GetOddity( SourceRow ), Target, Target.Parent( TargetRow ) ) ) == E_NIL )
 				IntermediateRow = Target.BecomeNextSibling( Name( SourceRow ), Source.GetOddity( SourceRow ), TargetRow );
 			ElementMap.Store( IntermediateRow, SourceRow );
 			TargetRow = IntermediateRow;
@@ -277,7 +277,7 @@ ERRBegin
 			TargetRow = Target.Parent( TargetRow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 

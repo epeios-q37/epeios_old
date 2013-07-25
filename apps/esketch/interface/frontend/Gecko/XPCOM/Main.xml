@@ -79,7 +79,7 @@
 			<Translation language="de">Öffnen ...</Translation>
 		</Entity>
 		<Entity Suffix="ttt">
-			<Translation language="en">Load an existing Projekt</Translation>
+			<Translation language="en">Load an existing Project</Translation>
 			<Translation language="fr">Ouvrir un projet existant</Translation>
 			<Translation language="de">Öffnung eines bestehndes Projekt</Translation>
 		</Entity>

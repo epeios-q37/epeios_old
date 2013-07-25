@@ -277,7 +277,7 @@ ERRBegin
 			TargetRow = Target.Parent( TargetRow );
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 

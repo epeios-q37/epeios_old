@@ -307,24 +307,24 @@ namespace cgimng {
 	protected:
 		cgimng::user_functions__ *UserFunctions_;
 		virtual void SSNMNGAllocate(
-			mdr::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{}
-		virtual void *CSDPreProcess( const char *Origin )
+		virtual void *CSDSUFPreProcess( const char *Origin )
 		{
 			return NULL;
 		}
-		csdleo::action__ CSDProcess(
+		csdleo::action__ CSDSUFProcess(
 			flw::ioflow__ &Client,
 			void *UP );
-		void CSDPostProcess( void *UP )
+		void CSDSUFPostProcess( void *UP )
 		{
 #ifdef CGIMNG_DBG
 			if ( UP != NULL )
-				ERRc();
+				ERRFwk();
 #endif
 		}
-		void CSDExit( void )
+		void CSDSUFExit( void )
 		{}
 	public:
 		void reset( bso::bool__ P = true )
@@ -336,8 +336,8 @@ namespace cgimng {
 		//f Initialization with 'UserFunctions' as user functions.
 		void Init(
 			cgimng::user_functions__ &UserFunctions,
-			bso::ushort__ Relative,
-			bso::ushort__ Absolute,
+			bso::u16__ Relative,
+			bso::u16__ Absolute,
 			log_functions__ &LogFunctions )
 		{
 			sessions::Init( Relative, Absolute, UserFunctions );
@@ -354,8 +354,8 @@ namespace cgimng {
 		bso::bool__ Init(
 			csdbns::port__ Port,
 			cgimng::user_functions__ &UserFunctions,
-			bso::ushort__ Relative,
-			bso::ushort__ Absolute,
+			bso::u16__ Relative,
+			bso::u16__ Absolute,
 			cgimng::log_functions__ &LogFunctions)
 		{
 			core_manager::Init( UserFunctions, Relative, Absolute, LogFunctions );

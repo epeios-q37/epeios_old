@@ -187,7 +187,7 @@ ERRBegin
 
 	P = Options.First();
 
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Argument.Init();
 
 		switch( Option = Options( P ) ) {
@@ -501,13 +501,13 @@ static inline bso::bool__ IsLast(
 	const parameters_ &Parameters,
 	sdr::row__ Current )
 {
-	if ( ( Current = Parameters.Next( Current ) ) == NONE )
+	if ( ( Current = Parameters.Next( Current ) ) == E_NIL )
 		return true;
 
 	if ( Parameters( Current ) != fblcst::cEnd )
 		return false;
 
-	return Parameters.Next( Current ) == NONE;
+	return Parameters.Next( Current ) == E_NIL;
 }
 
 void Generate(
@@ -528,10 +528,10 @@ void Generate(
 		
 	P = Parameters.Next( P );
 		
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		if ( ( Cast = (fblcst::cast)*Parameters( P ) ) == fblcst::cEnd ) {
 			
-			if ( Parameters.Next( P ) != NONE ) {
+			if ( Parameters.Next( P ) != E_NIL ) {
 				ID = 1;
 				Writer.PopTag();
 				Writer.PushTag( "Out" );
@@ -614,7 +614,7 @@ ERRBegin
 	P = Commands.First();
 	Command.Init( Commands );
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Generate( Command( P ), Writer, Position );
 		P = Commands.Next( P );
 	}
@@ -630,28 +630,28 @@ void Convert( str::string_ &Buffer )
 {
 ERRProlog
 	str::string Temp;
-	sdr::row__ P = NONE;
+	sdr::row__ P = E_NIL;
 ERRBegin
 	Temp.Init();
 
 	P = Buffer.First();
 
-	if ( P != NONE )
+	if ( P != E_NIL )
 		if ( Buffer( P ) != '_' ) {
 			Temp.Append( toupper( Buffer( P ) ) );
 
 			P = Buffer.Next( P );
 
-			while ( P != NONE )	{
+			while ( P != E_NIL )	{
 				if ( Buffer( P ) == '_' ) {
 					P = Buffer.Next( P );
 
-				if ( P != NONE )
+				if ( P != E_NIL )
 					Temp.Append( toupper( Buffer( P ) ) );
 				} else
 					Temp.Append( Buffer( P ) );
 
-				if ( P != NONE )
+				if ( P != E_NIL )
 					P = Buffer.Next(  P );
 			}
 	
@@ -824,7 +824,7 @@ ERRBegin
 	P = Types.First();
 	Type.Init( Types );
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Generate( Type( P ), ( P == MasterRow ), Writer );
 		P = Types.Next( P );
 	}
@@ -854,7 +854,7 @@ ERRBegin
 	P = RawMessages.First();
 	RawMessage.Init( RawMessages );
 	
-	while( P != NONE ) {
+	while( P != E_NIL ) {
 		Writer.PushTag( "Message" );
 		Writer.PutAttribute( "Content", RawMessage( P ) );
 		Writer.PopTag();
@@ -962,7 +962,7 @@ ERREpilog
 
 sdr::row__ FindMasterType( const types_ &Types )
 {
-	sdr::row__ P = NONE;
+	sdr::row__ P = E_NIL;
 ERRProlog
 	ctn::E_CITEM( type_ ) Type;
 ERRBegin
@@ -970,10 +970,10 @@ ERRBegin
 	
 	P = Types.First();
 	
-	while( ( P != NONE ) && ( Type( P ).ID() != FBLFRD_MASTER_TYPE ) )
+	while( ( P != E_NIL ) && ( Type( P ).ID() != FBLFRD_MASTER_TYPE ) )
 		P = Types.Next( P );
 		
-	if ( P == NONE )
+	if ( P == E_NIL )
 		ERRFwk();
 ERRErr
 ERREnd
@@ -990,7 +990,7 @@ ERRProlog
 	types Types;
 	str::string TargetLabel, ProtocolVersion, APIVersion;
 	str::string BackendInformations;
-	sdr::row__ MasterRow = NONE;
+	sdr::row__ MasterRow = E_NIL;
 	bso::bool__ Backup = false;
 	flf::file_oflow___ File;
 	txf::text_oflow__ TFile;

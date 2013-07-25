@@ -61,13 +61,13 @@ namespace xmlbsc {
 #include "fnm.h"
 
 static void Init_(
-	flm::file_memory_driver___ &Driver,
+	fls::file_storage_driver___ &Driver,
 	char *Buffer,
 	const char *Discriminator,
 	const char *Name,
 	const char *Directory,
 	const char *Suffix,
-	flm::id__ ID )
+	fls::id__ ID )
 {
 ERRProlog
 	const char *FileName = NULL;
@@ -77,7 +77,7 @@ ERRBegin
 
 	FileName = fnm::BuildFileName( Directory, Buffer, Suffix, FileNameBuffer );
 
-	Driver.Init( ID, true, FileName );
+	Driver.Init( ID, FileName );
 ERRErr
 ERREnd
 ERREpilog
@@ -86,7 +86,7 @@ ERREpilog
 
 void xmlbsc::file_memory_drivers::Init(
 	const char *Name,
-	flm::id__ ID,
+	fls::id__ ID,
 	const char *Directory,
 	const char *Suffix )
 {
@@ -94,7 +94,7 @@ ERRProlog
 	char *Buffer = NULL;
 ERRBegin
 	if ( ( Buffer = (char *)malloc( strlen( Name ) + 2 ) ) == NULL )
-		ERRa();
+		ERRAlc();
 
 	Init_( DTree.Tree, Buffer, "T", Name, Directory, Suffix, ID );
 	Init_( DTree.Queue, Buffer, "Q", Name, Directory, Suffix, ID );

@@ -154,7 +154,7 @@ ERRBegin
 #endif
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 

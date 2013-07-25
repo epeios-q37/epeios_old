@@ -85,10 +85,10 @@ namespace xmldoc {
 			Structure.reset( P );
 			Data.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Structure.plug( MM );
-			Data.plug( MM );
+			Structure.plug( AS );
+			Data.plug( AS );
 		}
 		document_ &operator =( const document_ &D )
 		{

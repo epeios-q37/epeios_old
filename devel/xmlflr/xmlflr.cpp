@@ -119,7 +119,7 @@ ERRBegin
 			PopTag();
 			break;
 		default:
-			ERRc();
+			ERRFwk();
 			break;
 		}
 

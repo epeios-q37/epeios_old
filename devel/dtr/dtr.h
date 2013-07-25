@@ -127,10 +127,10 @@ namespace dtr {
 			Tree.reset( P );
 			Queue.reset( P );
 		}
-		void plug( mmm::multimemory_ &M )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Tree.plug( M );
-			Queue.plug( M );
+			Tree.plug( AS );
+			Queue.plug( AS );
 		}
 		dynamic_tree_ &operator =( const dynamic_tree_ &T )
 		{

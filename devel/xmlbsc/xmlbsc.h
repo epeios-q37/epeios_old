@@ -69,7 +69,7 @@ extern class ttr_tutor &XMLBSCTutor;
 #include "dtr.h"
 #include "lst.h"
 #include "ctn.h"
-#include "flm.h"
+#include "fls.h"
 #include "str.h"
 #include "xml.h"
 
@@ -78,28 +78,28 @@ namespace xmlbsc {
 	using dtr::dynamic_tree_;
 	using lst::list_;
 	using bch::bunch_;
-	using ctn::mono_extended_container_;
+	using ctn::mono_container_;
 
 	/*c Contains the file memory driver tu use together with the 'hdbbsc' class.
 	Designed for using with the merged memory ('MMG' library). */
 	class file_memory_drivers {
 	public:
 		struct tree_drivers {
-			flm::file_memory_driver___ Tree, Queue;
+			fls::file_storage_driver___ Tree, Queue;
 		} DTree;
-		flm::file_memory_driver___ List;
-		flm::file_memory_driver___ Bunch;
+		fls::file_storage_driver___ List;
+		fls::file_storage_driver___ Bunch;
 		struct container_drivers {
-			flm::file_memory_driver___ Statics;
+			fls::file_storage_driver___ Statics;
 			struct descriptors_drivers {
-				flm::file_memory_driver___ Descriptors;
-				flm::file_memory_driver___ Multimemory;
+				fls::file_storage_driver___ Descriptors;
+				fls::file_storage_driver___ Multimemory;
 			} Dynamics;
 		} Container;
 		//f Initialize with generic name 'Name', directory 'Directory' and  suffix 'Suffix'.
 		void Init(
 			const char *Name,
-			flm::id__ ID,
+			fls::id__ ID,
 			const char *Directory = NULL,
 			const char *Suffix = "hdb" );
 		//f Make persistent.
@@ -134,7 +134,7 @@ namespace xmlbsc {
 	: public E_LISTt_( r ),
 	  public E_DTREEt_( r ),
 	  public E_BUNCHt_( o, r ),
-	  public E_XMCONTAINERt_( item_, r )
+	  public E_MCONTAINERt_( item_, r )
 	{
 	private:
 		r Create_(
@@ -144,53 +144,53 @@ namespace xmlbsc {
 			r P = E_LISTt_( r )::New();
 
 			E_BUNCHt_( o, r )::Store( Oddity, P );
-			E_XMCONTAINERt_( item_, r )::Store( Item, P );
+			E_MCONTAINERt_( item_, r )::Store( Item, P );
 
 			return P;
 		}
 	protected:
 		void LSTAllocate(
-			epeios::size__ Size,
+			sdr::size__ Size,
 			aem::mode__ Mode )
 		{
 			E_DTREEt_( r )::Allocate( Size, Mode );
 
 			E_BUNCHt_( o, r )::Allocate( Size, Mode );
-			E_XMCONTAINERt_( item_, r )::Allocate( Size, Mode );
+			E_MCONTAINERt_( item_, r )::Allocate( Size, Mode );
 		}
 	public:
 		struct s
 		: public E_LISTt_( r )::s,
 		  public E_DTREEt_( r )::s,
 		  public E_BUNCHt_( o, r )::s,
-		  public E_XMCONTAINERt_( item_, r )::s
+		  public E_MCONTAINERt_( item_, r )::s
 		{};
 		basic_( s &S )
 		: E_LISTt_( r )( S ),
 		  E_DTREEt_( r )( S ),
 		  E_BUNCHt_( o, r )( S ),
-		  E_XMCONTAINERt_( item_, r )( S )
+		  E_MCONTAINERt_( item_, r )( S )
 		{}
 		void reset( bool P = true )
 		{
 			E_LISTt_( r )::reset( P );
 			E_DTREEt_( r )::reset( P );
 			E_BUNCHt_( o, r )::reset( P );
-			E_XMCONTAINERt_( item_, r )::reset( P );
+			E_MCONTAINERt_( item_, r )::reset( P );
 		}
-		void plug( mmm::multimemory_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			E_LISTt_( r )::plug( MM );
-			E_DTREEt_( r )::plug( MM );
-			E_BUNCHt_( o, r )::plug( MM );
-			E_XMCONTAINERt_( item_, r )::plug( MM );
+			E_LISTt_( r )::plug( AS );
+			E_DTREEt_( r )::plug( AS );
+			E_BUNCHt_( o, r )::plug( AS );
+			E_MCONTAINERt_( item_, r )::plug( AS );
 		}
 		basic_ &operator =( const basic_ &BM )
 		{
 			E_LISTt_( r )::operator =( BM );
 			E_DTREEt_( r )::operator =( BM );
 			E_BUNCHt_( o, r )::operator =( BM );
-			E_XMCONTAINERt_( item_, r )::operator =( BM );
+			E_MCONTAINERt_( item_, r )::operator =( BM );
 
 			return *this;
 		}
@@ -201,16 +201,16 @@ namespace xmlbsc {
 			E_DTREEt_( r )::Queue.plug( Drivers.DTree.Queue );
 			E_LISTt_( r )::plug( Drivers.List );
 			E_BUNCHt_( o, r )::plug( Drivers.Bunch );
-			E_XMCONTAINERt_( item_, r )::Statics.plug( Drivers.Container.Statics );
-			E_XMCONTAINERt_( item_, r )::Dynamics.Descripteurs.plug( Drivers.Container.Dynamics.Descriptors );
-			E_XMCONTAINERt_( item_, r )::Dynamics.Multimemoire.plug( Drivers.Container.Dynamics.Multimemory );
+			E_MCONTAINERt_( item_, r )::Statics.plug( Drivers.Container.Statics );
+			E_MCONTAINERt_( item_, r )::Dynamics.Descripteurs.plug( Drivers.Container.Dynamics.Descriptors );
+			E_MCONTAINERt_( item_, r )::Dynamics.Multimemoire.plug( Drivers.Container.Dynamics.Multimemory );
 		}
 		void Init( void )
 		{
 			E_LISTt_( r )::Init();
 			E_DTREEt_( r )::Init();
 			E_BUNCHt_( o, r )::Init();
-			E_XMCONTAINERt_( item_, r )::Init();
+			E_MCONTAINERt_( item_, r )::Init();
 		}
 		void BecomeFirstChild(
 			r First,
@@ -319,7 +319,7 @@ namespace xmlbsc {
 		{
 			return E_DTREEt_( r )::Last( Node );
 		}
-		epeios::size__ Amount( void ) const
+		sdr::size__ Amount( void ) const
 		{
 			return E_DTREEt_( r )::Amount();
 		}
@@ -331,8 +331,8 @@ namespace xmlbsc {
 			const item_ &Item,
 			r Row )
 		{
-			E_XMCONTAINERt_( item_, r )::Store( Item, Row );
-			E_XMCONTAINERt_( item_, r )::Flush();
+			E_MCONTAINERt_( item_, r )::Store( Item, Row );
+			E_MCONTAINERt_( item_, r )::Flush();
 		}
 	};
 

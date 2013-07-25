@@ -77,14 +77,14 @@ const char *cgimng::GetLogLabel( log__ Log )
 	CASE( CloseButInUse );
 	CASE( Cleaning );
 	default:
-		ERRu();
+		ERRPrm();
 		return NULL;	// Pour éviter un 'warning'.
 		break;
 	}
 
 }
 
-csdleo::action__ cgimng::core_manager::CSDProcess(
+csdleo::action__ cgimng::core_manager::CSDSUFProcess(
 	flw::ioflow__ &Client,
 	void *UP )
 {
@@ -93,7 +93,7 @@ ERRProlog
 ERRBegin
 #ifdef CGIMNG_DBG
 	if ( UP != NULL )
-		ERRc();
+		ERRFwk();
 #endif
 
 	CGIArguments.Init();
@@ -146,7 +146,7 @@ void cgimng::tool___::Create(
 	str::string_ &SessionID )
 {
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	session_id__ SID;
 	lck::read_write_access___<sessions_> Sessions;
 	data__ *Data = NULL;
@@ -156,7 +156,7 @@ ERRBegin
 	Data = new data__;
 
 	if ( Data == NULL )
-		ERRa();
+		ERRAlc();
 
 	Data->UP = UP;
 	Data->Mutex = mtx::Create( mtx::mSynchronizing );
@@ -166,8 +166,8 @@ ERRBegin
 
 	tol::InitializeRandomGenerator();
 
-	P = Sessions().Open();
-	Sessions().Store( Data, P );
+	P = Sessions().New( Data );
+//	Sessions().Store( Data, P );
 	SID = Sessions().SessionID( P );
 
 	SessionID = SID.Value();
@@ -186,16 +186,16 @@ answer__ cgimng::tool___::GetAndLock(
 {
 	answer__ Answer = aUndefined;
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
-	P = Sessions().Position( SessionID );
+	P = Sessions().Search( SessionID );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 
-		data__ &Data =  *(data__ *)Sessions().Get( P );
+		data__ &Data =  *(data__ *)Sessions().Pointers( P );
 
 		Data.InUse = true;
 
@@ -207,8 +207,8 @@ ERRBegin
 
 		UP = Data.UP;
 
-		if ( Sessions().IsValid( P ) ) {
-			Sessions().MarkAsAlwaysValid( P );
+		if ( Sessions().IsAlive( P ) ) {
+			Sessions().MarkAsImmortal( P );
 			Answer = aOK;
 			_Log( lGet, SessionID );
 		} else {
@@ -231,18 +231,18 @@ ERREpilog
 void cgimng::tool___::Release( const str::string_ &SessionID )
 {
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
-	if ( ( P = Sessions().Position( SessionID ) ) != NONE )	{
+	if ( ( P = Sessions().Search( SessionID ) ) != E_NIL )	{
 
-		data__ &Data =  *(data__ *)Sessions().Get( P );
+		data__ &Data =  *(data__ *)Sessions().Pointers( P );
 
 #ifdef CGIMNG_DBG
 		if ( !mtx::IsLocked( Data.Mutex ) )
-			ERRu();
+			ERRFwk();
 #endif
 
 		Sessions().Touch( P );
@@ -253,7 +253,7 @@ ERRBegin
 
 		_Log( lRelease, SessionID );
 	} else
-		ERRu();
+		ERRFwk();
 ERRErr
 ERREnd
 ERREpilog
@@ -264,16 +264,16 @@ answer__ cgimng::tool___::Close( const str::string_ &SessionID )
 {
 	answer__ Answer = aUndefined;
 ERRProlog
-	ssnmng::row__ P = NONE;
+	ssnmng::row__ P = E_NIL;
 	lck::read_write_access___<sessions_> Sessions;
 ERRBegin
 	Sessions.Init( Sessions_ );
 
-	P = Sessions().Position( SessionID );
+	P = Sessions().Search( SessionID );
 
-	if ( P != NONE ) {
+	if ( P != E_NIL ) {
 
-		data__ &Data =  *(data__ *)Sessions().Get( P );
+		data__ &Data =  *(data__ *)Sessions().Pointers( P );
 
 		if ( !mtx::TryToLock( Data.Mutex ) ) {
 			Answer = aLocked;
@@ -282,7 +282,7 @@ ERRBegin
 		} else if ( Data.InUse ) {
 			Answer = aInUse;
 			_Log( lCloseButInUse, SessionID );
-		} else if ( Sessions().IsValid( P ) ) {
+		} else if ( Sessions().IsAlive( P ) ) {
 			Answer = aOK;
 			_Log( lClose, SessionID );
 		} else {

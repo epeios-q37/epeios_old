@@ -306,7 +306,8 @@ Utile pour afficher le numéro de ligne dans un #pragma message (...). */
 # define E_STRING(x) E__STRING(x)
 
 // Inspiré du site msdn.microsoft.com.
-# define __LOC__ __FILE__ "(" E_STRING(__LINE__) ")"
+// Le ' :' à la fin est nécessaire pour que Visual C++ puisse se positionner sur la bonne ligne.
+# define __LOC__ __FILE__ "(" E_STRING(__LINE__) ") :"
 
 // Utilisation :
 // #pragma message(__LOC__ " : Message")

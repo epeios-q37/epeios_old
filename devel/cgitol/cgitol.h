@@ -106,11 +106,11 @@ namespace cgitol {
 			Skin.reset( P );
 			Session.reset( P );
 		}
-		void plug( mmm::E_MULTIMEMORY_ &MM )
+		void plug( ags::E_ASTORAGE_ &AS )
 		{
-			Target.plug( MM );
-			Skin.plug( MM );
-			Session.plug( MM );
+			Target.plug( AS );
+			Skin.plug( AS );
+			Session.plug( AS );
 		}
 		parameters_ &operator =( const parameters_ &D )
 		{
