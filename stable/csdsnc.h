@@ -70,7 +70,7 @@ extern class ttr_tutor &CSDSNCTutor;
 #include "cpe.h"
 #include "ags.h"
 
-#ifdef CPE__MT
+#ifdef CPE_MT
 #	define CSDSNC__MT
 #endif
 

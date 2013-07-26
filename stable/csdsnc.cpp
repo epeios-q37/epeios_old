@@ -137,7 +137,7 @@ void csdsnc::core_::_KeepAlive( time_t Delay )
 {
 #ifdef CSDSNC__MT
 	if ( Delay <= CSDSNC_PING_RESOLUTION )
-		ERRu();
+		ERRFwk();
 
 	mtk::Launch( ::KeepAlive_, this );
 #else
