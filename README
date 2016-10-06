@@ -1,5 +1,1 @@
-$Id$
-
-The 'stable' directory contains the stable version of the various Epeios libraries.
-The 'devel' directory contains the development version of the various Epeios libraries.
-The 'tools' directory contains tools which the Epeios libraries.
+This is a a copy from the old CVS repository (http://cvs.savannah.gnu.org/viewvc/?root=epeios) of the Epeios framework, for archiving. The new one is at http://github.com/epeios-q37/epeios/.
