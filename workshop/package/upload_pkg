@@ -1,3 +1,0 @@
-# $Id$
-scp -rpv workdir/packages/* www-data@zeusw.org:epeios/download
-rm -rf workdir

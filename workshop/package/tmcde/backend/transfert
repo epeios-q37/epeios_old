@@ -1,3 +1,0 @@
-# $Id$
-scp -r workdir/packages/* csimon@subversions.gnu.org:/upload/etmc/
-rm -rf workdir

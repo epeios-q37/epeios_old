@@ -1,3 +1,0 @@
-# $Id$
-scp -P 60000 -r workdir/*.tar.gz csimon@musicanet.org:build
-rm -rf workdir

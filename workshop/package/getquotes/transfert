@@ -1,3 +1,0 @@
-# $Id$
-scp -r workdir/*.tar.gz csimon@zeusw.org:Bourse/build/
-rm -rf workdir
