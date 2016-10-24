@@ -1,6 +1,0 @@
-<!-- $Id$ -->
-
-<!ENTITY databaseSelectionDialogBox.title "Sélection d'une base de données">
-<!ENTITY ok.label "OK">
-<!ENTITY cancel.label "Annuler">
-<!ENTITY databaseSelect.label "Sélectionnez une base de données">

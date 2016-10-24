@@ -1,6 +1,0 @@
-<!-- $Id$ -->
-
-<!ENTITY databaseSelectionDialogBox.title "Database selection">
-<!ENTITY ok.label "OK">
-<!ENTITY cancel.label "Cancel">
-<!ENTITY databaseSelect.label "Select database">

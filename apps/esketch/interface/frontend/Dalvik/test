@@ -1,1 +1,0 @@
-adb uninstall org.zeusw.esketch && ./build && adb install bin/ESketch-debug.apk

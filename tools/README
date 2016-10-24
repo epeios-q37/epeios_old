@@ -1,7 +1,0 @@
-$Id$
-
-The various software you may find in this directory are all under development. To get the stable version, you must download the file from corresponding package (not made yet).
-* The 'ebrk2py' (Epeios BrOkeR TO PYthon) is a software which generates the Python API to acces to a server which uses Epeios protocol. This is made by connecting to this server and asking for available objects types and their functions. So, if the server is modified, you have only to use this software to generate the new Python API. Equivalent software would be written in Python, and for other languages ('JAVA, for example).
-* The 'gendoc' is the software used to generate the 'Quickdoc'.
-* 'mcdi2db' is a little software which parse the content of a MP3 CD-ROM and generates a file for my Psion série 5 database software. (I usually hear my MP3 CD-ROM on my portable player, so I use my Psion to see the content of this CD-ROM).
-* 'reveal' parses a file an replaces its tags by text or file contents. I use this software to maintain my web sites. 

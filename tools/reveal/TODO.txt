@@ -1,5 +1,0 @@
-$Id$
-
-- Allow different characters to delimit the begin and the end of a tag.
-- Create and use a 'parameters' object for the command line arguments.
-- Change the copyright to me (and not the project).

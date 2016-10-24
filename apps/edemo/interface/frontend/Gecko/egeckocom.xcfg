@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
-<Configurations xmlns:xpp="http://zeusw.org/epeios/xpp">
-	<Configuration target="egeckocom">
-		<Components>
-				<Component id="eDemo">h:/bin/edemogck.dll</Component>
-				<!--<Component id="eDemo">/home/csimon/bin/edemogck.so</Component>-->
-		</Components>
-	</Configuration>
-</Configurations>

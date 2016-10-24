@@ -1,6 +1,0 @@
-<!-- $Id$ -->
-
-<!ENTITY firstRecord.label "|&lt;">
-<!ENTITY previousRecord.label "&lt;&lt;">
-<!ENTITY nextRecord.label "&gt;&gt;">
-<!ENTITY lastRecord.label "&gt;|">
